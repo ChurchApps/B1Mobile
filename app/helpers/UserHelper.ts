@@ -1,58 +1,61 @@
 import { ChumsCachedData } from '../screens/drawer/checkin/helpers';
-import { UserInterface, ChurchInterface, SettingInterface, SwitchAppRequestInterface, ApiHelper, LoginResponseInterface, RolePermissionInterface, TabInterface } from './ApiHelper'
+import { UserInterface, ChurchInterface, LoginResponseInterface, RolePermissionInterface, IPermission, LinkInterface } from './Interfaces'
+import { ApiHelper } from "./ApiHelper";
+import { Utils } from "./Utils";
 import { EnvironmentHelper } from './EnvironmentHelper';
 
 export class UserHelper {
     static currentChurch: ChurchInterface;
     static churches: ChurchInterface[];
     static user: UserInterface;
-    static currentSettings: SettingInterface;
+    //static currentSettings: SettingInterface;
     static currentPermissions: RolePermissionInterface[];
-    static tabs: TabInterface[];
+    static tabs: LinkInterface[];
 
-    private static setChurches = (allChurches: ChurchInterface[]) => {
-        UserHelper.churches = [];
-        allChurches.forEach(c => {
-            var add = false;
-            c.apps?.forEach(a => { if (a.name === "B1") add = true; })
-            if (add) UserHelper.churches.push(c);
-        });
-        UserHelper.selectChurch(UserHelper.churches[0].id || 0);
-    }
+    static handleLoginSuccess = async (resp: LoginResponseInterface) => {
+        if (Object.keys(resp).length !== 0) {
+            UserHelper.churches = [];
 
-    static handleLogin = async (resp: LoginResponseInterface) => {
-        ApiHelper.jwt = resp.token;
-        ApiHelper.amJwt = resp.token;
-        UserHelper.user = resp.user;
-        UserHelper.setChurches(resp.churches);
-        console.log("loading")
-        UserHelper.tabs = await ApiHelper.apiGet("/tabs");
-        console.log("made it")
-    }
-
-    static selectChurch = (churchId: number) => {
-        var church = null;
-        UserHelper.churches.forEach(c => { if (c.id === churchId) church = c; });
-        if (church === null) window.location.reload();
-        else {
-            UserHelper.currentChurch = church;
-
-            UserHelper.currentChurch.apps?.forEach(app => {
-                if (app.name === "B1") UserHelper.currentPermissions = app.permissions;
-            })
-
-            const data: SwitchAppRequestInterface = { appName: "B1", churchId: UserHelper.currentChurch.id || 0 };
-            ApiHelper.apiPost(EnvironmentHelper.AccessManagementApiUrl + '/users/switchApp', data).then((resp: LoginResponseInterface) => {
-                ApiHelper.jwt = resp.token;
+            resp.churches.forEach((c) => {
+                var add = false;
+                c.apis?.forEach((api) => {
+                    if (api.keyName === ApiHelper.defaultApi) add = true;
+                });
+                if (add) UserHelper.churches.push(c);
             });
+
+            if (UserHelper.churches.length > 0) {
+                UserHelper.user = resp.user;
+                UserHelper.selectChurch();
+                UserHelper.tabs = await ApiHelper.get("/links?type=tabs", "B1Api");
+            } else {
+                //handleLoginErrors(["No permissions"]);
+
+            }
         }
     }
 
 
-    static checkAccess(contentType: string, action: string): boolean {
+    static handleLoginErrors = (errors: string[]) => {
+        if (errors[0] === "No permissions") Utils.errorMsg("The provided login does not have access to this application.");
+        else Utils.errorMsg("Invalid login. Please check your email or password.");
+    }
+
+
+
+    static selectChurch = () => {
+        UserHelper.currentChurch = UserHelper.churches[0];
+        UserHelper.currentChurch.apis?.forEach(api => { ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions); });
+    }
+
+
+
+    static checkAccess({ api, contentType, action }: IPermission): boolean {
+        const permissions = ApiHelper.getConfig(api).permisssions;
+
         var result = false;
-        if (UserHelper.currentPermissions !== undefined) {
-            UserHelper.currentPermissions.forEach(element => {
+        if (permissions !== undefined) {
+            permissions.forEach(element => {
                 if (element.contentType === contentType && element.action === action) result = true;
             });
         }

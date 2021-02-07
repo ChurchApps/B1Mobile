@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View, TextInput, TouchableOpacity, ActivityIndicator, FlatList, ListRenderItem, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Styles, ApiHelper, EnvironmentHelper, Utils, ChurchInterface, UserHelper } from "./components";
+import { Styles, ApiHelper, Utils, ChurchInterface, UserHelper } from "./components";
 import Ripple from "react-native-material-ripple"
 import { stackNavigationProps } from "./StackScreens";
 
@@ -23,7 +23,7 @@ export function ChurchSearch(props: Props) {
         const errors = validate();
         if (errors.length === 0) {
             setIsLoading(!isLoading);
-            ApiHelper.apiGetAnonymous(EnvironmentHelper.AccessManagementApiUrl + "/churches/search?name=" + escape(name) + "&app=B1").then((resp: ChurchInterface[]) => {
+            ApiHelper.getAnonymous("/churches/search?name=" + escape(name) + "&app=B1", "AccessApi").then((resp: ChurchInterface[]) => {
                 setChurches(resp);
                 setIsLoading(false);
             }).catch((e) => { Utils.errorMsg("No matches found"); setIsLoading(false); });

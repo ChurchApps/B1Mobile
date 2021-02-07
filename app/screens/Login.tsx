@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View, TextInput, TouchableOpacity, ActivityIndicator, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { Styles, ApiHelper, EnvironmentHelper, LoginResponseInterface, UserHelper, Utils } from "./components";
+import { Styles, ApiHelper, LoginResponseInterface, UserHelper, Utils } from "./components";
 import { stackNavigationProps } from "./StackScreens";
 import { Container } from "native-base";
 
@@ -21,18 +21,31 @@ export function Login(props: Props) {
         return result;
     }
 
+
+
+
+
     const handlePress = () => {
         const errors = validate();
         if (errors.length === 0) {
             setIsLoading(!isLoading);
             const data = { email: email, password: password };
-            ApiHelper.apiPostAnonymous(EnvironmentHelper.AccessManagementApiUrl + "/users/login", data).then((resp: LoginResponseInterface) => {
-                UserHelper.handleLogin(resp).then(() => {
+            ApiHelper.postAnonymous("/users/login", data, "AccessApi").then((resp: LoginResponseInterface) => {
+                console.log("MADE IT");
+                if (resp.errors !== undefined) UserHelper.handleLoginErrors(resp.errors);
+                else {
+                    UserHelper.handleLoginSuccess(resp);
                     AsyncStorage.multiSet([["@LoggedIn", "true"], ["@Email", email], ["@Password", password]]);
-                    setIsLoading(false);
                     props.navigation.navigate("ChurchSearch");
-                });
-            }).catch((e) => { Utils.errorMsg("Invalid username or password."); setIsLoading(false); });
+                }
+                setIsLoading(false);
+
+
+            }).catch((e) => {
+                Utils.errorMsg(JSON.stringify(e));
+                //Utils.errorMsg("Invalid username or password."); 
+                setIsLoading(false);
+            });
         }
 
     }

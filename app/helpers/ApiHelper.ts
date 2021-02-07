@@ -40,6 +40,16 @@ export class ApiHelper {
         }
     }
 
+    static async getAnonymous(path: string, apiName: ApiListType) {
+        const config = this.getConfig(apiName);
+        try {
+            const requestOptions = { method: 'GET' };
+            return fetch(config.url + path, requestOptions).then(response => response.json())
+        } catch (e) {
+            throw (e);
+        }
+    }
+
     static async post(path: string, data: any[] | {}, apiName: ApiListType) {
         const config = this.getConfig(apiName);
         const requestOptions = {
@@ -66,6 +76,8 @@ export class ApiHelper {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         };
+        console.log(config.url + path);
+        console.log(JSON.stringify(requestOptions));
         return fetch(config.url + path, requestOptions).then(response => response.json())
     }
 

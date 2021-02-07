@@ -23,3 +23,7 @@ export interface IPermission {
     contentType: string;
     action: string;
 }
+
+
+export interface LinkInterface { id?: number, churchId?: number, category?: string, url?: string, linkType?: string, linkData?: string, icon?: string, text?: string, sort?: number }
+export interface PageInterface { id?: number, churchId?: number, name?: string, content?: string, lastModified?: Date }

@@ -25,7 +25,7 @@ export const Splash = (props: Props) => {
     }
 
     const attemptLogin = (email: string, password: string) => {
-        ApiHelper.apiPostAnonymous(EnvironmentHelper.AccessManagementApiUrl + "/users/login", { email: email, password: password }).then((resp: LoginResponseInterface) => {
+        ApiHelper.postAnonymous("/users/login", { email: email, password: password }, "AccessApi").then((resp: LoginResponseInterface) => {
             UserHelper.handleLogin(resp).then(() => {
                 AsyncStorage.multiSet([["@LoggedIn", "true"], ["@Email", email], ["@Password", password]]);
                 setLoggedIn(true);
