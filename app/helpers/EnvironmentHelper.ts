@@ -26,13 +26,15 @@ export class EnvironmentHelper {
     }
 
     static initDev = () => {
-        Constants.manifest.developer;
-        EnvironmentHelper.AccessApi = ENV.accessApi || "";
-        EnvironmentHelper.AttendanceApi = ENV.attendanceApi || "";
-        EnvironmentHelper.GivingApi = ENV.givingApi || "";
-        EnvironmentHelper.MembershipApi = ENV.membershipApi || "";
-        EnvironmentHelper.B1Api = ENV.b1Api || "";
-        EnvironmentHelper.ImageBase = ENV.imageBase || ""
+        const baseUrl = Constants.manifest.debuggerHost?.split(':').shift() || "";
+        console.log(baseUrl)
+
+        EnvironmentHelper.AccessApi = ENV.accessApi.replace("localhost", baseUrl) || "";
+        EnvironmentHelper.AttendanceApi = ENV.attendanceApi.replace("localhost", baseUrl) || "";
+        EnvironmentHelper.GivingApi = ENV.givingApi.replace("localhost", baseUrl) || "";
+        EnvironmentHelper.MembershipApi = ENV.membershipApi.replace("localhost", baseUrl) || "";
+        EnvironmentHelper.B1Api = ENV.b1Api.replace("localhost", baseUrl) || "";
+        EnvironmentHelper.ImageBase = ENV.imageBase.replace("localhost", baseUrl) || ""
     }
 
     //NOTE: None of these values are secret.
