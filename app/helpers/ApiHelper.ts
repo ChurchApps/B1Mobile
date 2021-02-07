@@ -70,7 +70,9 @@ export class ApiHelper {
     }
 
     static async postAnonymous(path: string, data: any[] | {}, apiName: ApiListType) {
+        console.log("GETTING CONFIG");
         const config = this.getConfig(apiName);
+        console.log(config);
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

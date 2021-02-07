@@ -14,6 +14,7 @@ export const Splash = (props: Props) => {
     const [loggedIn, setLoggedIn] = React.useState(false);
 
     const loadData = async () => {
+        EnvironmentHelper.init();
         await AsyncStorage.multiGet(["@LoggedIn", "@Email", "@Password"]).then(response => {
             const login = response[0][1] === "true";
             if (login) {
@@ -26,11 +27,13 @@ export const Splash = (props: Props) => {
 
     const attemptLogin = (email: string, password: string) => {
         ApiHelper.postAnonymous("/users/login", { email: email, password: password }, "AccessApi").then((resp: LoginResponseInterface) => {
-            UserHelper.handleLogin(resp).then(() => {
+            if (resp.errors !== undefined) UserHelper.handleLoginErrors(resp.errors);
+            else {
+                UserHelper.handleLoginSuccess(resp);
                 AsyncStorage.multiSet([["@LoggedIn", "true"], ["@Email", email], ["@Password", password]]);
                 setLoggedIn(true);
                 setIsLoading(false);
-            });
+            }
         }).catch((e) => { setLoggedIn(false); setIsLoading(false); });
     }
 

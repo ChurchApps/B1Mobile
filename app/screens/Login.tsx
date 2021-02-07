@@ -26,12 +26,14 @@ export function Login(props: Props) {
 
 
     const handlePress = () => {
+        console.log("LOGGING IN");
         const errors = validate();
         if (errors.length === 0) {
-            setIsLoading(!isLoading);
+            console.log("NO ERRORS");
+            setIsLoading(true);
             const data = { email: email, password: password };
+            console.log(data);
             ApiHelper.postAnonymous("/users/login", data, "AccessApi").then((resp: LoginResponseInterface) => {
-                console.log("MADE IT");
                 if (resp.errors !== undefined) UserHelper.handleLoginErrors(resp.errors);
                 else {
                     UserHelper.handleLoginSuccess(resp);
@@ -39,9 +41,8 @@ export function Login(props: Props) {
                     props.navigation.navigate("ChurchSearch");
                 }
                 setIsLoading(false);
-
-
             }).catch((e) => {
+                console.log(e);
                 Utils.errorMsg(JSON.stringify(e));
                 //Utils.errorMsg("Invalid username or password."); 
                 setIsLoading(false);
