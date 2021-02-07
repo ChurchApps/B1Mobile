@@ -1,4 +1,6 @@
 import { ApiHelper } from "./ApiHelper";
+import Constants from "expo-constants";
+import { ENV } from "../../Env";
 
 export class EnvironmentHelper {
     private static AccessApi = "";
@@ -24,12 +26,13 @@ export class EnvironmentHelper {
     }
 
     static initDev = () => {
-        EnvironmentHelper.AccessApi = process.env.REACT_APP_ACCESS_API || "";
-        EnvironmentHelper.AttendanceApi = process.env.REACT_APP_ATTENDANCE_API || "";
-        EnvironmentHelper.GivingApi = process.env.REACT_APP_GIVING_API || "";
-        EnvironmentHelper.MembershipApi = process.env.REACT_APP_MEMBERSHIP_API || "";
-        EnvironmentHelper.B1Api = process.env.REACT_APP_B1_API || "";
-        EnvironmentHelper.ImageBase = process.env.REACT_APP_IMAGE_BASE || ""
+        Constants.manifest.developer;
+        EnvironmentHelper.AccessApi = ENV.accessApi || "";
+        EnvironmentHelper.AttendanceApi = ENV.attendanceApi || "";
+        EnvironmentHelper.GivingApi = ENV.givingApi || "";
+        EnvironmentHelper.MembershipApi = ENV.membershipApi || "";
+        EnvironmentHelper.B1Api = ENV.b1Api || "";
+        EnvironmentHelper.ImageBase = ENV.imageBase || ""
     }
 
     //NOTE: None of these values are secret.
