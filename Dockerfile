@@ -5,15 +5,13 @@ RUN apk update && \
 
 WORKDIR /app
 
-COPY ./package.json . 
+COPY . .
 
 RUN git submodule init && git submodule update
 
 RUN npm install --global expo-cli
 
 RUN npm install
-
-COPY . .
 
 CMD npm start
 
