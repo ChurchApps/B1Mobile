@@ -2,9 +2,10 @@ import React from "react";
 import { Text, View, TextInput, TouchableOpacity, ActivityIndicator, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import { Styles, ApiHelper, EnvironmentHelper, LoginResponseInterface, UserHelper, Utils } from "./components";
+import { Styles, ApiHelper, EnvironmentHelper, LoginResponseInterface, UserHelper, Utils, LinkInterface } from "./components";
 import { stackNavigationProps } from "./StackScreens";
 import { Container } from "native-base";
+import { CachedData } from "../helpers/CachedData";
 
 type Props = { navigation: stackNavigationProps; };
 
@@ -26,16 +27,19 @@ export function Login(props: Props) {
         if (errors.length === 0) {
             setIsLoading(!isLoading);
             const data = { email: email, password: password };
-            ApiHelper.apiPostAnonymous(EnvironmentHelper.AccessManagementApiUrl + "/users/login", data).then((resp: LoginResponseInterface) => {
-                UserHelper.handleLogin(resp).then(() => {
+            UserHelper.login(data).then((success: Boolean) => {
+                if (success) {
                     AsyncStorage.multiSet([["@LoggedIn", "true"], ["@Email", email], ["@Password", password]]);
                     setIsLoading(false);
-                    props.navigation.navigate("ChurchSearch");
-                });
-            }).catch((e) => { Utils.errorMsg("Invalid username or password."); setIsLoading(false); });
+                    props.navigation.navigate("Home");
+                } else {
+                    setIsLoading(false);
+                }
+            });
         }
 
     }
+
 
     return (
         <SafeAreaView style={Styles.safeArea}>

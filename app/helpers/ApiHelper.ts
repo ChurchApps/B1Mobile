@@ -1,68 +1,76 @@
-import { EnvironmentHelper } from "./EnvironmentHelper";
-
-//B1
-export interface LinkInterface { id?: number, churchId: number, category: string, url?: string, text?: string, sort?: number, linkType: string, linkData: string, icon: string }
-export interface PageInterface { id?: number, churchId: number, name: string, content: string }
-
-//AccessManagment
-export interface ApplicationInterface { name: string, permissions: RolePermissionInterface[] }
-export interface ChurchInterface { id?: number, name: string, registrationDate?: Date, apps?: ApplicationInterface[] }
-export interface LoadCreateUserRequestInterface { userEmail: string, fromEmail: string, subject: string, body: string, userName: string }
-export interface LoginResponseInterface { user: UserInterface, churches: ChurchInterface[], token: string }
-export interface RegisterInterface { churchName?: string, displayName?: string, email?: string, password?: string }
-export interface RoleInterface { id?: number, churchId?: number, appName?: string, name?: string }
-export interface RolePermissionInterface { id?: number, churchId?: number, roleId?: number, appName?: string, contentType?: string, contentId?: number, action?: string }
-export interface RoleMemberInterface { id?: number, churchId?: number, roleId?: number, userId?: number, user?: UserInterface }
-export interface ResetPasswordRequestInterface { userEmail: string, fromEmail: string, subject: string, body: string }
-export interface ResetPasswordResponseInterface { emailed: boolean }
-export interface SwitchAppRequestInterface { appName: string, churchId: number }
-export interface SwitchAppResponseInterface { appName: string, churchId: number }
-export interface UserInterface { id?: number, email?: string, authGuid?: string, displayName?: string, registrationDate?: Date, lastLogin?: Date, password?: string }
+import { ApiConfig, RolePermissionInterface, ApiListType } from "./Interfaces";
 
 export class ApiHelper {
-    static jwt = '';
-    static amJwt = '';
 
-    static getUrl(path: string) {
-        if (path.indexOf("://") > -1) return path;
-        else return EnvironmentHelper.B1ApiUrl + path;
+    static apiConfigs: ApiConfig[] = [];
+    static defaultApi = "";
+    static isAuthenticated = false;
+
+
+    static getConfig(keyName: string) {
+        if (keyName === undefined) keyName = this.defaultApi;
+        var result: ApiConfig | undefined;
+        this.apiConfigs.forEach(config => { if (config.keyName === keyName) result = config });
+        //if (result === null) throw new Error("Unconfigured API: " + keyName);
+        return result;
     }
 
-    static async apiGet(path: string) {
-        const requestOptions = { method: 'GET', headers: { 'Authorization': 'Bearer ' + this.jwt } };
-        return fetch(this.getUrl(path), requestOptions).then(response => response.json())
+    static setPermissions(keyName: string, jwt: string, permissions: RolePermissionInterface[]) {
+        this.apiConfigs.forEach(config => {
+            if (config.keyName === keyName) {
+                config.jwt = jwt;
+                config.permisssions = permissions;
+            }
+        });
+        this.isAuthenticated = true;
     }
 
-    static async apiGetAnonymous(path: string) {
-        const requestOptions = { method: 'GET' };
-        return fetch(this.getUrl(path), requestOptions).then(response => response.json())
+    static clearPermissions() {
+        this.apiConfigs.forEach(config => { config.jwt = ""; config.permisssions = []; });
+        this.isAuthenticated = false;
     }
 
-    static async apiPost(path: string, data: any[] | {}) {
+    static async get(path: string, apiName: ApiListType) {
+        const config = this.getConfig(apiName);
+        if (config === undefined) return;
+        try {
+            const requestOptions = { method: 'GET', headers: { 'Authorization': 'Bearer ' + config.jwt } };
+            return fetch(config.url + path, requestOptions).then(response => response.json())
+        } catch (e) {
+            throw (e);
+        }
+    }
+
+    static async post(path: string, data: any[] | {}, apiName: ApiListType) {
+        const config = this.getConfig(apiName);
+        if (config === undefined) return;
         const requestOptions = {
             method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + this.jwt, 'Content-Type': 'application/json' },
+            headers: { 'Authorization': 'Bearer ' + config.jwt, 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         };
-        return fetch(this.getUrl(path), requestOptions).then(response => response.json())
+        return fetch(config.url + path, requestOptions).then(response => response.json())
     }
 
-    static async apiDelete(path: string) {
+    static async delete(path: string, apiName: ApiListType) {
+        const config = this.getConfig(apiName);
+        if (config === undefined) return;
         const requestOptions = {
             method: 'DELETE',
-            headers: { 'Authorization': 'Bearer ' + this.jwt }
+            headers: { 'Authorization': 'Bearer ' + config.jwt }
         };
-        return fetch(this.getUrl(path), requestOptions);
+        return fetch(config.url + path, requestOptions);
     }
 
-    static async apiPostAnonymous(path: string, data: any[] | {}) {
+    static async postAnonymous(path: string, data: any[] | {}, apiName: ApiListType) {
+        const config = this.getConfig(apiName);
+        if (config === undefined) return;
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         };
-        return fetch(this.getUrl(path), requestOptions).then(response => response.json())
+        return fetch(config.url + path, requestOptions).then(response => response.json())
     }
 
 }
-

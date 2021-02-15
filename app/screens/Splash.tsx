@@ -25,13 +25,17 @@ export const Splash = (props: Props) => {
     }
 
     const attemptLogin = (email: string, password: string) => {
-        ApiHelper.apiPostAnonymous(EnvironmentHelper.AccessManagementApiUrl + "/users/login", { email: email, password: password }).then((resp: LoginResponseInterface) => {
-            UserHelper.handleLogin(resp).then(() => {
+        UserHelper.login({ email: email, password: password }).then((success: Boolean) => {
+            if (success) {
                 AsyncStorage.multiSet([["@LoggedIn", "true"], ["@Email", email], ["@Password", password]]);
                 setLoggedIn(true);
                 setIsLoading(false);
-            });
-        }).catch((e) => { setLoggedIn(false); setIsLoading(false); });
+            } else {
+                setLoggedIn(false); setIsLoading(false);
+            }
+        });
+
+
     }
 
     const redirect = (page: string) => { props.navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: page }] })); }

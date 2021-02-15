@@ -1,9 +1,10 @@
 import React from "react";
 import { ScrollView, Text, View, Image } from "react-native";
 import { NavigationActions, NavigationNavigateActionPayload, NavigationParams } from "react-navigation";
-import { UserHelper, Styles, TabInterface } from "../../helpers";
+import { UserHelper, Styles, LinkInterface } from "../../helpers";
 import { Icon } from "native-base"
 import { DrawerContentComponentProps, DrawerContentOptions, DrawerItem } from "@react-navigation/drawer";
+import { CachedData } from "../../helpers/CachedData";
 
 export const CustomDrawer = (props: DrawerContentComponentProps<DrawerContentOptions>) => {
 
@@ -13,8 +14,8 @@ export const CustomDrawer = (props: DrawerContentComponentProps<DrawerContentOpt
         return () => { props.navigation.dispatch(NavigationActions.navigate(options)) };
     }*/
 
-    const handleClick = (tab: TabInterface) => {
-        switch (tab.tabType) {
+    const handleClick = (tab: LinkInterface) => {
+        switch (tab.linkType) {
             case "checkin":
                 navigate("Checkin");
                 break;
@@ -25,7 +26,7 @@ export const CustomDrawer = (props: DrawerContentComponentProps<DrawerContentOpt
                 navigate("LiveStream");
                 break;
             case "page":
-                navigate("Page", { title: tab.text, id: tab.tabData });
+                navigate("Page", { title: tab.text, id: tab.linkData });
                 break;
             default:
                 navigate("WebPage", { title: "Test", url: "https://www.google.com/" });
@@ -36,7 +37,7 @@ export const CustomDrawer = (props: DrawerContentComponentProps<DrawerContentOpt
     const navigate = (routeName: string, params?: NavigationParams) => { props.navigation.navigate(routeName, params); }
 
 
-    if (UserHelper.tabs === null) { return <Text>Error loading nav</Text>; }
+    if (CachedData.tabs === null) { return <Text>Error loading nav</Text>; }
 
     const getIcon = (cssName: string) => {
         const solid = cssName.indexOf("fas") === 0;
@@ -50,11 +51,11 @@ export const CustomDrawer = (props: DrawerContentComponentProps<DrawerContentOpt
         <View style={Styles.nav}>
             <View style={Styles.navChurchName}>
                 <Icon name="church" solid={true} type="FontAwesome5" style={Styles.navIcon} />
-                <Text style={Styles.navChurchNameText}>{UserHelper.currentChurch.name}</Text>
+                <Text style={Styles.navChurchNameText}>{CachedData.church?.name}</Text>
             </View>
             <ScrollView>
                 <View >
-                    {UserHelper.tabs.map(t => (
+                    {CachedData.tabs?.map(t => (
                         <View key={t.id} style={Styles.navLink}>
                             {getIcon(t.icon)}
                             <Text style={Styles.navLinkText} onPress={() => { handleClick(t) }} >{t.text}</Text>
