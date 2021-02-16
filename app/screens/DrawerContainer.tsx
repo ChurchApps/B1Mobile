@@ -10,19 +10,7 @@ import { CustomDrawer } from "./components/CustomDrawer";
 
 type Props = { navigation: stackNavigationProps; };
 
-const getTabDrawers = () => {
-    const result: JSX.Element[] = [];
-    var i = 0;
-    const name = "Bible"
-
-    UserHelper.tabs.forEach(t => {
-        result.push(<DrawerNav.Screen name="WebPage" component={WebPage} options={{ title: t.text }} initialParams={{ url: "https://biblegateway.com/", title: t.text }} />);
-    });
-    return result;
-}
-
 export const DrawerContainer = (props: Props) => {
-    console.log(UserHelper.tabs);
     return (
         <SafeAreaView style={Styles.safeArea}>
             <View style={Styles.fullWidthContainer}>

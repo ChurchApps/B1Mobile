@@ -29,7 +29,7 @@ export const CustomDrawer = (props: DrawerContentComponentProps<DrawerContentOpt
                 navigate("Page", { title: tab.text, id: tab.linkData });
                 break;
             default:
-                navigate("WebPage", { title: "Test", url: "https://www.google.com/" });
+                navigate("WebPage", { title: "Test", url: tab.url });
                 break;
         }
     }

@@ -9,12 +9,12 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 
 ### Dev Setup Instructions
-For the APIs, you may either set them up on your local machine first, or point to the staging server copies during development.  The staging server urls are in the sample dotenv files.
+Dev setup consists of loading the "Full Stack" docker container to launch the dependencies; launching the expo server in this project and connecting to it via the expo app.
 
-### ChumsCheckin
-1. Copy `dotenv.sample.txt` to `.env` and updated it to point to the appropriate API urls. 
-2. Run `npm start` to start the React Native server.
-3. In Android Studio open the /android folder and click the run button to install the app on your device.  It will initially load with the logo missing, you need to connect it to the ReactNative server.
-4. Connect the app to your react native server by either shaking the device or running `adb shell input keyevent 82` to open the developer menu. Go to settings, Debug server host and enter YourIP:8081.  Restart the app and it should work properly.
-
-You may create a test account at https://staging.chums.org/ if you are using the staging api urls.
+1. Follow the [Docker setup instructions](https://github.com/LiveChurchSolutions/Docker/) for the "Full Stack" container.
+2. Go to https://localhost:3400/ and register an account.
+3. Login to https://localhost:3401/ with that account, select your test church and click the Activate link next to "B1 Church".
+4. Login to the B1 Admin at http://localhost:3301/ and add one or more Tabs; (Example: Bible, External Url, https://www.biblegateway.com/passage/?search=Genesis+1)
+5. Run "npm install" and "npm start" on this project to start the expo server.
+6. Download the Expo Go app for iOS or Android and scan the barcode from step 5.
+7. Login to the app with the same account.
