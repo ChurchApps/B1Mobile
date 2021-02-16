@@ -14,7 +14,7 @@ Dev setup consists of loading the "Full Stack" docker container to launch the de
 1. Follow the [Docker setup instructions](https://github.com/LiveChurchSolutions/Docker/) for the "Full Stack" container.
 2. Go to https://localhost:3400/ and register an account.
 3. Login to https://localhost:3401/ with that account, select your test church and click the Activate link next to "B1 Church".
-4. Login to the B1 Admin at http://localhost:3301/ and add one or more Tabs; (Example: Bible, External Url, https://www.biblegateway.com/passage/?search=Genesis+1)
+4. Login to the B1 Admin at http://localhost:3301/ and add one or more Tabs; (Example: Bible, External Url, https://yourchurch.org/)
 5. Run "npm install" and "npm start" on this project to start the expo server.
 6. Download the Expo Go app for iOS or Android and scan the barcode from step 5.
 7. Login to the app with the same account.
