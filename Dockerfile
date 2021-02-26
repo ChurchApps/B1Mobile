@@ -13,6 +13,6 @@ RUN npm install --global expo-cli
 
 RUN npm install
 
-CMD npm start
+CMD npm run $ENVIRONMENT
 
 EXPOSE 19000 19001 19002 19003 19004 19005 19006
