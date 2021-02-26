@@ -5,7 +5,7 @@ RUN apk update && \
 
 WORKDIR /app
 
-COPY . .
+RUN git clone https://github.com/LiveChurchSolutions/B1App.git .
 
 RUN git submodule init && git submodule update
 
