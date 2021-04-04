@@ -9,7 +9,11 @@ const Images = {
     ic_checkin: require("../assets/images/ic_checkin.png"),
     ic_give: require("../assets/images/ic_give.png"),
     ic_groups: require("../assets/images/ic_groups.png"),
-    ic_getintouch: require("../assets/images/ic_getintouch.png")
+    ic_getintouch: require("../assets/images/ic_getintouch.png"),
+    ic_search: require("../assets/images/ic_search.png"),
+    logoBlue: require("../assets/images/logoBlue.png"),
+    logoWhite: require("../assets/images/logoWhite.png"),
+    ic_church: require("../assets/images/ic_church.png")
 };
    
 export default Images;

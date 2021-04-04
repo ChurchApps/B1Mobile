@@ -5,6 +5,7 @@ import {
     Image,
     StyleSheet,
     Text,
+    ActivityIndicator,
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {
@@ -14,6 +15,7 @@ import {
 import Images from '../utils/Images';
 import MainHeader from '../components/MainHeader';
 import WebView from 'react-native-webview';
+import Loader from '../components/Loader';
 
 interface Props {
     navigation: {
@@ -21,10 +23,18 @@ interface Props {
         goBack: () => void;
         openDrawer: () => void;
     };
+    route: {
+        params:{
+            url:any
+        }
+    }
 }
 
 const HomeScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
+    const { params } = props.route;
+    const [isLoading, setLoading] = useState(false);
+
     useEffect(() => {
 
     }, [])
@@ -39,8 +49,9 @@ const HomeScreen = (props: Props) => {
                 rightComponent={null}
             />
             <View style={styles.webViewContainer}> 
-                <WebView source={{ uri: 'https://biblegateway.com/'}} />
+                <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: params && params.url && params.url }} />
             </View>
+            {isLoading && <Loader loading={isLoading}/>}
         </SafeAreaView>
     );
 };

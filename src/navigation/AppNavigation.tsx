@@ -5,6 +5,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import SplashScreen from '../screens/SplashScreen';
 import HomeScreen from '../screens/HomeScreen';
 import CustomDrawer from '../components/CustomDrawer';
+import ChurchSearch from '../screens/ChurchSearch';
 
 const AppNav = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -18,6 +19,10 @@ const MainStack = () => {
             <Drawer.Screen
                 name={'HomeScreen'}
                 component={HomeScreen}
+            />
+            <Drawer.Screen
+                name={'ChurchSearch'}
+                component={ChurchSearch}
             />
         </Drawer.Navigator>
     );

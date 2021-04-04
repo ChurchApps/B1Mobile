@@ -15,6 +15,7 @@ import {
 import { ScrollView } from 'react-native-gesture-handler';
 import MainHeader from './MainHeader';
 import Images from '../utils/Images';
+import Fonts from '../utils/Fonts';
 
 interface Props {
     navigation: {
@@ -44,7 +45,8 @@ const CustomDrawer = (props: any) => {
     },{
         id: 2,
         title: 'Live Stream',
-        image: Images.ic_live_stream
+        image: Images.ic_live_stream,
+        url: 'https://test.streaminglive.church/'
     },{
         id: 3,
         title: 'Checkin',
@@ -66,33 +68,34 @@ const CustomDrawer = (props: any) => {
     useEffect(() => {
     }, [])
 
+    const navigateToScreen = (item : any) => {
+        if (item.url && item.url != '') {
+            navigate('HomeScreen',{ url:item.url })
+        }
+    }
+
+    const listItem = (item: any) => {
+        return (
+            <TouchableOpacity style={styles.headerView} onPress={() => navigateToScreen(item)}>
+                <Image source={item.image} style={styles.tabIcon}/>
+                <Text style={styles.tabTitle}>{item.title}</Text>
+            </TouchableOpacity>
+        );
+    }
+
     return (
         <SafeAreaView>
             <View style={styles.headerView}>
                 <Image source={Images.ic_user} style={styles.userIcon}/>
                 <Text style={styles.userNameText}>Jeremy Zongker</Text>
             </View>
-            <FlatList
-                data={menuList}
-                renderItem={({ item }) =>
-                <TouchableOpacity style={styles.headerView}>
-                    <Image source={item.image} style={styles.tabIcon}/>
-                    <Text style={styles.tabTitle}>{item.title}</Text>
-                </TouchableOpacity>}
-                keyExtractor={( item: any ) => item.id}
-            />
-            <View style={styles.churchContainer}>
-                <Text style={styles.churchText}>Cedar Ridge Online</Text>
-            </View>
-            <FlatList
-                data={staticTabs}
-                renderItem={({ item }) =>
-                <View style={styles.headerView}>
-                    <Image source={item.image} style={styles.tabIcon}/>
-                    <Text style={styles.tabTitle}>{item.title}</Text>
-                </View>}
-                keyExtractor={( item: any ) => item.id}
-            />
+            <FlatList data={menuList} renderItem={({ item }) => listItem(item)} keyExtractor={( item: any ) => item.id} />
+            <TouchableOpacity style={styles.churchContainer} onPress={() => navigate('ChurchSearch')}>
+                {/* <Text style={styles.churchText}>Cedar Ridge Online</Text> */}
+                <Image source={Images.ic_search} style={styles.searchIcon} />
+                <Text style={styles.churchText}>Find your church...</Text>
+            </TouchableOpacity>
+            <FlatList data={staticTabs} renderItem={({ item }) => listItem(item)} keyExtractor={( item: any ) => item.id} />
         </SafeAreaView>
     );
 };
@@ -112,6 +115,7 @@ const styles = StyleSheet.create({
     },
     userNameText: {
         fontSize: wp('3.8%'),
+        fontFamily: Fonts.RobotoRegular
     },
     tabIcon: {
         width: wp('6%'),
@@ -121,17 +125,28 @@ const styles = StyleSheet.create({
     },
     tabTitle: {
         fontSize: wp('4%'),
+        fontFamily: Fonts.RobotoRegular
     },
     churchContainer: {
-        borderBottomColor: 'gray',
+        borderBottomColor: 'lightgray',
         borderBottomWidth: 1,
         marginHorizontal: wp('4%'),
         marginTop: wp('6%'),
-        marginBottom: wp('2%')
+        marginBottom: wp('2%'),
+        borderRadius: wp('1.5%'),
+        flexDirection: 'row',
+        alignItems:'center'
     },
     churchText: {
-        fontSize: wp('4.2%'),
-        paddingVertical: wp('1.5%')
+        fontSize: wp('3.7%'),
+        paddingVertical: wp('1.5%'),
+        fontFamily: Fonts.RobotoRegular,
+        color: 'gray'
+    },
+    searchIcon: {
+        width: wp('6%'),
+        height: wp('6%'), 
+        margin: wp('1.5%'),
     }
 })
 
