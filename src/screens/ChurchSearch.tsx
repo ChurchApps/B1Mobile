@@ -5,7 +5,9 @@ import {
     Image,
     StyleSheet,
     Text,
-    ActivityIndicator
+    ActivityIndicator,
+    Alert,
+    DevSettings
 } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import {
@@ -16,6 +18,8 @@ import Images from '../utils/Images';
 import MainHeader from '../components/MainHeader';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
+import { getSearchList } from '../helper/ApiHelper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props {
     navigation: {
@@ -25,33 +29,10 @@ interface Props {
     };
 }
 
-const testList = [
-    {
-        id: 1,
-        title: 'Church 1',
-        location: 'New York'
-    },
-    {
-        id: 2,
-        title: 'Church 2',
-        location: 'California'
-    },
-    {
-        id: 3,
-        title: 'Church 3',
-        location: 'Los Angeles'
-    },
-    {
-        id: 4,
-        title: 'Church 4',
-        location: 'Chicago'
-    }
-]
-
 const ChurchSearch = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const [searchText, setSearchText] = useState('');
-    const [churchList, setChurchList] = useState([]);
+    const [searchList, setSearchList] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -60,26 +41,56 @@ const ChurchSearch = (props: Props) => {
 
     const renderChurchItem = (item: any) => {
         return (
-            <TouchableOpacity style={styles.churchListView}>
+            <TouchableOpacity style={styles.churchListView} onPress={() => churchSelection(item.name)}>
                 <Image source={Images.ic_church} style={styles.churchListIcon} />
                 <View style={styles.churchListTextView}>
-                    <Text style={styles.churchListTitle}>{item.title}</Text>
-                    <Text style={styles.churchListLocation}>{item.location}</Text>
+                    <Text style={styles.churchListTitle}>{item.name}</Text>
+                    {/* <Text style={styles.churchListLocation}>{item.location}</Text> */}
                 </View>
             </TouchableOpacity>
         );
     }
 
+    const churchSelection = async(churchName: string) => {
+        try {
+            await AsyncStorage.setItem('CHURCH_NAME', churchName)
+            DevSettings.reload()
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const searchApiCall = (text: String) => {
+        setLoading(true);
+        getSearchList(text, (err: any, res: any) => {
+            setLoading(false);
+            if(!err) {
+                if (res.data.length != 0) {
+                    console.log(res.data)
+                    setSearchList(res.data)
+                } else {
+                    setSearchList([])
+                    Alert.alert("Alert","Search result not found!!");
+                }
+            } else {
+                Alert.alert("Alert",err.message);
+            }             
+        });
+    }
+
     return (
         <SafeAreaView style={styles.container}>
-            <MainHeader
-                leftComponent={null}
-                mainComponent={<Image source={Images.logoWhite} style={styles.mainIcon} />}
-                rightComponent={null}
-            />
+            <View style={styles.headerContainer}> 
+                <View style={styles.headerLogoView}>
+                    <Image source={Images.logoWhite} style={styles.mainIcon} />
+                </View>
+            </View>
             <View style={styles.mainView}>
                 <Text style={styles.mainText}>Find Your Church</Text>
                 <View style={styles.textInputView}>
+                    <Image
+                        source={Images.ic_search}
+                        style={styles.searchIcon} />
                     <TextInput
                         style={styles.textInputStyle}
                         placeholder={'Church name'}
@@ -91,13 +102,14 @@ const ChurchSearch = (props: Props) => {
                         onChangeText={(text) => { setSearchText(text) }}
                     />
                 </View>
-                <TouchableOpacity style={styles.searchButton}>
+                <TouchableOpacity style={styles.searchButton} onPress={() => searchApiCall(searchText)}>
                     {loading ?
                         <ActivityIndicator size='small' color='white' animating={loading} /> :
                         <Text style={styles.searchText}>SEARCH</Text>
                     }
                 </TouchableOpacity>
-                <FlatList data={testList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={{marginVertical: wp('2%')}}/>
+
+                <FlatList data={searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={styles.churchListStyle}/>
             </View>
         </SafeAreaView>
     );
@@ -108,18 +120,25 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: Colors.app_color
     },
-    menuIcon: {
-        width: wp('6%'),
-        height: wp('6%'),
-        margin: wp('5%'),
-        tintColor: 'white'
-    },
     mainIcon: {
         width: wp('55%'),
         height: wp('55%'),
         margin: wp('5%'),
         resizeMode: 'contain',
         alignSelf: 'center'
+    },
+    searchIcon: {
+        width: wp('6%'),
+        height: wp('6%'), 
+        margin: wp('1.5%'),
+    },
+    headerContainer: { 
+        backgroundColor: Colors.gray_bg 
+    },
+    headerLogoView: {
+        borderBottomLeftRadius: wp('8%'),
+        borderBottomRightRadius: wp('8%'),
+        backgroundColor: Colors.app_color,
     },
     mainView: {
         flex: 1,
@@ -203,6 +222,9 @@ const styles = StyleSheet.create({
         fontSize: wp('3.6%'),
         color: 'gray',
         fontFamily: Fonts.RobotoLight
+    },
+    churchListStyle: {
+        marginVertical: wp('2%')
     }
 })
 

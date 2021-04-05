@@ -16,6 +16,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import MainHeader from './MainHeader';
 import Images from '../utils/Images';
 import Fonts from '../utils/Fonts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props {
     navigation: {
@@ -28,6 +29,7 @@ interface Props {
 
 const CustomDrawer = (props: any) => {
     const { navigate, goBack, openDrawer } = props.navigation;
+    const [churchName, setChurchName] = useState('');
     const menuList = [{
         id: 1,
         title: 'Bible',
@@ -66,7 +68,19 @@ const CustomDrawer = (props: any) => {
     }]
 
     useEffect(() => {
+        getChurch();
     }, [])
+
+    const getChurch = async () => {
+        try {
+            const value = await AsyncStorage.getItem('CHURCH_NAME')
+            if(value !== null) {
+                setChurchName(value)
+            }
+        } catch(e) {
+            console.log(e)
+        }
+    }
 
     const navigateToScreen = (item : any) => {
         if (item.url && item.url != '') {
@@ -90,11 +104,15 @@ const CustomDrawer = (props: any) => {
                 <Text style={styles.userNameText}>Jeremy Zongker</Text>
             </View>
             <FlatList data={menuList} renderItem={({ item }) => listItem(item)} keyExtractor={( item: any ) => item.id} />
+            {churchName != '' ? 
             <TouchableOpacity style={styles.churchContainer} onPress={() => navigate('ChurchSearch')}>
-                {/* <Text style={styles.churchText}>Cedar Ridge Online</Text> */}
+                <Text style={{...styles.churchText, color: 'black'}}>{churchName}</Text> 
+            </TouchableOpacity> : 
+            <TouchableOpacity style={styles.churchContainer} onPress={() => navigate('ChurchSearch')}>
                 <Image source={Images.ic_search} style={styles.searchIcon} />
                 <Text style={styles.churchText}>Find your church...</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>}
+            
             <FlatList data={staticTabs} renderItem={({ item }) => listItem(item)} keyExtractor={( item: any ) => item.id} />
         </SafeAreaView>
     );
