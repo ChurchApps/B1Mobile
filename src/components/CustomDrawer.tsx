@@ -5,7 +5,9 @@ import {
     SafeAreaView,
     TouchableOpacity,
     Image,
-    FlatList
+    FlatList,
+    Alert,
+    ActivityIndicator
 } from 'react-native';
 import { StyleSheet } from 'react-native';
 import {
@@ -17,6 +19,9 @@ import MainHeader from './MainHeader';
 import Images from '../utils/Images';
 import Fonts from '../utils/Fonts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { connect } from 'react-redux';
+import { getDrawerList } from '../redux/actions/drawerItemsAction';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface Props {
     navigation: {
@@ -25,57 +30,39 @@ interface Props {
         openDrawer: () => void;
     };
     onPress: () => void;
+    getDrawerItemList: (callback: any) => void;
 }
 
 const CustomDrawer = (props: any) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const [churchName, setChurchName] = useState('');
+    const [churchEmpty, setChurchEmpty] = useState(true);
+    const [drawerList, setDrawerList] = useState([]);
+    const [loading, setLoading] = useState(false);
     const menuList = [{
         id: 1,
-        title: 'Bible',
+        text: 'Bible',
         image: Images.ic_bible,
         url: 'https://biblegateway.com/'
     },{
         id: 2,
-        title: 'Preferences',
+        text: 'Preferences',
         image: Images.ic_preferences
     }];
-    const staticTabs = [{
-        id: 1,
-        title: 'Home',
-        image: Images.ic_home
-    },{
-        id: 2,
-        title: 'Live Stream',
-        image: Images.ic_live_stream,
-        url: 'https://test.streaminglive.church/'
-    },{
-        id: 3,
-        title: 'Checkin',
-        image: Images.ic_checkin
-    },{
-        id: 4,
-        title: 'Give',
-        image: Images.ic_give
-    },{
-        id: 5,
-        title: 'Groups',
-        image: Images.ic_groups
-    },{
-        id: 6,
-        title: 'Get in Touch',
-        image: Images.ic_getintouch
-    }]
 
     useEffect(() => {
         getChurch();
+        
     }, [])
 
     const getChurch = async () => {
         try {
-            const value = await AsyncStorage.getItem('CHURCH_NAME')
+            const value = await AsyncStorage.getItem('CHURCH_DATA')
             if(value !== null) {
-                setChurchName(value)
+                const churchData = JSON.parse(value);
+                setChurchName(churchData.name)
+                setChurchEmpty(false)
+                getDrawerList(churchData.id);
             }
         } catch(e) {
             console.log(e)
@@ -84,15 +71,32 @@ const CustomDrawer = (props: any) => {
 
     const navigateToScreen = (item : any) => {
         if (item.url && item.url != '') {
-            navigate('HomeScreen',{ url:item.url })
+            navigate('HomeScreen',{ url:item.url, title: item.text })
         }
     }
 
-    const listItem = (item: any) => {
+    const getDrawerList = (churchId: any) => {
+        setLoading(true);
+        props.getDrawerItemList(churchId, (err: any, res: any) => {
+            setLoading(false);
+            if (!err) {
+                if (res.data.length != 0) {
+                    setDrawerList(res.data)
+                } else {
+                    setDrawerList([])
+                }
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
+    }
+
+    const listItem = (top: boolean,item: any) => {
         return (
             <TouchableOpacity style={styles.headerView} onPress={() => navigateToScreen(item)}>
-                <Image source={item.image} style={styles.tabIcon}/>
-                <Text style={styles.tabTitle}>{item.title}</Text>
+                {top ? <Image source={item.image} style={styles.tabIcon}/> : 
+                <Icon name={item.icon} color={'black'} style={styles.tabIcon} size={wp('6%')}/>}
+                <Text style={styles.tabTitle}>{item.text}</Text>
             </TouchableOpacity>
         );
     }
@@ -103,17 +107,19 @@ const CustomDrawer = (props: any) => {
                 <Image source={Images.ic_user} style={styles.userIcon}/>
                 <Text style={styles.userNameText}>Jeremy Zongker</Text>
             </View>
-            <FlatList data={menuList} renderItem={({ item }) => listItem(item)} keyExtractor={( item: any ) => item.id} />
-            {churchName != '' ? 
+            <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={( item: any ) => item.id} />
+
             <TouchableOpacity style={styles.churchContainer} onPress={() => navigate('ChurchSearch')}>
-                <Text style={{...styles.churchText, color: 'black'}}>{churchName}</Text> 
-            </TouchableOpacity> : 
-            <TouchableOpacity style={styles.churchContainer} onPress={() => navigate('ChurchSearch')}>
-                <Image source={Images.ic_search} style={styles.searchIcon} />
-                <Text style={styles.churchText}>Find your church...</Text>
-            </TouchableOpacity>}
+                {churchEmpty && <Image source={Images.ic_search} style={styles.searchIcon} />}
+                <Text style={{...styles.churchText, color: churchEmpty ? 'gray' : 'black'}}>
+                    {churchEmpty ? 'Find your church...' : churchName}
+                </Text>
+            </TouchableOpacity>
             
-            <FlatList data={staticTabs} renderItem={({ item }) => listItem(item)} keyExtractor={( item: any ) => item.id} />
+            {
+                loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
+                <FlatList data={drawerList} renderItem={({ item }) => listItem(false, item)} keyExtractor={( item: any ) => item.id} />
+            }
         </SafeAreaView>
     );
 };
@@ -159,7 +165,7 @@ const styles = StyleSheet.create({
         fontSize: wp('3.7%'),
         paddingVertical: wp('1.5%'),
         fontFamily: Fonts.RobotoRegular,
-        color: 'gray'
+        marginHorizontal: wp('1%'),
     },
     searchIcon: {
         width: wp('6%'),
@@ -168,4 +174,15 @@ const styles = StyleSheet.create({
     }
 })
 
-export default CustomDrawer;
+const mapStateToProps = (state: any) => {
+    return {
+        drawerlist: state.drawerlist,
+    };
+};
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        getDrawerItemList: (churchId: any, callback: any) => dispatch(getDrawerList(churchId, callback))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawer);

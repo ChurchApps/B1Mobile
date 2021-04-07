@@ -18,8 +18,9 @@ import Images from '../utils/Images';
 import MainHeader from '../components/MainHeader';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
-import { getSearchList } from '../helper/ApiHelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getSearchList } from '../redux/actions/searchListAction';
+import { connect } from 'react-redux';
 
 interface Props {
     navigation: {
@@ -27,6 +28,7 @@ interface Props {
         goBack: () => void;
         openDrawer: () => void;
     };
+    getSearchChurchList: (searchText: String, callback: any) => void;
 }
 
 const ChurchSearch = (props: Props) => {
@@ -40,9 +42,13 @@ const ChurchSearch = (props: Props) => {
     }, [])
 
     const renderChurchItem = (item: any) => {
+        const churchImage = item.settings && item.settings[0].value
         return (
-            <TouchableOpacity style={styles.churchListView} onPress={() => churchSelection(item.name)}>
-                <Image source={Images.ic_church} style={styles.churchListIcon} />
+            <TouchableOpacity style={styles.churchListView} onPress={() => churchSelection(item)}>
+                {
+                    churchImage ? <Image source={{ uri: churchImage }} style={styles.churchListIcon} /> :
+                        <Image source={Images.ic_church} style={styles.churchListIcon} />
+                }
                 <View style={styles.churchListTextView}>
                     <Text style={styles.churchListTitle}>{item.name}</Text>
                     {/* <Text style={styles.churchListLocation}>{item.location}</Text> */}
@@ -51,9 +57,10 @@ const ChurchSearch = (props: Props) => {
         );
     }
 
-    const churchSelection = async(churchName: string) => {
+    const churchSelection = async (churchData: any) => {
         try {
-            await AsyncStorage.setItem('CHURCH_NAME', churchName)
+            const churchValue = JSON.stringify(churchData)
+            await AsyncStorage.setItem('CHURCH_DATA', churchValue)
             DevSettings.reload()
         } catch (err) {
             console.log(err)
@@ -62,25 +69,25 @@ const ChurchSearch = (props: Props) => {
 
     const searchApiCall = (text: String) => {
         setLoading(true);
-        getSearchList(text, (err: any, res: any) => {
+        props.getSearchChurchList(text, (err: any, res: any) => {
             setLoading(false);
-            if(!err) {
+            if (!err) {
                 if (res.data.length != 0) {
                     console.log(res.data)
                     setSearchList(res.data)
                 } else {
                     setSearchList([])
-                    Alert.alert("Alert","Search result not found!!");
+                    Alert.alert("Alert", "Search result not found!!");
                 }
             } else {
-                Alert.alert("Alert",err.message);
-            }             
+                Alert.alert("Alert", err.message);
+            }
         });
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.headerContainer}> 
+            <View style={styles.headerContainer}>
                 <View style={styles.headerLogoView}>
                     <Image source={Images.logoWhite} style={styles.mainIcon} />
                 </View>
@@ -109,7 +116,7 @@ const ChurchSearch = (props: Props) => {
                     }
                 </TouchableOpacity>
 
-                <FlatList data={searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={styles.churchListStyle}/>
+                <FlatList data={searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={styles.churchListStyle} />
             </View>
         </SafeAreaView>
     );
@@ -129,11 +136,11 @@ const styles = StyleSheet.create({
     },
     searchIcon: {
         width: wp('6%'),
-        height: wp('6%'), 
+        height: wp('6%'),
         margin: wp('1.5%'),
     },
-    headerContainer: { 
-        backgroundColor: Colors.gray_bg 
+    headerContainer: {
+        backgroundColor: Colors.gray_bg
     },
     headerLogoView: {
         borderBottomLeftRadius: wp('8%'),
@@ -204,11 +211,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     churchListIcon: {
-        width: wp('10%'),
-        height: wp('10%'),
-        marginLeft: wp('4%'),
-        marginRight: wp('2.5%'),
-        tintColor: Colors.app_color
+        width: wp('12%'),
+        height: wp('12%'),
+        // marginLeft: wp('4%'),
+        marginHorizontal: wp('2.5%'),
+        borderRadius: wp('1.5%')
     },
     churchListTextView: {
         height: wp('12%'),
@@ -228,4 +235,16 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ChurchSearch;
+const mapStateToProps = (state: any) => {
+    return {
+        searchlist: state.searchlist,
+    };
+};
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        getSearchChurchList: (searchText: any, callback: any) => dispatch(getSearchList(searchText, callback))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChurchSearch);
+

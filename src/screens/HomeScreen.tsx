@@ -25,7 +25,8 @@ interface Props {
     };
     route: {
         params:{
-            url:any
+            url: any,
+            title: string
         }
     }
 }
@@ -39,13 +40,19 @@ const HomeScreen = (props: Props) => {
 
     }, [])
 
+    const getTitle = () => {
+        const title = params && params.title && params.title;
+        return title == undefined ? 'Home' : title;
+    }
+
     return (
+        
         <SafeAreaView style={styles.container}>
              <MainHeader
                 leftComponent={ <TouchableOpacity onPress={() => openDrawer()}> 
                     <Image source={Images.ic_menu} style={styles.menuIcon}/>
                 </TouchableOpacity>}
-                mainComponent={<Text style={styles.headerText}>Home</Text>}
+                mainComponent={<Text style={styles.headerText}>{getTitle()}</Text>}
                 rightComponent={null}
             />
             <View style={styles.webViewContainer}> 
