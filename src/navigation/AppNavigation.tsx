@@ -6,8 +6,10 @@ import SplashScreen from '../screens/SplashScreen';
 import HomeScreen from '../screens/HomeScreen';
 import CustomDrawer from '../components/CustomDrawer';
 import ChurchSearch from '../screens/ChurchSearch';
+import LoginScreen from '../screens/LoginScreen';
 
 const AppNav = createStackNavigator();
+const AuthNav = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const MainStack = () => {
@@ -28,11 +30,25 @@ const MainStack = () => {
     );
 }
 
+const AuthStack = () => {
+    return (
+        <AuthNav.Navigator
+            headerMode="none"
+            initialRouteName={'LoginScreen'}>
+            <AuthNav.Screen 
+                name={'LoginScreen'}
+                component={LoginScreen}
+            />
+        </AuthNav.Navigator>
+    );
+}
+
 const AppNavigation = (props: {}) => {
     return (
         <NavigationContainer>
             <AppNav.Navigator headerMode="none" initialRouteName='SplashScreen'>
                 <AppNav.Screen name="SplashScreen" component={SplashScreen} />
+                <AppNav.Screen name="AuthStack" component={AuthStack} />
                 <AppNav.Screen name="MainStack" component={MainStack} />
             </AppNav.Navigator>
         </NavigationContainer>

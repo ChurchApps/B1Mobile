@@ -91,11 +91,12 @@ const CustomDrawer = (props: any) => {
         });
     }
 
-    const listItem = (top: boolean,item: any) => {
+    const listItem = (topItem: boolean,item: any) => {
+        var tab_icon = item.icon != undefined ? item.icon.replace('fas fa-','') : '';
         return (
             <TouchableOpacity style={styles.headerView} onPress={() => navigateToScreen(item)}>
-                {top ? <Image source={item.image} style={styles.tabIcon}/> : 
-                <Icon name={item.icon} color={'black'} style={styles.tabIcon} size={wp('6%')}/>}
+                {topItem ? <Image source={item.image} style={styles.tabIcon}/> : 
+                <Icon name={tab_icon} color={'black'} style={styles.tabIcon} size={wp('6%')}/>}
                 <Text style={styles.tabTitle}>{item.text}</Text>
             </TouchableOpacity>
         );

@@ -20,7 +20,7 @@ interface Props {
 
 const SplashScreen = (props: Props) => {
     useEffect(() => {
-        props.navigation.navigate('MainStack');
+        props.navigation.navigate('AuthStack');
     }, [])
 
     return (
