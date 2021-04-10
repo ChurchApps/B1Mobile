@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Text,
     ActivityIndicator,
+    Alert,
 } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import {
@@ -16,20 +17,65 @@ import Images from '../utils/Images';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Icon from 'react-native-vector-icons/Fontisto';
+import { getLoginData } from '../redux/actions/loginAction';
+import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props {
     navigation: {
         navigate: (screenName: string) => void;
     };
+    getLoginApiData: (params: any, callback: any) => void;
 }
 
 const LoginScreen = (props: Props) => {
     const { navigate } = props.navigation;
     const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState('test@b1.church');
+    const [password, setPassword] = useState('password');
 
     useEffect(() => {
 
     }, [])
+
+    const validateDetails = () => {
+        if (email != '') {
+            let emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
+            if (emailReg.test(email) === false) {
+                Alert.alert("Alert", 'Please enter valid email!!');
+                return false;
+            } else {
+                if (password != '') {
+                    return true;
+                } else {
+                    Alert.alert("Alert", 'Please enter password!!');
+                    return false;
+                }
+            }
+        } else {
+            Alert.alert("Alert", 'Please enter email!!');
+            return false;
+        }
+    }
+
+    const loginApiCall = () => {
+        let params = { "email": email, "password": password }
+        setLoading(true);
+        props.getLoginApiData(params, async (err: any, res: any) => {
+            setLoading(false);
+            if (!err) {
+                if (res.data.user != null) {
+                    await AsyncStorage.setItem('USER_DATA', JSON.stringify(res.data.user))
+                    await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(res.data.churches[0]))
+                    .then(() => {
+                        props.navigation.navigate('MainStack');
+                    })
+                }
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -40,9 +86,8 @@ const LoginScreen = (props: Props) => {
             </View>
             <View style={styles.mainView}>
                 <Text style={styles.mainText}>Welcome, Please Login.</Text>
-                <Text style={styles.textInputTitle}>Email</Text>
                 <View style={styles.textInputView}>
-                    {/* <Icon name={'email'} color={Colors.app_color} style={styles.inputIcon} size={wp('4.5%')}/> */}
+                    <Icon name={'email'} color={Colors.app_color} style={styles.inputIcon} size={wp('4.5%')} />
                     <TextInput
                         style={styles.textInputStyle}
                         placeholder={'Email'}
@@ -50,11 +95,12 @@ const LoginScreen = (props: Props) => {
                         autoCorrect={false}
                         keyboardType='email-address'
                         placeholderTextColor={'lightgray'}
+                        value={email}
+                        onChangeText={(text) => { setEmail(text) }}
                     />
                 </View>
-                <Text style={styles.textInputTitle}>Password</Text>
                 <View style={styles.textInputView}>
-                    {/* <Icon name={'email'} color={Colors.app_color} style={styles.inputIcon} size={wp('4.5%')}/> */}
+                    <Icon name={'key'} color={Colors.app_color} style={styles.inputIcon} size={wp('4.5%')} />
                     <TextInput
                         style={styles.textInputStyle}
                         placeholder={'Password'}
@@ -62,10 +108,12 @@ const LoginScreen = (props: Props) => {
                         autoCorrect={false}
                         keyboardType='default'
                         placeholderTextColor={'lightgray'}
+                        value={password}
+                        onChangeText={(text) => { setPassword(text) }}
                     />
                 </View>
 
-                <TouchableOpacity style={styles.loginButton} onPress={() => props.navigation.navigate('MainStack')}>
+                <TouchableOpacity style={styles.loginButton} onPress={() => { validateDetails() && loginApiCall()}}>
                     {loading ?
                         <ActivityIndicator size='small' color='white' animating={loading} /> :
                         <Text style={styles.loginText}>LOGIN</Text>
@@ -111,18 +159,12 @@ const styles = StyleSheet.create({
         fontSize: wp('4.8%'),
         fontFamily: Fonts.RobotoMedium
     },
-    textInputTitle: {
-        marginHorizontal: wp('5%'),
-        marginTop: wp('4%'),
-        fontSize: wp('3.9%'),
-        fontFamily: Fonts.RobotoLight
-    },
     textInputView: {
         height: wp('12%'),
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: wp('3.5%'),
+        marginTop: wp('5%'),
         marginHorizontal: wp('5%'),
         backgroundColor: 'white',
         borderRadius: wp('2%'),
@@ -156,5 +198,16 @@ const styles = StyleSheet.create({
     }
 })
 
-export default LoginScreen;
+const mapStateToProps = (state: any) => {
+    return {
+        login_data: state.login_data
+    };
+};
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        getLoginApiData: (params: any, callback: any) => dispatch(getLoginData(params, callback))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);
 

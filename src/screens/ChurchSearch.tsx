@@ -20,7 +20,7 @@ import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSearchList } from '../redux/actions/searchListAction';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 
 interface Props {
     navigation: {
@@ -36,9 +36,10 @@ const ChurchSearch = (props: Props) => {
     const [searchText, setSearchText] = useState('');
     const [searchList, setSearchList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const selector = useSelector((state: any) => state);
 
     useEffect(() => {
-
+        console.log('Recent-->', selector.search_list)
     }, [])
 
     const renderChurchItem = (item: any) => {
@@ -73,7 +74,6 @@ const ChurchSearch = (props: Props) => {
             setLoading(false);
             if (!err) {
                 if (res.data.length != 0) {
-                    console.log(res.data)
                     setSearchList(res.data)
                 } else {
                     setSearchList([])
@@ -115,7 +115,7 @@ const ChurchSearch = (props: Props) => {
                         <Text style={styles.searchText}>SEARCH</Text>
                     }
                 </TouchableOpacity>
-
+                {searchText == '' && <Text style={styles.recentText}>Recent Church</Text>}
                 <FlatList data={searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={styles.churchListStyle} />
             </View>
         </SafeAreaView>
@@ -232,7 +232,13 @@ const styles = StyleSheet.create({
     },
     churchListStyle: {
         marginVertical: wp('2%')
-    }
+    },
+    recentText: {
+        marginHorizontal: wp('5%'),
+        marginTop: wp('5%'),
+        fontSize: wp('4%'),
+        fontFamily: Fonts.RobotoRegular
+    },
 })
 
 const mapStateToProps = (state: any) => {

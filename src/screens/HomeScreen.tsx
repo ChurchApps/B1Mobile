@@ -6,6 +6,7 @@ import {
     StyleSheet,
     Text,
     ActivityIndicator,
+    AppState,
 } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import {
@@ -16,6 +17,7 @@ import Images from '../utils/Images';
 import MainHeader from '../components/MainHeader';
 import WebView from 'react-native-webview';
 import Loader from '../components/Loader';
+import { connect } from 'react-redux';
 
 interface Props {
     navigation: {
@@ -28,14 +30,14 @@ interface Props {
             url: any,
             title: string
         }
-    }
+    };
 }
 
 const HomeScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const { params } = props.route;
     const [isLoading, setLoading] = useState(false);
-
+    
     useEffect(() => {
 
     }, [])

@@ -23,7 +23,7 @@ export default (state = initialState, action:any) => {
                     isFetching: false,
                     fetchError: false,
                     fetchErrorMessage: '',
-                    drawer_list: action.drawer_list
+                    drawer_list: action.data
                 }
             case DRAWER_LIST_FETCH_FAILURE:
                 return {

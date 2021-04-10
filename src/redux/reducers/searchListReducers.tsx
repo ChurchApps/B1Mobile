@@ -4,7 +4,7 @@ export const SEARCH_LIST_FETCH_FAILURE = 'SEARCH_LIST_FETCH_FAILURE';
 
 const initialState = {
     isFetching: false,
-    search_list: '',
+    search_list: null,
     fetchError: false,
     fetchErrorMessage: ''
 }
@@ -23,14 +23,14 @@ export default (state = initialState, action:any) => {
                     isFetching: false,
                     fetchError: false,
                     fetchErrorMessage: '',
-                    search_list: action.search_list
+                    search_list: action.data
                 }
             case SEARCH_LIST_FETCH_FAILURE:
                 return {
                     isFetching: false,
                     fetchError: true,
                     fetchErrorMessage: action.error.message,
-                    search_list: ''
+                    search_list: null
                 }
            
             default: 

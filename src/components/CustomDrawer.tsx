@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import {
     View,
     Text,
@@ -7,7 +7,8 @@ import {
     Image,
     FlatList,
     Alert,
-    ActivityIndicator
+    ActivityIndicator,
+    DevSettings
 } from 'react-native';
 import { StyleSheet } from 'react-native';
 import {
@@ -19,9 +20,9 @@ import MainHeader from './MainHeader';
 import Images from '../utils/Images';
 import Fonts from '../utils/Fonts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { getDrawerList } from '../redux/actions/drawerItemsAction';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 interface Props {
     navigation: {
@@ -39,6 +40,8 @@ const CustomDrawer = (props: any) => {
     const [churchEmpty, setChurchEmpty] = useState(true);
     const [drawerList, setDrawerList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState({displayName: ''});
+    
     const menuList = [{
         id: 1,
         text: 'Bible',
@@ -52,18 +55,20 @@ const CustomDrawer = (props: any) => {
 
     useEffect(() => {
         getChurch();
-        
     }, [])
 
     const getChurch = async () => {
         try {
-            const value = await AsyncStorage.getItem('CHURCH_DATA')
-            if(value !== null) {
-                const churchData = JSON.parse(value);
+            const user = await AsyncStorage.getItem('USER_DATA')
+            if(user !== null) { setUser(JSON.parse(user)) }
+            const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+            if(churchvalue !== null) {
+                const churchData = JSON.parse(churchvalue);
                 setChurchName(churchData.name)
                 setChurchEmpty(false)
                 getDrawerList(churchData.id);
             }
+            
         } catch(e) {
             console.log(e)
         }
@@ -91,8 +96,14 @@ const CustomDrawer = (props: any) => {
         });
     }
 
+    const logoutAction = async() => {
+        await AsyncStorage.getAllKeys()
+        .then(keys => AsyncStorage.multiRemove(keys))
+        .then(() => DevSettings.reload());
+    }
+
     const listItem = (topItem: boolean,item: any) => {
-        var tab_icon = item.icon != undefined ? item.icon.replace('fas fa-','') : '';
+        var tab_icon = item.icon != undefined ? item.icon.slice(7) : '';
         return (
             <TouchableOpacity style={styles.headerView} onPress={() => navigateToScreen(item)}>
                 {topItem ? <Image source={item.image} style={styles.tabIcon}/> : 
@@ -106,7 +117,7 @@ const CustomDrawer = (props: any) => {
         <SafeAreaView>
             <View style={styles.headerView}>
                 <Image source={Images.ic_user} style={styles.userIcon}/>
-                <Text style={styles.userNameText}>Jeremy Zongker</Text>
+                <Text style={styles.userNameText}>{user != null ? user.displayName : ''}</Text>
             </View>
             <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={( item: any ) => item.id} />
 
@@ -121,7 +132,11 @@ const CustomDrawer = (props: any) => {
                 loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
                 <FlatList data={drawerList} renderItem={({ item }) => listItem(false, item)} keyExtractor={( item: any ) => item.id} />
             }
+            <TouchableOpacity style={styles.logoutBtn} onPress={() => logoutAction()}>
+                <Text>Log out</Text>
+            </TouchableOpacity>
         </SafeAreaView>
+        
     );
 };
 
@@ -172,12 +187,17 @@ const styles = StyleSheet.create({
         width: wp('6%'),
         height: wp('6%'), 
         margin: wp('1.5%'),
+    },
+    logoutBtn: { 
+        marginTop: wp('10%'),
+        marginLeft: wp('5%')
     }
 })
 
 const mapStateToProps = (state: any) => {
     return {
         drawerlist: state.drawerlist,
+        login_data: state.login_data
     };
 };
 const mapDispatchToProps = (dispatch: any) => {
