@@ -36,29 +36,15 @@ const ChurchSearch = (props: Props) => {
     const [searchText, setSearchText] = useState('');
     const [searchList, setSearchList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const selector = useSelector((state: any) => state);
+    const [recentList, setRecentList] = useState([]);
+    const [recentListEmpty, setRecentListEmpty] = useState(false);
 
     useEffect(() => {
-        console.log('Recent-->', selector.search_list)
+        GetRecentList();
     }, [])
 
-    const renderChurchItem = (item: any) => {
-        const churchImage = item.settings && item.settings[0].value
-        return (
-            <TouchableOpacity style={styles.churchListView} onPress={() => churchSelection(item)}>
-                {
-                    churchImage ? <Image source={{ uri: churchImage }} style={styles.churchListIcon} /> :
-                        <Image source={Images.ic_church} style={styles.churchListIcon} />
-                }
-                <View style={styles.churchListTextView}>
-                    <Text style={styles.churchListTitle}>{item.name}</Text>
-                    {/* <Text style={styles.churchListLocation}>{item.location}</Text> */}
-                </View>
-            </TouchableOpacity>
-        );
-    }
-
     const churchSelection = async (churchData: any) => {
+        StoreToRecent(churchData);
         try {
             const churchValue = JSON.stringify(churchData)
             await AsyncStorage.setItem('CHURCH_DATA', churchValue)
@@ -83,6 +69,48 @@ const ChurchSearch = (props: Props) => {
                 Alert.alert("Alert", err.message);
             }
         });
+    }
+
+    const GetRecentList = async () => {
+        try {
+            const church_list = await AsyncStorage.getItem('RECENT_CHURCHES');
+            if (church_list != null) {
+                setRecentListEmpty(true)
+                let list = JSON.parse(church_list);
+                let reverseList = list.reverse()
+                setRecentList(reverseList);
+            }
+        } catch (err) {
+            console.log('Get Recent Search List Error-->',err)
+        }
+    }
+
+    const StoreToRecent = async(churchData: any) => {
+        var filteredItems: any[] = [];
+        filteredItems = recentList.filter((item:any) => item.id !== churchData.id);
+        filteredItems.push(churchData);
+        try {
+            const churchlist = JSON.stringify(filteredItems)
+            await AsyncStorage.setItem('RECENT_CHURCHES', churchlist)
+        } catch (err) {
+            console.log('Store Recent Search List Error-->',err)
+        }
+    }
+
+    const renderChurchItem = (item: any) => {
+        const churchImage = item.settings && item.settings[0].value
+        return (
+            <TouchableOpacity style={styles.churchListView} onPress={() => churchSelection(item)}>
+                {
+                    churchImage ? <Image source={{ uri: churchImage }} style={styles.churchListIcon} /> :
+                        <Image source={Images.ic_church} style={styles.churchListIcon} />
+                }
+                <View style={styles.churchListTextView}>
+                    <Text style={styles.churchListTitle}>{item.name}</Text>
+                    {/* <Text style={styles.churchListLocation}>{item.location}</Text> */}
+                </View>
+            </TouchableOpacity>
+        );
     }
 
     return (
@@ -115,8 +143,17 @@ const ChurchSearch = (props: Props) => {
                         <Text style={styles.searchText}>SEARCH</Text>
                     }
                 </TouchableOpacity>
-                {searchText == '' && <Text style={styles.recentText}>Recent Church</Text>}
-                <FlatList data={searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={styles.churchListStyle} />
+                {searchText == '' &&
+                    <Text style={styles.recentText}>
+                        {recentListEmpty ? 'Recent Churches' : 'Recent Churches Not Available!!'}
+                    </Text>
+                } 
+                <FlatList 
+                    data={searchText == '' ? recentList : searchList } 
+                    renderItem={({ item }) => renderChurchItem(item)} 
+                    keyExtractor={(item: any) => item.id} 
+                    style={styles.churchListStyle} 
+                />
             </View>
         </SafeAreaView>
     );
