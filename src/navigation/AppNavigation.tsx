@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import CustomDrawer from '../components/CustomDrawer';
 import ChurchSearch from '../screens/ChurchSearch';
 import LoginScreen from '../screens/LoginScreen';
+import HouseholdScreen from '../screens/HouseholdScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -25,6 +26,10 @@ const MainStack = () => {
             <Drawer.Screen
                 name={'ChurchSearch'}
                 component={ChurchSearch}
+            />
+            <Drawer.Screen 
+                name={'HouseholdScreen'}
+                component={HouseholdScreen}
             />
         </Drawer.Navigator>
     );

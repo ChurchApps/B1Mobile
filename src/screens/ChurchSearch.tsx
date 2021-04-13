@@ -250,7 +250,6 @@ const styles = StyleSheet.create({
     churchListIcon: {
         width: wp('12%'),
         height: wp('12%'),
-        // marginLeft: wp('4%'),
         marginHorizontal: wp('2.5%'),
         borderRadius: wp('1.5%')
     },

@@ -13,7 +13,9 @@ const Images = {
     ic_search: require("../assets/images/ic_search.png"),
     logoBlue: require("../assets/images/logoBlue.png"),
     logoWhite: require("../assets/images/logoWhite.png"),
-    ic_church: require("../assets/images/ic_church.png")
+    ic_church: require("../assets/images/ic_church.png"),
+    logoChums: require("../assets/images/logoChums.png"),
+    ic_member: require("../assets/images/ic_member.png")
 };
    
 export default Images;
