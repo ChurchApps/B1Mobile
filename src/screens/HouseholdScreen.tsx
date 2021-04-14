@@ -32,17 +32,61 @@ const HouseholdScreen = (props: Props) => {
         id: 1,
         name: 'James Smith',
         image: Images.ic_member,
-        classes: ['10:00am', '09:00am', '08:00am']
+        classes: [{
+            time: '10:00am',
+            selection: 'Nursery Nursery Nursery Nursery Nursery Nursery Nursery Nursery Nursery Nursery'
+        },{
+            time: '09:00am',
+            selection: 'Homebuilders'
+        },{
+            time: '09:00am',
+            selection: 'Homebuilders'
+        },{
+            time: '09:00am',
+            selection: 'Homebuilders'
+        },{
+            time: '09:00am',
+            selection: null
+        },{
+            time: '09:00am',
+            selection: 'Homebuilders'
+        }]
     }, {
         id: 2,
         name: 'Jack Smith',
         image: Images.ic_member,
-        classes: ['10:00am', '09:00am', '08:00am']
+        classes: [{
+            time: '10:00am',
+            selection: null
+        },{
+            time: '09:00am',
+            selection: 'Worship'
+        },{
+            time: '08:00am',
+            selection: null
+        }]
     }, {
         id: 3,
-        name: 'John Smith',
+        name: 'Tony Smith',
         image: Images.ic_member,
-        classes: ['10:00am', '09:00am', '08:00am']
+        classes: [{
+            time: '10:00am',
+            selection: 'Homebuilders'
+        },{
+            time: '09:00am',
+            selection: 'Test'
+        },{
+            time: '08:00am',
+            selection: 'Worship'
+        }]
+    }, {
+        id: 4,
+        name: 'Max Smith',
+        image: Images.ic_member,
+        classes: [{
+            time: '10:00am',
+            selection: null
+        }]
     }]);
 
     useEffect(() => {
@@ -52,22 +96,43 @@ const HouseholdScreen = (props: Props) => {
     const renderMemberItem = (item: any) => {
         return (
             <View>
-                <TouchableOpacity style={styles.memberListView} onPress={() => { setSelected(item.id) }}>
+                <TouchableOpacity style={styles.memberListView} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
                     <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={styles.selectionIcon} size={wp('6%')} />
                     <Image source={item.image} style={styles.memberListIcon} />
                     <View style={styles.memberListTextView}>
                         <Text style={styles.memberListTitle} numberOfLines={1}>{item.name}</Text>
+                        {selected != item.id && item.classes.map((item_class: any, index: any) => {
+                            return(
+                                <View>
+                                    {item_class.selection ? 
+                                        <Text style={styles.selectedText} numberOfLines={1}>
+                                            {item_class.time}{" - "}{item_class.selection}
+                                        </Text> 
+                                    : null}
+                                </View>
+                            );
+                        })}
                     </View>
                 </TouchableOpacity>
-                {selected == item.id && item.classes.map((itemC: any, index: any) => {
+                {selected == item.id && item.classes.map((item_class: any, index: any) => {
                     return (
                         <View style={{
                             ...styles.classesView, 
                             borderBottomWidth: ( index == item.classes.length - 1 ) ? 0 : 1
                         }}>
-                            <Text style={styles.classesTimeText}>{itemC}</Text>
-                            <TouchableOpacity style={styles.classesNoneBtn}>
-                                <Text style={styles.classesNoneText}>NONE</Text>
+                            <View style={styles.classesTimeView}>
+                                <Icon name={'clock-o'} style={styles.timeIcon} size={wp('5%')} />
+                                <Text style={styles.classesTimeText}>{item_class.time}</Text>
+                            </View>
+                            <TouchableOpacity 
+                                style={{
+                                    ...styles.classesNoneBtn, 
+                                    backgroundColor: item_class.selection ? Colors.button_green : Colors.button_bg
+                                }}
+                                onPress={() => item_class.selection ? null : navigate('GroupsScreen')}>
+                                <Text style={styles.classesNoneText} numberOfLines={3}>
+                                    {item_class.selection ? item_class.selection : 'NONE'}
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     );
@@ -79,7 +144,7 @@ const HouseholdScreen = (props: Props) => {
     return (
         <View style={styles.container}>
             <View style={styles.headerLogoView}>
-                <Image source={Images.logoChums} style={styles.mainIcon} />
+                <Image source={Images.logoBlue} style={styles.mainIcon} />
             </View>
             <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
@@ -88,6 +153,11 @@ const HouseholdScreen = (props: Props) => {
                     keyExtractor={(item: any) => item.id}
                     style={styles.memberListStyle}
                 />
+                <TouchableOpacity style={styles.checkinBtn} onPress={() => navigate('HouseholdScreen')}>
+                    <Text style={styles.checkinBtnText}>
+                        CHECKIN
+                    </Text>
+                </TouchableOpacity>
             </SafeAreaView>
         </View>
     );
@@ -109,9 +179,9 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
     mainIcon: {
-        width: wp('70%'),
+        width: wp('55%'),
         height: wp('55%'),
-        marginTop: wp('8%'),
+        marginTop: wp('10%'),
         marginBottom: wp('4%'),
         resizeMode: 'contain',
         alignSelf: 'center',
@@ -139,14 +209,15 @@ const styles = StyleSheet.create({
         borderRadius: wp('1.5%')
     },
     memberListTextView: {
-        height: wp('12%'),
-        justifyContent: 'space-evenly'
+        width: wp('62%'),
+        marginVertical: wp('2%'),
+        justifyContent: 'space-evenly',
     },
     memberListTitle: {
         fontSize: wp('4.2%'),
         fontFamily: Fonts.RobotoMedium,
         color: Colors.app_color,
-        marginLeft: wp('3%'),
+        marginLeft: wp('2%'),
         width: wp('65%'),
     },
     memberListStyle: {
@@ -157,8 +228,13 @@ const styles = StyleSheet.create({
         color: 'gray',
         marginLeft: wp('3%')
     },
+    timeIcon: {
+        fontSize: wp('5%'),
+        color: Colors.app_color,
+        marginHorizontal: wp('1%')
+    },
     classesView: {
-        width: wp('85%'),
+        width: wp('90%'),
         flexDirection: 'row',
         alignSelf: 'center',
         justifyContent: 'space-between',
@@ -169,23 +245,50 @@ const styles = StyleSheet.create({
         borderBottomColor: 'lightgray'
     },
     classesNoneBtn: {
-        width: wp('35%'),
-        height: wp('13%'),
+        width: wp('55%'),
+        height: wp('16%'),
         marginHorizontal: wp('2%'),
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: wp('2%'),
-        backgroundColor: Colors.button_bg
+    },
+    classesTimeView: {
+        flexDirection:'row',
+        justifyContent:'center',
+        alignItems:'center',
     },
     classesTimeText: {
-        width: wp('40%'),
         textAlign:'center',
-        fontSize: wp('3.8%')
+        fontSize: wp('3.7%'),
+        color: Colors.app_color,
+    },
+    selectedText: {
+        width: wp('62%'),
+        textAlign:'left',
+        fontSize: wp('3.4%'),
+        color: Colors.button_green,
+        marginLeft: wp('2%'),
+        marginVertical: wp('0.5%'),
     },
     classesNoneText: {
+        width: wp('50%'),
         color: 'white',
-        fontSize: wp('3.5%')
-    }
+        fontSize: wp('3.5%'),
+        textAlign: 'center'
+    },
+    checkinBtnText: {
+        color: 'white',
+        fontSize: wp('4.2%'),
+        textAlign: 'center',
+        fontFamily: Fonts.RobotoMedium,
+    },
+    checkinBtn: {
+        width: wp('100%'),
+        height: wp('15%'),
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: Colors.button_bg
+    },
 })
 
 export default HouseholdScreen;
