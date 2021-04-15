@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+    Alert,
     Image,
     SafeAreaView,
     StyleSheet,
@@ -13,9 +14,14 @@ import {
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { connect } from 'react-redux';
+import CheckinHeader from '../components/CheckinHeader';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Images from '../utils/Images';
+import { getMemberData } from '../redux/actions/memberDataAction';
+import Loader from '../components/Loader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Props {
     navigation: {
@@ -23,11 +29,13 @@ interface Props {
         goBack: () => void;
         openDrawer: () => void;
     };
+    getMemberDataApi: (userId: String, token: any, callback: any) => void;
 }
 
 const HouseholdScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const [selected, setSelected] = useState(null);
+    const [isLoading, setLoading] = useState(false);
     const [memberList, setMemberList] = useState([{
         id: 1,
         name: 'James Smith',
@@ -39,16 +47,16 @@ const HouseholdScreen = (props: Props) => {
             time: '09:00am',
             selection: 'Homebuilders'
         },{
-            time: '09:00am',
+            time: '08:00am',
             selection: 'Homebuilders'
         },{
-            time: '09:00am',
+            time: '07:00am',
             selection: 'Homebuilders'
         },{
-            time: '09:00am',
+            time: '06:00am',
             selection: null
         },{
-            time: '09:00am',
+            time: '05:00am',
             selection: 'Homebuilders'
         }]
     }, {
@@ -90,8 +98,30 @@ const HouseholdScreen = (props: Props) => {
     }]);
 
     useEffect(() => {
-
+        getMemberData();
     }, [])
+
+    const getMemberData = async() => {
+        setLoading(true);
+        const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+        const user = await AsyncStorage.getItem('USER_DATA')
+        if(churchvalue !== null && user !== null) {
+            const token = JSON.parse(churchvalue).jwt
+            const userId = JSON.parse(user).id
+            props.getMemberDataApi(userId, token, (err: any, res: any) => {
+                setLoading(false);
+                if (!err) {
+                   console.log('Member Data-->',res.data)
+                } else {
+                    Alert.alert("Alert", err.message);
+                }
+            });
+        }
+    }
+
+    const getHouseholdList = () => {
+        
+    }
 
     const renderMemberItem = (item: any) => {
         return (
@@ -143,9 +173,7 @@ const HouseholdScreen = (props: Props) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerLogoView}>
-                <Image source={Images.logoBlue} style={styles.mainIcon} />
-            </View>
+            <CheckinHeader onPress={() => openDrawer()}/>
             <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
                     data={memberList}
@@ -159,6 +187,7 @@ const HouseholdScreen = (props: Props) => {
                     </Text>
                 </TouchableOpacity>
             </SafeAreaView>
+            {isLoading && <Loader loading={isLoading}/>}
         </View>
     );
 };
@@ -167,24 +196,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.gray_bg
-    },
-    headerLogoView: {
-        borderBottomLeftRadius: wp('8%'),
-        borderBottomRightRadius: wp('8%'),
-        backgroundColor: 'white',
-        shadowColor: Colors.app_color,
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.2,
-        shadowRadius: wp('1.5%'),
-        elevation: 5,
-    },
-    mainIcon: {
-        width: wp('55%'),
-        height: wp('55%'),
-        marginTop: wp('10%'),
-        marginBottom: wp('4%'),
-        resizeMode: 'contain',
-        alignSelf: 'center',
     },
     memberListView: {
         width: wp('90%'),
@@ -291,4 +302,15 @@ const styles = StyleSheet.create({
     },
 })
 
-export default HouseholdScreen;
+const mapStateToProps = (state: any) => {
+    return {
+        member_data: state.member_data,
+    };
+};
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        getMemberDataApi: (userId: any, token: any, callback: any) => dispatch(getMemberData(userId, token, callback))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HouseholdScreen);

@@ -13,6 +13,7 @@ import {
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import CheckinHeader from '../components/CheckinHeader';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Images from '../utils/Images';
@@ -100,9 +101,7 @@ const GroupsScreen = (props: Props) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.headerLogoView}>
-                <Image source={Images.logoBlue} style={styles.mainIcon} />
-            </View>
+            <CheckinHeader onPress={() => openDrawer()}/>
             <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
                     data={groupList}
@@ -124,24 +123,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.gray_bg
-    },
-    headerLogoView: {
-        borderBottomLeftRadius: wp('8%'),
-        borderBottomRightRadius: wp('8%'),
-        backgroundColor: 'white',
-        shadowColor: Colors.app_color,
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.2,
-        shadowRadius: wp('1.5%'),
-        elevation: 5,
-    },
-    mainIcon: {
-        width: wp('55%'),
-        height: wp('55%'),
-        marginTop: wp('10%'),
-        marginBottom: wp('4%'),
-        resizeMode: 'contain',
-        alignSelf: 'center',
     },
     groupListView: {
         width: wp('90%'),

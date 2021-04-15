@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         top: 0,
-        backgroundColor: 'white',
+        backgroundColor: 'rgba(255,255,255,0.5)',
         width:wp('100%'),
         height:hp('100%'),
         alignItems:'center',

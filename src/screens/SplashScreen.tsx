@@ -28,6 +28,7 @@ const SplashScreen = (props: Props) => {
         try {
             const user = await AsyncStorage.getItem('USER_DATA')
             if(user !== null) {
+                console.log("USER_DATA-->", user)
                 props.navigation.navigate('MainStack');
             } else {
                 props.navigation.navigate('AuthStack');
