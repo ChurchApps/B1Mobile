@@ -10,6 +10,7 @@ import LoginScreen from '../screens/LoginScreen';
 import HouseholdScreen from '../screens/HouseholdScreen';
 import GroupsScreen from '../screens/GroupsScreen';
 import CheckinCompleteScreen from '../screens/CheckinCompleteScreen';
+import ServiceScreen from '../screens/ServiceScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -28,6 +29,10 @@ const MainStack = () => {
             <Drawer.Screen
                 name={'ChurchSearch'}
                 component={ChurchSearch}
+            />
+            <Drawer.Screen 
+                name={'ServiceScreen'}
+                component={ServiceScreen}
             />
             <Drawer.Screen 
                 name={'HouseholdScreen'}

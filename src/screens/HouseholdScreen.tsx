@@ -20,8 +20,10 @@ import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Images from '../utils/Images';
 import { getMemberData } from '../redux/actions/memberDataAction';
+import { getHouseholdList } from '../redux/actions/householdListAction';
 import Loader from '../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IMAGE_URL } from '../helper/ApiConstants';
 
 interface Props {
     navigation: {
@@ -30,32 +32,34 @@ interface Props {
         openDrawer: () => void;
     };
     getMemberDataApi: (userId: String, token: any, callback: any) => void;
+    getHouseholdListApi: (householdId: String, token: any, callback: any) => void;
 }
 
 const HouseholdScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const [selected, setSelected] = useState(null);
     const [isLoading, setLoading] = useState(false);
-    const [memberList, setMemberList] = useState([{
+    const [memberList, setMemberList] = useState([]);
+    const staticList = [{
         id: 1,
         name: 'James Smith',
         image: Images.ic_member,
         classes: [{
             time: '10:00am',
             selection: 'Nursery Nursery Nursery Nursery Nursery Nursery Nursery Nursery Nursery Nursery'
-        },{
+        }, {
             time: '09:00am',
             selection: 'Homebuilders'
-        },{
+        }, {
             time: '08:00am',
             selection: 'Homebuilders'
-        },{
+        }, {
             time: '07:00am',
             selection: 'Homebuilders'
-        },{
+        }, {
             time: '06:00am',
             selection: null
-        },{
+        }, {
             time: '05:00am',
             selection: 'Homebuilders'
         }]
@@ -66,10 +70,10 @@ const HouseholdScreen = (props: Props) => {
         classes: [{
             time: '10:00am',
             selection: null
-        },{
+        }, {
             time: '09:00am',
             selection: 'Worship'
-        },{
+        }, {
             time: '08:00am',
             selection: null
         }]
@@ -80,10 +84,10 @@ const HouseholdScreen = (props: Props) => {
         classes: [{
             time: '10:00am',
             selection: 'Homebuilders'
-        },{
+        }, {
             time: '09:00am',
             selection: 'Test'
-        },{
+        }, {
             time: '08:00am',
             selection: 'Worship'
         }]
@@ -95,23 +99,25 @@ const HouseholdScreen = (props: Props) => {
             time: '10:00am',
             selection: null
         }]
-    }]);
+    }]
 
     useEffect(() => {
         getMemberData();
     }, [])
 
-    const getMemberData = async() => {
+    const getMemberData = async () => {
         setLoading(true);
         const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
         const user = await AsyncStorage.getItem('USER_DATA')
-        if(churchvalue !== null && user !== null) {
+        if (churchvalue !== null && user !== null) {
             const token = JSON.parse(churchvalue).jwt
             const userId = JSON.parse(user).id
             props.getMemberDataApi(userId, token, (err: any, res: any) => {
-                setLoading(false);
                 if (!err) {
-                   console.log('Member Data-->',res.data)
+                    console.log('Member Data-->', res.data)
+                    if (res.data && res.data.householdId) {
+                        getHouseholdList(res.data.householdId, token)
+                    }
                 } else {
                     Alert.alert("Alert", err.message);
                 }
@@ -119,8 +125,18 @@ const HouseholdScreen = (props: Props) => {
         }
     }
 
-    const getHouseholdList = () => {
-        
+    const getHouseholdList = (householdId: String, token: any) => {
+        props.getHouseholdListApi(householdId, token, (err: any, res: any) => {
+            setLoading(false);
+            if (!err) {
+                console.log('Household List-->', res.data)
+                if (res.data) { 
+                    setMemberList(res.data)
+                }
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
     }
 
     const renderMemberItem = (item: any) => {
@@ -128,35 +144,35 @@ const HouseholdScreen = (props: Props) => {
             <View>
                 <TouchableOpacity style={styles.memberListView} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
                     <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={styles.selectionIcon} size={wp('6%')} />
-                    <Image source={item.image} style={styles.memberListIcon} />
+                    <Image source={{uri: IMAGE_URL + item.photo}} style={styles.memberListIcon} />
                     <View style={styles.memberListTextView}>
-                        <Text style={styles.memberListTitle} numberOfLines={1}>{item.name}</Text>
-                        {selected != item.id && item.classes.map((item_class: any, index: any) => {
-                            return(
+                        <Text style={styles.memberListTitle} numberOfLines={1}>{item.name.display}</Text>
+                        {/* {selected != item.id && item.classes.map((item_class: any, index: any) => {
+                            return (
                                 <View>
-                                    {item_class.selection ? 
+                                    {item_class.selection ?
                                         <Text style={styles.selectedText} numberOfLines={1}>
                                             {item_class.time}{" - "}{item_class.selection}
-                                        </Text> 
-                                    : null}
+                                        </Text>
+                                        : null}
                                 </View>
                             );
-                        })}
+                        })} */}
                     </View>
                 </TouchableOpacity>
-                {selected == item.id && item.classes.map((item_class: any, index: any) => {
+                {/* {selected == item.id && item.classes.map((item_class: any, index: any) => {
                     return (
                         <View style={{
-                            ...styles.classesView, 
-                            borderBottomWidth: ( index == item.classes.length - 1 ) ? 0 : 1
+                            ...styles.classesView,
+                            borderBottomWidth: (index == item.classes.length - 1) ? 0 : 1
                         }}>
                             <View style={styles.classesTimeView}>
                                 <Icon name={'clock-o'} style={styles.timeIcon} size={wp('5%')} />
                                 <Text style={styles.classesTimeText}>{item_class.time}</Text>
                             </View>
-                            <TouchableOpacity 
+                            <TouchableOpacity
                                 style={{
-                                    ...styles.classesNoneBtn, 
+                                    ...styles.classesNoneBtn,
                                     backgroundColor: item_class.selection ? Colors.button_green : Colors.button_bg
                                 }}
                                 onPress={() => item_class.selection ? null : navigate('GroupsScreen')}>
@@ -166,14 +182,14 @@ const HouseholdScreen = (props: Props) => {
                             </TouchableOpacity>
                         </View>
                     );
-                })}
+                })} */}
             </View>
         );
     }
 
     return (
         <View style={styles.container}>
-            <CheckinHeader onPress={() => openDrawer()}/>
+            <CheckinHeader onPress={() => openDrawer()} />
             <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
                     data={memberList}
@@ -181,13 +197,13 @@ const HouseholdScreen = (props: Props) => {
                     keyExtractor={(item: any) => item.id}
                     style={styles.memberListStyle}
                 />
-                <TouchableOpacity style={styles.checkinBtn} onPress={() => navigate('HouseholdScreen')}>
+                <TouchableOpacity style={styles.checkinBtn} onPress={() => navigate('CheckinCompleteScreen')}>
                     <Text style={styles.checkinBtnText}>
                         CHECKIN
                     </Text>
                 </TouchableOpacity>
             </SafeAreaView>
-            {isLoading && <Loader loading={isLoading}/>}
+            {isLoading && <Loader loading={isLoading} />}
         </View>
     );
 };
@@ -264,18 +280,18 @@ const styles = StyleSheet.create({
         borderRadius: wp('2%'),
     },
     classesTimeView: {
-        flexDirection:'row',
-        justifyContent:'center',
-        alignItems:'center',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     classesTimeText: {
-        textAlign:'center',
+        textAlign: 'center',
         fontSize: wp('3.7%'),
         color: Colors.app_color,
     },
     selectedText: {
         width: wp('62%'),
-        textAlign:'left',
+        textAlign: 'left',
         fontSize: wp('3.4%'),
         color: Colors.button_green,
         marginLeft: wp('2%'),
@@ -305,11 +321,13 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state: any) => {
     return {
         member_data: state.member_data,
+        household_list: state.household_list,
     };
 };
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        getMemberDataApi: (userId: any, token: any, callback: any) => dispatch(getMemberData(userId, token, callback))
+        getMemberDataApi: (userId: any, token: any, callback: any) => dispatch(getMemberData(userId, token, callback)),
+        getHouseholdListApi: (householdId: any, token: any, callback: any) => dispatch(getHouseholdList(householdId, token, callback))
     }
 }
 

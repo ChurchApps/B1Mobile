@@ -76,7 +76,7 @@ const CustomDrawer = (props: any) => {
 
     const navigateToScreen = (item : any) => {
         if (item.linkType && item.linkType == "checkin") {
-            navigate('HouseholdScreen')
+            navigate('ServiceScreen')
         } else {
             if (item.url && item.url != '') {
                 navigate('HomeScreen',{ url:item.url, title: item.text })

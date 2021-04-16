@@ -5,13 +5,15 @@ import DrawerList from './drawerItemsReducers';
 import LoginData from './loginReducers';
 import MemberData from './memberDataReducer';
 import HouseholdList from './householdListReducers';
+import ServiceList from './searchListReducers';
 
 const Reducers = combineReducers({
     searchlist: SearchList,
     drawerlist: DrawerList,
     login_data: LoginData,
     member_data: MemberData,
-    Household_list: HouseholdList
+    household_list: HouseholdList,
+    services_data: ServiceList
 })
 
 export default Reducers;
