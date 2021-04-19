@@ -10,7 +10,8 @@ const API = {
     LOGIN_URL: ACCESS_DOMAIN_URL + 'users/login',
     MEMBER_URL: MEMBER_DOMAIN_URL + 'people/userId/',
     HOUSEHOLD_LIST_URL: MEMBER_DOMAIN_URL + 'people/household/',
-    SERVICES_URL: SERVICE_DOMAIN_URL + 'services'
+    SERVICES_URL: SERVICE_DOMAIN_URL + 'services',
+    SERVICES_TIME_URL: SERVICE_DOMAIN_URL + 'servicetimes?serviceId='
 }
 
 export default API;

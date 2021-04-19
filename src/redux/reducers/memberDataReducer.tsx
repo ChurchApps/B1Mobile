@@ -29,7 +29,7 @@ export default (state = initialState, action: any) => {
             return {
                 isFetching: false,
                 fetchError: true,
-                fetchErrorMessage: action.error.message,
+                fetchErrorMessage: action.error,
                 member_data: null
             }
 

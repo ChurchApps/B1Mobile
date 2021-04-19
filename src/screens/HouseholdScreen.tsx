@@ -24,6 +24,7 @@ import { getHouseholdList } from '../redux/actions/householdListAction';
 import Loader from '../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IMAGE_URL } from '../helper/ApiConstants';
+import { getServicesTimeData } from '../redux/actions/servicesTimeAction';
 
 interface Props {
     navigation: {
@@ -31,8 +32,14 @@ interface Props {
         goBack: () => void;
         openDrawer: () => void;
     };
+    route: {
+        params:{
+            serviceId: any,
+        }
+    };
     getMemberDataApi: (userId: String, token: any, callback: any) => void;
     getHouseholdListApi: (householdId: String, token: any, callback: any) => void;
+    getServicesTimeDataApi: (serviceId: String, token: any, callback: any) => void;
 }
 
 const HouseholdScreen = (props: Props) => {
@@ -40,6 +47,7 @@ const HouseholdScreen = (props: Props) => {
     const [selected, setSelected] = useState(null);
     const [isLoading, setLoading] = useState(false);
     const [memberList, setMemberList] = useState([]);
+    const [serviceTimeList, setServiceTimeList] = useState([]);
     const staticList = [{
         id: 1,
         name: 'James Smith',
@@ -102,6 +110,7 @@ const HouseholdScreen = (props: Props) => {
     }]
 
     useEffect(() => {
+        console.log('Navigation Params--->',props.route.params.serviceId)
         getMemberData();
     }, [])
 
@@ -132,7 +141,20 @@ const HouseholdScreen = (props: Props) => {
                 console.log('Household List-->', res.data)
                 if (res.data) { 
                     setMemberList(res.data)
+                    getServicesTimeData(props.route.params.serviceId, token)
                 }
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
+    }
+
+    const getServicesTimeData = (serviceId: any, token: any) => {
+        props.getServicesTimeDataApi(serviceId, token, (err: any, res: any) => {
+            setLoading(false);
+            if (!err) {
+                console.log('Service Time List-->', res.data)
+                setServiceTimeList(res.data)
             } else {
                 Alert.alert("Alert", err.message);
             }
@@ -160,29 +182,32 @@ const HouseholdScreen = (props: Props) => {
                         })} */}
                     </View>
                 </TouchableOpacity>
-                {/* {selected == item.id && item.classes.map((item_class: any, index: any) => {
+                {selected == item.id && serviceTimeList.map((item_time: any, index: any) => {
                     return (
                         <View style={{
                             ...styles.classesView,
-                            borderBottomWidth: (index == item.classes.length - 1) ? 0 : 1
-                        }}>
+                            borderBottomWidth: (index == serviceTimeList.length - 1) ? 0 : 1
+                        }}
+                        key={item_time.id}>
                             <View style={styles.classesTimeView}>
                                 <Icon name={'clock-o'} style={styles.timeIcon} size={wp('5%')} />
-                                <Text style={styles.classesTimeText}>{item_class.time}</Text>
+                                <Text style={styles.classesTimeText}>{item_time.name}</Text>
                             </View>
                             <TouchableOpacity
                                 style={{
                                     ...styles.classesNoneBtn,
-                                    backgroundColor: item_class.selection ? Colors.button_green : Colors.button_bg
+                                    // backgroundColor: item_time.selection ? Colors.button_green : Colors.button_bg
+                                    backgroundColor: Colors.button_bg
                                 }}
-                                onPress={() => item_class.selection ? null : navigate('GroupsScreen')}>
+                                onPress={() => item_time.selection ? null : navigate('GroupsScreen')}>
                                 <Text style={styles.classesNoneText} numberOfLines={3}>
-                                    {item_class.selection ? item_class.selection : 'NONE'}
+                                    {/* {item_time.selection ? item_time.selection : 'NONE'} */}
+                                    NONE
                                 </Text>
                             </TouchableOpacity>
                         </View>
                     );
-                })} */}
+                })}
             </View>
         );
     }
@@ -322,12 +347,14 @@ const mapStateToProps = (state: any) => {
     return {
         member_data: state.member_data,
         household_list: state.household_list,
+        service_time: state.service_time,
     };
 };
 const mapDispatchToProps = (dispatch: any) => {
     return {
         getMemberDataApi: (userId: any, token: any, callback: any) => dispatch(getMemberData(userId, token, callback)),
-        getHouseholdListApi: (householdId: any, token: any, callback: any) => dispatch(getHouseholdList(householdId, token, callback))
+        getHouseholdListApi: (householdId: any, token: any, callback: any) => dispatch(getHouseholdList(householdId, token, callback)),
+        getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => dispatch(getServicesTimeData(serviceId, token, callback))
     }
 }
 

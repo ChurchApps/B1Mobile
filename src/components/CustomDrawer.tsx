@@ -24,15 +24,15 @@ import { connect, useSelector } from 'react-redux';
 import { getDrawerList } from '../redux/actions/drawerItemsAction';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-interface Props {
-    navigation: {
-        navigate: (screenName: string) => void;
-        goBack: () => void;
-        openDrawer: () => void;
-    };
-    onPress: () => void;
-    getDrawerItemList: (callback: any) => void;
-}
+// interface Props {
+//     navigation: {
+//         navigate: (screenName: string, params: any) => void;
+//         goBack: () => void;
+//         openDrawer: () => void;
+//     };
+//     onPress: () => void;
+//     getDrawerItemList: (churchId: String, callback: any) => void;
+// }
 
 const CustomDrawer = (props: any) => {
     const { navigate, goBack, openDrawer } = props.navigation;
@@ -76,7 +76,7 @@ const CustomDrawer = (props: any) => {
 
     const navigateToScreen = (item : any) => {
         if (item.linkType && item.linkType == "checkin") {
-            navigate('ServiceScreen')
+            navigate('ServiceScreen', {})
         } else {
             if (item.url && item.url != '') {
                 navigate('HomeScreen',{ url:item.url, title: item.text })
@@ -125,7 +125,7 @@ const CustomDrawer = (props: any) => {
             </View>
             <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={( item: any ) => item.id} />
 
-            <TouchableOpacity style={styles.churchContainer} onPress={() => navigate('ChurchSearch')}>
+            <TouchableOpacity style={styles.churchContainer} onPress={() => navigate('ChurchSearch', {})}>
                 {churchEmpty && <Image source={Images.ic_search} style={styles.searchIcon} />}
                 <Text style={{...styles.churchText, color: churchEmpty ? 'gray' : 'black'}}>
                     {churchEmpty ? 'Find your church...' : churchName}

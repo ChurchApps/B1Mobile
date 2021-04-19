@@ -25,7 +25,7 @@ import Images from '../utils/Images';
 
 interface Props {
     navigation: {
-        navigate: (screenName: string) => void;
+        navigate: (screenName: string, params: any) => void;
         goBack: () => void;
         openDrawer: () => void;
     };
@@ -33,7 +33,7 @@ interface Props {
 }
 
 const ServiceScreen = (props: Props) => {
-    const { navigate, goBack, openDrawer } = props.navigation;
+    const { goBack, openDrawer } = props.navigation;
     const [selected, setSelected] = useState(null);
     const [isLoading, setLoading] = useState(false);
     const [groupList, setGroupList] = useState([]);
@@ -61,10 +61,14 @@ const ServiceScreen = (props: Props) => {
         }
     }
 
+    const ServiceSelection = (item: any) => { 
+        props.navigation.navigate('HouseholdScreen',{ serviceId: item.id })
+    }
+
     const renderGroupItem = (item: any) => {
         return (
             <View>
-                <TouchableOpacity style={styles.groupListView} onPress={() => { navigate('HouseholdScreen') }}>
+                <TouchableOpacity style={styles.groupListView} onPress={() => ServiceSelection(item)}>
                     <Text style={styles.groupListTitle} numberOfLines={1}>{item.campus.name} - {item.name}</Text>
                 </TouchableOpacity>
             </View>
