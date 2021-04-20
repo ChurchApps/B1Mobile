@@ -1,5 +1,7 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import {
+    Alert,
     Image,
     SafeAreaView,
     StyleSheet,
@@ -13,7 +15,11 @@ import {
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { connect } from 'react-redux';
 import CheckinHeader from '../components/CheckinHeader';
+import Loader from '../components/Loader';
+import { getToken } from '../helper/ApiHelper';
+import { getGroupList } from '../redux/actions/groupsListAction';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Images from '../utils/Images';
@@ -24,72 +30,74 @@ interface Props {
         goBack: () => void;
         openDrawer: () => void;
     };
+    getGroupListApi: (token: any, callback: any) => void;
 }
 
 const GroupsScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const [selected, setSelected] = useState(null);
-    const [groupList, setGroupList] = useState([{
-        id: 1,
-        name: 'Youth',
-        classes: [{
-            name: 'High School Boys',
-        },{
-            name: 'High School Girls',
-        },{
-            name: 'Middle School Boys',
-        },{
-            name: 'Middle School Boys',
-        }]
-    }, {
-        id: 2,
-        name: 'Kids',
-        classes: [{
-            name: 'High School Boys',
-        },{
-            name: 'High School Girls',
-        },{
-            name: 'Middle School Boys',
-        },{
-            name: 'Middle School Boys',
-        }]
-    }, {
-        id: 3,
-        name: 'ABF',
-        classes: [{
-            name: 'High School Boys',
-        },{
-            name: 'High School Girls',
-        },{
-            name: 'Middle School Boys',
-        },{
-            name: 'Middle School Boys',
-        }]
-    }]);
+    const [isLoading, setLoading] = useState(false);
+    const [groupTree, setGroupTree] = useState<any[]>([]);
 
     useEffect(() => {
-
+        getGroupListData();
     }, [])
+
+    const getGroupListData = async () => {
+        setLoading(true);
+        const token = await getToken("MembershipApi")
+        props.getGroupListApi(token, async (err: any, res: any) => {
+            setLoading(false);
+            if (!err) {
+                createGroupTree(res.data)
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
+    }
+
+    const createGroupTree = (groups: any) => {
+        var category = "";
+        var group_tree: any[] = [];
+
+        const sortedGroups = groups.sort((a: any, b: any) => {
+            return ((a.categoryName || "") > (b.categoryName || "")) ? 1 : -1;
+        });
+
+        sortedGroups?.forEach((group:any) => {
+            if (group.categoryName !== category) group_tree.push({ key: group_tree.length, name: group.categoryName || "", items: [] })
+            group_tree[group_tree.length - 1].items.push(group);
+            category = group.categoryName || "";
+        })
+
+        setGroupTree(group_tree);
+    }
+
+    const selectGroup = (group_item: any) => {
+        navigate('HouseholdScreen')
+    }
 
     const renderGroupItem = (item: any) => {
         return (
             <View>
-                <TouchableOpacity style={styles.groupListView} onPress={() => { setSelected(item.id) }}>
-                    <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={styles.selectionIcon} size={wp('6%')} />
+                <TouchableOpacity style={styles.groupListView} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
+                    <Icon name={selected == item.key ? 'angle-down' : 'angle-right'} style={styles.selectionIcon} size={wp('6%')} />
                     <View style={styles.groupListTextView}>
                         <Text style={styles.groupListTitle} numberOfLines={1}>{item.name}</Text>
                     </View>
                 </TouchableOpacity>
-                {selected == item.id && item.classes.map((item_class: any, index: any) => {
+                {selected == item.key && item.items.map((item_group: any, index: any) => {
                     return (
                         <View style={{
-                            ...styles.classesView, 
-                            borderBottomWidth: ( index == item.classes.length - 1 ) ? 0 : 1
-                        }}>
-                            <TouchableOpacity 
-                                style={styles.classesBtn}>
+                            ...styles.classesView,
+                            borderBottomWidth: (index == item.items.length - 1) ? 0 : 1
+                        }} key={item_group.id}>
+                            <TouchableOpacity
+                                style={styles.classesBtn}
+                                onPress={() => selectGroup(item_group)}
+                            >
                                 <Text style={styles.classesText}>
-                                    {item_class.name}
+                                    {item_group.name}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -101,20 +109,21 @@ const GroupsScreen = (props: Props) => {
 
     return (
         <View style={styles.container}>
-            <CheckinHeader onPress={() => openDrawer()}/>
+            <CheckinHeader onPress={() => openDrawer()} />
             <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
-                    data={groupList}
+                    data={groupTree}
                     renderItem={({ item }) => renderGroupItem(item)}
-                    keyExtractor={(item: any) => item.id}
+                    keyExtractor={(item: any) => item.key}
                     style={styles.groupListStyle}
                 />
                 <TouchableOpacity style={styles.noneBtn} onPress={() => navigate('HouseholdScreen')}>
-                    <Text style={{...styles.classesText, color: 'white'}}>
+                    <Text style={{ ...styles.classesText, color: 'white' }}>
                         NONE
                     </Text>
                 </TouchableOpacity>
             </SafeAreaView>
+            {isLoading && <Loader loading={isLoading} />}
         </View>
     );
 };
@@ -189,4 +198,15 @@ const styles = StyleSheet.create({
     },
 })
 
-export default GroupsScreen;
+const mapStateToProps = (state: any) => {
+    return {
+        group_list: state.group_list,
+    };
+};
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        getGroupListApi: (token: any, callback: any) => dispatch(getGroupList(token, callback)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GroupsScreen);

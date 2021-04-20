@@ -8,7 +8,7 @@ export function getServicesTimeData(serviceId: any, token: any, callback: any) {
             type: SERVICES_TIME_FETCH
         });
 
-        axios.get(API.SERVICES_TIME_URL + serviceId, { headers: {"Authorization" : `Bearer ${token}`} })
+        axios.get(API.SERVICES_TIME_URL + '?serviceId=' + serviceId, { headers: {"Authorization" : `Bearer ${token}`} })
             .then(res => {
                 dispatch({
                     type: SERVICES_TIME_FETCH_FAILURE,

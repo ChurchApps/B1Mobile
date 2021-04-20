@@ -11,7 +11,8 @@ const API = {
     MEMBER_URL: MEMBER_DOMAIN_URL + 'people/userId/',
     HOUSEHOLD_LIST_URL: MEMBER_DOMAIN_URL + 'people/household/',
     SERVICES_URL: SERVICE_DOMAIN_URL + 'services',
-    SERVICES_TIME_URL: SERVICE_DOMAIN_URL + 'servicetimes?serviceId='
+    SERVICES_TIME_URL: SERVICE_DOMAIN_URL + 'servicetimes',
+    GROUPS_URL: MEMBER_DOMAIN_URL + 'groups'
 }
 
 export default API;

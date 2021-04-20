@@ -18,6 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import CheckinHeader from '../components/CheckinHeader';
 import Loader from '../components/Loader';
+import { getToken } from '../helper/ApiHelper';
 import { getServicesData } from '../redux/actions/servicesAction';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
@@ -45,9 +46,8 @@ const ServiceScreen = (props: Props) => {
 
     const getServiceData = async() => {
         setLoading(true);
-        const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
-        if (churchvalue !== null) {
-            const token = JSON.parse(churchvalue).jwt
+        const token = await getToken('default')
+        if (token != null) {
             props.getServicesDataApi(token, (err: any, res: any) => {
                 setLoading(false);
                 if (!err) {

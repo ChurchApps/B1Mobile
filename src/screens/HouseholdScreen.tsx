@@ -25,6 +25,7 @@ import Loader from '../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IMAGE_URL } from '../helper/ApiConstants';
 import { getServicesTimeData } from '../redux/actions/servicesTimeAction';
+import { getToken } from '../helper/ApiHelper';
 
 interface Props {
     navigation: {
@@ -110,20 +111,17 @@ const HouseholdScreen = (props: Props) => {
     }]
 
     useEffect(() => {
-        console.log('Navigation Params--->',props.route.params.serviceId)
         getMemberData();
     }, [])
 
     const getMemberData = async () => {
         setLoading(true);
-        const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+        const token = await getToken('default')
         const user = await AsyncStorage.getItem('USER_DATA')
-        if (churchvalue !== null && user !== null) {
-            const token = JSON.parse(churchvalue).jwt
+        if (token !== null && user !== null) {
             const userId = JSON.parse(user).id
             props.getMemberDataApi(userId, token, (err: any, res: any) => {
                 if (!err) {
-                    console.log('Member Data-->', res.data)
                     if (res.data && res.data.householdId) {
                         getHouseholdList(res.data.householdId, token)
                     }
@@ -138,7 +136,6 @@ const HouseholdScreen = (props: Props) => {
         props.getHouseholdListApi(householdId, token, (err: any, res: any) => {
             setLoading(false);
             if (!err) {
-                console.log('Household List-->', res.data)
                 if (res.data) { 
                     setMemberList(res.data)
                     getServicesTimeData(props.route.params.serviceId, token)
@@ -153,7 +150,6 @@ const HouseholdScreen = (props: Props) => {
         props.getServicesTimeDataApi(serviceId, token, (err: any, res: any) => {
             setLoading(false);
             if (!err) {
-                console.log('Service Time List-->', res.data)
                 setServiceTimeList(res.data)
             } else {
                 Alert.alert("Alert", err.message);
