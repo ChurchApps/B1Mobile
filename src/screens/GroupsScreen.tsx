@@ -29,8 +29,15 @@ interface Props {
         navigate: (screenName: string) => void;
         goBack: () => void;
         openDrawer: () => void;
+        addListener: (type: string, callback: any) => void;
     };
     getGroupListApi: (token: any, callback: any) => void;
+    route: {
+        params:{
+            member: any,
+            time: any
+        }
+    };
 }
 
 const GroupsScreen = (props: Props) => {
@@ -38,22 +45,27 @@ const GroupsScreen = (props: Props) => {
     const [selected, setSelected] = useState(null);
     const [isLoading, setLoading] = useState(false);
     const [groupTree, setGroupTree] = useState<any[]>([]);
+    const [memberList, setMemberList] = useState([]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         getGroupListData();
-    }, [])
+        // const unsubscribe = props.navigation.addListener('focus', () => {
+        //     getGroupListData();
+        // });
+        // return unsubscribe;
+      }, []);
 
     const getGroupListData = async () => {
-        setLoading(true);
-        const token = await getToken("MembershipApi")
-        props.getGroupListApi(token, async (err: any, res: any) => {
-            setLoading(false);
-            if (!err) {
-                createGroupTree(res.data)
-            } else {
-                Alert.alert("Alert", err.message);
+        try {
+            const group_list = await AsyncStorage.getItem('GROUP_LIST')
+            const member_list = await AsyncStorage.getItem('MEMBER_LIST')
+            if(group_list != null && member_list!= null) { 
+                setMemberList(JSON.parse(member_list))
+                createGroupTree(JSON.parse(group_list))
             }
-        });
+        } catch (error) {
+            console.log('MEMBER LIST ERROR',error)
+        }
     }
 
     const createGroupTree = (groups: any) => {
@@ -73,8 +85,24 @@ const GroupsScreen = (props: Props) => {
         setGroupTree(group_tree);
     }
 
-    const selectGroup = (group_item: any) => {
-        navigate('HouseholdScreen')
+    const selectGroup = async(group_item: any) => {
+        memberList?.forEach((member:any) => {
+            member.serviceTime?.forEach((time:any) => {
+                if (member.id == props.route.params.member.id) {
+                    if(time.id == props.route.params.time.id){
+                        time['selectedGroup'] = group_item;
+                    }
+                }
+            })
+        })
+        console.log('memberList---->',memberList)
+        try {
+            const memberValue = JSON.stringify(memberList)
+            await AsyncStorage.setItem('MEMBER_LIST', memberValue)
+            navigate('HouseholdScreen')
+        } catch (error) {
+            console.log('SET MEMBER LIST ERROR',error)
+        }
     }
 
     const renderGroupItem = (item: any) => {
@@ -117,7 +145,7 @@ const GroupsScreen = (props: Props) => {
                     keyExtractor={(item: any) => item.key}
                     style={styles.groupListStyle}
                 />
-                <TouchableOpacity style={styles.noneBtn} onPress={() => navigate('HouseholdScreen')}>
+                <TouchableOpacity style={styles.noneBtn} onPress={() => selectGroup(null)}>
                     <Text style={{ ...styles.classesText, color: 'white' }}>
                         NONE
                     </Text>

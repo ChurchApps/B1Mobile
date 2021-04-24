@@ -19,7 +19,11 @@ import { connect } from 'react-redux';
 import CheckinHeader from '../components/CheckinHeader';
 import Loader from '../components/Loader';
 import { getToken } from '../helper/ApiHelper';
+import { getGroupList } from '../redux/actions/groupsListAction';
+import { getHouseholdList } from '../redux/actions/householdListAction';
+import { getMemberData } from '../redux/actions/memberDataAction';
 import { getServicesData } from '../redux/actions/servicesAction';
+import { getServicesTimeData } from '../redux/actions/servicesTimeAction';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Images from '../utils/Images';
@@ -31,18 +35,22 @@ interface Props {
         openDrawer: () => void;
     };
     getServicesDataApi: (token: any, callback: any) => void;
+    getMemberDataApi: (userId: any, token: any, callback: any) => void;
+    getHouseholdListApi: (householdId: any, token: any, callback: any) => void;
+    getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => void;
+    getGroupListApi: (token: any, callback: any) => void;
 }
 
 const ServiceScreen = (props: Props) => {
     const { goBack, openDrawer } = props.navigation;
     const [selected, setSelected] = useState(null);
     const [isLoading, setLoading] = useState(false);
-    const [groupList, setGroupList] = useState([]);
+    const [serviceList, setServiceList] = useState([]);
+    const [serviceId, setServiceId] = useState('');
 
     useEffect(() => {
         getServiceData();
     }, [])
-
 
     const getServiceData = async() => {
         setLoading(true);
@@ -52,7 +60,7 @@ const ServiceScreen = (props: Props) => {
                 setLoading(false);
                 if (!err) {
                     if (res.data) { 
-                        setGroupList(res.data)
+                        setServiceList(res.data)
                     }
                 } else {
                     Alert.alert("Alert", err.message);
@@ -62,7 +70,79 @@ const ServiceScreen = (props: Props) => {
     }
 
     const ServiceSelection = (item: any) => { 
-        props.navigation.navigate('HouseholdScreen',{ serviceId: item.id })
+        setLoading(true);
+        setServiceId(item.id);
+        getMemberData();
+    }
+
+    const getMemberData = async () => {
+        const token = await getToken('default')
+        const user = await AsyncStorage.getItem('USER_DATA')
+        if (token !== null && user !== null) {
+            const userId = JSON.parse(user).id
+            props.getMemberDataApi(userId, token, (err: any, res: any) => {
+                if (!err) {
+                    if (res.data && res.data.householdId) {
+                        getHouseholdList(res.data.householdId, token)
+                    }
+                } else {
+                    Alert.alert("Alert", err.message);
+                }
+            });
+        }
+    }
+
+    const getHouseholdList = (householdId: String, token: any) => {
+        props.getHouseholdListApi(householdId, token, (err: any, res: any) => {
+            if (!err) {
+                if (res.data) { 
+                    getServicesTimeData(serviceId, token, res.data)
+                }
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
+    }
+
+    const getServicesTimeData = (serviceId: any, token: any, memberList: any) => {
+        props.getServicesTimeDataApi(serviceId, token, (err: any, res: any) => {
+            if (!err) {
+                createHouseholdTree(res.data, memberList)
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
+    }
+
+    const createHouseholdTree = async(serviceTime: any, memberList: any) => {
+        memberList?.forEach((member:any) => {
+            member['serviceTime'] = serviceTime;
+        })
+        try {
+            const memberValue = JSON.stringify(memberList)
+            await AsyncStorage.setItem('MEMBER_LIST', memberValue)
+            getGroupListData()
+        } catch (error) {
+            console.log('SET MEMBER LIST ERROR',error)
+        }
+    }
+
+    const getGroupListData = async () => {
+        const token = await getToken("MembershipApi")
+        props.getGroupListApi(token, async (err: any, res: any) => {
+            setLoading(false);
+            if (!err) {
+                try {
+                    const groupValue = JSON.stringify(res.data)
+                    await AsyncStorage.setItem('GROUP_LIST', groupValue)
+                    .then(() => props.navigation.navigate('HouseholdScreen',{ serviceId: serviceId }))
+                } catch (error) {
+                    console.log('SET MEMBER LIST ERROR',error)
+                }
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
     }
 
     const renderGroupItem = (item: any) => {
@@ -80,7 +160,7 @@ const ServiceScreen = (props: Props) => {
             <CheckinHeader onPress={() => openDrawer()}/>
             <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
-                    data={groupList}
+                    data={serviceList}
                     renderItem={({ item }) => renderGroupItem(item)}
                     keyExtractor={(item: any) => item.id}
                     style={styles.groupListStyle}
@@ -166,11 +246,19 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state: any) => {
     return {
         service_data: state.service_data,
+        member_data: state.member_data,
+        household_list: state.household_list,
+        service_time: state.service_time,
+        group_list: state.group_list,
     };
 };
 const mapDispatchToProps = (dispatch: any) => {
     return {
         getServicesDataApi: (token: any, callback: any) => dispatch(getServicesData(token, callback)),
+        getMemberDataApi: (userId: any, token: any, callback: any) => dispatch(getMemberData(userId, token, callback)),
+        getHouseholdListApi: (householdId: any, token: any, callback: any) => dispatch(getHouseholdList(householdId, token, callback)),
+        getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => dispatch(getServicesTimeData(serviceId, token, callback)),
+        getGroupListApi: (token: any, callback: any) => dispatch(getGroupList(token, callback)),
     }
 }
 

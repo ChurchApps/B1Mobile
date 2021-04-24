@@ -11,14 +11,14 @@ export function getServicesTimeData(serviceId: any, token: any, callback: any) {
         axios.get(API.SERVICES_TIME_URL + '?serviceId=' + serviceId, { headers: {"Authorization" : `Bearer ${token}`} })
             .then(res => {
                 dispatch({
-                    type: SERVICES_TIME_FETCH_FAILURE,
+                    type: SERVICES_TIME_FETCH_SUCCESS,
                     data: res
                 })
                 callback(null, res);
             })
             .catch(err => {
                 dispatch({
-                    type: SERVICES_TIME_FETCH_SUCCESS
+                    type: SERVICES_TIME_FETCH_FAILURE
                 })
                 callback(err, null);
             })

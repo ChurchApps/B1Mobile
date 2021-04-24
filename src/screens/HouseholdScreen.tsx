@@ -19,28 +19,27 @@ import CheckinHeader from '../components/CheckinHeader';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Images from '../utils/Images';
-import { getMemberData } from '../redux/actions/memberDataAction';
-import { getHouseholdList } from '../redux/actions/householdListAction';
 import Loader from '../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IMAGE_URL } from '../helper/ApiConstants';
-import { getServicesTimeData } from '../redux/actions/servicesTimeAction';
+import { loadAttendanceData } from '../redux/actions/loadAttendanceAction';
 import { getToken } from '../helper/ApiHelper';
+import { submitAttendanceData } from '../redux/actions/submitAttendanceAction';
 
 interface Props {
     navigation: {
-        navigate: (screenName: string) => void;
+        navigate: (screenName: string, params: any) => void;
         goBack: () => void;
         openDrawer: () => void;
+        addListener: (type: string, callback: any) => void;
     };
     route: {
-        params:{
+        params: {
             serviceId: any,
         }
     };
-    getMemberDataApi: (userId: String, token: any, callback: any) => void;
-    getHouseholdListApi: (householdId: String, token: any, callback: any) => void;
-    getServicesTimeDataApi: (serviceId: String, token: any, callback: any) => void;
+    loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => void;
+    submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => void;
 }
 
 const HouseholdScreen = (props: Props) => {
@@ -48,113 +47,59 @@ const HouseholdScreen = (props: Props) => {
     const [selected, setSelected] = useState(null);
     const [isLoading, setLoading] = useState(false);
     const [memberList, setMemberList] = useState([]);
-    const [serviceTimeList, setServiceTimeList] = useState([]);
-    const staticList = [{
-        id: 1,
-        name: 'James Smith',
-        image: Images.ic_member,
-        classes: [{
-            time: '10:00am',
-            selection: 'Nursery Nursery Nursery Nursery Nursery Nursery Nursery Nursery Nursery Nursery'
-        }, {
-            time: '09:00am',
-            selection: 'Homebuilders'
-        }, {
-            time: '08:00am',
-            selection: 'Homebuilders'
-        }, {
-            time: '07:00am',
-            selection: 'Homebuilders'
-        }, {
-            time: '06:00am',
-            selection: null
-        }, {
-            time: '05:00am',
-            selection: 'Homebuilders'
-        }]
-    }, {
-        id: 2,
-        name: 'Jack Smith',
-        image: Images.ic_member,
-        classes: [{
-            time: '10:00am',
-            selection: null
-        }, {
-            time: '09:00am',
-            selection: 'Worship'
-        }, {
-            time: '08:00am',
-            selection: null
-        }]
-    }, {
-        id: 3,
-        name: 'Tony Smith',
-        image: Images.ic_member,
-        classes: [{
-            time: '10:00am',
-            selection: 'Homebuilders'
-        }, {
-            time: '09:00am',
-            selection: 'Test'
-        }, {
-            time: '08:00am',
-            selection: 'Worship'
-        }]
-    }, {
-        id: 4,
-        name: 'Max Smith',
-        image: Images.ic_member,
-        classes: [{
-            time: '10:00am',
-            selection: null
-        }]
-    }]
 
-    useEffect(() => {
-        getMemberData();
-    }, [])
+    React.useEffect(() => {
+        getMemberFromStorage();
+        const unsubscribe = props.navigation.addListener('focus', () => {
+            getMemberFromStorage();
+        });
+        return unsubscribe;
+    }, [props.navigation]);
 
-    const getMemberData = async () => {
-        setLoading(true);
-        const token = await getToken('default')
-        const user = await AsyncStorage.getItem('USER_DATA')
-        if (token !== null && user !== null) {
-            const userId = JSON.parse(user).id
-            props.getMemberDataApi(userId, token, (err: any, res: any) => {
-                if (!err) {
-                    if (res.data && res.data.householdId) {
-                        getHouseholdList(res.data.householdId, token)
-                    }
-                } else {
-                    Alert.alert("Alert", err.message);
-                }
-            });
+    const getMemberFromStorage = async () => {
+        try {
+            const member_list = await AsyncStorage.getItem('MEMBER_LIST')
+            if (member_list != null) {
+                setMemberList(JSON.parse(member_list));
+                loadExistingAttendance();
+            }
+        } catch (error) {
+            console.log('GET MEMBER LIST ERROR', error)
         }
     }
 
-    const getHouseholdList = (householdId: String, token: any) => {
-        props.getHouseholdListApi(householdId, token, (err: any, res: any) => {
-            setLoading(false);
+    const loadExistingAttendance = async() => {
+        const serviceId = props.route.params.serviceId;
+        const token = await getToken('AttendanceApi')
+        const peopleIds: any[] = [];
+        memberList?.forEach((member:any) => {
+            peopleIds.push(member.id)
+        })
+        props.loadAttendanceDataApi(serviceId, peopleIds, token, (err: any, res: any) => {
             if (!err) {
-                if (res.data) { 
-                    setMemberList(res.data)
-                    getServicesTimeData(props.route.params.serviceId, token)
-                }
+                console.log('Existing Attendance--->',res.data)
             } else {
                 Alert.alert("Alert", err.message);
             }
         });
     }
 
-    const getServicesTimeData = (serviceId: any, token: any) => {
-        props.getServicesTimeDataApi(serviceId, token, (err: any, res: any) => {
-            setLoading(false);
-            if (!err) {
-                setServiceTimeList(res.data)
-            } else {
-                Alert.alert("Alert", err.message);
-            }
-        });
+    const submitAttendance = async() => {
+        navigate('CheckinCompleteScreen', {})
+        // const serviceId = props.route.params.serviceId;
+        // const token = await getToken('AttendanceApi')
+        // const peopleIds: any[] = [];
+        // memberList?.forEach((member:any) => {
+        //     peopleIds.push(member.id)
+        // })
+        // props.submitAttendanceDataApi(serviceId, peopleIds, token, (err: any, res: any) => {
+        //     if (!err) {
+        //         console.log('Submit Attendance--->',res.data)
+        //         navigate('CheckinCompleteScreen', {})
+        //     } else {
+        //         Alert.alert("Alert", err.message);
+        //     }
+        // });
     }
 
     const renderMemberItem = (item: any) => {
@@ -162,29 +107,29 @@ const HouseholdScreen = (props: Props) => {
             <View>
                 <TouchableOpacity style={styles.memberListView} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
                     <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={styles.selectionIcon} size={wp('6%')} />
-                    <Image source={{uri: IMAGE_URL + item.photo}} style={styles.memberListIcon} />
+                    <Image source={{ uri: IMAGE_URL + item.photo }} style={styles.memberListIcon} />
                     <View style={styles.memberListTextView}>
                         <Text style={styles.memberListTitle} numberOfLines={1}>{item.name.display}</Text>
-                        {/* {selected != item.id && item.classes.map((item_class: any, index: any) => {
+                        {selected != item.id && item.serviceTime.map((item_time: any, index: any) => {
                             return (
-                                <View>
-                                    {item_class.selection ?
+                                <View key={item_time.id}>
+                                    {item_time.selectedGroup ?
                                         <Text style={styles.selectedText} numberOfLines={1}>
-                                            {item_class.time}{" - "}{item_class.selection}
+                                            {item_time.name}{" - "}{item_time.selectedGroup.name}
                                         </Text>
                                         : null}
                                 </View>
                             );
-                        })} */}
+                        })}
                     </View>
                 </TouchableOpacity>
-                {selected == item.id && serviceTimeList.map((item_time: any, index: any) => {
+                {selected == item.id && item.serviceTime && item.serviceTime.map((item_time: any, index: any) => {
                     return (
                         <View style={{
                             ...styles.classesView,
-                            borderBottomWidth: (index == serviceTimeList.length - 1) ? 0 : 1
+                            borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1
                         }}
-                        key={item_time.id}>
+                            key={item_time.id}>
                             <View style={styles.classesTimeView}>
                                 <Icon name={'clock-o'} style={styles.timeIcon} size={wp('5%')} />
                                 <Text style={styles.classesTimeText}>{item_time.name}</Text>
@@ -192,13 +137,11 @@ const HouseholdScreen = (props: Props) => {
                             <TouchableOpacity
                                 style={{
                                     ...styles.classesNoneBtn,
-                                    // backgroundColor: item_time.selection ? Colors.button_green : Colors.button_bg
-                                    backgroundColor: Colors.button_bg
+                                    backgroundColor: item_time.selectedGroup ? Colors.button_green : Colors.button_bg
                                 }}
-                                onPress={() => item_time.selection ? null : navigate('GroupsScreen')}>
+                                onPress={() => item_time.selection ? null : navigate('GroupsScreen', { member: item, time: item_time })}>
                                 <Text style={styles.classesNoneText} numberOfLines={3}>
-                                    {/* {item_time.selection ? item_time.selection : 'NONE'} */}
-                                    NONE
+                                    {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
                                 </Text>
                             </TouchableOpacity>
                         </View>
@@ -218,7 +161,7 @@ const HouseholdScreen = (props: Props) => {
                     keyExtractor={(item: any) => item.id}
                     style={styles.memberListStyle}
                 />
-                <TouchableOpacity style={styles.checkinBtn} onPress={() => navigate('CheckinCompleteScreen')}>
+                <TouchableOpacity style={styles.checkinBtn} onPress={() => submitAttendance()}>
                     <Text style={styles.checkinBtnText}>
                         CHECKIN
                     </Text>
@@ -341,16 +284,14 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state: any) => {
     return {
-        member_data: state.member_data,
-        household_list: state.household_list,
-        service_time: state.service_time,
+        load_attendance: state.load_attendance,
+        submit_attendance: state.submit_attendance,
     };
 };
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        getMemberDataApi: (userId: any, token: any, callback: any) => dispatch(getMemberData(userId, token, callback)),
-        getHouseholdListApi: (householdId: any, token: any, callback: any) => dispatch(getHouseholdList(householdId, token, callback)),
-        getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => dispatch(getServicesTimeData(serviceId, token, callback))
+        loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => dispatch(loadAttendanceData(serviceId, peopleIds, token, callback)),
+        submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => dispatch(submitAttendanceData(serviceId, peopleIds, token, callback)),
     }
 }
 

@@ -30,7 +30,7 @@ const CheckinCompleteScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
 
     useEffect(() => {
-
+        setTimeout(()=>{navigate('ServiceScreen')}, 1000); 
     }, [])
 
     return (
