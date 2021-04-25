@@ -33,7 +33,7 @@ interface Props {
     };
     getGroupListApi: (token: any, callback: any) => void;
     route: {
-        params:{
+        params: {
             member: any,
             time: any
         }
@@ -49,22 +49,18 @@ const GroupsScreen = (props: Props) => {
 
     React.useEffect(() => {
         getGroupListData();
-        // const unsubscribe = props.navigation.addListener('focus', () => {
-        //     getGroupListData();
-        // });
-        // return unsubscribe;
-      }, []);
+    }, []);
 
     const getGroupListData = async () => {
         try {
             const group_list = await AsyncStorage.getItem('GROUP_LIST')
             const member_list = await AsyncStorage.getItem('MEMBER_LIST')
-            if(group_list != null && member_list!= null) { 
+            if (group_list != null && member_list != null) {
                 setMemberList(JSON.parse(member_list))
                 createGroupTree(JSON.parse(group_list))
             }
         } catch (error) {
-            console.log('MEMBER LIST ERROR',error)
+            console.log('MEMBER LIST ERROR', error)
         }
     }
 
@@ -76,7 +72,7 @@ const GroupsScreen = (props: Props) => {
             return ((a.categoryName || "") > (b.categoryName || "")) ? 1 : -1;
         });
 
-        sortedGroups?.forEach((group:any) => {
+        sortedGroups?.forEach((group: any) => {
             if (group.categoryName !== category) group_tree.push({ key: group_tree.length, name: group.categoryName || "", items: [] })
             group_tree[group_tree.length - 1].items.push(group);
             category = group.categoryName || "";
@@ -85,23 +81,22 @@ const GroupsScreen = (props: Props) => {
         setGroupTree(group_tree);
     }
 
-    const selectGroup = async(group_item: any) => {
-        memberList?.forEach((member:any) => {
-            member.serviceTime?.forEach((time:any) => {
+    const selectGroup = async (group_item: any) => {
+        memberList?.forEach((member: any) => {
+            member.serviceTime?.forEach((time: any) => {
                 if (member.id == props.route.params.member.id) {
-                    if(time.id == props.route.params.time.id){
+                    if (time.id == props.route.params.time.id) {
                         time['selectedGroup'] = group_item;
                     }
                 }
             })
         })
-        console.log('memberList---->',memberList)
         try {
             const memberValue = JSON.stringify(memberList)
             await AsyncStorage.setItem('MEMBER_LIST', memberValue)
-            navigate('HouseholdScreen')
+                .then(() => goBack());
         } catch (error) {
-            console.log('SET MEMBER LIST ERROR',error)
+            console.log('SET MEMBER LIST ERROR', error)
         }
     }
 

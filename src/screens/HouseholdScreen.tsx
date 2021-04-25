@@ -21,7 +21,7 @@ import Fonts from '../utils/Fonts';
 import Images from '../utils/Images';
 import Loader from '../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IMAGE_URL } from '../helper/ApiConstants';
+import API, { IMAGE_URL } from '../helper/ApiConstants';
 import { loadAttendanceData } from '../redux/actions/loadAttendanceAction';
 import { getToken } from '../helper/ApiHelper';
 import { submitAttendanceData } from '../redux/actions/submitAttendanceAction';
@@ -39,7 +39,7 @@ interface Props {
         }
     };
     loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => void;
-    submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => void;
+    submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, pendingVisits: any, callback: any) => void;
 }
 
 const HouseholdScreen = (props: Props) => {
@@ -50,10 +50,11 @@ const HouseholdScreen = (props: Props) => {
 
     React.useEffect(() => {
         getMemberFromStorage();
-        const unsubscribe = props.navigation.addListener('focus', () => {
+        loadExistingAttendance(memberList);
+        const init = props.navigation.addListener('focus', () => {
             getMemberFromStorage();
         });
-        return unsubscribe;
+        return init;
     }, [props.navigation]);
 
     const getMemberFromStorage = async () => {
@@ -61,45 +62,62 @@ const HouseholdScreen = (props: Props) => {
             const member_list = await AsyncStorage.getItem('MEMBER_LIST')
             if (member_list != null) {
                 setMemberList(JSON.parse(member_list));
-                loadExistingAttendance();
             }
         } catch (error) {
             console.log('GET MEMBER LIST ERROR', error)
         }
     }
 
-    const loadExistingAttendance = async() => {
+    const loadExistingAttendance = async (members: any) => {
+        setLoading(true);
         const serviceId = props.route.params.serviceId;
         const token = await getToken('AttendanceApi')
         const peopleIds: any[] = [];
-        memberList?.forEach((member:any) => {
+        members?.forEach((member: any) => {
             peopleIds.push(member.id)
         })
         props.loadAttendanceDataApi(serviceId, peopleIds, token, (err: any, res: any) => {
+            setLoading(false);
             if (!err) {
-                console.log('Existing Attendance--->',res.data)
+                console.log('Existing Attendance--->', res.data)
             } else {
                 Alert.alert("Alert", err.message);
             }
         });
     }
 
-    const submitAttendance = async() => {
-        navigate('CheckinCompleteScreen', {})
-        // const serviceId = props.route.params.serviceId;
-        // const token = await getToken('AttendanceApi')
-        // const peopleIds: any[] = [];
-        // memberList?.forEach((member:any) => {
-        //     peopleIds.push(member.id)
-        // })
-        // props.submitAttendanceDataApi(serviceId, peopleIds, token, (err: any, res: any) => {
-        //     if (!err) {
-        //         console.log('Submit Attendance--->',res.data)
-        //         navigate('CheckinCompleteScreen', {})
-        //     } else {
-        //         Alert.alert("Alert", err.message);
-        //     }
-        // });
+    const submitAttendance = async () => {
+        setLoading(true);
+        const serviceId = props.route.params.serviceId;
+        const token = await getToken('AttendanceApi')
+
+        const peopleIds: any[] = [];
+        var pendingVisits: any[] = [];
+
+        memberList?.forEach((member: any) => {
+            peopleIds.push(member.id)
+            var visitSessionList: any[] = [];
+            member.serviceTime?.forEach((time: any) => {
+                if (time.selectedGroup != null) {
+                    visitSessionList.push({ session: { serviceTimeId: time.id, groupId: time.selectedGroup.id, displayName: time.selectedGroup.name } })
+                }
+            })
+            if (visitSessionList.length != 0) {
+                pendingVisits.push({ personId: member.id, serviceId: serviceId, visitSessions: visitSessionList })
+            }
+        })
+        console.log('pendingVisits--->', pendingVisits)
+        let body = JSON.stringify(pendingVisits)
+        props.submitAttendanceDataApi(serviceId, peopleIds, token, body, (err: any, res: any) => {
+            setLoading(false);
+            if (!err) {
+                console.log('Submit Attendance--->', res.data)
+                Alert.alert("Success", 'Submit Attendance');
+                // navigate('CheckinCompleteScreen', {})
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
     }
 
     const renderMemberItem = (item: any) => {
@@ -291,7 +309,7 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => dispatch(loadAttendanceData(serviceId, peopleIds, token, callback)),
-        submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => dispatch(submitAttendanceData(serviceId, peopleIds, token, callback)),
+        submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, pendingVisits: any, callback: any) => dispatch(submitAttendanceData(serviceId, peopleIds, token, pendingVisits, callback)),
     }
 }
 

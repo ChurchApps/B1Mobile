@@ -46,20 +46,19 @@ const ServiceScreen = (props: Props) => {
     const [selected, setSelected] = useState(null);
     const [isLoading, setLoading] = useState(false);
     const [serviceList, setServiceList] = useState([]);
-    const [serviceId, setServiceId] = useState('');
 
     useEffect(() => {
         getServiceData();
     }, [])
 
-    const getServiceData = async() => {
+    const getServiceData = async () => {
         setLoading(true);
         const token = await getToken('default')
         if (token != null) {
             props.getServicesDataApi(token, (err: any, res: any) => {
                 setLoading(false);
                 if (!err) {
-                    if (res.data) { 
+                    if (res.data) {
                         setServiceList(res.data)
                     }
                 } else {
@@ -69,13 +68,12 @@ const ServiceScreen = (props: Props) => {
         }
     }
 
-    const ServiceSelection = (item: any) => { 
+    const ServiceSelection = (item: any) => {
         setLoading(true);
-        setServiceId(item.id);
-        getMemberData();
+        getMemberData(item.id);
     }
 
-    const getMemberData = async () => {
+    const getMemberData = async (serviceId: any) => {
         const token = await getToken('default')
         const user = await AsyncStorage.getItem('USER_DATA')
         if (token !== null && user !== null) {
@@ -83,7 +81,7 @@ const ServiceScreen = (props: Props) => {
             props.getMemberDataApi(userId, token, (err: any, res: any) => {
                 if (!err) {
                     if (res.data && res.data.householdId) {
-                        getHouseholdList(res.data.householdId, token)
+                        getHouseholdList(serviceId, res.data.householdId, token)
                     }
                 } else {
                     Alert.alert("Alert", err.message);
@@ -92,10 +90,10 @@ const ServiceScreen = (props: Props) => {
         }
     }
 
-    const getHouseholdList = (householdId: String, token: any) => {
+    const getHouseholdList = (serviceId: any, householdId: String, token: any) => {
         props.getHouseholdListApi(householdId, token, (err: any, res: any) => {
             if (!err) {
-                if (res.data) { 
+                if (res.data) {
                     getServicesTimeData(serviceId, token, res.data)
                 }
             } else {
@@ -107,27 +105,27 @@ const ServiceScreen = (props: Props) => {
     const getServicesTimeData = (serviceId: any, token: any, memberList: any) => {
         props.getServicesTimeDataApi(serviceId, token, (err: any, res: any) => {
             if (!err) {
-                createHouseholdTree(res.data, memberList)
+                createHouseholdTree(serviceId, res.data, memberList)
             } else {
                 Alert.alert("Alert", err.message);
             }
         });
     }
 
-    const createHouseholdTree = async(serviceTime: any, memberList: any) => {
-        memberList?.forEach((member:any) => {
+    const createHouseholdTree = async (serviceId: any, serviceTime: any, memberList: any) => {
+        memberList?.forEach((member: any) => {
             member['serviceTime'] = serviceTime;
         })
         try {
             const memberValue = JSON.stringify(memberList)
             await AsyncStorage.setItem('MEMBER_LIST', memberValue)
-            getGroupListData()
+                .then(() => getGroupListData(serviceId))
         } catch (error) {
-            console.log('SET MEMBER LIST ERROR',error)
+            console.log('SET MEMBER LIST ERROR', error)
         }
     }
 
-    const getGroupListData = async () => {
+    const getGroupListData = async (serviceId: any) => {
         const token = await getToken("MembershipApi")
         props.getGroupListApi(token, async (err: any, res: any) => {
             setLoading(false);
@@ -135,9 +133,9 @@ const ServiceScreen = (props: Props) => {
                 try {
                     const groupValue = JSON.stringify(res.data)
                     await AsyncStorage.setItem('GROUP_LIST', groupValue)
-                    .then(() => props.navigation.navigate('HouseholdScreen',{ serviceId: serviceId }))
+                        .then(() => props.navigation.navigate('HouseholdScreen', { serviceId: serviceId }))
                 } catch (error) {
-                    console.log('SET MEMBER LIST ERROR',error)
+                    console.log('SET MEMBER LIST ERROR', error)
                 }
             } else {
                 Alert.alert("Alert", err.message);
@@ -157,7 +155,7 @@ const ServiceScreen = (props: Props) => {
 
     return (
         <View style={styles.container}>
-            <CheckinHeader onPress={() => openDrawer()}/>
+            <CheckinHeader onPress={() => openDrawer()} />
             <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
                     data={serviceList}
@@ -195,9 +193,9 @@ const styles = StyleSheet.create({
     groupListTextView: {
         height: wp('12%'),
         justifyContent: 'center',
-        alignItems:'center',
-        alignContent:'center',
-        backgroundColor:'red'
+        alignItems: 'center',
+        alignContent: 'center',
+        backgroundColor: 'red'
     },
     groupListTitle: {
         fontSize: wp('4.5%'),
