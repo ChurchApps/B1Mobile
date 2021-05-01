@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import CheckinHeader from '../components/CheckinHeader';
 import Loader from '../components/Loader';
-import { getToken } from '../helper/ApiHelper';
+import { createGroupTree, getPeopleIds, getToken } from '../helper/ApiHelper';
 import { getGroupList } from '../redux/actions/groupsListAction';
 import { getHouseholdList } from '../redux/actions/householdListAction';
 import { getMemberData } from '../redux/actions/memberDataAction';
@@ -119,21 +119,25 @@ const ServiceScreen = (props: Props) => {
         try {
             const memberValue = JSON.stringify(memberList)
             await AsyncStorage.setItem('MEMBER_LIST', memberValue)
-                .then(() => getGroupListData(serviceId))
+                .then(() => getGroupListData(serviceId, memberList))
         } catch (error) {
             console.log('SET MEMBER LIST ERROR', error)
         }
     }
 
-    const getGroupListData = async (serviceId: any) => {
+    const getGroupListData = async (serviceId: any, memberList: any) => {
         const token = await getToken("MembershipApi")
         props.getGroupListApi(token, async (err: any, res: any) => {
             setLoading(false);
             if (!err) {
+                const peopleIds = getPeopleIds(memberList);
                 try {
-                    const groupValue = JSON.stringify(res.data)
-                    await AsyncStorage.setItem('GROUP_LIST', groupValue)
-                        .then(() => props.navigation.navigate('HouseholdScreen', { serviceId: serviceId }))
+                    const group_tree = createGroupTree(res.data);
+                    await AsyncStorage.setItem('GROUP_LIST', JSON.stringify(group_tree))
+                    await AsyncStorage.setItem('SCREEN', 'SERVICE')
+                    .then(() => {
+                        props.navigation.navigate('HouseholdScreen', { serviceId: serviceId, people_Ids: peopleIds })
+                    })
                 } catch (error) {
                     console.log('SET MEMBER LIST ERROR', error)
                 }

@@ -22,9 +22,9 @@ import Images from '../utils/Images';
 import Loader from '../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API, { IMAGE_URL } from '../helper/ApiConstants';
-import { loadAttendanceData } from '../redux/actions/loadAttendanceAction';
 import { getToken } from '../helper/ApiHelper';
 import { submitAttendanceData } from '../redux/actions/submitAttendanceAction';
+import { loadAttendanceData } from '../redux/actions/loadAttendanceAction';
 
 interface Props {
     navigation: {
@@ -36,23 +36,28 @@ interface Props {
     route: {
         params: {
             serviceId: any,
+            people_Ids: any
         }
     };
-    loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => void;
     submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, pendingVisits: any, callback: any) => void;
+    loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => void;
 }
 
 const HouseholdScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const [selected, setSelected] = useState(null);
     const [isLoading, setLoading] = useState(false);
-    const [memberList, setMemberList] = useState([]);
+    const [memberList, setMemberList] = useState<any[]>([]);
+    const [groupTree, setGroupTree] = useState<any[]>([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         getMemberFromStorage();
-        loadExistingAttendance(memberList);
-        const init = props.navigation.addListener('focus', () => {
-            getMemberFromStorage();
+    }, []);
+    
+    useEffect(() => {
+        getMemberFromStorage();
+        const init = props.navigation.addListener('focus', async () => {
+            await getMemberFromStorage();
         });
         return init;
     }, [props.navigation]);
@@ -60,42 +65,80 @@ const HouseholdScreen = (props: Props) => {
     const getMemberFromStorage = async () => {
         try {
             const member_list = await AsyncStorage.getItem('MEMBER_LIST')
-            if (member_list != null) {
-                setMemberList(JSON.parse(member_list));
+            const group_list = await AsyncStorage.getItem('GROUP_LIST')
+            const screen = await AsyncStorage.getItem('SCREEN')
+            if (group_list != null && member_list != null) {
+                const groups = JSON.parse(group_list);
+                const members = JSON.parse(member_list); 
+                setGroupTree(groups);
+                setMemberList(members);
+                if (screen == 'SERVICE') {
+                    setSelected(null);
+                    loadExistingAttendance(members, groups);
+                }
             }
+            
         } catch (error) {
-            console.log('GET MEMBER LIST ERROR', error)
+            console.log('MEMBER LIST ERROR', error)
         }
     }
 
-    const loadExistingAttendance = async (members: any) => {
-        setLoading(true);
+    const loadExistingAttendance = async ( memberList: any, group_tree: any) => {
         const serviceId = props.route.params.serviceId;
+        const people_Ids = props.route.params.people_Ids;
+        setLoading(true);
         const token = await getToken('AttendanceApi')
-        const peopleIds: any[] = [];
-        members?.forEach((member: any) => {
-            peopleIds.push(member.id)
-        })
-        props.loadAttendanceDataApi(serviceId, peopleIds, token, (err: any, res: any) => {
+        props.loadAttendanceDataApi(serviceId, people_Ids, token, async (err: any, res: any) => {
             setLoading(false);
             if (!err) {
-                console.log('Existing Attendance--->', res.data)
+                await setExistingAttendance(res.data, memberList, group_tree)
             } else {
                 Alert.alert("Alert", err.message);
             }
         });
     }
 
+    const setExistingAttendance = async (existingAttendance: any, memberList: any, group_tree: any) => {
+        var member_list = [...memberList];
+        const groupTree = [...group_tree];
+
+        existingAttendance?.forEach((item: any) => {
+            item.visitSessions?.forEach(async (visitSession: any) => {
+                member_list?.forEach((member: any) => {
+                    if (member.id == item.personId) {
+                        member.serviceTime?.forEach((time: any) => {
+                            if (time.id == visitSession.session.serviceTimeId) {
+                                groupTree.forEach((group_item: any) => {
+                                    group_item.items.forEach((itemG: any) => {
+                                        if (visitSession.session.groupId == itemG.id) {
+                                            time['selectedGroup'] = itemG;
+                                        }
+                                    })
+                                })
+                            }
+                        })
+                    }
+                })
+            })
+        })
+        try {
+            setMemberList(member_list)
+            const memberValue = JSON.stringify(member_list)
+            await AsyncStorage.setItem('MEMBER_LIST', memberValue)
+        } catch (error) {
+            console.log('SET MEMBER LIST ERROR', error)
+        }
+    }
+
+
     const submitAttendance = async () => {
         setLoading(true);
         const serviceId = props.route.params.serviceId;
+        const people_Ids = props.route.params.people_Ids;
         const token = await getToken('AttendanceApi')
 
-        const peopleIds: any[] = [];
         var pendingVisits: any[] = [];
-
         memberList?.forEach((member: any) => {
-            peopleIds.push(member.id)
             var visitSessionList: any[] = [];
             member.serviceTime?.forEach((time: any) => {
                 if (time.selectedGroup != null) {
@@ -106,14 +149,18 @@ const HouseholdScreen = (props: Props) => {
                 pendingVisits.push({ personId: member.id, serviceId: serviceId, visitSessions: visitSessionList })
             }
         })
-        console.log('pendingVisits--->', pendingVisits)
-        let body = JSON.stringify(pendingVisits)
-        props.submitAttendanceDataApi(serviceId, peopleIds, token, body, (err: any, res: any) => {
+
+        props.submitAttendanceDataApi(serviceId, people_Ids, token, pendingVisits, async(err: any, res: any) => {
             setLoading(false);
             if (!err) {
-                console.log('Submit Attendance--->', res.data)
-                Alert.alert("Success", 'Submit Attendance');
-                // navigate('CheckinCompleteScreen', {})
+                try {
+                    await AsyncStorage.removeItem('MEMBER_LIST')
+                    await AsyncStorage.removeItem('GROUP_LIST')
+                    .then(() => { navigate('CheckinCompleteScreen', {}) })
+                } catch (error) {
+                    console.log('CLEAR MEMBER LIST ERROR', error)
+                }
+                
             } else {
                 Alert.alert("Alert", err.message);
             }
@@ -157,7 +204,7 @@ const HouseholdScreen = (props: Props) => {
                                     ...styles.classesNoneBtn,
                                     backgroundColor: item_time.selectedGroup ? Colors.button_green : Colors.button_bg
                                 }}
-                                onPress={() => item_time.selection ? null : navigate('GroupsScreen', { member: item, time: item_time })}>
+                                onPress={() => item_time.selection ? null : navigate('GroupsScreen', { member: item, time: item_time, serviceId: props.route.params.serviceId })}>
                                 <Text style={styles.classesNoneText} numberOfLines={3}>
                                     {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
                                 </Text>
@@ -302,14 +349,14 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state: any) => {
     return {
-        load_attendance: state.load_attendance,
         submit_attendance: state.submit_attendance,
+        load_attendance: state.load_attendance,
     };
 };
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => dispatch(loadAttendanceData(serviceId, peopleIds, token, callback)),
         submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, pendingVisits: any, callback: any) => dispatch(submitAttendanceData(serviceId, peopleIds, token, pendingVisits, callback)),
+        loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => dispatch(loadAttendanceData(serviceId, peopleIds, token, callback)),
     }
 }
 

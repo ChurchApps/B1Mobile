@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import CheckinHeader from '../components/CheckinHeader';
 import Loader from '../components/Loader';
-import { getToken } from '../helper/ApiHelper';
+import { createGroupTree, getToken } from '../helper/ApiHelper';
 import { getGroupList } from '../redux/actions/groupsListAction';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
@@ -47,38 +47,31 @@ const GroupsScreen = (props: Props) => {
     const [groupTree, setGroupTree] = useState<any[]>([]);
     const [memberList, setMemberList] = useState([]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         getGroupListData();
     }, []);
 
+    useEffect(() => {
+        getGroupListData();
+        const init = props.navigation.addListener('focus', async () => {
+            await getGroupListData();
+        });
+        return init;
+    }, [props.navigation]);
+
     const getGroupListData = async () => {
         try {
+            setSelected(null);
+            await AsyncStorage.setItem('SCREEN', 'GROUP')
             const group_list = await AsyncStorage.getItem('GROUP_LIST')
             const member_list = await AsyncStorage.getItem('MEMBER_LIST')
             if (group_list != null && member_list != null) {
                 setMemberList(JSON.parse(member_list))
-                createGroupTree(JSON.parse(group_list))
+                setGroupTree(JSON.parse(group_list));
             }
         } catch (error) {
             console.log('MEMBER LIST ERROR', error)
         }
-    }
-
-    const createGroupTree = (groups: any) => {
-        var category = "";
-        var group_tree: any[] = [];
-
-        const sortedGroups = groups.sort((a: any, b: any) => {
-            return ((a.categoryName || "") > (b.categoryName || "")) ? 1 : -1;
-        });
-
-        sortedGroups?.forEach((group: any) => {
-            if (group.categoryName !== category) group_tree.push({ key: group_tree.length, name: group.categoryName || "", items: [] })
-            group_tree[group_tree.length - 1].items.push(group);
-            category = group.categoryName || "";
-        })
-
-        setGroupTree(group_tree);
     }
 
     const selectGroup = async (group_item: any) => {

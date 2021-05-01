@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Image,
     SafeAreaView,
     StyleSheet,
     Text,
-    TouchableOpacity,
     View,
 } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp
@@ -16,13 +13,13 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import CheckinHeader from '../components/CheckinHeader';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
-import Images from '../utils/Images';
 
 interface Props {
     navigation: {
         navigate: (screenName: string) => void;
         goBack: () => void;
         openDrawer: () => void;
+        addListener: (type: string, callback: any) => void;
     };
 }
 
@@ -30,17 +27,27 @@ const CheckinCompleteScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
 
     useEffect(() => {
-        setTimeout(()=>{navigate('ServiceScreen')}, 1000); 
-    }, [])
+        serviceNavigate();
+    }, []);
+
+    useEffect(() => {
+        serviceNavigate();
+        const init = props.navigation.addListener('focus', async () => { serviceNavigate() });
+        return init;
+    }, [props.navigation]);
+
+    const serviceNavigate = () => {
+        setTimeout(() => { navigate('ServiceScreen') }, 1000);
+    }
 
     return (
         <View style={styles.container}>
-            <CheckinHeader onPress={() => openDrawer()}/>
+            <CheckinHeader onPress={() => openDrawer()} />
             <SafeAreaView style={styles.safeAreaContainer}>
-                     <Icon name={'check-circle'} style={styles.successIcon} size={wp('20%')} />
-                    <Text style={styles.successText}>
-                        Checkin Complete.
-                    </Text>
+                <Icon name={'check-circle'} style={styles.successIcon} size={wp('20%')} />
+                <Text style={styles.successText}>
+                    Checkin Complete.
+                </Text>
             </SafeAreaView>
         </View>
     );
@@ -52,8 +59,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.gray_bg
     },
     safeAreaContainer: {
-        justifyContent:'center',
-        alignItems:'center',
+        justifyContent: 'center',
+        alignItems: 'center',
         flex: 1
     },
     successIcon: {
