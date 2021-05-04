@@ -10,7 +10,8 @@ import {
     heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import CheckinHeader from '../components/CheckinHeader';
+import WhiteHeader from '../components/WhiteHeader';
+import globalStyles from '../helper/GlobalStyles';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 
@@ -41,8 +42,8 @@ const CheckinCompleteScreen = (props: Props) => {
     }
 
     return (
-        <View style={styles.container}>
-            <CheckinHeader onPress={() => openDrawer()} />
+        <View style={globalStyles.grayContainer}>
+            <WhiteHeader onPress={() => openDrawer()} />
             <SafeAreaView style={styles.safeAreaContainer}>
                 <Icon name={'check-circle'} style={styles.successIcon} size={wp('20%')} />
                 <Text style={styles.successText}>
@@ -54,10 +55,6 @@ const CheckinCompleteScreen = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.gray_bg
-    },
     safeAreaContainer: {
         justifyContent: 'center',
         alignItems: 'center',

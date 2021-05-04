@@ -16,13 +16,15 @@ import {
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import CheckinHeader from '../components/CheckinHeader';
+import WhiteHeader from '../components/WhiteHeader';
 import Loader from '../components/Loader';
 import { createGroupTree, getToken } from '../helper/ApiHelper';
+import globalStyles from '../helper/GlobalStyles';
 import { getGroupList } from '../redux/actions/groupsListAction';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Images from '../utils/Images';
+import BottomButton from '../components/BottomButton';
 
 interface Props {
     navigation: {
@@ -96,25 +98,17 @@ const GroupsScreen = (props: Props) => {
     const renderGroupItem = (item: any) => {
         return (
             <View>
-                <TouchableOpacity style={styles.groupListView} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
-                    <Icon name={selected == item.key ? 'angle-down' : 'angle-right'} style={styles.selectionIcon} size={wp('6%')} />
-                    <View style={styles.groupListTextView}>
-                        <Text style={styles.groupListTitle} numberOfLines={1}>{item.name}</Text>
+                <TouchableOpacity style={globalStyles.listMainView} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
+                    <Icon name={selected == item.key ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
+                    <View style={globalStyles.listTextView}>
+                        <Text style={[globalStyles.groupListTitle,styles.groupListTitle]} numberOfLines={1}>{item.name}</Text>
                     </View>
                 </TouchableOpacity>
                 {selected == item.key && item.items.map((item_group: any, index: any) => {
                     return (
-                        <View style={{
-                            ...styles.classesView,
-                            borderBottomWidth: (index == item.items.length - 1) ? 0 : 1
-                        }} key={item_group.id}>
-                            <TouchableOpacity
-                                style={styles.classesBtn}
-                                onPress={() => selectGroup(item_group)}
-                            >
-                                <Text style={styles.classesText}>
-                                    {item_group.name}
-                                </Text>
+                        <View style={{ ...styles.classesView, borderBottomWidth: (index == item.items.length - 1) ? 0 : 1 }} key={item_group.id}>
+                            <TouchableOpacity style={styles.classesBtn} onPress={() => selectGroup(item_group)}>
+                                <Text style={styles.classesText}> {item_group.name} </Text>
                             </TouchableOpacity>
                         </View>
                     );
@@ -124,20 +118,11 @@ const GroupsScreen = (props: Props) => {
     }
 
     return (
-        <View style={styles.container}>
-            <CheckinHeader onPress={() => openDrawer()} />
+        <View style={globalStyles.grayContainer}>
+            <WhiteHeader onPress={() => openDrawer()} />
             <SafeAreaView style={{ flex: 1 }}>
-                <FlatList
-                    data={groupTree}
-                    renderItem={({ item }) => renderGroupItem(item)}
-                    keyExtractor={(item: any) => item.key}
-                    style={styles.groupListStyle}
-                />
-                <TouchableOpacity style={styles.noneBtn} onPress={() => selectGroup(null)}>
-                    <Text style={{ ...styles.classesText, color: 'white' }}>
-                        NONE
-                    </Text>
-                </TouchableOpacity>
+                <FlatList data={groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
+                <BottomButton title='NONE' onPress={() => selectGroup(null)}/>
             </SafeAreaView>
             {isLoading && <Loader loading={isLoading} />}
         </View>
@@ -145,43 +130,9 @@ const GroupsScreen = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.gray_bg
-    },
-    groupListView: {
-        width: wp('90%'),
-        backgroundColor: 'white',
-        alignSelf: 'center',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        marginVertical: wp('2%'),
-        borderRadius: wp('2%'),
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.2,
-        shadowRadius: wp('1.5%'),
-        elevation: 5,
-        shadowColor: Colors.app_color,
-        flexDirection: 'row',
-    },
-    groupListTextView: {
-        height: wp('12%'),
-        justifyContent: 'space-evenly'
-    },
     groupListTitle: {
-        fontSize: wp('4.5%'),
-        fontFamily: Fonts.RobotoMedium,
-        color: Colors.app_color,
         marginLeft: wp('3%'),
         width: wp('65%'),
-    },
-    groupListStyle: {
-        marginVertical: wp('3%'),
-    },
-    selectionIcon: {
-        fontSize: wp('6%'),
-        color: 'gray',
-        marginLeft: wp('3%')
     },
     classesView: {
         width: wp('80%'),
@@ -204,14 +155,7 @@ const styles = StyleSheet.create({
         color: Colors.app_color,
         fontSize: wp('4.2%'),
         marginHorizontal: wp('2.5%')
-    },
-    noneBtn: {
-        width: wp('100%'),
-        height: wp('15%'),
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.button_red
-    },
+    }
 })
 
 const mapStateToProps = (state: any) => {

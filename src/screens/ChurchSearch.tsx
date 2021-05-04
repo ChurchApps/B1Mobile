@@ -21,6 +21,8 @@ import Fonts from '../utils/Fonts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSearchList } from '../redux/actions/searchListAction';
 import { connect, useSelector } from 'react-redux';
+import globalStyles from '../helper/GlobalStyles';
+import BlueHeader from '../components/BlueHeader';
 
 interface Props {
     navigation: {
@@ -81,7 +83,7 @@ const ChurchSearch = (props: Props) => {
                 setRecentList(reverseList);
             }
         } catch (err) {
-            console.log('Get Recent Search List Error-->',err)
+            console.log('GET RECENT CHURCHES ERROR',err)
         }
     }
 
@@ -93,41 +95,34 @@ const ChurchSearch = (props: Props) => {
             const churchlist = JSON.stringify(filteredItems)
             await AsyncStorage.setItem('RECENT_CHURCHES', churchlist)
         } catch (err) {
-            console.log('Store Recent Search List Error-->',err)
+            console.log('SET RECENT CHURCHES ERROR',err)
         }
     }
 
     const renderChurchItem = (item: any) => {
         const churchImage = item.settings && item.settings[0].value
         return (
-            <TouchableOpacity style={styles.churchListView} onPress={() => churchSelection(item)}>
+            <TouchableOpacity style={[globalStyles.listMainView,styles.churchListView]} onPress={() => churchSelection(item)}>
                 {
                     churchImage ? <Image source={{ uri: churchImage }} style={styles.churchListIcon} /> :
                         <Image source={Images.ic_church} style={styles.churchListIcon} />
                 }
-                <View style={styles.churchListTextView}>
-                    <Text style={styles.churchListTitle}>{item.name}</Text>
-                    {/* <Text style={styles.churchListLocation}>{item.location}</Text> */}
+                <View style={globalStyles.listTextView}>
+                    <Text style={globalStyles.listTitleText}>{item.name}</Text>
                 </View>
             </TouchableOpacity>
         );
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.headerContainer}>
-                <View style={styles.headerLogoView}>
-                    <Image source={Images.logoWhite} style={styles.mainIcon} />
-                </View>
-            </View>
-            <View style={styles.mainView}>
+        <SafeAreaView style={globalStyles.appContainer}>
+            <BlueHeader />
+            <View style={globalStyles.grayContainer}>
                 <Text style={styles.mainText}>Find Your Church</Text>
-                <View style={styles.textInputView}>
-                    <Image
-                        source={Images.ic_search}
-                        style={styles.searchIcon} />
+                <View style={globalStyles.textInputView}>
+                    <Image source={Images.ic_search} style={globalStyles.searchIcon} />
                     <TextInput
-                        style={styles.textInputStyle}
+                        style={globalStyles.textInputStyle}
                         placeholder={'Church name'}
                         autoCapitalize="none"
                         autoCorrect={false}
@@ -137,134 +132,34 @@ const ChurchSearch = (props: Props) => {
                         onChangeText={(text) => { setSearchText(text) }}
                     />
                 </View>
-                <TouchableOpacity style={styles.searchButton} onPress={() => searchApiCall(searchText)}>
-                    {loading ?
-                        <ActivityIndicator size='small' color='white' animating={loading} /> :
-                        <Text style={styles.searchText}>SEARCH</Text>
-                    }
+                <TouchableOpacity style={{...globalStyles.roundBlueButton, marginTop: wp('6%')}} onPress={() => searchApiCall(searchText)}>
+                    {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text> }
                 </TouchableOpacity>
-                {searchText == '' &&
-                    <Text style={styles.recentText}>
-                        {recentListEmpty ? 'Recent Churches' : 'Recent Churches Not Available!!'}
-                    </Text>
-                } 
-                <FlatList 
-                    data={searchText == '' ? recentList : searchList } 
-                    renderItem={({ item }) => renderChurchItem(item)} 
-                    keyExtractor={(item: any) => item.id} 
-                    style={styles.churchListStyle} 
-                />
+                { searchText == '' && <Text style={styles.recentText}> 
+                    {recentListEmpty ? 'Recent Churches' : 'Recent Churches Not Available!!'}
+                </Text> }
+                <FlatList data={searchText == '' ? recentList : searchList } renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={styles.churchListStyle} />
             </View>
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.app_color
-    },
-    mainIcon: {
-        width: wp('55%'),
-        height: wp('55%'),
-        margin: wp('5%'),
-        resizeMode: 'contain',
-        alignSelf: 'center'
-    },
-    searchIcon: {
-        width: wp('6%'),
-        height: wp('6%'),
-        margin: wp('1.5%'),
-    },
-    headerContainer: {
-        backgroundColor: Colors.gray_bg
-    },
-    headerLogoView: {
-        borderBottomLeftRadius: wp('8%'),
-        borderBottomRightRadius: wp('8%'),
-        backgroundColor: Colors.app_color,
-    },
-    mainView: {
-        flex: 1,
-        backgroundColor: Colors.gray_bg
-    },
     mainText: {
         marginHorizontal: wp('5%'),
         marginTop: wp('8%'),
         fontSize: wp('4.5%'),
         fontFamily: Fonts.RobotoLight
     },
-    textInputView: {
-        height: wp('12%'),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: wp('6%'),
-        marginHorizontal: wp('5%'),
-        backgroundColor: 'white',
-        borderRadius: wp('2%'),
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.1,
-        shadowRadius: wp('1.5%'),
-        elevation: 5,
-    },
-    textInputStyle: {
-        height: wp('10%'),
-        width: wp('80%'),
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: wp('3.8%'),
-        color: 'gray',
-    },
-    searchButton: {
-        height: wp('12%'),
-        width: wp('90%'),
-        borderRadius: wp('2%'),
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignSelf: 'center',
-        backgroundColor: Colors.button_bg,
-        marginTop: wp('6%'),
-    },
-    searchText: {
-        color: 'white',
-        fontSize: wp('3.8%'),
-        fontFamily: Fonts.RobotoMedium
-    },
     churchListView: {
         height: wp('16%'),
-        width: wp('90%'),
-        backgroundColor: 'white',
-        alignSelf: 'center',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        marginVertical: wp('2%'),
-        borderRadius: wp('2%'),
-        shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.1,
-        shadowRadius: wp('1.5%'),
-        elevation: 5,
-        shadowColor: Colors.app_color,
-        flexDirection: 'row'
     },
     churchListIcon: {
         width: wp('12%'),
         height: wp('12%'),
         marginHorizontal: wp('2.5%'),
         borderRadius: wp('1.5%')
-    },
-    churchListTextView: {
-        height: wp('12%'),
-        justifyContent: 'space-evenly'
-    },
-    churchListTitle: {
-        fontSize: wp('4.2%'),
-        fontFamily: Fonts.RobotoMedium
-    },
-    churchListLocation: {
-        fontSize: wp('3.6%'),
-        color: 'gray',
-        fontFamily: Fonts.RobotoLight
     },
     churchListStyle: {
         marginVertical: wp('2%')

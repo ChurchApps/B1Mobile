@@ -6,7 +6,6 @@ import {
     widthPercentageToDP as wp,
     heightPercentageToDP as hp 
 } from 'react-native-responsive-screen';
-import Colors from '../utils/Colors';
 
 interface Props {
     loading: any;
@@ -14,7 +13,7 @@ interface Props {
 
 const Loader = (props: Props) => {
     return (
-        <ActivityIndicator style={styles.activityStyle} size='large' animating={props.loading} />
+        <ActivityIndicator style={styles.activityStyle} size='large' color='gray' animating={props.loading} />
     );
 };
 
@@ -30,6 +29,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     }
 })
-
 
 export default Loader;

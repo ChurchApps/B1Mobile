@@ -15,7 +15,7 @@ import {
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import CheckinHeader from '../components/CheckinHeader';
+import WhiteHeader from '../components/WhiteHeader';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 import Images from '../utils/Images';
@@ -25,6 +25,8 @@ import API, { IMAGE_URL } from '../helper/ApiConstants';
 import { getToken } from '../helper/ApiHelper';
 import { submitAttendanceData } from '../redux/actions/submitAttendanceAction';
 import { loadAttendanceData } from '../redux/actions/loadAttendanceAction';
+import globalStyles from '../helper/GlobalStyles';
+import BottomButton from '../components/BottomButton';
 
 interface Props {
     navigation: {
@@ -170,11 +172,11 @@ const HouseholdScreen = (props: Props) => {
     const renderMemberItem = (item: any) => {
         return (
             <View>
-                <TouchableOpacity style={styles.memberListView} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
-                    <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={styles.selectionIcon} size={wp('6%')} />
+                <TouchableOpacity style={globalStyles.listMainView} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
+                    <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
                     <Image source={{ uri: IMAGE_URL + item.photo }} style={styles.memberListIcon} />
                     <View style={styles.memberListTextView}>
-                        <Text style={styles.memberListTitle} numberOfLines={1}>{item.name.display}</Text>
+                        <Text style={[globalStyles.listTitleText,styles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
                         {selected != item.id && item.serviceTime.map((item_time: any, index: any) => {
                             return (
                                 <View key={item_time.id}>
@@ -190,20 +192,12 @@ const HouseholdScreen = (props: Props) => {
                 </TouchableOpacity>
                 {selected == item.id && item.serviceTime && item.serviceTime.map((item_time: any, index: any) => {
                     return (
-                        <View style={{
-                            ...styles.classesView,
-                            borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1
-                        }}
-                            key={item_time.id}>
+                        <View style={{ ...styles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1 }} key={item_time.id}>
                             <View style={styles.classesTimeView}>
                                 <Icon name={'clock-o'} style={styles.timeIcon} size={wp('5%')} />
                                 <Text style={styles.classesTimeText}>{item_time.name}</Text>
                             </View>
-                            <TouchableOpacity
-                                style={{
-                                    ...styles.classesNoneBtn,
-                                    backgroundColor: item_time.selectedGroup ? Colors.button_green : Colors.button_bg
-                                }}
+                            <TouchableOpacity style={{ ...styles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Colors.button_green : Colors.button_bg }}
                                 onPress={() => item_time.selection ? null : navigate('GroupsScreen', { member: item, time: item_time, serviceId: props.route.params.serviceId })}>
                                 <Text style={styles.classesNoneText} numberOfLines={3}>
                                     {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
@@ -217,20 +211,11 @@ const HouseholdScreen = (props: Props) => {
     }
 
     return (
-        <View style={styles.container}>
-            <CheckinHeader onPress={() => openDrawer()} />
+        <View style={globalStyles.grayContainer}>
+            <WhiteHeader onPress={() => openDrawer()} />
             <SafeAreaView style={{ flex: 1 }}>
-                <FlatList
-                    data={memberList}
-                    renderItem={({ item }) => renderMemberItem(item)}
-                    keyExtractor={(item: any) => item.id}
-                    style={styles.memberListStyle}
-                />
-                <TouchableOpacity style={styles.checkinBtn} onPress={() => submitAttendance()}>
-                    <Text style={styles.checkinBtnText}>
-                        CHECKIN
-                    </Text>
-                </TouchableOpacity>
+                <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
+                <BottomButton title='CHECKIN' onPress={() => submitAttendance()}/>
             </SafeAreaView>
             {isLoading && <Loader loading={isLoading} />}
         </View>
@@ -238,25 +223,6 @@ const HouseholdScreen = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.gray_bg
-    },
-    memberListView: {
-        width: wp('90%'),
-        backgroundColor: 'white',
-        alignSelf: 'center',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        marginVertical: wp('2%'),
-        borderRadius: wp('2%'),
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.2,
-        shadowRadius: wp('1.5%'),
-        elevation: 5,
-        shadowColor: Colors.app_color,
-        flexDirection: 'row',
-    },
     memberListIcon: {
         width: wp('16%'),
         height: wp('16%'),
@@ -270,19 +236,9 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
     },
     memberListTitle: {
-        fontSize: wp('4.2%'),
-        fontFamily: Fonts.RobotoMedium,
         color: Colors.app_color,
         marginLeft: wp('2%'),
         width: wp('65%'),
-    },
-    memberListStyle: {
-        marginVertical: wp('3%'),
-    },
-    selectionIcon: {
-        fontSize: wp('6%'),
-        color: 'gray',
-        marginLeft: wp('3%')
     },
     timeIcon: {
         fontSize: wp('5%'),
@@ -331,20 +287,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: wp('3.5%'),
         textAlign: 'center'
-    },
-    checkinBtnText: {
-        color: 'white',
-        fontSize: wp('4.2%'),
-        textAlign: 'center',
-        fontFamily: Fonts.RobotoMedium,
-    },
-    checkinBtn: {
-        width: wp('100%'),
-        height: wp('15%'),
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.button_bg
-    },
+    }
 })
 
 const mapStateToProps = (state: any) => {

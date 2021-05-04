@@ -58,7 +58,7 @@ const HomeScreen = (props: Props) => {
                 rightComponent={null}
             />
             <View style={styles.webViewContainer}> 
-                <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: params && params.url && params.url }} />
+                <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: params && params.url && params.url }} scalesPageToFit={false} />
             </View>
             {isLoading && <Loader loading={isLoading}/>}
         </SafeAreaView>

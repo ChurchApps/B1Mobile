@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-    Image,
-    NativeModules, TouchableOpacity, View
-} from 'react-native';
+import { Image, NativeModules, Platform, TouchableOpacity, View } from 'react-native';
 import { StyleSheet } from 'react-native';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Colors from '../utils/Colors';
 import Images from '../utils/Images';
 const { StatusBarManager } = NativeModules;
@@ -16,7 +10,7 @@ interface Props {
     onPress: () => void;
 }
 
-const CheckinHeader = (props: Props) => {
+const WhiteHeader = (props: Props) => {
     return (
         <View style={styles.headerLogoView}>
             <Image source={Images.logoBlue} style={styles.mainIcon} />
@@ -42,7 +36,7 @@ const styles = StyleSheet.create({
         width: wp('6%'),
         height: wp('6%'),
         marginLeft: wp('5%'),
-        marginTop: StatusBarManager.HEIGHT + wp('3%')
+        marginTop: Platform.OS == 'ios' ? StatusBarManager.HEIGHT + wp('5%') : wp('5%')
     },
     mainIcon: {
         width: wp('55%'),
@@ -57,5 +51,4 @@ const styles = StyleSheet.create({
     }
 })
 
-
-export default CheckinHeader;
+export default WhiteHeader;

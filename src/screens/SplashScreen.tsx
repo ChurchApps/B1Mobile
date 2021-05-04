@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import {
     View,
-    SafeAreaView,
     Image,
     StyleSheet,
 } from 'react-native';
@@ -28,7 +27,6 @@ const SplashScreen = (props: Props) => {
         try {
             const user = await AsyncStorage.getItem('USER_DATA')
             if(user !== null) {
-                console.log("USER_DATA-->", user)
                 props.navigation.navigate('MainStack');
             } else {
                 props.navigation.navigate('AuthStack');

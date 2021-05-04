@@ -16,9 +16,10 @@ import {
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import CheckinHeader from '../components/CheckinHeader';
+import WhiteHeader from '../components/WhiteHeader';
 import Loader from '../components/Loader';
 import { createGroupTree, getPeopleIds, getToken } from '../helper/ApiHelper';
+import globalStyles from '../helper/GlobalStyles';
 import { getGroupList } from '../redux/actions/groupsListAction';
 import { getHouseholdList } from '../redux/actions/householdListAction';
 import { getMemberData } from '../redux/actions/memberDataAction';
@@ -150,22 +151,22 @@ const ServiceScreen = (props: Props) => {
     const renderGroupItem = (item: any) => {
         return (
             <View>
-                <TouchableOpacity style={styles.groupListView} onPress={() => ServiceSelection(item)}>
-                    <Text style={styles.groupListTitle} numberOfLines={1}>{item.campus.name} - {item.name}</Text>
+                <TouchableOpacity style={[globalStyles.listMainView,styles.groupListView]} onPress={() => ServiceSelection(item)}>
+                    <Text style={globalStyles.groupListTitle} numberOfLines={1}>{item.campus.name} - {item.name}</Text>
                 </TouchableOpacity>
             </View>
         );
     }
 
     return (
-        <View style={styles.container}>
-            <CheckinHeader onPress={() => openDrawer()} />
+        <View style={globalStyles.grayContainer}>
+            <WhiteHeader onPress={() => openDrawer()} />
             <SafeAreaView style={{ flex: 1 }}>
                 <FlatList
                     data={serviceList}
                     renderItem={({ item }) => renderGroupItem(item)}
                     keyExtractor={(item: any) => item.id}
-                    style={styles.groupListStyle}
+                    style={globalStyles.listContainerStyle}
                 />
             </SafeAreaView>
             {isLoading && <Loader loading={isLoading} />}
@@ -174,25 +175,9 @@ const ServiceScreen = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.gray_bg
-    },
     groupListView: {
-        width: wp('90%'),
         height: wp('15%'),
-        backgroundColor: 'white',
-        alignSelf: 'center',
         justifyContent: 'center',
-        alignItems: 'center',
-        marginVertical: wp('2%'),
-        borderRadius: wp('2%'),
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.2,
-        shadowRadius: wp('1.5%'),
-        elevation: 5,
-        shadowColor: Colors.app_color,
-        flexDirection: 'row',
     },
     groupListTextView: {
         height: wp('12%'),
@@ -200,48 +185,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignContent: 'center',
         backgroundColor: 'red'
-    },
-    groupListTitle: {
-        fontSize: wp('4.5%'),
-        fontFamily: Fonts.RobotoMedium,
-        color: Colors.app_color,
-    },
-    groupListStyle: {
-        marginVertical: wp('3%'),
-    },
-    selectionIcon: {
-        fontSize: wp('6%'),
-        color: 'gray',
-        marginLeft: wp('3%')
-    },
-    classesView: {
-        width: wp('80%'),
-        flexDirection: 'row',
-        alignSelf: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: wp('2%'),
-        paddingBottom: wp('2%'),
-        borderBottomWidth: 1,
-        borderBottomColor: 'lightgray'
-    },
-    classesBtn: {
-        width: wp('75%'),
-        height: wp('8%'),
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-    },
-    classesText: {
-        color: Colors.app_color,
-        fontSize: wp('4.2%'),
-        marginHorizontal: wp('2.5%')
-    },
-    noneBtn: {
-        width: wp('100%'),
-        height: wp('15%'),
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.button_red
     },
 })
 

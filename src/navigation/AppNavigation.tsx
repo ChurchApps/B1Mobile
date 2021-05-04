@@ -22,43 +22,20 @@ const MainStack = () => {
             initialRouteName={'HomeScreen'}
             drawerType={'slide'}
             drawerContent={(props) => <CustomDrawer {...props} />}>
-            <Drawer.Screen
-                name={'HomeScreen'}
-                component={HomeScreen}
-            />
-            <Drawer.Screen
-                name={'ChurchSearch'}
-                component={ChurchSearch}
-            />
-            <Drawer.Screen 
-                name={'ServiceScreen'}
-                component={ServiceScreen}
-            />
-            <Drawer.Screen 
-                name={'HouseholdScreen'}
-                component={HouseholdScreen}
-            />
-            <Drawer.Screen 
-                name={'GroupsScreen'}
-                component={GroupsScreen}
-            />
-            <Drawer.Screen 
-                name={'CheckinCompleteScreen'}
-                component={CheckinCompleteScreen}
-            />
+            <Drawer.Screen name={'HomeScreen'} component={HomeScreen} />
+            <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
+            <Drawer.Screen name={'ServiceScreen'} component={ServiceScreen} />
+            <Drawer.Screen name={'HouseholdScreen'} component={HouseholdScreen} />
+            <Drawer.Screen name={'GroupsScreen'} component={GroupsScreen}/>
+            <Drawer.Screen name={'CheckinCompleteScreen'} component={CheckinCompleteScreen} />
         </Drawer.Navigator>
     );
 }
 
 const AuthStack = () => {
     return (
-        <AuthNav.Navigator
-            headerMode="none"
-            initialRouteName={'LoginScreen'}>
-            <AuthNav.Screen 
-                name={'LoginScreen'}
-                component={LoginScreen}
-            />
+        <AuthNav.Navigator headerMode="none" initialRouteName={'LoginScreen'}>
+            <AuthNav.Screen name={'LoginScreen'} component={LoginScreen} />
         </AuthNav.Navigator>
     );
 }

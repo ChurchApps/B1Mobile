@@ -20,6 +20,8 @@ import Icon from 'react-native-vector-icons/Fontisto';
 import { getLoginData } from '../redux/actions/loginAction';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import globalStyles from '../helper/GlobalStyles';
+import BlueHeader from '../components/BlueHeader';
 
 interface Props {
     navigation: {
@@ -78,18 +80,14 @@ const LoginScreen = (props: Props) => {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.headerContainer}>
-                <View style={styles.headerLogoView}>
-                    <Image source={Images.logoWhite} style={styles.mainIcon} />
-                </View>
-            </View>
-            <View style={styles.mainView}>
+        <SafeAreaView style={globalStyles.appContainer}>
+            <BlueHeader />
+            <View style={globalStyles.grayContainer}>
                 <Text style={styles.mainText}>Welcome, Please Login.</Text>
-                <View style={styles.textInputView}>
+                <View style={globalStyles.textInputView}>
                     <Icon name={'email'} color={Colors.app_color} style={styles.inputIcon} size={wp('4.5%')} />
                     <TextInput
-                        style={styles.textInputStyle}
+                        style={globalStyles.textInputStyle}
                         placeholder={'Email'}
                         autoCapitalize="none"
                         autoCorrect={false}
@@ -99,24 +97,25 @@ const LoginScreen = (props: Props) => {
                         onChangeText={(text) => { setEmail(text) }}
                     />
                 </View>
-                <View style={styles.textInputView}>
+                <View style={globalStyles.textInputView}>
                     <Icon name={'key'} color={Colors.app_color} style={styles.inputIcon} size={wp('4.5%')} />
                     <TextInput
-                        style={styles.textInputStyle}
+                        style={globalStyles.textInputStyle}
                         placeholder={'Password'}
                         autoCapitalize="none"
                         autoCorrect={false}
                         keyboardType='default'
                         placeholderTextColor={'lightgray'}
+                        secureTextEntry={true}
                         value={password}
                         onChangeText={(text) => { setPassword(text) }}
                     />
                 </View>
 
-                <TouchableOpacity style={styles.loginButton} onPress={() => { validateDetails() && loginApiCall()}}>
+                <TouchableOpacity style={globalStyles.roundBlueButton} onPress={() => { validateDetails() && loginApiCall()}}>
                     {loading ?
                         <ActivityIndicator size='small' color='white' animating={loading} /> :
-                        <Text style={styles.loginText}>LOGIN</Text>
+                        <Text style={globalStyles.roundBlueButtonText}>LOGIN</Text>
                     }
                 </TouchableOpacity>
             </View>
@@ -125,33 +124,10 @@ const LoginScreen = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Colors.app_color
-    },
-    mainIcon: {
-        width: wp('55%'),
-        height: wp('55%'),
-        margin: wp('5%'),
-        resizeMode: 'contain',
-        alignSelf: 'center'
-    },
     inputIcon: {
         width: wp('4.5%'),
         height: wp('4.5%'),
         margin: wp('3%'),
-    },
-    headerContainer: {
-        backgroundColor: Colors.gray_bg
-    },
-    headerLogoView: {
-        borderBottomLeftRadius: wp('8%'),
-        borderBottomRightRadius: wp('8%'),
-        backgroundColor: Colors.app_color,
-    },
-    mainView: {
-        flex: 1,
-        backgroundColor: Colors.gray_bg
     },
     mainText: {
         marginHorizontal: wp('5%'),
@@ -159,43 +135,6 @@ const styles = StyleSheet.create({
         fontSize: wp('4.8%'),
         fontFamily: Fonts.RobotoMedium
     },
-    textInputView: {
-        height: wp('12%'),
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: wp('5%'),
-        marginHorizontal: wp('5%'),
-        backgroundColor: 'white',
-        borderRadius: wp('2%'),
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.1,
-        shadowRadius: wp('1.5%'),
-        elevation: 5,
-    },
-    textInputStyle: {
-        height: wp('10%'),
-        width: wp('80%'),
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: wp('3.8%'),
-        color: 'gray',
-    },
-    loginButton: {
-        height: wp('12%'),
-        width: wp('90%'),
-        borderRadius: wp('2%'),
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignSelf: 'center',
-        backgroundColor: Colors.button_bg,
-        marginTop: wp('8%'),
-    },
-    loginText: {
-        color: 'white',
-        fontSize: wp('3.8%'),
-        fontFamily: Fonts.RobotoMedium
-    }
 })
 
 const mapStateToProps = (state: any) => {
