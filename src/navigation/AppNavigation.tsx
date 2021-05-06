@@ -18,10 +18,7 @@ const Drawer = createDrawerNavigator();
 
 const MainStack = () => {
     return (
-        <Drawer.Navigator
-            initialRouteName={'HomeScreen'}
-            drawerType={'slide'}
-            drawerContent={(props) => <CustomDrawer {...props} />}>
+        <Drawer.Navigator initialRouteName={'HomeScreen'} drawerType={'slide'} drawerContent={(props) => <CustomDrawer {...props} />}>
             <Drawer.Screen name={'HomeScreen'} component={HomeScreen} />
             <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
             <Drawer.Screen name={'ServiceScreen'} component={ServiceScreen} />

@@ -1,14 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import {
-    View,
-    Image,
-    StyleSheet,
-} from 'react-native';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
+import { View, Image } from 'react-native';
+import globalStyles from '../helper/GlobalStyles';
 import Images from '../utils/Images';
 
 interface Props {
@@ -36,22 +29,10 @@ const SplashScreen = (props: Props) => {
         }
     }
     return (
-        <View style={styles.mainView}>
-            <Image source={Images.splash_screen} style={styles.splashImage} />
+        <View style={globalStyles.safeAreaContainer}>
+            <Image source={Images.splash_screen} style={globalStyles.splashImage} />
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    mainView:{
-        flex:1, 
-        justifyContent:'center', 
-        alignItems:'center'
-    },
-    splashImage:{
-        width: wp('100%'),
-        height: hp('100%'),
-    },
-})
 
 export default SplashScreen;

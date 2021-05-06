@@ -1,19 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    View,
-} from 'react-native';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
+import { SafeAreaView, Text, View } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import WhiteHeader from '../components/WhiteHeader';
 import globalStyles from '../helper/GlobalStyles';
-import Colors from '../utils/Colors';
-import Fonts from '../utils/Fonts';
 
 interface Props {
     navigation: {
@@ -44,32 +34,12 @@ const CheckinCompleteScreen = (props: Props) => {
     return (
         <View style={globalStyles.grayContainer}>
             <WhiteHeader onPress={() => openDrawer()} />
-            <SafeAreaView style={styles.safeAreaContainer}>
-                <Icon name={'check-circle'} style={styles.successIcon} size={wp('20%')} />
-                <Text style={styles.successText}>
-                    Checkin Complete.
-                </Text>
+            <SafeAreaView style={globalStyles.safeAreaContainer}>
+                <Icon name={'check-circle'} style={globalStyles.successIcon} size={wp('20%')} />
+                <Text style={globalStyles.successText}>Checkin Complete.</Text>
             </SafeAreaView>
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    safeAreaContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        flex: 1
-    },
-    successIcon: {
-        fontSize: wp('20%'),
-        color: Colors.button_green,
-    },
-    successText: {
-        fontFamily: Fonts.RobotoLight,
-        fontSize: wp('5%'),
-        color: 'black',
-        marginVertical: wp('5%'),
-    }
-})
 
 export default CheckinCompleteScreen;

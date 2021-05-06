@@ -1,21 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import {
-    View,
-    SafeAreaView,
-    Image,
-    StyleSheet,
-    Text,
-    ActivityIndicator,
-    Alert,
-} from 'react-native';
-import { FlatList, TextInput, TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
-import Images from '../utils/Images';
+import { View, SafeAreaView, Text, ActivityIndicator, Alert } from 'react-native';
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Colors from '../utils/Colors';
-import Fonts from '../utils/Fonts';
 import Icon from 'react-native-vector-icons/Fontisto';
 import { getLoginData } from '../redux/actions/loginAction';
 import { connect } from 'react-redux';
@@ -83,9 +70,9 @@ const LoginScreen = (props: Props) => {
         <SafeAreaView style={globalStyles.appContainer}>
             <BlueHeader />
             <View style={globalStyles.grayContainer}>
-                <Text style={styles.mainText}>Welcome, Please Login.</Text>
+                <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
                 <View style={globalStyles.textInputView}>
-                    <Icon name={'email'} color={Colors.app_color} style={styles.inputIcon} size={wp('4.5%')} />
+                    <Icon name={'email'} color={Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
                     <TextInput
                         style={globalStyles.textInputStyle}
                         placeholder={'Email'}
@@ -98,7 +85,7 @@ const LoginScreen = (props: Props) => {
                     />
                 </View>
                 <View style={globalStyles.textInputView}>
-                    <Icon name={'key'} color={Colors.app_color} style={styles.inputIcon} size={wp('4.5%')} />
+                    <Icon name={'key'} color={Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
                     <TextInput
                         style={globalStyles.textInputStyle}
                         placeholder={'Password'}
@@ -122,20 +109,6 @@ const LoginScreen = (props: Props) => {
         </SafeAreaView>
     );
 };
-
-const styles = StyleSheet.create({
-    inputIcon: {
-        width: wp('4.5%'),
-        height: wp('4.5%'),
-        margin: wp('3%'),
-    },
-    mainText: {
-        marginHorizontal: wp('5%'),
-        marginTop: wp('8%'),
-        fontSize: wp('4.8%'),
-        fontFamily: Fonts.RobotoMedium
-    },
-})
 
 const mapStateToProps = (state: any) => {
     return {

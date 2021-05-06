@@ -1,20 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import {
-    Alert,
-    Image,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { Alert, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import WhiteHeader from '../components/WhiteHeader';
 import Loader from '../components/Loader';
@@ -25,9 +12,6 @@ import { getHouseholdList } from '../redux/actions/householdListAction';
 import { getMemberData } from '../redux/actions/memberDataAction';
 import { getServicesData } from '../redux/actions/servicesAction';
 import { getServicesTimeData } from '../redux/actions/servicesTimeAction';
-import Colors from '../utils/Colors';
-import Fonts from '../utils/Fonts';
-import Images from '../utils/Images';
 
 interface Props {
     navigation: {
@@ -44,7 +28,6 @@ interface Props {
 
 const ServiceScreen = (props: Props) => {
     const { goBack, openDrawer } = props.navigation;
-    const [selected, setSelected] = useState(null);
     const [isLoading, setLoading] = useState(false);
     const [serviceList, setServiceList] = useState([]);
 
@@ -151,7 +134,7 @@ const ServiceScreen = (props: Props) => {
     const renderGroupItem = (item: any) => {
         return (
             <View>
-                <TouchableOpacity style={[globalStyles.listMainView,styles.groupListView]} onPress={() => ServiceSelection(item)}>
+                <TouchableOpacity style={[globalStyles.listMainView, globalStyles.groupListView]} onPress={() => ServiceSelection(item)}>
                     <Text style={globalStyles.groupListTitle} numberOfLines={1}>{item.campus.name} - {item.name}</Text>
                 </TouchableOpacity>
             </View>
@@ -173,20 +156,6 @@ const ServiceScreen = (props: Props) => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    groupListView: {
-        height: wp('15%'),
-        justifyContent: 'center',
-    },
-    groupListTextView: {
-        height: wp('12%'),
-        justifyContent: 'center',
-        alignItems: 'center',
-        alignContent: 'center',
-        backgroundColor: 'red'
-    },
-})
 
 const mapStateToProps = (state: any) => {
     return {

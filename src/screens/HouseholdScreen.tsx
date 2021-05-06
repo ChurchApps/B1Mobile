@@ -1,27 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Alert,
-    Image,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import WhiteHeader from '../components/WhiteHeader';
 import Colors from '../utils/Colors';
-import Fonts from '../utils/Fonts';
-import Images from '../utils/Images';
 import Loader from '../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import API, { IMAGE_URL } from '../helper/ApiConstants';
+import API from '../helper/ApiConstants';
 import { getToken } from '../helper/ApiHelper';
 import { submitAttendanceData } from '../redux/actions/submitAttendanceAction';
 import { loadAttendanceData } from '../redux/actions/loadAttendanceAction';
@@ -174,14 +161,14 @@ const HouseholdScreen = (props: Props) => {
             <View>
                 <TouchableOpacity style={globalStyles.listMainView} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
                     <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
-                    <Image source={{ uri: IMAGE_URL + item.photo }} style={styles.memberListIcon} />
-                    <View style={styles.memberListTextView}>
-                        <Text style={[globalStyles.listTitleText,styles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
+                    <Image source={{ uri: API.IMAGE_URL + item.photo }} style={globalStyles.memberListIcon} />
+                    <View style={globalStyles.memberListTextView}>
+                        <Text style={[globalStyles.listTitleText,globalStyles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
                         {selected != item.id && item.serviceTime.map((item_time: any, index: any) => {
                             return (
                                 <View key={item_time.id}>
                                     {item_time.selectedGroup ?
-                                        <Text style={styles.selectedText} numberOfLines={1}>
+                                        <Text style={globalStyles.selectedText} numberOfLines={1}>
                                             {item_time.name}{" - "}{item_time.selectedGroup.name}
                                         </Text>
                                         : null}
@@ -192,14 +179,14 @@ const HouseholdScreen = (props: Props) => {
                 </TouchableOpacity>
                 {selected == item.id && item.serviceTime && item.serviceTime.map((item_time: any, index: any) => {
                     return (
-                        <View style={{ ...styles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1 }} key={item_time.id}>
-                            <View style={styles.classesTimeView}>
-                                <Icon name={'clock-o'} style={styles.timeIcon} size={wp('5%')} />
-                                <Text style={styles.classesTimeText}>{item_time.name}</Text>
+                        <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1 }} key={item_time.id}>
+                            <View style={globalStyles.classesTimeView}>
+                                <Icon name={'clock-o'} style={globalStyles.timeIcon} size={wp('5%')} />
+                                <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
                             </View>
-                            <TouchableOpacity style={{ ...styles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Colors.button_green : Colors.button_bg }}
+                            <TouchableOpacity style={{ ...globalStyles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Colors.button_green : Colors.button_bg }}
                                 onPress={() => item_time.selection ? null : navigate('GroupsScreen', { member: item, time: item_time, serviceId: props.route.params.serviceId })}>
-                                <Text style={styles.classesNoneText} numberOfLines={3}>
+                                <Text style={globalStyles.classesNoneText} numberOfLines={3}>
                                     {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
                                 </Text>
                             </TouchableOpacity>
@@ -221,74 +208,6 @@ const HouseholdScreen = (props: Props) => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    memberListIcon: {
-        width: wp('16%'),
-        height: wp('16%'),
-        marginHorizontal: wp('2%'),
-        marginVertical: wp('2%'),
-        borderRadius: wp('1.5%')
-    },
-    memberListTextView: {
-        width: wp('62%'),
-        marginVertical: wp('2%'),
-        justifyContent: 'space-evenly',
-    },
-    memberListTitle: {
-        color: Colors.app_color,
-        marginLeft: wp('2%'),
-        width: wp('65%'),
-    },
-    timeIcon: {
-        fontSize: wp('5%'),
-        color: Colors.app_color,
-        marginHorizontal: wp('1%')
-    },
-    classesView: {
-        width: wp('90%'),
-        flexDirection: 'row',
-        alignSelf: 'center',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: wp('2%'),
-        paddingBottom: wp('2%'),
-        borderBottomWidth: 1,
-        borderBottomColor: 'lightgray'
-    },
-    classesNoneBtn: {
-        width: wp('55%'),
-        height: wp('16%'),
-        marginHorizontal: wp('2%'),
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: wp('2%'),
-    },
-    classesTimeView: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    classesTimeText: {
-        textAlign: 'center',
-        fontSize: wp('3.7%'),
-        color: Colors.app_color,
-    },
-    selectedText: {
-        width: wp('62%'),
-        textAlign: 'left',
-        fontSize: wp('3.4%'),
-        color: Colors.button_green,
-        marginLeft: wp('2%'),
-        marginVertical: wp('0.5%'),
-    },
-    classesNoneText: {
-        width: wp('50%'),
-        color: 'white',
-        fontSize: wp('3.5%'),
-        textAlign: 'center'
-    }
-})
 
 const mapStateToProps = (state: any) => {
     return {

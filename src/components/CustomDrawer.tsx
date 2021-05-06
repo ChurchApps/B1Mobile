@@ -1,31 +1,14 @@
-import React, { useState, useEffect, useReducer } from 'react';
-import {
-    View,
-    Text,
-    SafeAreaView,
-    TouchableOpacity,
-    Image,
-    FlatList,
-    Alert,
-    ActivityIndicator,
-    DevSettings
-} from 'react-native';
-import { StyleSheet } from 'react-native';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
-import { ScrollView } from 'react-native-gesture-handler';
-import MainHeader from './MainHeader';
+import React, { useState, useEffect } from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, DevSettings } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Images from '../utils/Images';
-import Fonts from '../utils/Fonts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { getDrawerList } from '../redux/actions/drawerItemsAction';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { getMemberData } from '../redux/actions/memberDataAction';
 import { getToken } from '../helper/ApiHelper';
-import { IMAGE_URL } from '../helper/ApiConstants';
+import API from '../helper/ApiConstants';
 import globalStyles from '../helper/GlobalStyles';
 
 // interface Props {
@@ -137,25 +120,25 @@ const CustomDrawer = (props: any) => {
     const listItem = (topItem: boolean, item: any) => {
         var tab_icon = item.icon != undefined ? item.icon.slice(7) : '';
         return (
-            <TouchableOpacity style={styles.headerView} onPress={() => navigateToScreen(item)}>
-                {topItem ? <Image source={item.image} style={styles.tabIcon} /> :
-                    <Icon name={tab_icon} color={'black'} style={styles.tabIcon} size={wp('6%')} />}
-                <Text style={styles.tabTitle}>{item.text}</Text>
+            <TouchableOpacity style={globalStyles.headerView} onPress={() => navigateToScreen(item)}>
+                {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
+                    <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('6%')} />}
+                <Text style={globalStyles.tabTitle}>{item.text}</Text>
             </TouchableOpacity>
         );
     }
 
     return (
         <SafeAreaView>
-            <View style={styles.headerView}>
-                <Image source={{ uri: IMAGE_URL + userProfile }} style={styles.userIcon} />
-                <Text style={styles.userNameText}>{user != null ? user.displayName : ''}</Text>
+            <View style={globalStyles.headerView}>
+                <Image source={{ uri: API.IMAGE_URL + userProfile }} style={globalStyles.userIcon} />
+                <Text style={globalStyles.userNameText}>{user != null ? user.displayName : ''}</Text>
             </View>
             <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
 
-            <TouchableOpacity style={styles.churchContainer} onPress={() => navigate('ChurchSearch', {})}>
+            <TouchableOpacity style={globalStyles.churchBtn} onPress={() => navigate('ChurchSearch', {})}>
                 {churchEmpty && <Image source={Images.ic_search} style={globalStyles.searchIcon} />}
-                <Text style={{ ...styles.churchText, color: churchEmpty ? 'gray' : 'black' }}>
+                <Text style={{ ...globalStyles.churchText, color: churchEmpty ? 'gray' : 'black' }}>
                     {churchEmpty ? 'Find your church...' : churchName}
                 </Text>
             </TouchableOpacity>
@@ -164,62 +147,13 @@ const CustomDrawer = (props: any) => {
                 loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
                     <FlatList data={drawerList} renderItem={({ item }) => listItem(false, item)} keyExtractor={(item: any) => item.id} />
             }
-            <TouchableOpacity style={styles.logoutBtn} onPress={() => logoutAction()}>
+            <TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
                 <Text>Log out</Text>
             </TouchableOpacity>
         </SafeAreaView>
 
     );
 };
-
-
-const styles = StyleSheet.create({
-    userIcon: {
-        width: wp('10%'),
-        height: wp('10%'),
-        margin: wp('4%'),
-        borderRadius: wp('5%')
-    },
-    headerView: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center'
-    },
-    userNameText: {
-        fontSize: wp('3.8%'),
-        fontFamily: Fonts.RobotoRegular
-    },
-    tabIcon: {
-        width: wp('6%'),
-        height: wp('6%'),
-        marginVertical: wp('2%'),
-        marginHorizontal: wp('4%'),
-    },
-    tabTitle: {
-        fontSize: wp('4%'),
-        fontFamily: Fonts.RobotoRegular
-    },
-    churchContainer: {
-        borderBottomColor: 'lightgray',
-        borderBottomWidth: 1,
-        marginHorizontal: wp('4%'),
-        marginTop: wp('6%'),
-        marginBottom: wp('2%'),
-        borderRadius: wp('1.5%'),
-        flexDirection: 'row',
-        alignItems: 'center'
-    },
-    churchText: {
-        fontSize: wp('3.7%'),
-        paddingVertical: wp('1.5%'),
-        fontFamily: Fonts.RobotoRegular,
-        marginHorizontal: wp('1%'),
-    },
-    logoutBtn: {
-        marginTop: wp('10%'),
-        marginLeft: wp('5%')
-    }
-})
 
 const mapStateToProps = (state: any) => {
     return {

@@ -1,29 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import {
-    Alert,
-    Image,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import {
-    widthPercentageToDP as wp,
-    heightPercentageToDP as hp
-} from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import WhiteHeader from '../components/WhiteHeader';
-import Loader from '../components/Loader';
-import { createGroupTree, getToken } from '../helper/ApiHelper';
 import globalStyles from '../helper/GlobalStyles';
 import { getGroupList } from '../redux/actions/groupsListAction';
-import Colors from '../utils/Colors';
-import Fonts from '../utils/Fonts';
-import Images from '../utils/Images';
 import BottomButton from '../components/BottomButton';
 
 interface Props {
@@ -45,7 +29,6 @@ interface Props {
 const GroupsScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const [selected, setSelected] = useState(null);
-    const [isLoading, setLoading] = useState(false);
     const [groupTree, setGroupTree] = useState<any[]>([]);
     const [memberList, setMemberList] = useState([]);
 
@@ -101,14 +84,14 @@ const GroupsScreen = (props: Props) => {
                 <TouchableOpacity style={globalStyles.listMainView} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
                     <Icon name={selected == item.key ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
                     <View style={globalStyles.listTextView}>
-                        <Text style={[globalStyles.groupListTitle,styles.groupListTitle]} numberOfLines={1}>{item.name}</Text>
+                        <Text style={[globalStyles.groupListTitle,globalStyles.groupMainTitle]} numberOfLines={1}>{item.name}</Text>
                     </View>
                 </TouchableOpacity>
                 {selected == item.key && item.items.map((item_group: any, index: any) => {
                     return (
-                        <View style={{ ...styles.classesView, borderBottomWidth: (index == item.items.length - 1) ? 0 : 1 }} key={item_group.id}>
-                            <TouchableOpacity style={styles.classesBtn} onPress={() => selectGroup(item_group)}>
-                                <Text style={styles.classesText}> {item_group.name} </Text>
+                        <View style={{ ...globalStyles.groupView, borderBottomWidth: (index == item.items.length - 1) ? 0 : 1 }} key={item_group.id}>
+                            <TouchableOpacity style={globalStyles.groupBtn} onPress={() => selectGroup(item_group)}>
+                                <Text style={globalStyles.groupText}> {item_group.name} </Text>
                             </TouchableOpacity>
                         </View>
                     );
@@ -124,39 +107,9 @@ const GroupsScreen = (props: Props) => {
                 <FlatList data={groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
                 <BottomButton title='NONE' onPress={() => selectGroup(null)}/>
             </SafeAreaView>
-            {isLoading && <Loader loading={isLoading} />}
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    groupListTitle: {
-        marginLeft: wp('3%'),
-        width: wp('65%'),
-    },
-    classesView: {
-        width: wp('80%'),
-        flexDirection: 'row',
-        alignSelf: 'center',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: wp('2%'),
-        paddingBottom: wp('2%'),
-        borderBottomWidth: 1,
-        borderBottomColor: 'lightgray'
-    },
-    classesBtn: {
-        width: wp('75%'),
-        height: wp('8%'),
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-    },
-    classesText: {
-        color: Colors.app_color,
-        fontSize: wp('4.2%'),
-        marginHorizontal: wp('2.5%')
-    }
-})
 
 const mapStateToProps = (state: any) => {
     return {
