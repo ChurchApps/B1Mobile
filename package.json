@@ -1,44 +1,64 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
+  "name": "B1App",
+  "version": "0.0.1",
+  "private": true,
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
-    "eject": "expo eject"
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
-    "@expo-google-fonts/roboto": "^0.1.0",
-    "@expo/vector-icons": "^12.0.2",
-    "@react-native-async-storage/async-storage": "^1.13.2",
-    "@react-native-community/hooks": "^2.6.0",
-    "@react-native-community/masked-view": "0.1.10",
-    "@react-navigation/drawer": "^5.11.4",
-    "@react-navigation/native": "^5.8.10",
-    "@react-navigation/stack": "^5.12.8",
-    "expo": "~40.0.0",
-    "expo-app-loading": "^1.0.1",
-    "expo-status-bar": "~1.0.3",
-    "native-base": "^2.15.0",
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
-    "react-native-gesture-handler": "~1.8.0",
-    "react-native-material-ripple": "^0.9.1",
-    "react-native-reanimated": "~1.13.0",
-    "react-native-safe-area-context": "3.1.9",
-    "react-native-screens": "~2.15.0",
-    "react-native-web": "~0.13.12",
-    "react-native-webview": "^11.0.2",
-    "react-navigation": "^4.4.3"
+    "@react-native-async-storage/async-storage": "^1.15.1",
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/drawer": "^5.12.4",
+    "@react-navigation/native": "^5.9.3",
+    "@react-navigation/stack": "^5.14.3",
+    "@types/react-native-vector-icons": "^6.4.6",
+    "@types/react-redux": "^7.1.16",
+    "@types/redux-logger": "^3.0.8",
+    "axios": "^0.21.1",
+    "react": "17.0.1",
+    "react-native": "0.64.0",
+    "react-native-gesture-handler": "^1.10.3",
+    "react-native-reanimated": "^1.13.2",
+    "react-native-responsive-screen": "^1.4.2",
+    "react-native-safe-area-context": "^3.2.0",
+    "react-native-screens": "^2.18.1",
+    "react-native-vector-icons": "^8.1.0",
+    "react-native-webview": "^11.3.1",
+    "react-redux": "^7.2.3",
+    "redux": "^4.0.5",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@types/react": "~16.9.35",
-    "@types/react-dom": "~16.9.8",
-    "@types/react-native": "^0.63.43",
-    "@types/react-native-material-ripple": "^0.9.1",
-    "typescript": "~4.0.0"
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "@types/jest": "^26.0.20",
+    "@types/react-native": "^0.63.51",
+    "@types/react-test-renderer": "^16.9.2",
+    "babel-jest": "^26.6.3",
+    "eslint": "^7.14.0",
+    "jest": "^26.6.3",
+    "metro-react-native-babel-preset": "^0.64.0",
+    "react-test-renderer": "17.0.1",
+    "typescript": "^3.8.3"
   },
-  "private": true
+  "resolutions": {
+    "@types/react": "^17"
+  },
+  "jest": {
+    "preset": "react-native",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  }
 }

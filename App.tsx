@@ -1,26 +1,23 @@
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { Login, Splash, StackScreens } from "./app/screens";
-import { createStackNavigator } from "@react-navigation/stack"
-import { DrawerContainer } from "./app/screens/DrawerContainer";
-import { EnvironmentHelper } from "./app/helpers";
+import React from 'react';
+import AppNavigator from './src/navigation/AppNavigation';
+import { View } from 'react-native';
+import { applyMiddleware, createStore } from 'redux';
+import Reducers from './src/redux/reducers/Reducers';
+import thunk from 'redux-thunk';
+import logger from 'redux-logger';
+import { Provider } from 'react-redux';
 
-export default function App() {
+const App = () => {
 
-  const StackNav = createStackNavigator<StackScreens>();
-
-  EnvironmentHelper.init();
-  const getStack = () => {
-    return (<StackNav.Navigator screenOptions={{ headerShown: false, animationEnabled: false }} >
-      <StackNav.Screen name="Splash" component={Splash} />
-      <StackNav.Screen name="Login" component={Login} />
-      <StackNav.Screen name="Home" component={DrawerContainer} />
-    </StackNav.Navigator>);
-  }
+  const store = createStore(Reducers, applyMiddleware(thunk, logger))
 
   return (
-    <NavigationContainer>
-      {getStack()}
-    </NavigationContainer>
+    <Provider store={store}>
+      <View style={{ flex: 1 }}>
+        <AppNavigator />
+      </View>
+    </Provider>
   );
-}
+};
+
+export default App;
