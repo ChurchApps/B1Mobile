@@ -10,6 +10,7 @@ import ServiceTime from './servicesTimeReducer';
 import GroupList from './groupsListReducers';
 import LoadAttendance from './loadAttendanceReducers';
 import SubmitAttendance from './submitAttendanceReducers';
+import MembersList from './membersListReducers';
 
 const Reducers = combineReducers({
     searchlist: SearchList,
@@ -21,7 +22,8 @@ const Reducers = combineReducers({
     services_time: ServiceTime,
     group_list: GroupList,
     load_attendance: LoadAttendance,
-    submit_attendance: SubmitAttendance
+    submit_attendance: SubmitAttendance,
+    members_list: MembersList
 })
 
 export default Reducers;
