@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Image, Text } from 'react-native';
-import { ScrollView, } from 'react-native-gesture-handler';
+import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
+import { ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
 import globalStyles from '../helper/GlobalStyles';
 import BlueHeader from '../components/BlueHeader';
 import API from '../helper/ApiConstants';
-
+import Icon from 'react-native-vector-icons/Zocial';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { widthPercentageToDP as wp} from 'react-native-responsive-screen';
+import Colors from '../utils/Colors';
 interface Props {
     navigation: {
         navigate: (screenName: string) => void;
@@ -23,9 +26,36 @@ interface Props {
 const MemberDetailScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const member = props.route.params.member;
+    const memberinfo = member.contactInfo;
 
-    useEffect(() => {}, [])
+    useEffect(() => {
+    }, [])
 
+    const onEmailClick = (email: string) => {
+        if (email) {
+            Linking.openURL(`mailto:${email}`)
+        } else {
+            Alert.alert("Sorry", 'Email of this user is not available.');
+        }
+    }
+
+    const onPhoneClick = (phone: any) => {
+        if (phone) {
+            Linking.openURL(`tel:${phone}`)
+        } else {
+            Alert.alert("Sorry", 'Phone number of this user is not available.');
+        }
+    }
+
+    const onAddressClick = () => {
+        if (memberinfo.address1) {
+            Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${memberinfo.address1}`);
+        } else {
+            Alert.alert("Sorry", 'Address of this user is not available.');
+        }
+    }
+    
+    
     return (
         <SafeAreaView style={globalStyles.appContainer}>
             <BlueHeader />
@@ -36,20 +66,31 @@ const MemberDetailScreen = (props: Props) => {
                 }
                 <Text style={globalStyles.memberName}>{member.name.display}</Text>
                 
-                <View style={globalStyles.memberDetailContainer}>
-                    <Text style={globalStyles.detailHeader}>Email :</Text>
-                    <Text style={globalStyles.detailValue}>{member.contactInfo.email ? member.contactInfo.email : '-'}</Text>
-                </View>
+                <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onEmailClick(memberinfo.email)}>
+                    <View style={globalStyles.detailIconContainer}>
+                        <Icon name={'email'} color={Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+                        <Text style={globalStyles.detailHeader}>Email :</Text>
+                    </View>
+                    <Text style={globalStyles.detailValue}>{memberinfo.email ? memberinfo.email : '-'}</Text>
+                </TouchableOpacity>
 
-                <View style={globalStyles.memberDetailContainer}>
-                    <Text style={globalStyles.detailHeader}>Phone :</Text>
-                    <Text style={globalStyles.detailValue}>{member.contactInfo.homePhone ? member.contactInfo.homePhone : '-'}</Text>
-                </View>
+                <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onPhoneClick(memberinfo.homePhone)}>
+                    <View style={globalStyles.detailIconContainer}>
+                        <FontAwesome5 name={'phone-alt'} color={Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+                        <Text style={globalStyles.detailHeader}>Phone :</Text>
+                    </View>
+                    <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
+                </TouchableOpacity>
 
-                <View style={globalStyles.memberDetailContainer}>
-                    <Text style={globalStyles.detailHeader}>Address :</Text>
-                    <Text style={globalStyles.detailValue}>{member.contactInfo.address1 ? member.contactInfo.address1 : '-'}</Text>
-                </View>
+                <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onAddressClick()}>
+                    <View style={globalStyles.detailIconContainer}>
+                        <FontAwesome5 name={'location-arrow'} color={Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+                        <Text style={globalStyles.detailHeader}>Address :</Text>
+                    </View>
+                    {memberinfo.address1 ? <Text style={globalStyles.detailValue}>{memberinfo.address1}</Text> : null}
+                    {memberinfo.address2 ? <Text style={globalStyles.detailValue}>{memberinfo.address2}</Text> : null}
+                    <Text style={globalStyles.detailValue}>{memberinfo.city ? memberinfo.city + ',' : ''} {memberinfo.state ? memberinfo.state + '-' : ''} {memberinfo.zip}</Text>
+                </TouchableOpacity>
                 
                 <Text style={[globalStyles.searchMainText, {alignSelf: 'center'}]}>- Household Members -</Text>
             </ScrollView>

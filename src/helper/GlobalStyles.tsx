@@ -69,7 +69,9 @@ const globalStyles = StyleSheet.create({
     memberIcon: { width: wp('25%'), height: wp('25%'), borderRadius: wp('12.5%'), alignSelf: 'center', marginTop: wp('8%') },
     memberName: { marginHorizontal: wp('5%'), marginBottom: wp('2%'), fontSize: wp('4.8%'), fontFamily: Fonts.RobotoRegular, alignSelf: 'center', marginTop: wp('4%') },
     memberDetailContainer: { marginHorizontal: wp('5%'),  marginVertical: wp('2%'), backgroundColor: 'white', shadowColor: Colors.app_color, shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.15, shadowRadius: wp('1%'), elevation: 3, borderRadius: wp('1.5%')},
-    detailHeader: { marginHorizontal: wp('5%'), marginVertical: wp('2%'), fontSize: wp('3.9%'), fontFamily: Fonts.RobotoLight },
+    detailHeader: { marginVertical: wp('2%'), fontSize: wp('3.9%'), fontFamily: Fonts.RobotoLight },
+    detailIcon: { width: wp('4.8%'), height: wp('4.8%'), margin: wp('3%'), marginTop: wp('2.5%'), marginLeft: wp('5%')},
+    detailIconContainer: {flexDirection: 'row', alignItems:'center'},
     detailValue: { marginHorizontal: wp('5%'), marginBottom: wp('2%'), fontSize: wp('4.4%'), fontFamily: Fonts.RobotoRegular },
 
     //BlueLogo
