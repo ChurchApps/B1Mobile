@@ -63,11 +63,8 @@ const MembersSearch = (props: Props) => {
 
     const renderMemberItem = (item: any) => {
         return (
-            <TouchableOpacity style={[globalStyles.listMainView,globalStyles.listMainView]} onPress={() => {navigate('MemberDetailScreen', { member: item })}}>
-                {
-                    item.photo ? <Image source={{ uri: API.IMAGE_URL + item.photo }} style={globalStyles.memberListIcon} /> :
-                        <Image source={Images.ic_member} style={globalStyles.memberListIcon} />
-                }
+            <TouchableOpacity style={globalStyles.listMainView} onPress={() => {navigate('MemberDetailScreen', { member: item })}}>
+                <Image source={item.photo ? { uri: API.IMAGE_URL + item.photo } : Images.ic_member} style={globalStyles.memberListIcon} /> 
                 <View style={globalStyles.listTextView}>
                     <Text style={globalStyles.listTitleText}>{item.name.display}</Text>
                 </View>

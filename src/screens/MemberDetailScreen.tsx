@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
-import { ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
+import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
 import globalStyles from '../helper/GlobalStyles';
 import BlueHeader from '../components/BlueHeader';
@@ -9,27 +9,35 @@ import Icon from 'react-native-vector-icons/Zocial';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Colors from '../utils/Colors';
+import { connect } from 'react-redux';
+import { getHouseholdList } from '../redux/actions/householdListAction';
+import { getToken } from '../helper/ApiHelper';
+import Loader from '../components/Loader';
+
 interface Props {
     navigation: {
         navigate: (screenName: string) => void;
         goBack: () => void;
         openDrawer: () => void;
     };
-    getAllMembersList: (token: any, callback: any) => void;
     route: {
         params:{
             member: any,
         }
     };
+    getHouseholdListApi: (householdId: any, token: any, callback: any) => void;
 }
 
 const MemberDetailScreen = (props: Props) => {
     const { navigate, goBack, openDrawer } = props.navigation;
     const member = props.route.params.member;
     const memberinfo = member.contactInfo;
+    const [isLoading, setLoading] = useState(false);
+    const [householdList, setHouseholdList] = useState([]);
 
     useEffect(() => {
-    }, [])
+        getHouseholdMembersList();
+    }, [props.route.params])
 
     const onEmailClick = (email: string) => {
         if (email) {
@@ -54,16 +62,38 @@ const MemberDetailScreen = (props: Props) => {
             Alert.alert("Sorry", 'Address of this user is not available.');
         }
     }
+
+    const getHouseholdMembersList = async() => {
+        setLoading(true);
+        const householdId = member.householdId;
+        const token = await getToken('default');
+        props.getHouseholdListApi(householdId, token, (err: any, res: any) => {
+            setLoading(false);
+            if (!err) {
+                if (res.data) { setHouseholdList(res.data) }
+            } else {
+                Alert.alert("Alert", err.message);
+            }
+        });
+    }
+
+    const renderMemberItem = (item: any) => {
+        return (
+            <View style={globalStyles.listMainView}>
+                <Image source={item.photo ? { uri: API.IMAGE_URL + item.photo } : Images.ic_member} style={globalStyles.memberListIcon} /> 
+                <View style={globalStyles.listTextView}>
+                    <Text style={globalStyles.listTitleText} numberOfLines={1}>{item.name.display}</Text>
+                </View>
+            </View>
+        );
+    }
     
     
     return (
         <SafeAreaView style={globalStyles.appContainer}>
             <BlueHeader />
             <ScrollView style={globalStyles.grayContainer}>
-                {
-                    member.photo ? <Image source={{ uri: API.IMAGE_URL + member.photo }} style={globalStyles.memberIcon} /> :
-                        <Image source={Images.ic_member} style={globalStyles.memberIcon} />
-                }
+                    <Image source={member.photo ? { uri: API.IMAGE_URL + member.photo } : Images.ic_member} style={globalStyles.memberIcon} /> 
                 <Text style={globalStyles.memberName}>{member.name.display}</Text>
                 
                 <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onEmailClick(memberinfo.email)}>
@@ -93,9 +123,22 @@ const MemberDetailScreen = (props: Props) => {
                 </TouchableOpacity>
                 
                 <Text style={[globalStyles.searchMainText, {alignSelf: 'center'}]}>- Household Members -</Text>
+                <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
             </ScrollView>
+            {isLoading && <Loader loading={isLoading} />}
         </SafeAreaView>
     );
 };
 
-export default MemberDetailScreen;
+const mapStateToProps = (state: any) => {
+    return {
+        household_list: state.household_list,
+    };
+};
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        getHouseholdListApi: (householdId: any, token: any, callback: any) => dispatch(getHouseholdList(householdId, token, callback)),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MemberDetailScreen);
