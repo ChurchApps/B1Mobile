@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
@@ -16,7 +16,7 @@ import Loader from '../components/Loader';
 
 interface Props {
     navigation: {
-        navigate: (screenName: string) => void;
+        navigate: (screenName: string, params: any) => void;
         goBack: () => void;
         openDrawer: () => void;
     };
@@ -34,6 +34,7 @@ const MemberDetailScreen = (props: Props) => {
     const memberinfo = member.contactInfo;
     const [isLoading, setLoading] = useState(false);
     const [householdList, setHouseholdList] = useState([]);
+    const scrollViewRef = useRef<any>();
 
     useEffect(() => {
         getHouseholdMembersList();
@@ -77,14 +78,19 @@ const MemberDetailScreen = (props: Props) => {
         });
     }
 
+    const onMembersClick = (item: any) => {
+        scrollViewRef.current.scrollTo({y: 0, animated: false})
+        navigate('MemberDetailScreen', { member: item })
+    }
+
     const renderMemberItem = (item: any) => {
         return (
-            <View style={globalStyles.listMainView}>
+            <TouchableOpacity style={globalStyles.listMainView} onPress={() => onMembersClick(item)}>
                 <Image source={item.photo ? { uri: API.IMAGE_URL + item.photo } : Images.ic_member} style={globalStyles.memberListIcon} /> 
                 <View style={globalStyles.listTextView}>
                     <Text style={globalStyles.listTitleText} numberOfLines={1}>{item.name.display}</Text>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     }
     
@@ -92,7 +98,7 @@ const MemberDetailScreen = (props: Props) => {
     return (
         <SafeAreaView style={globalStyles.appContainer}>
             <BlueHeader />
-            <ScrollView style={globalStyles.grayContainer}>
+            <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
                     <Image source={member.photo ? { uri: API.IMAGE_URL + member.photo } : Images.ic_member} style={globalStyles.memberIcon} /> 
                 <Text style={globalStyles.memberName}>{member.name.display}</Text>
                 
