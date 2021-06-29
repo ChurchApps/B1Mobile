@@ -20,7 +20,7 @@ interface Props {
 const LoginScreen = (props: Props) => {
     const { navigate } = props.navigation;
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState('test@b1.church');
+    const [email, setEmail] = useState('rdavis@chums.org');
     const [password, setPassword] = useState('password');
 
     useEffect(() => {

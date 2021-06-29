@@ -11,6 +11,8 @@ import HouseholdScreen from '../screens/HouseholdScreen';
 import GroupsScreen from '../screens/GroupsScreen';
 import CheckinCompleteScreen from '../screens/CheckinCompleteScreen';
 import ServiceScreen from '../screens/ServiceScreen';
+import MembersSearch from '../screens/MembersSearch';
+import MemberDetailScreen from '../screens/MemberDetailScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -21,6 +23,8 @@ const MainStack = () => {
         <Drawer.Navigator initialRouteName={'HomeScreen'} drawerType={'slide'} drawerContent={(props) => <CustomDrawer {...props} />}>
             <Drawer.Screen name={'HomeScreen'} component={HomeScreen} />
             <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
+            <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />
+            <Drawer.Screen name={'MemberDetailScreen'} component={MemberDetailScreen}/>
             <Drawer.Screen name={'ServiceScreen'} component={ServiceScreen} />
             <Drawer.Screen name={'HouseholdScreen'} component={HouseholdScreen} />
             <Drawer.Screen name={'GroupsScreen'} component={GroupsScreen}/>

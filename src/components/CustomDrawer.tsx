@@ -39,6 +39,10 @@ const CustomDrawer = (props: any) => {
         id: 2,
         text: 'Preferences',
         image: Images.ic_preferences
+    }, {
+        id: 3,
+        text: 'Members',
+        image: Images.ic_groups
     }];
 
     useEffect(() => {
@@ -69,6 +73,9 @@ const CustomDrawer = (props: any) => {
         } else {
             if (item.url && item.url != '') {
                 navigate('HomeScreen', { url: item.url, title: item.text })
+            }
+            if (item.text == 'Members') {
+                navigate('MembersSearch')
             }
         }
     }
