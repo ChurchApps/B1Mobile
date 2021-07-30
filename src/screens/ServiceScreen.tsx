@@ -20,7 +20,7 @@ interface Props {
         openDrawer: () => void;
     };
     getServicesDataApi: (token: any, callback: any) => void;
-    getMemberDataApi: (userId: any, token: any, callback: any) => void;
+    getMemberDataApi: (personId: any, token: any, callback: any) => void;
     getHouseholdListApi: (householdId: any, token: any, callback: any) => void;
     getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => void;
     getGroupListApi: (token: any, callback: any) => void;
@@ -59,10 +59,12 @@ const ServiceScreen = (props: Props) => {
 
     const getMemberData = async (serviceId: any) => {
         const token = await getToken('default')
-        const user = await AsyncStorage.getItem('USER_DATA')
-        if (token !== null && user !== null) {
-            const userId = JSON.parse(user).id
-            props.getMemberDataApi(userId, token, (err: any, res: any) => {
+        const member_token = await getToken("MembershipApi")
+        const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+        if (token !== null && churchvalue !== null && member_token != null) {
+            const churchData = JSON.parse(churchvalue);
+            const personId = churchData.personId
+            props.getMemberDataApi(personId, member_token, (err: any, res: any) => {
                 if (!err) {
                     if (res.data && res.data.householdId) {
                         getHouseholdList(serviceId, res.data.householdId, token)
@@ -169,7 +171,7 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         getServicesDataApi: (token: any, callback: any) => dispatch(getServicesData(token, callback)),
-        getMemberDataApi: (userId: any, token: any, callback: any) => dispatch(getMemberData(userId, token, callback)),
+        getMemberDataApi: (personId: any, token: any, callback: any) => dispatch(getMemberData(personId, token, callback)),
         getHouseholdListApi: (householdId: any, token: any, callback: any) => dispatch(getHouseholdList(householdId, token, callback)),
         getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => dispatch(getServicesTimeData(serviceId, token, callback)),
         getGroupListApi: (token: any, callback: any) => dispatch(getGroupList(token, callback)),

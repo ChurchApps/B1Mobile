@@ -27,7 +27,7 @@ const CustomDrawer = (props: any) => {
     const [churchEmpty, setChurchEmpty] = useState(true);
     const [drawerList, setDrawerList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState({ displayName: '' });
+    const [user, setUser] = useState({email:"",firstName:"",lastName:"",id:""});
     const [userProfile, setUserProfile] = useState('');
 
     const menuList = [{
@@ -43,6 +43,10 @@ const CustomDrawer = (props: any) => {
         id: 3,
         text: 'Members',
         image: Images.ic_groups
+    }, {
+        id: 4,
+        text: 'Donate',
+        image: Images.ic_give
     }];
 
     useEffect(() => {
@@ -52,14 +56,17 @@ const CustomDrawer = (props: any) => {
     const getChurch = async () => {
         try {
             const user = await AsyncStorage.getItem('USER_DATA')
-            if (user !== null) { setUser(JSON.parse(user)) }
+            if (user !== null) { 
+                setUser(JSON.parse(user)) 
+            }
             const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
             if (churchvalue !== null) {
                 const churchData = JSON.parse(churchvalue);
+                const personId = churchData.personId
                 setChurchName(churchData.name)
                 setChurchEmpty(false)
                 getDrawerList(churchData.id);
-                getMemberData();
+                getMemberData(personId);
             }
 
         } catch (e) {
@@ -76,6 +83,9 @@ const CustomDrawer = (props: any) => {
             }
             if (item.text == 'Members') {
                 navigate('MembersSearch')
+            }
+            if (item.text == 'Donate') {
+                navigate('DonationScreen')
             }
         }
     }
@@ -101,12 +111,10 @@ const CustomDrawer = (props: any) => {
         });
     }
 
-    const getMemberData = async () => {
-        const token = await getToken('default')
-        const user = await AsyncStorage.getItem('USER_DATA')
-        if (token !== null && user !== null) {
-            const userId = JSON.parse(user).id
-            props.getMemberDataApi(userId, token, (err: any, res: any) => {
+    const getMemberData = async (personId: any) => {
+        const token = await getToken("MembershipApi")
+        if (token !== null) {
+            props.getMemberDataApi(personId, token, (err: any, res: any) => {
                 if (!err) {
                     if (res.data) {
                         setUserProfile(res.data.photo)
@@ -139,7 +147,7 @@ const CustomDrawer = (props: any) => {
         <SafeAreaView>
             <View style={globalStyles.headerView}>
                 <Image source={{ uri: API.IMAGE_URL + userProfile }} style={globalStyles.userIcon} />
-                <Text style={globalStyles.userNameText}>{user != null ? user.displayName : ''}</Text>
+                <Text style={globalStyles.userNameText}>{user != null ? user.firstName + ' ' + user.lastName : ''}</Text>
             </View>
             <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
 
@@ -172,7 +180,7 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         getDrawerItemList: (churchId: any, callback: any) => dispatch(getDrawerList(churchId, callback)),
-        getMemberDataApi: (userId: any, token: any, callback: any) => dispatch(getMemberData(userId, token, callback)),
+        getMemberDataApi: (personId: any, token: any, callback: any) => dispatch(getMemberData(personId, token, callback)),
     }
 }
 
