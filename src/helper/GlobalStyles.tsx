@@ -16,7 +16,7 @@ const globalStyles = StyleSheet.create({
     listTitleText: { fontSize: wp('4.2%'), fontFamily: Fonts.RobotoMedium },
     listMainView: { width: wp('90%'), backgroundColor: 'white', alignSelf: 'center', justifyContent: 'flex-start', alignItems: 'center', marginVertical: wp('2%'), borderRadius: wp('2%'), shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.2, shadowRadius: wp('1.5%'), elevation: 5, shadowColor: Colors.app_color, flexDirection: 'row' },
     listContainerStyle: { marginVertical: wp('3%') },
-    selectionIcon: { fontSize: wp('6%'), color: 'gray', marginLeft: wp('3%') },
+    selectionIcon: { color: 'gray', marginLeft: wp('3%') },
     groupListTitle: { fontSize: wp('4.5%'), fontFamily: Fonts.RobotoMedium, color: Colors.app_color },
     safeAreaContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
@@ -110,15 +110,15 @@ const globalStyles = StyleSheet.create({
     dropDownMainStyle: { borderColor: 'lightgray', borderWidth: 1 },
     dropDownStyle: { backgroundColor: 'lightgray', width: wp('90%'), borderColor: 'gray', elevation: 999, zIndex: 10 },
     itemStyle: { justifyContent: 'flex-start', borderBottomWidth: 1, borderColor: 'gray', height: wp('11.5%'), paddingLeft: wp('2%') },
-    labelStyle: { fontSize: wp('3.8%') },
+    labelStyle: { fontSize: wp('4.2%') },
     containerStyle: { height: wp('10%'), width: wp('90%'), marginHorizontal: wp('5%'), marginTop: wp('2%') },
     containerStyleAndroid: { height: wp('10%'), width: wp('86%'), marginHorizontal: wp('5%') },
     dropDownContainer: { height: wp('14%'), flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: wp('5%'), borderRadius: wp('3%'), borderColor: 'lightgray', borderWidth: 1 },
-    methodContainer: { flexDirection: 'row', width: wp('90%'), justifyContent: 'space-between', alignSelf: 'center', marginTop: wp('4%') },
+    methodContainer: { flexDirection: 'row', width: wp('90%'), justifyContent: 'space-between', alignSelf: 'center', marginVertical: wp('4%') },
     methodButton: { backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', marginVertical: wp('2%'), borderRadius: wp('2%'), shadowOffset: { width: 0, height: 0 }, elevation: 5, shadowColor: Colors.app_color, flexDirection: 'row', height: wp('15%'), width: wp('42.5%'), justifyContent: 'center', shadowOpacity: 0.3, shadowRadius: wp('2%') },
     methodBtnText: { fontFamily: Fonts.RobotoMedium, color: Colors.app_color, width: wp('40%'), textAlign: 'center', fontSize: wp('4.2%') },
     fundView: { width: wp('100%'), flexDirection: 'row', justifyContent: 'space-between' },
-    fundInput: { height: wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
+    fundInput: { fontSize: wp('4.2%'), height: wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
     dateInput: { borderWidth: 1, marginHorizontal: wp('5%'), paddingHorizontal: wp('2%'), borderColor: 'lightgray', borderRadius: wp('2%'), height: wp('12%'), marginTop: wp('2%'), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1, alignSelf: 'stretch' },
     dateText: { width: wp('65%'), fontSize: wp('3.8%') },
     notesInputView: { height: wp('20%'), alignItems: 'center', justifyContent: 'center', fontSize: wp('4.2%'), borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), margin: wp('5%'), textAlignVertical: "top" },
@@ -137,7 +137,20 @@ const globalStyles = StyleSheet.create({
     closeIcon: { color: 'gray', alignSelf: 'center' },
     popupBottomContainer: { flexDirection: 'row', justifyContent: 'space-evenly', marginTop: wp('5%') },
     popupButton: { height: wp('12%'), justifyContent: 'center', borderRadius: wp('1.5%') },
-    popupButonText: { textAlign: 'center', color: 'white', fontSize: wp('4.7%'), fontFamily: Fonts.RobotoMedium, paddingHorizontal: wp('3%') }
+    popupButonText: { textAlign: 'center', color: 'white', fontSize: wp('4.7%'), fontFamily: Fonts.RobotoMedium, paddingHorizontal: wp('3%') },
+
+    cardListView: { width: wp('90%'), flexDirection: 'row', justifyContent: 'space-between', marginVertical: wp('5%'), alignSelf: 'center' },
+    cardListText: { width: wp('80%'), fontSize: wp('4.2%'), textAlign: 'left', fontFamily: Fonts.RobotoRegular, alignSelf: 'center' },
+    cardListSeperator: { height: 0.5, width: wp('100%'), backgroundColor: 'lightgray' },
+
+    paymentTitleContainer: { backgroundColor: 'white', borderRadius: wp('3.5%'), justifyContent: 'space-between', marginVertical: wp('5%'), shadowOffset: { width: 0, height: 0 }, elevation: 5, shadowColor: Colors.app_color, shadowOpacity: 0.1, shadowRadius: wp('2%') },
+    paymentDetailText: { width: wp('90%'), fontSize: wp('4.2%'), textAlign: 'left', fontFamily: Fonts.RobotoRegular, alignSelf: 'center', marginVertical: wp('4%') },
+    paymentTitleHeaderLine: { height: wp('1.5%'), width: wp('100%'), backgroundColor: Colors.app_color, alignSelf: 'center' },
+    paymentTitleView: { flexDirection: 'row', height: wp('12%'), justifyContent: 'space-between', borderBottomColor: 'gray', borderBottomWidth: 1, alignItems: 'center', paddingHorizontal: wp('5%') },
+    paymentTitleText: { fontSize: wp('4.5%'), textAlign: 'left', fontFamily: Fonts.RobotoMedium, width: wp('70%') },
+    methodModalText: { color: 'black', fontSize: wp('4%') },
+    donationIcon: { width: wp('7%'), height: wp('7%') }
+
 })
 
 export default globalStyles;

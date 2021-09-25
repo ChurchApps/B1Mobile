@@ -15,6 +15,9 @@ const FundDropDown = (props: any) => {
         { label: 'Month(s)', value: 'Months' },
         { label: 'Week(s)', value: 'Weeks' }
     ]);
+    const [acHolderType, setAcHolderType] = useState([
+        { label: 'Individual', value: 'Individual' }
+    ]);
 
     const setFundTypeValues = (id: number, type: any) => {
         const tempFundList = [...props.fundList];
@@ -35,7 +38,7 @@ const FundDropDown = (props: any) => {
 
     const getHeight = () => {
         if (openFundDropDown) {
-            return props.type == 'funds' ? itemsType.length * wp('16%') : intervalType.length * wp('16%')
+            return props.type == 'funds' ? props.type == 'interval' ? itemsType.length * wp('16%') : intervalType.length * wp('16%') : acHolderType.length * wp('16%')
         } else {
             return 0
         }
@@ -44,17 +47,17 @@ const FundDropDown = (props: any) => {
     return (
         <DropDownPicker
             listMode="SCROLLVIEW"
-            items={props.type == 'funds' ? itemsType : intervalType}
+            items={props.type == 'funds' ? props.type == 'interval' ? itemsType : intervalType : acHolderType}
             open={openFundDropDown}
             setOpen={setOpenFundDropDown}
             value={valueType}
             setValue={setValueType}
             onChangeValue={(value) => setFundTypeValues}
-            containerStyle={{ ...globalStyles.containerStyle, width: wp('40%'), height: getHeight() }}
+            containerStyle={{ ...globalStyles.containerStyle, width: props.type == 'funds' ? wp('40%') : wp('90%'), height: getHeight() }}
             style={{ ...globalStyles.dropDownMainStyle, height: wp('12%') }}
             labelStyle={globalStyles.labelStyle}
             listItemContainerStyle={globalStyles.itemStyle}
-            dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp('40%') }}
+            dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: props.type == 'funds' ? wp('40%') : wp('90%') }}
             scrollViewProps={{ nestedScrollEnabled: true }}
         />
     );
