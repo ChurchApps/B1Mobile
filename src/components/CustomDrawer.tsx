@@ -59,7 +59,7 @@ const CustomDrawer = (props: any) => {
                 setChurchName(churchData.name)
                 setChurchEmpty(false)
                 getDrawerList(churchData.id);
-                getMemberData();
+                getMemberData(churchData.personId);
             }
 
         } catch (e) {
@@ -101,22 +101,20 @@ const CustomDrawer = (props: any) => {
         });
     }
 
-    const getMemberData = async () => {
-        const token = await getToken('MembershipApi')
-        const church = await AsyncStorage.getItem('CHURCH_DATA')
-        if (token !== null && church !== null) {
-            const personId = JSON.parse(church).personId
-            props.getMemberDataApi(personId, token, (err: any, res: any) => {
-                if (!err) {
-                    if (res.data) {
-                        setUserProfile(res.data.photo)
-                    }
-                } else {
-                    Alert.alert("Alert", err.message);
-                }
-            });
-        }
-    }
+    const getMemberData = async (personId: any) => {
+      const token = await getToken("MembershipApi")
+      if (token !== null) {
+          props.getMemberDataApi(personId, token, (err: any, res: any) => {
+              if (!err) {
+                  if (res.data) {
+                      setUserProfile(res.data.photo)
+                  }
+              } else {
+                  Alert.alert("Alert", err.message);
+              }
+          });
+      }
+  }
 
     const logoutAction = async () => {
         await AsyncStorage.getAllKeys()
