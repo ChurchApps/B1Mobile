@@ -395,7 +395,7 @@ const DonationScreen = (props: Props) => {
                                 <Icon name={index == 0 ? 'credit-card-alt' : 'bank'} style={{ color: Colors.button_green, marginHorizontal: wp('4%') }} size={wp('6%')} />
                                 <Text style={{ fontSize: wp('4.8%'), fontFamily: Fonts.RobotoRegular, textAlign: 'center', paddingVertical: wp('2%') }}>{item}</Text>
                             </TouchableOpacity>}
-                        keyExtractor={(item: any) => item.last4}
+                        keyExtractor={(item: any) => item}
                         ItemSeparatorComponent={({ item }) => <View style={globalStyles.cardListSeperator} />}
                     />
                 </DialogContent>
