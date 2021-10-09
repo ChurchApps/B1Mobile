@@ -27,7 +27,7 @@ const CustomDrawer = (props: any) => {
     const [churchEmpty, setChurchEmpty] = useState(true);
     const [drawerList, setDrawerList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState({ displayName: '' });
+    const [user, setUser] = useState<any>(null);
     const [userProfile, setUserProfile] = useState('');
 
     const menuList = [{
@@ -102,11 +102,11 @@ const CustomDrawer = (props: any) => {
     }
 
     const getMemberData = async () => {
-        const token = await getToken('default')
-        const user = await AsyncStorage.getItem('USER_DATA')
-        if (token !== null && user !== null) {
-            const userId = JSON.parse(user).id
-            props.getMemberDataApi(userId, token, (err: any, res: any) => {
+        const token = await getToken('MembershipApi')
+        const church = await AsyncStorage.getItem('CHURCH_DATA')
+        if (token !== null && church !== null) {
+            const personId = JSON.parse(church).personId
+            props.getMemberDataApi(personId, token, (err: any, res: any) => {
                 if (!err) {
                     if (res.data) {
                         setUserProfile(res.data.photo)
@@ -139,7 +139,7 @@ const CustomDrawer = (props: any) => {
         <SafeAreaView>
             <View style={globalStyles.headerView}>
                 <Image source={{ uri: API.IMAGE_URL + userProfile }} style={globalStyles.userIcon} />
-                <Text style={globalStyles.userNameText}>{user != null ? user.displayName : ''}</Text>
+                <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
             </View>
             <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
 
