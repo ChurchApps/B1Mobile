@@ -13,6 +13,7 @@ import CheckinCompleteScreen from '../screens/CheckinCompleteScreen';
 import ServiceScreen from '../screens/ServiceScreen';
 import MembersSearch from '../screens/MembersSearch';
 import MemberDetailScreen from '../screens/MemberDetailScreen';
+import DonationScreen from '../screens/DonationScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -29,6 +30,7 @@ const MainStack = () => {
             <Drawer.Screen name={'HouseholdScreen'} component={HouseholdScreen} />
             <Drawer.Screen name={'GroupsScreen'} component={GroupsScreen}/>
             <Drawer.Screen name={'CheckinCompleteScreen'} component={CheckinCompleteScreen} />
+            <Drawer.Screen name={'DonationScreen'} component={DonationScreen} />
         </Drawer.Navigator>
     );
 }

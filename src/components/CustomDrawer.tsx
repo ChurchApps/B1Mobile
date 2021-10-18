@@ -43,6 +43,10 @@ const CustomDrawer = (props: any) => {
         id: 3,
         text: 'Members',
         image: Images.ic_groups
+    }, {
+        id: 4,
+        text: 'Donate',
+        image: Images.ic_give
     }];
 
     useEffect(() => {
@@ -52,7 +56,9 @@ const CustomDrawer = (props: any) => {
     const getChurch = async () => {
         try {
             const user = await AsyncStorage.getItem('USER_DATA')
-            if (user !== null) { setUser(JSON.parse(user)) }
+            if (user !== null) { 
+                setUser(JSON.parse(user)) 
+            }
             const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
             if (churchvalue !== null) {
                 const churchData = JSON.parse(churchvalue);
@@ -76,6 +82,9 @@ const CustomDrawer = (props: any) => {
             }
             if (item.text == 'Members') {
                 navigate('MembersSearch')
+            }
+            if (item.text == 'Donate') {
+                navigate('DonationScreen')
             }
         }
     }
@@ -170,7 +179,7 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: any) => {
     return {
         getDrawerItemList: (churchId: any, callback: any) => dispatch(getDrawerList(churchId, callback)),
-        getMemberDataApi: (userId: any, token: any, callback: any) => dispatch(getMemberData(userId, token, callback)),
+        getMemberDataApi: (personId: any, token: any, callback: any) => dispatch(getMemberData(personId, token, callback)),
     }
 }
 
