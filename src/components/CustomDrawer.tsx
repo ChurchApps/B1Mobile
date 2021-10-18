@@ -27,7 +27,7 @@ const CustomDrawer = (props: any) => {
     const [churchEmpty, setChurchEmpty] = useState(true);
     const [drawerList, setDrawerList] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState({email:"",firstName:"",lastName:"",id:""});
+    const [user, setUser] = useState<any>(null);
     const [userProfile, setUserProfile] = useState('');
 
     const menuList = [{
@@ -62,11 +62,10 @@ const CustomDrawer = (props: any) => {
             const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
             if (churchvalue !== null) {
                 const churchData = JSON.parse(churchvalue);
-                const personId = churchData.personId
                 setChurchName(churchData.name)
                 setChurchEmpty(false)
                 getDrawerList(churchData.id);
-                getMemberData(personId);
+                getMemberData(churchData.personId);
             }
 
         } catch (e) {
@@ -112,19 +111,19 @@ const CustomDrawer = (props: any) => {
     }
 
     const getMemberData = async (personId: any) => {
-        const token = await getToken("MembershipApi")
-        if (token !== null) {
-            props.getMemberDataApi(personId, token, (err: any, res: any) => {
-                if (!err) {
-                    if (res.data) {
-                        setUserProfile(res.data.photo)
-                    }
-                } else {
-                    Alert.alert("Alert", err.message);
-                }
-            });
-        }
-    }
+      const token = await getToken("MembershipApi")
+      if (token !== null) {
+          props.getMemberDataApi(personId, token, (err: any, res: any) => {
+              if (!err) {
+                  if (res.data) {
+                      setUserProfile(res.data.photo)
+                  }
+              } else {
+                  Alert.alert("Alert", err.message);
+              }
+          });
+      }
+  }
 
     const logoutAction = async () => {
         await AsyncStorage.getAllKeys()
@@ -147,7 +146,7 @@ const CustomDrawer = (props: any) => {
         <SafeAreaView>
             <View style={globalStyles.headerView}>
                 <Image source={{ uri: API.IMAGE_URL + userProfile }} style={globalStyles.userIcon} />
-                <Text style={globalStyles.userNameText}>{user != null ? user.firstName + ' ' + user.lastName : ''}</Text>
+                <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
             </View>
             <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
 
