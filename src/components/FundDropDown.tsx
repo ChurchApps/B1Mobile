@@ -3,7 +3,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import globalStyles from '../helper/GlobalStyles';
 
-const FundDropDown = (props: any) => {
+export function FundDropDown(props: any) {
     const [openFundDropDown, setOpenFundDropDown] = useState(false);
     const [valueType, setValueType] = useState(null);
     const [itemsType, setItemsType] = useState([
@@ -62,5 +62,3 @@ const FundDropDown = (props: any) => {
         />
     );
 };
-
-export default FundDropDown;

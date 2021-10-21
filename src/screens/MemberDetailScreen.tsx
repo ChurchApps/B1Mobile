@@ -3,7 +3,7 @@ import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
 import globalStyles from '../helper/GlobalStyles';
-import BlueHeader from '../components/BlueHeader';
+import { BlueHeader, Loader } from '../components';
 import API from '../helper/ApiConstants';
 import Icon from 'react-native-vector-icons/Zocial';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -12,7 +12,6 @@ import Colors from '../utils/Colors';
 import { connect } from 'react-redux';
 import { getHouseholdList } from '../redux/actions/householdListAction';
 import { getToken } from '../helper/ApiHelper';
-import Loader from '../components/Loader';
 
 interface Props {
     navigation: {
@@ -131,7 +130,7 @@ const MemberDetailScreen = (props: Props) => {
                 <Text style={[globalStyles.searchMainText, {alignSelf: 'center'}]}>- Household Members -</Text>
                 <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
             </ScrollView>
-            {isLoading && <Loader loading={isLoading} />}
+            {isLoading && <Loader isLoading={isLoading} />}
         </SafeAreaView>
     );
 };

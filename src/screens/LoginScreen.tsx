@@ -8,7 +8,7 @@ import { getLoginData } from '../redux/actions/loginAction';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalStyles from '../helper/GlobalStyles';
-import BlueHeader from '../components/BlueHeader';
+import { BlueHeader } from '../components';
 
 interface Props {
     navigation: {
@@ -20,8 +20,8 @@ interface Props {
 const LoginScreen = (props: Props) => {
     const { navigate } = props.navigation;
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState('rdavis@chums.org');
-    const [password, setPassword] = useState('password');
+    const [email, setEmail] = useState('b1.user03@yopmail.com');
+    const [password, setPassword] = useState('65lZdqw3UEM');
 
     useEffect(() => {
 

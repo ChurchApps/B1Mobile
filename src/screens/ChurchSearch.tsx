@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSearchList } from '../redux/actions/searchListAction';
 import { connect } from 'react-redux';
 import globalStyles from '../helper/GlobalStyles';
-import BlueHeader from '../components/BlueHeader';
+import { BlueHeader } from '../components';
 
 interface Props {
     navigation: {

@@ -1,9 +1,9 @@
-import React from 'react';
+import * as React from 'react';
 import { Image, View } from 'react-native';
 import globalStyles from '../helper/GlobalStyles';
 import Images from '../utils/Images';
 
-const BlueHeader = (props: {}) => {
+export function BlueHeader(){
     return (
         <View style={globalStyles.headerContainer}>
             <View style={globalStyles.blueLogoView}>
@@ -12,5 +12,3 @@ const BlueHeader = (props: {}) => {
         </View>
     );
 };
-
-export default BlueHeader;

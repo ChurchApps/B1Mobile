@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import SplashScreen from '../screens/SplashScreen';
 import HomeScreen from '../screens/HomeScreen';
-import CustomDrawer from '../components/CustomDrawer';
+import { CustomDrawer } from '../components';
 import ChurchSearch from '../screens/ChurchSearch';
 import LoginScreen from '../screens/LoginScreen';
 import HouseholdScreen from '../screens/HouseholdScreen';

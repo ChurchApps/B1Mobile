@@ -21,7 +21,7 @@ import globalStyles from '../helper/GlobalStyles';
 //     getDrawerItemList: (churchId: String, callback: any) => void;
 // }
 
-const CustomDrawer = (props: any) => {
+function Drawer(props: any) {
     const { navigate, goBack, openDrawer } = props.navigation;
     const [churchName, setChurchName] = useState('');
     const [churchEmpty, setChurchEmpty] = useState(true);
@@ -183,4 +183,4 @@ const mapDispatchToProps = (dispatch: any) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(CustomDrawer);
+export const CustomDrawer = connect(mapStateToProps, mapDispatchToProps)(Drawer);
