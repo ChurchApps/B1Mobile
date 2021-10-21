@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Image, Text, TextInput, Alert } from 'react-native';
+import { View, SafeAreaView, Image, Text, TextInput } from 'react-native';
 import { TouchableOpacity, ScrollView, FlatList } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
-import MainHeader from '../components/MainHeader';
-import Loader from '../components/Loader';
 import globalStyles from '../helper/GlobalStyles';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Colors from '../utils/Colors';
@@ -12,7 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { ModalDatePicker } from "react-native-material-date-picker";
 import moment from 'moment';
-import FundDropDown from '../components/FundDropDown';
+import { FundDropDown, Loader, MainHeader } from '../components';
 import Dialog, {
     DialogContent,
     ScaleAnimation,
@@ -382,7 +380,7 @@ const DonationScreen = (props: Props) => {
                 {TitleComponent('Donate')}
                 {TitleComponent('Donations')}
             </ScrollView>
-            {isLoading && <Loader loading={isLoading} />}
+            {isLoading && <Loader isLoading={isLoading} />}
 
             {/* Select Method Popup */}
             <Dialog onTouchOutside={() => setMethodModal(false)} width={0.5} visible={selectMethodModal} dialogAnimation={new ScaleAnimation()}>
