@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { View } from 'react-native';
 import globalStyles from '../helper/GlobalStyles';
 
@@ -8,14 +8,12 @@ interface Props {
     rightComponent: any;
 }
 
-const MainHeader = (props: Props) => {
+export function MainHeader({ leftComponent, mainComponent, rightComponent }: Props) {
     return (
         <View style={globalStyles.headerViewStyle}>
-            <View style={[globalStyles.componentStyle, { flex: 2.1, justifyContent: 'flex-start' }]}>{props.leftComponent}</View>
-            <View style={[globalStyles.componentStyle, { flex: 5.5 }]}>{props.mainComponent}</View>
-            <View style={[globalStyles.componentStyle, { flex: 2, justifyContent: 'flex-end' }]}>{props.rightComponent}</View>
+            <View style={[globalStyles.componentStyle, { flex: 2.1, justifyContent: 'flex-start' }]}>{leftComponent}</View>
+            <View style={[globalStyles.componentStyle, { flex: 5.5 }]}>{mainComponent}</View>
+            <View style={[globalStyles.componentStyle, { flex: 2, justifyContent: 'flex-end' }]}>{rightComponent}</View>
         </View>
     );
 };
-
-export default MainHeader;

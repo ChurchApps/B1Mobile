@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
-import MainHeader from '../components/MainHeader';
 import WebView from 'react-native-webview';
-import Loader from '../components/Loader';
+import { Loader, MainHeader } from '../components';
 import globalStyles from '../helper/GlobalStyles';
 
 interface Props {
@@ -48,7 +47,7 @@ const HomeScreen = (props: Props) => {
             <View style={globalStyles.webViewContainer}> 
                 <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: params && params.url && params.url }} scalesPageToFit={false} />
             </View>
-            {isLoading && <Loader loading={isLoading}/>}
+            {isLoading && <Loader isLoading={isLoading}/>}
         </SafeAreaView>
     );
 };

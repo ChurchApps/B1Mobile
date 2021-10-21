@@ -1,14 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import WhiteHeader from '../components/WhiteHeader';
 import globalStyles from '../helper/GlobalStyles';
 import { getGroupList } from '../redux/actions/groupsListAction';
-import BottomButton from '../components/BottomButton';
+import { BottomButton, WhiteHeader } from '../components';
 
 interface Props {
     navigation: {

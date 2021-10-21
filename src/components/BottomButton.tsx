@@ -9,14 +9,12 @@ interface Props {
     onPress: () => void;
 }
 
-const BottomButton = (props: Props) => {
+export function BottomButton({ title, onPress }: Props) {
     return (
-        <TouchableOpacity style={{...globalStyles.bottomBtn,backgroundColor: props.title != 'NONE' ? Colors.button_bg : Colors.button_red}} onPress={() => props.onPress()}>
-            <Text style={{...globalStyles.classesText, fontFamily: props.title != 'NONE' ? Fonts.RobotoMedium : Fonts.RobotoRegular}}>
-                {props.title}
+        <TouchableOpacity style={{...globalStyles.bottomBtn,backgroundColor: title != 'NONE' ? Colors.button_bg : Colors.button_red}} onPress={() => onPress()}>
+            <Text style={{...globalStyles.classesText, fontFamily: title != 'NONE' ? Fonts.RobotoMedium : Fonts.RobotoRegular}}>
+                {title}
             </Text>
         </TouchableOpacity>
     );
 };
-
-export default BottomButton;

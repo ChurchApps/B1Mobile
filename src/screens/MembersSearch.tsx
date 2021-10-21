@@ -6,9 +6,8 @@ import Images from '../utils/Images';
 import { getMembersList } from '../redux/actions/membersListAction';
 import { connect } from 'react-redux';
 import globalStyles from '../helper/GlobalStyles';
-import BlueHeader from '../components/BlueHeader';
+import { BlueHeader, Loader } from '../components';
 import { getToken } from '../helper/ApiHelper';
-import Loader from '../components/Loader';
 import API from '../helper/ApiConstants';
 
 interface Props {
@@ -98,7 +97,7 @@ const MembersSearch = (props: Props) => {
                 </Text> }
                 <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} />
             </ScrollView>
-            {isLoading && <Loader loading={isLoading} />}
+            {isLoading && <Loader isLoading={isLoading} />}
         </SafeAreaView>
     );
 };

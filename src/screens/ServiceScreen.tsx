@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Alert, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import WhiteHeader from '../components/WhiteHeader';
-import Loader from '../components/Loader';
+import { Loader, WhiteHeader } from '../components';
 import { createGroupTree, getPeopleIds, getToken } from '../helper/ApiHelper';
 import globalStyles from '../helper/GlobalStyles';
 import { getGroupList } from '../redux/actions/groupsListAction';
@@ -154,7 +153,7 @@ const ServiceScreen = (props: Props) => {
                     style={globalStyles.listContainerStyle}
                 />
             </SafeAreaView>
-            {isLoading && <Loader loading={isLoading} />}
+            {isLoading && <Loader isLoading={isLoading} />}
         </View>
     );
 };

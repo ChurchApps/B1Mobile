@@ -4,16 +4,14 @@ import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import WhiteHeader from '../components/WhiteHeader';
 import Colors from '../utils/Colors';
-import Loader from '../components/Loader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from '../helper/ApiConstants';
 import { getToken } from '../helper/ApiHelper';
 import { submitAttendanceData } from '../redux/actions/submitAttendanceAction';
 import { loadAttendanceData } from '../redux/actions/loadAttendanceAction';
 import globalStyles from '../helper/GlobalStyles';
-import BottomButton from '../components/BottomButton';
+import { BottomButton, Loader, WhiteHeader } from '../components';
 
 interface Props {
     navigation: {
@@ -204,7 +202,7 @@ const HouseholdScreen = (props: Props) => {
                 <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
                 <BottomButton title='CHECKIN' onPress={() => submitAttendance()}/>
             </SafeAreaView>
-            {isLoading && <Loader loading={isLoading} />}
+            {isLoading && <Loader isLoading={isLoading} />}
         </View>
     );
 };
