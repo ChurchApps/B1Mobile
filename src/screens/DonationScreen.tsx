@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Image, Text, TextInput } from 'react-native';
-import { TouchableOpacity, ScrollView, FlatList } from 'react-native-gesture-handler';
+import { View, SafeAreaView, Image, Text, TextInput, TouchableOpacity } from 'react-native';
+import { ScrollView, FlatList } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
 import globalStyles from '../helper/GlobalStyles';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
@@ -10,13 +10,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { ModalDatePicker } from "react-native-material-date-picker";
 import moment from 'moment';
-import { FundDropDown, Loader, MainHeader } from '../components';
-import Dialog, {
-    DialogContent,
-    ScaleAnimation,
-} from 'react-native-popup-dialog';
+import { FundDropDown, Loader, MainHeader, PaymentMethods } from '../components';
+import Dialog, { DialogContent, ScaleAnimation } from 'react-native-popup-dialog';
 import Fonts from '../utils/Fonts';
 import { CardField } from '@stripe/stripe-react-native';
+import API from '../helper/ApiConstants';
+import { getToken } from '../helper/ApiHelper';
+import axios from "axios"
+import { initStripe } from "@stripe/stripe-react-native"
 
 interface Props {
     navigation: {
@@ -74,7 +75,18 @@ const DonationScreen = (props: Props) => {
         }
     }]);
 
+    // initialise stripe
     useEffect(() => {
+      (async () => {
+        const token = await getToken("GivingApi")
+        console.log("token: ", token)
+        const res = await axios.get(API.GIVING_API + "/gateways", { headers: { "Authorization" : `Bearer ${token}` } })
+        if (res.data.length && res.data[0]?.publicKey) {
+          initStripe({
+            publishableKey: res.data[0].publicKey
+          })
+        }
+      })()
     }, [])
 
     const AddMoreFundComponent = () => {
@@ -376,6 +388,7 @@ const DonationScreen = (props: Props) => {
 
             {/* Content */}
             <ScrollView>
+              <PaymentMethods />
                 {TitleComponent('Payment Methods')}
                 {TitleComponent('Donate')}
                 {TitleComponent('Donations')}
