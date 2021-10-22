@@ -2,6 +2,7 @@ export const ACCESS_DOMAIN_URL = 'https://accessapi.staging.churchapps.org/';
 export const B1_DOMAIN_URL = 'https://api.staging.b1.church/';
 export const MEMBER_DOMAIN_URL = 'https://membershipapi.staging.churchapps.org/';
 export const ATTENDANCE_DOMAIN_URL = 'https://attendanceapi.staging.churchapps.org/';
+export const GIVING_API = "https://givingapi.staging.churchapps.org"
 
 const API = {
     IMAGE_URL : 'https://content.staging.churchapps.org',
@@ -13,7 +14,8 @@ const API = {
     SERVICES_URL: ATTENDANCE_DOMAIN_URL + 'services',
     SERVICES_TIME_URL: ATTENDANCE_DOMAIN_URL + 'servicetimes',
     GROUPS_URL: MEMBER_DOMAIN_URL + 'groups',
-    ATTENDANCE_URL: ATTENDANCE_DOMAIN_URL + 'visits/checkin'
+    ATTENDANCE_URL: ATTENDANCE_DOMAIN_URL + 'visits/checkin',
+    GIVING_API: GIVING_API
 }
 
 export default API;
