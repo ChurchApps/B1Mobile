@@ -5,9 +5,9 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Images from '../utils/Images';
 import { getMembersList } from '../redux/actions/membersListAction';
 import { connect } from 'react-redux';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 import { BlueHeader, Loader } from '../components';
-import { getToken } from '../helper/ApiHelper';
+import { getToken } from '../helper/_ApiHelper';
 import API from '../helper/ApiConstants';
 
 interface Props {

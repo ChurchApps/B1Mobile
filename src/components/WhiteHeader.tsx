@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Image, NativeModules, Platform, TouchableOpacity, View } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Images from '../utils/Images';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 const { StatusBarManager } = NativeModules;
 
 interface Props {

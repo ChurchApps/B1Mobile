@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Image, View } from 'react-native';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 import Images from '../utils/Images';
 
 export function BlueHeader(){

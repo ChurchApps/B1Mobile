@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 
 interface Props {
     leftComponent: any;
