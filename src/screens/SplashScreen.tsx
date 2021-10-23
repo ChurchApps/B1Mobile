@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect } from 'react';
 import { View, Image } from 'react-native';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 import Images from '../utils/Images';
 import { ApiHelper, ChurchInterface } from "../helper"
 

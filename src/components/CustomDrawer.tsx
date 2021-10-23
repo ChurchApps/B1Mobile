@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { getMemberData } from '../redux/actions/memberDataAction';
 import { getToken } from '../helper/_ApiHelper';
 import API from '../helper/ApiConstants';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 
 // interface Props {
 //     navigation: {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 import { BlueHeader, Loader } from '../components';
 import API from '../helper/ApiConstants';
 import Icon from 'react-native-vector-icons/Zocial';
