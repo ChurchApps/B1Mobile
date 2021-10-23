@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { View, Image } from 'react-native';
 import globalStyles from '../helper/GlobalStyles';
 import Images from '../utils/Images';
+import { ApiHelper, ChurchInterface } from "../helper"
 
 interface Props {
     navigation: {
@@ -19,7 +20,12 @@ const SplashScreen = (props: Props) => {
     const checkUser = async() => {
         try {
             const user = await AsyncStorage.getItem('USER_DATA')
-            if(user !== null) {
+            const churchString = await AsyncStorage.getItem("CHURCH_DATA")
+
+            if(user !== null && churchString !== null) {
+                const church: ChurchInterface = JSON.parse(churchString);
+                church.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+
                 props.navigation.navigate('MainStack');
             } else {
                 props.navigation.navigate('AuthStack');

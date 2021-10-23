@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import globalStyles from '../helper/GlobalStyles';
 import { BlueHeader } from '../components';
+import { ChurchInterface, ApiHelper } from '../helper';
 
 interface Props {
     navigation: {
@@ -54,8 +55,11 @@ const LoginScreen = (props: Props) => {
             setLoading(false);
             if (!err) {
                 if (res.data.user != null) {
+                    const church: ChurchInterface = res.data.churches[0]
+
+                    church.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
                     await AsyncStorage.setItem('USER_DATA', JSON.stringify(res.data.user))
-                    await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(res.data.churches[0]))
+                    await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(church))
                     .then(() => {
                         props.navigation.navigate('MainStack');
                     })
