@@ -1,4 +1,5 @@
 import { STAGE, ACCESS_API, MEMBERSHIP_API, ATTENDANCE_API, B1_API, CONTENT_ROOT } from "@env"
+import { ApiHelper } from "./ApiHelper"
 
 export class EnvironmentHelper {
   private static AccessApi = "";
@@ -14,8 +15,12 @@ export class EnvironmentHelper {
       case "prod": EnvironmentHelper.initProd(); break;
       default: EnvironmentHelper.initDev(); break;
     }
-
-    // TODO - configure ApiHelper here
+    ApiHelper.apiConfigs = [
+      { keyName: "AccessApi", url: EnvironmentHelper.AccessApi, jwt: "", permisssions: [] },
+      { keyName: "MembershipApi", url: EnvironmentHelper.MembershipApi, jwt: "", permisssions: [] },
+      { keyName: "AttendanceApi", url: EnvironmentHelper.AttendanceApi, jwt: "", permisssions: [] },
+      { keyName: "B1Api", url: EnvironmentHelper.B1Api, jwt: "", permisssions: [] }
+    ]
   }
 
   static initDev = () => {
