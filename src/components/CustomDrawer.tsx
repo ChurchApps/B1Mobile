@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { getMemberData } from '../redux/actions/memberDataAction';
 import { getToken } from '../helper/_ApiHelper';
 import API from '../helper/ApiConstants';
-import { globalStyles } from '../helper';
+import { globalStyles, EnvironmentHelper, Userhelper } from '../helper';
 
 // interface Props {
 //     navigation: {
@@ -145,7 +145,7 @@ function Drawer(props: any) {
     return (
         <SafeAreaView>
             <View style={globalStyles.headerView}>
-                <Image source={{ uri: API.IMAGE_URL + userProfile }} style={globalStyles.userIcon} />
+                <Image source={{ uri: EnvironmentHelper.ContentRoot + Userhelper.person?.photo || "" }} style={globalStyles.userIcon} />
                 <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
             </View>
             <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
