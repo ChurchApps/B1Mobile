@@ -3,7 +3,7 @@ import Colors from "../utils/Colors";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Fonts from "../utils/Fonts";
 
-const globalStyles = StyleSheet.create({
+export const globalStyles = StyleSheet.create({
     //Global Styles
     appContainer: { flex: 1, backgroundColor: Colors.app_color },
     grayContainer: { flex: 1, backgroundColor: Colors.gray_bg },
@@ -152,5 +152,3 @@ const globalStyles = StyleSheet.create({
     donationIcon: { width: wp('7%'), height: wp('7%') }
 
 })
-
-export default globalStyles;

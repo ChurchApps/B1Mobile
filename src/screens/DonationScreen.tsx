@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, TextInput } from 'react-native';
 import { TouchableOpacity, ScrollView, FlatList } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Colors from '../utils/Colors';
 import DropDownPicker from 'react-native-dropdown-picker';

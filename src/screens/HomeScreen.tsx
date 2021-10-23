@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
 import WebView from 'react-native-webview';
 import { Loader, MainHeader } from '../components';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 
 interface Props {
     navigation: {

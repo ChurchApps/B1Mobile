@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import WhiteHeader from '../components/WhiteHeader';
-import globalStyles from '../helper/GlobalStyles';
+import { WhiteHeader } from '../components';
+import { globalStyles } from '../helper';
 
 interface Props {
     navigation: {

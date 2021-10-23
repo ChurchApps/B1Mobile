@@ -6,7 +6,7 @@ import Images from '../utils/Images';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSearchList } from '../redux/actions/searchListAction';
 import { connect } from 'react-redux';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 import { BlueHeader } from '../components';
 
 interface Props {

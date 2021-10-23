@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 import Colors from '../utils/Colors';
 import Fonts from '../utils/Fonts';
 

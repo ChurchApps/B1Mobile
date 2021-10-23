@@ -5,7 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 import { getGroupList } from '../redux/actions/groupsListAction';
 import { BottomButton, WhiteHeader } from '../components';
 

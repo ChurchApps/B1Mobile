@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import globalStyles from '../helper/GlobalStyles';
+import { globalStyles } from '../helper';
 
 export function FundDropDown(props: any) {
     const [openFundDropDown, setOpenFundDropDown] = useState(false);
