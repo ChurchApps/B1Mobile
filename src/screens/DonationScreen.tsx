@@ -15,7 +15,7 @@ import Dialog, { DialogContent, ScaleAnimation } from 'react-native-popup-dialog
 import Fonts from '../utils/Fonts';
 import { CardField } from '@stripe/stripe-react-native';
 import API from '../helper/ApiConstants';
-import { getToken } from '../helper/ApiHelper';
+import { getToken } from '../helper/_ApiHelper';
 import axios from "axios"
 import { initStripe } from "@stripe/stripe-react-native"
 

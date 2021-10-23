@@ -5,9 +5,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { CardField, useStripe, CardFieldInput } from "@stripe/stripe-react-native";
 import { DisplayBox, SelectPaymentMethod } from ".";
 import Colors from "../utils/Colors";
-import globalStyles from "../helper/GlobalStyles";
+import { globalStyles } from "../helper";
 import { PaymentMethodInterface } from "../interfaces"
-import { PersonHelper } from "../helper";
 
 type Methods = "Add Card" | "Add Bank";
 
@@ -29,9 +28,9 @@ export function PaymentMethods() {
       return
     }
 
-    const person = await PersonHelper.getPerson()
 
-    let paymentMethod: PaymentMethodInterface = {  personId: person.id, email: person.contactInfo.email, name: person.name.display } 
+
+    // let paymentMethod: PaymentMethodInterface = {  personId: person.id, email: person.contactInfo.email, name: person.name.display } 
   }
 
   let contentBody = null;
