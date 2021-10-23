@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { View, Image } from 'react-native';
 import { globalStyles } from '../helper';
 import Images from '../utils/Images';
-import { ApiHelper, ChurchInterface } from "../helper"
+import { ApiHelper, ChurchInterface, Userhelper } from "../helper"
 
 interface Props {
     navigation: {
@@ -24,8 +24,9 @@ const SplashScreen = (props: Props) => {
 
             if(user !== null && churchString !== null) {
                 const church: ChurchInterface = JSON.parse(churchString);
+                Userhelper.currentChurch = church;
                 church.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
-
+                await Userhelper.setPersonRecord()
                 props.navigation.navigate('MainStack');
             } else {
                 props.navigation.navigate('AuthStack');
