@@ -11,7 +11,7 @@ import { widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Colors from '../utils/Colors';
 import { connect } from 'react-redux';
 import { getHouseholdList } from '../redux/actions/householdListAction';
-import { getToken } from '../helper/ApiHelper';
+import { getToken } from '../helper/_ApiHelper';
 
 interface Props {
     navigation: {

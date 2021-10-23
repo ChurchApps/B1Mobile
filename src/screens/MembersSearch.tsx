@@ -7,7 +7,7 @@ import { getMembersList } from '../redux/actions/membersListAction';
 import { connect } from 'react-redux';
 import globalStyles from '../helper/GlobalStyles';
 import { BlueHeader, Loader } from '../components';
-import { getToken } from '../helper/ApiHelper';
+import { getToken } from '../helper/_ApiHelper';
 import API from '../helper/ApiConstants';
 
 interface Props {

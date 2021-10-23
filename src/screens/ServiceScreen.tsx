@@ -4,7 +4,7 @@ import { Alert, SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
 import { FlatList } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { Loader, WhiteHeader } from '../components';
-import { createGroupTree, getPeopleIds, getToken } from '../helper/ApiHelper';
+import { createGroupTree, getPeopleIds, getToken } from '../helper/_ApiHelper';
 import globalStyles from '../helper/GlobalStyles';
 import { getGroupList } from '../redux/actions/groupsListAction';
 import { getHouseholdList } from '../redux/actions/householdListAction';

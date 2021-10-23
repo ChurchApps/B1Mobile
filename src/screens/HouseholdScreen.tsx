@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import Colors from '../utils/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from '../helper/ApiConstants';
-import { getToken } from '../helper/ApiHelper';
+import { getToken } from '../helper/_ApiHelper';
 import { submitAttendanceData } from '../redux/actions/submitAttendanceAction';
 import { loadAttendanceData } from '../redux/actions/loadAttendanceAction';
 import globalStyles from '../helper/GlobalStyles';
