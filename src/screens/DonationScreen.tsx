@@ -14,10 +14,8 @@ import { FundDropDown, Loader, MainHeader, PaymentMethods } from '../components'
 import Dialog, { DialogContent, ScaleAnimation } from 'react-native-popup-dialog';
 import Fonts from '../utils/Fonts';
 import { CardField } from '@stripe/stripe-react-native';
-import API from '../helper/ApiConstants';
-import { getToken } from '../helper/_ApiHelper';
-import axios from "axios"
 import { initStripe } from "@stripe/stripe-react-native"
+import { ApiHelper } from "../helper"
 
 interface Props {
     navigation: {
@@ -78,12 +76,10 @@ const DonationScreen = (props: Props) => {
     // initialise stripe
     useEffect(() => {
       (async () => {
-        const token = await getToken("GivingApi")
-        console.log("token: ", token)
-        const res = await axios.get(API.GIVING_API + "/gateways", { headers: { "Authorization" : `Bearer ${token}` } })
-        if (res.data.length && res.data[0]?.publicKey) {
+        const data = await ApiHelper.get("/gateways", "GivingApi")
+        if (data.length && data[0]?.publicKey) {
           initStripe({
-            publishableKey: res.data[0].publicKey
+            publishableKey: data[0].publicKey
           })
         }
       })()
