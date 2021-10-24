@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, TextInput, TouchableOpacity } from 'react-native';
 import { ScrollView, FlatList } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
-import { globalStyles } from '../helper';
+import { globalStyles, Userhelper, ApiHelper } from '../helper';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Colors from '../utils/Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -15,7 +15,7 @@ import Dialog, { DialogContent, ScaleAnimation } from 'react-native-popup-dialog
 import Fonts from '../utils/Fonts';
 import { CardField } from '@stripe/stripe-react-native';
 import { initStripe } from "@stripe/stripe-react-native"
-import { ApiHelper } from "../helper"
+import { StripePaymentMethod } from '../interfaces';
 
 interface Props {
     navigation: {
@@ -72,6 +72,9 @@ const DonationScreen = (props: Props) => {
             label: 'Individual', value: 'Individual'
         }
     }]);
+    const [customerId, setCustomerId] = useState<string>("")
+    const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>()
+    const person = Userhelper.person
 
     // initialise stripe
     useEffect(() => {
@@ -81,6 +84,19 @@ const DonationScreen = (props: Props) => {
           initStripe({
             publishableKey: data[0].publicKey
           })
+          const results = await ApiHelper.get("/paymentmethods/personId" + person.id, "GivingApi")
+          if (!results.length) {
+            setPaymentMethods([])
+          }
+          else {
+            let cards = results[0].cards.data.map((card: any) => new StripePaymentMethod(card));
+            let banks = results[0].banks.data.map((bank: any) => new StripePaymentMethod(bank));
+            let methods = cards.concat(banks);
+            setCustomerId(results[0].customer.id);
+            setPaymentMethods(methods);
+          }
+        } else {
+          setPaymentMethods([])
         }
       })()
     }, [])
@@ -384,7 +400,7 @@ const DonationScreen = (props: Props) => {
 
             {/* Content */}
             <ScrollView>
-              <PaymentMethods />
+              <PaymentMethods customerId={customerId} />
                 {TitleComponent('Payment Methods')}
                 {TitleComponent('Donate')}
                 {TitleComponent('Donations')}
