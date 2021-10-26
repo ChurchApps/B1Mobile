@@ -73,18 +73,20 @@ const DonationScreen = (props: Props) => {
         }
     }]);
     const [customerId, setCustomerId] = useState<string>("")
-    const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>()
+    const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
     const person = Userhelper.person
 
     // initialise stripe
     useEffect(() => {
       (async () => {
         const data = await ApiHelper.get("/gateways", "GivingApi")
+        console.log("DATA: ", data)
         if (data.length && data[0]?.publicKey) {
           initStripe({
             publishableKey: data[0].publicKey
           })
-          const results = await ApiHelper.get("/paymentmethods/personId" + person.id, "GivingApi")
+          const results = await ApiHelper.get("/paymentmethods/personid/" + person.id, "GivingApi")
+          console.log("RESULTS: ", results)
           if (!results.length) {
             setPaymentMethods([])
           }
@@ -400,7 +402,7 @@ const DonationScreen = (props: Props) => {
 
             {/* Content */}
             <ScrollView>
-              <PaymentMethods customerId={customerId} />
+              <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} />
                 {TitleComponent('Payment Methods')}
                 {TitleComponent('Donate')}
                 {TitleComponent('Donations')}

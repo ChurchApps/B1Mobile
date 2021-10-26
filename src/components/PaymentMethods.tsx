@@ -3,18 +3,21 @@ import { TouchableOpacity, View, Text } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { CardField, useStripe, CardFieldInput } from "@stripe/stripe-react-native";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { FlatList } from "react-native-gesture-handler";
 import { DisplayBox, SelectPaymentMethod } from ".";
 import Colors from "../utils/Colors";
 import { ApiHelper, globalStyles, Userhelper } from "../helper";
-import { PaymentMethodInterface } from "../interfaces";
+import { PaymentMethodInterface, StripePaymentMethod } from "../interfaces";
 
 type Methods = "Add Card" | "Add Bank";
 
 interface Props {
   customerId: string;
+  paymentMethods: StripePaymentMethod[];
 }
 
-export function PaymentMethods({ customerId }: Props) {
+export function PaymentMethods({ customerId, paymentMethods }: Props) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = React.useState<Methods>();
   const [card, setCard] = React.useState<CardFieldInput.Details>();
@@ -39,12 +42,12 @@ export function PaymentMethods({ customerId }: Props) {
       email: person.contactInfo.email,
       name: person.name.display,
     };
-    const result = await ApiHelper.post("/paymentmethods/addcard", paymentMethod, "GivingApi")
+    const result = await ApiHelper.post("/paymentmethods/addcard", paymentMethod, "GivingApi");
     if (result?.raw?.message) {
       console.log("There was an error creating the payment method: ", result?.raw?.message);
     } else {
-      console.log("card Successfully created: ", result)
-      setSelectedMethod(undefined)
+      console.log("card Successfully created: ", result);
+      setSelectedMethod(undefined);
     }
   };
 
@@ -68,10 +71,26 @@ export function PaymentMethods({ customerId }: Props) {
     case "Add Bank":
       break;
     default:
-      contentBody = <Text style={globalStyles.paymentDetailText}>No payment methods.</Text>;
+      contentBody = (
+        <FlatList
+          data={paymentMethods}
+          renderItem={({ item }) => (
+            <View style={globalStyles.cardListView} key={item.id}>
+              <Text style={globalStyles.cardListText}> {item.name + " ****" + item.last4}</Text>
+              <TouchableOpacity onPress={() => {}}>
+                <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
+              </TouchableOpacity>
+            </View>
+          )}
+          keyExtractor={(item: any) => item.id}
+          ItemSeparatorComponent={({ item }) => <View style={globalStyles.cardListSeperator} />}
+        />
+      );
+
+      // contentBody = <Text style={globalStyles.paymentDetailText}>No payment methods.</Text>;
       break;
   }
-
+  console.log("METHODS: ", paymentMethods);
   const rightHeaderContent = (
     <TouchableOpacity onPress={() => setShowModal(true)}>
       <Icon name={"plus"} style={{ color: Colors.button_green }} size={wp("6%")} />
