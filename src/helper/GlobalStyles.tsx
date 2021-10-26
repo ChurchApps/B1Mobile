@@ -119,6 +119,8 @@ export const globalStyles = StyleSheet.create({
     methodBtnText: { fontFamily: Fonts.RobotoMedium, color: Colors.app_color, width: wp('40%'), textAlign: 'center', fontSize: wp('4.2%') },
     fundView: { width: wp('100%'), flexDirection: 'row', justifyContent: 'space-between' },
     fundInput: { fontSize: wp('4.2%'), height: wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
+    cardDatesView: { width: wp('95%'), flexDirection: 'row', justifyContent: "space-around", marginBottom: wp("2%") },
+    cardDates: { fontSize: wp('4.2%'), height: wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
     dateInput: { borderWidth: 1, marginHorizontal: wp('5%'), paddingHorizontal: wp('2%'), borderColor: 'lightgray', borderRadius: wp('2%'), height: wp('12%'), marginTop: wp('2%'), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1, alignSelf: 'stretch' },
     dateText: { width: wp('65%'), fontSize: wp('3.8%') },
     notesInputView: { height: wp('20%'), alignItems: 'center', justifyContent: 'center', fontSize: wp('4.2%'), borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), margin: wp('5%'), textAlignVertical: "top" },
