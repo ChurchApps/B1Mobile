@@ -77,31 +77,32 @@ const DonationScreen = (props: Props) => {
     const person = Userhelper.person
 
     // initialise stripe
-    useEffect(() => {
-      (async () => {
-        const data = await ApiHelper.get("/gateways", "GivingApi")
-        console.log("DATA: ", data)
-        if (data.length && data[0]?.publicKey) {
-          initStripe({
-            publishableKey: data[0].publicKey
-          })
-          const results = await ApiHelper.get("/paymentmethods/personid/" + person.id, "GivingApi")
-          console.log("RESULTS: ", results)
-          if (!results.length) {
-            setPaymentMethods([])
-          }
-          else {
-            let cards = results[0].cards.data.map((card: any) => new StripePaymentMethod(card));
-            let banks = results[0].banks.data.map((bank: any) => new StripePaymentMethod(bank));
-            let methods = cards.concat(banks);
-            setCustomerId(results[0].customer.id);
-            setPaymentMethods(methods);
-          }
-        } else {
+    useEffect(() => { loadData() }, [])
+
+    const loadData = async () => {
+      console.log("LOAD_DATA")
+      const data = await ApiHelper.get("/gateways", "GivingApi")
+      console.log("DATA: ", data)
+      if (data.length && data[0]?.publicKey) {
+        initStripe({
+          publishableKey: data[0].publicKey
+        })
+        const results = await ApiHelper.get("/paymentmethods/personid/" + person.id, "GivingApi")
+        console.log("RESULTS: ", results)
+        if (!results.length) {
           setPaymentMethods([])
         }
-      })()
-    }, [])
+        else {
+          let cards = results[0].cards.data.map((card: any) => new StripePaymentMethod(card));
+          let banks = results[0].banks.data.map((bank: any) => new StripePaymentMethod(bank));
+          let methods = cards.concat(banks);
+          setCustomerId(results[0].customer.id);
+          setPaymentMethods(methods);
+        }
+      } else {
+        setPaymentMethods([])
+      }
+    }
 
     const AddMoreFundComponent = () => {
         const tempFundList = [...fundList];
@@ -402,7 +403,7 @@ const DonationScreen = (props: Props) => {
 
             {/* Content */}
             <ScrollView>
-              <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} />
+              <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} />
                 {TitleComponent('Payment Methods')}
                 {TitleComponent('Donate')}
                 {TitleComponent('Donations')}

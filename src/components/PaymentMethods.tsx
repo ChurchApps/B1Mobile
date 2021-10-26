@@ -15,9 +15,10 @@ type Methods = "Add Card" | "Add Bank";
 interface Props {
   customerId: string;
   paymentMethods: StripePaymentMethod[];
+  updatedFunction: () => void;
 }
 
-export function PaymentMethods({ customerId, paymentMethods }: Props) {
+export function PaymentMethods({ customerId, paymentMethods, updatedFunction }: Props) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = React.useState<Methods>();
   const [card, setCard] = React.useState<CardFieldInput.Details>();
@@ -48,6 +49,7 @@ export function PaymentMethods({ customerId, paymentMethods }: Props) {
     } else {
       console.log("card Successfully created: ", result);
       setSelectedMethod(undefined);
+      updatedFunction()
     }
   };
 
