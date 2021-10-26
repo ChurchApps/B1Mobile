@@ -129,6 +129,7 @@ export const globalStyles = StyleSheet.create({
     previewBtnView: { flexDirection: 'row', justifyContent: 'space-evenly', width: wp('100%'), marginTop: wp('2%') },
     previewBtn: { height: wp('12%'), width: wp('50%'), justifyContent: 'center' },
     previewBtnText: { textAlign: 'center', width: wp('50%'), color: 'white', fontSize: wp('4.7%'), fontFamily: Fonts.RobotoMedium },
+    actionButtons: { height: wp('12%'), width: wp('50%'), justifyContent: 'center', alignItems: "center" },
 
     previewView: { flexDirection: 'row', paddingVertical: wp('3%'), borderBottomWidth: 1, borderBottomColor: 'lightgray' },
     previewTitleText: { width: wp('30%'), fontFamily: Fonts.RobotoRegular, fontSize: wp('4.2%') },

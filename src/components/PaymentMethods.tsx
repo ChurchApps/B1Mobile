@@ -40,7 +40,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       Alert.alert("Cannot be left blank", "Expiration year & month cannot be left blank");
       return;
     }
-    setIsaving(true)
+    setIsaving(true);
 
     const payload: StripeCardUpdateInterface = {
       personId: person.id,
@@ -50,15 +50,14 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
 
     const result = await ApiHelper.post("/paymentmethods/updatecard", payload, "GivingApi");
     if (result?.raw?.message) {
-      Alert.alert("Update failed",result.raw.message);
+      Alert.alert("Update failed", result.raw.message);
+    } else {
+      setSelectedMethod(undefined);
+      updatedFunction();
+      setMonth("");
+      setYear("");
     }
-    else {
-      setSelectedMethod(undefined)
-      updatedFunction()
-      setMonth("")
-      setYear("")
-    }
-    setIsaving(false)
+    setIsaving(false);
   };
 
   const createCard = async () => {
@@ -70,7 +69,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
 
     if (stripePaymentMethod.error) {
       Alert.alert("Failed", stripePaymentMethod.error.message);
-      setIsaving(false)
+      setIsaving(false);
       return;
     }
 
@@ -94,11 +93,34 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   const handleEdit = (item: StripePaymentMethod) => {
     setSelectedMethod("Handle Card Edit");
     setCardToEdit(item);
-    setMonth(item.exp_month?.toString() || "")
-    setYear(item.exp_year?.toString().slice(-2) || "")
+    setMonth(item.exp_month?.toString() || "");
+    setYear(item.exp_year?.toString().slice(-2) || "");
+  };
+
+  const handleDelete = () => {
+    Alert.alert("Are you sure?", "This will permantly delete this payment method", [
+      {
+        text: "Cancel",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: async () => {
+          try {
+            await ApiHelper.delete("/paymentmethods/" + cardToEdit?.id + "/" + customerId, "GivingApi");
+            setSelectedMethod(undefined);
+            await updatedFunction();
+          } catch (err) {
+            Alert.alert("Error in deleting the method");
+          }
+        },
+      },
+    ]);
   };
 
   let contentBody = null;
+  let boxTitle = null;
   switch (selectedMethod) {
     case "Add Card":
       contentBody = (
@@ -114,8 +136,10 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
           />
         </View>
       );
+      boxTitle = "Add New Card";
       break;
     case "Add Bank":
+      boxTitle = "Add New Bank Account";
       break;
     case "Handle Card Edit":
       contentBody = (
@@ -144,6 +168,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
           </View>
         </View>
       );
+      boxTitle = cardToEdit?.name.toUpperCase() + "****" + cardToEdit?.last4;
       break;
     default:
       contentBody =
@@ -164,18 +189,20 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
         ) : (
           <Text style={globalStyles.paymentDetailText}>No payment methods.</Text>
         );
+      boxTitle = "Payment Methods";
       break;
   }
 
-  const rightHeaderContent = selectedMethod !== "Handle Card Edit" && (
+  const rightHeaderContent = !selectedMethod && (
     <TouchableOpacity onPress={() => setShowModal(true)}>
       <Icon name={"plus"} style={{ color: Colors.button_green }} size={wp("6%")} />
     </TouchableOpacity>
   );
+  const widthClass = selectedMethod === "Handle Card Edit" ? wp("33.33%") : wp("50%");
   const footerContent = selectedMethod && (
     <View style={{ ...globalStyles.previewBtnView }}>
       <TouchableOpacity
-        style={{ ...globalStyles.previewBtn, backgroundColor: Colors.button_yellow }}
+        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_yellow, width: widthClass }}
         onPress={() => {
           setSelectedMethod(undefined);
           setCardToEdit(undefined);
@@ -184,8 +211,19 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       >
         <Text style={globalStyles.previewBtnText}>Cancel</Text>
       </TouchableOpacity>
+      {selectedMethod === "Handle Card Edit" && (
+        <TouchableOpacity
+          style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_red, width: widthClass }}
+          onPress={() => {
+            handleDelete();
+          }}
+          disabled={isSaving}
+        >
+          <Text style={globalStyles.previewBtnText}>Delete</Text>
+        </TouchableOpacity>
+      )}
       <TouchableOpacity
-        style={{ ...globalStyles.previewBtn, backgroundColor: Colors.button_dark_green }}
+        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_dark_green, width: widthClass }}
         onPress={() => handleSave()}
         disabled={isSaving}
       >
@@ -197,7 +235,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       </TouchableOpacity>
     </View>
   );
-  const boxTitle = cardToEdit ? cardToEdit?.name.toUpperCase() + "****" + cardToEdit?.last4 : "Payment Methods";
+
   const boxIcon = cardToEdit ? (
     <Image source={Images.ic_give} style={globalStyles.donationIcon} />
   ) : (
