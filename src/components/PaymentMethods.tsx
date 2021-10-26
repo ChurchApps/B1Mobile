@@ -61,8 +61,6 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     setIsaving(false)
   };
 
-  // TODO - PREFILL THE EXPIRATION DATE IN THE FORM IF FOUND
-
   const createCard = async () => {
     setIsaving(true);
     const stripePaymentMethod = await createPaymentMethod({
@@ -72,6 +70,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
 
     if (stripePaymentMethod.error) {
       Alert.alert("Failed", stripePaymentMethod.error.message);
+      setIsaving(false)
       return;
     }
 
@@ -95,6 +94,8 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   const handleEdit = (item: StripePaymentMethod) => {
     setSelectedMethod("Handle Card Edit");
     setCardToEdit(item);
+    setMonth(item.exp_month?.toString() || "")
+    setYear(item.exp_year?.toString().slice(-2) || "")
   };
 
   let contentBody = null;
@@ -166,7 +167,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       break;
   }
 
-  const rightHeaderContent = (
+  const rightHeaderContent = selectedMethod !== "Handle Card Edit" && (
     <TouchableOpacity onPress={() => setShowModal(true)}>
       <Icon name={"plus"} style={{ color: Colors.button_green }} size={wp("6%")} />
     </TouchableOpacity>
