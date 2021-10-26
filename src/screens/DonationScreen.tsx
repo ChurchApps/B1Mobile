@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Image, Text, TextInput } from 'react-native';
-import { TouchableOpacity, ScrollView, FlatList } from 'react-native-gesture-handler';
+import { View, SafeAreaView, Image, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { ScrollView, FlatList } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
-import { globalStyles } from '../helper';
+import { globalStyles, Userhelper, ApiHelper } from '../helper';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Colors from '../utils/Colors';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -10,13 +10,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { ModalDatePicker } from "react-native-material-date-picker";
 import moment from 'moment';
-import { FundDropDown, Loader, MainHeader } from '../components';
-import Dialog, {
-    DialogContent,
-    ScaleAnimation,
-} from 'react-native-popup-dialog';
+import { FundDropDown, Loader, MainHeader, PaymentMethods } from '../components';
+import Dialog, { DialogContent, ScaleAnimation } from 'react-native-popup-dialog';
 import Fonts from '../utils/Fonts';
 import { CardField } from '@stripe/stripe-react-native';
+import { initStripe } from "@stripe/stripe-react-native"
+import { StripePaymentMethod } from '../interfaces';
 
 interface Props {
     navigation: {
@@ -73,9 +72,42 @@ const DonationScreen = (props: Props) => {
             label: 'Individual', value: 'Individual'
         }
     }]);
+    const [customerId, setCustomerId] = useState<string>("")
+    const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
+    const [areMethodsLoading, setAreMethodsLoading] = useState<boolean>(false)
+    const person = Userhelper.person
 
-    useEffect(() => {
-    }, [])
+    // initialise stripe
+    useEffect(() => { loadData() }, [])
+
+    const loadData = async () => {
+      try {
+        setAreMethodsLoading(true)
+        const data = await ApiHelper.get("/gateways", "GivingApi")
+        if (data.length && data[0]?.publicKey) {
+          initStripe({
+            publishableKey: data[0].publicKey
+          })
+          const results = await ApiHelper.get("/paymentmethods/personid/" + person.id, "GivingApi")
+          if (!results.length) {
+            setPaymentMethods([])
+          }
+          else {
+            let cards = results[0].cards.data.map((card: any) => new StripePaymentMethod(card));
+            let banks = results[0].banks.data.map((bank: any) => new StripePaymentMethod(bank));
+            let methods = cards.concat(banks);
+            setCustomerId(results[0].customer.id);
+            setPaymentMethods(methods);
+          }
+        } else {
+          setPaymentMethods([])
+        }
+        setAreMethodsLoading(false)
+      } catch (err: any) {
+        Alert.alert("Failed to fetch payment methods", err.message)
+      }
+
+    }
 
     const AddMoreFundComponent = () => {
         const tempFundList = [...fundList];
@@ -376,6 +408,12 @@ const DonationScreen = (props: Props) => {
 
             {/* Content */}
             <ScrollView>
+              <PaymentMethods 
+                customerId={customerId}
+                paymentMethods={paymentMethods}
+                updatedFunction={loadData}
+                isLoading={areMethodsLoading}
+              />
                 {TitleComponent('Payment Methods')}
                 {TitleComponent('Donate')}
                 {TitleComponent('Donations')}
