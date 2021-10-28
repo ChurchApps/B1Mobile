@@ -6,17 +6,16 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import Fonts from "../../utils/Fonts";
 import { globalStyles } from "../../helper";
 import Colors from "../../utils/Colors";
+import { StripePaymentMethod } from "../../interfaces";
 
 interface Props {
   show: boolean;
   close: () => void;
-  onSelect: (methodType: Methods) => void;
+  onSelect: (paymentMethod: StripePaymentMethod) => void;
 }
 
-type Methods = "Add Card" | "Add Bank"
-
 export function SelectPaymentMethod({ show, close, onSelect }: Props) {
-  const methods: Methods[] = ["Add Card", "Add Bank"];
+  const methods: string[] = ["card", "bank"];
 
   return (
     <Dialog onTouchOutside={close} width={0.5} visible={show} dialogAnimation={new ScaleAnimation()}>
@@ -27,7 +26,7 @@ export function SelectPaymentMethod({ show, close, onSelect }: Props) {
           renderItem={({ item, index }) => (
             <TouchableOpacity
               onPress={() => {
-                onSelect(item);
+                onSelect(new StripePaymentMethod({ type: item }));
                 close();
               }}
               style={{ flexDirection: "row", alignItems: "center" }}
@@ -45,7 +44,7 @@ export function SelectPaymentMethod({ show, close, onSelect }: Props) {
                   paddingVertical: wp("2%"),
                 }}
               >
-                {item}
+                Add {item[0].toUpperCase() + item.slice(1).toLowerCase()}
               </Text>
             </TouchableOpacity>
           )}

@@ -10,6 +10,7 @@ import Colors from "../utils/Colors";
 import { ApiHelper, globalStyles, Userhelper } from "../helper";
 import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "../interfaces";
 import Images from "../utils/Images";
+import { useIsFocused } from "@react-navigation/native";
 
 type Methods = "Add Card" | "Add Bank" | "Handle Card Edit";
 
@@ -23,6 +24,10 @@ interface Props {
 export function PaymentMethods({ customerId, paymentMethods, updatedFunction, isLoading }: Props) {
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = React.useState<Methods>();
+  const [editPaymentMethod, setEditPaymentMethod] = React.useState<StripePaymentMethod>(new StripePaymentMethod());
+  const [verify, setVerify] = React.useState<boolean>(false);
+  const isFocused = useIsFocused();
+
   // const [card, setCard] = React.useState<CardFieldInput.Details>();
   // const [isSaving, setIsaving] = React.useState<boolean>(false);
   // const [cardToEdit, setCardToEdit] = React.useState<StripePaymentMethod>();
@@ -242,7 +247,30 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   // ) : (
   //   <Icon name={"credit-card-alt"} style={{ color: "gray" }} size={wp("5.5%")} />
   // );
-  console.log(paymentMethods)
+
+  React.useEffect(() => {
+    if (isFocused) {
+      setMode("display");
+      setEditPaymentMethod(new StripePaymentMethod());
+    }
+  }, [isFocused]);
+
+  const handleEdit = (paymentMethod: StripePaymentMethod, verifyAccount?: boolean) => {
+    setEditPaymentMethod(paymentMethod);
+    setVerify(!!verifyAccount);
+    setMode("edit");
+  };
+
+  let editModeContent = null;
+  switch (editPaymentMethod.type) {
+    case "card":
+      editModeContent = <Text>Card method</Text>;
+      break;
+    case "bank":
+      editModeContent = <Text>Bank method</Text>;
+      break;
+  }
+
   const paymentTable =
     paymentMethods.length > 0 ? (
       <FlatList
@@ -251,8 +279,8 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
           <View style={globalStyles.cardListView} key={item.id}>
             <Text style={globalStyles.cardListText}> {item.name + " ****" + item.last4}</Text>
             <TouchableOpacity onPress={() => {}}>
-            <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
-          </TouchableOpacity>
+              <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
+            </TouchableOpacity>
           </View>
         )}
         keyExtractor={(item: any) => item.id}
@@ -276,15 +304,11 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
         )}
       </DisplayBox>
     ) : (
-      <Text>Edit mode</Text>
+      editModeContent
     );
   return (
     <>
-      <SelectPaymentMethod
-        show={showModal}
-        close={() => setShowModal(false)}
-        onSelect={(type: Methods) => setSelectedMethod(type)}
-      />
+      <SelectPaymentMethod show={showModal} close={() => setShowModal(false)} onSelect={handleEdit} />
       {content}
     </>
   );
