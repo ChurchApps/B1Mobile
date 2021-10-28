@@ -252,12 +252,14 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
         title={boxTitle}
         rightHeaderComponent={rightHeaderContent}
         headerIcon={boxIcon}
-        footer={footerContent}
       >
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />
         ) : (
-          contentBody
+          <>
+            {contentBody}
+            {/* {footerContent} */}
+          </>
         )}
       </DisplayBox>
     </>

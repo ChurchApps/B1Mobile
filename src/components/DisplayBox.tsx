@@ -8,10 +8,9 @@ interface Props {
   rightHeaderComponent?: React.ReactNode;
   headerIcon: React.ReactNode;
   children: React.ReactNode;
-  footer: React.ReactNode;
 }
 
-export function DisplayBox({ title, rightHeaderComponent, headerIcon, children, footer }: Props) {
+export function DisplayBox({ title, rightHeaderComponent, headerIcon, children }: Props) {
   return (
     <View style={globalStyles.paymentTitleContainer}>
       <View style={{ width: wp("100%") }}>
@@ -23,7 +22,6 @@ export function DisplayBox({ title, rightHeaderComponent, headerIcon, children, 
         </View>
       </View>
       {children}
-      {footer}
     </View>
   );
 }
