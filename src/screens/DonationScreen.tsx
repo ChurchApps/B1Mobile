@@ -16,6 +16,7 @@ import Fonts from '../utils/Fonts';
 import { CardField } from '@stripe/stripe-react-native';
 import { initStripe } from "@stripe/stripe-react-native"
 import { StripePaymentMethod } from '../interfaces';
+import { useIsFocused } from '@react-navigation/native';
 
 interface Props {
     navigation: {
@@ -75,11 +76,12 @@ const DonationScreen = (props: Props) => {
     const [customerId, setCustomerId] = useState<string>("")
     const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
     const [areMethodsLoading, setAreMethodsLoading] = useState<boolean>(false)
+    const isFocused = useIsFocused();
     const person = Userhelper.person
 
-    // initialise stripe
-    useEffect(() => { loadData() }, [])
+    useEffect(() => { if (isFocused) loadData() }, [isFocused])
 
+    // initialise stripe
     const loadData = async () => {
       try {
         setAreMethodsLoading(true)
