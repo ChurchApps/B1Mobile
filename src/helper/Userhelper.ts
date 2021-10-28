@@ -1,4 +1,4 @@
-import { ChurchInterface, PersonInterface, ApiHelper } from ".";
+import { ChurchInterface, PersonInterface, ApiHelper, IPermission } from ".";
 
 export class Userhelper {
   static currentChurch: ChurchInterface;
@@ -9,6 +9,16 @@ export class Userhelper {
     Userhelper.person = person;
   }
 
-  // TODO - MAKE SURE TO ALSO UPDATE PERSON RECORD WHEN CHURCH IS CHANGED FROM CHURCH SELECT SCREEN
+  static checkAccess({ api, contentType, action }: IPermission): boolean {
+    const permissions = ApiHelper.getConfig(api)?.permisssions;
+
+    let result = false;
+    if (permissions !== undefined) {
+      permissions.forEach(element => {
+        if (element.contentType === contentType && element.action === action) result = true;
+      });
+    }
+    return result;
+  }
 
 }

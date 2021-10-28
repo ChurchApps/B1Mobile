@@ -5,10 +5,10 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { CardField, useStripe, CardFieldInput } from "@stripe/stripe-react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { FlatList } from "react-native-gesture-handler";
-import { DisplayBox, SelectPaymentMethod, InputBox } from ".";
+import { DisplayBox, SelectPaymentMethod, CardForm } from ".";
 import Colors from "../utils/Colors";
 import { ApiHelper, globalStyles, Userhelper } from "../helper";
-import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "../interfaces";
+import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod, Permissions } from "../interfaces";
 import Images from "../utils/Images";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -62,36 +62,6 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   //     updatedFunction();
   //     setMonth("");
   //     setYear("");
-  //   }
-  //   setIsaving(false);
-  // };
-
-  // const createCard = async () => {
-  //   setIsaving(true);
-  //   const stripePaymentMethod = await createPaymentMethod({
-  //     type: "Card",
-  //     ...card,
-  //   });
-
-  //   if (stripePaymentMethod.error) {
-  //     Alert.alert("Failed", stripePaymentMethod.error.message);
-  //     setIsaving(false);
-  //     return;
-  //   }
-
-  //   let paymentMethod: PaymentMethodInterface = {
-  //     id: stripePaymentMethod.paymentMethod.id,
-  //     customerId,
-  //     personId: person.id,
-  //     email: person.contactInfo.email,
-  //     name: person.name.display,
-  //   };
-  //   const result = await ApiHelper.post("/paymentmethods/addcard", paymentMethod, "GivingApi");
-  //   if (result?.raw?.message) {
-  //     Alert.alert("Failed to create payment method: ", result?.raw?.message);
-  //   } else {
-  //     setSelectedMethod(undefined);
-  //     await updatedFunction();
   //   }
   //   setIsaving(false);
   // };
@@ -204,49 +174,6 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       <Icon name={"plus"} style={{ color: Colors.button_green }} size={wp("6%")} />
     </TouchableOpacity>
   );
-  // const widthClass = selectedMethod === "Handle Card Edit" ? wp("33.33%") : wp("50%");
-  // const footerContent = selectedMethod && (
-  //   <View style={{ ...globalStyles.previewBtnView }}>
-  //     <TouchableOpacity
-  //       style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_yellow, width: widthClass }}
-  //       onPress={() => {
-  //         setSelectedMethod(undefined);
-  //         setCardToEdit(undefined);
-  //       }}
-  //       disabled={isSaving}
-  //     >
-  //       <Text style={globalStyles.previewBtnText}>Cancel</Text>
-  //     </TouchableOpacity>
-  //     {selectedMethod === "Handle Card Edit" && (
-  //       <TouchableOpacity
-  //         style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_red, width: widthClass }}
-  //         onPress={() => {
-  //           handleDelete();
-  //         }}
-  //         disabled={isSaving}
-  //       >
-  //         <Text style={globalStyles.previewBtnText}>Delete</Text>
-  //       </TouchableOpacity>
-  //     )}
-  //     <TouchableOpacity
-  //       style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_dark_green, width: widthClass }}
-  //       onPress={() => handleSave()}
-  //       disabled={isSaving}
-  //     >
-  //       {isSaving ? (
-  //         <ActivityIndicator size="small" color="gray" animating={isSaving} />
-  //       ) : (
-  //         <Text style={globalStyles.previewBtnText}>Save</Text>
-  //       )}
-  //     </TouchableOpacity>
-  //   </View>
-  // );
-
-  // const boxIcon = cardToEdit ? (
-  //   <Image source={Images.ic_give} style={globalStyles.donationIcon} />
-  // ) : (
-  //   <Icon name={"credit-card-alt"} style={{ color: "gray" }} size={wp("5.5%")} />
-  // );
 
   React.useEffect(() => {
     if (isFocused) {
@@ -264,12 +191,28 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   let editModeContent = null;
   switch (editPaymentMethod.type) {
     case "card":
-      editModeContent = <Text>Card method</Text>;
+      editModeContent = (
+        <CardForm
+          setMode={setMode}
+          card={editPaymentMethod}
+          customerId={customerId}
+          updatedFunction={updatedFunction}
+        />
+      );
       break;
     case "bank":
       editModeContent = <Text>Bank method</Text>;
       break;
   }
+
+  const getEditButton = (item: StripePaymentMethod) => {
+    if (!Userhelper.checkAccess(Permissions.givingApi.settings.edit)) return null;
+    return (
+      <TouchableOpacity onPress={() => handleEdit(item)}>
+        <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
+      </TouchableOpacity>
+    );
+  };
 
   const paymentTable =
     paymentMethods.length > 0 ? (
@@ -278,9 +221,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
         renderItem={({ item }) => (
           <View style={globalStyles.cardListView} key={item.id}>
             <Text style={globalStyles.cardListText}> {item.name + " ****" + item.last4}</Text>
-            <TouchableOpacity onPress={() => {}}>
-              <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
-            </TouchableOpacity>
+            {getEditButton(item)}
           </View>
         )}
         keyExtractor={(item: any) => item.id}

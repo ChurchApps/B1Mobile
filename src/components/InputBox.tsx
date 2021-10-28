@@ -11,7 +11,7 @@ interface Props {
   cancelFunction?: () => void;
   deleteFunction?: () => void;
   saveFunction: () => void;
-  isSubmitting: boolean;
+  isSubmitting?: boolean;
 }
 
 export function InputBox({
@@ -23,20 +23,7 @@ export function InputBox({
   saveFunction,
   isSubmitting = false,
 }: Props) {
-
-  let buttons: JSX.Element[] = [
-    <TouchableOpacity
-      style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_dark_green }}
-      onPress={() => saveFunction()}
-      disabled={isSubmitting}
-    >
-      {isSubmitting ? (
-        <ActivityIndicator size="small" color="gray" animating={isSubmitting} />
-      ) : (
-        <Text style={globalStyles.previewBtnText}>Save</Text>
-      )}
-    </TouchableOpacity>,
-  ];
+  let buttons: JSX.Element[] = [];
 
   if (cancelFunction) {
     buttons.push(
@@ -65,6 +52,20 @@ export function InputBox({
       </TouchableOpacity>
     );
   }
+
+  buttons.push(
+    <TouchableOpacity
+      style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_dark_green }}
+      onPress={() => saveFunction()}
+      disabled={isSubmitting}
+    >
+      {isSubmitting ? (
+        <ActivityIndicator size="small" color="gray" animating={isSubmitting} />
+      ) : (
+        <Text style={globalStyles.previewBtnText}>Save</Text>
+      )}
+    </TouchableOpacity>
+  );
 
   return (
     <View style={globalStyles.paymentTitleContainer}>
