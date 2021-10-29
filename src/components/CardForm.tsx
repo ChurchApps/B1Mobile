@@ -58,7 +58,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction }: Props) 
 
   const updateCard = async () => {
     if (!month || !year) {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       Alert.alert("Cannot be left blank", "Expiration year & month cannot be left blank");
       return;
     }
@@ -80,8 +80,6 @@ export function CardForm({ setMode, card, customerId, updatedFunction }: Props) 
     }
     setIsSubmitting(false);
   };
-
-  console.log("card: ", card)
 
   return (
     <InputBox
