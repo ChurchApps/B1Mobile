@@ -34,3 +34,4 @@ export interface ServiceTimeInterface { id?: string, name?: string, groups?: Gro
 export interface SessionInterface { id?: string, groupId?: string, serviceTimeId?: string, sessionDate?: Date, displayName?: string }
 export interface VisitInterface { id?: string, personId?: string, serviceId?: string, groupId?: string, visitDate?: Date, visitSessions?: VisitSessionInterface[], person?: PersonInterface }
 export interface VisitSessionInterface { id?: string, visitId?: string, sessionId?: string, visit?: VisitInterface, session?: SessionInterface }
+export interface IPermission { api: string, contentType: string, action: string }

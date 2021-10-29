@@ -6,7 +6,9 @@ export { Loader } from "./Loader"
 export { MainHeader } from "./MainHeader"
 export { WhiteHeader } from "./WhiteHeader"
 export { DisplayBox } from "./DisplayBox"
+export { InputBox } from "./InputBox"
 export { PaymentMethods } from "./PaymentMethods"
+export { CardForm } from "./CardForm"
 
 // popups
 export { SelectPaymentMethod } from "./popups/SelectPaymentMethod"
