@@ -5,7 +5,7 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { InputBox } from ".";
 import Images from "../utils/Images";
 import { globalStyles, Userhelper, ApiHelper } from "../helper";
-import { StripePaymentMethod, PaymentMethodInterface } from "../interfaces";
+import { StripePaymentMethod, PaymentMethodInterface, StripeCardUpdateInterface } from "../interfaces";
 
 interface Props {
   setMode: any;
@@ -17,8 +17,8 @@ interface Props {
 export function CardForm({ setMode, card, customerId, updatedFunction }: Props) {
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [month, setMonth] = React.useState<string>("");
-  const [year, setYear] = React.useState<string>("");
+  const [month, setMonth] = React.useState<string>(card.exp_month?.toString() || "");
+  const [year, setYear] = React.useState<string>(card.exp_year?.toString().slice(-2) || "");
   const { createPaymentMethod } = useStripe();
   const person = Userhelper.person;
 
@@ -56,7 +56,32 @@ export function CardForm({ setMode, card, customerId, updatedFunction }: Props) 
     setIsSubmitting(false);
   };
 
-  const updateCard = () => {};
+  const updateCard = async () => {
+    if (!month || !year) {
+      setIsSubmitting(false)
+      Alert.alert("Cannot be left blank", "Expiration year & month cannot be left blank");
+      return;
+    }
+
+    const payload: StripeCardUpdateInterface = {
+      personId: person.id,
+      paymentMethodId: card.id,
+      cardData: { card: { exp_month: month, exp_year: year } },
+    };
+
+    const result = await ApiHelper.post("/paymentmethods/updatecard", payload, "GivingApi");
+    if (result?.raw?.message) {
+      Alert.alert("Update failed", result.raw.message);
+    } else {
+      setMonth("");
+      setYear("");
+      setMode("display");
+      await updatedFunction();
+    }
+    setIsSubmitting(false);
+  };
+
+  console.log("card: ", card)
 
   return (
     <InputBox
