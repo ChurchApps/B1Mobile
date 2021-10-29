@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { TouchableOpacity, View, Text, ActivityIndicator } from "react-native";
+import { TouchableOpacity, View, Text, ActivityIndicator, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { FlatList } from "react-native-gesture-handler";
 import { DisplayBox, SelectPaymentMethod, CardForm } from ".";
 import Colors from "../utils/Colors";
-import { globalStyles, Userhelper } from "../helper";
+import { globalStyles, Userhelper, ApiHelper } from "../helper";
 import { StripePaymentMethod, Permissions } from "../interfaces";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -43,6 +43,28 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     setMode("edit");
   };
 
+  const handleDelete = () => {
+    Alert.alert("Are you sure?", "This will permantly delete this payment method", [
+      {
+        text: "Cancel",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: async () => {
+          try {
+            await ApiHelper.delete("/paymentmethods/" + editPaymentMethod.id + "/" + customerId, "GivingApi");
+            setMode("display")
+            await updatedFunction();
+          } catch (err) {
+            Alert.alert("Error in deleting the method");
+          }
+        },
+      },
+    ]);
+  };
+
   let editModeContent = null;
   switch (editPaymentMethod.type) {
     case "card":
@@ -52,6 +74,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
           card={editPaymentMethod}
           customerId={customerId}
           updatedFunction={updatedFunction}
+          handleDelete={handleDelete}
         />
       );
       break;

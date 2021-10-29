@@ -25,10 +25,11 @@ export function InputBox({
 }: Props) {
   let buttons: JSX.Element[] = [];
 
+  const widthClass = deleteFunction ? wp("33.33%") : wp("50%");
   if (cancelFunction) {
     buttons.push(
       <TouchableOpacity
-        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_yellow }}
+        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_yellow, width: widthClass }}
         onPress={() => {
           cancelFunction();
         }}
@@ -42,7 +43,7 @@ export function InputBox({
   if (deleteFunction) {
     buttons.push(
       <TouchableOpacity
-        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_red }}
+        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_red, width: widthClass }}
         onPress={() => {
           deleteFunction();
         }}
@@ -55,7 +56,7 @@ export function InputBox({
 
   buttons.push(
     <TouchableOpacity
-      style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_dark_green }}
+      style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_dark_green, width: widthClass }}
       onPress={() => saveFunction()}
       disabled={isSubmitting}
     >

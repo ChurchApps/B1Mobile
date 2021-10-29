@@ -12,9 +12,10 @@ interface Props {
   card: StripePaymentMethod;
   customerId: string;
   updatedFunction: () => void;
+  handleDelete: () => void;
 }
 
-export function CardForm({ setMode, card, customerId, updatedFunction }: Props) {
+export function CardForm({ setMode, card, customerId, updatedFunction, handleDelete }: Props) {
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [month, setMonth] = React.useState<string>(card.exp_month?.toString() || "");
@@ -88,6 +89,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction }: Props) 
       saveFunction={handleSave}
       cancelFunction={() => setMode("display")}
       isSubmitting={isSubmitting}
+      deleteFunction={card.id ? handleDelete : undefined}
     >
       {!card.id ? (
         <View>
