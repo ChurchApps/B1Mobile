@@ -167,6 +167,7 @@ export function BankForm({
       headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
       saveFunction={handleSave}
       cancelFunction={() => setMode("display")}
+      deleteFunction={bank.id && !showVerifyForm ? handleDelete : undefined}
       isSubmitting={isSubmitting}
     >
       {informationalText}
