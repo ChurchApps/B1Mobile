@@ -3,7 +3,7 @@ import { Text, Image, View, TextInput, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useStripe } from "@stripe/stripe-react-native";
-import { PaymentMethodInterface, StripePaymentMethod } from "../interfaces";
+import { PaymentMethodInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../interfaces";
 import { InputBox } from ".";
 import Images from "../utils/Images";
 import { globalStyles, Userhelper, ApiHelper, StripeHelper } from "../helper";
@@ -44,8 +44,10 @@ export function BankForm({
   const [name, setName] = useState<string>("");
   const [accountNumber, setAccountNumber] = useState<string>("");
   const [routingNumber, setRoutingNumber] = useState<string>("");
+  const [firstDeposit, setFirstDeposit] = useState<string>("");
+  const [secondDeposit, setSecondDeposit] = useState<string>("");
   const {} = useStripe();
-  const person = Userhelper.person
+  const person = Userhelper.person;
 
   const handleSave = () => {
     setIsSubmitting(true);
@@ -64,9 +66,9 @@ export function BankForm({
 
   const createBank = async () => {
     if (!routingNumber || !accountNumber) {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       Alert.alert("Cannot be left blank", "Account number & Routing number are required!");
-      return
+      return;
     }
 
     const response = await StripeHelper.createToken(publishKey, {
@@ -75,12 +77,12 @@ export function BankForm({
       "bank_account[account_holder_name]": name,
       "bank_account[account_holder_type]": selectedType,
       "bank_account[routing_number]": routingNumber,
-      "bank_account[account_number]": accountNumber
+      "bank_account[account_number]": accountNumber,
     });
 
     if (response?.error?.message) {
-      Alert.alert("Error", response.error.message)
-      setIsSubmitting(false)
+      Alert.alert("Error", response.error.message);
+      setIsSubmitting(false);
     } else {
       const paymentMethod: PaymentMethodInterface = {
         id: response.id,
@@ -88,21 +90,43 @@ export function BankForm({
         personId: person.id,
         email: person.contactInfo.email,
         name: person.name.display,
-      }
+      };
 
-      const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi")
+      const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi");
       if (result?.raw?.message) {
-        Alert.alert("Error", result.raw.message)
+        Alert.alert("Error", result.raw.message);
       } else {
         setMode("display");
         await updatedFunction();
       }
     }
 
-    setIsSubmitting(false)
+    setIsSubmitting(false);
   };
 
-  const verifyBank = () => {};
+  const verifyBank = async () => {
+    if (!firstDeposit || !secondDeposit) {
+      setIsSubmitting(false)
+      Alert.alert("Error", "Please enter both deposit amounts")
+      return
+    }
+
+    const verifyPayload: StripeBankAccountVerifyInterface = {
+      paymentMethodId: bank.id,
+      customerId,
+      amountData: { amounts: [firstDeposit, secondDeposit] }
+    }
+
+    const response = await ApiHelper.post("/paymentmethods/verifyBank", verifyPayload, "GivingApi")
+    if (response?.raw?.message) {
+      Alert.alert("Error", response.raw.message)
+    } else {
+      setMode("display");
+      await updatedFunction();
+    }
+
+    setIsSubmitting(false);
+  };
 
   const informationalText = !bank.id && (
     <View style={{ marginTop: wp("5%"), flex: 1, alignItems: "center" }}>
@@ -115,7 +139,7 @@ export function BankForm({
   );
   return (
     <InputBox
-      title="Add New Bank Account"
+      title={bank.id ? `${bank.name.toUpperCase()} ****${bank.last4}` : "Add New Bank Account"}
       headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
       saveFunction={handleSave}
       cancelFunction={() => setMode("display")}
@@ -129,21 +153,25 @@ export function BankForm({
               Enter the two deposits you received in your account to finish verifying your bank account.
             </Text>
           </View>
-          <Text style={globalStyles.semiTitleText}>First Deposit</Text>
-          <View style={{ flex: 1 }}>
-            <TextInput
-              style={{ ...globalStyles.fundInput, width: wp("90%") }}
-              keyboardType="number-pad"
-              value={accountNumber}
-              onChangeText={(text) => setAccountNumber(text)}
-            />
-            <Text style={globalStyles.semiTitleText}>Second Deposit</Text>
-            <TextInput
-              style={{ ...globalStyles.fundInput, width: wp("90%") }}
-              keyboardType="number-pad"
-              value={routingNumber}
-              onChangeText={(text) => setRoutingNumber(text)}
-            />
+          <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: wp("95%") }}>
+            <View>
+              <Text style={globalStyles.semiTitleText}>First Deposit</Text>
+              <TextInput
+                style={{ ...globalStyles.fundInput, width: wp("40%") }}
+                keyboardType="number-pad"
+                value={firstDeposit}
+                onChangeText={(text) => setFirstDeposit(text)}
+              />
+            </View>
+            <View>
+              <Text style={globalStyles.semiTitleText}>Second Deposit</Text>
+              <TextInput
+                style={{ ...globalStyles.fundInput, width: wp("40%") }}
+                keyboardType="number-pad"
+                value={secondDeposit}
+                onChangeText={(text) => setSecondDeposit(text)}
+              />
+            </View>
           </View>
         </View>
       ) : (
