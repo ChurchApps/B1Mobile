@@ -3,7 +3,7 @@ import { Text, Image, View, TextInput, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useStripe } from "@stripe/stripe-react-native";
-import { StripePaymentMethod } from "../interfaces";
+import { PaymentMethodInterface, StripePaymentMethod } from "../interfaces";
 import { InputBox } from ".";
 import Images from "../utils/Images";
 import { globalStyles, Userhelper, ApiHelper, StripeHelper } from "../helper";
@@ -45,6 +45,7 @@ export function BankForm({
   const [accountNumber, setAccountNumber] = useState<string>("");
   const [routingNumber, setRoutingNumber] = useState<string>("");
   const {} = useStripe();
+  const person = Userhelper.person
 
   const handleSave = () => {
     setIsSubmitting(true);
@@ -77,7 +78,27 @@ export function BankForm({
       "bank_account[account_number]": accountNumber
     });
 
-    console.log(response)
+    if (response?.error?.message) {
+      Alert.alert("Error", response.error.message)
+      setIsSubmitting(false)
+    } else {
+      const paymentMethod: PaymentMethodInterface = {
+        id: response.id,
+        customerId,
+        personId: person.id,
+        email: person.contactInfo.email,
+        name: person.name.display,
+      }
+
+      const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi")
+      if (result?.raw?.message) {
+        Alert.alert("Error", result.raw.message)
+      } else {
+        setMode("display");
+        await updatedFunction();
+      }
+    }
+
     setIsSubmitting(false)
   };
 
