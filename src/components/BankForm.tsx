@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Text, Image, View, TextInput, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
-import { useStripe } from "@stripe/stripe-react-native";
-import { PaymentMethodInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../interfaces";
+import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../interfaces";
 import { InputBox } from ".";
 import Images from "../utils/Images";
 import { globalStyles, Userhelper, ApiHelper, StripeHelper } from "../helper";
@@ -40,13 +39,12 @@ export function BankForm({
 }: Props) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [selectedType, setSelectedType] = useState(accountTypes[0].value);
-  const [name, setName] = useState<string>("");
+  const [selectedType, setSelectedType] = useState(bank.account_holder_type || accountTypes[0].value);
+  const [name, setName] = useState<string>(bank.account_holder_name || "");
   const [accountNumber, setAccountNumber] = useState<string>("");
   const [routingNumber, setRoutingNumber] = useState<string>("");
   const [firstDeposit, setFirstDeposit] = useState<string>("");
   const [secondDeposit, setSecondDeposit] = useState<string>("");
-  const {} = useStripe();
   const person = Userhelper.person;
 
   const handleSave = () => {
@@ -62,7 +60,33 @@ export function BankForm({
     createBank();
   };
 
-  const updateBank = () => {};
+  const updateBank = async () => {
+    if (!name) {
+      setIsSubmitting(false)
+      Alert.alert("Required", "Please enter account holder name");
+      return;
+    }
+
+    const payload: StripeBankAccountUpdateInterface = {
+      paymentMethodId: bank.id,
+      customerId,
+      personId: person.id,
+      bankData: {
+        account_holder_name: name,
+        account_holder_type: selectedType
+      }
+    }
+
+    const response = await ApiHelper.post("/paymentmethods/updatebank", payload, "GivingApi")
+    if (response?.raw?.message) {
+      Alert.alert("Error", response.raw.message);
+    } else {
+      setMode("display");
+      await updatedFunction();
+    }
+
+    setIsSubmitting(false);
+  };
 
   const createBank = async () => {
     if (!routingNumber || !accountNumber) {
@@ -106,20 +130,20 @@ export function BankForm({
 
   const verifyBank = async () => {
     if (!firstDeposit || !secondDeposit) {
-      setIsSubmitting(false)
-      Alert.alert("Error", "Please enter both deposit amounts")
-      return
+      setIsSubmitting(false);
+      Alert.alert("Error", "Please enter both deposit amounts");
+      return;
     }
 
     const verifyPayload: StripeBankAccountVerifyInterface = {
       paymentMethodId: bank.id,
       customerId,
-      amountData: { amounts: [firstDeposit, secondDeposit] }
-    }
+      amountData: { amounts: [firstDeposit, secondDeposit] },
+    };
 
-    const response = await ApiHelper.post("/paymentmethods/verifyBank", verifyPayload, "GivingApi")
+    const response = await ApiHelper.post("/paymentmethods/verifyBank", verifyPayload, "GivingApi");
     if (response?.raw?.message) {
-      Alert.alert("Error", response.raw.message)
+      Alert.alert("Error", response.raw.message);
     } else {
       setMode("display");
       await updatedFunction();
@@ -204,20 +228,24 @@ export function BankForm({
               scrollViewProps={{ nestedScrollEnabled: true }}
             />
           </View>
-          <Text style={globalStyles.semiTitleText}>Account Number</Text>
-          <TextInput
-            style={{ ...globalStyles.fundInput, width: wp("90%") }}
-            keyboardType="number-pad"
-            value={accountNumber}
-            onChangeText={(text) => setAccountNumber(text)}
-          />
-          <Text style={globalStyles.semiTitleText}>Routing Number</Text>
-          <TextInput
-            style={{ ...globalStyles.fundInput, width: wp("90%") }}
-            keyboardType="number-pad"
-            value={routingNumber}
-            onChangeText={(text) => setRoutingNumber(text)}
-          />
+          {!bank.id && (
+            <>
+              <Text style={globalStyles.semiTitleText}>Account Number</Text>
+              <TextInput
+                style={{ ...globalStyles.fundInput, width: wp("90%") }}
+                keyboardType="number-pad"
+                value={accountNumber}
+                onChangeText={(text) => setAccountNumber(text)}
+              />
+              <Text style={globalStyles.semiTitleText}>Routing Number</Text>
+              <TextInput
+                style={{ ...globalStyles.fundInput, width: wp("90%") }}
+                keyboardType="number-pad"
+                value={routingNumber}
+                onChangeText={(text) => setRoutingNumber(text)}
+              />
+            </>
+          )}
         </View>
       )}
     </InputBox>
