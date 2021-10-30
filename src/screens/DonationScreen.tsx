@@ -76,6 +76,7 @@ const DonationScreen = (props: Props) => {
     const [customerId, setCustomerId] = useState<string>("")
     const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
     const [areMethodsLoading, setAreMethodsLoading] = useState<boolean>(false)
+    const [publishKey, setPublishKey] = useState<string>("")
     const isFocused = useIsFocused();
     const person = Userhelper.person
 
@@ -90,6 +91,7 @@ const DonationScreen = (props: Props) => {
           initStripe({
             publishableKey: data[0].publicKey
           })
+          setPublishKey(data[0].publicKey)
           const results = await ApiHelper.get("/paymentmethods/personid/" + person.id, "GivingApi")
           if (!results.length) {
             setPaymentMethods([])
@@ -415,6 +417,7 @@ const DonationScreen = (props: Props) => {
                 paymentMethods={paymentMethods}
                 updatedFunction={loadData}
                 isLoading={areMethodsLoading}
+                publishKey={publishKey}
               />
                 {TitleComponent('Payment Methods')}
                 {TitleComponent('Donate')}

@@ -4,7 +4,7 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { FlatList } from "react-native-gesture-handler";
-import { DisplayBox, SelectPaymentMethod, CardForm } from ".";
+import { DisplayBox, SelectPaymentMethod, CardForm, BankForm } from ".";
 import Colors from "../utils/Colors";
 import { globalStyles, Userhelper, ApiHelper } from "../helper";
 import { StripePaymentMethod, Permissions } from "../interfaces";
@@ -15,9 +15,10 @@ interface Props {
   paymentMethods: StripePaymentMethod[];
   updatedFunction: () => void;
   isLoading: boolean;
+  publishKey: string;
 }
 
-export function PaymentMethods({ customerId, paymentMethods, updatedFunction, isLoading }: Props) {
+export function PaymentMethods({ customerId, paymentMethods, updatedFunction, isLoading, publishKey }: Props) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editPaymentMethod, setEditPaymentMethod] = useState<StripePaymentMethod>(new StripePaymentMethod());
   const [verify, setVerify] = useState<boolean>(false); // todo - to use for bank sections
@@ -55,7 +56,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
         onPress: async () => {
           try {
             await ApiHelper.delete("/paymentmethods/" + editPaymentMethod.id + "/" + customerId, "GivingApi");
-            setMode("display")
+            setMode("display");
             await updatedFunction();
           } catch (err) {
             Alert.alert("Error in deleting the method");
@@ -79,7 +80,17 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       );
       break;
     case "bank":
-      editModeContent = <Text>Bank method</Text>;
+      editModeContent = (
+        <BankForm
+          setMode={setMode}
+          bank={editPaymentMethod}
+          customerId={customerId}
+          updatedFunction={updatedFunction}
+          handleDelete={handleDelete}
+          showVerifyForm={verify}
+          publishKey={publishKey}
+        />
+      );
       break;
   }
 
@@ -99,6 +110,11 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
         renderItem={({ item }) => (
           <View style={globalStyles.cardListView} key={item.id}>
             <Text style={globalStyles.cardListText}> {item.name + " ****" + item.last4}</Text>
+            {item?.status === "new" && (
+              <TouchableOpacity onPress={() => handleEdit(item, true)}>
+                <Text style={{ color: Colors.app_color, width: wp("10%") }}>Verify</Text>
+              </TouchableOpacity>
+            )}
             {getEditButton(item)}
           </View>
         )}

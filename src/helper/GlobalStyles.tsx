@@ -143,7 +143,7 @@ export const globalStyles = StyleSheet.create({
     popupButonText: { textAlign: 'center', color: 'white', fontSize: wp('4.7%'), fontFamily: Fonts.RobotoMedium, paddingHorizontal: wp('3%') },
 
     cardListView: { width: wp('90%'), flexDirection: 'row', justifyContent: 'space-between', marginVertical: wp('5%'), alignSelf: 'center' },
-    cardListText: { width: wp('80%'), fontSize: wp('4.2%'), textAlign: 'left', fontFamily: Fonts.RobotoRegular, alignSelf: 'center' },
+    cardListText: { fontSize: wp('4.2%'), textAlign: 'left', fontFamily: Fonts.RobotoRegular, alignSelf: 'center' },
     cardListSeperator: { height: 0.5, width: wp('100%'), backgroundColor: 'lightgray' },
 
     paymentTitleContainer: { backgroundColor: 'white', borderRadius: wp('3.5%'), justifyContent: 'space-between', marginVertical: wp('5%'), shadowOffset: { width: 0, height: 0 }, elevation: 5, shadowColor: Colors.app_color, shadowOpacity: 0.1, shadowRadius: wp('2%') },
