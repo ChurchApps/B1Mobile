@@ -10,6 +10,7 @@ export { InputBox } from "./InputBox"
 export { PaymentMethods } from "./PaymentMethods"
 export { CardForm } from "./CardForm"
 export { BankForm } from "./BankForm"
+export { Donations } from "./Donations"
 
 // popups
 export { SelectPaymentMethod } from "./popups/SelectPaymentMethod"
