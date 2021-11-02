@@ -21,8 +21,8 @@ interface Props {
 const LoginScreen = (props: Props) => {
     const { navigate } = props.navigation;
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState('b1.user03@yopmail.com');
-    const [password, setPassword] = useState('65lZdqw3UEM');
+    const [email, setEmail] = useState('jared@dsprinting.com');
+    const [password, setPassword] = useState('stripetest');
 
     useEffect(() => {
 
