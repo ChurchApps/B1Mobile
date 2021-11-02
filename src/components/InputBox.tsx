@@ -10,7 +10,7 @@ interface Props {
   children: React.ReactNode;
   cancelFunction?: () => void;
   deleteFunction?: () => void;
-  saveFunction: () => void;
+  saveFunction?: () => void;
   isSubmitting?: boolean;
 }
 
@@ -53,20 +53,21 @@ export function InputBox({
       </TouchableOpacity>
     );
   }
-
-  buttons.push(
-    <TouchableOpacity
-      style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_dark_green, width: widthClass }}
-      onPress={() => saveFunction()}
-      disabled={isSubmitting}
-    >
-      {isSubmitting ? (
-        <ActivityIndicator size="small" color="gray" animating={isSubmitting} />
-      ) : (
-        <Text style={globalStyles.previewBtnText}>Save</Text>
-      )}
-    </TouchableOpacity>
-  );
+  if (saveFunction) {
+    buttons.push(
+      <TouchableOpacity
+        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_dark_green, width: widthClass }}
+        onPress={() => saveFunction()}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <ActivityIndicator size="small" color="gray" animating={isSubmitting} />
+        ) : (
+          <Text style={globalStyles.previewBtnText}>Save</Text>
+        )}
+      </TouchableOpacity>
+    );
+  }
 
   return (
     <View style={globalStyles.paymentTitleContainer}>
