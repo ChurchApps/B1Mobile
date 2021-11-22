@@ -227,6 +227,7 @@ export function BankForm({
               listItemContainerStyle={globalStyles.itemStyle}
               dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("90%") }}
               scrollViewProps={{ nestedScrollEnabled: true }}
+              dropDownDirection="BOTTOM"
             />
           </View>
           {!bank.id && (

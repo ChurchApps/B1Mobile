@@ -21,7 +21,7 @@ interface Props {
 export function PaymentMethods({ customerId, paymentMethods, updatedFunction, isLoading, publishKey }: Props) {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editPaymentMethod, setEditPaymentMethod] = useState<StripePaymentMethod>(new StripePaymentMethod());
-  const [verify, setVerify] = useState<boolean>(false); // todo - to use for bank sections
+  const [verify, setVerify] = useState<boolean>(false);
   const [mode, setMode] = useState<"display" | "edit">("display");
   const isFocused = useIsFocused();
 

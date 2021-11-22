@@ -419,7 +419,9 @@ const DonationScreen = (props: Props) => {
                 isLoading={areMethodsLoading}
                 publishKey={publishKey}
               />
-              <DonationForm />
+              <DonationForm
+                paymentMethods={paymentMethods}
+              />
               {/* <Donations /> */}
                 {/* {TitleComponent('Payment Methods')} */}
                 {TitleComponent('Donate')}
