@@ -421,6 +421,7 @@ const DonationScreen = (props: Props) => {
               />
               <DonationForm
                 paymentMethods={paymentMethods}
+                customerId={customerId}
               />
               {/* <Donations /> */}
                 {/* {TitleComponent('Payment Methods')} */}

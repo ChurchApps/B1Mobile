@@ -7,24 +7,48 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { InputBox } from ".";
 import Images from "../utils/Images";
 import Colors from "../utils/Colors";
-import { globalStyles, ApiHelper } from "../helper";
-import { FundDonationInterface, FundInterface, StripePaymentMethod } from "../interfaces";
-import { FundDonations } from "."
+import { globalStyles, ApiHelper, Userhelper } from "../helper";
+import {
+  FundDonationInterface,
+  FundInterface,
+  StripePaymentMethod,
+  StripeDonationInterface,
+  PersonInterface,
+} from "../interfaces";
+import { FundDonations } from ".";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
+  customerId: string;
 }
 
-export function DonationForm({ paymentMethods: pm }: Props) {
+export function DonationForm({ paymentMethods: pm, customerId }: Props) {
+  const person = Userhelper.person;
   const [donationType, setDonationType] = useState<string>("");
   const [isMethodsDropdownOpen, setIsMethodsDropdownOpen] = useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("");
-  const [date, setDate] = useState<string>("Select a date")
-  const [funds, setFunds] = useState<FundInterface[]>([])
-  const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([])
-  const [paymentMethods, setPaymentMethods] = useState(
-    pm.map((p) => ({ label: `${p.name} ****${p.last4}`, value: p.id }))
-  );
+  const [date, setDate] = useState<string>("Select a date");
+  const [funds, setFunds] = useState<FundInterface[]>([]);
+  const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<{ label: string; value: string }[]>([]);
+  const [total, setTotal] = React.useState<number>(0);
+  const [donation, setDonation] = React.useState<StripeDonationInterface>({
+    id: pm[0]?.id,
+    type: pm[0]?.type,
+    customerId: customerId,
+    person: {
+      id: person?.id || "",
+      email: person?.contactInfo.email || "",
+      name: person?.name.display || "",
+    },
+    amount: 0,
+    billing_cycle_anchor: +new Date(),
+    interval: {
+      interval_count: 1,
+      interval: "month",
+    },
+    funds: [],
+  });
 
   const handleSave = () => {};
 
@@ -33,13 +57,33 @@ export function DonationForm({ paymentMethods: pm }: Props) {
   };
 
   const loadData = () => {
-    ApiHelper.get("/funds", "GivingApi").then(data => {
-      setFunds(data)
-      if (data.length) setFundDonations([{ fundId: data[0].id }])
-    })
-  }
+    ApiHelper.get("/funds", "GivingApi").then((data) => {
+      setFunds(data);
+      if (data.length) setFundDonations([{ fundId: data[0].id }]);
+    });
+  };
 
-  useEffect(loadData, [])
+  const handleFundDonationsChange = (fd: FundDonationInterface[]) => {
+    setFundDonations(fd);
+    let totalAmount = 0;
+    let selectedFunds: any = [];
+    for (const fundDonation of fd) {
+      totalAmount += fundDonation.amount || 0;
+      let fund = funds.find((fund: FundInterface) => fund.id === fundDonation.fundId);
+      selectedFunds.push({ id: fundDonation.fundId, amount: fundDonation.amount || 0, name: fund?.name || "" });
+    }
+    let d = { ...donation };
+    d.amount = totalAmount;
+    d.funds = selectedFunds;
+    setDonation(d);
+    setTotal(totalAmount);
+  };
+
+  useEffect(loadData, []);
+
+  useEffect(() => {
+    setPaymentMethods(pm.map((p) => ({ label: `${p.name} ****${p.last4}`, value: p.id })));
+  }, [pm]);
 
   return (
     <InputBox
@@ -104,7 +148,9 @@ export function DonationForm({ paymentMethods: pm }: Props) {
                 dropDownDirection="BOTTOM"
               />
             </View>
-            <Text style={globalStyles.searchMainText}>{donationType === "once" ? "Donation Date" : "Recurring Donation Start Date"}</Text>
+            <Text style={globalStyles.searchMainText}>
+              {donationType === "once" ? "Donation Date" : "Recurring Donation Start Date"}
+            </Text>
             <View style={globalStyles.dateInput}>
               <Text style={globalStyles.dateText} numberOfLines={1}>
                 {date.toString()}
@@ -118,7 +164,8 @@ export function DonationForm({ paymentMethods: pm }: Props) {
               />
             </View>
             <Text style={globalStyles.semiTitleText}>Fund</Text>
-            <FundDonations funds={funds} fundDonations={fundDonations} />
+            <FundDonations funds={funds} fundDonations={fundDonations} updatedFunction={handleFundDonationsChange} />
+            {fundDonations.length > 1 && <Text style={globalStyles.totalText}>Total Donation Amount: ${total}</Text>}
           </View>
         ) : null}
       </ScrollView>
