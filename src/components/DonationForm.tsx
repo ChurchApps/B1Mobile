@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Image, ScrollView, View, TouchableOpacity, Text } from "react-native";
+import { Image, ScrollView, View, TouchableOpacity, Text, TextInput } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
+import moment from "moment";
 import { InputBox } from ".";
 import Images from "../utils/Images";
 import Colors from "../utils/Colors";
@@ -27,11 +28,12 @@ export function DonationForm({ paymentMethods: pm, customerId }: Props) {
   const [donationType, setDonationType] = useState<string>("");
   const [isMethodsDropdownOpen, setIsMethodsDropdownOpen] = useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("");
-  const [date, setDate] = useState<string>("Select a date");
+  const [date, setDate] = useState(new Date());  
   const [funds, setFunds] = useState<FundInterface[]>([]);
   const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<{ label: string; value: string }[]>([]);
   const [total, setTotal] = React.useState<number>(0);
+  const [notes, setNotes] = useState<string>("");
   const [donation, setDonation] = React.useState<StripeDonationInterface>({
     id: pm[0]?.id,
     type: pm[0]?.type,
@@ -50,7 +52,22 @@ export function DonationForm({ paymentMethods: pm, customerId }: Props) {
     funds: [],
   });
 
-  const handleSave = () => {};
+  const handleSave = () => {
+    if (donation.amount && donation.amount < .5) {
+      console.log("show error")
+    } else {
+      console.log("show preview modal")
+    }
+    // let method = pm.find((pm) => pm.id === selectedMethod);
+    // const payload: StripeDonationInterface = {
+    //   ...donation,
+    //   id: selectedMethod,
+    //   type: method?.type,
+    //   billing_cycle_anchor: +new Date(date),
+    //   notes,
+    // };
+    // console.log("PAYLOAD: ", payload);
+  };
 
   const handleCancel = () => {
     setDonationType("");
@@ -153,12 +170,12 @@ export function DonationForm({ paymentMethods: pm, customerId }: Props) {
             </Text>
             <View style={globalStyles.dateInput}>
               <Text style={globalStyles.dateText} numberOfLines={1}>
-                {date.toString()}
+                {moment(date).format("DD-MM-YYYY")}
               </Text>
               <ModalDatePicker
                 button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={wp("6%")} />}
                 locale="en"
-                onSelect={(date: any) => console.log(date)}
+                onSelect={(date: any) => setDate(date)}
                 isHideOnSelect={true}
                 initialDate={new Date()}
               />
@@ -166,6 +183,14 @@ export function DonationForm({ paymentMethods: pm, customerId }: Props) {
             <Text style={globalStyles.semiTitleText}>Fund</Text>
             <FundDonations funds={funds} fundDonations={fundDonations} updatedFunction={handleFundDonationsChange} />
             {fundDonations.length > 1 && <Text style={globalStyles.totalText}>Total Donation Amount: ${total}</Text>}
+            <Text style={globalStyles.semiTitleText}>Notes</Text>
+            <TextInput
+              multiline={true}
+              numberOfLines={3}
+              style={globalStyles.notesInput}
+              value={notes}
+              onChangeText={(text) => setNotes(text)}
+            />
           </View>
         ) : null}
       </ScrollView>

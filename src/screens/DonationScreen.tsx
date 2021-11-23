@@ -425,7 +425,7 @@ const DonationScreen = (props: Props) => {
               />
               {/* <Donations /> */}
                 {/* {TitleComponent('Payment Methods')} */}
-                {TitleComponent('Donate')}
+                {/* {TitleComponent('Donate')} */}
                 {TitleComponent('Donations')}
             </ScrollView>
             {isLoading && <Loader isLoading={isLoading} />}

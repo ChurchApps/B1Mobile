@@ -27,7 +27,6 @@ export function FundDonation({ fundDonation, funds, index, updatedFunction }: Pr
 
   useEffect(() => {
     let fd = { ...fundDonation }
-    console.log("fd: ", fd)
     fd.fundId = selectedFund
     updatedFunction(fd, index)
   }, [selectedFund])

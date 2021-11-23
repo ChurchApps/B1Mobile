@@ -131,6 +131,7 @@ export const globalStyles = StyleSheet.create({
     previewBtnText: { textAlign: 'center', width: wp('50%'), color: 'white', fontSize: wp('4.7%'), fontFamily: Fonts.RobotoMedium },
     actionButtons: { height: wp('12%'), width: wp('50%'), justifyContent: 'center', alignItems: "center" },
     totalText: { marginHorizontal: wp('5%'), fontSize: wp('4.5%'), marginTop: wp('5%') },
+    notesInput: { fontSize: wp('4.2%'), width: wp('90%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%'), marginBottom: wp("2%") },
 
     previewView: { flexDirection: 'row', paddingVertical: wp('3%'), borderBottomWidth: 1, borderBottomColor: 'lightgray' },
     previewTitleText: { width: wp('30%'), fontFamily: Fonts.RobotoRegular, fontSize: wp('4.2%') },
