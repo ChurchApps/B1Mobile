@@ -34,7 +34,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<{ label: string; value: string }[]>([]);
   const [total, setTotal] = React.useState<number>(0);
-  const [donation, setDonation] = React.useState<StripeDonationInterface>({
+  const initDonation: StripeDonationInterface = {
     id: pm[0]?.id,
     type: pm[0]?.type,
     customerId: customerId,
@@ -50,7 +50,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       interval: "month",
     },
     funds: [],
-  });
+  };
+  const [donation, setDonation] = React.useState<StripeDonationInterface>(initDonation);
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
 
   const handleSave = () => {
@@ -105,10 +106,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     if (results?.status === "succeeded" || results?.status === "pending" || results?.status === "active") {
       setShowPreviewModal(false);
       setDonationType("");
-      setDonation({});
       setTotal(0);
-      setPaymentMethods([]);
-      setFundDonations([]);
+      setFundDonations([{ fundId: funds[0]?.id }]);
+      setDonation(initDonation);
       Alert.alert("Payment Succesful!", message, [{ text: "OK", onPress: () => updatedFunction() }]);
     }
     if (results?.raw?.message) {
