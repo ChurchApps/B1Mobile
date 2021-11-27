@@ -424,8 +424,7 @@ const DonationScreen = (props: Props) => {
                 customerId={customerId}
                 updatedFunction={loadData}
               />
-              {/* <Donations /> */}
-                {TitleComponent('Donations')}
+              <Donations />
             </ScrollView>
             {isLoading && <Loader isLoading={isLoading} />}
 

@@ -21,6 +21,7 @@
     "@types/react-redux": "^7.1.16",
     "@types/redux-logger": "^3.0.8",
     "axios": "^0.21.1",
+    "date-fns": "^2.23.0",
     "moment": "^2.29.1",
     "react": "17.0.1",
     "react-native": "0.64.0",
