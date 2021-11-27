@@ -17,3 +17,4 @@ export { FundDonation } from "./FundDonation"
 
 // popups
 export { SelectPaymentMethod } from "./popups/SelectPaymentMethod"
+export { PreviewModal } from "./popups/PreviewModal"

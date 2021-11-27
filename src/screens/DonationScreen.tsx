@@ -422,10 +422,9 @@ const DonationScreen = (props: Props) => {
               <DonationForm
                 paymentMethods={paymentMethods}
                 customerId={customerId}
+                updatedFunction={loadData}
               />
               {/* <Donations /> */}
-                {/* {TitleComponent('Payment Methods')} */}
-                {/* {TitleComponent('Donate')} */}
                 {TitleComponent('Donations')}
             </ScrollView>
             {isLoading && <Loader isLoading={isLoading} />}

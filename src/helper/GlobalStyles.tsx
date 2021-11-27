@@ -135,13 +135,13 @@ export const globalStyles = StyleSheet.create({
 
     previewView: { flexDirection: 'row', paddingVertical: wp('3%'), borderBottomWidth: 1, borderBottomColor: 'lightgray' },
     previewTitleText: { width: wp('30%'), fontFamily: Fonts.RobotoRegular, fontSize: wp('4.2%') },
-    previewDetailText: { width: wp('50%'), fontFamily: Fonts.RobotoRegular },
+    previewDetailText: { width: wp('50%'), fontFamily: Fonts.RobotoRegular, fontSize: wp("4.2%") },
     donationPreviewView: { width: '100%', height: wp('14%'), marginBottom: wp('3%'), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomColor: 'lightgray', borderBottomWidth: 1 },
     donationText: { fontSize: wp('5.5%'), fontFamily: Fonts.RobotoRegular },
     donationCloseBtn: { height: wp('8%'), width: wp('8%'), justifyContent: 'center' },
     closeIcon: { color: 'gray', alignSelf: 'center' },
     popupBottomContainer: { flexDirection: 'row', justifyContent: 'space-evenly', marginTop: wp('5%') },
-    popupButton: { height: wp('12%'), justifyContent: 'center', borderRadius: wp('1.5%') },
+    popupButton: { height: wp('12%'), justifyContent: 'center', borderRadius: wp('1.5%'), width: wp("30%") },
     popupButonText: { textAlign: 'center', color: 'white', fontSize: wp('4.7%'), fontFamily: Fonts.RobotoMedium, paddingHorizontal: wp('3%') },
 
     cardListView: { width: wp('90%'), flexDirection: 'row', justifyContent: 'space-between', marginVertical: wp('5%'), alignSelf: 'center' },
