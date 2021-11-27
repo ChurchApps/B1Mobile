@@ -11,6 +11,10 @@ export { PaymentMethods } from "./PaymentMethods"
 export { CardForm } from "./CardForm"
 export { BankForm } from "./BankForm"
 export { Donations } from "./Donations"
+export { DonationForm } from "./DonationForm"
+export { FundDonations } from "./FundDonations"
+export { FundDonation } from "./FundDonation"
 
 // popups
 export { SelectPaymentMethod } from "./popups/SelectPaymentMethod"
+export { PreviewModal } from "./popups/PreviewModal"
