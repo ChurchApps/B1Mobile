@@ -53,6 +53,14 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   };
   const [donation, setDonation] = React.useState<StripeDonationInterface>(initDonation);
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
+  const [isIntervalDropdownOpen, setIsIntervalDropdownOpen] = useState<boolean>(false);
+  const [intervalTypes, setIntervalTypes] = useState<{ label: string; value: string }[]>([
+    { label: "Day(s)", value: "day" },
+    { label: "Week(s)", value: "week" },
+    { label: "Month(s)", value: "month" },
+    { label: "Year(s)", value: "year" },
+  ]);
+  const [selectedInterval, setSelectedInterval] = useState<string>("");
 
   const handleSave = () => {
     if (donation.amount && donation.amount < 0.5) {
@@ -115,6 +123,19 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       setShowPreviewModal(false);
       Alert.alert("Failed to make a donation", results?.raw?.message);
     }
+  };
+
+  const handleIntervalChange = (key: string, value: any) => {
+    const donationsCopy = { ...donation };
+    switch (key) {
+      case "number":
+        if (donationsCopy.interval) donationsCopy.interval.interval_count = value;
+        break;
+      case "type":
+        if (donationsCopy.interval) donationsCopy.interval.interval = value;
+        break;
+    }
+    setDonation(donationsCopy);
   };
 
   useEffect(loadData, []);
@@ -212,6 +233,45 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                   initialDate={new Date()}
                 />
               </View>
+              {donationType === "recurring" && (
+                <View style={globalStyles.intervalView}>
+                  <View>
+                    <Text style={globalStyles.semiTitleText}>Interval Number</Text>
+                    <TextInput
+                      style={globalStyles.intervalInput}
+                      keyboardType="number-pad"
+                      onChangeText={(text) => handleIntervalChange("number", text)}
+                    />
+                  </View>
+                  <View>
+                    <Text style={globalStyles.semiTitleText}>Interval Type</Text>
+                    <View>
+                      <DropDownPicker
+                        listMode="SCROLLVIEW"
+                        open={isIntervalDropdownOpen}
+                        onChangeValue={(value) => handleIntervalChange("type", value)}
+                        items={intervalTypes}
+                        value={donation.interval?.interval || ""}
+                        setOpen={setIsIntervalDropdownOpen}
+                        setValue={setSelectedInterval}
+                        setItems={setIntervalTypes}
+                        containerStyle={{
+                          ...globalStyles.containerStyle,
+                          height: isIntervalDropdownOpen ? intervalTypes.length * wp("18%") : 0,
+                          width: wp("45%"),
+                        }}
+                        style={globalStyles.dropDownMainStyle}
+                        labelStyle={globalStyles.labelStyle}
+                        listItemContainerStyle={globalStyles.itemStyle}
+                        dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("45%") }}
+                        scrollViewProps={{ scrollEnabled: true }}
+                        dropDownDirection="BOTTOM"
+                      />
+                    </View>
+                  </View>
+                </View>
+              )}
+
               <Text style={globalStyles.semiTitleText}>Fund</Text>
               <FundDonations funds={funds} fundDonations={fundDonations} updatedFunction={handleFundDonationsChange} />
               {fundDonations.length > 1 && <Text style={globalStyles.totalText}>Total Donation Amount: ${total}</Text>}
