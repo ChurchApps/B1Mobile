@@ -134,6 +134,7 @@ export const globalStyles = StyleSheet.create({
     actionButtons: { height: wp('12%'), width: wp('50%'), justifyContent: 'center', alignItems: "center" },
     totalText: { marginHorizontal: wp('5%'), fontSize: wp('4.5%'), marginTop: wp('5%') },
     notesInput: { fontSize: wp('4.2%'), width: wp('90%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%'), marginBottom: wp("2%") },
+    donationContainer: { width: wp('100%'), alignItems: 'center', marginVertical: wp('2%') },
 
     previewView: { flexDirection: 'row', paddingVertical: wp('3%'), borderBottomWidth: 1, borderBottomColor: 'lightgray' },
     previewTitleText: { width: wp('30%'), fontFamily: Fonts.RobotoRegular, fontSize: wp('4.2%') },
@@ -149,6 +150,7 @@ export const globalStyles = StyleSheet.create({
     cardListView: { width: wp('90%'), flexDirection: 'row', justifyContent: 'space-between', marginVertical: wp('5%'), alignSelf: 'center' },
     cardListText: { fontSize: wp('4.2%'), textAlign: 'left', fontFamily: Fonts.RobotoRegular, alignSelf: 'center' },
     cardListSeperator: { height: 0.5, width: wp('100%'), backgroundColor: 'lightgray' },
+    donationListView: { width: wp('90%'), marginVertical: wp('5%'), alignSelf: 'center' },
 
     paymentTitleContainer: { backgroundColor: 'white', borderRadius: wp('3.5%'), justifyContent: 'space-between', marginVertical: wp('5%'), shadowOffset: { width: 0, height: 0 }, elevation: 5, shadowColor: Colors.app_color, shadowOpacity: 0.1, shadowRadius: wp('2%') },
     paymentDetailText: { width: wp('90%'), fontSize: wp('4.2%'), textAlign: 'left', fontFamily: Fonts.RobotoRegular, alignSelf: 'center', marginVertical: wp('4%') },
@@ -156,6 +158,8 @@ export const globalStyles = StyleSheet.create({
     paymentTitleView: { flexDirection: 'row', height: wp('12%'), justifyContent: 'space-between', borderBottomColor: 'gray', borderBottomWidth: 1, alignItems: 'center', paddingHorizontal: wp('5%') },
     paymentTitleText: { fontSize: wp('4.5%'), textAlign: 'left', fontFamily: Fonts.RobotoMedium, width: wp('70%') },
     methodModalText: { color: 'black', fontSize: wp('4%') },
-    donationIcon: { width: wp('7%'), height: wp('7%') }
+    donationIcon: { width: wp('7%'), height: wp('7%') },
 
+    donationRowContainer: { width: wp("90%"), display: "flex", flexDirection: "row" },
+    donationRowText: { width: wp("35%"), textAlign: "center", fontFamily: Fonts.RobotoRegular, fontSize: wp("4.2%") }
 })
