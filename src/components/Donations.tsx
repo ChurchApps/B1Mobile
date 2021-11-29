@@ -73,7 +73,7 @@ export function Donations() {
       </View>
     </ScrollView>
   );
-  console.log(getRow());
+
   const content =
     donations.length > 0 ? (
       donationsTable
