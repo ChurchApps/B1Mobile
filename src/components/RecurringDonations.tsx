@@ -3,6 +3,8 @@ import { Image, ActivityIndicator, Text, ScrollView, View, TouchableOpacity } fr
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { useIsFocused } from "@react-navigation/native";
+import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog";
+import Icon from "react-native-vector-icons/FontAwesome";
 import Images from "../utils/Images";
 import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, Userhelper } from "../helper";
 import { DisplayBox } from ".";
@@ -16,6 +18,8 @@ interface Props {
 export function RecurringDonations({ customerId }: Props) {
   const [subscriptions, setSubscriptions] = React.useState<SubscriptionInterface[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionInterface>({} as SubscriptionInterface);
   const isFocused = useIsFocused();
   const person = Userhelper.person;
 
@@ -34,11 +38,16 @@ export function RecurringDonations({ customerId }: Props) {
           requests &&
           Promise.all(requests).then(() => {
             setSubscriptions(subs);
-            setIsLoading(false)
+            setIsLoading(false);
           })
         );
       });
     }
+  };
+
+  const getInterval = (subscription: SubscriptionInterface) => {
+    let interval = subscription?.plan?.interval_count + " " + subscription?.plan?.interval;
+    return subscription?.plan?.interval_count > 1 ? interval + "s" : interval;
   };
 
   useEffect(() => {
@@ -66,13 +75,45 @@ export function RecurringDonations({ customerId }: Props) {
             <Text style={{ ...globalStyles.donationRowText }}>
               {total} / {intervalUi}
             </Text>
-            <TouchableOpacity onPress={() => {}} style={{ marginLeft: wp("6%") }}>
+            <TouchableOpacity
+              onPress={() => {
+                setShowModal(true);
+                setSelectedSubscription(sub);
+              }}
+              style={{ marginLeft: wp("6%") }}
+            >
               <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
             </TouchableOpacity>
           </View>
         </View>
       );
     });
+  };
+
+  const getFunds = (subscription: SubscriptionInterface) => {
+    let result = [];
+    subscription.funds.forEach((fund: any) => {
+      result.push(
+        <View
+          key={subscription.id + fund.id}
+          style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: wp("40%") }}
+        >
+          <Text style={{ width: wp("30%"), overflow: "hidden" }}>{fund.name}</Text>
+          <Text>{CurrencyHelper.formatCurrency(fund.amount)}</Text>
+        </View>
+      );
+    });
+    const total = subscription.plan.amount / 100;
+    result.push(
+      <View
+        key={subscription.id + "-total"}
+        style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: wp("40%") }}
+      >
+        <Text style={{ width: wp("30%"), overflow: "hidden" }}>Total</Text>
+        <Text>{CurrencyHelper.formatCurrency(total)}</Text>
+      </View>
+    );
+    return result;
   };
 
   const donationsTable = (
@@ -91,18 +132,60 @@ export function RecurringDonations({ customerId }: Props) {
     subscriptions.length > 0 ? (
       donationsTable
     ) : (
-      <Text style={globalStyles.paymentDetailText}>Recurring Donations will appear once a donation has been entered.</Text>
+      <Text style={globalStyles.paymentDetailText}>
+        Recurring Donations will appear once a donation has been entered.
+      </Text>
     );
   return (
-    <DisplayBox
-      title="Recurring Donations"
-      headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
-    >
-      {isLoading ? (
-        <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />
-      ) : (
-        content
-      )}
-    </DisplayBox>
+    <>
+      <Dialog
+        onTouchOutside={() => setShowModal(false)}
+        width={0.86}
+        visible={showModal}
+        dialogAnimation={new ScaleAnimation()}
+      >
+        <DialogContent>
+          <View style={globalStyles.donationPreviewView}>
+            <Text style={globalStyles.donationText}>Edit Subscription</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setShowModal(false);
+              }}
+              style={globalStyles.donationCloseBtn}
+            >
+              <Icon name={"close"} style={globalStyles.closeIcon} size={wp("6%")} />
+            </TouchableOpacity>
+          </View>
+          <ScrollView>
+            <View style={globalStyles.previewView}>
+              <Text style={globalStyles.previewTitleText}>Start Date:</Text>
+              <Text style={{ ...globalStyles.previewDetailText }}>
+                {DateHelper.prettyDate(
+                  new Date(selectedSubscription && selectedSubscription.billing_cycle_anchor * 1000)
+                )}
+              </Text>
+            </View>
+            <View style={globalStyles.previewView}>
+              <Text style={globalStyles.previewTitleText}>Amount:</Text>
+              <View style={{ display: "flex" }}>{getFunds(selectedSubscription)}</View>
+            </View>
+            <View style={globalStyles.previewView}>
+              <Text style={globalStyles.previewTitleText}>Interval:</Text>
+              <Text style={{ ...globalStyles.previewDetailText }}>Every {getInterval(selectedSubscription)}</Text>
+            </View>
+          </ScrollView>
+        </DialogContent>
+      </Dialog>
+      <DisplayBox
+        title="Recurring Donations"
+        headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
+      >
+        {isLoading ? (
+          <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />
+        ) : (
+          content
+        )}
+      </DisplayBox>
+    </>
   );
 }
