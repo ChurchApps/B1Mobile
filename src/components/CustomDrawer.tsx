@@ -22,165 +22,166 @@ import { globalStyles, EnvironmentHelper, Userhelper } from '../helper';
 // }
 
 function Drawer(props: any) {
-    const { navigate, goBack, openDrawer } = props.navigation;
-    const [churchName, setChurchName] = useState('');
-    const [churchEmpty, setChurchEmpty] = useState(true);
-    const [drawerList, setDrawerList] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [user, setUser] = useState<any>(null);
-    const [userProfile, setUserProfile] = useState('');
+  const { navigate, goBack, openDrawer } = props.navigation;
+  const [churchName, setChurchName] = useState('');
+  const [churchEmpty, setChurchEmpty] = useState(true);
+  const [drawerList, setDrawerList] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState('');
 
-    const menuList = [{
-        id: 1,
-        text: 'Bible',
-        image: Images.ic_bible,
-        url: 'https://biblegateway.com/'
-    }, {
-        id: 2,
-        text: 'Preferences',
-        image: Images.ic_preferences
-    }, {
-        id: 3,
-        text: 'Members',
-        image: Images.ic_groups
-    }, {
-        id: 4,
-        text: 'Donate',
-        image: Images.ic_give
-    }];
+  const menuList = [{
+    id: 1,
+    text: 'Bible',
+    image: Images.ic_bible,
+    url: 'https://biblegateway.com/'
+  }, {
+    id: 2,
+    text: 'Preferences',
+    image: Images.ic_preferences
+  }, {
+    id: 3,
+    text: 'Members',
+    image: Images.ic_groups
+  }, {
+    id: 4,
+    text: 'Donate',
+    image: Images.ic_give
+  }];
 
-    useEffect(() => {
-        getChurch();
-    }, [props.navigation])
+  useEffect(() => {
+    getChurch();
+  }, [props.navigation])
 
-    const getChurch = async () => {
-        try {
-            const user = await AsyncStorage.getItem('USER_DATA')
-            if (user !== null) { 
-                setUser(JSON.parse(user)) 
-            }
-            const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
-            if (churchvalue !== null) {
-                const churchData = JSON.parse(churchvalue);
-                setChurchName(churchData.name)
-                setChurchEmpty(false)
-                getDrawerList(churchData.id);
-                getMemberData(churchData.personId);
-            }
-
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const navigateToScreen = (item: any) => {
-        if (item.linkType && item.linkType == "checkin") {
-            navigate('ServiceScreen', {})
-        } else {
-            if (item.url && item.url != '') {
-                navigate('HomeScreen', { url: item.url, title: item.text })
-            }
-            if (item.text == 'Members') {
-                navigate('MembersSearch')
-            }
-            if (item.text == 'Donate') {
-                navigate('DonationScreen')
-            }
-        }
-    }
-
-    const getDrawerList = (churchId: any) => {
-        setLoading(true);
-        props.getDrawerItemList(churchId, (err: any, res: any) => {
-            setLoading(false);
-            if (!err) {
-                if (res.data.length != 0) {
-                    res.data.forEach((item: any) => {
-                        if (item.text == 'Home') {
-                            navigateToScreen(item)
-                        }
-                    })
-                    setDrawerList(res.data)
-                } else {
-                    setDrawerList([])
-                }
-            } else {
-                Alert.alert("Alert", err.message);
-            }
-        });
-    }
-
-    const getMemberData = async (personId: any) => {
-      const token = await getToken("MembershipApi")
-      if (token !== null) {
-          props.getMemberDataApi(personId, token, (err: any, res: any) => {
-              if (!err) {
-                  if (res.data) {
-                      setUserProfile(res.data.photo)
-                  }
-              } else {
-                  Alert.alert("Alert", err.message);
-              }
-          });
+  const getChurch = async () => {
+    try {
+      const user = await AsyncStorage.getItem('USER_DATA')
+      if (user !== null) {
+        setUser(JSON.parse(user))
       }
+      const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+      if (churchvalue !== null) {
+        const churchData = JSON.parse(churchvalue);
+        setChurchName(churchData.name)
+        setChurchEmpty(false)
+        getDrawerList(churchData.id);
+        getMemberData(churchData.personId);
+      }
+
+    } catch (e) {
+      console.log(e)
+    }
   }
 
-    const logoutAction = async () => {
-        await AsyncStorage.getAllKeys()
-            .then(keys => AsyncStorage.multiRemove(keys))
-            .then(() => DevSettings.reload());
+  const navigateToScreen = (item: any) => {
+    if (item.linkType && item.linkType == "checkin") navigate('ServiceScreen', {})
+    if (item.linkType && item.linkType == "stream") navigate('HomeScreen', { url: "https://" + Userhelper.currentChurch.subDomain + ".streaminglive.church/", title: item.text })
+    if (item.linkType && item.linkType == "lessons") navigate('HomeScreen', { url: "https://lessons.church/b1/" + Userhelper.currentChurch.id, title: item.text })
+    else {
+      if (item.url && item.url != '') {
+        navigate('HomeScreen', { url: item.url, title: item.text })
+      }
+      if (item.text == 'Members') {
+        navigate('MembersSearch')
+      }
+      if (item.text == 'Donate') {
+        navigate('DonationScreen')
+      }
     }
+  }
 
-    const listItem = (topItem: boolean, item: any) => {
-        var tab_icon = item.icon != undefined ? item.icon.slice(7) : '';
-        return (
-            <TouchableOpacity style={globalStyles.headerView} onPress={() => navigateToScreen(item)}>
-                {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-                    <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('6%')} />}
-                <Text style={globalStyles.tabTitle}>{item.text}</Text>
-            </TouchableOpacity>
-        );
-    }
-
-    return (
-        <SafeAreaView>
-            <View style={globalStyles.headerView}>
-                <Image source={{ uri: EnvironmentHelper.ContentRoot + Userhelper.person?.photo || "" }} style={globalStyles.userIcon} />
-                <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
-            </View>
-            <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
-
-            <TouchableOpacity style={globalStyles.churchBtn} onPress={() => navigate('ChurchSearch', {})}>
-                {churchEmpty && <Image source={Images.ic_search} style={globalStyles.searchIcon} />}
-                <Text style={{ ...globalStyles.churchText, color: churchEmpty ? 'gray' : 'black' }}>
-                    {churchEmpty ? 'Find your church...' : churchName}
-                </Text>
-            </TouchableOpacity>
-
-            {
-                loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
-                    <FlatList data={drawerList} renderItem={({ item }) => listItem(false, item)} keyExtractor={(item: any) => item.id} />
+  const getDrawerList = (churchId: any) => {
+    setLoading(true);
+    props.getDrawerItemList(churchId, (err: any, res: any) => {
+      setLoading(false);
+      if (!err) {
+        if (res.data.length != 0) {
+          res.data.forEach((item: any) => {
+            if (item.text == 'Home') {
+              navigateToScreen(item)
             }
-            <TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
-                <Text>Log out</Text>
-            </TouchableOpacity>
-        </SafeAreaView>
+          })
+          setDrawerList(res.data)
+        } else {
+          setDrawerList([])
+        }
+      } else {
+        Alert.alert("Alert", err.message);
+      }
+    });
+  }
 
+  const getMemberData = async (personId: any) => {
+    const token = await getToken("MembershipApi")
+    if (token !== null) {
+      props.getMemberDataApi(personId, token, (err: any, res: any) => {
+        if (!err) {
+          if (res.data) {
+            setUserProfile(res.data.photo)
+          }
+        } else {
+          Alert.alert("Alert", err.message);
+        }
+      });
+    }
+  }
+
+  const logoutAction = async () => {
+    await AsyncStorage.getAllKeys()
+      .then(keys => AsyncStorage.multiRemove(keys))
+      .then(() => DevSettings.reload());
+  }
+
+  const listItem = (topItem: boolean, item: any) => {
+    var tab_icon = item.icon != undefined ? item.icon.slice(7) : '';
+    return (
+      <TouchableOpacity style={globalStyles.headerView} onPress={() => navigateToScreen(item)}>
+        {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
+          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('6%')} />}
+        <Text style={globalStyles.tabTitle}>{item.text}</Text>
+      </TouchableOpacity>
     );
+  }
+
+  return (
+    <SafeAreaView>
+      <View style={globalStyles.headerView}>
+        <Image source={{ uri: EnvironmentHelper.ContentRoot + Userhelper.person?.photo || "" }} style={globalStyles.userIcon} />
+        <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
+      </View>
+      <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
+
+      <TouchableOpacity style={globalStyles.churchBtn} onPress={() => navigate('ChurchSearch', {})}>
+        {churchEmpty && <Image source={Images.ic_search} style={globalStyles.searchIcon} />}
+        <Text style={{ ...globalStyles.churchText, color: churchEmpty ? 'gray' : 'black' }}>
+          {churchEmpty ? 'Find your church...' : churchName}
+        </Text>
+      </TouchableOpacity>
+
+      {
+        loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
+          <FlatList data={drawerList} renderItem={({ item }) => listItem(false, item)} keyExtractor={(item: any) => item.id} />
+      }
+      <TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
+        <Text>Log out</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
+
+  );
 };
 
 const mapStateToProps = (state: any) => {
-    return {
-        drawerlist: state.drawerlist,
-        login_data: state.login_data,
-        member_data: state.member_data,
-    };
+  return {
+    drawerlist: state.drawerlist,
+    login_data: state.login_data,
+    member_data: state.member_data,
+  };
 };
 const mapDispatchToProps = (dispatch: any) => {
-    return {
-        getDrawerItemList: (churchId: any, callback: any) => dispatch(getDrawerList(churchId, callback)),
-        getMemberDataApi: (personId: any, token: any, callback: any) => dispatch(getMemberData(personId, token, callback)),
-    }
+  return {
+    getDrawerItemList: (churchId: any, callback: any) => dispatch(getDrawerList(churchId, callback)),
+    getMemberDataApi: (personId: any, token: any, callback: any) => dispatch(getMemberData(personId, token, callback)),
+  }
 }
 
 export const CustomDrawer = connect(mapStateToProps, mapDispatchToProps)(Drawer);
