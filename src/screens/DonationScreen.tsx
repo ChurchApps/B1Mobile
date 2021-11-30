@@ -424,7 +424,11 @@ const DonationScreen = (props: Props) => {
                 customerId={customerId}
                 updatedFunction={loadData}
               />
-              <RecurringDonations customerId={customerId} />
+              <RecurringDonations
+                customerId={customerId}
+                paymentMethods={paymentMethods}
+                updatedFunction={loadData}
+              />
               <Donations />
             </ScrollView>
             {isLoading && <Loader isLoading={isLoading} />}
