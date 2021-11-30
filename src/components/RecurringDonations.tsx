@@ -92,7 +92,8 @@ export function RecurringDonations({ customerId }: Props) {
 
   const getFunds = (subscription: SubscriptionInterface) => {
     let result = [];
-    subscription.funds.forEach((fund: any) => {
+
+    subscription?.funds?.forEach((fund: any) => {
       result.push(
         <View
           key={subscription.id + fund.id}
@@ -103,7 +104,7 @@ export function RecurringDonations({ customerId }: Props) {
         </View>
       );
     });
-    const total = subscription.plan.amount / 100;
+    const total = subscription?.plan?.amount / 100;
     result.push(
       <View
         key={subscription.id + "-total"}
