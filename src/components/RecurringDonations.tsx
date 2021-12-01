@@ -263,13 +263,14 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 backgroundColor: "#6C757D",
                 borderTopRightRadius: 0,
                 borderBottomRightRadius: 0,
+                width: wp("26%")
               }}
               onPress={() => setShowModal(false)}
             >
               <Text style={globalStyles.popupButonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ ...globalStyles.popupButton, backgroundColor: "red", borderRadius: 0 }}
+              style={{ ...globalStyles.popupButton, backgroundColor: "red", borderRadius: 0, width: wp("25%") }}
               onPress={() => console.log("delete")}
             >
               <Text style={globalStyles.popupButonText}>Delete</Text>
@@ -280,6 +281,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 backgroundColor: Colors.button_bg,
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
+                width: wp("26%")
               }}
               onPress={() => console.log("pressed")}
               disabled={isSaving}
