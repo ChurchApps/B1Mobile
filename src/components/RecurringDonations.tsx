@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, ActivityIndicator, Text, ScrollView, View, TouchableOpacity, TextInput } from "react-native";
+import { Image, ActivityIndicator, Text, ScrollView, View, TouchableOpacity, TextInput, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { useIsFocused } from "@react-navigation/native";
@@ -36,6 +36,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   ]);
   const [selectedInterval, setSelectedInterval] = useState<string>("");
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const isFocused = useIsFocused();
   const person = Userhelper.person;
@@ -112,6 +113,36 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
         </View>
       );
     });
+  };
+
+  const handleDelete = () => {
+    Alert.alert("Are you sure?", "This will permantly delete and stop the recurring payments", [
+      {
+        text: "Cancel",
+        onPress: () => {},
+        style: "cancel",
+      },
+      {
+        text: "OK",
+        onPress: async () => {
+          try {
+            setIsDeleting(true);
+            let promises = [];
+            promises.push(ApiHelper.delete("/subscriptions/" + selectedSubscription.id, "GivingApi"));
+            promises.push(ApiHelper.delete("/subscriptionfunds/subscription/" + selectedSubscription.id, "GivingApi"));
+            Promise.all(promises).then(async () => {
+              setIsDeleting(false);
+              setShowModal(false);
+              await updatedFunction();
+              loadDonations();
+            });
+          } catch (err) {
+            setIsDeleting(false);
+            Alert.alert("Error in deleting the method");
+          }
+        },
+      },
+    ]);
   };
 
   const getFunds = (subscription: SubscriptionInterface) => {
@@ -263,17 +294,23 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 backgroundColor: "#6C757D",
                 borderTopRightRadius: 0,
                 borderBottomRightRadius: 0,
-                width: wp("26%")
+                width: wp("26%"),
               }}
               onPress={() => setShowModal(false)}
+              disabled={isSaving || isDeleting}
             >
               <Text style={globalStyles.popupButonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={{ ...globalStyles.popupButton, backgroundColor: "red", borderRadius: 0, width: wp("25%") }}
-              onPress={() => console.log("delete")}
+              onPress={() => handleDelete()}
+              disabled={isSaving || isDeleting}
             >
-              <Text style={globalStyles.popupButonText}>Delete</Text>
+              {isDeleting ? (
+                <ActivityIndicator size="small" color="white" animating={isDeleting} />
+              ) : (
+                <Text style={globalStyles.popupButonText}>Delete</Text>
+              )}
             </TouchableOpacity>
             <TouchableOpacity
               style={{
@@ -281,10 +318,10 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 backgroundColor: Colors.button_bg,
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
-                width: wp("26%")
+                width: wp("26%"),
               }}
               onPress={() => console.log("pressed")}
-              disabled={isSaving}
+              disabled={isSaving || isDeleting}
             >
               {isSaving ? (
                 <ActivityIndicator size="small" color="white" animating={isSaving} />
