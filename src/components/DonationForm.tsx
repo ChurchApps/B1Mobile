@@ -228,7 +228,12 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                 <ModalDatePicker
                   button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={wp("6%")} />}
                   locale="en"
-                  onSelect={(date: any) => setDate(date)}
+                  onSelect={(date: any) => {
+                    setDate(date);
+                    const donationsCopy = { ...donation };
+                    donationsCopy.billing_cycle_anchor = date;
+                    setDonation(donationsCopy);
+                  }}
                   isHideOnSelect={true}
                   initialDate={new Date()}
                 />

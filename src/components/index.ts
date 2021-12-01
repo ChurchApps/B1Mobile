@@ -14,6 +14,7 @@ export { Donations } from "./Donations"
 export { DonationForm } from "./DonationForm"
 export { FundDonations } from "./FundDonations"
 export { FundDonation } from "./FundDonation"
+export { RecurringDonations } from "./RecurringDonations"
 
 // popups
 export { SelectPaymentMethod } from "./popups/SelectPaymentMethod"

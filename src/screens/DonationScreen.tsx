@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { ModalDatePicker } from "react-native-material-date-picker";
 import moment from 'moment';
-import { FundDropDown, Loader, MainHeader, PaymentMethods, Donations, DonationForm } from '../components';
+import { FundDropDown, Loader, MainHeader, PaymentMethods, Donations, DonationForm, RecurringDonations } from '../components';
 import Dialog, { DialogContent, ScaleAnimation } from 'react-native-popup-dialog';
 import Fonts from '../utils/Fonts';
 import { CardField } from '@stripe/stripe-react-native';
@@ -422,6 +422,11 @@ const DonationScreen = (props: Props) => {
               <DonationForm
                 paymentMethods={paymentMethods}
                 customerId={customerId}
+                updatedFunction={loadData}
+              />
+              <RecurringDonations
+                customerId={customerId}
+                paymentMethods={paymentMethods}
                 updatedFunction={loadData}
               />
               <Donations />
