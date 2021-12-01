@@ -145,6 +145,26 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     ]);
   };
 
+  const handleSave = () => {
+    setIsSaving(true);
+    const selectedSubsCopy = { ...selectedSubscription };
+
+    let methods = pm.find((pm: StripePaymentMethod) => pm.id === selectedMethod);
+    if (!methods) {
+      methods = pm[0];
+    }
+    selectedSubsCopy.default_payment_method = methods?.type === "card" ? selectedMethod : "";
+    selectedSubsCopy.default_source = methods?.type === "bank" ? selectedMethod : "";
+    selectedSubsCopy.plan.interval_count = Number(intervalNumber);
+    selectedSubsCopy.plan.interval = selectedInterval;
+    ApiHelper.post("/subscriptions", [selectedSubsCopy], "GivingApi").then(async () => {
+      setIsSaving(false);
+      setShowModal(false);
+      await updatedFunction();
+      loadDonations();
+    });
+  };
+
   const getFunds = (subscription: SubscriptionInterface) => {
     let result = [];
 
@@ -173,17 +193,15 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   };
 
   const donationsTable = (
-    <ScrollView nestedScrollEnabled={true}>
-      <View style={{ ...globalStyles.donationContainer, marginVertical: wp("5%") }}>
-        <View style={{ ...globalStyles.donationRowContainer, marginBottom: wp("5%") }}>
-          <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Start Date</Text>
-          <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Amount</Text>
-        </View>
-        {getRow()}
+    <View style={{ ...globalStyles.donationContainer, marginVertical: wp("5%") }}>
+      <View style={{ ...globalStyles.donationRowContainer, marginBottom: wp("5%") }}>
+        <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Start Date</Text>
+        <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Amount</Text>
       </View>
-    </ScrollView>
+      {getRow()}
+    </View>
   );
-  console.log("interval", intervalNumber);
+
   const content =
     subscriptions.length > 0 ? (
       donationsTable
@@ -212,81 +230,81 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               <Icon name={"close"} style={globalStyles.closeIcon} size={wp("6%")} />
             </TouchableOpacity>
           </View>
-          <ScrollView>
-            <View style={globalStyles.previewView}>
-              <Text style={globalStyles.previewTitleText}>Start Date:</Text>
-              <Text style={{ ...globalStyles.previewDetailText }}>
-                {DateHelper.prettyDate(
-                  new Date(selectedSubscription && selectedSubscription.billing_cycle_anchor * 1000)
-                )}
-              </Text>
-            </View>
-            <View style={globalStyles.previewView}>
-              <Text style={globalStyles.previewTitleText}>Amount:</Text>
-              <View style={{ display: "flex" }}>{getFunds(selectedSubscription)}</View>
-            </View>
-            <View style={globalStyles.previewView}>
-              <Text style={globalStyles.previewTitleText}>Interval:</Text>
-              <Text style={{ ...globalStyles.previewDetailText }}>Every {getInterval(selectedSubscription)}</Text>
-            </View>
-            <Text style={{ ...globalStyles.previewTitleText, marginTop: wp("4%") }}>Method:</Text>
-            <View style={{ width: wp("100%"), marginBottom: wp("12%") }}>
-              <DropDownPicker
-                listMode="SCROLLVIEW"
-                open={isMethodsDropdownOpen}
-                items={paymentMethods}
-                value={selectedMethod}
-                setOpen={setIsMethodsDropdownOpen}
-                setValue={setSelectedMethod}
-                setItems={setPaymentMethods}
-                containerStyle={{
-                  ...globalStyles.containerStyle,
-                  height: isMethodsDropdownOpen ? paymentMethods.length * wp("12%") : wp("1%"),
-                  width: wp("76%"),
-                  marginHorizontal: wp("0%"),
-                }}
-                style={globalStyles.dropDownMainStyle}
-                labelStyle={globalStyles.labelStyle}
-                listItemContainerStyle={globalStyles.itemStyle}
-                dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("76%"), marginHorizontal: wp("0%") }}
-                scrollViewProps={{ scrollEnabled: true }}
-                dropDownDirection="BOTTOM"
-              />
-            </View>
-            <Text style={{ ...globalStyles.previewTitleText, marginTop: wp("4%"), width: wp("40%") }}>
-              Interval Number:
+          {/* <ScrollView> */}
+          <View style={globalStyles.previewView}>
+            <Text style={globalStyles.previewTitleText}>Start Date:</Text>
+            <Text style={{ ...globalStyles.previewDetailText }}>
+              {DateHelper.prettyDate(
+                new Date(selectedSubscription && selectedSubscription.billing_cycle_anchor * 1000)
+              )}
             </Text>
-            <TextInput
-              style={{ ...globalStyles.intervalInput, width: wp("76%"), marginLeft: wp("0%") }}
-              keyboardType="number-pad"
-              value={intervalNumber?.toString()}
-              onChangeText={(text) => setIntervalNumber(text)}
+          </View>
+          <View style={globalStyles.previewView}>
+            <Text style={globalStyles.previewTitleText}>Amount:</Text>
+            <View style={{ display: "flex" }}>{getFunds(selectedSubscription)}</View>
+          </View>
+          <View style={globalStyles.previewView}>
+            <Text style={globalStyles.previewTitleText}>Interval:</Text>
+            <Text style={{ ...globalStyles.previewDetailText }}>Every {getInterval(selectedSubscription)}</Text>
+          </View>
+          <Text style={{ ...globalStyles.previewTitleText, marginTop: wp("4%") }}>Method:</Text>
+          <View style={{ width: wp("100%"), marginBottom: wp("12%") }}>
+            <DropDownPicker
+              listMode="SCROLLVIEW"
+              open={isMethodsDropdownOpen}
+              items={paymentMethods}
+              value={selectedMethod}
+              setOpen={setIsMethodsDropdownOpen}
+              setValue={setSelectedMethod}
+              setItems={setPaymentMethods}
+              containerStyle={{
+                ...globalStyles.containerStyle,
+                height: isMethodsDropdownOpen ? paymentMethods.length * wp("12%") : wp("1%"),
+                width: wp("76%"),
+                marginHorizontal: wp("0%"),
+              }}
+              style={globalStyles.dropDownMainStyle}
+              labelStyle={globalStyles.labelStyle}
+              listItemContainerStyle={globalStyles.itemStyle}
+              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("76%"), marginHorizontal: wp("0%") }}
+              scrollViewProps={{ scrollEnabled: true }}
+              dropDownDirection="BOTTOM"
             />
-            <Text style={{ ...globalStyles.previewTitleText, marginTop: wp("4%") }}>Interval Type</Text>
-            <View style={{ width: wp("100%"), marginBottom: wp("12%") }}>
-              <DropDownPicker
-                listMode="SCROLLVIEW"
-                open={isIntervalDropdownOpen}
-                items={intervalTypes}
-                value={selectedInterval}
-                setOpen={setIsIntervalDropdownOpen}
-                setValue={setSelectedInterval}
-                setItems={setIntervalTypes}
-                containerStyle={{
-                  ...globalStyles.containerStyle,
-                  height: isIntervalDropdownOpen ? intervalTypes.length * wp("18%") : wp("1%"),
-                  width: wp("76%"),
-                  marginHorizontal: wp("0%"),
-                }}
-                style={globalStyles.dropDownMainStyle}
-                labelStyle={globalStyles.labelStyle}
-                listItemContainerStyle={globalStyles.itemStyle}
-                dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("76%"), marginHorizontal: wp("0%") }}
-                scrollViewProps={{ scrollEnabled: true }}
-                dropDownDirection="BOTTOM"
-              />
-            </View>
-          </ScrollView>
+          </View>
+          <Text style={{ ...globalStyles.previewTitleText, marginTop: wp("4%"), width: wp("40%") }}>
+            Interval Number:
+          </Text>
+          <TextInput
+            style={{ ...globalStyles.intervalInput, width: wp("76%"), marginLeft: wp("0%") }}
+            keyboardType="number-pad"
+            value={intervalNumber?.toString()}
+            onChangeText={(text) => setIntervalNumber(text)}
+          />
+          <Text style={{ ...globalStyles.previewTitleText, marginTop: wp("4%") }}>Interval Type</Text>
+          <View style={{ width: wp("100%"), marginBottom: wp("12%") }}>
+            <DropDownPicker
+              listMode="SCROLLVIEW"
+              open={isIntervalDropdownOpen}
+              items={intervalTypes}
+              value={selectedInterval}
+              setOpen={setIsIntervalDropdownOpen}
+              setValue={setSelectedInterval}
+              setItems={setIntervalTypes}
+              containerStyle={{
+                ...globalStyles.containerStyle,
+                height: isIntervalDropdownOpen ? intervalTypes.length * wp("12%") : wp("1%"),
+                width: wp("76%"),
+                marginHorizontal: wp("0%"),
+              }}
+              style={globalStyles.dropDownMainStyle}
+              labelStyle={globalStyles.labelStyle}
+              listItemContainerStyle={globalStyles.itemStyle}
+              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("76%"), marginHorizontal: wp("0%") }}
+              scrollViewProps={{ scrollEnabled: true }}
+              dropDownDirection="BOTTOM"
+            />
+          </View>
+          {/* </ScrollView> */}
           <View style={globalStyles.popupBottomContainer}>
             <TouchableOpacity
               style={{
@@ -320,7 +338,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 borderBottomLeftRadius: 0,
                 width: wp("26%"),
               }}
-              onPress={() => console.log("pressed")}
+              onPress={() => handleSave()}
               disabled={isSaving || isDeleting}
             >
               {isSaving ? (
