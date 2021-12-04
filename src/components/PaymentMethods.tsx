@@ -4,7 +4,7 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { FlatList } from "react-native-gesture-handler";
-import { DisplayBox, SelectPaymentMethod, CardForm, BankForm } from ".";
+import { DisplayBox, PaymentMethodModal, CardForm, BankForm } from ".";
 import Colors from "../utils/Colors";
 import { globalStyles, Userhelper, ApiHelper } from "../helper";
 import { StripePaymentMethod, Permissions } from "../interfaces";
@@ -143,7 +143,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     );
   return (
     <>
-      <SelectPaymentMethod show={showModal} close={() => setShowModal(false)} onSelect={handleEdit} />
+      <PaymentMethodModal show={showModal} close={() => setShowModal(false)} onSelect={handleEdit} />
       {content}
     </>
   );

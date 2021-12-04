@@ -31,6 +31,7 @@
     "react-native-dropdown-picker": "^5.1.21",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-material-date-picker": "^1.0.0",
+    "react-native-modal": "^13.0.0",
     "react-native-modal-datetime-picker": "^10.0.0",
     "react-native-popup-dialog": "^0.18.3",
     "react-native-reanimated": "^1.13.2",
