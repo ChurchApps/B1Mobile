@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -7,6 +6,7 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Colors from "../../utils/Colors";
 import { globalStyles, DateHelper, CurrencyHelper } from "../../helper";
 import { StripeDonationInterface } from "../../interfaces";
+import { CustomModal } from "./CustomModal";
 
 interface Props {
   show: boolean;
@@ -26,7 +26,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
     let message = "Thank you for your donation.";
     if (d === "recurring") message = "Recurring donation created. " + message;
     await handleDonate(message);
-    setLoading(false)
+    setLoading(false);
   };
 
   const formatInterval = () => {
@@ -37,12 +37,12 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
   };
 
   useEffect(() => {
-    setLoading(false)
-  }, [])
+    setLoading(false);
+  }, []);
 
   return (
-    <Dialog onTouchOutside={() => close()} width={0.86} visible={show} dialogAnimation={new ScaleAnimation()}>
-      <DialogContent>
+    <CustomModal isVisible={show} close={close} width={wp(90)}>
+      <View style={{ paddingHorizontal: wp(1) }}>
         <View style={globalStyles.donationPreviewView}>
           <Text style={globalStyles.donationText}>Donation Preview</Text>
           <TouchableOpacity
@@ -126,7 +126,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
             )}
           </TouchableOpacity>
         </View>
-      </DialogContent>
-    </Dialog>
+      </View>
+    </CustomModal>
   );
 }

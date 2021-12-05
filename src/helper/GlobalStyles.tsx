@@ -139,7 +139,7 @@ export const globalStyles = StyleSheet.create({
     previewView: { flexDirection: 'row', paddingVertical: wp('3%'), borderBottomWidth: 1, borderBottomColor: 'lightgray' },
     previewTitleText: { width: wp('30%'), fontFamily: Fonts.RobotoRegular, fontSize: wp('4.2%') },
     previewDetailText: { width: wp('50%'), fontFamily: Fonts.RobotoRegular, fontSize: wp("4.2%") },
-    donationPreviewView: { width: '100%', height: wp('14%'), marginBottom: wp('3%'), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomColor: 'lightgray', borderBottomWidth: 1 },
+    donationPreviewView: { width: '100%', height: wp('10%'), marginBottom: wp('3%'), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     donationText: { fontSize: wp('5.5%'), fontFamily: Fonts.RobotoRegular },
     donationCloseBtn: { height: wp('8%'), width: wp('8%'), justifyContent: 'center' },
     closeIcon: { color: 'gray', alignSelf: 'center' },
