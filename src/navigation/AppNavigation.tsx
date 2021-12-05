@@ -8,7 +8,7 @@ import { CustomDrawer } from '../components';
 import ChurchSearch from '../screens/ChurchSearch';
 import LoginScreen from '../screens/LoginScreen';
 import HouseholdScreen from '../screens/checkin/HouseholdScreen';
-import GroupsScreen from '../screens/GroupsScreen';
+import GroupsScreen from '../screens/checkin/GroupsScreen';
 import CheckinCompleteScreen from '../screens/checkin/CheckinCompleteScreen';
 import ServiceScreen from '../screens/checkin/ServiceScreen';
 import MembersSearch from '../screens/MembersSearch';
