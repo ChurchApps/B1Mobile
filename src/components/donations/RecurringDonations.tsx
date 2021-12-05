@@ -6,11 +6,11 @@ import { useIsFocused } from "@react-navigation/native";
 import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog";
 import Icon from "react-native-vector-icons/FontAwesome";
 import DropDownPicker from "react-native-dropdown-picker";
-import Images from "../utils/Images";
-import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper } from "../helper";
-import { DisplayBox } from ".";
-import { StripePaymentMethod, SubscriptionInterface } from "../interfaces";
-import Colors from "../utils/Colors";
+import Images from "../../utils/Images";
+import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper } from "../../helpers";
+import { DisplayBox } from "../";
+import { StripePaymentMethod, SubscriptionInterface } from "../../interfaces";
+import Colors from "../../utils/Colors";
 
 interface Props {
   customerId: string;
@@ -107,7 +107,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               }}
               style={{ marginLeft: wp("6%") }}
             >
-              <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
+              <FontAwesome5 name={"pencil-alt"} style={{ color: Constants.Colors.app_color }} size={wp("5.5%")} />
             </TouchableOpacity>
           </View>
         </View>
@@ -333,7 +333,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
             <TouchableOpacity
               style={{
                 ...globalStyles.popupButton,
-                backgroundColor: Colors.button_bg,
+                backgroundColor: Constants.Colors.button_bg,
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
                 width: wp("26%"),
@@ -352,7 +352,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
       </Dialog>
       <DisplayBox
         title="Recurring Donations"
-        headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
+        headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
       >
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />

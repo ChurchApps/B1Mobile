@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import Images from '../utils/Images';
+import { Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSearchList } from '../redux/actions/searchListAction';
 import { connect } from 'react-redux';
-import { globalStyles, UserHelper } from '../helper';
+import { globalStyles, UserHelper } from '../helpers';
 import { BlueHeader } from '../components';
 
 
@@ -92,7 +92,7 @@ const ChurchSearch = (props: Props) => {
       <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView]} onPress={() => churchSelection(item)}>
         {
           churchImage ? <Image source={{ uri: churchImage }} style={globalStyles.churchListIcon} /> :
-            <Image source={Images.ic_church} style={globalStyles.churchListIcon} />
+            <Image source={Constants.Images.ic_church} style={globalStyles.churchListIcon} />
         }
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText}>{item.name}</Text>
@@ -107,7 +107,7 @@ const ChurchSearch = (props: Props) => {
       <View style={globalStyles.grayContainer}>
         <Text style={globalStyles.searchMainText}>Find Your Church</Text>
         <View style={globalStyles.textInputView}>
-          <Image source={Images.ic_search} style={globalStyles.searchIcon} />
+          <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
           <TextInput
             style={globalStyles.textInputStyle}
             placeholder={'Church name'}

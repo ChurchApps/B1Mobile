@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, Text } from "react-native";
-import { FundDonationInterface, FundInterface } from "../interfaces";
-import { globalStyles } from "../helper";
+import { FundDonationInterface, FundInterface } from "../../interfaces";
+import { globalStyles } from "../../helpers";
 import { FundDonation } from ".";
 
 interface Props {

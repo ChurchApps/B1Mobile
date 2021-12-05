@@ -4,7 +4,7 @@ import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Fonts from "../../utils/Fonts";
-import { globalStyles } from "../../helper";
+import { globalStyles } from "../../helpers";
 import Colors from "../../utils/Colors";
 import { StripePaymentMethod } from "../../interfaces";
 
@@ -33,13 +33,13 @@ export function SelectPaymentMethod({ show, close, onSelect }: Props) {
             >
               <Icon
                 name={index == 0 ? "credit-card-alt" : "bank"}
-                style={{ color: Colors.button_green, marginHorizontal: wp("4%") }}
+                style={{ color: Constants.Colors.button_green, marginHorizontal: wp("4%") }}
                 size={wp("6%")}
               />
               <Text
                 style={{
                   fontSize: wp("4.8%"),
-                  fontFamily: Fonts.RobotoRegular,
+                  fontFamily: Constants.Fonts.RobotoRegular,
                   textAlign: "center",
                   paddingVertical: wp("2%"),
                 }}

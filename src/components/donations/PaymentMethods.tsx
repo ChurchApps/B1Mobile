@@ -4,10 +4,11 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { FlatList } from "react-native-gesture-handler";
-import { DisplayBox, SelectPaymentMethod, CardForm, BankForm } from ".";
-import Colors from "../utils/Colors";
-import { globalStyles, UserHelper, ApiHelper } from "../helper";
-import { StripePaymentMethod, Permissions } from "../interfaces";
+import { CardForm, BankForm } from ".";
+import { DisplayBox, SelectPaymentMethod } from "../";
+import Colors from "../../utils/Colors";
+import { globalStyles, UserHelper, ApiHelper } from "../../helpers";
+import { StripePaymentMethod, Permissions } from "../../interfaces";
 import { useIsFocused } from "@react-navigation/native";
 
 interface Props {
@@ -27,7 +28,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
 
   const rightHeaderContent = (
     <TouchableOpacity onPress={() => setShowModal(true)}>
-      <Icon name={"plus"} style={{ color: Colors.button_green }} size={wp("6%")} />
+      <Icon name={"plus"} style={{ color: Constants.Colors.button_green }} size={wp("6%")} />
     </TouchableOpacity>
   );
 
@@ -98,7 +99,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     if (!UserHelper.checkAccess(Permissions.givingApi.settings.edit)) return null;
     return (
       <TouchableOpacity onPress={() => handleEdit(item)}>
-        <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
+        <FontAwesome5 name={"pencil-alt"} style={{ color: Constants.Colors.app_color }} size={wp("5.5%")} />
       </TouchableOpacity>
     );
   };
@@ -112,7 +113,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
             <Text style={globalStyles.cardListText}> {item.name + " ****" + item.last4}</Text>
             {item?.status === "new" && (
               <TouchableOpacity onPress={() => handleEdit(item, true)}>
-                <Text style={{ color: Colors.app_color, width: wp("10%") }}>Verify</Text>
+                <Text style={{ color: Constants.Colors.app_color, width: wp("10%") }}>Verify</Text>
               </TouchableOpacity>
             )}
             {getEditButton(item)}
@@ -148,3 +149,4 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     </>
   );
 }
+
