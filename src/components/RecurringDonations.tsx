@@ -7,7 +7,7 @@ import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog
 import Icon from "react-native-vector-icons/FontAwesome";
 import DropDownPicker from "react-native-dropdown-picker";
 import Images from "../utils/Images";
-import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, Userhelper } from "../helper";
+import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper } from "../helper";
 import { DisplayBox } from ".";
 import { StripePaymentMethod, SubscriptionInterface } from "../interfaces";
 import Colors from "../utils/Colors";
@@ -39,7 +39,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const isFocused = useIsFocused();
-  const person = Userhelper.person;
+  const person = UserHelper.person;
 
   const loadDonations = () => {
     if (customerId) {
@@ -119,7 +119,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     Alert.alert("Are you sure?", "This will permantly delete and stop the recurring payments", [
       {
         text: "Cancel",
-        onPress: () => {},
+        onPress: () => { },
         style: "cancel",
       },
       {

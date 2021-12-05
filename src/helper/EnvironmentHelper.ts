@@ -11,11 +11,12 @@ export class EnvironmentHelper {
   static ContentRoot = "";
 
   static init = () => {
-    switch(STAGE) {
+    switch (STAGE) {
       case "staging": EnvironmentHelper.initStaging(); break;
       case "prod": EnvironmentHelper.initProd(); break;
       default: EnvironmentHelper.initDev(); break;
     }
+    console.log("INIT");
     ApiHelper.apiConfigs = [
       { keyName: "AccessApi", url: EnvironmentHelper.AccessApi, jwt: "", permisssions: [] },
       { keyName: "MembershipApi", url: EnvironmentHelper.MembershipApi, jwt: "", permisssions: [] },
@@ -23,6 +24,8 @@ export class EnvironmentHelper {
       { keyName: "GivingApi", url: EnvironmentHelper.GivingApi, jwt: "", permisssions: [] },
       { keyName: "B1Api", url: EnvironmentHelper.B1Api, jwt: "", permisssions: [] }
     ]
+    //leaving for now as a hack.  For some reason outputting the value makes the difference of whether it's actually populated or not.
+    console.log(JSON.stringify(ApiHelper.apiConfigs[1].url));
   }
 
   static initDev = () => {

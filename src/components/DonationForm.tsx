@@ -8,7 +8,7 @@ import moment from "moment";
 import { InputBox } from ".";
 import Images from "../utils/Images";
 import Colors from "../utils/Colors";
-import { globalStyles, ApiHelper, Userhelper } from "../helper";
+import { globalStyles, ApiHelper, UserHelper } from "../helper";
 import {
   FundDonationInterface,
   FundInterface,
@@ -25,7 +25,7 @@ interface Props {
 }
 
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
-  const person = Userhelper.person;
+  const person = UserHelper.person;
   const [donationType, setDonationType] = useState<string>("");
   const [isMethodsDropdownOpen, setIsMethodsDropdownOpen] = useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("");

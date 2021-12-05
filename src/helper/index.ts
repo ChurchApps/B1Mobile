@@ -1,6 +1,6 @@
 export { EnvironmentHelper } from "./EnvironmentHelper"
 export { ApiHelper } from "./ApiHelper"
-export { Userhelper } from "./Userhelper"
+export { UserHelper } from "./UserHelper"
 export { StripeHelper } from "./StripeHelper"
 export { DateHelper } from "./Datehelper"
 export { CurrencyHelper } from "./CurrencyHelper"

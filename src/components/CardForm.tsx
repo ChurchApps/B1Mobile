@@ -4,7 +4,7 @@ import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-nativ
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { InputBox } from ".";
 import Images from "../utils/Images";
-import { globalStyles, Userhelper, ApiHelper } from "../helper";
+import { globalStyles, UserHelper, ApiHelper } from "../helper";
 import { StripePaymentMethod, PaymentMethodInterface, StripeCardUpdateInterface } from "../interfaces";
 
 interface Props {
@@ -21,7 +21,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   const [month, setMonth] = React.useState<string>(card.exp_month?.toString() || "");
   const [year, setYear] = React.useState<string>(card.exp_year?.toString().slice(-2) || "");
   const { createPaymentMethod } = useStripe();
-  const person = Userhelper.person;
+  const person = UserHelper.person;
 
   const handleSave = () => {
     setIsSubmitting(true);

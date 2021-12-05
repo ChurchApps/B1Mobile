@@ -1,12 +1,12 @@
 import { ChurchInterface, PersonInterface, ApiHelper, IPermission } from ".";
 
-export class Userhelper {
+export class UserHelper {
   static currentChurch: ChurchInterface;
   static person: PersonInterface
 
   static async setPersonRecord() {
-    const person: PersonInterface = await ApiHelper.get(`/people/${Userhelper.currentChurch.personId}`, "MembershipApi");
-    Userhelper.person = person;
+    const person: PersonInterface = await ApiHelper.get(`/people/${UserHelper.currentChurch.personId}`, "MembershipApi");
+    UserHelper.person = person;
   }
 
   static checkAccess({ api, contentType, action }: IPermission): boolean {

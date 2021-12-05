@@ -6,7 +6,7 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { FlatList } from "react-native-gesture-handler";
 import { DisplayBox, SelectPaymentMethod, CardForm, BankForm } from ".";
 import Colors from "../utils/Colors";
-import { globalStyles, Userhelper, ApiHelper } from "../helper";
+import { globalStyles, UserHelper, ApiHelper } from "../helper";
 import { StripePaymentMethod, Permissions } from "../interfaces";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -48,7 +48,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     Alert.alert("Are you sure?", "This will permantly delete this payment method", [
       {
         text: "Cancel",
-        onPress: () => {},
+        onPress: () => { },
         style: "cancel",
       },
       {
@@ -95,7 +95,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   }
 
   const getEditButton = (item: StripePaymentMethod) => {
-    if (!Userhelper.checkAccess(Permissions.givingApi.settings.edit)) return null;
+    if (!UserHelper.checkAccess(Permissions.givingApi.settings.edit)) return null;
     return (
       <TouchableOpacity onPress={() => handleEdit(item)}>
         <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />

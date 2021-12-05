@@ -7,7 +7,7 @@ import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog
 import Icon from "react-native-vector-icons/FontAwesome";
 import { DisplayBox } from ".";
 import Images from "../utils/Images";
-import { globalStyles, ApiHelper, Userhelper, DateHelper, CurrencyHelper } from "../helper";
+import { globalStyles, ApiHelper, UserHelper, DateHelper, CurrencyHelper } from "../helper";
 import { DonationInterface } from "../interfaces";
 import Colors from "../utils/Colors";
 
@@ -17,7 +17,7 @@ export function Donations() {
   const [showDonationModal, setShowDonationModal] = useState<boolean>(false);
   const [selectedDonation, setSelectedDonation] = useState<DonationInterface>({});
   const isFocused = useIsFocused();
-  const person = Userhelper.person;
+  const person = UserHelper.person;
 
   const loadDonations = () => {
     console.log("here");

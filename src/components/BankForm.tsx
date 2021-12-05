@@ -5,7 +5,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../interfaces";
 import { InputBox } from ".";
 import Images from "../utils/Images";
-import { globalStyles, Userhelper, ApiHelper, StripeHelper } from "../helper";
+import { globalStyles, UserHelper, ApiHelper, StripeHelper } from "../helper";
 
 interface Props {
   setMode: any;
@@ -45,7 +45,7 @@ export function BankForm({
   const [routingNumber, setRoutingNumber] = useState<string>("");
   const [firstDeposit, setFirstDeposit] = useState<string>("");
   const [secondDeposit, setSecondDeposit] = useState<string>("");
-  const person = Userhelper.person;
+  const person = UserHelper.person;
 
   const handleSave = () => {
     setIsSubmitting(true);

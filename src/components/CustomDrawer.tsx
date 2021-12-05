@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { getMemberData } from '../redux/actions/memberDataAction';
 import { getToken } from '../helper/_ApiHelper';
 import API from '../helper/ApiConstants';
-import { globalStyles, EnvironmentHelper, Userhelper } from '../helper';
+import { globalStyles, EnvironmentHelper, UserHelper } from '../helper';
 
 // interface Props {
 //     navigation: {
@@ -30,6 +30,9 @@ function Drawer(props: any) {
   const [user, setUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState('');
 
+  const menuList: any[] = [];
+
+  /*
   const menuList = [{
     id: 1,
     text: 'Bible',
@@ -47,7 +50,7 @@ function Drawer(props: any) {
     id: 4,
     text: 'Donate',
     image: Images.ic_give
-  }];
+  }];*/
 
   useEffect(() => {
     getChurch();
@@ -75,8 +78,8 @@ function Drawer(props: any) {
 
   const navigateToScreen = (item: any) => {
     if (item.linkType && item.linkType == "checkin") navigate('ServiceScreen', {})
-    if (item.linkType && item.linkType == "stream") navigate('HomeScreen', { url: "https://" + Userhelper.currentChurch.subDomain + ".streaminglive.church/", title: item.text })
-    if (item.linkType && item.linkType == "lessons") navigate('HomeScreen', { url: "https://lessons.church/b1/" + Userhelper.currentChurch.id, title: item.text })
+    if (item.linkType && item.linkType == "stream") navigate('HomeScreen', { url: "https://" + UserHelper.currentChurch.subDomain + ".streaminglive.church/", title: item.text })
+    if (item.linkType && item.linkType == "lessons") navigate('HomeScreen', { url: "https://lessons.church/b1/" + UserHelper.currentChurch.id, title: item.text })
     else {
       if (item.url && item.url != '') {
         navigate('HomeScreen', { url: item.url, title: item.text })
@@ -146,7 +149,7 @@ function Drawer(props: any) {
   return (
     <SafeAreaView>
       <View style={globalStyles.headerView}>
-        <Image source={{ uri: EnvironmentHelper.ContentRoot + Userhelper.person?.photo || "" }} style={globalStyles.userIcon} />
+        <Image source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.person?.photo || "" }} style={globalStyles.userIcon} />
         <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
       </View>
       <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
