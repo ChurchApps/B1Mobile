@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { globalStyles } from "../helper";
+import { globalStyles } from "../helpers";
 import Colors from "../utils/Colors";
 
 interface Props {

@@ -7,9 +7,9 @@ import Icon from 'react-native-vector-icons/Fontisto';
 import { getLoginData } from '../redux/actions/loginAction';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles } from '../helper';
+import { globalStyles } from '../helpers';
 import { BlueHeader } from '../components';
-import { ChurchInterface, ApiHelper, UserHelper } from '../helper';
+import { ChurchInterface, ApiHelper, UserHelper } from '../helpers';
 
 interface Props {
   navigation: {

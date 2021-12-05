@@ -7,7 +7,7 @@ import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog
 import Icon from "react-native-vector-icons/FontAwesome";
 import DropDownPicker from "react-native-dropdown-picker";
 import Images from "../../utils/Images";
-import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper } from "../../helper";
+import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper } from "../../helpers";
 import { DisplayBox } from "../";
 import { StripePaymentMethod, SubscriptionInterface } from "../../interfaces";
 import Colors from "../../utils/Colors";

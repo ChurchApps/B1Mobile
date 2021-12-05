@@ -6,11 +6,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import Colors from '../../utils/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import API from '../../helper/ApiConstants';
-import { getToken } from '../../helper/_ApiHelper';
+import API from '../../helpers/ApiConstants';
+import { getToken } from '../../helpers/_ApiHelper';
 import { submitAttendanceData } from '../../redux/actions/submitAttendanceAction';
 import { loadAttendanceData } from '../../redux/actions/loadAttendanceAction';
-import { globalStyles } from '../../helper';
+import { globalStyles } from '../../helpers';
 import { BottomButton, Loader, WhiteHeader } from '../../components';
 
 interface Props {

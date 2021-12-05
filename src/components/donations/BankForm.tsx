@@ -5,7 +5,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../interfaces";
 import { InputBox } from "..";
 import Images from "../../utils/Images";
-import { globalStyles, UserHelper, ApiHelper, StripeHelper } from "../../helper";
+import { globalStyles, UserHelper, ApiHelper, StripeHelper } from "../../helpers";
 
 interface Props {
   setMode: any;

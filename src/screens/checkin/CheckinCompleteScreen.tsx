@@ -3,7 +3,7 @@ import { SafeAreaView, Text, View } from 'react-native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { WhiteHeader } from '../../components';
-import { globalStyles } from '../../helper';
+import { globalStyles } from '../../helpers';
 
 
 interface Props {

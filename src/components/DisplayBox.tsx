@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, Text } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { globalStyles } from "../helper";
+import { globalStyles } from "../helpers";
 
 interface Props {
   title: string;

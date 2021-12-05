@@ -8,7 +8,7 @@ import moment from "moment";
 import { InputBox } from "../";
 import Images from "../../utils/Images";
 import Colors from "../../utils/Colors";
-import { globalStyles, ApiHelper, UserHelper } from "../../helper";
+import { globalStyles, ApiHelper, UserHelper } from "../../helpers";
 import { FundDonationInterface, FundInterface, StripePaymentMethod, StripeDonationInterface, PersonInterface, } from "../../interfaces";
 import { FundDonations, } from ".";
 import { PreviewModal } from "../";

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, Image, Text, TouchableOpacity, Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Images from '../utils/Images';
-import { globalStyles, UserHelper, ApiHelper } from '../helper';;
+import { globalStyles, UserHelper, ApiHelper } from '../helpers';;
 import { MainHeader, PaymentMethods, Donations, DonationForm, RecurringDonations } from '../components';
 import { initStripe } from "@stripe/stripe-react-native"
 import { StripePaymentMethod } from '../interfaces';

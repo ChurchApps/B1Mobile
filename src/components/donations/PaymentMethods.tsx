@@ -7,7 +7,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { CardForm, BankForm } from ".";
 import { DisplayBox, SelectPaymentMethod } from "../";
 import Colors from "../../utils/Colors";
-import { globalStyles, UserHelper, ApiHelper } from "../../helper";
+import { globalStyles, UserHelper, ApiHelper } from "../../helpers";
 import { StripePaymentMethod, Permissions } from "../../interfaces";
 import { useIsFocused } from "@react-navigation/native";
 

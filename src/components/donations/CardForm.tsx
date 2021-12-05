@@ -4,7 +4,7 @@ import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-nativ
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { InputBox } from "../";
 import Images from "../../utils/Images";
-import { globalStyles, UserHelper, ApiHelper } from "../../helper";
+import { globalStyles, UserHelper, ApiHelper } from "../../helpers";
 import { StripePaymentMethod, PaymentMethodInterface, StripeCardUpdateInterface } from "../../interfaces";
 
 interface Props {

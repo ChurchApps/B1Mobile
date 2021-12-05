@@ -7,9 +7,9 @@ import { connect } from 'react-redux';
 import { getDrawerList } from '../redux/actions/drawerItemsAction';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { getMemberData } from '../redux/actions/memberDataAction';
-import { getToken } from '../helper/_ApiHelper';
-import API from '../helper/ApiConstants';
-import { globalStyles, EnvironmentHelper, UserHelper } from '../helper';
+import { getToken } from '../helpers/_ApiHelper';
+import API from '../helpers/ApiConstants';
+import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 
 // interface Props {
 //     navigation: {
