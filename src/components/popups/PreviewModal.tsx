@@ -115,7 +115,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
             <Text style={globalStyles.popupButonText}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ ...globalStyles.popupButton, backgroundColor: Colors.button_bg }}
+            style={{ ...globalStyles.popupButton, backgroundColor: Constants.Colors.button_bg }}
             onPress={() => handleClick()}
             disabled={isLoading}
           >

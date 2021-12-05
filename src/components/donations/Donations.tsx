@@ -55,7 +55,7 @@ export function Donations() {
             }}
             style={{ marginLeft: wp("6%") }}
           >
-            <FontAwesome5 name={"eye"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
+            <FontAwesome5 name={"eye"} style={{ color: Constants.Colors.app_color }} size={wp("5.5%")} />
           </TouchableOpacity>
         </View>
       </View>
@@ -127,7 +127,7 @@ export function Donations() {
           </ScrollView>
         </DialogContent>
       </Dialog>
-      <DisplayBox title="Donations" headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}>
+      <DisplayBox title="Donations" headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}>
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />
         ) : (

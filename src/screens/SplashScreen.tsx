@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect } from 'react';
 import { View, Image } from 'react-native';
 import { globalStyles } from '../helpers';
-import Images from '../utils/Images';
+import { Constants } from '../helpers';
 import { ApiHelper, ChurchInterface, UserHelper } from "../helpers"
 
 interface Props {
@@ -42,7 +42,7 @@ const SplashScreen = (props: Props) => {
   }
   return (
     <View style={globalStyles.safeAreaContainer}>
-      <Image source={Images.splash_screen} style={globalStyles.splashImage} />
+      <Image source={Constants.Images.splash_screen} style={globalStyles.splashImage} />
     </View>
   );
 };

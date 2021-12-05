@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, ActivityIndicator, Alert } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import Colors from '../utils/Colors';
+import { Constants } from '../helpers';
 import Icon from 'react-native-vector-icons/Fontisto';
 import { getLoginData } from '../redux/actions/loginAction';
 import { connect } from 'react-redux';
@@ -78,7 +78,7 @@ const LoginScreen = (props: Props) => {
       <View style={globalStyles.grayContainer}>
         <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
         <View style={globalStyles.textInputView}>
-          <Icon name={'email'} color={Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
+          <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
           <TextInput
             style={globalStyles.textInputStyle}
             placeholder={'Email'}
@@ -91,7 +91,7 @@ const LoginScreen = (props: Props) => {
           />
         </View>
         <View style={globalStyles.textInputView}>
-          <Icon name={'key'} color={Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
+          <Icon name={'key'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
           <TextInput
             style={globalStyles.textInputStyle}
             placeholder={'Password'}

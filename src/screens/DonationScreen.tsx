@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, Image, Text, TouchableOpacity, Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import Images from '../utils/Images';
+import { Constants } from '../helpers';
 import { globalStyles, UserHelper, ApiHelper } from '../helpers';;
 import { MainHeader, PaymentMethods, Donations, DonationForm, RecurringDonations } from '../components';
 import { initStripe } from "@stripe/stripe-react-native"
@@ -62,7 +62,7 @@ const DonationScreen = (props: Props) => {
     <SafeAreaView style={globalStyles.grayContainer}>
       <MainHeader
         leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Images.ic_menu} style={globalStyles.menuIcon} />
+          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
         </TouchableOpacity>}
         mainComponent={<Text style={globalStyles.headerText}>Donate</Text>}
         rightComponent={null}

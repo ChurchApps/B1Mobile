@@ -4,7 +4,6 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../interfaces";
 import { InputBox } from "..";
-import Images from "../../utils/Images";
 import { globalStyles, UserHelper, ApiHelper, StripeHelper } from "../../helpers";
 
 interface Props {
@@ -164,7 +163,7 @@ export function BankForm({
   return (
     <InputBox
       title={bank.id ? `${bank.name.toUpperCase()} ****${bank.last4}` : "Add New Bank Account"}
-      headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
+      headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
       saveFunction={handleSave}
       cancelFunction={() => setMode("display")}
       deleteFunction={bank.id && !showVerifyForm ? handleDelete : undefined}

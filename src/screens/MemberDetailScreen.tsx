@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import Images from '../utils/Images';
+import { Constants } from '../helpers';
 import { globalStyles } from '../helpers';
 import { BlueHeader, Loader } from '../components';
 import API from '../helpers/ApiConstants';
 import Icon from 'react-native-vector-icons/Zocial';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import Colors from '../utils/Colors';
 import { connect } from 'react-redux';
 import { getHouseholdList } from '../redux/actions/householdListAction';
 import { getToken } from '../helpers/_ApiHelper';
@@ -85,7 +84,7 @@ const MemberDetailScreen = (props: Props) => {
   const renderMemberItem = (item: any) => {
     return (
       <TouchableOpacity style={globalStyles.listMainView} onPress={() => onMembersClick(item)}>
-        <Image source={item.photo ? { uri: API.IMAGE_URL + item.photo } : Images.ic_member} style={globalStyles.memberListIcon} />
+        <Image source={item.photo ? { uri: API.IMAGE_URL + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText} numberOfLines={1}>{item.name.display}</Text>
         </View>
@@ -98,12 +97,12 @@ const MemberDetailScreen = (props: Props) => {
     <SafeAreaView style={globalStyles.appContainer}>
       <BlueHeader />
       <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
-        <Image source={member.photo ? { uri: API.IMAGE_URL + member.photo } : Images.ic_member} style={globalStyles.memberIcon} />
+        <Image source={member.photo ? { uri: API.IMAGE_URL + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
         <Text style={globalStyles.memberName}>{member.name.display}</Text>
 
         <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onEmailClick(memberinfo.email)}>
           <View style={globalStyles.detailIconContainer}>
-            <Icon name={'email'} color={Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+            <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Email :</Text>
           </View>
           <Text style={globalStyles.detailValue}>{memberinfo.email ? memberinfo.email : '-'}</Text>
@@ -111,7 +110,7 @@ const MemberDetailScreen = (props: Props) => {
 
         <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onPhoneClick(memberinfo.homePhone)}>
           <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'phone-alt'} color={Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+            <FontAwesome5 name={'phone-alt'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Phone :</Text>
           </View>
           <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
@@ -119,7 +118,7 @@ const MemberDetailScreen = (props: Props) => {
 
         <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onAddressClick()}>
           <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'location-arrow'} color={Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+            <FontAwesome5 name={'location-arrow'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Address :</Text>
           </View>
           {memberinfo.address1 ? <Text style={globalStyles.detailValue}>{memberinfo.address1}</Text> : null}

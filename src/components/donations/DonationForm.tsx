@@ -153,7 +153,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       />
       <InputBox
         title="Donate"
-        headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
+        headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
         saveFunction={donationType ? handleSave : undefined}
         cancelFunction={donationType ? handleCancel : undefined}
       >
@@ -162,12 +162,12 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             <TouchableOpacity
               style={{
                 ...globalStyles.methodButton,
-                backgroundColor: donationType === "once" ? Colors.app_color : "white",
+                backgroundColor: donationType === "once" ? Constants.Colors.app_color : "white",
               }}
               onPress={() => setDonationType("once")}
             >
               <Text
-                style={{ ...globalStyles.methodBtnText, color: donationType === "once" ? "white" : Colors.app_color }}
+                style={{ ...globalStyles.methodBtnText, color: donationType === "once" ? "white" : Constants.Colors.app_color }}
               >
                 Make a Donation
               </Text>
@@ -175,14 +175,14 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             <TouchableOpacity
               style={{
                 ...globalStyles.methodButton,
-                backgroundColor: donationType === "recurring" ? Colors.app_color : "white",
+                backgroundColor: donationType === "recurring" ? Constants.Colors.app_color : "white",
               }}
               onPress={() => setDonationType("recurring")}
             >
               <Text
                 style={{
                   ...globalStyles.methodBtnText,
-                  color: donationType === "recurring" ? "white" : Colors.app_color,
+                  color: donationType === "recurring" ? "white" : Constants.Colors.app_color,
                 }}
               >
                 Make a Recurring Donation

@@ -4,7 +4,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
-import Colors from '../../utils/Colors';
+import { Constants } from '../../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from '../../helpers/ApiConstants';
 import { getToken } from '../../helpers/_ApiHelper';
@@ -182,7 +182,7 @@ const HouseholdScreen = (props: Props) => {
                 <Icon name={'clock-o'} style={globalStyles.timeIcon} size={wp('5%')} />
                 <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
               </View>
-              <TouchableOpacity style={{ ...globalStyles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Colors.button_green : Colors.button_bg }}
+              <TouchableOpacity style={{ ...globalStyles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
                 onPress={() => item_time.selection ? null : navigate('GroupsScreen', { member: item, time: item_time, serviceId: props.route.params.serviceId })}>
                 <Text style={globalStyles.classesNoneText} numberOfLines={3}>
                   {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}

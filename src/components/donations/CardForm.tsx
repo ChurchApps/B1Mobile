@@ -85,7 +85,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   return (
     <InputBox
       title="Add New Card"
-      headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
+      headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
       saveFunction={handleSave}
       cancelFunction={() => setMode("display")}
       isSubmitting={isSubmitting}

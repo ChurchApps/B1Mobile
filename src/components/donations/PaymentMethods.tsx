@@ -28,7 +28,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
 
   const rightHeaderContent = (
     <TouchableOpacity onPress={() => setShowModal(true)}>
-      <Icon name={"plus"} style={{ color: Colors.button_green }} size={wp("6%")} />
+      <Icon name={"plus"} style={{ color: Constants.Colors.button_green }} size={wp("6%")} />
     </TouchableOpacity>
   );
 
@@ -99,7 +99,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     if (!UserHelper.checkAccess(Permissions.givingApi.settings.edit)) return null;
     return (
       <TouchableOpacity onPress={() => handleEdit(item)}>
-        <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
+        <FontAwesome5 name={"pencil-alt"} style={{ color: Constants.Colors.app_color }} size={wp("5.5%")} />
       </TouchableOpacity>
     );
   };
@@ -113,7 +113,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
             <Text style={globalStyles.cardListText}> {item.name + " ****" + item.last4}</Text>
             {item?.status === "new" && (
               <TouchableOpacity onPress={() => handleEdit(item, true)}>
-                <Text style={{ color: Colors.app_color, width: wp("10%") }}>Verify</Text>
+                <Text style={{ color: Constants.Colors.app_color, width: wp("10%") }}>Verify</Text>
               </TouchableOpacity>
             )}
             {getEditButton(item)}

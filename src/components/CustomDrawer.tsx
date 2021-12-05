@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, DevSettings } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import Images from '../utils/Images';
+import { Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { connect } from 'react-redux';
 import { getDrawerList } from '../redux/actions/drawerItemsAction';
@@ -36,20 +36,20 @@ function Drawer(props: any) {
   const menuList = [{
     id: 1,
     text: 'Bible',
-    image: Images.ic_bible,
+    image: Constants.Images.ic_bible,
     url: 'https://biblegateway.com/'
   }, {
     id: 2,
     text: 'Preferences',
-    image: Images.ic_preferences
+    image: Constants.Images.ic_preferences
   }, {
     id: 3,
     text: 'Members',
-    image: Images.ic_groups
+    image: Constants.Images.ic_groups
   }, {
     id: 4,
     text: 'Donate',
-    image: Images.ic_give
+    image: Constants.Images.ic_give
   }];*/
 
   useEffect(() => {
@@ -171,7 +171,7 @@ function Drawer(props: any) {
       <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
 
       <TouchableOpacity style={globalStyles.churchBtn} onPress={() => navigate('ChurchSearch', {})}>
-        {churchEmpty && <Image source={Images.ic_search} style={globalStyles.searchIcon} />}
+        {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
         <Text style={{ ...globalStyles.churchText, color: churchEmpty ? 'gray' : 'black' }}>
           {churchEmpty ? 'Find your church...' : churchName}
         </Text>
