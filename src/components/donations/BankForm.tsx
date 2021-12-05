@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Text, Image, View, TextInput, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
-import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../interfaces";
-import { InputBox } from ".";
-import Images from "../utils/Images";
-import { globalStyles, UserHelper, ApiHelper, StripeHelper } from "../helper";
+import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../interfaces";
+import { InputBox } from "..";
+import Images from "../../utils/Images";
+import { globalStyles, UserHelper, ApiHelper, StripeHelper } from "../../helper";
 
 interface Props {
   setMode: any;

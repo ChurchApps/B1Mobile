@@ -4,10 +4,11 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { FlatList } from "react-native-gesture-handler";
-import { DisplayBox, SelectPaymentMethod, CardForm, BankForm } from ".";
-import Colors from "../utils/Colors";
-import { globalStyles, UserHelper, ApiHelper } from "../helper";
-import { StripePaymentMethod, Permissions } from "../interfaces";
+import { CardForm, BankForm } from ".";
+import { DisplayBox, SelectPaymentMethod } from "../";
+import Colors from "../../utils/Colors";
+import { globalStyles, UserHelper, ApiHelper } from "../../helper";
+import { StripePaymentMethod, Permissions } from "../../interfaces";
 import { useIsFocused } from "@react-navigation/native";
 
 interface Props {
@@ -148,3 +149,4 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     </>
   );
 }
+

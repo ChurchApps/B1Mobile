@@ -5,18 +5,13 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import moment from "moment";
-import { InputBox } from ".";
-import Images from "../utils/Images";
-import Colors from "../utils/Colors";
-import { globalStyles, ApiHelper, UserHelper } from "../helper";
-import {
-  FundDonationInterface,
-  FundInterface,
-  StripePaymentMethod,
-  StripeDonationInterface,
-  PersonInterface,
-} from "../interfaces";
-import { FundDonations, PreviewModal } from ".";
+import { InputBox } from "../";
+import Images from "../../utils/Images";
+import Colors from "../../utils/Colors";
+import { globalStyles, ApiHelper, UserHelper } from "../../helper";
+import { FundDonationInterface, FundInterface, StripePaymentMethod, StripeDonationInterface, PersonInterface, } from "../../interfaces";
+import { FundDonations, } from ".";
+import { PreviewModal } from "../";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];

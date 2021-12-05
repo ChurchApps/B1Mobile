@@ -5,11 +5,11 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useIsFocused } from "@react-navigation/native";
 import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { DisplayBox } from ".";
-import Images from "../utils/Images";
-import { globalStyles, ApiHelper, UserHelper, DateHelper, CurrencyHelper } from "../helper";
-import { DonationInterface } from "../interfaces";
-import Colors from "../utils/Colors";
+import { DisplayBox } from "../";
+import Images from "../../utils/Images";
+import { globalStyles, ApiHelper, UserHelper, DateHelper, CurrencyHelper } from "../../helper";
+import { DonationInterface } from "../../interfaces";
+import Colors from "../../utils/Colors";
 
 export function Donations() {
   const [donations, setDonations] = useState<DonationInterface[]>([]);
