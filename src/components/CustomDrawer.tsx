@@ -77,20 +77,22 @@ function Drawer(props: any) {
   }
 
   const navigateToScreen = (item: any) => {
-    if (item.linkType && item.linkType == "checkin") navigate('ServiceScreen', {})
-    if (item.linkType && item.linkType == "stream") navigate('HomeScreen', { url: "https://" + UserHelper.currentChurch.subDomain + ".streaminglive.church/", title: item.text })
-    if (item.linkType && item.linkType == "lessons") navigate('HomeScreen', { url: "https://lessons.church/b1/" + UserHelper.currentChurch.id, title: item.text })
+    const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
+    if (item.linkType == "checkin") navigate('ServiceScreen', {})
+    if (item.linkType == "stream") navigate('HomeScreen', { url: "https://" + UserHelper.currentChurch.subDomain + ".streaminglive.church/", title: item.text })
+    if (item.linkType == "lessons") navigate('HomeScreen', { url: "https://lessons.church/b1/" + UserHelper.currentChurch.id, title: item.text })
+    if (item.linkType == "bible") navigate('HomeScreen', { url: bibleUrl, title: item.text })
+    if (item.linkType == "donation") navigate('DonationScreen')
+    if (item.linkType == "directory") navigate('MembersSearch')
+    if (item.linkType == "url") navigate('HomeScreen', { url: item.url, title: item.text })
+    /*
     else {
+      //TODO: Add "pages"
       if (item.url && item.url != '') {
         navigate('HomeScreen', { url: item.url, title: item.text })
       }
-      if (item.text == 'Members') {
-        navigate('MembersSearch')
-      }
-      if (item.text == 'Donate') {
-        navigate('DonationScreen')
-      }
-    }
+      
+    }*/
   }
 
   const getDrawerList = (churchId: any) => {
@@ -146,6 +148,20 @@ function Drawer(props: any) {
     );
   }
 
+  const loginOutToggle = () => {
+    if (UserHelper.person) {
+      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
+        <Text>Log out</Text>
+      </TouchableOpacity>);
+    } else {
+      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => navigate('AuthStack')}>
+        <Text>Login</Text>
+      </TouchableOpacity>);
+    }
+
+
+  }
+
   return (
     <SafeAreaView>
       <View style={globalStyles.headerView}>
@@ -165,9 +181,7 @@ function Drawer(props: any) {
         loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
           <FlatList data={drawerList} renderItem={({ item }) => listItem(false, item)} keyExtractor={(item: any) => item.id} />
       }
-      <TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
-        <Text>Log out</Text>
-      </TouchableOpacity>
+      {loginOutToggle()}
     </SafeAreaView>
 
   );
