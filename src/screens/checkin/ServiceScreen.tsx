@@ -7,9 +7,9 @@ import { Loader, WhiteHeader } from '../../components';
 import { createGroupTree, getPeopleIds, getToken } from '../../helpers/_ApiHelper';
 import { ApiHelper, globalStyles } from '../../helpers';
 import { getGroupList } from '../../redux/actions/groupsListAction';
-import { getHouseholdList } from '../../redux/actions/householdListAction';
 import { getServicesData } from '../../redux/actions/servicesAction';
 import { getServicesTimeData } from '../../redux/actions/servicesTimeAction';
+import { PersonInterface } from '../../interfaces';
 
 interface Props {
   navigation: {
@@ -18,7 +18,6 @@ interface Props {
     openDrawer: () => void;
   };
   getServicesDataApi: (token: any, callback: any) => void;
-  getHouseholdListApi: (householdId: any, token: any, callback: any) => void;
   getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => void;
   getGroupListApi: (token: any, callback: any) => void;
 }
@@ -63,24 +62,14 @@ const ServiceScreen = (props: Props) => {
       const personId = churchData.personId
 
       if (personId) {
-        ApiHelper.get("/people/" + personId, "MembershipApi").then(data => {
-          getHouseholdList(serviceId, data.householdId, token);
-        });
+        const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
+        const householdMembers: PersonInterface[] = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
+        getServicesTimeData(serviceId, token, householdMembers)
+
       }
     }
   }
 
-  const getHouseholdList = (serviceId: any, householdId: String, token: any) => {
-    props.getHouseholdListApi(householdId, token, (err: any, res: any) => {
-      if (!err) {
-        if (res.data) {
-          getServicesTimeData(serviceId, token, res.data)
-        }
-      } else {
-        Alert.alert("Alert", err.message);
-      }
-    });
-  }
 
   const getServicesTimeData = (serviceId: any, token: any, memberList: any) => {
     props.getServicesTimeDataApi(serviceId, token, (err: any, res: any) => {
@@ -165,8 +154,6 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: any) => {
   return {
     getServicesDataApi: (token: any, callback: any) => dispatch(getServicesData(token, callback)),
-    getMemberDataApi: (personId: any, token: any, callback: any) => dispatch(getMemberData(personId, token, callback)),
-    getHouseholdListApi: (householdId: any, token: any, callback: any) => dispatch(getHouseholdList(householdId, token, callback)),
     getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => dispatch(getServicesTimeData(serviceId, token, callback)),
     getGroupListApi: (token: any, callback: any) => dispatch(getGroupList(token, callback)),
   }

@@ -8,8 +8,6 @@ import API from '../helpers/ApiConstants';
 import Icon from 'react-native-vector-icons/Zocial';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import { connect } from 'react-redux';
-import { getHouseholdList } from '../redux/actions/householdListAction';
 import { getToken } from '../helpers/_ApiHelper';
 
 interface Props {
