@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Image, ActivityIndicator, Text, ScrollView, View, TouchableOpacity, TextInput, Alert } from "react-native";
+import { Image, ActivityIndicator, Text, View, TouchableOpacity, TextInput, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { useIsFocused } from "@react-navigation/native";
-import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog";
 import Icon from "react-native-vector-icons/FontAwesome";
 import DropDownPicker from "react-native-dropdown-picker";
+import { CustomModal } from "../modals/CustomModal";
 import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper, Constants } from "../../helpers";
 import { DisplayBox } from "../";
 import { StripePaymentMethod, SubscriptionInterface } from "../../interfaces";
@@ -210,13 +210,8 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     );
   return (
     <>
-      <Dialog
-        onTouchOutside={() => setShowModal(false)}
-        width={0.86}
-        visible={showModal}
-        dialogAnimation={new ScaleAnimation()}
-      >
-        <DialogContent>
+      <CustomModal width={wp(85)} isVisible={showModal} close={() => setShowModal(false)}>
+        <View style={{ paddingHorizontal: wp(1) }}>
           <View style={globalStyles.donationPreviewView}>
             <Text style={globalStyles.donationText}>Edit Subscription</Text>
             <TouchableOpacity
@@ -346,8 +341,8 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               )}
             </TouchableOpacity>
           </View>
-        </DialogContent>
-      </Dialog>
+        </View>
+      </CustomModal>
       <DisplayBox
         title="Recurring Donations"
         headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}

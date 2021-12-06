@@ -5,7 +5,8 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { FlatList } from "react-native-gesture-handler";
 import { CardForm, BankForm } from ".";
-import { DisplayBox, SelectPaymentMethod } from "../";
+import { DisplayBox } from "../";
+import { PaymentMethodModal } from "../modals/PaymentMethodModal"
 import { globalStyles, UserHelper, ApiHelper, Constants } from "../../helpers";
 import { StripePaymentMethod, Permissions } from "../../interfaces";
 import { useIsFocused } from "@react-navigation/native";
@@ -143,7 +144,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     );
   return (
     <>
-      <SelectPaymentMethod show={showModal} close={() => setShowModal(false)} onSelect={handleEdit} />
+      <PaymentMethodModal show={showModal} close={() => setShowModal(false)} onSelect={handleEdit} />
       {content}
     </>
   );

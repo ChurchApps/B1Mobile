@@ -3,8 +3,8 @@ import { Image, Text, ActivityIndicator, ScrollView, View, TouchableOpacity } fr
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useIsFocused } from "@react-navigation/native";
-import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { CustomModal } from "../modals/CustomModal";
 import { DisplayBox } from "../";
 import { globalStyles, ApiHelper, UserHelper, DateHelper, CurrencyHelper, Constants } from "../../helpers";
 import { DonationInterface } from "../../interfaces";
@@ -18,7 +18,6 @@ export function Donations() {
   const person = UserHelper.person;
 
   const loadDonations = () => {
-    console.log("here");
     setIsLoading(true);
     ApiHelper.get("/donations?personId=" + person.id, "GivingApi")
       .then((data) => {
@@ -83,13 +82,8 @@ export function Donations() {
 
   return (
     <>
-      <Dialog
-        onTouchOutside={() => setShowDonationModal(false)}
-        width={0.86}
-        visible={showDonationModal}
-        dialogAnimation={new ScaleAnimation()}
-      >
-        <DialogContent>
+      <CustomModal width={wp(85)} isVisible={showDonationModal} close={() => setShowDonationModal(false)}>
+        <View style={{ paddingHorizontal: wp(1) }}>
           <View style={globalStyles.donationPreviewView}>
             <Text style={globalStyles.donationText}>Donation Details</Text>
             <TouchableOpacity
@@ -125,8 +119,8 @@ export function Donations() {
               </Text>
             </View>
           </ScrollView>
-        </DialogContent>
-      </Dialog>
+        </View>
+      </CustomModal>
       <DisplayBox title="Donations" headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}>
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />

@@ -10,6 +10,6 @@ export { InputBox } from "./InputBox"
 export * from "./donations"
 
 
-// popups
-export { SelectPaymentMethod } from "./popups/SelectPaymentMethod"
-export { PreviewModal } from "./popups/PreviewModal"
+// Modals
+export { PaymentMethodModal } from "./modals/PaymentMethodModal";
+export { PreviewModal } from "./modals/PreviewModal";
