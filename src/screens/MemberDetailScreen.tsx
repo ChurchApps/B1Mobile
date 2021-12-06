@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import { Constants } from '../helpers';
+import { ApiHelper, Constants } from '../helpers';
 import { globalStyles } from '../helpers';
 import { BlueHeader, Loader } from '../components';
 import API from '../helpers/ApiConstants';
@@ -23,10 +23,9 @@ interface Props {
       member: any,
     }
   };
-  getHouseholdListApi: (householdId: any, token: any, callback: any) => void;
 }
 
-const MemberDetailScreen = (props: Props) => {
+export const MemberDetailScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const member = props.route.params.member;
   const memberinfo = member.contactInfo;
@@ -66,14 +65,10 @@ const MemberDetailScreen = (props: Props) => {
     setLoading(true);
     const householdId = member.householdId;
     const token = await getToken('default');
-    props.getHouseholdListApi(householdId, token, (err: any, res: any) => {
+    ApiHelper.get("/people/household/" + householdId, "MembershipApi").then(data => {
       setLoading(false);
-      if (!err) {
-        if (res.data) { setHouseholdList(res.data) }
-      } else {
-        Alert.alert("Alert", err.message);
-      }
-    });
+      setHouseholdList(data);
+    })
   }
 
   const onMembersClick = (item: any) => {
@@ -133,16 +128,3 @@ const MemberDetailScreen = (props: Props) => {
     </SafeAreaView>
   );
 };
-
-const mapStateToProps = (state: any) => {
-  return {
-    household_list: state.household_list,
-  };
-};
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getHouseholdListApi: (householdId: any, token: any, callback: any) => dispatch(getHouseholdList(householdId, token, callback)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MemberDetailScreen);

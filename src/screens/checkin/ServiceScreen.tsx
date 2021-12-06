@@ -5,10 +5,9 @@ import { FlatList } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { Loader, WhiteHeader } from '../../components';
 import { createGroupTree, getPeopleIds, getToken } from '../../helpers/_ApiHelper';
-import { globalStyles } from '../../helpers';
+import { ApiHelper, globalStyles } from '../../helpers';
 import { getGroupList } from '../../redux/actions/groupsListAction';
 import { getHouseholdList } from '../../redux/actions/householdListAction';
-import { getMemberData } from '../../redux/actions/memberDataAction';
 import { getServicesData } from '../../redux/actions/servicesAction';
 import { getServicesTimeData } from '../../redux/actions/servicesTimeAction';
 
@@ -19,7 +18,6 @@ interface Props {
     openDrawer: () => void;
   };
   getServicesDataApi: (token: any, callback: any) => void;
-  getMemberDataApi: (personId: any, token: any, callback: any) => void;
   getHouseholdListApi: (householdId: any, token: any, callback: any) => void;
   getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => void;
   getGroupListApi: (token: any, callback: any) => void;
@@ -63,15 +61,12 @@ const ServiceScreen = (props: Props) => {
     if (token !== null && churchvalue !== null && member_token != null) {
       const churchData = JSON.parse(churchvalue);
       const personId = churchData.personId
-      props.getMemberDataApi(personId, member_token, (err: any, res: any) => {
-        if (!err) {
-          if (res.data && res.data.householdId) {
-            getHouseholdList(serviceId, res.data.householdId, token)
-          }
-        } else {
-          Alert.alert("Alert", err.message);
-        }
-      });
+
+      if (personId) {
+        ApiHelper.get("/people/" + personId, "MembershipApi").then(data => {
+          getHouseholdList(serviceId, data.householdId, token);
+        });
+      }
     }
   }
 

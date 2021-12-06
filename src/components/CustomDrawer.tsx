@@ -106,18 +106,7 @@ export function CustomDrawer(props: any) {
   }
 
   const getMemberData = async (personId: any) => {
-    const token = await getToken("MembershipApi")
-    if (token !== null) {
-      props.getMemberDataApi(personId, token, (err: any, res: any) => {
-        if (!err) {
-          if (res.data) {
-            setUserProfile(res.data.photo)
-          }
-        } else {
-          Alert.alert("Alert", err.message);
-        }
-      });
-    }
+    ApiHelper.get("/people/" + personId, "MembershipApi").then(data => { setUserProfile(data.photo); });
   }
 
   const logoutAction = async () => {
