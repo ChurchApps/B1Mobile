@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, DevSettings } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants } from '../helpers';
+import { ApiHelper, Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { connect } from 'react-redux';
-import { getDrawerList } from '../redux/actions/drawerItemsAction';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { getMemberData } from '../redux/actions/memberDataAction';
 import { getToken } from '../helpers/_ApiHelper';
-import API from '../helpers/ApiConstants';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import { Permissions } from '../interfaces';
 
@@ -22,7 +18,7 @@ import { Permissions } from '../interfaces';
 //     getDrawerItemList: (churchId: String, callback: any) => void;
 // }
 
-function Drawer(props: any) {
+export function CustomDrawer(props: any) {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [churchName, setChurchName] = useState('');
   const [churchEmpty, setChurchEmpty] = useState(true);
@@ -102,38 +98,15 @@ function Drawer(props: any) {
 
   const getDrawerList = (churchId: any) => {
     setLoading(true);
-    props.getDrawerItemList(churchId, (err: any, res: any) => {
+    ApiHelper.get("/links/church/" + churchId + "?category=tab", "B1Api").then(data => {
       setLoading(false);
-      if (!err) {
-        if (res.data.length != 0) {
-          res.data.forEach((item: any) => {
-            if (item.text == 'Home') {
-              navigateToScreen(item)
-            }
-          })
-          setDrawerList(res.data)
-        } else {
-          setDrawerList([])
-        }
-      } else {
-        Alert.alert("Alert", err.message);
-      }
+      setDrawerList(data);
+      if (data.length > 0) navigateToScreen(data[0]);
     });
   }
 
   const getMemberData = async (personId: any) => {
-    const token = await getToken("MembershipApi")
-    if (token !== null) {
-      props.getMemberDataApi(personId, token, (err: any, res: any) => {
-        if (!err) {
-          if (res.data) {
-            setUserProfile(res.data.photo)
-          }
-        } else {
-          Alert.alert("Alert", err.message);
-        }
-      });
-    }
+    ApiHelper.get("/people/" + personId, "MembershipApi").then(data => { setUserProfile(data.photo); });
   }
 
   const logoutAction = async () => {
@@ -195,19 +168,3 @@ function Drawer(props: any) {
 
   );
 };
-
-const mapStateToProps = (state: any) => {
-  return {
-    drawerlist: state.drawerlist,
-    login_data: state.login_data,
-    member_data: state.member_data,
-  };
-};
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getDrawerItemList: (churchId: any, callback: any) => dispatch(getDrawerList(churchId, callback)),
-    getMemberDataApi: (personId: any, token: any, callback: any) => dispatch(getMemberData(personId, token, callback)),
-  }
-}
-
-export const CustomDrawer = connect(mapStateToProps, mapDispatchToProps)(Drawer);

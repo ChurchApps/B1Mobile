@@ -3,13 +3,10 @@ import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-
 import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { connect } from 'react-redux';
-import { Constants } from '../../helpers';
+import { ApiHelper, Constants } from '../../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from '../../helpers/ApiConstants';
 import { getToken } from '../../helpers/_ApiHelper';
-import { submitAttendanceData } from '../../redux/actions/submitAttendanceAction';
-import { loadAttendanceData } from '../../redux/actions/loadAttendanceAction';
 import { globalStyles } from '../../helpers';
 import { BottomButton, Loader, WhiteHeader } from '../../components';
 
@@ -26,11 +23,9 @@ interface Props {
       people_Ids: any
     }
   };
-  submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, pendingVisits: any, callback: any) => void;
-  loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => void;
 }
 
-const HouseholdScreen = (props: Props) => {
+export const HouseholdScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [selected, setSelected] = useState(null);
   const [isLoading, setLoading] = useState(false);
@@ -74,15 +69,10 @@ const HouseholdScreen = (props: Props) => {
     const serviceId = props.route.params.serviceId;
     const people_Ids = props.route.params.people_Ids;
     setLoading(true);
-    const token = await getToken('AttendanceApi')
-    props.loadAttendanceDataApi(serviceId, people_Ids, token, async (err: any, res: any) => {
-      setLoading(false);
-      if (!err) {
-        await setExistingAttendance(res.data, memberList, group_tree)
-      } else {
-        Alert.alert("Alert", err.message);
-      }
-    });
+
+    const data = ApiHelper.get("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + people_Ids + "&include=visitSessions", "AttendanceApi");
+    setLoading(false);
+    setExistingAttendance(data, memberList, group_tree)
   }
 
   const setExistingAttendance = async (existingAttendance: any, memberList: any, group_tree: any) => {
@@ -137,21 +127,16 @@ const HouseholdScreen = (props: Props) => {
       }
     })
 
-    props.submitAttendanceDataApi(serviceId, people_Ids, token, pendingVisits, async (err: any, res: any) => {
-      setLoading(false);
-      if (!err) {
-        try {
-          await AsyncStorage.removeItem('MEMBER_LIST')
-          await AsyncStorage.removeItem('GROUP_LIST')
-            .then(() => { navigate('CheckinCompleteScreen', {}) })
-        } catch (error) {
-          console.log('CLEAR MEMBER LIST ERROR', error)
-        }
+    ApiHelper.post("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + people_Ids, pendingVisits, "AttendanceApi");
+    setLoading(false);
+    try {
+      await AsyncStorage.removeItem('MEMBER_LIST')
+      await AsyncStorage.removeItem('GROUP_LIST')
+      navigate('CheckinCompleteScreen', {})
+    } catch (error) {
+      console.log('CLEAR MEMBER LIST ERROR', error)
+    }
 
-      } else {
-        Alert.alert("Alert", err.message);
-      }
-    });
   }
 
   const renderMemberItem = (item: any) => {
@@ -207,17 +192,3 @@ const HouseholdScreen = (props: Props) => {
   );
 };
 
-const mapStateToProps = (state: any) => {
-  return {
-    submit_attendance: state.submit_attendance,
-    load_attendance: state.load_attendance,
-  };
-};
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    submitAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, pendingVisits: any, callback: any) => dispatch(submitAttendanceData(serviceId, peopleIds, token, pendingVisits, callback)),
-    loadAttendanceDataApi: (serviceId: any, peopleIds: any, token: any, callback: any) => dispatch(loadAttendanceData(serviceId, peopleIds, token, callback)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(HouseholdScreen);

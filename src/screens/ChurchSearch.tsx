@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ArrayHelper, ChurchInterface, Constants } from '../helpers';
+import { ApiHelper, ArrayHelper, ChurchInterface, Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getSearchList } from '../redux/actions/searchListAction';
 import { connect } from 'react-redux';
 import { globalStyles, UserHelper } from '../helpers';
 import { BlueHeader } from '../components';
@@ -16,10 +15,9 @@ interface Props {
     goBack: () => void;
     openDrawer: () => void;
   };
-  getSearchChurchList: (searchText: String, callback: any) => void;
 }
 
-const ChurchSearch = (props: Props) => {
+export const ChurchSearch = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState([]);
@@ -49,19 +47,11 @@ const ChurchSearch = (props: Props) => {
 
   const searchApiCall = (text: String) => {
     setLoading(true);
-    props.getSearchChurchList(text, (err: any, res: any) => {
+    ApiHelper.get("/churches/search/?name=" + text + "&app=B1&include=logoSquare", "AccessApi").then(data => {
       setLoading(false);
-      if (!err) {
-        if (res.data.length != 0) {
-          setSearchList(res.data)
-        } else {
-          setSearchList([])
-          Alert.alert("Alert", "Search result not found!!");
-        }
-      } else {
-        Alert.alert("Alert", err.message);
-      }
-    });
+      setSearchList(data);
+      if (data.length === 0) Alert.alert("Alert", "Search result not found!!");
+    })
   }
 
   const GetRecentList = async () => {
@@ -134,17 +124,3 @@ const ChurchSearch = (props: Props) => {
     </SafeAreaView>
   );
 };
-
-const mapStateToProps = (state: any) => {
-  return {
-    searchlist: state.searchlist,
-  };
-};
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getSearchChurchList: (searchText: any, callback: any) => dispatch(getSearchList(searchText, callback))
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ChurchSearch);
-
