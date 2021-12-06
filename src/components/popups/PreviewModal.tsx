@@ -4,9 +4,9 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import Colors from "../../utils/Colors";
 import { globalStyles, DateHelper, CurrencyHelper } from "../../helpers";
 import { StripeDonationInterface } from "../../interfaces";
+import { Constants } from "../../helpers";
 
 interface Props {
   show: boolean;

@@ -3,8 +3,7 @@ import { View, Image, Alert, TextInput, Text } from "react-native";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { InputBox } from "../";
-import Images from "../../utils/Images";
-import { globalStyles, UserHelper, ApiHelper } from "../../helpers";
+import { globalStyles, UserHelper, ApiHelper, Constants } from "../../helpers";
 import { StripePaymentMethod, PaymentMethodInterface, StripeCardUpdateInterface } from "../../interfaces";
 
 interface Props {

@@ -6,8 +6,7 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { FlatList } from "react-native-gesture-handler";
 import { CardForm, BankForm } from ".";
 import { DisplayBox, SelectPaymentMethod } from "../";
-import Colors from "../../utils/Colors";
-import { globalStyles, UserHelper, ApiHelper } from "../../helpers";
+import { globalStyles, UserHelper, ApiHelper, Constants } from "../../helpers";
 import { StripePaymentMethod, Permissions } from "../../interfaces";
 import { useIsFocused } from "@react-navigation/native";
 

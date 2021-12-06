@@ -4,7 +4,7 @@ import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../interfaces";
 import { InputBox } from "..";
-import { globalStyles, UserHelper, ApiHelper, StripeHelper } from "../../helpers";
+import { globalStyles, UserHelper, ApiHelper, StripeHelper, Constants } from "../../helpers";
 
 interface Props {
   setMode: any;
