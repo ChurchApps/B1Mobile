@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants } from '../helpers';
+import { ArrayHelper, ChurchInterface, Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getSearchList } from '../redux/actions/searchListAction';
 import { connect } from 'react-redux';
@@ -31,10 +31,13 @@ const ChurchSearch = (props: Props) => {
     GetRecentList();
   }, [])
 
-  const churchSelection = async (churchData: any) => {
+  const churchSelection = async (churchData: ChurchInterface) => {
     StoreToRecent(churchData);
     try {
-      const churchValue = JSON.stringify(churchData)
+      const existing = (UserHelper.churches) ? ArrayHelper.getOne(UserHelper.churches, "id", churchData.id) : [];
+      if (existing) churchData = existing;
+      const churchValue = JSON.stringify(churchData);
+
       await AsyncStorage.setItem('CHURCH_DATA', churchValue)
       UserHelper.currentChurch = churchData;
       if (UserHelper.user) UserHelper.setPersonRecord();

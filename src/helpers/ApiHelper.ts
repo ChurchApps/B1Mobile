@@ -37,14 +37,16 @@ export class ApiHelper {
   }
 
   static async get(path: string, apiName: ApiListType) {
-      const config = this.getConfig(apiName);
-      if (config === undefined) return;
-      try {
-          const requestOptions = { method: 'GET', headers: { 'Authorization': 'Bearer ' + config.jwt } };
-          return fetch(config.url + path, requestOptions).then(response => response.json())
-      } catch (e) {
-          throw (e);
-      }
+    const config = this.getConfig(apiName);
+    if (config === undefined) return;
+    try {
+      const requestOptions = { method: 'GET', headers: { 'Authorization': 'Bearer ' + config.jwt } };
+      console.log(config.url + path);
+      console.log(config.jwt);
+      return fetch(config.url + path, requestOptions).then(response => response.json())
+    } catch (e) {
+      throw (e);
+    }
   }
 
   static async getAnonymous(path: string, apiName: ApiListType) {
@@ -59,35 +61,35 @@ export class ApiHelper {
   }
 
   static async post(path: string, data: any[] | {}, apiName: ApiListType) {
-      const config = this.getConfig(apiName);
-      if (config === undefined) return;
-      const requestOptions = {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + config.jwt, 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-      };
-      return fetch(config.url + path, requestOptions).then(response => response.json())
+    const config = this.getConfig(apiName);
+    if (config === undefined) return;
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + config.jwt, 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    };
+    return fetch(config.url + path, requestOptions).then(response => response.json())
   }
 
   static async delete(path: string, apiName: ApiListType) {
-      const config = this.getConfig(apiName);
-      if (config === undefined) return;
-      const requestOptions = {
-          method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + config.jwt }
-      };
-      return fetch(config.url + path, requestOptions);
+    const config = this.getConfig(apiName);
+    if (config === undefined) return;
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + config.jwt }
+    };
+    return fetch(config.url + path, requestOptions);
   }
 
   static async postAnonymous(path: string, data: any[] | {}, apiName: ApiListType) {
-      const config = this.getConfig(apiName);
-      if (config === undefined) return;
-      const requestOptions = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-      };
-      return fetch(config.url + path, requestOptions).then(response => response.json())
+    const config = this.getConfig(apiName);
+    if (config === undefined) return;
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    };
+    return fetch(config.url + path, requestOptions).then(response => response.json())
   }
 
 }

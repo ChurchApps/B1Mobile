@@ -10,6 +10,7 @@ import { getMemberData } from '../redux/actions/memberDataAction';
 import { getToken } from '../helpers/_ApiHelper';
 import API from '../helpers/ApiConstants';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
+import { Permissions } from '../interfaces';
 
 // interface Props {
 //     navigation: {
@@ -83,7 +84,11 @@ function Drawer(props: any) {
     if (item.linkType == "lessons") navigate('HomeScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch.id, title: item.text })
     if (item.linkType == "bible") navigate('HomeScreen', { url: bibleUrl, title: item.text })
     if (item.linkType == "donation") navigate('DonationScreen')
-    if (item.linkType == "directory") navigate('MembersSearch')
+    if (item.linkType == "directory") {
+      if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
+      else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers)) Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.")
+      else navigate('MembersSearch')
+    }
     if (item.linkType == "url") navigate('HomeScreen', { url: item.url, title: item.text })
     /*
     else {
