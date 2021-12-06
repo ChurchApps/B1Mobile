@@ -33,8 +33,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     customerId: customerId,
     person: {
       id: person?.id || "",
-      email: person?.contactInfo.email || "",
-      name: person?.name.display || "",
+      email: person?.contactInfo?.email || "",
+      name: person?.name?.display || "",
     },
     amount: 0,
     billing_cycle_anchor: +new Date(),

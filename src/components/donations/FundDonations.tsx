@@ -26,7 +26,7 @@ export function FundDonations({ funds, fundDonations, updatedFunction }: Props) 
 
   return (
     <>
-      {fundDonations.map((fd, index) => (
+      {fundDonations?.map((fd, index) => (
         <FundDonation fundDonation={fd} funds={funds} updatedFunction={handleUpdated} index={index} />
       ))}
       <TouchableOpacity onPress={() => addRow()}>

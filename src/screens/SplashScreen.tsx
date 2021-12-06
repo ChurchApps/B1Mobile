@@ -23,6 +23,7 @@ const SplashScreen = (props: Props) => {
       const churchString = await AsyncStorage.getItem("CHURCH_DATA")
 
       if (user !== null && churchString !== null) {
+        UserHelper.user = JSON.parse(user);
         const church: ChurchInterface = JSON.parse(churchString);
         UserHelper.currentChurch = church;
         church.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))

@@ -37,6 +37,7 @@ const ChurchSearch = (props: Props) => {
       const churchValue = JSON.stringify(churchData)
       await AsyncStorage.setItem('CHURCH_DATA', churchValue)
       UserHelper.currentChurch = churchData;
+      if (UserHelper.user) UserHelper.setPersonRecord();
       DevSettings.reload()
     } catch (err) {
       console.log(err)

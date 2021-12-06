@@ -56,6 +56,7 @@ const LoginScreen = (props: Props) => {
       if (!err) {
         if (res.data.user != null) {
           const church: ChurchInterface = res.data.churches[0]
+          UserHelper.user = res.data.user;
 
           UserHelper.currentChurch = church
           church.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))

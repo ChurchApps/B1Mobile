@@ -21,7 +21,9 @@ export function Donations() {
     console.log("here");
     setIsLoading(true);
     ApiHelper.get("/donations?personId=" + person.id, "GivingApi")
-      .then((data) => setDonations(data))
+      .then((data) => {
+        if (Array.isArray(data)) setDonations(data)
+      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -38,26 +40,29 @@ export function Donations() {
   useEffect(loadDonations, []);
 
   const getRow = () => {
-    return donations?.map((d) => (
-      <View>
-        <View style={globalStyles.cardListSeperator} />
-        <View style={{ ...globalStyles.donationRowContainer, ...globalStyles.donationListView }}>
-          <Text style={{ ...globalStyles.donationRowText }}>
-            {DateHelper.prettyDate(new Date(d.donationDate || ""))}
-          </Text>
-          <Text style={{ ...globalStyles.donationRowText }}>{CurrencyHelper.formatCurrency(d.fund?.amount || 0)}</Text>
-          <TouchableOpacity
-            onPress={() => {
-              setShowDonationModal(true);
-              setSelectedDonation(d);
-            }}
-            style={{ marginLeft: wp("6%") }}
-          >
-            <FontAwesome5 name={"eye"} style={{ color: Constants.Colors.app_color }} size={wp("5.5%")} />
-          </TouchableOpacity>
+    if (!donations) return <View></View>
+    else {
+      return donations?.map((d) => (
+        <View>
+          <View style={globalStyles.cardListSeperator} />
+          <View style={{ ...globalStyles.donationRowContainer, ...globalStyles.donationListView }}>
+            <Text style={{ ...globalStyles.donationRowText }}>
+              {DateHelper.prettyDate(new Date(d.donationDate || ""))}
+            </Text>
+            <Text style={{ ...globalStyles.donationRowText }}>{CurrencyHelper.formatCurrency(d.fund?.amount || 0)}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setShowDonationModal(true);
+                setSelectedDonation(d);
+              }}
+              style={{ marginLeft: wp("6%") }}
+            >
+              <FontAwesome5 name={"eye"} style={{ color: Constants.Colors.app_color }} size={wp("5.5%")} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    ));
+      ));
+    }
   };
 
   const donationsTable = (
@@ -72,12 +77,9 @@ export function Donations() {
     </ScrollView>
   );
 
-  const content =
-    donations.length > 0 ? (
-      donationsTable
-    ) : (
-      <Text style={globalStyles.paymentDetailText}>Donations will appear once a donation has been entered.</Text>
-    );
+  const content = donations?.length > 0
+    ? donationsTable
+    : <Text style={globalStyles.paymentDetailText}>Donations will appear once a donation has been entered.</Text>
 
   return (
     <>
