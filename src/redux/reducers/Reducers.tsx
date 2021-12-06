@@ -1,6 +1,5 @@
 import { combineReducers } from "redux";
 
-import SearchList from './searchListReducers';
 import DrawerList from './drawerItemsReducers';
 import LoginData from './loginReducers';
 import MemberData from './memberDataReducer';
@@ -13,17 +12,16 @@ import SubmitAttendance from './submitAttendanceReducers';
 import MembersList from './membersListReducers';
 
 const Reducers = combineReducers({
-    searchlist: SearchList,
-    drawerlist: DrawerList,
-    login_data: LoginData,
-    member_data: MemberData,
-    household_list: HouseholdList,
-    services_data: ServiceList,
-    services_time: ServiceTime,
-    group_list: GroupList,
-    load_attendance: LoadAttendance,
-    submit_attendance: SubmitAttendance,
-    members_list: MembersList
+  drawerlist: DrawerList,
+  login_data: LoginData,
+  member_data: MemberData,
+  household_list: HouseholdList,
+  services_data: ServiceList,
+  services_time: ServiceTime,
+  group_list: GroupList,
+  load_attendance: LoadAttendance,
+  submit_attendance: SubmitAttendance,
+  members_list: MembersList
 })
 
 export default Reducers;
