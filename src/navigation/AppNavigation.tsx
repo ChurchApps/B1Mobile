@@ -6,7 +6,7 @@ import SplashScreen from '../screens/SplashScreen';
 import HomeScreen from '../screens/HomeScreen';
 import { CustomDrawer } from '../components';
 import { ChurchSearch } from '../screens/ChurchSearch';
-import LoginScreen from '../screens/LoginScreen';
+import { LoginScreen } from '../screens/LoginScreen';
 import HouseholdScreen from '../screens/checkin/HouseholdScreen';
 import GroupsScreen from '../screens/checkin/GroupsScreen';
 import CheckinCompleteScreen from '../screens/checkin/CheckinCompleteScreen';
