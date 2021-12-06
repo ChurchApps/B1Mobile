@@ -18,9 +18,6 @@ export const CONTENT_URL = "https://content.staging.churchapps.org"
 //Staging
 const API = {
   IMAGE_URL: CONTENT_URL,
-  HOUSEHOLD_LIST_URL: MEMBERSHIP_URL + 'people/household/',
-  SERVICES_URL: ATTENDANCE_DOMAIN_URL + 'services',
-  SERVICES_TIME_URL: ATTENDANCE_DOMAIN_URL + 'servicetimes',
   GROUPS_URL: MEMBERSHIP_URL + 'groups',
   ATTENDANCE_URL: ATTENDANCE_DOMAIN_URL + 'visits/checkin',
   GIVING_API: GIVING_API

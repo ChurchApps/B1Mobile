@@ -7,9 +7,7 @@ import { Loader, WhiteHeader } from '../../components';
 import { createGroupTree, getPeopleIds, getToken } from '../../helpers/_ApiHelper';
 import { ApiHelper, globalStyles } from '../../helpers';
 import { getGroupList } from '../../redux/actions/groupsListAction';
-import { getServicesData } from '../../redux/actions/servicesAction';
-import { getServicesTimeData } from '../../redux/actions/servicesTimeAction';
-import { PersonInterface } from '../../interfaces';
+import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
 
 interface Props {
   navigation: {
@@ -17,8 +15,6 @@ interface Props {
     goBack: () => void;
     openDrawer: () => void;
   };
-  getServicesDataApi: (token: any, callback: any) => void;
-  getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => void;
   getGroupListApi: (token: any, callback: any) => void;
 }
 
@@ -33,19 +29,7 @@ const ServiceScreen = (props: Props) => {
 
   const getServiceData = async () => {
     setLoading(true);
-    const token = await getToken('default')
-    if (token != null) {
-      props.getServicesDataApi(token, (err: any, res: any) => {
-        setLoading(false);
-        if (!err) {
-          if (res.data) {
-            setServiceList(res.data)
-          }
-        } else {
-          Alert.alert("Alert", err.message);
-        }
-      });
-    }
+    ApiHelper.get("/services", "AttendanceApi").then(data => { setLoading(false); setServiceList(data); })
   }
 
   const ServiceSelection = (item: any) => {
@@ -64,22 +48,12 @@ const ServiceScreen = (props: Props) => {
       if (personId) {
         const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
         const householdMembers: PersonInterface[] = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
-        getServicesTimeData(serviceId, token, householdMembers)
-
+        const serviceTimes: ServiceTimeInterface = await ApiHelper.get("/serviceTimes?serviceId" + serviceId, "AttendanceApi");
+        createHouseholdTree(serviceId, serviceTimes, householdMembers);
       }
     }
   }
 
-
-  const getServicesTimeData = (serviceId: any, token: any, memberList: any) => {
-    props.getServicesTimeDataApi(serviceId, token, (err: any, res: any) => {
-      if (!err) {
-        createHouseholdTree(serviceId, res.data, memberList)
-      } else {
-        Alert.alert("Alert", err.message);
-      }
-    });
-  }
 
   const createHouseholdTree = async (serviceId: any, serviceTime: any, memberList: any) => {
     memberList?.forEach((member: any) => {
@@ -153,8 +127,6 @@ const mapStateToProps = (state: any) => {
 };
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    getServicesDataApi: (token: any, callback: any) => dispatch(getServicesData(token, callback)),
-    getServicesTimeDataApi: (serviceId: any, token: any, callback: any) => dispatch(getServicesTimeData(serviceId, token, callback)),
     getGroupListApi: (token: any, callback: any) => dispatch(getGroupList(token, callback)),
   }
 }
