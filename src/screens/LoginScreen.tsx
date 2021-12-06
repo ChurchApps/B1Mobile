@@ -57,16 +57,15 @@ const LoginScreen = (props: Props) => {
         if (res.data.user != null) {
           const church: ChurchInterface = res.data.churches[0]
           UserHelper.user = res.data.user;
-
+          UserHelper.churches = res.data.churches;
           UserHelper.currentChurch = church
           church.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
           await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
           await AsyncStorage.setItem('USER_DATA', JSON.stringify(res.data.user))
+          await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(res.data.churches))
           await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(church))
-            .then(() => {
-              props.navigation.navigate('MainStack');
-              DevSettings.reload();
-            })
+          props.navigation.navigate('MainStack');
+          DevSettings.reload();
         }
       } else {
         Alert.alert("Alert", err.message);

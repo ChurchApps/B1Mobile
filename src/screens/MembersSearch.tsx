@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, Alert } from 'react-native';
 import { FlatList, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants } from '../helpers';
+import { ApiHelper, Constants } from '../helpers';
 import { getMembersList } from '../redux/actions/membersListAction';
 import { connect } from 'react-redux';
 import { globalStyles } from '../helpers';
@@ -27,26 +27,19 @@ const MembersSearch = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    membersListApiCall()
+    loadMembers()
   }, [])
 
-  const membersListApiCall = async () => {
-    setLoading(true);
-    const token = await getToken("MembershipApi")
-    props.getAllMembersList(token, (err: any, res: any) => {
+  const loadMembers = () => {
+    console.log("LOAD MEMBERS")
+    ApiHelper.get("/people", "MembershipApi").then(data => {
+      console.log("MEMBERS")
+      console.log(data);
       setLoading(false);
-      if (!err) {
-        if (res.data.length != 0) {
-          setMembersList(res.data)
-          setSearchList(res.data)
-        } else {
-          setSearchList([])
-          Alert.alert("Alert", "Members not found!!");
-        }
-      } else {
-        Alert.alert("Alert", err.message);
-      }
-    });
+      setSearchList(data);
+      setMembersList(data);
+      if (data.length === 0) Alert.alert("Alert", "No matches found");
+    })
   }
 
   const filterMember = (searchText: string) => {
@@ -71,6 +64,12 @@ const MembersSearch = (props: Props) => {
     );
   }
 
+  const getResults = () => {
+    if (isLoading) return <></>
+    else if (searchList.length == 0) return <Text style={globalStyles.recentText}>Member Not Available!!</Text>
+    else return <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} />
+  }
+
   return (
     <SafeAreaView style={globalStyles.appContainer}>
       <BlueHeader />
@@ -78,24 +77,12 @@ const MembersSearch = (props: Props) => {
         <Text style={globalStyles.searchMainText}>Find Members</Text>
         <View style={globalStyles.textInputView}>
           <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
-          <TextInput
-            style={globalStyles.textInputStyle}
-            placeholder={'Member Name'}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType='default'
-            placeholderTextColor={'lightgray'}
-            value={searchText}
-            onChangeText={(text) => { setSearchText(text) }}
-          />
+          <TextInput style={globalStyles.textInputStyle} placeholder={'Member Name'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} value={searchText} onChangeText={(text) => { setSearchText(text) }} />
         </View>
         <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%') }} onPress={() => filterMember(searchText)}>
           <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>
         </TouchableOpacity>
-        {searchList.length == 0 && <Text style={globalStyles.recentText}>
-          Member Not Available!!
-        </Text>}
-        <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} />
+        {getResults()}
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
     </SafeAreaView>
