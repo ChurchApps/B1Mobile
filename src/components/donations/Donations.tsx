@@ -4,12 +4,10 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { useIsFocused } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { DisplayBox } from ".";
-import Images from "../utils/Images";
-import { globalStyles, ApiHelper, Userhelper, DateHelper, CurrencyHelper } from "../helper";
-import { DonationInterface } from "../interfaces";
-import Colors from "../utils/Colors";
-import { CustomModal } from "./modals/CustomModal";
+import { CustomModal } from "../modals/CustomModal";
+import { DisplayBox } from "../";
+import { globalStyles, ApiHelper, UserHelper, DateHelper, CurrencyHelper, Constants } from "../../helpers";
+import { DonationInterface } from "../../interfaces";
 
 export function Donations() {
   const [donations, setDonations] = useState<DonationInterface[]>([]);
@@ -17,12 +15,14 @@ export function Donations() {
   const [showDonationModal, setShowDonationModal] = useState<boolean>(false);
   const [selectedDonation, setSelectedDonation] = useState<DonationInterface>({});
   const isFocused = useIsFocused();
-  const person = Userhelper.person;
+  const person = UserHelper.person;
 
   const loadDonations = () => {
     setIsLoading(true);
     ApiHelper.get("/donations?personId=" + person.id, "GivingApi")
-      .then((data) => setDonations(data))
+      .then((data) => {
+        if (Array.isArray(data)) setDonations(data)
+      })
       .finally(() => {
         setIsLoading(false);
       });
@@ -39,26 +39,29 @@ export function Donations() {
   useEffect(loadDonations, []);
 
   const getRow = () => {
-    return donations?.map((d) => (
-      <View>
-        <View style={globalStyles.cardListSeperator} />
-        <View style={{ ...globalStyles.donationRowContainer, ...globalStyles.donationListView }}>
-          <Text style={{ ...globalStyles.donationRowText }}>
-            {DateHelper.prettyDate(new Date(d.donationDate || ""))}
-          </Text>
-          <Text style={{ ...globalStyles.donationRowText }}>{CurrencyHelper.formatCurrency(d.fund?.amount || 0)}</Text>
-          <TouchableOpacity
-            onPress={() => {
-              setShowDonationModal(true);
-              setSelectedDonation(d);
-            }}
-            style={{ marginLeft: wp("6%") }}
-          >
-            <FontAwesome5 name={"eye"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
-          </TouchableOpacity>
+    if (!donations) return <View></View>
+    else {
+      return donations?.map((d) => (
+        <View>
+          <View style={globalStyles.cardListSeperator} />
+          <View style={{ ...globalStyles.donationRowContainer, ...globalStyles.donationListView }}>
+            <Text style={{ ...globalStyles.donationRowText }}>
+              {DateHelper.prettyDate(new Date(d.donationDate || ""))}
+            </Text>
+            <Text style={{ ...globalStyles.donationRowText }}>{CurrencyHelper.formatCurrency(d.fund?.amount || 0)}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setShowDonationModal(true);
+                setSelectedDonation(d);
+              }}
+              style={{ marginLeft: wp("6%") }}
+            >
+              <FontAwesome5 name={"eye"} style={{ color: Constants.Colors.app_color }} size={wp("5.5%")} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    ));
+      ));
+    }
   };
 
   const donationsTable = (
@@ -73,12 +76,9 @@ export function Donations() {
     </ScrollView>
   );
 
-  const content =
-    donations.length > 0 ? (
-      donationsTable
-    ) : (
-      <Text style={globalStyles.paymentDetailText}>Donations will appear once a donation has been entered.</Text>
-    );
+  const content = donations?.length > 0
+    ? donationsTable
+    : <Text style={globalStyles.paymentDetailText}>Donations will appear once a donation has been entered.</Text>
 
   return (
     <>
@@ -119,9 +119,15 @@ export function Donations() {
               </Text>
             </View>
           </ScrollView>
+<<<<<<< HEAD:src/components/Donations.tsx
         </View>
       </CustomModal>
       <DisplayBox title="Donations" headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}>
+=======
+        </DialogContent>
+      </Dialog>
+      <DisplayBox title="Donations" headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}>
+>>>>>>> upstream/main:src/components/donations/Donations.tsx
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />
         ) : (

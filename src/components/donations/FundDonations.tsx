@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, Text } from "react-native";
-import { FundDonationInterface, FundInterface } from "../interfaces";
-import { globalStyles } from "../helper";
+import { FundDonationInterface, FundInterface } from "../../interfaces";
+import { globalStyles } from "../../helpers";
 import { FundDonation } from ".";
 
 interface Props {
@@ -26,7 +26,7 @@ export function FundDonations({ funds, fundDonations, updatedFunction }: Props) 
 
   return (
     <>
-      {fundDonations.map((fd, index) => (
+      {fundDonations?.map((fd, index) => (
         <FundDonation fundDonation={fd} funds={funds} updatedFunction={handleUpdated} index={index} />
       ))}
       <TouchableOpacity onPress={() => addRow()}>

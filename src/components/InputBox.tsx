@@ -1,8 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { globalStyles } from "../helper";
-import Colors from "../utils/Colors";
+import { Constants, globalStyles } from "../helpers";
 
 interface Props {
   title: string;
@@ -29,7 +28,7 @@ export function InputBox({
   if (cancelFunction) {
     buttons.push(
       <TouchableOpacity
-        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_yellow, width: widthClass }}
+        style={{ ...globalStyles.actionButtons, backgroundColor: Constants.Colors.button_yellow, width: widthClass }}
         onPress={() => {
           cancelFunction();
         }}
@@ -43,7 +42,7 @@ export function InputBox({
   if (deleteFunction) {
     buttons.push(
       <TouchableOpacity
-        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_red, width: widthClass }}
+        style={{ ...globalStyles.actionButtons, backgroundColor: Constants.Colors.button_red, width: widthClass }}
         onPress={() => {
           deleteFunction();
         }}
@@ -56,7 +55,7 @@ export function InputBox({
   if (saveFunction) {
     buttons.push(
       <TouchableOpacity
-        style={{ ...globalStyles.actionButtons, backgroundColor: Colors.button_dark_green, width: widthClass }}
+        style={{ ...globalStyles.actionButtons, backgroundColor: Constants.Colors.button_dark_green, width: widthClass }}
         onPress={() => saveFunction()}
         disabled={isSubmitting}
       >

@@ -5,12 +5,10 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { useIsFocused } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import DropDownPicker from "react-native-dropdown-picker";
-import Images from "../utils/Images";
-import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, Userhelper } from "../helper";
-import { DisplayBox } from ".";
-import { StripePaymentMethod, SubscriptionInterface } from "../interfaces";
-import Colors from "../utils/Colors";
-import { CustomModal } from "./modals/CustomModal";
+import { CustomModal } from "../modals/CustomModal";
+import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper, Constants } from "../../helpers";
+import { DisplayBox } from "../";
+import { StripePaymentMethod, SubscriptionInterface } from "../../interfaces";
 
 interface Props {
   customerId: string;
@@ -39,7 +37,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const isFocused = useIsFocused();
-  const person = Userhelper.person;
+  const person = UserHelper.person;
 
   const loadDonations = () => {
     if (customerId) {
@@ -107,7 +105,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               }}
               style={{ marginLeft: wp("6%") }}
             >
-              <FontAwesome5 name={"pencil-alt"} style={{ color: Colors.app_color }} size={wp("5.5%")} />
+              <FontAwesome5 name={"pencil-alt"} style={{ color: Constants.Colors.app_color }} size={wp("5.5%")} />
             </TouchableOpacity>
           </View>
         </View>
@@ -119,7 +117,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     Alert.alert("Are you sure?", "This will permantly delete and stop the recurring payments", [
       {
         text: "Cancel",
-        onPress: () => {},
+        onPress: () => { },
         style: "cancel",
       },
       {
@@ -328,7 +326,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
             <TouchableOpacity
               style={{
                 ...globalStyles.popupButton,
-                backgroundColor: Colors.button_bg,
+                backgroundColor: Constants.Colors.button_bg,
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
                 width: wp("26%"),
@@ -347,7 +345,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
       </CustomModal>
       <DisplayBox
         title="Recurring Donations"
-        headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
+        headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
       >
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />

@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import Colors from "../../utils/Colors";
-import { globalStyles, DateHelper, CurrencyHelper } from "../../helper";
+import { globalStyles, DateHelper, CurrencyHelper } from "../../helpers";
 import { StripeDonationInterface } from "../../interfaces";
 import { CustomModal } from "./CustomModal";
+import { Constants } from "../../helpers";
 
 interface Props {
   show: boolean;
@@ -115,7 +115,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
             <Text style={globalStyles.popupButonText}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{ ...globalStyles.popupButton, backgroundColor: Colors.button_bg }}
+            style={{ ...globalStyles.popupButton, backgroundColor: Constants.Colors.button_bg }}
             onPress={() => handleClick()}
             disabled={isLoading}
           >

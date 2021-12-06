@@ -5,18 +5,11 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import moment from "moment";
-import { InputBox } from ".";
-import Images from "../utils/Images";
-import Colors from "../utils/Colors";
-import { globalStyles, ApiHelper, Userhelper } from "../helper";
-import {
-  FundDonationInterface,
-  FundInterface,
-  StripePaymentMethod,
-  StripeDonationInterface,
-  PersonInterface,
-} from "../interfaces";
-import { FundDonations, PreviewModal } from ".";
+import { InputBox } from "../";
+import { globalStyles, ApiHelper, UserHelper, Constants } from "../../helpers";
+import { FundDonationInterface, FundInterface, StripePaymentMethod, StripeDonationInterface, PersonInterface, } from "../../interfaces";
+import { FundDonations, } from ".";
+import { PreviewModal } from "../";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -25,7 +18,7 @@ interface Props {
 }
 
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
-  const person = Userhelper.person;
+  const person = UserHelper.person;
   const [donationType, setDonationType] = useState<string>("");
   const [isMethodsDropdownOpen, setIsMethodsDropdownOpen] = useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("");
@@ -40,8 +33,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     customerId: customerId,
     person: {
       id: person?.id || "",
-      email: person?.contactInfo.email || "",
-      name: person?.name.display || "",
+      email: person?.contactInfo?.email || "",
+      name: person?.name?.display || "",
     },
     amount: 0,
     billing_cycle_anchor: +new Date(),
@@ -158,7 +151,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       />
       <InputBox
         title="Donate"
-        headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}
+        headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
         saveFunction={donationType ? handleSave : undefined}
         cancelFunction={donationType ? handleCancel : undefined}
       >
@@ -167,12 +160,12 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             <TouchableOpacity
               style={{
                 ...globalStyles.methodButton,
-                backgroundColor: donationType === "once" ? Colors.app_color : "white",
+                backgroundColor: donationType === "once" ? Constants.Colors.app_color : "white",
               }}
               onPress={() => setDonationType("once")}
             >
               <Text
-                style={{ ...globalStyles.methodBtnText, color: donationType === "once" ? "white" : Colors.app_color }}
+                style={{ ...globalStyles.methodBtnText, color: donationType === "once" ? "white" : Constants.Colors.app_color }}
               >
                 Make a Donation
               </Text>
@@ -180,14 +173,14 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             <TouchableOpacity
               style={{
                 ...globalStyles.methodButton,
-                backgroundColor: donationType === "recurring" ? Colors.app_color : "white",
+                backgroundColor: donationType === "recurring" ? Constants.Colors.app_color : "white",
               }}
               onPress={() => setDonationType("recurring")}
             >
               <Text
                 style={{
                   ...globalStyles.methodBtnText,
-                  color: donationType === "recurring" ? "white" : Colors.app_color,
+                  color: donationType === "recurring" ? "white" : Constants.Colors.app_color,
                 }}
               >
                 Make a Recurring Donation

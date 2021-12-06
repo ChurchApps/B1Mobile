@@ -5,5 +5,6 @@ declare module "@env" {
   export const ATTENDANCE_API: string;
   export const GIVING_API: string;
   export const B1_API: string;
+  export const LESSONS_ROOT: string;
   export const STAGE: string | undefined;
 }
