@@ -3,11 +3,8 @@ import { View, SafeAreaView, Image, Text, Alert } from 'react-native';
 import { FlatList, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, Constants } from '../helpers';
-import { getMembersList } from '../redux/actions/membersListAction';
-import { connect } from 'react-redux';
 import { globalStyles } from '../helpers';
 import { BlueHeader, Loader } from '../components';
-import { getToken } from '../helpers/_ApiHelper';
 import API from '../helpers/ApiConstants';
 
 interface Props {
@@ -16,10 +13,9 @@ interface Props {
     goBack: () => void;
     openDrawer: () => void;
   };
-  getAllMembersList: (token: any, callback: any) => void;
 }
 
-const MembersSearch = (props: Props) => {
+export const MembersSearch = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState([]);
@@ -31,10 +27,7 @@ const MembersSearch = (props: Props) => {
   }, [])
 
   const loadMembers = () => {
-    console.log("LOAD MEMBERS")
     ApiHelper.get("/people", "MembershipApi").then(data => {
-      console.log("MEMBERS")
-      console.log(data);
       setLoading(false);
       setSearchList(data);
       setMembersList(data);
@@ -89,15 +82,3 @@ const MembersSearch = (props: Props) => {
   );
 };
 
-const mapStateToProps = (state: any) => {
-  return {
-    members_list: state.members_list,
-  };
-};
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getAllMembersList: (token: any, callback: any) => dispatch(getMembersList(token, callback))
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MembersSearch);

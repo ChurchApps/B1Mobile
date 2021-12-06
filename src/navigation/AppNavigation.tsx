@@ -11,7 +11,7 @@ import HouseholdScreen from '../screens/checkin/HouseholdScreen';
 import GroupsScreen from '../screens/checkin/GroupsScreen';
 import CheckinCompleteScreen from '../screens/checkin/CheckinCompleteScreen';
 import ServiceScreen from '../screens/checkin/ServiceScreen';
-import MembersSearch from '../screens/MembersSearch';
+import { MembersSearch } from '../screens/MembersSearch';
 import MemberDetailScreen from '../screens/MemberDetailScreen';
 import DonationScreen from '../screens/DonationScreen';
 import { globalStyles } from '../helpers';
