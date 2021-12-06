@@ -80,7 +80,7 @@ function Drawer(props: any) {
     const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
     if (item.linkType == "checkin") navigate('ServiceScreen', {})
     if (item.linkType == "stream") navigate('HomeScreen', { url: "https://" + UserHelper.currentChurch.subDomain + ".streaminglive.church/", title: item.text })
-    if (item.linkType == "lessons") navigate('HomeScreen', { url: "https://lessons.church/b1/" + UserHelper.currentChurch.id, title: item.text })
+    if (item.linkType == "lessons") navigate('HomeScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch.id, title: item.text })
     if (item.linkType == "bible") navigate('HomeScreen', { url: bibleUrl, title: item.text })
     if (item.linkType == "donation") navigate('DonationScreen')
     if (item.linkType == "directory") navigate('MembersSearch')

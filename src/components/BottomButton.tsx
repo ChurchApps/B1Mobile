@@ -11,7 +11,7 @@ interface Props {
 export function BottomButton({ title, onPress }: Props) {
   return (
     <TouchableOpacity style={{ ...globalStyles.bottomBtn, backgroundColor: title != 'NONE' ? Constants.Colors.button_bg : Constants.Colors.button_red }} onPress={() => onPress()}>
-      <Text style={{ ...globalStyles.classesText, fontFamily: title != 'NONE' ? Fonts.RobotoMedium : Fonts.RobotoRegular }}>
+      <Text style={{ ...globalStyles.classesText, fontFamily: title != 'NONE' ? Constants.Fonts.RobotoMedium : Constants.Fonts.RobotoRegular }}>
         {title}
       </Text>
     </TouchableOpacity>

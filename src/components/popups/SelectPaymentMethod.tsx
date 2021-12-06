@@ -3,7 +3,7 @@ import { TouchableOpacity, FlatList, Text, View } from "react-native";
 import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { globalStyles } from "../../helpers";
+import { Constants, globalStyles } from "../../helpers";
 import { StripePaymentMethod } from "../../interfaces";
 
 interface Props {
