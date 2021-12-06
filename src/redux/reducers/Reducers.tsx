@@ -1,6 +1,5 @@
 import { combineReducers } from "redux";
 
-import DrawerList from './drawerItemsReducers';
 import LoginData from './loginReducers';
 import MemberData from './memberDataReducer';
 import HouseholdList from './householdListReducers';
@@ -12,7 +11,6 @@ import SubmitAttendance from './submitAttendanceReducers';
 import MembersList from './membersListReducers';
 
 const Reducers = combineReducers({
-  drawerlist: DrawerList,
   login_data: LoginData,
   member_data: MemberData,
   household_list: HouseholdList,
