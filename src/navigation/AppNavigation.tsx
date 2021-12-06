@@ -14,6 +14,7 @@ import ServiceScreen from '../screens/checkin/ServiceScreen';
 import MembersSearch from '../screens/MembersSearch';
 import MemberDetailScreen from '../screens/MemberDetailScreen';
 import DonationScreen from '../screens/DonationScreen';
+import { globalStyles } from '../helpers';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -21,7 +22,7 @@ const Drawer = createDrawerNavigator();
 
 const MainStack = () => {
   return (
-    <Drawer.Navigator initialRouteName={'HomeScreen'} drawerType={'slide'} drawerContent={(props) => <CustomDrawer {...props} />}>
+    <Drawer.Navigator initialRouteName={'HomeScreen'} drawerType={'slide'} drawerStyle={globalStyles.drawerStyle} drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name={'HomeScreen'} component={HomeScreen} />
       <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
       <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />

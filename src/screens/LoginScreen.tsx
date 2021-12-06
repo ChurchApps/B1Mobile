@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert } from 'react-native';
+import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Constants } from '../helpers';
@@ -64,6 +64,7 @@ const LoginScreen = (props: Props) => {
           await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(church))
             .then(() => {
               props.navigation.navigate('MainStack');
+              DevSettings.reload();
             })
         }
       } else {

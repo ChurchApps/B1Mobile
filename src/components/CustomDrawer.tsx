@@ -151,28 +151,32 @@ function Drawer(props: any) {
   const loginOutToggle = () => {
     if (UserHelper.person) {
       return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
-        <Text>Log out</Text>
+        <Text style={globalStyles.drawerText}>Log out</Text>
       </TouchableOpacity>);
     } else {
       return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => navigate('AuthStack')}>
-        <Text>Login</Text>
+        <Text style={globalStyles.drawerText}>Login</Text>
       </TouchableOpacity>);
     }
+  }
 
-
+  const getUserInfo = () => {
+    if (UserHelper.person) {
+      return (<View style={globalStyles.headerView}>
+        <Image source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.person?.photo || "" }} style={globalStyles.userIcon} />
+        <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
+      </View>)
+    }
   }
 
   return (
     <SafeAreaView>
-      <View style={globalStyles.headerView}>
-        <Image source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.person?.photo || "" }} style={globalStyles.userIcon} />
-        <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
-      </View>
+      {getUserInfo()}
       <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
 
       <TouchableOpacity style={globalStyles.churchBtn} onPress={() => navigate('ChurchSearch', {})}>
         {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
-        <Text style={{ ...globalStyles.churchText, color: churchEmpty ? 'gray' : 'black' }}>
+        <Text style={{ ...globalStyles.churchText }}>
           {churchEmpty ? 'Find your church...' : churchName}
         </Text>
       </TouchableOpacity>
