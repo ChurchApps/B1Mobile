@@ -119,15 +119,9 @@ export function Donations() {
               </Text>
             </View>
           </ScrollView>
-<<<<<<< HEAD:src/components/Donations.tsx
         </View>
       </CustomModal>
-      <DisplayBox title="Donations" headerIcon={<Image source={Images.ic_give} style={globalStyles.donationIcon} />}>
-=======
-        </DialogContent>
-      </Dialog>
       <DisplayBox title="Donations" headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}>
->>>>>>> upstream/main:src/components/donations/Donations.tsx
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />
         ) : (

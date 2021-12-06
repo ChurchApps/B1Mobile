@@ -2,9 +2,7 @@ import * as React from "react";
 import { TouchableOpacity, FlatList, Text, View } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
-import Fonts from "../../utils/Fonts";
-import { globalStyles } from "../../helper";
-import Colors from "../../utils/Colors";
+import { globalStyles, Constants } from "../../helpers";
 import { StripePaymentMethod } from "../../interfaces";
 import { CustomModal } from "./CustomModal";
 
@@ -32,13 +30,13 @@ export function PaymentMethodModal({ show, close, onSelect }: Props) {
           >
             <Icon
               name={index == 0 ? "credit-card-alt" : "bank"}
-              style={{ color: Colors.button_green, marginHorizontal: wp("4%") }}
+              style={{ color: Constants.Colors.button_green, marginHorizontal: wp("4%") }}
               size={wp("6%")}
             />
             <Text
               style={{
                 fontSize: wp("4.8%"),
-                fontFamily: Fonts.RobotoRegular,
+                fontFamily: Constants.Fonts.RobotoRegular,
                 textAlign: "center",
                 paddingVertical: wp("2%"),
               }}
