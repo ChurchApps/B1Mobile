@@ -3,10 +3,8 @@ import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-
 import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ApiHelper, Constants } from '../../helpers';
+import { ApiHelper, Constants, EnvironmentHelper } from '../../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import API from '../../helpers/ApiConstants';
-import { getToken } from '../../helpers/_ApiHelper';
 import { globalStyles } from '../../helpers';
 import { BottomButton, Loader, WhiteHeader } from '../../components';
 
@@ -112,7 +110,6 @@ export const HouseholdScreen = (props: Props) => {
     setLoading(true);
     const serviceId = props.route.params.serviceId;
     const people_Ids = props.route.params.people_Ids;
-    const token = await getToken('AttendanceApi')
 
     var pendingVisits: any[] = [];
     memberList?.forEach((member: any) => {
@@ -144,7 +141,7 @@ export const HouseholdScreen = (props: Props) => {
       <View>
         <TouchableOpacity style={globalStyles.listMainView} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
           <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
-          <Image source={{ uri: API.IMAGE_URL + item.photo }} style={globalStyles.memberListIcon} />
+          <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={globalStyles.memberListIcon} />
           <View style={globalStyles.memberListTextView}>
             <Text style={[globalStyles.listTitleText, globalStyles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
             {selected != item.id && item.serviceTime.map((item_time: any, index: any) => {

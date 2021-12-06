@@ -4,19 +4,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { ApiHelper, Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { getToken } from '../helpers/_ApiHelper';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import { Permissions } from '../interfaces';
-
-// interface Props {
-//     navigation: {
-//         navigate: (screenName: string, params: any) => void;
-//         goBack: () => void;
-//         openDrawer: () => void;
-//     };
-//     onPress: () => void;
-//     getDrawerItemList: (churchId: String, callback: any) => void;
-// }
 
 export function CustomDrawer(props: any) {
   const { navigate, goBack, openDrawer } = props.navigation;
@@ -28,26 +17,6 @@ export function CustomDrawer(props: any) {
   const [userProfile, setUserProfile] = useState('');
 
   const menuList: any[] = [];
-
-  /*
-  const menuList = [{
-    id: 1,
-    text: 'Bible',
-    image: Constants.Images.ic_bible,
-    url: 'https://biblegateway.com/'
-  }, {
-    id: 2,
-    text: 'Preferences',
-    image: Constants.Images.ic_preferences
-  }, {
-    id: 3,
-    text: 'Members',
-    image: Constants.Images.ic_groups
-  }, {
-    id: 4,
-    text: 'Donate',
-    image: Constants.Images.ic_give
-  }];*/
 
   useEffect(() => {
     getChurch();

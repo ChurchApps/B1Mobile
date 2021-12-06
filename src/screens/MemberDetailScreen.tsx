@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import { ApiHelper, Constants } from '../helpers';
+import { ApiHelper, Constants, EnvironmentHelper } from '../helpers';
 import { globalStyles } from '../helpers';
 import { BlueHeader, Loader } from '../components';
-import API from '../helpers/ApiConstants';
 import Icon from 'react-native-vector-icons/Zocial';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import { getToken } from '../helpers/_ApiHelper';
 
 interface Props {
   navigation: {
@@ -62,7 +60,6 @@ export const MemberDetailScreen = (props: Props) => {
   const getHouseholdMembersList = async () => {
     setLoading(true);
     const householdId = member.householdId;
-    const token = await getToken('default');
     ApiHelper.get("/people/household/" + householdId, "MembershipApi").then(data => {
       setLoading(false);
       setHouseholdList(data);
@@ -77,7 +74,7 @@ export const MemberDetailScreen = (props: Props) => {
   const renderMemberItem = (item: any) => {
     return (
       <TouchableOpacity style={globalStyles.listMainView} onPress={() => onMembersClick(item)}>
-        <Image source={item.photo ? { uri: API.IMAGE_URL + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
+        <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText} numberOfLines={1}>{item.name.display}</Text>
         </View>
@@ -90,7 +87,7 @@ export const MemberDetailScreen = (props: Props) => {
     <SafeAreaView style={globalStyles.appContainer}>
       <BlueHeader />
       <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
-        <Image source={member.photo ? { uri: API.IMAGE_URL + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
+        <Image source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
         <Text style={globalStyles.memberName}>{member.name.display}</Text>
 
         <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onEmailClick(memberinfo.email)}>

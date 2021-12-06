@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, Alert } from 'react-native';
 import { FlatList, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ApiHelper, Constants } from '../helpers';
+import { ApiHelper, Constants, EnvironmentHelper } from '../helpers';
 import { globalStyles } from '../helpers';
 import { BlueHeader, Loader } from '../components';
-import API from '../helpers/ApiConstants';
 
 interface Props {
   navigation: {
@@ -49,7 +48,7 @@ export const MembersSearch = (props: Props) => {
   const renderMemberItem = (item: any) => {
     return (
       <TouchableOpacity style={globalStyles.listMainView} onPress={() => { navigate('MemberDetailScreen', { member: item }) }}>
-        <Image source={item.photo ? { uri: API.IMAGE_URL + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
+        <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText}>{item.name.display}</Text>
         </View>

@@ -1,9 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import { Alert, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { Loader, WhiteHeader } from '../../components';
-import { createGroupTree, getPeopleIds, getToken } from '../../helpers/_ApiHelper';
 import { ApiHelper, globalStyles } from '../../helpers';
 import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
 
@@ -35,10 +34,9 @@ export const ServiceScreen = (props: Props) => {
   }
 
   const getMemberData = async (serviceId: any) => {
-    const token = await getToken('default')
-    const member_token = await getToken("MembershipApi")
+
     const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
-    if (token !== null && churchvalue !== null && member_token != null) {
+    if (churchvalue !== null) {
       const churchData = JSON.parse(churchvalue);
       const personId = churchData.personId
 
@@ -63,6 +61,31 @@ export const ServiceScreen = (props: Props) => {
     } catch (error) {
       console.log('SET MEMBER LIST ERROR', error)
     }
+  }
+
+  const createGroupTree = (groups: any) => {
+    var category = "";
+    var group_tree: any[] = [];
+
+    const sortedGroups = groups.sort((a: any, b: any) => {
+      return ((a.categoryName || "") > (b.categoryName || "")) ? 1 : -1;
+    });
+
+    sortedGroups?.forEach((group: any) => {
+      if (group.categoryName !== category) group_tree.push({ key: group_tree.length, name: group.categoryName || "", items: [] })
+      group_tree[group_tree.length - 1].items.push(group);
+      category = group.categoryName || "";
+    })
+    return group_tree;
+  }
+
+  const getPeopleIds = (memberList: any) => {
+    const peopleIds: any[] = [];
+    memberList?.forEach((member: any) => {
+      peopleIds.push(member.id)
+    })
+    const people_Ids = escape(peopleIds.join(","))
+    return people_Ids
   }
 
   const getGroupListData = async (serviceId: any, memberList: any) => {
