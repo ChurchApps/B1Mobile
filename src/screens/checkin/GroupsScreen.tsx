@@ -6,7 +6,6 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import { globalStyles } from '../../helpers';
-import { getGroupList } from '../../redux/actions/groupsListAction';
 import { BottomButton, WhiteHeader } from '../../components';
 
 interface Props {
@@ -16,7 +15,6 @@ interface Props {
     openDrawer: () => void;
     addListener: (type: string, callback: any) => void;
   };
-  getGroupListApi: (token: any, callback: any) => void;
   route: {
     params: {
       member: any,
@@ -25,7 +23,7 @@ interface Props {
   };
 }
 
-const GroupsScreen = (props: Props) => {
+export const GroupsScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [selected, setSelected] = useState(null);
   const [groupTree, setGroupTree] = useState<any[]>([]);
@@ -109,16 +107,3 @@ const GroupsScreen = (props: Props) => {
     </View>
   );
 };
-
-const mapStateToProps = (state: any) => {
-  return {
-    group_list: state.group_list,
-  };
-};
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getGroupListApi: (token: any, callback: any) => dispatch(getGroupList(token, callback)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(GroupsScreen);

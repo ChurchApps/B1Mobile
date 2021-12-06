@@ -2,11 +2,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
 import { Alert, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { connect } from 'react-redux';
 import { Loader, WhiteHeader } from '../../components';
 import { createGroupTree, getPeopleIds, getToken } from '../../helpers/_ApiHelper';
 import { ApiHelper, globalStyles } from '../../helpers';
-import { getGroupList } from '../../redux/actions/groupsListAction';
 import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
 
 interface Props {
@@ -15,10 +13,9 @@ interface Props {
     goBack: () => void;
     openDrawer: () => void;
   };
-  getGroupListApi: (token: any, callback: any) => void;
 }
 
-const ServiceScreen = (props: Props) => {
+export const ServiceScreen = (props: Props) => {
   const { goBack, openDrawer } = props.navigation;
   const [isLoading, setLoading] = useState(false);
   const [serviceList, setServiceList] = useState([]);
@@ -69,25 +66,17 @@ const ServiceScreen = (props: Props) => {
   }
 
   const getGroupListData = async (serviceId: any, memberList: any) => {
-    const token = await getToken("MembershipApi")
-    props.getGroupListApi(token, async (err: any, res: any) => {
-      setLoading(false);
-      if (!err) {
-        const peopleIds = getPeopleIds(memberList);
-        try {
-          const group_tree = createGroupTree(res.data);
-          await AsyncStorage.setItem('GROUP_LIST', JSON.stringify(group_tree))
-          await AsyncStorage.setItem('SCREEN', 'SERVICE')
-            .then(() => {
-              props.navigation.navigate('HouseholdScreen', { serviceId: serviceId, people_Ids: peopleIds })
-            })
-        } catch (error) {
-          console.log('SET MEMBER LIST ERROR', error)
-        }
-      } else {
-        Alert.alert("Alert", err.message);
-      }
-    });
+    const data = await ApiHelper.get("/groups", "MembershipApi")
+    setLoading(false);
+    const peopleIds = getPeopleIds(memberList);
+    try {
+      const group_tree = createGroupTree(data);
+      await AsyncStorage.setItem('GROUP_LIST', JSON.stringify(group_tree))
+      await AsyncStorage.setItem('SCREEN', 'SERVICE');
+      props.navigation.navigate('HouseholdScreen', { serviceId: serviceId, people_Ids: peopleIds })
+    } catch (error) {
+      console.log('SET MEMBER LIST ERROR', error)
+    }
   }
 
   const renderGroupItem = (item: any) => {
@@ -116,19 +105,3 @@ const ServiceScreen = (props: Props) => {
   );
 };
 
-const mapStateToProps = (state: any) => {
-  return {
-    service_data: state.service_data,
-    member_data: state.member_data,
-    household_list: state.household_list,
-    service_time: state.service_time,
-    group_list: state.group_list,
-  };
-};
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    getGroupListApi: (token: any, callback: any) => dispatch(getGroupList(token, callback)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ServiceScreen);
