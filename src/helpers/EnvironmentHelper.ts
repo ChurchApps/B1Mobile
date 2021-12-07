@@ -1,4 +1,4 @@
-import { STAGE, ACCESS_API, MEMBERSHIP_API, ATTENDANCE_API, GIVING_API, B1_API, CONTENT_ROOT, LESSONS_ROOT } from "@env"
+import { STAGE, ACCESS_API, MEMBERSHIP_API, ATTENDANCE_API, GIVING_API, B1_API, CONTENT_ROOT, LESSONS_ROOT, STREAMING_LIVE_ROOT } from "@env"
 import { ApiHelper } from "./ApiHelper"
 
 export class EnvironmentHelper {
@@ -8,6 +8,7 @@ export class EnvironmentHelper {
   public static GivingApi = "";
   public static B1Api = "";
   public static LessonsRoot = "";
+  public static StreamingLiveRoot = "";
 
   static ContentRoot = "";
 
@@ -25,6 +26,8 @@ export class EnvironmentHelper {
       { keyName: "GivingApi", url: EnvironmentHelper.GivingApi, jwt: "", permisssions: [] },
       { keyName: "B1Api", url: EnvironmentHelper.B1Api, jwt: "", permisssions: [] }
     ]
+
+
     //leaving for now as a hack.  For some reason outputting the value makes the difference of whether it's actually populated or not.
     console.log(JSON.stringify(ApiHelper.apiConfigs[1].url));
   }
@@ -37,6 +40,7 @@ export class EnvironmentHelper {
     EnvironmentHelper.B1Api = B1_API || "";
     EnvironmentHelper.ContentRoot = CONTENT_ROOT || "";
     EnvironmentHelper.LessonsRoot = LESSONS_ROOT || "";
+    EnvironmentHelper.StreamingLiveRoot = STREAMING_LIVE_ROOT || "";
   }
   /*
     // NOTE - None of these values are secret

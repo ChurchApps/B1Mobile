@@ -9,3 +9,4 @@ GIVING_API=https://givingapi.staging.churchapps.org
 B1_API=https://api.staging.b1.church
 
 LESSONS_ROOT=https://staging.lessons.church
+STREAMING_LIVE_ROOT=https://{subdomain}.staging.streaminglive.church
