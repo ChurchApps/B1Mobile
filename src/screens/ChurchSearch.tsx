@@ -18,7 +18,6 @@ interface Props {
 }
 
 export const ChurchSearch = (props: Props) => {
-  const { navigate, goBack, openDrawer } = props.navigation;
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -32,10 +31,9 @@ export const ChurchSearch = (props: Props) => {
   const churchSelection = async (churchData: ChurchInterface) => {
     StoreToRecent(churchData);
     try {
-      const existing = (UserHelper.churches) ? ArrayHelper.getOne(UserHelper.churches, "id", churchData.id) : [];
+      const existing = (UserHelper.churches) ? ArrayHelper.getOne(UserHelper.churches, "id", churchData.id) : null;
       if (existing) churchData = existing;
       const churchValue = JSON.stringify(churchData);
-
       await AsyncStorage.setItem('CHURCH_DATA', churchValue)
       UserHelper.currentChurch = churchData;
       if (UserHelper.user) UserHelper.setPersonRecord();

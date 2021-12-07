@@ -44,17 +44,21 @@ export function CustomDrawer(props: any) {
 
   const navigateToScreen = (item: any) => {
     const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
-    if (item.linkType == "checkin") navigate('ServiceScreen', {})
-    if (item.linkType == "stream") navigate('HomeScreen', { url: "https://" + UserHelper.currentChurch.subDomain + ".streaminglive.church/", title: item.text })
-    if (item.linkType == "lessons") navigate('HomeScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch.id, title: item.text })
-    if (item.linkType == "bible") navigate('HomeScreen', { url: bibleUrl, title: item.text })
+    if (item.linkType == "stream") navigate('StreamScreen', { url: "https://" + UserHelper.currentChurch.subDomain + ".streaminglive.church/", title: item.text })
+    if (item.linkType == "lessons") navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch.id, title: item.text })
+    if (item.linkType == "bible") navigate('BibleScreen', { url: bibleUrl, title: item.text })
     if (item.linkType == "donation") navigate('DonationScreen')
+    if (item.linkType == "url") navigate('WebsiteScreen', { url: item.url, title: item.text })
     if (item.linkType == "directory") {
       if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
       else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers)) Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.")
       else navigate('MembersSearch')
     }
-    if (item.linkType == "url") navigate('HomeScreen', { url: item.url, title: item.text })
+    if (item.linkType == "checkin") {
+      if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
+      else navigate('ServiceScreen', {})
+    }
+
     /*
     else {
       //TODO: Add "pages"
@@ -75,7 +79,7 @@ export function CustomDrawer(props: any) {
   }
 
   const getMemberData = async (personId: any) => {
-    ApiHelper.get("/people/" + personId, "MembershipApi").then(data => { setUserProfile(data.photo); });
+    if (personId) ApiHelper.get("/people/" + personId, "MembershipApi").then(data => { setUserProfile(data.photo); });
   }
 
   const logoutAction = async () => {

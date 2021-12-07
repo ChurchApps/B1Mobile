@@ -17,7 +17,6 @@ export class UserHelper {
 
   static checkAccess({ api, contentType, action }: IPermission): boolean {
     const permissions = ApiHelper.getConfig(api)?.permisssions;
-    if (api === "MembershipApi") console.log(permissions)
 
     let result = false;
     if (permissions !== undefined) {

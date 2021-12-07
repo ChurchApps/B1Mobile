@@ -20,7 +20,7 @@ interface Props {
   };
 }
 
-const HomeScreen = (props: Props) => {
+export const WebsiteScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const { params } = props.route;
   const [isLoading, setLoading] = useState(false);
@@ -52,4 +52,4 @@ const HomeScreen = (props: Props) => {
   );
 };
 
-export default HomeScreen;
+
