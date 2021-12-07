@@ -114,7 +114,7 @@ export const ServiceScreen = (props: Props) => {
 
   return (
     <View style={globalStyles.grayContainer}>
-      <WhiteHeader onPress={() => openDrawer()} />
+      <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList
           data={serviceList}

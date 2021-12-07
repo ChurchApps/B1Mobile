@@ -4,7 +4,7 @@ import { FlatList, ScrollView, TextInput, TouchableOpacity } from 'react-native-
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, Constants, EnvironmentHelper } from '../helpers';
 import { globalStyles } from '../helpers';
-import { BlueHeader, Loader } from '../components';
+import { BlueHeader, Loader, SimpleHeader, WhiteHeader } from '../components';
 
 interface Props {
   navigation: {
@@ -63,8 +63,8 @@ export const MembersSearch = (props: Props) => {
   }
 
   return (
-    <SafeAreaView style={globalStyles.appContainer}>
-      <BlueHeader />
+    <SafeAreaView style={globalStyles.grayContainer}>
+      <SimpleHeader onPress={() => openDrawer()} title="Directory" />
       <ScrollView style={globalStyles.grayContainer}>
         <Text style={globalStyles.searchMainText}>Find Members</Text>
         <View style={globalStyles.textInputView}>

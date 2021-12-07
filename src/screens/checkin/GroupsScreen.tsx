@@ -99,7 +99,7 @@ export const GroupsScreen = (props: Props) => {
 
   return (
     <View style={globalStyles.grayContainer}>
-      <WhiteHeader onPress={() => openDrawer()} />
+      <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList data={groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
         <BottomButton title='NONE' onPress={() => selectGroup(null)} />

@@ -34,7 +34,7 @@ const CheckinCompleteScreen = (props: Props) => {
 
   return (
     <View style={globalStyles.grayContainer}>
-      <WhiteHeader onPress={() => openDrawer()} />
+      <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
       <SafeAreaView style={globalStyles.safeAreaContainer}>
         <Icon name={'check-circle'} style={globalStyles.successIcon} size={wp('20%')} />
         <Text style={globalStyles.successText}>Checkin Complete.</Text>

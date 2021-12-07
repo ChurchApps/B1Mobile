@@ -3,7 +3,7 @@ import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import { ApiHelper, Constants, EnvironmentHelper } from '../helpers';
 import { globalStyles } from '../helpers';
-import { BlueHeader, Loader } from '../components';
+import { BlueHeader, Loader, SimpleHeader, WhiteHeader } from '../components';
 import Icon from 'react-native-vector-icons/Zocial';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
@@ -84,8 +84,8 @@ export const MemberDetailScreen = (props: Props) => {
 
 
   return (
-    <SafeAreaView style={globalStyles.appContainer}>
-      <BlueHeader />
+    <SafeAreaView style={globalStyles.grayContainer}>
+      <SimpleHeader onPress={() => openDrawer()} title="Directory" />
       <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
         <Image source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
         <Text style={globalStyles.memberName}>{member.name.display}</Text>

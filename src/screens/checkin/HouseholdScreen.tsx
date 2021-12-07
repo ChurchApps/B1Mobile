@@ -179,7 +179,7 @@ export const HouseholdScreen = (props: Props) => {
 
   return (
     <View style={globalStyles.grayContainer}>
-      <WhiteHeader onPress={() => openDrawer()} />
+      <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
         <BottomButton title='CHECKIN' onPress={() => submitAttendance()} />

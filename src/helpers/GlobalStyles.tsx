@@ -105,7 +105,7 @@ export const globalStyles = StyleSheet.create({
 
   //WhiteLogo
   headerLogoView: { borderBottomLeftRadius: wp('8%'), borderBottomRightRadius: wp('8%'), backgroundColor: 'white', shadowColor: Constants.Colors.app_color, shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.2, shadowRadius: wp('1.5%'), elevation: 5 },
-  whiteMainIcon: { width: wp('55%'), height: wp('55%'), marginTop: wp('10%'), marginBottom: wp('4%'), resizeMode: 'contain', alignSelf: 'center' },
+  whiteMainIcon: { width: wp('55%'), height: wp('55%'), marginTop: wp('2%'), marginBottom: wp('2%'), resizeMode: 'contain', alignSelf: 'center' },
   logoMenuIcon: { width: wp('6%'), height: wp('6%'), marginLeft: wp('5%') },
   logoMenuBtn: { position: 'absolute' },
 
