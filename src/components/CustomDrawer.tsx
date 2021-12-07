@@ -49,6 +49,7 @@ export function CustomDrawer(props: any) {
     if (item.linkType == "bible") navigate('BibleScreen', { url: bibleUrl, title: item.text })
     if (item.linkType == "donation") navigate('DonationScreen')
     if (item.linkType == "url") navigate('WebsiteScreen', { url: item.url, title: item.text })
+    if (item.linkType == "page") navigate('PageScreen', { url: item.url, title: item.text })
     if (item.linkType == "directory") {
       if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
       else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers)) Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.")

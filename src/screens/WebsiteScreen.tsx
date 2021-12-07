@@ -3,7 +3,7 @@ import { View, SafeAreaView, Image, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Constants } from '../helpers';
 import WebView from 'react-native-webview';
-import { Loader, MainHeader } from '../components';
+import { Loader, MainHeader, SimpleHeader } from '../components';
 import { globalStyles } from '../helpers';
 
 interface Props {
@@ -37,13 +37,7 @@ export const WebsiteScreen = (props: Props) => {
   return (
 
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>{getTitle()}</Text>}
-        rightComponent={null}
-      />
+      <SimpleHeader onPress={() => openDrawer()} title={getTitle()} />
       <View style={globalStyles.webViewContainer}>
         <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: params && params.url && params.url }} scalesPageToFit={false} />
       </View>

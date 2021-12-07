@@ -29,6 +29,7 @@ const MainStack = () => {
       <Drawer.Screen name={'LessonsScreen'} component={WebsiteScreen} />
       <Drawer.Screen name={'StreamScreen'} component={WebsiteScreen} />
       <Drawer.Screen name={'WebsiteScreen'} component={WebsiteScreen} />
+      <Drawer.Screen name={'PageScreen'} component={WebsiteScreen} />
 
       <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
       <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />
