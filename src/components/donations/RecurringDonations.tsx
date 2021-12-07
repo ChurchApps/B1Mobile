@@ -33,7 +33,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     { label: "Year(s)", value: "year" },
   ]);
   const [selectedInterval, setSelectedInterval] = useState<string>("");
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+  // const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const isFocused = useIsFocused();
@@ -143,25 +143,25 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     ]);
   };
 
-  const handleSave = () => {
-    setIsSaving(true);
-    const selectedSubsCopy = { ...selectedSubscription };
+  // const handleSave = () => {
+  //   setIsSaving(true);
+  //   const selectedSubsCopy = { ...selectedSubscription };
 
-    let methods = pm.find((pm: StripePaymentMethod) => pm.id === selectedMethod);
-    if (!methods) {
-      methods = pm[0];
-    }
-    selectedSubsCopy.default_payment_method = methods?.type === "card" ? selectedMethod : "";
-    selectedSubsCopy.default_source = methods?.type === "bank" ? selectedMethod : "";
-    selectedSubsCopy.plan.interval_count = Number(intervalNumber);
-    selectedSubsCopy.plan.interval = selectedInterval;
-    ApiHelper.post("/subscriptions", [selectedSubsCopy], "GivingApi").then(async () => {
-      setIsSaving(false);
-      setShowModal(false);
-      await updatedFunction();
-      loadDonations();
-    });
-  };
+  //   let methods = pm.find((pm: StripePaymentMethod) => pm.id === selectedMethod);
+  //   if (!methods) {
+  //     methods = pm[0];
+  //   }
+  //   selectedSubsCopy.default_payment_method = methods?.type === "card" ? selectedMethod : "";
+  //   selectedSubsCopy.default_source = methods?.type === "bank" ? selectedMethod : "";
+  //   selectedSubsCopy.plan.interval_count = Number(intervalNumber);
+  //   selectedSubsCopy.plan.interval = selectedInterval;
+  //   ApiHelper.post("/subscriptions", [selectedSubsCopy], "GivingApi").then(async () => {
+  //     setIsSaving(false);
+  //     setShowModal(false);
+  //     await updatedFunction();
+  //     loadDonations();
+  //   });
+  // };
 
   const getFunds = (subscription: SubscriptionInterface) => {
     let result = [];
@@ -308,14 +308,14 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 width: wp("26%"),
               }}
               onPress={() => setShowModal(false)}
-              disabled={isSaving || isDeleting}
+              disabled={isDeleting}
             >
               <Text style={globalStyles.popupButonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={{ ...globalStyles.popupButton, backgroundColor: "red", borderRadius: 0, width: wp("25%") }}
+              style={{ ...globalStyles.popupButton, backgroundColor: "#800000" }}
               onPress={() => handleDelete()}
-              disabled={isSaving || isDeleting}
+              disabled={isDeleting}
             >
               {isDeleting ? (
                 <ActivityIndicator size="small" color="white" animating={isDeleting} />
@@ -323,7 +323,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 <Text style={globalStyles.popupButonText}>Delete</Text>
               )}
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{
                 ...globalStyles.popupButton,
                 backgroundColor: Constants.Colors.button_bg,
@@ -339,7 +339,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               ) : (
                 <Text style={globalStyles.popupButonText}>Save</Text>
               )}
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </CustomModal>

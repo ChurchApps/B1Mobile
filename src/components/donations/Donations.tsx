@@ -18,14 +18,16 @@ export function Donations() {
   const person = UserHelper.person;
 
   const loadDonations = () => {
-    setIsLoading(true);
-    ApiHelper.get("/donations?personId=" + person.id, "GivingApi")
-      .then((data) => {
-        if (Array.isArray(data)) setDonations(data)
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    if (person) {
+      setIsLoading(true);
+      ApiHelper.get("/donations?personId=" + person.id, "GivingApi")
+        .then((data) => {
+          if (Array.isArray(data)) setDonations(data);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   };
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export function Donations() {
   useEffect(loadDonations, []);
 
   const getRow = () => {
-    if (!donations) return <View></View>
+    if (!donations) return <View></View>;
     else {
       return donations?.map((d) => (
         <View>
@@ -48,7 +50,9 @@ export function Donations() {
             <Text style={{ ...globalStyles.donationRowText }}>
               {DateHelper.prettyDate(new Date(d.donationDate || ""))}
             </Text>
-            <Text style={{ ...globalStyles.donationRowText }}>{CurrencyHelper.formatCurrency(d.fund?.amount || 0)}</Text>
+            <Text style={{ ...globalStyles.donationRowText }}>
+              {CurrencyHelper.formatCurrency(d.fund?.amount || 0)}
+            </Text>
             <TouchableOpacity
               onPress={() => {
                 setShowDonationModal(true);
@@ -76,9 +80,12 @@ export function Donations() {
     </ScrollView>
   );
 
-  const content = donations?.length > 0
-    ? donationsTable
-    : <Text style={globalStyles.paymentDetailText}>Donations will appear once a donation has been entered.</Text>
+  const content =
+    donations?.length > 0 ? (
+      donationsTable
+    ) : (
+      <Text style={globalStyles.paymentDetailText}>Donations will appear once a donation has been entered.</Text>
+    );
 
   return (
     <>
@@ -121,7 +128,10 @@ export function Donations() {
           </ScrollView>
         </View>
       </CustomModal>
-      <DisplayBox title="Donations" headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}>
+      <DisplayBox
+        title="Donations"
+        headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
+      >
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />
         ) : (
