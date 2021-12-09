@@ -1,4 +1,4 @@
-package com.b1app;
+package church.b1.mobile;
 
 import com.facebook.react.ReactActivity;
 

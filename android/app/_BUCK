@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.b1app",
+    package = "church.b1.mobile",
 )
 
 android_resource(
     name = "res",
-    package = "com.b1app",
+    package = "church.b1.mobile",
     res = "src/main/res",
 )
 
