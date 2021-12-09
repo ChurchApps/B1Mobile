@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  B1App
+//  B1Church
 //
 //  Created by mac on 09/08/21.
 //
