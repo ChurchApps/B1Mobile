@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings } from 'react-native';
+import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Constants, LoginResponseInterface } from '../helpers';
@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../helpers';
 import { BlueHeader } from '../components';
 import { ChurchInterface, ApiHelper, UserHelper } from '../helpers';
+import { B1_WEB_ROOT } from '@env';
 
 interface Props {
   navigation: {
@@ -66,6 +67,9 @@ export const LoginScreen = (props: Props) => {
     });
   }
 
+  const forgotLink = B1_WEB_ROOT.replace("{subdomain}.", "") + "/login?action=forgot";
+  const registerLink = B1_WEB_ROOT.replace("{subdomain}.", "") + "/login?action=register";
+
   return (
     <SafeAreaView style={globalStyles.appContainer}>
       <BlueHeader />
@@ -86,6 +90,17 @@ export const LoginScreen = (props: Props) => {
             <Text style={globalStyles.roundBlueButtonText}>LOGIN</Text>
           }
         </TouchableOpacity>
+
+        <View style={globalStyles.loginLinks}>
+          <TouchableOpacity onPress={() => { Linking.openURL(forgotLink); }}>
+            <Text style={globalStyles.simpleLink}>Forgot Password</Text>
+          </TouchableOpacity>
+          <Text> | </Text>
+          <TouchableOpacity onPress={() => { Linking.openURL(registerLink); }}>
+            <Text style={globalStyles.simpleLink}>Register</Text>
+          </TouchableOpacity>
+        </View>
+
       </View>
     </SafeAreaView>
   );

@@ -19,6 +19,11 @@ export const globalStyles = StyleSheet.create({
   groupListTitle: { fontSize: wp('4.5%'), fontFamily: Constants.Fonts.RobotoMedium, color: Constants.Colors.app_color },
   safeAreaContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
+  loginLinks: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+
+  simpleLink: { textDecorationLine: "underline", color: Constants.Colors.button_bg },
+
+
   //Splash
   splashImage: { width: wp('100%'), height: hp('100%') },
 

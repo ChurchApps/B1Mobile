@@ -1,4 +1,4 @@
-import { STAGE, ACCESS_API, MEMBERSHIP_API, ATTENDANCE_API, GIVING_API, B1_API, CONTENT_ROOT, LESSONS_ROOT, STREAMING_LIVE_ROOT } from "@env"
+import { STAGE, ACCESS_API, MEMBERSHIP_API, ATTENDANCE_API, GIVING_API, B1_API, CONTENT_ROOT, LESSONS_ROOT, STREAMING_LIVE_ROOT, B1_WEB_ROOT } from "@env"
 import { ApiHelper } from "./ApiHelper"
 
 export class EnvironmentHelper {
@@ -9,6 +9,7 @@ export class EnvironmentHelper {
   public static B1Api = "";
   public static LessonsRoot = "";
   public static StreamingLiveRoot = "";
+  public static B1WebRoot = "";
 
   static ContentRoot = "";
 
@@ -41,6 +42,7 @@ export class EnvironmentHelper {
     EnvironmentHelper.ContentRoot = CONTENT_ROOT || "";
     EnvironmentHelper.LessonsRoot = LESSONS_ROOT || "";
     EnvironmentHelper.StreamingLiveRoot = STREAMING_LIVE_ROOT || "";
+    EnvironmentHelper.B1WebRoot = B1_WEB_ROOT || "";
   }
   /*
     // NOTE - None of these values are secret
