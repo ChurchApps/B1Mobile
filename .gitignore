@@ -1,4 +1,5 @@
 *.bat
+*.hprof
 
 # OSX
 #
