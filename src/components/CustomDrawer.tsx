@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, DevSettings } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import { Permissions } from '../interfaces';
+import RNRestart from 'react-native-restart';
 
 export function CustomDrawer(props: any) {
   const { navigate, goBack, openDrawer } = props.navigation;
@@ -86,7 +87,7 @@ export function CustomDrawer(props: any) {
   const logoutAction = async () => {
     await AsyncStorage.getAllKeys()
       .then(keys => AsyncStorage.multiRemove(keys))
-      .then(() => DevSettings.reload());
+      .then(() => RNRestart.Restart());
   }
 
   const listItem = (topItem: boolean, item: any) => {

@@ -4,10 +4,9 @@ import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-hand
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, ArrayHelper, ChurchInterface, Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { connect } from 'react-redux';
 import { globalStyles, UserHelper } from '../helpers';
 import { BlueHeader } from '../components';
-
+import RNRestart from 'react-native-restart';
 
 interface Props {
   navigation: {
@@ -37,7 +36,8 @@ export const ChurchSearch = (props: Props) => {
       await AsyncStorage.setItem('CHURCH_DATA', churchValue)
       UserHelper.currentChurch = churchData;
       if (UserHelper.user) UserHelper.setPersonRecord();
-      DevSettings.reload()
+      //DevSettings.reload()
+      RNRestart.Restart();
     } catch (err) {
       console.log(err)
     }

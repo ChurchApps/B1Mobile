@@ -9,6 +9,7 @@ import { globalStyles } from '../helpers';
 import { BlueHeader } from '../components';
 import { ChurchInterface, ApiHelper, UserHelper } from '../helpers';
 import { B1_WEB_ROOT } from '@env';
+import RNRestart from 'react-native-restart';
 
 interface Props {
   navigation: {
@@ -62,7 +63,8 @@ export const LoginScreen = (props: Props) => {
         await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.churches))
         await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(church))
         props.navigation.navigate('MainStack');
-        DevSettings.reload();
+        //DevSettings.reload();
+        RNRestart.Restart();
       } else Alert.alert("Alert", "Invalid login");
     });
   }

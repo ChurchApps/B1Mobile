@@ -23,6 +23,6 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 4. Increment the version number in android/app/build.gradle
 5. Run `cd android` followed by `gradlew bundleRelease` to produce the release bundle.
 6. Plug in an Android phonet via USB so an apk is generated for the correct device.
-7. Run `cd..` followed by `react-native run-android --variant=release` to generate an apk file for Fire devices.  You can close the node window when it completes.
+7. Run `cd..` followed by `react-native run-android --variant=release` to generate an apk file for Android devices.  You can close the node window when it completes.
 8. Open the app in Android studio.  Choose Build -> Generate Signed Bundle and point to your keys.
 9. The signed build will be at `\android\app\release`.  Upload it to the Google Play store.
