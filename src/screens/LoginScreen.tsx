@@ -19,8 +19,8 @@ interface Props {
 export const LoginScreen = (props: Props) => {
   const { navigate } = props.navigation;
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('jared@dsprinting.com');
-  const [password, setPassword] = useState('stripetest');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
 
