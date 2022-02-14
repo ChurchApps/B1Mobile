@@ -2,6 +2,7 @@ import React from 'react';
 import AppNavigator from './src/navigation/AppNavigation';
 import { View } from 'react-native';
 import { EnvironmentHelper } from "./src/helpers"
+import CodePush from 'react-native-code-push';
 
 // Need manually add Intl polyfill for react-native app
 import "intl";
@@ -14,6 +15,8 @@ if (Platform.OS === "android") {
   }
 }
 import "intl/locale-data/jsonp/en";
+
+
 
 EnvironmentHelper.init();
 const App = () => {
@@ -28,4 +31,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default CodePush(App);
