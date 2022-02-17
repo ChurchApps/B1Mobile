@@ -14,10 +14,13 @@ export class EnvironmentHelper {
   static ContentRoot = "";
 
   static init = () => {
+    EnvironmentHelper.initProd();
+    /*
     switch (STAGE) {
       case "prod": EnvironmentHelper.initProd(); break;
       default: EnvironmentHelper.initDev(); break;
     }
+    */
     console.log("INIT");
     ApiHelper.apiConfigs = [
       { keyName: "AccessApi", url: EnvironmentHelper.AccessApi, jwt: "", permisssions: [] },
