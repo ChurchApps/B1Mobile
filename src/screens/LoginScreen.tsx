@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants, LoginResponseInterface } from '../helpers';
+import { Constants, EnvironmentHelper, LoginResponseInterface } from '../helpers';
 import Icon from 'react-native-vector-icons/Fontisto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../helpers';
 import { BlueHeader } from '../components';
 import { ChurchInterface, ApiHelper, UserHelper } from '../helpers';
-import { B1_WEB_ROOT } from '@env';
 import RNRestart from 'react-native-restart';
 
 interface Props {
@@ -69,8 +68,8 @@ export const LoginScreen = (props: Props) => {
     });
   }
 
-  const forgotLink = B1_WEB_ROOT.replace("{subdomain}.", "") + "/login?action=forgot";
-  const registerLink = B1_WEB_ROOT.replace("{subdomain}.", "") + "/login?action=register";
+  const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
+  const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
     <SafeAreaView style={globalStyles.appContainer}>
