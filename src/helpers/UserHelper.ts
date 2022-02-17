@@ -12,7 +12,7 @@ export class UserHelper {
     //const person: PersonInterface = await ApiHelper.get(`/people/${UserHelper.currentChurch.personId}`, "MembershipApi");
     const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentChurch.id}`, "MembershipApi");
     UserHelper.person = data.person;
-    if (this.currentChurch.personId) this.currentChurch.personId = UserHelper.person.id
+    //if (this.currentChurch.personId) this.currentChurch.personId = UserHelper.person.id
   }
 
   static checkAccess({ api, contentType, action }: IPermission): boolean {

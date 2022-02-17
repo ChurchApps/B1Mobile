@@ -95,7 +95,7 @@ export function CustomDrawer(props: any) {
     return (
       <TouchableOpacity style={globalStyles.headerView} onPress={() => navigateToScreen(item)}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('6%')} />}
+          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />}
         <Text style={globalStyles.tabTitle}>{item.text}</Text>
       </TouchableOpacity>
     );
@@ -104,11 +104,11 @@ export function CustomDrawer(props: any) {
   const loginOutToggle = () => {
     if (UserHelper.person) {
       return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
-        <Text style={globalStyles.drawerText}>Log out</Text>
+        <Text style={globalStyles.tabTitle}>Log out</Text>
       </TouchableOpacity>);
     } else {
       return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => navigate('AuthStack')}>
-        <Text style={globalStyles.drawerText}>Login</Text>
+        <Text style={globalStyles.tabTitle}>Login</Text>
       </TouchableOpacity>);
     }
   }
