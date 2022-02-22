@@ -48,7 +48,7 @@ export const ChurchSearch = (props: Props) => {
     ApiHelper.get("/churches/search/?name=" + text + "&app=B1&include=logoSquare", "AccessApi").then(data => {
       setLoading(false);
       setSearchList(data);
-      if (data.length === 0) Alert.alert("Alert", "Search result not found!!");
+      if (data.length === 0) Alert.alert("Alert", "No matches found");
     })
   }
 
@@ -115,7 +115,7 @@ export const ChurchSearch = (props: Props) => {
           {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
         </TouchableOpacity>
         {searchText == '' && <Text style={globalStyles.recentText}>
-          {recentListEmpty ? 'Recent Churches' : 'Recent Churches Not Available!!'}
+          {recentListEmpty ? 'Recent Churches' : 'No recent churches available.'}
         </Text>}
         <FlatList data={searchText == '' ? recentList : searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} />
       </View>

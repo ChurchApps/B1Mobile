@@ -45,8 +45,8 @@ export function CustomDrawer(props: any) {
 
   const navigateToScreen = (item: any) => {
     const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
-    if (item.linkType == "stream") navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", UserHelper.currentChurch.subDomain || ""), title: item.text })
-    if (item.linkType == "lessons") navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch.id, title: item.text })
+    if (item.linkType == "stream") navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", UserHelper.currentChurch?.subDomain || ""), title: item.text })
+    if (item.linkType == "lessons") navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch?.id, title: item.text })
     if (item.linkType == "bible") navigate('BibleScreen', { url: bibleUrl, title: item.text })
     if (item.linkType == "donation") navigate('DonationScreen')
     if (item.linkType == "url") navigate('WebsiteScreen', { url: item.url, title: item.text })
@@ -102,7 +102,7 @@ export function CustomDrawer(props: any) {
   }
 
   const loginOutToggle = () => {
-    if (UserHelper.person) {
+    if (UserHelper.user) {
       return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
         <Text style={globalStyles.tabTitle}>Log out</Text>
       </TouchableOpacity>);
