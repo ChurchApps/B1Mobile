@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Constants } from '../helpers';
+import { Constants, UserHelper } from '../helpers';
 import WebView from 'react-native-webview';
 import { Loader, MainHeader, SimpleHeader } from '../components';
 import { globalStyles } from '../helpers';
@@ -25,14 +25,21 @@ export const WebsiteScreen = (props: Props) => {
   const { params } = props.route;
   const [isLoading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const checkRedirect = () => {
+    if (!UserHelper.currentChurch) props.navigation.navigate("ChurchSearch")
+  }
 
+
+  useEffect(() => {
+    checkRedirect();
   }, [])
 
   const getTitle = () => {
     const title = params && params.title && params.title;
     return title == undefined ? 'Home' : title;
   }
+
+
 
   return (
 
