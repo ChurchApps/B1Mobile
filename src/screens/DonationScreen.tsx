@@ -55,15 +55,9 @@ const DonationScreen = (props: Props) => {
     } catch (err: any) {
       Alert.alert("Failed to fetch payment methods", err.message)
     }
-
+  
   }
 
-
-  if (Platform.OS === "ios") {
-    let url = "https://" + UserHelper.currentChurch.subDomain + ".b1.church/login/?returnUrl=%2Fdonate%3FnoHeader%3D1";
-    if (UserHelper.currentChurch.apis) url += "&jwt=" + UserHelper.currentChurch.apis[0].jwt;
-    console.log(url);
-  }
 
   return (
     <SafeAreaView style={globalStyles.grayContainer}>

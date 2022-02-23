@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, Platform } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import { Permissions } from '../interfaces';
 import RNRestart from 'react-native-restart';
+import SafariView from "react-native-safari-view";
 
 export function CustomDrawer(props: any) {
   const { navigate, goBack, openDrawer } = props.navigation;
@@ -48,7 +49,10 @@ export function CustomDrawer(props: any) {
     if (item.linkType == "stream") navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", UserHelper.currentChurch?.subDomain || ""), title: item.text })
     if (item.linkType == "lessons") navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch?.id, title: item.text })
     if (item.linkType == "bible") navigate('BibleScreen', { url: bibleUrl, title: item.text })
-    if (item.linkType == "donation") navigate('DonationScreen')
+    if (item.linkType == "donation") {
+      if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
+      else navDonations();
+    }
     if (item.linkType == "url") navigate('WebsiteScreen', { url: item.url, title: item.text })
     if (item.linkType == "page") navigate('PageScreen', { url: item.url, title: item.text })
     if (item.linkType == "directory") {
@@ -69,6 +73,17 @@ export function CustomDrawer(props: any) {
       }
       
     }*/
+  }
+
+  const navDonations = () => {
+    if (Platform.OS === "ios") {
+      let url = "https://" + UserHelper.currentChurch.subDomain + ".b1.church/login/?returnUrl=%2Fdonate%3FnoHeader%3D1";
+      if (UserHelper.currentChurch.jwt) url += "&jwt=" + UserHelper.currentChurch.jwt;
+      console.log(url);
+      SafariView.isAvailable().then(() => {
+        SafariView.show({url: url})
+      })
+    } else navigate('DonationScreen')
   }
 
   const getDrawerList = (churchId: any) => {

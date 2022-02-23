@@ -512,7 +512,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "church.b1.mobile";
+				PRODUCT_BUNDLE_IDENTIFIER = church.b1.mobile;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/B1Mobile.app/B1Mobile";
 			};
@@ -537,7 +537,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "church.b1.mobile";
+				PRODUCT_BUNDLE_IDENTIFIER = church.b1.mobile;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/B1Mobile.app/B1Mobile";
 			};
@@ -563,7 +563,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "church.b1.mobile";
+				PRODUCT_BUNDLE_IDENTIFIER = church.b1.mobile;
 				PRODUCT_NAME = B1Mobile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -590,7 +590,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "church.b1.mobile";
+				PRODUCT_BUNDLE_IDENTIFIER = church.b1.mobile;
 				PRODUCT_NAME = B1Mobile;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

@@ -300,6 +300,8 @@ PODS:
     - glog
   - react-native-restart (0.0.22):
     - React-Core
+  - react-native-safari-view (1.0.0):
+    - React
   - react-native-safe-area-context (3.2.0):
     - React-Core
   - react-native-webview (11.3.1):
@@ -448,6 +450,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-restart (from `../node_modules/react-native-restart`)
+  - react-native-safari-view (from `../node_modules/react-native-safari-view`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -542,6 +545,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-restart:
     :path: "../node_modules/react-native-restart"
+  react-native-safari-view:
+    :path: "../node_modules/react-native-safari-view"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-webview:
@@ -629,6 +634,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 595f76eba2176ebd8817a1fffd47b84fbdab9383
   React-logger: 23de8ea0f44fa00ee77e96060273225607fd4d78
   react-native-restart: 733a51ad137f15b0f8dc34c4082e55af7da00979
+  react-native-safari-view: 955d7160d159241b8e9395d12d10ea0ef863dcdd
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-webview: 07fca3f4378bd6ea26254bf63119bfd70f4fabeb
   React-perflogger: 3c9bb7372493e49036f07a82c44c8cf65cbe88db
