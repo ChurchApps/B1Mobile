@@ -15,6 +15,7 @@ import { MembersSearch } from '../screens/MembersSearch';
 import { MemberDetailScreen } from '../screens/MemberDetailScreen';
 import DonationScreen from '../screens/DonationScreen';
 import { globalStyles } from '../helpers';
+import { RegisterScreen } from '../screens/RegisterScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -47,6 +48,7 @@ const AuthStack = () => {
   return (
     <AuthNav.Navigator headerMode="none" initialRouteName={'LoginScreen'}>
       <AuthNav.Screen name={'LoginScreen'} component={LoginScreen} />
+      <AuthNav.Screen name={'RegisterScreen'} component={RegisterScreen} />
     </AuthNav.Navigator>
   );
 }

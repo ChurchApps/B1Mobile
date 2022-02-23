@@ -30,18 +30,18 @@ export const LoginScreen = (props: Props) => {
     if (email != '') {
       let emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
-        Alert.alert("Alert", 'Please enter valid email!!');
+        Alert.alert("Alert", 'Please enter valid email.');
         return false;
       } else {
         if (password != '') {
           return true;
         } else {
-          Alert.alert("Alert", 'Please enter password!!');
+          Alert.alert("Alert", 'Please enter password.');
           return false;
         }
       }
     } else {
-      Alert.alert("Alert", 'Please enter email!!');
+      Alert.alert("Alert", 'Please enter email.');
       return false;
     }
   }
@@ -55,12 +55,12 @@ export const LoginScreen = (props: Props) => {
         const church: ChurchInterface = data.churches[0]
         UserHelper.user = data.user;
         UserHelper.churches = data.churches;
-        UserHelper.currentChurch = church
-        church.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+        if (church) UserHelper.currentChurch = church
+        church?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
         await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
         await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.churches))
-        await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(church))
+        if (church) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(church))
         props.navigation.navigate('MainStack');
         //DevSettings.reload();
         RNRestart.Restart();
@@ -97,7 +97,7 @@ export const LoginScreen = (props: Props) => {
             <Text style={globalStyles.simpleLink}>Forgot Password</Text>
           </TouchableOpacity>
           <Text> | </Text>
-          <TouchableOpacity onPress={() => { Linking.openURL(registerLink); }}>
+          <TouchableOpacity onPress={() => { props.navigation.navigate("RegisterScreen") }}>
             <Text style={globalStyles.simpleLink}>Register</Text>
           </TouchableOpacity>
         </View>
