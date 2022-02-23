@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Image, Text, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView, Image, Text, TouchableOpacity, Alert, Platform } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Constants } from '../helpers';
 import { globalStyles, UserHelper, ApiHelper } from '../helpers';;
@@ -56,6 +56,13 @@ const DonationScreen = (props: Props) => {
       Alert.alert("Failed to fetch payment methods", err.message)
     }
 
+  }
+
+
+  if (Platform.OS === "ios") {
+    let url = "https://" + UserHelper.currentChurch.subDomain + ".b1.church/login/?returnUrl=%2Fdonate%3FnoHeader%3D1";
+    if (UserHelper.currentChurch.apis) url += "&jwt=" + UserHelper.currentChurch.apis[0].jwt;
+    console.log(url);
   }
 
   return (
