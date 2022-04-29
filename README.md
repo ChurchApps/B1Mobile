@@ -26,3 +26,11 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 7. Run `cd..` followed by `react-native run-android --variant=release` to generate an apk file for Android devices.  You can close the node window when it completes.
 8. Open the app in Android studio.  Choose Build -> Generate Signed Bundle and point to your keys.
 9. The signed build will be at `\android\app\release`.  Upload it to the Google Play store.
+
+### iOS
+1. Follow instructions [here](https://help.dropsource.com/docs/documentation/after-dropsource/publishing-your-app/submitting-an-ios-app-to-the-app-store/#:~:text=Archive%20your%20App,Click%20Validate%20App)
+
+### Codepush release
+1. Update version number in package.json
+2. Run 'appcenter codepush release-react -a Live-Church-Solutions/B1Mobile -d Production' to push to Android
+2. Run 'appcenter codepush release-react -a Live-Church-Solutions/B1Mobile_iOS -d Production' to push to iOS

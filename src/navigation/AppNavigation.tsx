@@ -15,6 +15,8 @@ import { MembersSearch } from '../screens/MembersSearch';
 import { MemberDetailScreen } from '../screens/MemberDetailScreen';
 import DonationScreen from '../screens/DonationScreen';
 import { globalStyles } from '../helpers';
+import { RegisterScreen } from '../screens/RegisterScreen';
+import { DashboardScreen } from '../screens/DashboardScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -25,6 +27,7 @@ const MainStack = () => {
 
   return (
     <Drawer.Navigator initialRouteName={'WebsiteScreen'} drawerType={'slide'} drawerStyle={globalStyles.drawerStyle} drawerContent={(props) => <CustomDrawer {...props} />}>
+      <Drawer.Screen name={'Dashboard'} component={DashboardScreen} />
       <Drawer.Screen name={'BibleScreen'} component={WebsiteScreen} />
       <Drawer.Screen name={'LessonsScreen'} component={WebsiteScreen} />
       <Drawer.Screen name={'StreamScreen'} component={WebsiteScreen} />
@@ -47,6 +50,7 @@ const AuthStack = () => {
   return (
     <AuthNav.Navigator headerMode="none" initialRouteName={'LoginScreen'}>
       <AuthNav.Screen name={'LoginScreen'} component={LoginScreen} />
+      <AuthNav.Screen name={'RegisterScreen'} component={RegisterScreen} />
     </AuthNav.Navigator>
   );
 }

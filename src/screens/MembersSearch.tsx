@@ -58,7 +58,7 @@ export const MembersSearch = (props: Props) => {
 
   const getResults = () => {
     if (isLoading) return <></>
-    else if (searchList.length == 0) return <Text style={globalStyles.recentText}>Member Not Available!!</Text>
+    else if (searchList.length == 0) return <Text style={globalStyles.recentText}>No results found</Text>
     else return <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} />
   }
 

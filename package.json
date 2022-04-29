@@ -1,6 +1,6 @@
 {
-  "name": "B1Church",
-  "version": "0.0.1",
+  "name": "B1Mobile",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -16,7 +16,7 @@
     "@react-navigation/drawer": "^5.12.4",
     "@react-navigation/native": "^5.9.3",
     "@react-navigation/stack": "^5.14.3",
-    "@stripe/stripe-react-native": "^0.1.1",
+    "@stripe/stripe-react-native": "^0.2.4",
     "@types/react-native-vector-icons": "^6.4.6",
     "appcenter": "4.4.3",
     "appcenter-analytics": "4.4.3",
@@ -38,6 +38,7 @@
     "react-native-reanimated": "^1.13.2",
     "react-native-responsive-screen": "^1.4.2",
     "react-native-restart": "0.0.22",
+    "react-native-safari-view": "^2.1.0",
     "react-native-safe-area-context": "^3.2.0",
     "react-native-screens": "^2.18.1",
     "react-native-vector-icons": "^8.1.0",

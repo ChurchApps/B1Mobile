@@ -54,6 +54,7 @@ export class ApiHelper {
     if (!config) return
     try {
       const requestOptions = { method: "GET" };
+      console.log(config.url + path)
       return fetch(config.url + path, requestOptions).then(response => response.json())
     } catch (e) {
       throw (e);

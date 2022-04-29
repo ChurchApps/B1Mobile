@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants, LoginResponseInterface } from '../helpers';
+import { Constants, EnvironmentHelper, LoginResponseInterface } from '../helpers';
 import Icon from 'react-native-vector-icons/Fontisto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../helpers';
 import { BlueHeader } from '../components';
 import { ChurchInterface, ApiHelper, UserHelper } from '../helpers';
-import { B1_WEB_ROOT } from '@env';
 import RNRestart from 'react-native-restart';
 
 interface Props {
@@ -31,18 +30,18 @@ export const LoginScreen = (props: Props) => {
     if (email != '') {
       let emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
-        Alert.alert("Alert", 'Please enter valid email!!');
+        Alert.alert("Alert", 'Please enter valid email.');
         return false;
       } else {
         if (password != '') {
           return true;
         } else {
-          Alert.alert("Alert", 'Please enter password!!');
+          Alert.alert("Alert", 'Please enter password.');
           return false;
         }
       }
     } else {
-      Alert.alert("Alert", 'Please enter email!!');
+      Alert.alert("Alert", 'Please enter email.');
       return false;
     }
   }
@@ -56,12 +55,14 @@ export const LoginScreen = (props: Props) => {
         const church: ChurchInterface = data.churches[0]
         UserHelper.user = data.user;
         UserHelper.churches = data.churches;
-        UserHelper.currentChurch = church
-        church.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+        if (church) {
+          await UserHelper.setCurrentChurch(church);
+        }
+        church?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
         await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
         await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.churches))
-        await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(church))
+        if (church) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(church))
         props.navigation.navigate('MainStack');
         //DevSettings.reload();
         RNRestart.Restart();
@@ -69,8 +70,8 @@ export const LoginScreen = (props: Props) => {
     });
   }
 
-  const forgotLink = B1_WEB_ROOT.replace("{subdomain}.", "") + "/login?action=forgot";
-  const registerLink = B1_WEB_ROOT.replace("{subdomain}.", "") + "/login?action=register";
+  const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
+  const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
     <SafeAreaView style={globalStyles.appContainer}>
@@ -98,7 +99,7 @@ export const LoginScreen = (props: Props) => {
             <Text style={globalStyles.simpleLink}>Forgot Password</Text>
           </TouchableOpacity>
           <Text> | </Text>
-          <TouchableOpacity onPress={() => { Linking.openURL(registerLink); }}>
+          <TouchableOpacity onPress={() => { props.navigation.navigate("RegisterScreen") }}>
             <Text style={globalStyles.simpleLink}>Register</Text>
           </TouchableOpacity>
         </View>

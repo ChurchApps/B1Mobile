@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, ActivityIndicator, Platform } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -7,6 +7,8 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import { Permissions } from '../interfaces';
 import RNRestart from 'react-native-restart';
+import { NavigationHelper } from '../helpers/NavigationHelper';
+import SafariView from "react-native-safari-view";
 
 export function CustomDrawer(props: any) {
   const { navigate, goBack, openDrawer } = props.navigation;
@@ -45,10 +47,13 @@ export function CustomDrawer(props: any) {
 
   const navigateToScreen = (item: any) => {
     const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
-    if (item.linkType == "stream") navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", UserHelper.currentChurch.subDomain || ""), title: item.text })
-    if (item.linkType == "lessons") navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch.id, title: item.text })
+    if (item.linkType == "stream") navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", UserHelper.currentChurch?.subDomain || ""), title: item.text })
+    if (item.linkType == "lessons") navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch?.id, title: item.text })
     if (item.linkType == "bible") navigate('BibleScreen', { url: bibleUrl, title: item.text })
-    if (item.linkType == "donation") navigate('DonationScreen')
+    if (item.linkType == "donation") {
+      if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
+      else navDonations();
+    }
     if (item.linkType == "url") navigate('WebsiteScreen', { url: item.url, title: item.text })
     if (item.linkType == "page") navigate('PageScreen', { url: item.url, title: item.text })
     if (item.linkType == "directory") {
@@ -71,12 +76,26 @@ export function CustomDrawer(props: any) {
     }*/
   }
 
+  const navDonations = () => {
+    if (Platform.OS === "ios") {
+      let url = "https://" + UserHelper.currentChurch.subDomain + ".b1.church/login/?returnUrl=%2Fdonate%3FnoHeader%3D1";
+      if (UserHelper.currentChurch.jwt) url += "&jwt=" + UserHelper.currentChurch.jwt;
+      console.log(url);
+      SafariView.isAvailable().then(() => {
+        SafariView.show({ url: url })
+      })
+    } else navigate('DonationScreen')
+  }
+
   const getDrawerList = (churchId: any) => {
     setLoading(true);
-    ApiHelper.get("/links/church/" + churchId + "?category=tab", "B1Api").then(data => {
+    ApiHelper.getAnonymous("/links/church/" + churchId + "?category=tab", "B1Api").then(data => {
       setLoading(false);
       setDrawerList(data);
-      if (data.length > 0) navigateToScreen(data[0]);
+      UserHelper.links = data;
+      //if (data.length > 0) navigateToScreen(data[0]);
+      navigate('Dashboard')
+
     });
   }
 
@@ -93,22 +112,22 @@ export function CustomDrawer(props: any) {
   const listItem = (topItem: boolean, item: any) => {
     var tab_icon = item.icon != undefined ? item.icon.slice(7) : '';
     return (
-      <TouchableOpacity style={globalStyles.headerView} onPress={() => navigateToScreen(item)}>
+      <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('6%')} />}
+          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />}
         <Text style={globalStyles.tabTitle}>{item.text}</Text>
       </TouchableOpacity>
     );
   }
 
   const loginOutToggle = () => {
-    if (UserHelper.person) {
+    if (UserHelper.user) {
       return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
-        <Text style={globalStyles.drawerText}>Log out</Text>
+        <Text style={globalStyles.tabTitle}>Log out</Text>
       </TouchableOpacity>);
     } else {
       return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => navigate('AuthStack')}>
-        <Text style={globalStyles.drawerText}>Login</Text>
+        <Text style={globalStyles.tabTitle}>Login</Text>
       </TouchableOpacity>);
     }
   }

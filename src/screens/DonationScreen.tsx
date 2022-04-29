@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Image, Text, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView, Image, Text, TouchableOpacity, Alert, Platform } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Constants } from '../helpers';
 import { globalStyles, UserHelper, ApiHelper } from '../helpers';;
@@ -55,8 +55,9 @@ const DonationScreen = (props: Props) => {
     } catch (err: any) {
       Alert.alert("Failed to fetch payment methods", err.message)
     }
-
+  
   }
+
 
   return (
     <SafeAreaView style={globalStyles.grayContainer}>

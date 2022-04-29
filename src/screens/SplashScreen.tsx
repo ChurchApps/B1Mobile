@@ -23,18 +23,19 @@ const SplashScreen = (props: Props) => {
       const churchString = await AsyncStorage.getItem("CHURCH_DATA")
       const churchesString = await AsyncStorage.getItem("CHURCHES_DATA")
 
-      if (user !== null && churchString !== null) {
+      if (user !== null) {
         UserHelper.user = JSON.parse(user);
-        const church: ChurchInterface = JSON.parse(churchString);
-        UserHelper.currentChurch = church;
+        let church: ChurchInterface | null = null;
+        if (churchString) church = JSON.parse(churchString);
+        if (church) await UserHelper.setCurrentChurch(church);
         UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [church];
-        church.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+        church?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         await UserHelper.setPersonRecord()
         props.navigation.navigate('MainStack');
       } else {
         if (churchString) {
           const church: ChurchInterface = JSON.parse(churchString);
-          UserHelper.currentChurch = church;
+          UserHelper.setCurrentChurch(church);
         }
         //props.navigation.navigate('AuthStack');
         props.navigation.navigate('MainStack');

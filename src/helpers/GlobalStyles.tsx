@@ -89,10 +89,10 @@ export const globalStyles = StyleSheet.create({
 
   //CustomDrawer
   drawerStyle: { backgroundColor: Constants.Colors.app_color, color: 'white' },
-  userIcon: { width: wp('10%'), height: wp('10%'), margin: wp('4%'), borderRadius: wp('5%') },
+  userIcon: { width: wp('6%'), height: wp('6%'), margin: wp('2%'), borderRadius: wp('2%') },
   headerView: { flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' },
-  userNameText: { fontSize: wp('3.8%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' },
-  tabIcon: { width: wp('8%'), maxHeight: wp('10%'), marginVertical: wp('2%'), marginHorizontal: wp('4%'), color: 'white' },
+  userNameText: { fontSize: wp('4%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' },
+  tabIcon: { width: wp('6%'), maxHeight: wp('10%'), marginVertical: wp('2%'), marginHorizontal: wp('3%'), color: 'white' },
   tabTitle: { fontSize: wp('4%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' },
   churchBtn: { borderBottomColor: 'lightgray', borderBottomWidth: 1, marginHorizontal: wp('4%'), marginTop: wp('6%'), marginBottom: wp('2%'), borderRadius: wp('1.5%'), flexDirection: 'row', alignItems: 'center', color: 'white' },
   churchText: { fontSize: wp('3.7%'), paddingVertical: wp('1.5%'), fontFamily: Constants.Fonts.RobotoRegular, marginHorizontal: wp('1%'), color: 'white' },
