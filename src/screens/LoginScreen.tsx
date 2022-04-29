@@ -55,7 +55,9 @@ export const LoginScreen = (props: Props) => {
         const church: ChurchInterface = data.churches[0]
         UserHelper.user = data.user;
         UserHelper.churches = data.churches;
-        if (church) UserHelper.currentChurch = church
+        if (church) {
+          await UserHelper.setCurrentChurch(church);
+        }
         church?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
         await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))

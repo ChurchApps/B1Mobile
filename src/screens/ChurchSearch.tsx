@@ -34,7 +34,7 @@ export const ChurchSearch = (props: Props) => {
       if (existing) churchData = existing;
       const churchValue = JSON.stringify(churchData);
       await AsyncStorage.setItem('CHURCH_DATA', churchValue)
-      UserHelper.currentChurch = churchData;
+      await UserHelper.setCurrentChurch(churchData);
       if (UserHelper.user) UserHelper.setPersonRecord();
       //DevSettings.reload()
       RNRestart.Restart();

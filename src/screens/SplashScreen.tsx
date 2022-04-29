@@ -27,7 +27,7 @@ const SplashScreen = (props: Props) => {
         UserHelper.user = JSON.parse(user);
         let church: ChurchInterface | null = null;
         if (churchString) church = JSON.parse(churchString);
-        if (church) UserHelper.currentChurch = church;
+        if (church) await UserHelper.setCurrentChurch(church);
         UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [church];
         church?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         await UserHelper.setPersonRecord()
@@ -35,7 +35,7 @@ const SplashScreen = (props: Props) => {
       } else {
         if (churchString) {
           const church: ChurchInterface = JSON.parse(churchString);
-          UserHelper.currentChurch = church;
+          UserHelper.setCurrentChurch(church);
         }
         //props.navigation.navigate('AuthStack');
         props.navigation.navigate('MainStack');

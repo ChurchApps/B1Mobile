@@ -1,12 +1,19 @@
 import { ChurchInterface, PersonInterface, ApiHelper, IPermission, UserInterface } from ".";
+import { AppearanceInterface } from "./Interfaces";
 
 export class UserHelper {
   static churches: ChurchInterface[];
   static currentChurch: ChurchInterface;
   static person: PersonInterface;
   static user: UserInterface;
+  static links: any[];
+  static churchAppearance: AppearanceInterface;
 
-
+  static async setCurrentChurch(church: ChurchInterface) {
+    console.log("Set current church")
+    UserHelper.currentChurch = church;
+    UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + church.id, "AccessApi");
+  }
 
   static async setPersonRecord() {
     if (UserHelper.currentChurch) {
