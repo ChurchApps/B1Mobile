@@ -1,8 +1,9 @@
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import { Permissions } from "../interfaces";
 import { EnvironmentHelper } from "./EnvironmentHelper";
 import { LinkInterface } from "./Interfaces";
 import { UserHelper } from "./UserHelper";
+import SafariView from "react-native-safari-view";
 
 export class NavigationHelper {
 
@@ -11,7 +12,10 @@ export class NavigationHelper {
     if (item.linkType == "stream") navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", UserHelper.currentChurch?.subDomain || ""), title: item.text })
     if (item.linkType == "lessons") navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch?.id, title: item.text })
     if (item.linkType == "bible") navigate('BibleScreen', { url: bibleUrl, title: item.text })
-    if (item.linkType == "donation") navigate('DonationScreen')
+    if (item.linkType == "donation") {
+      if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
+      else NavigationHelper.navDonations(navigate);
+    }
     if (item.linkType == "url") navigate('WebsiteScreen', { url: item.url, title: item.text })
     if (item.linkType == "page") navigate('PageScreen', { url: item.url, title: item.text })
     if (item.linkType == "directory") {
@@ -23,6 +27,16 @@ export class NavigationHelper {
       if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
       else navigate('ServiceScreen', {})
     }
+  }
+
+  static navDonations(navigate: any) {
+    if (Platform.OS === "ios") {
+      let url = "https://" + UserHelper.currentChurch.subDomain + ".b1.church/login/?returnUrl=%2Fdonate%3FnoHeader%3D1";
+      if (UserHelper.currentChurch.jwt) url += "&jwt=" + UserHelper.currentChurch.jwt;
+      SafariView.isAvailable().then(() => {
+        SafariView.show({ url: url })
+      })
+    } else navigate('DonationScreen')
   }
 
 }

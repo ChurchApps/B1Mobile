@@ -1,6 +1,6 @@
 {
   "name": "B1Mobile",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -52,6 +52,7 @@
     "@types/react-native": "^0.63.51",
     "@types/react-native-dotenv": "^0.2.0",
     "@types/react-native-restart": "0.0.14",
+    "@types/react-native-safari-view": "^2.0.5",
     "@types/react-test-renderer": "^16.9.2",
     "babel-jest": "^26.6.3",
     "eslint": "^7.14.0",
