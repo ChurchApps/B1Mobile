@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings } from 'react-native';
+import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, ArrayHelper, ChurchInterface, Constants } from '../helpers';
@@ -96,29 +96,32 @@ export const ChurchSearch = (props: Props) => {
   return (
     <SafeAreaView style={globalStyles.appContainer}>
       <BlueHeader />
-      <View style={globalStyles.grayContainer}>
-        <Text style={globalStyles.searchMainText}>Find Your Church</Text>
-        <View style={globalStyles.textInputView}>
-          <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
-          <TextInput
-            style={globalStyles.textInputStyle}
-            placeholder={'Church name'}
-            autoCapitalize="none"
-            autoCorrect={false}
-            keyboardType='default'
-            placeholderTextColor={'lightgray'}
-            value={searchText}
-            onChangeText={(text) => { setSearchText(text) }}
-          />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <View style={globalStyles.grayContainer}>
+          <Text style={globalStyles.searchMainText}>Find Your Church</Text>
+          <View style={globalStyles.textInputView}>
+            <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
+            <TextInput
+              style={globalStyles.textInputStyle}
+              placeholder={'Church name'}
+              autoCapitalize="none"
+              autoCorrect={false}
+              keyboardType='default'
+              placeholderTextColor={'lightgray'}
+              value={searchText}
+              onChangeText={(text) => { setSearchText(text) }}
+            />
+          </View>
+          <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%') }} onPress={() => searchApiCall(searchText)}>
+            {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
+          </TouchableOpacity>
+          {searchText == '' && <Text style={globalStyles.recentText}>
+            {recentListEmpty ? 'Recent Churches' : 'No recent churches available.'}
+          </Text>}
+
+          <FlatList data={searchText == '' ? recentList : searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} />
         </View>
-        <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%') }} onPress={() => searchApiCall(searchText)}>
-          {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
-        </TouchableOpacity>
-        {searchText == '' && <Text style={globalStyles.recentText}>
-          {recentListEmpty ? 'Recent Churches' : 'No recent churches available.'}
-        </Text>}
-        <FlatList data={searchText == '' ? recentList : searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} />
-      </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

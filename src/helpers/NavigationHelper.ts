@@ -12,6 +12,7 @@ export class NavigationHelper {
     if (item.linkType == "stream") navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", UserHelper.currentChurch?.subDomain || ""), title: item.text })
     if (item.linkType == "lessons") navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentChurch?.id, title: item.text })
     if (item.linkType == "bible") navigate('BibleScreen', { url: bibleUrl, title: item.text })
+    if (item.linkType == "votd") navigate('VotdScreen', {})
     if (item.linkType == "donation") {
       if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
       else NavigationHelper.navDonations(navigate);

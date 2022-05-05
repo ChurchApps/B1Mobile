@@ -33,6 +33,7 @@ export const DashboardScreen = (props: Props) => {
 
   const getButton = (topItem: boolean, item: LinkInterface) => {
     let img = require("../assets/images/dash_worship.png"); //https://www.pexels.com/photo/man-raising-his-left-hand-2351722/
+    console.log(item.linkType);
     switch (item.linkType) {
       case "url":
         img = require("../assets/images/dash_url.png"); //https://www.pexels.com/photo/selective-focus-photography-of-macbook-pro-with-turned-on-screen-on-brown-wooden-table-68763/
@@ -52,10 +53,11 @@ export const DashboardScreen = (props: Props) => {
       case "bible":
         img = require("../assets/images/dash_bible.png"); //https://www.pexels.com/photo/pink-pencil-on-open-bible-page-and-pink-272337/
         break;
+      case "votd":
+        img = require("../assets/images/dash_votd.png"); //https://www.pexels.com/photo/empty-gray-road-under-white-clouds-3041347/
+        break;
     }
 
-
-    //return (<ImageButton image="https://chums.org/images/home/about-bg.jpg" text={item.text} />);
     return (<ImageButton image={img} text={item.text} onPress={() => NavigationHelper.navigateToScreen(item, navigate)} />);
   }
 

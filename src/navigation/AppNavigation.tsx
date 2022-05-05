@@ -17,6 +17,7 @@ import DonationScreen from '../screens/DonationScreen';
 import { globalStyles } from '../helpers';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { DashboardScreen } from '../screens/DashboardScreen';
+import { VotdScreen } from '../screens/VotdScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -29,6 +30,7 @@ const MainStack = () => {
     <Drawer.Navigator initialRouteName={'WebsiteScreen'} drawerType={'slide'} drawerStyle={globalStyles.drawerStyle} drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name={'Dashboard'} component={DashboardScreen} />
       <Drawer.Screen name={'BibleScreen'} component={WebsiteScreen} />
+      <Drawer.Screen name={'VotdScreen'} component={VotdScreen} />
       <Drawer.Screen name={'LessonsScreen'} component={WebsiteScreen} />
       <Drawer.Screen name={'StreamScreen'} component={WebsiteScreen} />
       <Drawer.Screen name={'WebsiteScreen'} component={WebsiteScreen} />

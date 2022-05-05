@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Image, Text } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Constants, UserHelper } from '../helpers';
+import { View, SafeAreaView } from 'react-native';
+import { UserHelper } from '../helpers';
 import WebView from 'react-native-webview';
-import { Loader, MainHeader, SimpleHeader } from '../components';
+import { Loader, SimpleHeader } from '../components';
 import { globalStyles } from '../helpers';
 
 interface Props {
@@ -21,14 +20,13 @@ interface Props {
 }
 
 export const WebsiteScreen = (props: Props) => {
-  const { navigate, goBack, openDrawer } = props.navigation;
+  const { openDrawer } = props.navigation;
   const { params } = props.route;
   const [isLoading, setLoading] = useState(false);
 
   const checkRedirect = () => {
     if (!UserHelper.currentChurch) props.navigation.navigate("ChurchSearch")
   }
-
 
   useEffect(() => {
     checkRedirect();
@@ -39,10 +37,7 @@ export const WebsiteScreen = (props: Props) => {
     return title == undefined ? 'Home' : title;
   }
 
-
-
   return (
-
     <SafeAreaView style={globalStyles.homeContainer}>
       <SimpleHeader onPress={() => openDrawer()} title={getTitle()} />
       <View style={globalStyles.webViewContainer}>
@@ -52,5 +47,3 @@ export const WebsiteScreen = (props: Props) => {
     </SafeAreaView>
   );
 };
-
-
