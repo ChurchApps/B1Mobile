@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, SafeAreaView, Image, useWindowDimensions, Dimensions } from 'react-native';
-import { heightPercentageToDP, widthPercentageToDP } from 'react-native-responsive-screen';
+import { View, SafeAreaView, Image, Dimensions } from 'react-native';
 import { SimpleHeader } from '../components';
 import { globalStyles } from '../helpers';
 
@@ -23,8 +22,9 @@ export const VotdScreen = (props: Props) => {
   const [shape, setShape] = React.useState("9x16");
 
   const getShape = () => {
-    const width = widthPercentageToDP(100);
-    const height = heightPercentageToDP(100);
+    const dim = Dimensions.get("screen");
+    const width = dim.width;
+    const height = dim.height;
     const ratio = width / height;
     const diff1x1 = Math.abs(ratio - 1);
     const diff16x9 = Math.abs(ratio - 1.777);
@@ -33,7 +33,6 @@ export const VotdScreen = (props: Props) => {
     if (diff16x9 < diff1x1) result = "16x9";
     else if (diff9x16 < diff1x1) result = "9x16"
     setShape(result);
-    //return result;
   }
 
   const getDayOfYear = () => {
@@ -45,8 +44,11 @@ export const VotdScreen = (props: Props) => {
     return day;
   }
 
-  Dimensions.addEventListener("change", getShape)
-  React.useEffect(getShape, []);
+
+  React.useEffect(() => {
+    getShape();
+    Dimensions.addEventListener("change", getShape);
+  }, []);
 
   const day = getDayOfYear();
   return (

@@ -33,7 +33,6 @@ export const DashboardScreen = (props: Props) => {
 
   const getButton = (topItem: boolean, item: LinkInterface) => {
     let img = require("../assets/images/dash_worship.png"); //https://www.pexels.com/photo/man-raising-his-left-hand-2351722/
-    console.log(item.linkType);
     switch (item.linkType) {
       case "url":
         img = require("../assets/images/dash_url.png"); //https://www.pexels.com/photo/selective-focus-photography-of-macbook-pro-with-turned-on-screen-on-brown-wooden-table-68763/

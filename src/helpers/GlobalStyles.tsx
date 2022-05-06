@@ -42,7 +42,7 @@ export const globalStyles = StyleSheet.create({
   homeContainer: { flex: 1, backgroundColor: 'white' },
   menuIcon: { width: wp('6%'), height: wp('6%'), margin: wp('5%'), tintColor: 'white' },
   headerText: { color: 'white', textAlign: 'center', fontSize: wp('4.5%'), fontWeight: 'bold' },
-  webViewContainer: { flex: 1, height: hp('100%'), width: wp('100%') },
+  webViewContainer: { flex: 1, height: "100%", width: "100%" },
 
   //Service
   groupListView: { height: wp('15%'), justifyContent: 'center' },
