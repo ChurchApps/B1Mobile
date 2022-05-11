@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, FlatList, Image } from 'react-native';
-import { LinkInterface, UserHelper } from '../helpers';
+import { LinkInterface, UserHelper, Utilities } from '../helpers';
 import WebView from 'react-native-webview';
 import { Loader, SimpleHeader } from '../components';
 import { globalStyles } from '../helpers';
@@ -29,6 +29,7 @@ export const DashboardScreen = (props: Props) => {
 
   const checkRedirect = () => {
     if (!UserHelper.currentChurch) props.navigation.navigate("ChurchSearch")
+    else Utilities.trackEvent("Dashboard Screen");
   }
 
   const getButton = (topItem: boolean, item: LinkInterface) => {

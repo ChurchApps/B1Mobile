@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView } from 'react-native';
-import { UserHelper } from '../helpers';
+import { UserHelper, Utilities } from '../helpers';
 import WebView from 'react-native-webview';
 import { Loader, SimpleHeader } from '../components';
 import { globalStyles } from '../helpers';
@@ -29,6 +29,7 @@ export const WebsiteScreen = (props: Props) => {
   }
 
   useEffect(() => {
+    Utilities.trackEvent("Website Screen", { url: props.route?.params?.url });
     checkRedirect();
   }, [])
 

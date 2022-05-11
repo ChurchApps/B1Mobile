@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, SafeAreaView, Image, Dimensions } from 'react-native';
 import { SimpleHeader } from '../components';
-import { globalStyles } from '../helpers';
+import { globalStyles, Utilities } from '../helpers';
 
 interface Props {
   navigation: {
@@ -46,6 +46,7 @@ export const VotdScreen = (props: Props) => {
 
 
   React.useEffect(() => {
+    Utilities.trackEvent("VOTD Screen");
     getShape();
     Dimensions.addEventListener("change", getShape);
   }, []);

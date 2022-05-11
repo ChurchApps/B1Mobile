@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ApiHelper, ArrayHelper, ChurchInterface, Constants } from '../helpers';
+import { ApiHelper, ArrayHelper, ChurchInterface, Constants, Utilities } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles, UserHelper } from '../helpers';
 import { BlueHeader } from '../components';
@@ -24,6 +24,7 @@ export const ChurchSearch = (props: Props) => {
   const [recentListEmpty, setRecentListEmpty] = useState(false);
 
   useEffect(() => {
+    Utilities.trackEvent("Church Search Screen");
     GetRecentList();
   }, [])
 

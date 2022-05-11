@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, Image, Text, TouchableOpacity, Alert, Platform } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Constants } from '../helpers';
+import { Constants, Utilities } from '../helpers';
 import { globalStyles, UserHelper, ApiHelper } from '../helpers';;
 import { MainHeader, PaymentMethods, Donations, DonationForm, RecurringDonations } from '../components';
 import { initStripe } from "@stripe/stripe-react-native"
@@ -29,6 +29,7 @@ const DonationScreen = (props: Props) => {
 
   // initialise stripe
   const loadData = async () => {
+    Utilities.trackEvent("Donation Screen");
     try {
       setAreMethodsLoading(true)
       const data = await ApiHelper.get("/gateways", "GivingApi")
@@ -55,7 +56,7 @@ const DonationScreen = (props: Props) => {
     } catch (err: any) {
       Alert.alert("Failed to fetch payment methods", err.message)
     }
-  
+
   }
 
 

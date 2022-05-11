@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import { ApiHelper, Constants, EnvironmentHelper } from '../helpers';
+import { ApiHelper, Constants, EnvironmentHelper, Utilities } from '../helpers';
 import { globalStyles } from '../helpers';
 import { BlueHeader, Loader, SimpleHeader, WhiteHeader } from '../components';
 import Icon from 'react-native-vector-icons/Zocial';
@@ -30,6 +30,7 @@ export const MemberDetailScreen = (props: Props) => {
   const scrollViewRef = useRef<any>();
 
   useEffect(() => {
+    Utilities.trackEvent("Member Detail Screen");
     getHouseholdMembersList();
   }, [props.route.params])
 

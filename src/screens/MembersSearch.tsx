@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, Alert } from 'react-native';
 import { FlatList, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ApiHelper, Constants, EnvironmentHelper } from '../helpers';
+import { ApiHelper, Constants, EnvironmentHelper, Utilities } from '../helpers';
 import { globalStyles } from '../helpers';
 import { BlueHeader, Loader, SimpleHeader, WhiteHeader } from '../components';
 
@@ -22,6 +22,7 @@ export const MembersSearch = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    Utilities.trackEvent("Member Search Screen");
     loadMembers()
   }, [])
 

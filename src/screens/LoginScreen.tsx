@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants, EnvironmentHelper, LoginResponseInterface } from '../helpers';
+import { Constants, EnvironmentHelper, LoginResponseInterface, Utilities } from '../helpers';
 import Icon from 'react-native-vector-icons/Fontisto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../helpers';
@@ -23,7 +23,7 @@ export const LoginScreen = (props: Props) => {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-
+    Utilities.trackEvent("Login Screen");
   }, [])
 
   const validateDetails = () => {
