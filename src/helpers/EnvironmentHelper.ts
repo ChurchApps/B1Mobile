@@ -14,7 +14,7 @@ export class EnvironmentHelper {
   static ContentRoot = "";
 
   static init = () => {
-    // EnvironmentHelper.initProd();
+    //EnvironmentHelper.initProd();
 
     switch (STAGE) {
       case "prod": EnvironmentHelper.initProd(); break;
