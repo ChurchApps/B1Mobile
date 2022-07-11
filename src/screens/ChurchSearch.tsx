@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard, Dimensions, PixelRatio } from 'react-native';
+import { FlatList, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, ArrayHelper, ChurchInterface, Constants, Utilities } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,10 +23,24 @@ export const ChurchSearch = (props: Props) => {
   const [recentList, setRecentList] = useState([]);
   const [recentListEmpty, setRecentListEmpty] = useState(false);
 
+  const [dimension, setDimension] = useState(Dimensions.get('window'));
+
+  const wd = (number: string) => {
+    let givenWidth = typeof number === "number" ? number : parseFloat(number);
+    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
+  };
+
   useEffect(() => {
     Utilities.trackEvent("Church Search Screen");
     GetRecentList();
+
+    Dimensions.addEventListener('change', () => {
+      const dim = Dimensions.get('screen')
+      setDimension(dim);
+    })
   }, [])
+  useEffect(() => {
+  }, [dimension])
 
   const churchSelection = async (churchData: ChurchInterface) => {
     StoreToRecent(churchData);
@@ -82,7 +96,7 @@ export const ChurchSearch = (props: Props) => {
   const renderChurchItem = (item: any) => {
     const churchImage = item.settings && item.settings[0].value
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView]} onPress={() => churchSelection(item)}>
+      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: wd('90%') }]} onPress={() => churchSelection(item)}>
         {
           churchImage ? <Image source={{ uri: churchImage }} style={globalStyles.churchListIcon} /> :
             <Image source={Constants.Images.ic_church} style={globalStyles.churchListIcon} />
@@ -95,34 +109,41 @@ export const ChurchSearch = (props: Props) => {
   }
 
   return (
-    <SafeAreaView style={globalStyles.appContainer}>
-      <BlueHeader />
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <View style={globalStyles.grayContainer}>
-          <Text style={globalStyles.searchMainText}>Find Your Church</Text>
-          <View style={globalStyles.textInputView}>
-            <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
-            <TextInput
-              style={globalStyles.textInputStyle}
-              placeholder={'Church name'}
-              autoCapitalize="none"
-              autoCorrect={false}
-              keyboardType='default'
-              placeholderTextColor={'lightgray'}
-              value={searchText}
-              onChangeText={(text) => { setSearchText(text) }}
-            />
-          </View>
-          <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%') }} onPress={() => searchApiCall(searchText)}>
-            {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
-          </TouchableOpacity>
-          {searchText == '' && <Text style={globalStyles.recentText}>
-            {recentListEmpty ? 'Recent Churches' : 'No recent churches available.'}
-          </Text>}
+    <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
+      <ScrollView>
+        <SafeAreaView style={globalStyles.appContainer}>
 
-          <FlatList data={searchText == '' ? recentList : searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} />
-        </View>
-      </TouchableWithoutFeedback>
-    </SafeAreaView>
+          <BlueHeader />
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <View style={globalStyles.grayContainer}>
+              <Text style={globalStyles.searchMainText}>Find Your Church</Text>
+              <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
+                <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
+                <TextInput
+                  style={[globalStyles.textInputStyle]}
+                  placeholder={'Church name'}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType='default'
+                  placeholderTextColor={'lightgray'}
+                  value={searchText}
+                  onChangeText={(text) => { setSearchText(text) }}
+                />
+              </View>
+              <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%'), width: wd('90%') }} onPress={() => searchApiCall(searchText)}>
+                {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
+              </TouchableOpacity>
+              {searchText == '' && <Text style={globalStyles.recentText}>
+                {recentListEmpty ? 'Recent Churches' : 'No recent churches available.'}
+              </Text>}
+              <ScrollView nestedScrollEnabled={false}>
+                <FlatList data={searchText == '' ? recentList : searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} scrollEnabled={false} />
+              </ScrollView>
+            </View>
+          </TouchableWithoutFeedback>
+
+        </SafeAreaView>
+      </ScrollView>
+    </View>
   );
 };

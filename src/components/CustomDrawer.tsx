@@ -8,6 +8,7 @@ import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import { Permissions } from '../interfaces';
 import RNRestart from 'react-native-restart';
 import { NavigationHelper } from '../helpers/NavigationHelper';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 export function CustomDrawer(props: any) {
@@ -24,6 +25,8 @@ export function CustomDrawer(props: any) {
   useEffect(() => {
     getChurch();
   }, [props.navigation])
+
+
 
   const getChurch = async () => {
     try {
@@ -70,11 +73,12 @@ export function CustomDrawer(props: any) {
   const listItem = (topItem: boolean, item: any) => {
     var tab_icon = item.icon != undefined ? item.icon.slice(7) : '';
     return (
-      <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
-        {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />}
-        <Text style={globalStyles.tabTitle}>{item.text}</Text>
-      </TouchableOpacity>
+      
+          <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
+            {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
+              <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />}
+            <Text style={globalStyles.tabTitle}>{item.text}</Text>
+          </TouchableOpacity>
     );
   }
 
@@ -100,7 +104,8 @@ export function CustomDrawer(props: any) {
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView >
+      <ScrollView>
       {getUserInfo()}
       <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
 
@@ -116,6 +121,7 @@ export function CustomDrawer(props: any) {
           <FlatList data={drawerList} renderItem={({ item }) => listItem(false, item)} keyExtractor={(item: any) => item.id} />
       }
       {loginOutToggle()}
+      </ScrollView>
     </SafeAreaView>
 
   );

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { Loader, WhiteHeader } from '../../components';
 import { ApiHelper, globalStyles } from '../../helpers';
 import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
@@ -19,9 +19,27 @@ export const ServiceScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [serviceList, setServiceList] = useState([]);
 
+  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+
+  const wd = (number: string) => {
+    let givenWidth = typeof number === "number" ? number : parseFloat(number);
+    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
+  };
+
+
   useEffect(() => {
     getServiceData();
+
+    Dimensions.addEventListener('change', () => {
+      const dim = Dimensions.get('screen')
+      setDimension(dim);
+    })
   }, [])
+  useEffect(()=>{
+  },[dimension])
+
+  
+
 
   const getServiceData = async () => {
     setLoading(true);
@@ -105,7 +123,7 @@ export const ServiceScreen = (props: Props) => {
   const renderGroupItem = (item: any) => {
     return (
       <View>
-        <TouchableOpacity style={[globalStyles.listMainView, globalStyles.groupListView]} onPress={() => ServiceSelection(item)}>
+        <TouchableOpacity style={[globalStyles.listMainView, globalStyles.groupListView, { width: wd('90%') }]} onPress={() => ServiceSelection(item)}>
           <Text style={globalStyles.groupListTitle} numberOfLines={1}>{item.campus.name} - {item.name}</Text>
         </TouchableOpacity>
       </View>
@@ -114,15 +132,17 @@ export const ServiceScreen = (props: Props) => {
 
   return (
     <View style={globalStyles.grayContainer}>
-      <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
-      <SafeAreaView style={{ flex: 1 }}>
-        <FlatList
-          data={serviceList}
-          renderItem={({ item }) => renderGroupItem(item)}
-          keyExtractor={(item: any) => item.id}
-          style={globalStyles.listContainerStyle}
-        />
-      </SafeAreaView>
+      <ScrollView>
+        <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
+        <SafeAreaView style={{ flex: 1 }}>
+          <FlatList
+            data={serviceList}
+            renderItem={({ item }) => renderGroupItem(item)}
+            keyExtractor={(item: any) => item.id}
+            style={globalStyles.listContainerStyle}
+          />
+        </SafeAreaView>
+      </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
     </View>
   );

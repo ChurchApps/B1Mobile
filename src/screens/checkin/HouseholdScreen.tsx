@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { ApiHelper, Constants, EnvironmentHelper } from '../../helpers';
@@ -30,9 +30,27 @@ export const HouseholdScreen = (props: Props) => {
   const [memberList, setMemberList] = useState<any[]>([]);
   const [groupTree, setGroupTree] = useState<any[]>([]);
 
+
+  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+
+  const wd = (number: string) => {
+    let givenWidth = typeof number === "number" ? number : parseFloat(number);
+    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
+  };
+
+
   useEffect(() => {
     getMemberFromStorage();
+
+    Dimensions.addEventListener('change', () => {
+      const dim = Dimensions.get('screen')
+      setDimension(dim);
+    })
   }, []);
+  useEffect(()=>{
+  },[dimension])
+
+
 
   useEffect(() => {
     getMemberFromStorage();
@@ -139,7 +157,7 @@ export const HouseholdScreen = (props: Props) => {
   const renderMemberItem = (item: any) => {
     return (
       <View>
-        <TouchableOpacity style={globalStyles.listMainView} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
+        <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
           <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
           <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={globalStyles.memberListIcon} />
           <View style={globalStyles.memberListTextView}>
@@ -159,7 +177,7 @@ export const HouseholdScreen = (props: Props) => {
         </TouchableOpacity>
         {selected == item.id && item.serviceTime && item.serviceTime.map((item_time: any, index: any) => {
           return (
-            <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1 }} key={item_time.id}>
+            <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1,width:wd('90%') }} key={item_time.id}>
               <View style={globalStyles.classesTimeView}>
                 <Icon name={'clock-o'} style={globalStyles.timeIcon} size={wp('5%')} />
                 <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
@@ -179,11 +197,13 @@ export const HouseholdScreen = (props: Props) => {
 
   return (
     <View style={globalStyles.grayContainer}>
-      <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
-      <SafeAreaView style={{ flex: 1 }}>
-        <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
-        <BottomButton title='CHECKIN' onPress={() => submitAttendance()} />
-      </SafeAreaView>
+      <ScrollView>
+        <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
+        <SafeAreaView style={{ flex: 1 }}>
+          <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
+          <BottomButton title='CHECKIN' onPress={() => submitAttendance()} style={wd('100%')}/>
+        </SafeAreaView>
+      </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
     </View>
   );

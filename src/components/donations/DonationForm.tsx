@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, ScrollView, View, TouchableOpacity, Text, TextInput, Alert } from "react-native";
+import { Image, ScrollView, View, TouchableOpacity, Text, Alert ,TextInput,Dimensions,PixelRatio} from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
@@ -54,6 +54,20 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     { label: "Year(s)", value: "year" },
   ]);
   const [selectedInterval, setSelectedInterval] = useState<string>("");
+
+  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+
+  const wd = (number: string) => {
+    let givenWidth = typeof number === "number" ? number : parseFloat(number);
+    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
+  };
+
+  useEffect(()=>{
+    Dimensions.addEventListener('change', () => {
+      const dim = Dimensions.get('screen')
+      setDimension(dim);
+    })
+  },[dimension])
 
   const handleSave = () => {
     if (donation.amount && donation.amount < 0.5) {
@@ -151,7 +165,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       />
       <InputBox
         title="Donate"
-        headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
+        headerIcon={<Image source={Constants.Images.ic_give} style={[globalStyles.donationIcon,{marginLeft:wd('4%')}]} />}
         saveFunction={donationType ? handleSave : undefined}
         cancelFunction={donationType ? handleCancel : undefined}
       >
@@ -240,6 +254,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       keyboardType="number-pad"
                       onChangeText={(text) => handleIntervalChange("number", text)}
                     />
+                   
                   </View>
                   <View>
                     <Text style={globalStyles.semiTitleText}>Interval Type</Text>

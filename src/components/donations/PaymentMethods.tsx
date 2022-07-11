@@ -36,7 +36,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     if (isFocused) {
       setMode("display");
       setEditPaymentMethod(new StripePaymentMethod());
-    }
+    } 
   }, [isFocused]);
 
   const handleEdit = (paymentMethod: StripePaymentMethod, verifyAccount?: boolean) => {

@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function MainHeader({ leftComponent, mainComponent, rightComponent }: Props) {
-  return (
+  return ( 
     <View style={globalStyles.headerViewStyle}>
       <View style={[globalStyles.componentStyle, { flex: 2.1, justifyContent: 'flex-start' }]}>{leftComponent}</View>
       <View style={[globalStyles.componentStyle, { flex: 5.5 }]}>{mainComponent}</View>

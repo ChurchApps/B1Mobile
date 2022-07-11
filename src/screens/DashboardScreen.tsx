@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, FlatList, Image } from 'react-native';
+import { View, SafeAreaView, Text, FlatList, Image,Dimensions,PixelRatio} from 'react-native';
 import { LinkInterface, UserHelper, Utilities } from '../helpers';
 import WebView from 'react-native-webview';
 import { Loader, SimpleHeader } from '../components';
@@ -7,6 +7,7 @@ import { globalStyles } from '../helpers';
 import { ImageButton } from '../components/ImageButton';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 import { NavigationHelper } from '../helpers/NavigationHelper';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface Props {
   navigation: {
@@ -26,6 +27,31 @@ export const DashboardScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const { params } = props.route;
   const [isLoading, setLoading] = useState(false);
+  
+  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+
+  const wd = (number: string) => {
+    let givenWidth = typeof number === "number" ? number : parseFloat(number);
+    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
+  };
+
+  const hd = (number: string) => {
+    let givenWidth = typeof number === "number" ? number : parseFloat(number);
+    return PixelRatio.roundToNearestPixel((dimension.height * givenWidth) / 100);
+  };
+
+
+  useEffect(() => {
+   
+    Dimensions.addEventListener('change', () => {
+      const dim = Dimensions.get('screen')
+      setDimension(dim);
+    })
+  }, [])
+
+  useEffect(() => {
+  }, [dimension])
+
 
   const checkRedirect = () => {
     if (!UserHelper.currentChurch) props.navigation.navigate("ChurchSearch")
@@ -69,17 +95,18 @@ export const DashboardScreen = (props: Props) => {
   useEffect(() => { checkRedirect(); }, [])
 
   const getBrand = () => {
+    
     if (UserHelper.churchAppearance.logoLight) return <Image source={{ uri: UserHelper.churchAppearance.logoLight }} style={{ width: "100%", height: widthPercentageToDP(25) }} />
     else return <Text style={{ fontSize: 20, width: "100%", textAlign: "center", marginTop: 0 }}>{UserHelper.currentChurch.name}</Text>
   }
 
   return (
 
-    <SafeAreaView style={globalStyles.homeContainer}>
+    <SafeAreaView style={globalStyles.homeContainer} >
       <SimpleHeader onPress={() => openDrawer()} title={"Home"} />
       <View style={globalStyles.webViewContainer}>
         {getBrand()}
-
+   
         {getButtons()}
       </View>
       {isLoading && <Loader isLoading={isLoading} />}

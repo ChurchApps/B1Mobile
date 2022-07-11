@@ -2,30 +2,31 @@ import { StyleSheet } from "react-native";
 import { Constants } from "../helpers";
 import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 
+
 export const globalStyles = StyleSheet.create({
   //Global Styles
   appContainer: { flex: 1, backgroundColor: Constants.Colors.app_color },
   grayContainer: { flex: 1, backgroundColor: Constants.Colors.gray_bg },
-  textInputView: { height: wp('12%'), flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: wp('5.5%'), marginHorizontal: wp('5%'), backgroundColor: 'white', borderRadius: wp('2%'), shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.1, shadowRadius: wp('1.5%'), elevation: 5 },
-  textInputStyle: { height: wp('10%'), width: wp('80%'), alignItems: 'center', justifyContent: 'center', fontSize: wp('3.8%'), color: 'gray' },
-  roundBlueButton: { height: wp('12%'), width: wp('90%'), borderRadius: wp('2%'), justifyContent: 'center', alignItems: 'center', alignSelf: 'center', backgroundColor: Constants.Colors.button_bg, marginTop: wp('8%') },
+  textInputView: { height: wp('12%'), flexDirection: 'row', alignItems: 'center', marginTop: wp('5.5%'), marginHorizontal: wp('5%'), backgroundColor: 'white', borderRadius: wp('2%'), shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.1, shadowRadius: wp('1.5%'), elevation: 5,alignSelf:'center' },
+  textInputStyle: { height: wp('10%'),  fontSize: wp('3.8%'), color: 'gray' ,alignItems:'center',justifyContent:'center'},
+  roundBlueButton: { height: wp('12%'), borderRadius: wp('2%'), justifyContent: 'center', alignItems: 'center', alignSelf: 'center', backgroundColor: Constants.Colors.button_bg, marginTop: wp('8%') },
   roundBlueButtonText: { color: 'white', fontSize: wp('3.8%'), fontFamily: Constants.Fonts.RobotoMedium },
   searchIcon: { width: wp('6%'), height: wp('6%'), margin: wp('1.5%') },
   listTextView: { height: wp('12%'), justifyContent: 'space-evenly' },
   listTitleText: { fontSize: wp('4.2%'), fontFamily: Constants.Fonts.RobotoMedium },
-  listMainView: { width: wp('90%'), backgroundColor: 'white', alignSelf: 'center', justifyContent: 'flex-start', alignItems: 'center', marginVertical: wp('2%'), borderRadius: wp('2%'), shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.2, shadowRadius: wp('1.5%'), elevation: 5, shadowColor: Constants.Colors.app_color, flexDirection: 'row' },
+  listMainView: { backgroundColor: 'white', alignSelf: 'center', justifyContent: 'flex-start', alignItems: 'center', marginVertical: wp('2%'), borderRadius: wp('2%'), shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.2, shadowRadius: wp('1.5%'), elevation: 5, shadowColor: Constants.Colors.app_color, flexDirection: 'row' },
   listContainerStyle: { marginVertical: wp('3%') },
   selectionIcon: { color: 'gray', marginLeft: wp('3%') },
   groupListTitle: { fontSize: wp('4.5%'), fontFamily: Constants.Fonts.RobotoMedium, color: Constants.Colors.app_color },
-  safeAreaContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  safeAreaContainer: {  alignItems: 'center', justifyContent: 'center' },
 
-  loginLinks: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  loginLinks: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',marginTop:200 },
 
   simpleLink: { textDecorationLine: "underline", color: Constants.Colors.button_bg },
 
 
   //Splash
-  splashImage: { width: wp('100%'), height: hp('100%') },
+  // splashImage: { width: wp('100%'), height: hp('100%') },
 
   //Login
   inputIcon: { width: wp('4.5%'), height: wp('4.5%'), margin: wp('3%') },
@@ -52,7 +53,7 @@ export const globalStyles = StyleSheet.create({
   memberListTextView: { width: wp('62%'), marginVertical: wp('2%'), justifyContent: 'space-evenly' },
   memberListTitle: { color: Constants.Colors.app_color, marginLeft: wp('2%'), width: wp('65%') },
   timeIcon: { fontSize: wp('5%'), color: Constants.Colors.app_color, marginHorizontal: wp('1%') },
-  classesView: { width: wp('90%'), flexDirection: 'row', alignSelf: 'center', justifyContent: 'space-between', alignItems: 'center', marginTop: wp('2%'), paddingBottom: wp('2%'), borderBottomWidth: 1, borderBottomColor: 'lightgray' },
+  classesView: { flexDirection: 'row', alignSelf: 'center', justifyContent: 'space-between', alignItems: 'center', marginTop: wp('2%'), paddingBottom: wp('2%'), borderBottomWidth: 1, borderBottomColor: 'lightgray' },
   classesNoneBtn: { width: wp('55%'), height: wp('16%'), marginHorizontal: wp('2%'), alignItems: 'center', justifyContent: 'center', borderRadius: wp('2%') },
   classesTimeView: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
   classesTimeText: { textAlign: 'center', fontSize: wp('3.7%'), color: Constants.Colors.app_color },
@@ -61,7 +62,7 @@ export const globalStyles = StyleSheet.create({
 
   //Groups
   groupMainTitle: { marginLeft: wp('3%'), width: wp('65%') },
-  groupView: { width: wp('80%'), flexDirection: 'row', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', marginTop: wp('2%'), paddingBottom: wp('2%'), borderBottomWidth: 1, borderBottomColor: 'lightgray' },
+  groupView: {flexDirection: 'row', alignSelf: 'center', justifyContent: 'center', alignItems: 'center', marginTop: wp('2%'), paddingBottom: wp('2%'), borderBottomWidth: 1, borderBottomColor: 'lightgray' },
   groupBtn: { width: wp('75%'), height: wp('8%'), alignItems: 'flex-start', justifyContent: 'center' },
   groupText: { color: Constants.Colors.app_color, fontSize: wp('4.2%'), marginHorizontal: wp('2.5%') },
 
@@ -72,7 +73,7 @@ export const globalStyles = StyleSheet.create({
   //Member Details
   memberIcon: { width: wp('25%'), height: wp('25%'), borderRadius: wp('12.5%'), alignSelf: 'center', marginTop: wp('8%') },
   memberName: { marginHorizontal: wp('5%'), marginBottom: wp('2%'), fontSize: wp('4.8%'), fontFamily: Constants.Fonts.RobotoRegular, alignSelf: 'center', marginTop: wp('4%') },
-  memberDetailContainer: { marginHorizontal: wp('5%'), marginVertical: wp('2%'), backgroundColor: 'white', shadowColor: Constants.Colors.app_color, shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.15, shadowRadius: wp('1%'), elevation: 3, borderRadius: wp('1.5%') },
+  memberDetailContainer: { marginVertical: wp('2%'), backgroundColor: 'white', shadowColor: Constants.Colors.app_color, shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.15, shadowRadius: wp('1%'), elevation: 3, borderRadius: wp('1.5%'),alignSelf:'center' },
   detailHeader: { marginVertical: wp('2%'), fontSize: wp('3.9%'), fontFamily: Constants.Fonts.RobotoLight },
   detailIcon: { width: wp('4.8%'), height: wp('4.8%'), margin: wp('3%'), marginTop: wp('2.5%'), marginLeft: wp('5%') },
   detailIconContainer: { flexDirection: 'row', alignItems: 'center' },
@@ -100,6 +101,7 @@ export const globalStyles = StyleSheet.create({
   drawerText: { color: 'white' },
 
 
+  
 
   //Loader
   indicatorStyle: { position: 'absolute', left: 0, top: 0, backgroundColor: 'rgba(255,255,255,0.5)', width: wp('100%'), height: hp('100%'), alignItems: 'center', justifyContent: 'center' },
@@ -128,7 +130,7 @@ export const globalStyles = StyleSheet.create({
   fundView: { width: wp('100%'), flexDirection: 'row', justifyContent: 'space-between' },
   fundInput: { fontSize: wp('4.2%'), height: wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
   intervalView: { width: wp('100%'), flexDirection: 'row', justifyContent: 'space-between' },
-  intervalInput: { fontSize: wp('4.2%'), height: wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
+  intervalInput: { fontSize: wp('4.2%'), height:wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
   cardDatesView: { width: wp('95%'), flexDirection: 'row', justifyContent: "space-around", marginBottom: wp("2%") },
   cardDates: { fontSize: wp('4.2%'), height: wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
   dateInput: { borderWidth: 1, marginHorizontal: wp('5%'), paddingHorizontal: wp('2%'), borderColor: 'lightgray', borderRadius: wp('2%'), height: wp('12%'), marginTop: wp('2%'), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flex: 1, alignSelf: 'stretch' },
@@ -161,12 +163,12 @@ export const globalStyles = StyleSheet.create({
   donationListView: { width: wp('90%'), marginVertical: wp('5%'), alignSelf: 'center' },
 
   paymentTitleContainer: { backgroundColor: 'white', borderRadius: wp('3.5%'), justifyContent: 'space-between', marginVertical: wp('5%'), shadowOffset: { width: 0, height: 0 }, elevation: 5, shadowColor: Constants.Colors.app_color, shadowOpacity: 0.1, shadowRadius: wp('2%') },
-  paymentDetailText: { width: wp('90%'), fontSize: wp('4.2%'), textAlign: 'left', fontFamily: Constants.Fonts.RobotoRegular, alignSelf: 'center', marginVertical: wp('4%') },
-  paymentTitleHeaderLine: { height: wp('1.5%'), width: wp('100%'), backgroundColor: Constants.Colors.app_color, alignSelf: 'center' },
-  paymentTitleView: { flexDirection: 'row', height: wp('12%'), justifyContent: 'space-between', borderBottomColor: 'gray', borderBottomWidth: 1, alignItems: 'center', paddingHorizontal: wp('5%') },
-  paymentTitleText: { fontSize: wp('4.5%'), textAlign: 'left', fontFamily: Constants.Fonts.RobotoMedium, width: wp('70%') },
+  paymentDetailText: { fontSize: wp('4.2%'), textAlign: 'left', fontFamily: Constants.Fonts.RobotoRegular, alignSelf: 'center', marginVertical: wp('4%'),padding:10},
+  paymentTitleHeaderLine: { height: wp('1.5%'), backgroundColor: Constants.Colors.app_color, alignSelf: 'center' },
+  paymentTitleView: { flexDirection: 'row', height: wp('12%'), justifyContent: 'space-between', borderBottomColor: 'gray', borderBottomWidth: 1, alignItems: 'center'},
+  paymentTitleText: { fontSize: wp('4.5%'), textAlign: 'left', fontFamily: Constants.Fonts.RobotoMedium },
   methodModalText: { color: 'black', fontSize: wp('4%') },
-  donationIcon: { width: wp('7%'), height: wp('7%') },
+  donationIcon: { width: wp('7%'), height: wp('7%')},
 
   donationRowContainer: { width: wp("90%"), display: "flex", flexDirection: "row" },
   donationRowText: { width: wp("35%"), textAlign: "center", fontFamily: Constants.Fonts.RobotoRegular, fontSize: wp("4.2%") }
