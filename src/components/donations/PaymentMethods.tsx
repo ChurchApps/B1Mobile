@@ -26,6 +26,9 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   const [mode, setMode] = useState<"display" | "edit">("display");
   const isFocused = useIsFocused();
 
+ 
+
+
   const rightHeaderContent = (
     <TouchableOpacity onPress={() => setShowModal(true)}>
       <Icon name={"plus"} style={{ color: Constants.Colors.button_green }} size={wp("6%")} />
@@ -37,6 +40,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       setMode("display");
       setEditPaymentMethod(new StripePaymentMethod());
     }
+    
   }, [isFocused]);
 
   const handleEdit = (paymentMethod: StripePaymentMethod, verifyAccount?: boolean) => {

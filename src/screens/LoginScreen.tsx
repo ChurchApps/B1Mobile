@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking, Dimensions, PixelRatio } from 'react-native';
+import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Constants, EnvironmentHelper, LoginResponseInterface, Utilities } from '../helpers';
 import Icon from 'react-native-vector-icons/Fontisto';
@@ -21,10 +21,23 @@ export const LoginScreen = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [dimension, setDimension] = useState(Dimensions.get('window'));
+
+  const wd = (number: string) => {
+    let givenWidth = typeof number === "number" ? number : parseFloat(number);
+    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
+  };
+
 
   useEffect(() => {
     Utilities.trackEvent("Login Screen");
+    Dimensions.addEventListener('change', () => {
+      const dim = Dimensions.get('screen')
+      setDimension(dim);
+    })
   }, [])
+  useEffect(()=>{
+  },[dimension])
 
   const validateDetails = () => {
     if (email != '') {
@@ -47,6 +60,7 @@ export const LoginScreen = (props: Props) => {
   }
 
   const loginApiCall = () => {
+
     let params = { "email": email, "password": password }
     setLoading(true);
     ApiHelper.post("/users/login", params, "AccessApi").then(async (data: LoginResponseInterface) => {
@@ -74,37 +88,41 @@ export const LoginScreen = (props: Props) => {
   const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
-    <SafeAreaView style={globalStyles.appContainer}>
-      <BlueHeader />
-      <View style={globalStyles.grayContainer}>
-        <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
-        <View style={globalStyles.textInputView}>
-          <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-          <TextInput style={globalStyles.textInputStyle} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
-        </View>
-        <View style={globalStyles.textInputView}>
-          <Icon name={'key'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-          <TextInput style={globalStyles.textInputStyle} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
-        </View>
+    <View style={{flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
+      <ScrollView>
+        <SafeAreaView style={globalStyles.appContainer}>
+          <BlueHeader />
+          <View style={globalStyles.grayContainer}>
+            <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
+            <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
+              <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
+              <TextInput style={globalStyles.textInputStyle} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+            </View>
+            <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
+              <Icon name={'key'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
+              <TextInput style={globalStyles.textInputStyle} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
+            </View>
 
-        <TouchableOpacity style={globalStyles.roundBlueButton} onPress={() => { validateDetails() && loginApiCall() }}>
-          {loading ?
-            <ActivityIndicator size='small' color='white' animating={loading} /> :
-            <Text style={globalStyles.roundBlueButtonText}>LOGIN</Text>
-          }
-        </TouchableOpacity>
+            <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { validateDetails() && loginApiCall() }}>
+              {loading ?
+                <ActivityIndicator size='small' color='white' animating={loading} /> :
+                <Text style={globalStyles.roundBlueButtonText}>LOGIN</Text>
+              }
+            </TouchableOpacity>
 
-        <View style={globalStyles.loginLinks}>
-          <TouchableOpacity onPress={() => { Linking.openURL(forgotLink); }}>
-            <Text style={globalStyles.simpleLink}>Forgot Password</Text>
-          </TouchableOpacity>
-          <Text> | </Text>
-          <TouchableOpacity onPress={() => { props.navigation.navigate("RegisterScreen") }}>
-            <Text style={globalStyles.simpleLink}>Register</Text>
-          </TouchableOpacity>
-        </View>
+            <View style={globalStyles.loginLinks}>
+              <TouchableOpacity onPress={() => { Linking.openURL(forgotLink); }}>
+                <Text style={globalStyles.simpleLink}>Forgot Password</Text>
+              </TouchableOpacity>
+              <Text> | </Text>
+              <TouchableOpacity onPress={() => { props.navigation.navigate("RegisterScreen") }}>
+                <Text style={globalStyles.simpleLink}>Register</Text>
+              </TouchableOpacity>
+            </View>
 
-      </View>
-    </SafeAreaView>
+          </View>
+        </SafeAreaView>
+      </ScrollView>
+    </View>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, SafeAreaView, Image, Text, Alert, Linking } from 'react-native';
+import { View, SafeAreaView, Image, Text, Alert, Linking, Dimensions, PixelRatio } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import { ApiHelper, Constants, EnvironmentHelper, Utilities } from '../helpers';
 import { globalStyles } from '../helpers';
@@ -29,10 +29,27 @@ export const MemberDetailScreen = (props: Props) => {
   const [householdList, setHouseholdList] = useState([]);
   const scrollViewRef = useRef<any>();
 
+  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+
+  const wd = (number: string) => {
+    let givenWidth = typeof number === "number" ? number : parseFloat(number);
+    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
+  };
+
   useEffect(() => {
     Utilities.trackEvent("Member Detail Screen");
     getHouseholdMembersList();
+
+    Dimensions.addEventListener('change', () => {
+      const dim = Dimensions.get('screen')
+      setDimension(dim);
+    })
   }, [props.route.params])
+
+  useEffect(() => {
+  }, [dimension])
+
+
 
   const onEmailClick = (email: string) => {
     if (email) {
@@ -74,7 +91,7 @@ export const MemberDetailScreen = (props: Props) => {
 
   const renderMemberItem = (item: any) => {
     return (
-      <TouchableOpacity style={globalStyles.listMainView} onPress={() => onMembersClick(item)}>
+      <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => onMembersClick(item)}>
         <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText} numberOfLines={1}>{item.name.display}</Text>
@@ -86,12 +103,13 @@ export const MemberDetailScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
+
       <SimpleHeader onPress={() => openDrawer()} title="Directory" />
       <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
         <Image source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
         <Text style={globalStyles.memberName}>{member.name.display}</Text>
 
-        <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onEmailClick(memberinfo.email)}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd('90%') }]} onPress={() => onEmailClick(memberinfo.email)}>
           <View style={globalStyles.detailIconContainer}>
             <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Email :</Text>
@@ -99,7 +117,7 @@ export const MemberDetailScreen = (props: Props) => {
           <Text style={globalStyles.detailValue}>{memberinfo.email ? memberinfo.email : '-'}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onPhoneClick(memberinfo.homePhone)}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd('90%') }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
           <View style={globalStyles.detailIconContainer}>
             <FontAwesome5 name={'phone-alt'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Phone :</Text>
@@ -107,7 +125,7 @@ export const MemberDetailScreen = (props: Props) => {
           <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={globalStyles.memberDetailContainer} onPress={() => onAddressClick()}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd('90%') }]} onPress={() => onAddressClick()}>
           <View style={globalStyles.detailIconContainer}>
             <FontAwesome5 name={'location-arrow'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Address :</Text>
@@ -121,6 +139,7 @@ export const MemberDetailScreen = (props: Props) => {
         <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
+
     </SafeAreaView>
   );
 };

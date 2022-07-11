@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView, Text, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { WhiteHeader } from '../../components';
@@ -34,11 +35,13 @@ const CheckinCompleteScreen = (props: Props) => {
 
   return (
     <View style={globalStyles.grayContainer}>
+      <ScrollView>
       <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
       <SafeAreaView style={globalStyles.safeAreaContainer}>
         <Icon name={'check-circle'} style={globalStyles.successIcon} size={wp('20%')} />
         <Text style={globalStyles.successText}>Checkin Complete.</Text>
       </SafeAreaView>
+      </ScrollView>
     </View>
   );
 };

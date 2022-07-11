@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Image, NativeModules, Text, TouchableOpacity } from 'react-native';
+import { Image, NativeModules, Text, TouchableOpacity} from 'react-native';
 import { Constants } from '../helpers';
 import { globalStyles } from '../helpers';
 import { MainHeader } from './MainHeader';
