@@ -21,7 +21,6 @@ export class EnvironmentHelper {
       default: EnvironmentHelper.initDev(); break;
     }
 
-    console.log("INIT");
     ApiHelper.apiConfigs = [
       { keyName: "AccessApi", url: EnvironmentHelper.AccessApi, jwt: "", permisssions: [] },
       { keyName: "MembershipApi", url: EnvironmentHelper.MembershipApi, jwt: "", permisssions: [] },

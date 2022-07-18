@@ -10,7 +10,6 @@ export class UserHelper {
   static churchAppearance: AppearanceInterface;
 
   static async setCurrentChurch(church: ChurchInterface) {
-    console.log("Set current church")
     UserHelper.currentChurch = church;
     UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + church.id, "AccessApi");
   }
