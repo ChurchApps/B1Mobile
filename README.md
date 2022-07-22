@@ -22,7 +22,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ## Release build
 ### Android
 1. Follow the environment setup instructions [here](https://reactnative.dev/docs/environment-setup) (first time only)
-2. Set `STAGE=prod` environment variable in .env
+2. Hardcode stage="prod" in EnvironmentHelper.ts
 3. Run `npm start -- --reset-cache` to pick up .env changes
 4. Increment the version number in android/app/build.gradle
 5. Run `cd android` followed by `gradlew bundleRelease` to produce the release bundle.
@@ -35,6 +35,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 1. Follow instructions [here](https://help.dropsource.com/docs/documentation/after-dropsource/publishing-your-app/submitting-an-ios-app-to-the-app-store/#:~:text=Archive%20your%20App,Click%20Validate%20App)
 
 ### Codepush release
-1. Update version number in package.json
-2. Run 'appcenter codepush release-react -a Live-Church-Solutions/B1Mobile -d Production' to push to Android
-2. Run 'appcenter codepush release-react -a Live-Church-Solutions/B1Mobile_iOS -d Production' to push to iOS
+1. Hardcode stage="prod" in EnvironmentHelper.ts
+2. Update version number in package.json
+3. Run 'appcenter codepush release-react -a Live-Church-Solutions/B1Mobile -d Production' to push to Android
+4. Run 'appcenter codepush release-react -a Live-Church-Solutions/B1Mobile_iOS -d Production' to push to iOS
