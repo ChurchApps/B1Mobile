@@ -3,7 +3,7 @@ import { View, Text, SafeAreaView, TouchableOpacity, Image, FlatList, Alert, Act
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, Constants } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import { Permissions } from '../interfaces';
 import RNRestart from 'react-native-restart';
@@ -71,14 +71,17 @@ export function CustomDrawer(props: any) {
   }
 
   const listItem = (topItem: boolean, item: any) => {
-    var tab_icon = item.icon != undefined ? item.icon.slice(7) : '';
+    var tab_icon = item.icon != undefined ? item.icon.split("_").join("-") : '';
+    if (tab_icon === "calendar-month") tab_icon = "calendar-today"; //not sure why this is missing from https://oblador.github.io/react-native-vector-icons/
+    //console.log(tab_icon);
+
     return (
-      
-          <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
-            {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-              <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />}
-            <Text style={globalStyles.tabTitle}>{item.text}</Text>
-          </TouchableOpacity>
+
+      <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
+        {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
+          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />}
+        <Text style={globalStyles.tabTitle}>{item.text}</Text>
+      </TouchableOpacity>
     );
   }
 
@@ -106,21 +109,21 @@ export function CustomDrawer(props: any) {
   return (
     <SafeAreaView >
       <ScrollView>
-      {getUserInfo()}
-      <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
+        {getUserInfo()}
+        <FlatList data={menuList} renderItem={({ item }) => listItem(true, item)} keyExtractor={(item: any) => item.id} />
 
-      <TouchableOpacity style={globalStyles.churchBtn} onPress={() => navigate('ChurchSearch', {})}>
-        {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
-        <Text style={{ ...globalStyles.churchText }}>
-          {churchEmpty ? 'Find your church...' : churchName}
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={globalStyles.churchBtn} onPress={() => navigate('ChurchSearch', {})}>
+          {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
+          <Text style={{ ...globalStyles.churchText }}>
+            {churchEmpty ? 'Find your church...' : churchName}
+          </Text>
+        </TouchableOpacity>
 
-      {
-        loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
-          <FlatList data={drawerList} renderItem={({ item }) => listItem(false, item)} keyExtractor={(item: any) => item.id} />
-      }
-      {loginOutToggle()}
+        {
+          loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
+            <FlatList data={drawerList} renderItem={({ item }) => listItem(false, item)} keyExtractor={(item: any) => item.id} />
+        }
+        {loginOutToggle()}
       </ScrollView>
     </SafeAreaView>
 
