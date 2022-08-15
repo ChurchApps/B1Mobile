@@ -36,8 +36,8 @@ export const LoginScreen = (props: Props) => {
       setDimension(dim);
     })
   }, [])
-  useEffect(()=>{
-  },[dimension])
+  useEffect(() => {
+  }, [dimension])
 
   const validateDetails = () => {
     if (email != '') {
@@ -69,10 +69,11 @@ export const LoginScreen = (props: Props) => {
         const church: ChurchInterface = data.churches[0]
         UserHelper.user = data.user;
         UserHelper.churches = data.churches;
-        if (church) {
-          await UserHelper.setCurrentChurch(church);
-        }
+        if (church) await UserHelper.setCurrentChurch(church);
+
+        ApiHelper.setDefaultPermissions(church?.jwt || "");
         church?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+
         await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
         await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
         await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.churches))
@@ -88,7 +89,7 @@ export const LoginScreen = (props: Props) => {
   const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
-    <View style={{flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
+    <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
       <ScrollView>
         <SafeAreaView style={globalStyles.appContainer}>
           <BlueHeader />

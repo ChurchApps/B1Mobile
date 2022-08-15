@@ -52,6 +52,7 @@ const SplashScreen = (props: Props) => {
         if (churchString) church = JSON.parse(churchString);
         if (church) await UserHelper.setCurrentChurch(church);
         UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [church];
+        ApiHelper.setDefaultPermissions(church?.jwt || "");
         church?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         await UserHelper.setPersonRecord()
         props.navigation.navigate('MainStack');
@@ -76,7 +77,7 @@ const SplashScreen = (props: Props) => {
     );
   } else {
     return (
-      <View style={[globalStyles.safeAreaContainer, { flex: 1}]}>
+      <View style={[globalStyles.safeAreaContainer, { flex: 1 }]}>
         <Image source={Constants.Images.splash_screen} style={{ width: wd('100%'), height: hd('100%') }} />
       </View>
     );

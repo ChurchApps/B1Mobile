@@ -21,7 +21,7 @@ export class NavigationHelper {
     if (item.linkType == "page") navigate('PageScreen', { url: item.url, title: item.text })
     if (item.linkType == "directory") {
       if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
-      else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers)) Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.")
+      else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers) && UserHelper.person.membershipStatus !== "Member" && UserHelper.person.membershipStatus !== "Staff") Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.")
       else navigate('MembersSearch')
     }
     if (item.linkType == "checkin") {
