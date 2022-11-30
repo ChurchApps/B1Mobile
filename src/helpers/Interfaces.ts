@@ -1,5 +1,5 @@
 export interface ApiConfig { keyName: string, url: string, jwt: string, permisssions: RolePermissionInterface[] }
-export type ApiListType = "AccessApi" | "MembershipApi" | "AttendanceApi" | "B1Api" | "GivingApi";
+export type ApiListType = "MembershipApi" | "AttendanceApi" | "B1Api" | "GivingApi";
 export interface AppearanceInterface { primaryColor?: string, primaryContrast?: string, secondaryColor?: string, secondaryContrast?: string, logoLight?: string, logoDark?: string }
 export interface LinkInterface { id?: string, churchId: string, category: string, url?: string, text: string, sort: number, linkType: string, linkData: string, icon: string, photo?: string }
 

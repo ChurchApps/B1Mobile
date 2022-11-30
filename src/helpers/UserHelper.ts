@@ -11,7 +11,7 @@ export class UserHelper {
 
   static async setCurrentChurch(church: ChurchInterface) {
     UserHelper.currentChurch = church;
-    UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + church.id, "AccessApi");
+    UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + church.id, "MembershipApi");
   }
 
   static async setPersonRecord() {

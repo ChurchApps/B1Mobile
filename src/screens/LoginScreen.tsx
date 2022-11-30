@@ -63,7 +63,7 @@ export const LoginScreen = (props: Props) => {
 
     let params = { "email": email, "password": password }
     setLoading(true);
-    ApiHelper.post("/users/login", params, "AccessApi").then(async (data: LoginResponseInterface) => {
+    ApiHelper.post("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
       setLoading(false);
       if (data.user != null) {
         const church: ChurchInterface = data.churches[0]

@@ -53,7 +53,7 @@ export const RegisterScreen = (props: Props) => {
   const registerApiCall = () => {
     const params = { email: email, firstName: firstName, lastName: lastName };
     setLoading(true);
-    ApiHelper.post("/users/register", params, "AccessApi").then(async (data: any) => {
+    ApiHelper.post("/users/register", params, "MembershipApi").then(async (data: any) => {
       setLoading(false);
       if (data.email != null) setRegistered(true);
       else Alert.alert("Alert", "User already exists.");

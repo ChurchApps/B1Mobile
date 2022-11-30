@@ -2,7 +2,6 @@ STAGE=
 
 # Apis
 CONTENT_ROOT=https://content.staging.churchapps.org
-ACCESS_API=https://accessapi.staging.churchapps.org
 MEMBERSHIP_API=https://membershipapi.staging.churchapps.org
 ATTENDANCE_API=https://attendanceapi.staging.churchapps.org
 GIVING_API=https://givingapi.staging.churchapps.org

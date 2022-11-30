@@ -17,6 +17,25 @@ export class Permissions {
   private static formCreate = { api: "MembershipApi", contentType: "Forms", action: "Create" };
 
   static membershipApi = {
+    roles: {
+      view: { api: "AccessApi", contentType: "Roles", action: "View" },
+      edit: { api: "AccessApi", contentType: "Roles", action: "Edit" }
+    },
+    roleMembers: {
+      view: { api: "AccessApi", contentType: "RoleMembers", action: "View" },
+      edit: { api: "AccessApi", contentType: "RoleMembers", action: "Edit" }
+    },
+    rolePermissions: {
+      view: { api: "AccessApi", contentType: "RolePermissions", action: "View" },
+      edit: { api: "AccessApi", contentType: "RolePermissions", action: "Edit" }
+    },
+    users: {
+      view: { api: "AccessApi", contentType: "Users", action: "View" },
+      edit: { api: "AccessApi", contentType: "Users", action: "Edit" }
+    },
+    settings: {
+      edit: { api: "AccessApi", contentType: "Settings", action: "Edit" }
+    },
     forms: {
       admin: Permissions.formAdmin,
       create: Permissions.formCreate,
@@ -56,25 +75,4 @@ export class Permissions {
 
   }
 
-  static accessApi = {
-    roles: {
-      view: { api: "AccessApi", contentType: "Roles", action: "View" },
-      edit: { api: "AccessApi", contentType: "Roles", action: "Edit" }
-    },
-    roleMembers: {
-      view: { api: "AccessApi", contentType: "RoleMembers", action: "View" },
-      edit: { api: "AccessApi", contentType: "RoleMembers", action: "Edit" }
-    },
-    rolePermissions: {
-      view: { api: "AccessApi", contentType: "RolePermissions", action: "View" },
-      edit: { api: "AccessApi", contentType: "RolePermissions", action: "Edit" }
-    },
-    users: {
-      view: { api: "AccessApi", contentType: "Users", action: "View" },
-      edit: { api: "AccessApi", contentType: "Users", action: "Edit" }
-    },
-    settings: {
-      edit: { api: "AccessApi", contentType: "Settings", action: "Edit" }
-    }
-  }
 }
