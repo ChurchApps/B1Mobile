@@ -60,7 +60,7 @@ export const ChurchSearch = (props: Props) => {
 
   const searchApiCall = (text: String) => {
     setLoading(true);
-    ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=logoSquare", "MembeshipApi").then(data => {
+    ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=logoSquare", "MembershipApi").then(data => {
       setLoading(false);
       setSearchList(data);
       if (data.length === 0) Alert.alert("Alert", "No matches found");
