@@ -9,7 +9,7 @@ export class Utilities {
     var pkg = require('../../package.json');
 
     const props = (data) ? data : {}
-    props.church = UserHelper.currentChurch?.name;
+    props.church = UserHelper.currentUserChurch?.church?.name;
     props.church = UserHelper.user?.displayName;
     props.appVersion = pkg.version;
     Analytics.trackEvent(name, props);

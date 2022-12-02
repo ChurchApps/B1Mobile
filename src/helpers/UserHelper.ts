@@ -1,23 +1,23 @@
-import { ChurchInterface, PersonInterface, ApiHelper, IPermission, UserInterface } from ".";
-import { AppearanceInterface } from "./Interfaces";
+import { PersonInterface, ApiHelper, IPermission, UserInterface } from ".";
+import { AppearanceInterface, LoginUserChurchInterface } from "./Interfaces";
 
 export class UserHelper {
-  static churches: ChurchInterface[];
-  static currentChurch: ChurchInterface;
+  static userChurches: LoginUserChurchInterface[];
+  static currentUserChurch: LoginUserChurchInterface;
   static person: PersonInterface;
   static user: UserInterface;
   static links: any[];
   static churchAppearance: AppearanceInterface;
 
-  static async setCurrentChurch(church: ChurchInterface) {
-    UserHelper.currentChurch = church;
-    UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + church.id, "MembershipApi");
+  static async setCurrentUserChurch(userChurch: LoginUserChurchInterface) {
+    UserHelper.currentUserChurch = userChurch;
+    UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + userChurch.church.id, "MembershipApi");
   }
 
   static async setPersonRecord() {
-    if (UserHelper.currentChurch) {
+    if (UserHelper.currentUserChurch) {
       //const person: PersonInterface = await ApiHelper.get(`/people/${UserHelper.currentChurch.personId}`, "MembershipApi");
-      const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentChurch.id}`, "MembershipApi");
+      const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       UserHelper.person = data.person;
       //if (this.currentChurch.personId) this.currentChurch.personId = UserHelper.person.id
     }

@@ -1,10 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View ,Dimensions,PixelRatio} from 'react-native';
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { connect } from 'react-redux';
 
 import { globalStyles } from '../../helpers';
 import { BottomButton, WhiteHeader } from '../../components';
@@ -44,9 +43,9 @@ export const GroupsScreen = (props: Props) => {
       setDimension(dim);
     })
   }, []);
-  
-  useEffect(()=>{
-  },[dimension])
+
+  useEffect(() => {
+  }, [dimension])
 
 
 
@@ -96,7 +95,7 @@ export const GroupsScreen = (props: Props) => {
   const renderGroupItem = (item: any) => {
     return (
       <View>
-        <TouchableOpacity style={[globalStyles.listMainView,{width:wd('90%')}]} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
+        <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
           <Icon name={selected == item.key ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
           <View style={globalStyles.listTextView}>
             <Text style={[globalStyles.groupListTitle, globalStyles.groupMainTitle]} numberOfLines={1}>{item.name}</Text>
@@ -104,7 +103,7 @@ export const GroupsScreen = (props: Props) => {
         </TouchableOpacity>
         {selected == item.key && item.items.map((item_group: any, index: any) => {
           return (
-            <View style={{ ...globalStyles.groupView, borderBottomWidth: (index == item.items.length - 1) ? 0 : 1,width:wd('80%') }} key={item_group.id}>
+            <View style={{ ...globalStyles.groupView, borderBottomWidth: (index == item.items.length - 1) ? 0 : 1, width: wd('80%') }} key={item_group.id}>
               <TouchableOpacity style={globalStyles.groupBtn} onPress={() => selectGroup(item_group)}>
                 <Text style={globalStyles.groupText}> {item_group.name} </Text>
               </TouchableOpacity>
@@ -118,11 +117,11 @@ export const GroupsScreen = (props: Props) => {
   return (
     <View style={globalStyles.grayContainer}>
       <ScrollView>
-      <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
-      <SafeAreaView style={{ flex: 1 }}>
-        <FlatList data={groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
-        <BottomButton title='NONE' onPress={() => selectGroup(null)} style={wd('100%')}/>
-      </SafeAreaView>
+        <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
+        <SafeAreaView style={{ flex: 1 }}>
+          <FlatList data={groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
+          <BottomButton title='NONE' onPress={() => selectGroup(null)} style={wd('100%')} />
+        </SafeAreaView>
       </ScrollView>
     </View>
   );

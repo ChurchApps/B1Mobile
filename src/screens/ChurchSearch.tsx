@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard, Dimensions, PixelRatio } from 'react-native';
 import { FlatList, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ApiHelper, ArrayHelper, ChurchInterface, Constants, Utilities } from '../helpers';
+import { ApiHelper, ArrayHelper, ChurchInterface, Constants, LoginUserChurchInterface, Utilities } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles, UserHelper } from '../helpers';
 import { BlueHeader } from '../components';
@@ -42,14 +42,14 @@ export const ChurchSearch = (props: Props) => {
   useEffect(() => {
   }, [dimension])
 
-  const churchSelection = async (churchData: ChurchInterface) => {
+  const churchSelection = async (churchData: LoginUserChurchInterface) => {
     StoreToRecent(churchData);
     try {
-      const existing = (UserHelper.churches) ? ArrayHelper.getOne(UserHelper.churches, "id", churchData.id) : null;
+      const existing = (UserHelper.userChurches) ? ArrayHelper.getOne(UserHelper.userChurches, "church.id", churchData.church.id) : null;
       if (existing) churchData = existing;
       const churchValue = JSON.stringify(churchData);
       await AsyncStorage.setItem('CHURCH_DATA', churchValue)
-      await UserHelper.setCurrentChurch(churchData);
+      await UserHelper.setCurrentUserChurch(churchData);
       if (UserHelper.user) UserHelper.setPersonRecord();
       //DevSettings.reload()
       RNRestart.Restart();

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking, Dimensions, PixelRatio } from 'react-native';
+import { View, SafeAreaView, Text, ActivityIndicator, Alert, Linking, Dimensions, PixelRatio } from 'react-native';
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants, EnvironmentHelper, LoginResponseInterface, Utilities } from '../helpers';
+import { Constants, EnvironmentHelper, LoginResponseInterface, LoginUserChurchInterface, Utilities } from '../helpers';
 import Icon from 'react-native-vector-icons/Fontisto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../helpers';
 import { BlueHeader } from '../components';
-import { ChurchInterface, ApiHelper, UserHelper } from '../helpers';
+import { ApiHelper, UserHelper } from '../helpers';
 import RNRestart from 'react-native-restart';
 
 interface Props {
@@ -66,18 +66,18 @@ export const LoginScreen = (props: Props) => {
     ApiHelper.post("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
       setLoading(false);
       if (data.user != null) {
-        const church: ChurchInterface = data.churches[0]
+        const userChurch: LoginUserChurchInterface = data.userChurches[0]
         UserHelper.user = data.user;
-        UserHelper.churches = data.churches;
-        if (church) await UserHelper.setCurrentChurch(church);
+        UserHelper.userChurches = data.userChurches;
+        if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
 
-        ApiHelper.setDefaultPermissions(church?.jwt || "");
-        church?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+        ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
+        userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
 
         await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
         await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
-        await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.churches))
-        if (church) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(church))
+        await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.userChurches))
+        if (userChurch) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(userChurch))
         props.navigation.navigate('MainStack');
         //DevSettings.reload();
         RNRestart.Restart();

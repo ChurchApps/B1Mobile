@@ -7,10 +7,11 @@ export interface LinkInterface { id?: string, churchId: string, category: string
 export interface ApiInterface { name: string, keyName?: string, permissions: RolePermissionInterface[], jwt: string }
 export interface ApplicationInterface { name: string, keyName?: string, permissions: RolePermissionInterface[] }
 export interface ChurchAppInterface { id?: string, churchId?: string, appName?: string }
-export interface ChurchInterface { id?: string, name?: string, registrationDate?: Date, apis?: ApiInterface[], address1?: string, address2?: string, city?: string, state?: string, zip?: string, country?: string, subDomain?: string, personId?: string, jwt?: string, settings?: GenericSettingInterface[] }
+export interface ChurchInterface { id?: string, name?: string, registrationDate?: Date, address1?: string, address2?: string, city?: string, state?: string, zip?: string, country?: string, subDomain?: string, settings?: GenericSettingInterface[], archivedDate?: Date }
 export interface ForgotResponse { emailed: boolean }
 export interface LoadCreateUserRequestInterface { userEmail: string, fromEmail?: string, subject?: string, body?: string, userName: string }
-export interface LoginResponseInterface { user: UserInterface, churches: ChurchInterface[], errors: string[] }
+export interface LoginResponseInterface { user: UserInterface, userChurches: LoginUserChurchInterface[], errors: string[] }
+export interface LoginUserChurchInterface { person: PersonInterface, church: ChurchInterface, apis: ApiInterface[], jwt: string, groups: { id: string, name: string }[] }
 export interface PermissionInterface { apiName?: string, section?: string, action?: string, displaySection?: string, displayAction?: string }
 export interface RegisterInterface { churchName?: string, displayName?: string, email?: string, password?: string }
 export interface RoleInterface { id?: string, churchId?: string, appName?: string, name?: string }

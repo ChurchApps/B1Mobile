@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { View, Image, Dimensions, PixelRatio } from 'react-native';
-import { globalStyles, Utilities } from '../helpers';
+import { globalStyles, LoginUserChurchInterface, Utilities } from '../helpers';
 import { Constants } from '../helpers';
 import { ApiHelper, ChurchInterface, UserHelper } from "../helpers"
 
@@ -48,18 +48,18 @@ const SplashScreen = (props: Props) => {
 
       if (user !== null) {
         UserHelper.user = JSON.parse(user);
-        let church: ChurchInterface | null = null;
-        if (churchString) church = JSON.parse(churchString);
-        if (church) await UserHelper.setCurrentChurch(church);
-        UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [church];
-        ApiHelper.setDefaultPermissions(church?.jwt || "");
-        church?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+        let userChurch: LoginUserChurchInterface | null = null;
+        if (churchString) userChurch = JSON.parse(churchString);
+        if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
+        UserHelper.userChurches = (churchesString) ? JSON.parse(churchesString) : [userChurch];
+        ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
+        userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         await UserHelper.setPersonRecord()
         props.navigation.navigate('MainStack');
       } else {
         if (churchString) {
-          const church: ChurchInterface = JSON.parse(churchString);
-          UserHelper.setCurrentChurch(church);
+          const userChurch: LoginUserChurchInterface = JSON.parse(churchString);
+          UserHelper.setCurrentUserChurch(userChurch);
         }
         //props.navigation.navigate('AuthStack');
         props.navigation.navigate('MainStack');

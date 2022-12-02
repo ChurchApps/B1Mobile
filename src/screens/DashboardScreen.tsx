@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, FlatList, Image, Dimensions, PixelRatio } from 'react-native';
 import { LinkInterface, UserHelper, Utilities } from '../helpers';
-import WebView from 'react-native-webview';
 import { Loader, SimpleHeader } from '../components';
 import { globalStyles } from '../helpers';
 import { ImageButton } from '../components/ImageButton';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 import { NavigationHelper } from '../helpers/NavigationHelper';
-import { ScrollView } from 'react-native-gesture-handler';
 
 interface Props {
   navigation: {
@@ -54,7 +52,7 @@ export const DashboardScreen = (props: Props) => {
 
 
   const checkRedirect = () => {
-    if (!UserHelper.currentChurch) props.navigation.navigate("ChurchSearch")
+    if (!UserHelper.currentUserChurch) props.navigation.navigate("ChurchSearch")
     else Utilities.trackEvent("Dashboard Screen");
   }
 
@@ -103,7 +101,7 @@ export const DashboardScreen = (props: Props) => {
   const getBrand = () => {
 
     if (UserHelper.churchAppearance.logoLight) return <Image source={{ uri: UserHelper.churchAppearance.logoLight }} style={{ width: "100%", height: widthPercentageToDP(25) }} />
-    else return <Text style={{ fontSize: 20, width: "100%", textAlign: "center", marginTop: 0 }}>{UserHelper.currentChurch.name}</Text>
+    else return <Text style={{ fontSize: 20, width: "100%", textAlign: "center", marginTop: 0 }}>{UserHelper.currentUserChurch.church.name}</Text>
   }
 
   return (
