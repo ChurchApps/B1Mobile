@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { View, Image, Dimensions, PixelRatio } from 'react-native';
-import { globalStyles, LoginUserChurchInterface, Utilities } from '../helpers';
+import { ChurchInterface, globalStyles, LoginUserChurchInterface, Utilities } from '../helpers';
 import { Constants } from '../helpers';
-import { ApiHelper, ChurchInterface, UserHelper } from "../helpers"
+import { ApiHelper, UserHelper } from "../helpers"
 
 interface Props {
   navigation: {
@@ -46,13 +46,26 @@ const SplashScreen = (props: Props) => {
       const churchString = await AsyncStorage.getItem("CHURCH_DATA")
       const churchesString = await AsyncStorage.getItem("CHURCHES_DATA")
 
+      console.log("******************************************************USER")
+      console.log(user);
+      console.log("******************************************************ChurchString")
+      console.log(churchString);
       if (user !== null) {
         UserHelper.user = JSON.parse(user);
+        ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
+
+        let church: ChurchInterface | null = null
         let userChurch: LoginUserChurchInterface | null = null;
-        if (churchString) userChurch = JSON.parse(churchString);
-        if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
-        UserHelper.userChurches = (churchesString) ? JSON.parse(churchesString) : [userChurch];
-        ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
+        if (churchString) church = JSON.parse(churchString);
+        if (church?.id) {
+          console.log("********************************************CHURCH EXISTS")
+          console.log(JSON.stringify(church))
+          userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
+          console.log(JSON.stringify(userChurch))
+          if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
+        }
+        UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
+
         userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         await UserHelper.setPersonRecord()
         props.navigation.navigate('MainStack');

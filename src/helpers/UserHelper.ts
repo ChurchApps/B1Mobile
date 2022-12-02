@@ -1,8 +1,8 @@
 import { PersonInterface, ApiHelper, IPermission, UserInterface } from ".";
-import { AppearanceInterface, LoginUserChurchInterface } from "./Interfaces";
+import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
 
 export class UserHelper {
-  static userChurches: LoginUserChurchInterface[];
+  static churches: ChurchInterface[];
   static currentUserChurch: LoginUserChurchInterface;
   static person: PersonInterface;
   static user: UserInterface;

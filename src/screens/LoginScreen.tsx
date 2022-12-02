@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, ActivityIndicator, Alert, Linking, Dimensions, PixelRatio } from 'react-native';
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants, EnvironmentHelper, LoginResponseInterface, LoginUserChurchInterface, Utilities } from '../helpers';
+import { ChurchInterface, Constants, EnvironmentHelper, LoginResponseInterface, LoginUserChurchInterface, Utilities } from '../helpers';
 import Icon from 'react-native-vector-icons/Fontisto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../helpers';
@@ -68,7 +68,9 @@ export const LoginScreen = (props: Props) => {
       if (data.user != null) {
         const userChurch: LoginUserChurchInterface = data.userChurches[0]
         UserHelper.user = data.user;
-        UserHelper.userChurches = data.userChurches;
+        const churches: ChurchInterface[] = [];
+        data.userChurches.forEach(uc => churches.push(uc.church));
+        UserHelper.churches = churches;
         if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
 
         ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
@@ -77,7 +79,7 @@ export const LoginScreen = (props: Props) => {
         await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
         await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
         await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.userChurches))
-        if (userChurch) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(userChurch))
+        if (userChurch) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(userChurch.church))
         props.navigation.navigate('MainStack');
         //DevSettings.reload();
         RNRestart.Restart();

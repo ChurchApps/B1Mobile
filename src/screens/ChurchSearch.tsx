@@ -42,14 +42,19 @@ export const ChurchSearch = (props: Props) => {
   useEffect(() => {
   }, [dimension])
 
-  const churchSelection = async (churchData: LoginUserChurchInterface) => {
+  const churchSelection = async (churchData: ChurchInterface) => {
+    console.log("************************************************churchSelection")
     StoreToRecent(churchData);
+
     try {
-      const existing = (UserHelper.userChurches) ? ArrayHelper.getOne(UserHelper.userChurches, "church.id", churchData.church.id) : null;
-      if (existing) churchData = existing;
+      let existing = null;
+      try {
+        if (UserHelper.churches) existing = ArrayHelper.getOne(UserHelper.churches, "church.id", churchData.id);
+      } catch { }
+      if (existing) churchData = existing.church;
       const churchValue = JSON.stringify(churchData);
       await AsyncStorage.setItem('CHURCH_DATA', churchValue)
-      await UserHelper.setCurrentUserChurch(churchData);
+      //await UserHelper.setCurrentUserChurch(userChurch);
       if (UserHelper.user) UserHelper.setPersonRecord();
       //DevSettings.reload()
       RNRestart.Restart();
