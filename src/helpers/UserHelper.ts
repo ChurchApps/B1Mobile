@@ -10,6 +10,8 @@ export class UserHelper {
   static churchAppearance: AppearanceInterface;
 
   static async setCurrentUserChurch(userChurch: LoginUserChurchInterface) {
+    console.log("*********************************************")
+    console.log(JSON.stringify(userChurch))
     UserHelper.currentUserChurch = userChurch;
     UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + userChurch.church.id, "MembershipApi");
   }
