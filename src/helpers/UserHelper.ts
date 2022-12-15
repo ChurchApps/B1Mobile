@@ -10,8 +10,6 @@ export class UserHelper {
   static churchAppearance: AppearanceInterface;
 
   static async setCurrentUserChurch(userChurch: LoginUserChurchInterface) {
-    console.log("*********************************************")
-    console.log(JSON.stringify(userChurch))
     UserHelper.currentUserChurch = userChurch;
     UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + userChurch.church.id, "MembershipApi");
   }
@@ -20,7 +18,7 @@ export class UserHelper {
     if (UserHelper.currentUserChurch) {
       //const person: PersonInterface = await ApiHelper.get(`/people/${UserHelper.currentChurch.personId}`, "MembershipApi");
       const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
-      UserHelper.person = data.person;
+      UserHelper.person = data;
       //if (this.currentChurch.personId) this.currentChurch.personId = UserHelper.person.id
     }
   }
