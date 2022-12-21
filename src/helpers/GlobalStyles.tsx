@@ -83,6 +83,7 @@ export const globalStyles = StyleSheet.create({
   headerContainer: { backgroundColor: Constants.Colors.gray_bg },
   blueLogoView: { borderBottomLeftRadius: wp('8%'), borderBottomRightRadius: wp('8%'), backgroundColor: Constants.Colors.app_color },
   blueMainIcon: { width: wp('55%'), height: wp('55%'), margin: wp('5%'), resizeMode: 'contain', alignSelf: 'center' },
+  blueMainBackIcon: { position: 'absolute', zIndex: 1 },
 
   //BottomButton
   bottomBtn: { width: wp('100%'), height: wp('15%'), alignItems: 'center', justifyContent: 'center' },

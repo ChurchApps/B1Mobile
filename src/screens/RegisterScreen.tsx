@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking } from 'react-native';
+import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking, PixelRatio, Dimensions } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Constants, EnvironmentHelper, LoginResponseInterface, Utilities } from '../helpers';
@@ -23,7 +23,12 @@ export const RegisterScreen = (props: Props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [registered, setRegistered] = useState(false)
+  const [dimension, setDimension] = useState(Dimensions.get('window'));
 
+  const wd = (number: string) => {
+    let givenWidth = typeof number === "number" ? number : parseFloat(number);
+    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
+  };
 
   useEffect(() => {
     Utilities.trackEvent("Register Screen");
@@ -63,19 +68,19 @@ export const RegisterScreen = (props: Props) => {
   const getForm = () => {
     return (<>
       <Text style={globalStyles.mainText}>Register an Account</Text>
-      <View style={globalStyles.textInputView}>
+      <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
         <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-        <TextInput style={globalStyles.textInputStyle} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
+        <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
       </View>
-      <View style={globalStyles.textInputView}>
+      <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
         <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-        <TextInput style={globalStyles.textInputStyle} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
+        <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
       </View>
-      <View style={globalStyles.textInputView}>
+      <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
         <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-        <TextInput style={globalStyles.textInputStyle} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+        <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
       </View>
-      <TouchableOpacity style={globalStyles.roundBlueButton} onPress={() => { validateDetails() && registerApiCall() }}>
+      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { validateDetails() && registerApiCall() }}>
         {loading ?
           <ActivityIndicator size='small' color='white' animating={loading} /> :
           <Text style={globalStyles.roundBlueButtonText}>Register</Text>
@@ -87,7 +92,7 @@ export const RegisterScreen = (props: Props) => {
   const getContent = () => {
     if (registered) return (<>
       <Text style={globalStyles.mainText}>Success: A temporary password has been sent to {email}. </Text>
-      <TouchableOpacity style={globalStyles.roundBlueButton} onPress={() => { props.navigation.navigate("LoginScreen") }}>
+      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { props.navigation.navigate("LoginScreen") }}>
         <Text style={globalStyles.roundBlueButtonText}>Login</Text>
       </TouchableOpacity>
     </>);
@@ -97,7 +102,7 @@ export const RegisterScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.appContainer}>
-      <BlueHeader />
+      <BlueHeader navigation={props.navigation} showBack={true}/>
       <View style={globalStyles.grayContainer}>
 
         {getContent()}

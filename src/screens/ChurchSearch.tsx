@@ -125,7 +125,7 @@ export const ChurchSearch = (props: Props) => {
               <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
                 <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
                 <TextInput
-                  style={[globalStyles.textInputStyle]}
+                  style={[globalStyles.textInputStyle, { width: wd('90%') }]}
                   placeholder={'Church name'}
                   autoCapitalize="none"
                   autoCorrect={false}
