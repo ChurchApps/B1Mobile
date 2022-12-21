@@ -86,7 +86,7 @@ export const MembersSearch = (props: Props) => {
           <Text style={[globalStyles.searchMainText, { marginHorizontal: wd('5%') }]}>Find Members</Text>
           <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
             <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
-            <TextInput style={globalStyles.textInputStyle} placeholder={'Member Name'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} value={searchText} onChangeText={(text) => { setSearchText(text) }} />
+            <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Member Name'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} value={searchText} onChangeText={(text) => { setSearchText(text) }} />
 
           </View>
           <TouchableOpacity style={[globalStyles.roundBlueButton, { marginTop: wp('6%'), width: wd('90%') }]} onPress={() => filterMember(searchText)}>

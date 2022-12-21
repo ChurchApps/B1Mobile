@@ -66,7 +66,7 @@ export function CustomDrawer(props: any) {
 
   const logoutAction = async () => {
     await AsyncStorage.getAllKeys()
-      .then(keys => AsyncStorage.multiRemove(keys))
+      .then((keys) => AsyncStorage.multiRemove(keys.filter((key) => key != "CHURCH_DATA")))
       .then(() => RNRestart.Restart());
   }
 

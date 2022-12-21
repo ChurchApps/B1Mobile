@@ -64,9 +64,17 @@ export const LoginScreen = (props: Props) => {
     let params = { "email": email, "password": password }
     setLoading(true);
     ApiHelper.post("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
-      setLoading(false);
+      setLoading(false);      
       if (data.user != null) {
-        const userChurch: LoginUserChurchInterface = data.userChurches[0]
+        var currentChurch : LoginUserChurchInterface = data.userChurches[0];
+        const churchString = await AsyncStorage.getItem("CHURCH_DATA");
+        let church: ChurchInterface | null = null
+        if (churchString) church = JSON.parse(churchString);
+        if(church != null && church?.id != null && church.id != ""){
+          currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
+        }
+
+        const userChurch: LoginUserChurchInterface = currentChurch
         UserHelper.user = data.user;
         const churches: ChurchInterface[] = [];
         data.userChurches.forEach(uc => churches.push(uc.church));
@@ -99,11 +107,11 @@ export const LoginScreen = (props: Props) => {
             <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
             <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
               <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-              <TextInput style={globalStyles.textInputStyle} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+              <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
             </View>
             <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
               <Icon name={'key'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-              <TextInput style={globalStyles.textInputStyle} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
+              <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
             </View>
 
             <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { validateDetails() && loginApiCall() }}>

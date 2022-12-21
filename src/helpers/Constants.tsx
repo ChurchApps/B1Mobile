@@ -7,7 +7,8 @@ export class Constants {
     button_green: '#70DC87',
     button_red: '#B0120C',
     button_dark_green: '#77CC01',
-    button_yellow: '#FAC108'
+    button_yellow: '#FAC108',
+    white_color: '#FFFFFF'
   };
 
   static Fonts = {
