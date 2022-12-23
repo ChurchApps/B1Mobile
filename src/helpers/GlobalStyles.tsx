@@ -120,7 +120,7 @@ export const globalStyles = StyleSheet.create({
   //Donate
   dropDownMainStyle: { borderColor: 'lightgray', borderWidth: 1 },
   dropDownStyle: { backgroundColor: 'lightgray', width: wp('90%'), borderColor: 'gray', elevation: 999, zIndex: 10 },
-  itemStyle: { justifyContent: 'flex-start', borderBottomWidth: 1, borderColor: 'gray', height: wp('11.5%'), paddingLeft: wp('2%') },
+  itemStyle: { justifyContent: 'flex-start', borderBottomWidth: 1, borderColor: 'gray', height: wp('12.5%'), paddingLeft: wp('2%') },
   labelStyle: { fontSize: wp('4.2%') },
   containerStyle: { height: wp('10%'), width: wp('90%'), marginHorizontal: wp('5%'), marginTop: wp('2%') },
   containerStyleAndroid: { height: wp('10%'), width: wp('86%'), marginHorizontal: wp('5%') },
@@ -130,7 +130,7 @@ export const globalStyles = StyleSheet.create({
   methodBtnText: { fontFamily: Constants.Fonts.RobotoMedium, color: Constants.Colors.app_color, width: wp('40%'), textAlign: 'center', fontSize: wp('4.2%') },
   fundView: { width: wp('100%'), flexDirection: 'row', justifyContent: 'space-between' },
   fundInput: { fontSize: wp('4.2%'), height: wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
-  intervalView: { width: wp('100%'), flexDirection: 'row', justifyContent: 'space-between' },
+  intervalView: { width: wp('100%')},
   intervalInput: { fontSize: wp('4.2%'), height:wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
   cardDatesView: { width: wp('95%'), flexDirection: 'row', justifyContent: "space-around", marginBottom: wp("2%") },
   cardDates: { fontSize: wp('4.2%'), height: wp('12%'), width: wp('40%'), alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'lightgray', borderRadius: wp('2%'), paddingHorizontal: wp('2%'), marginLeft: wp('5%'), marginTop: wp('2%') },
