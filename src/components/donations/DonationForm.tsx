@@ -85,7 +85,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const loadData = () => {
     ApiHelper.get("/funds", "GivingApi").then((data) => {
       setFunds(data);
-      console.log("The response ---> ", data);
       if (data.length) setFundDonations([{ fundId: data[0].id }]);
     });
   };
@@ -142,7 +141,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         break;
       case "type":
         if (donationsCopy.interval) {
-          console.log("The current copy 1111 ----> ", value);
           switch (value){
             case "one_week":
               donationsCopy.interval.interval_count = 1;
@@ -168,7 +166,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         };
         break;
     }
-    console.log("The current copy ----> ", donationsCopy.interval);
     setDonation(donationsCopy);
   };
 
