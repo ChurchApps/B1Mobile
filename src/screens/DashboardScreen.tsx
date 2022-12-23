@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, FlatList, Image, Dimensions, PixelRatio } from 'react-native';
-import { LinkInterface, UserHelper, Utilities } from '../helpers';
+import { ApiHelper, LinkInterface, UserHelper, Utilities } from '../helpers';
 import { Loader, SimpleHeader } from '../components';
 import { globalStyles } from '../helpers';
 import { ImageButton } from '../components/ImageButton';

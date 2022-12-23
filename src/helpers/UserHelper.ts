@@ -1,10 +1,9 @@
-import { PersonInterface, ApiHelper, IPermission, UserInterface } from ".";
+import { ApiHelper, IPermission, UserInterface } from ".";
 import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
 
 export class UserHelper {
   static churches: ChurchInterface[];
   static currentUserChurch: LoginUserChurchInterface;
-  static person: PersonInterface;
   static user: UserInterface;
   static links: any[];
   static churchAppearance: AppearanceInterface;
@@ -15,11 +14,9 @@ export class UserHelper {
   }
 
   static async setPersonRecord() {
-    if (UserHelper.currentUserChurch) {
-      //const person: PersonInterface = await ApiHelper.get(`/people/${UserHelper.currentChurch.personId}`, "MembershipApi");
+    if (UserHelper.currentUserChurch && !UserHelper.currentUserChurch.person) {
       const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
-      UserHelper.person = data;
-      //if (this.currentChurch.personId) this.currentChurch.personId = UserHelper.person.id
+      UserHelper.currentUserChurch.person = data;
     }
   }
 

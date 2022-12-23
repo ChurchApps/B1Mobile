@@ -64,17 +64,18 @@ export const LoginScreen = (props: Props) => {
     let params = { "email": email, "password": password }
     setLoading(true);
     ApiHelper.post("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
-      setLoading(false);      
+      setLoading(false);
       if (data.user != null) {
-        var currentChurch : LoginUserChurchInterface = data.userChurches[0];
+        var currentChurch: LoginUserChurchInterface = data.userChurches[0];
         const churchString = await AsyncStorage.getItem("CHURCH_DATA");
         let church: ChurchInterface | null = null
         if (churchString) church = JSON.parse(churchString);
-        if(church != null && church?.id != null && church.id != ""){
+        if (church != null && church?.id != null && church.id != "") {
           currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
         }
 
         const userChurch: LoginUserChurchInterface = currentChurch
+
         UserHelper.user = data.user;
         const churches: ChurchInterface[] = [];
         data.userChurches.forEach(uc => churches.push(uc.church));
@@ -88,7 +89,9 @@ export const LoginScreen = (props: Props) => {
         await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
         await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.userChurches))
         if (userChurch) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(userChurch.church))
+
         props.navigation.navigate('MainStack');
+
         //DevSettings.reload();
         RNRestart.Restart();
       } else Alert.alert("Alert", "Invalid login");

@@ -15,18 +15,18 @@ export class NavigationHelper {
     if (item.linkType == "bible") navigate('BibleScreen', { url: bibleUrl, title: item.text })
     if (item.linkType == "votd") navigate('VotdScreen', {})
     if (item.linkType == "donation") {
-      if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
+      if (!UserHelper.currentUserChurch?.person) Alert.alert("Alert", "You must be logged in to access this page.")
       else NavigationHelper.navDonations(navigate);
     }
     if (item.linkType == "url") navigate('WebsiteScreen', { url: item.url, title: item.text })
     if (item.linkType == "page") navigate('PageScreen', { url: item.url, title: item.text })
     if (item.linkType == "directory") {
-      if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
-      else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers) && UserHelper.person.membershipStatus !== "Member" && UserHelper.person.membershipStatus !== "Staff") Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.")
+      if (!UserHelper.currentUserChurch?.person) Alert.alert("Alert", "You must be logged in to access this page.")
+      else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers) && UserHelper.currentUserChurch?.person.membershipStatus !== "Member" && UserHelper.currentUserChurch?.person.membershipStatus !== "Staff") Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.")
       else navigate('MembersSearch')
     }
     if (item.linkType == "checkin") {
-      if (!UserHelper.person) Alert.alert("Alert", "You must be logged in to access this page.")
+      if (!UserHelper.currentUserChurch?.person) Alert.alert("Alert", "You must be logged in to access this page.")
       else navigate('ServiceScreen', {})
     }
   }

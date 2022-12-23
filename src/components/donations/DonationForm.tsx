@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Image, ScrollView, View, TouchableOpacity, Text, Alert ,TextInput,Dimensions,PixelRatio} from "react-native";
+import { Image, ScrollView, View, TouchableOpacity, Text, Alert, TextInput, Dimensions, PixelRatio } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
-  const person = UserHelper.person;
+  const person = UserHelper.currentUserChurch?.person;
   const [donationType, setDonationType] = useState<string>("");
   const [isMethodsDropdownOpen, setIsMethodsDropdownOpen] = useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("");
@@ -63,12 +63,12 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     Dimensions.addEventListener('change', () => {
       const dim = Dimensions.get('screen')
       setDimension(dim);
     })
-  },[dimension])
+  }, [dimension])
 
   const handleSave = () => {
     if (donation.amount && donation.amount < 0.5) {
@@ -83,7 +83,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   };
 
   const loadData = () => {
-    ApiHelper.get("/funds", "GivingApi").then((data) => {
+    ApiHelper.get("/funds/churchId/" + UserHelper.currentUserChurch.church.id, "GivingApi").then((data) => {
       setFunds(data);
       if (data.length) setFundDonations([{ fundId: data[0].id }]);
     });
@@ -141,7 +141,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         break;
       case "type":
         if (donationsCopy.interval) {
-          switch (value){
+          switch (value) {
             case "one_week":
               donationsCopy.interval.interval_count = 1;
               donationsCopy.interval.interval = "week";
@@ -157,11 +157,11 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             case "three_month":
               donationsCopy.interval.interval_count = 3;
               donationsCopy.interval.interval = "month";
-              break;  
+              break;
             case "one_year":
               donationsCopy.interval.interval_count = 1;
               donationsCopy.interval.interval = "year";
-              break;    
+              break;
           }
         };
         break;
@@ -189,7 +189,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       />
       <InputBox
         title="Donate"
-        headerIcon={<Image source={Constants.Images.ic_give} style={[globalStyles.donationIcon,{marginLeft:wd('4%')}]} />}
+        headerIcon={<Image source={Constants.Images.ic_give} style={[globalStyles.donationIcon, { marginLeft: wd('4%') }]} />}
         saveFunction={donationType ? handleSave : undefined}
         cancelFunction={donationType ? handleCancel : undefined}
       >
@@ -281,28 +281,28 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                    
                   </View> */}
                   <View>
-                  <Text style={globalStyles.semiTitleText}>Interval</Text>
-                  <DropDownPicker
-                    listMode="SCROLLVIEW"
-                    open={isIntervalDropdownOpen}
-                    items={intervalTypes}
-                    value={selectedInterval}
-                    setOpen={setIsIntervalDropdownOpen}
-                    setValue={(value) => { 
-                      setSelectedInterval(value())
-                      handleIntervalChange("type", value())
-                    }}
-                    containerStyle={{
-                      ...globalStyles.containerStyle,
-                      height: isIntervalDropdownOpen ? intervalTypes.length * wp("12.5%") : wp('12%'),
-                    }}
-                    style={globalStyles.dropDownMainStyle}
-                    labelStyle={globalStyles.labelStyle}
-                    listItemContainerStyle={globalStyles.itemStyle}
-                    dropDownContainerStyle={{ ...globalStyles.dropDownStyle }}
-                    scrollViewProps={{ scrollEnabled: true }}
-                    dropDownDirection="BOTTOM"
-                  />
+                    <Text style={globalStyles.semiTitleText}>Interval</Text>
+                    <DropDownPicker
+                      listMode="SCROLLVIEW"
+                      open={isIntervalDropdownOpen}
+                      items={intervalTypes}
+                      value={selectedInterval}
+                      setOpen={setIsIntervalDropdownOpen}
+                      setValue={(value) => {
+                        setSelectedInterval(value())
+                        handleIntervalChange("type", value())
+                      }}
+                      containerStyle={{
+                        ...globalStyles.containerStyle,
+                        height: isIntervalDropdownOpen ? intervalTypes.length * wp("12.5%") : wp('12%'),
+                      }}
+                      style={globalStyles.dropDownMainStyle}
+                      labelStyle={globalStyles.labelStyle}
+                      listItemContainerStyle={globalStyles.itemStyle}
+                      dropDownContainerStyle={{ ...globalStyles.dropDownStyle }}
+                      scrollViewProps={{ scrollEnabled: true }}
+                      dropDownDirection="BOTTOM"
+                    />
                   </View>
                 </View>
               )}

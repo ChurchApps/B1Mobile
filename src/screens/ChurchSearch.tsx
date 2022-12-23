@@ -43,9 +43,7 @@ export const ChurchSearch = (props: Props) => {
   }, [dimension])
 
   const churchSelection = async (churchData: ChurchInterface) => {
-    console.log("************************************************churchSelection")
     StoreToRecent(churchData);
-
     try {
       let existing = null;
       try {

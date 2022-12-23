@@ -98,9 +98,9 @@ export function CustomDrawer(props: any) {
   }
 
   const getUserInfo = () => {
-    if (UserHelper.person) {
+    if (UserHelper.currentUserChurch?.person) {
       return (<View style={globalStyles.headerView}>
-        <Image source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.person?.photo || "" }} style={globalStyles.userIcon} />
+        <Image source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo || "" }} style={globalStyles.userIcon} />
         <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
       </View>)
     }

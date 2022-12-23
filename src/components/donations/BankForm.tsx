@@ -44,7 +44,7 @@ export function BankForm({
   const [routingNumber, setRoutingNumber] = useState<string>("");
   const [firstDeposit, setFirstDeposit] = useState<string>("");
   const [secondDeposit, setSecondDeposit] = useState<string>("");
-  const person = UserHelper.person;
+  const person = UserHelper.currentUserChurch?.person;
 
   const handleSave = () => {
     setIsSubmitting(true);

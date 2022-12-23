@@ -15,7 +15,7 @@ export function Donations() {
   const [showDonationModal, setShowDonationModal] = useState<boolean>(false);
   const [selectedDonation, setSelectedDonation] = useState<DonationInterface>({});
   const isFocused = useIsFocused();
-  const person = UserHelper.person;
+  const person = UserHelper.currentUserChurch?.person;
 
   const loadDonations = () => {
     if (person) {

@@ -46,10 +46,6 @@ const SplashScreen = (props: Props) => {
       const churchString = await AsyncStorage.getItem("CHURCH_DATA")
       const churchesString = await AsyncStorage.getItem("CHURCHES_DATA")
 
-      //console.log("******************************************************USER")
-      //console.log(user);
-      //console.log("******************************************************ChurchString")
-      //console.log(churchString);
       if (user !== null) {
         UserHelper.user = JSON.parse(user);
         ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
@@ -58,26 +54,25 @@ const SplashScreen = (props: Props) => {
         let userChurch: LoginUserChurchInterface | null = null;
         if (churchString) church = JSON.parse(churchString);
         if (church?.id) {
-          //console.log("********************************************CHURCH EXISTS")
-          //console.log(JSON.stringify(church))
           userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
-          //console.log(JSON.stringify(userChurch))
           if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
         }
         UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
 
         userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         await UserHelper.setPersonRecord()
+
         props.navigation.navigate('MainStack');
       } else {
         if (churchString) {
           let church = JSON.parse(churchString);
-          //const userChurch: LoginUserChurchInterface = JSON.parse(churchString);
           const userChurch: LoginUserChurchInterface = { person: { name: {}, contactInfo: {} }, church: church, apis: [], jwt: "", groups: [] };
 
           UserHelper.setCurrentUserChurch(userChurch);
         }
-        //props.navigation.navigate('AuthStack');
+
+
+
         props.navigation.navigate('MainStack');
       }
     } catch (e) {

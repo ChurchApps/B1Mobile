@@ -20,7 +20,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   const [month, setMonth] = React.useState<string>(card.exp_month?.toString() || "");
   const [year, setYear] = React.useState<string>(card.exp_year?.toString().slice(-2) || "");
   const { createPaymentMethod } = useStripe();
-  const person = UserHelper.person;
+  const person = UserHelper.currentUserChurch?.person;
 
   const handleSave = () => {
     setIsSubmitting(true);

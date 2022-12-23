@@ -37,7 +37,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const isFocused = useIsFocused();
-  const person = UserHelper.person;
+  const person = UserHelper.currentUserChurch?.person;
 
   const loadDonations = () => {
     if (customerId) {

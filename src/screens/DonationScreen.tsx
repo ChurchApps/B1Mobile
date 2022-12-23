@@ -23,7 +23,7 @@ const DonationScreen = (props: Props) => {
   const [areMethodsLoading, setAreMethodsLoading] = useState<boolean>(false)
   const [publishKey, setPublishKey] = useState<string>("")
   const isFocused = useIsFocused();
-  const person = UserHelper.person
+  const person = UserHelper.currentUserChurch?.person
 
   useEffect(() => { if (isFocused) loadData() }, [isFocused])
 
