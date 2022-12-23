@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Image, ScrollView, View, TouchableOpacity, Text, Alert ,TextInput,Dimensions,PixelRatio} from "react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -48,12 +48,13 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [isIntervalDropdownOpen, setIsIntervalDropdownOpen] = useState<boolean>(false);
   const [intervalTypes, setIntervalTypes] = useState<{ label: string; value: string }[]>([
-    { label: "Day(s)", value: "day" },
-    { label: "Week(s)", value: "week" },
-    { label: "Month(s)", value: "month" },
-    { label: "Year(s)", value: "year" },
+    { label: "Weekly", value: "one_week" },
+    { label: "Bi-Weekly", value: "two_week" },
+    { label: "Monthly", value: "one_month" },
+    { label: "Quarterly", value: "three_month" },
+    { label: "Annually", value: "one_year" },
   ]);
-  const [selectedInterval, setSelectedInterval] = useState<string>("");
+  const [selectedInterval, setSelectedInterval] = useState<string>("one_week");
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
@@ -139,7 +140,30 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         if (donationsCopy.interval) donationsCopy.interval.interval_count = value;
         break;
       case "type":
-        if (donationsCopy.interval) donationsCopy.interval.interval = value;
+        if (donationsCopy.interval) {
+          switch (value){
+            case "one_week":
+              donationsCopy.interval.interval_count = 1;
+              donationsCopy.interval.interval = "week";
+              break;
+            case "two_week":
+              donationsCopy.interval.interval_count = 2;
+              donationsCopy.interval.interval = "week";
+              break;
+            case "one_month":
+              donationsCopy.interval.interval_count = 1;
+              donationsCopy.interval.interval = "month";
+              break;
+            case "three_month":
+              donationsCopy.interval.interval_count = 3;
+              donationsCopy.interval.interval = "month";
+              break;  
+            case "one_year":
+              donationsCopy.interval.interval_count = 1;
+              donationsCopy.interval.interval = "year";
+              break;    
+          }
+        };
         break;
     }
     setDonation(donationsCopy);
@@ -247,7 +271,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
               </View>
               {donationType === "recurring" && (
                 <View style={globalStyles.intervalView}>
-                  <View>
+                  {/* <View>
                     <Text style={globalStyles.semiTitleText}>Interval Number</Text>
                     <TextInput
                       style={globalStyles.intervalInput}
@@ -255,32 +279,30 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       onChangeText={(text) => handleIntervalChange("number", text)}
                     />
                    
-                  </View>
+                  </View> */}
                   <View>
-                    <Text style={globalStyles.semiTitleText}>Interval Type</Text>
-                    <View>
-                      <DropDownPicker
-                        listMode="SCROLLVIEW"
-                        open={isIntervalDropdownOpen}
-                        onChangeValue={(value) => handleIntervalChange("type", value)}
-                        items={intervalTypes}
-                        value={donation.interval?.interval || ""}
-                        setOpen={setIsIntervalDropdownOpen}
-                        setValue={setSelectedInterval}
-                        setItems={setIntervalTypes}
-                        containerStyle={{
-                          ...globalStyles.containerStyle,
-                          height: isIntervalDropdownOpen ? intervalTypes.length * wp("18%") : 0,
-                          width: wp("45%"),
-                        }}
-                        style={globalStyles.dropDownMainStyle}
-                        labelStyle={globalStyles.labelStyle}
-                        listItemContainerStyle={globalStyles.itemStyle}
-                        dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("45%") }}
-                        scrollViewProps={{ scrollEnabled: true }}
-                        dropDownDirection="BOTTOM"
-                      />
-                    </View>
+                  <Text style={globalStyles.semiTitleText}>Interval</Text>
+                  <DropDownPicker
+                    listMode="SCROLLVIEW"
+                    open={isIntervalDropdownOpen}
+                    items={intervalTypes}
+                    value={selectedInterval}
+                    setOpen={setIsIntervalDropdownOpen}
+                    setValue={(value) => { 
+                      setSelectedInterval(value())
+                      handleIntervalChange("type", value())
+                    }}
+                    containerStyle={{
+                      ...globalStyles.containerStyle,
+                      height: isIntervalDropdownOpen ? intervalTypes.length * wp("12.5%") : wp('12%'),
+                    }}
+                    style={globalStyles.dropDownMainStyle}
+                    labelStyle={globalStyles.labelStyle}
+                    listItemContainerStyle={globalStyles.itemStyle}
+                    dropDownContainerStyle={{ ...globalStyles.dropDownStyle }}
+                    scrollViewProps={{ scrollEnabled: true }}
+                    dropDownDirection="BOTTOM"
+                  />
                   </View>
                 </View>
               )}

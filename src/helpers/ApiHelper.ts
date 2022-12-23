@@ -68,7 +68,7 @@ export class ApiHelper {
     };
     console.log(config.url + path)
     console.log(JSON.stringify(requestOptions))
-    return fetch(config.url + path, requestOptions).then(response => response.json())
+    return fetch(config.url + path, requestOptions).then(response => response.json()).catch(_ => null);
   }
 
   static async delete(path: string, apiName: ApiListType) {
