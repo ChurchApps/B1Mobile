@@ -39,3 +39,5 @@ export interface SessionInterface { id?: string, groupId?: string, serviceTimeId
 export interface VisitInterface { id?: string, personId?: string, serviceId?: string, groupId?: string, visitDate?: Date, visitSessions?: VisitSessionInterface[], person?: PersonInterface }
 export interface VisitSessionInterface { id?: string, visitId?: string, sessionId?: string, visit?: VisitInterface, session?: SessionInterface }
 export interface IPermission { api: string, contentType: string, action: string }
+
+export interface UserSearchInterface {anniversary?: Date, birthDate?: Date, contactInfo: ContactInfoInterface, conversationId?: string, gender?: string, householdId?: string, householdRole?: string, id?: string, maritalStatus?: string, membershipStatus?: string, name: NameInterface, photo?: string, photoUpdated?: Date}

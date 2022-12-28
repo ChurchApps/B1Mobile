@@ -1,0 +1,140 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect } from 'react';
+import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Keyboard, PixelRatio, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { TextInput } from 'react-native-gesture-handler';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { BlueHeader } from '../components';
+import { ApiHelper, Constants, globalStyles, UserSearchInterface, Utilities } from '../helpers';
+
+interface Props {
+    navigation: {
+      navigate: (screenName: string) => void;
+      goBack: () => void;
+      openDrawer: () => void;
+    };
+}
+
+export const SearchUserScreen = (props: Props) => {
+    const [searchText, setSearchText] = useState('');
+    const [searchList, setSearchList] = useState<UserSearchInterface[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [recentList, setRecentList] = useState([]);
+    const [recentListEmpty, setRecentListEmpty] = useState(false);
+
+    const [dimension, setDimension] = useState(Dimensions.get('window'));
+
+    const wd = (number: string) => {
+      let givenWidth = typeof number === "number" ? number : parseFloat(number);
+      return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
+    };
+  
+    useEffect(() => {
+        Utilities.trackEvent("User search Screen");
+        GetRecentList();
+        Dimensions.addEventListener('change', () => {
+          const dim = Dimensions.get('screen')
+          setDimension(dim);
+        })
+      }, [])
+
+      const GetRecentList = async () => {
+        try {
+          const church_list = await AsyncStorage.getItem('RECENT_USERS_SEARCH');
+          if (church_list != null) {
+            setRecentListEmpty(true)
+            let list = JSON.parse(church_list);
+            let reverseList = list.reverse()
+            setRecentList(reverseList);
+          }
+        } catch (err) {
+          console.log('GET RECENT USER SEARCH ERROR', err)
+        }
+      }
+
+      const searchUserApiCall = (text: String) => {
+        setLoading(true);
+        ApiHelper.get("/people/search/?term=" + text, "MembershipApi").then(data => {
+          setLoading(false);
+          setSearchList(data);
+          if (data.length === 0) Alert.alert("Alert", "No matches found");
+        })
+      }
+
+      const renderUserItem = (item: UserSearchInterface) => {
+        const userImage = item.photo
+        return (
+          <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: wd('90%') }]} onPress={() => userSelection(item)}>
+            {
+              userImage ? <Image source={{ uri: userImage }} style={globalStyles.churchListIcon} /> :
+                <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp('9%'), width: wp('9%')}]}/>
+            }
+            <View style={globalStyles.listTextView}>
+              <Text style={globalStyles.listTitleText}>{item.name.display}</Text>
+            </View>
+          </TouchableOpacity>
+        );
+      }
+
+      const userSelection = async (userData: UserSearchInterface) => {
+        StoreToRecent(userData);
+        try {
+            console.log("The current selected ---> ", userData.name.display);
+        } catch (err) {
+          console.log(err)
+        }
+      }
+
+      const StoreToRecent = async (userData: UserSearchInterface) => {
+        var filteredItems: UserSearchInterface[] = [];
+        filteredItems = recentList.filter((item: UserSearchInterface) => item.id !== userData.id);
+        filteredItems.push(userData);
+        try {
+          const usersList = JSON.stringify(filteredItems)
+          await AsyncStorage.setItem('RECENT_USERS_SEARCH', usersList)
+        } catch (err) {
+          console.log('SET RECENT USER ERROR', err)
+        }
+      }
+
+      const getHeaderView = () => {
+        return (
+          <View>
+            <BlueHeader />
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <View style={globalStyles.grayContainer}>
+                  <Text style={globalStyles.searchMainText}>Search for a person</Text>
+                  <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
+                    <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
+                    <TextInput
+                      style={[globalStyles.textInputStyle, { width: wd('90%') }]}
+                      placeholder={'Name'}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      keyboardType='default'
+                      placeholderTextColor={'lightgray'}
+                      value={searchText}
+                      onChangeText={(text) => { setSearchText(text) }}
+                    />
+                  </View>
+                  <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%'), width: wd('90%') }} onPress={() => searchUserApiCall(searchText)}>
+                    {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
+                  </TouchableOpacity>
+                  {searchText == '' && <Text style={globalStyles.recentText}> {recentListEmpty ? 'Recent Users' : 'No recent users available.'}
+              </Text>}
+          </View>
+          </TouchableWithoutFeedback>
+          </View>
+        );
+      }      
+
+      return (
+        <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
+          <FlatList 
+            data={searchText == '' ? recentList : searchList} 
+            renderItem={({ item }) => renderUserItem(item)} 
+            keyExtractor={(item: any) => item.id} 
+            ListHeaderComponent={getHeaderView()}
+          />
+        </View>
+      );
+}

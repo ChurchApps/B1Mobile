@@ -98,7 +98,8 @@ export const globalStyles = StyleSheet.create({
   tabTitle: { fontSize: wp('4%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' },
   churchBtn: { borderBottomColor: 'lightgray', borderBottomWidth: 1, marginHorizontal: wp('4%'), marginTop: wp('6%'), marginBottom: wp('2%'), borderRadius: wp('1.5%'), flexDirection: 'row', alignItems: 'center', color: 'white' },
   churchText: { fontSize: wp('3.7%'), paddingVertical: wp('1.5%'), fontFamily: Constants.Fonts.RobotoRegular, marginHorizontal: wp('1%'), color: 'white' },
-  logoutBtn: { marginTop: wp('10%'), marginLeft: wp('5%'), color: 'white' },
+  logoutBtn: { marginTop: wp('6%'), marginLeft: wp('5%'), color: 'white' },
+  messageRootView: {flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center'},
   drawerText: { color: 'white' },
 
 
