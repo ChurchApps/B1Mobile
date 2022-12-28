@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Image, FlatList,  ActivityIndicator } fro
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import RNRestart from 'react-native-restart';
 import { NavigationHelper } from '../helpers/NavigationHelper';
