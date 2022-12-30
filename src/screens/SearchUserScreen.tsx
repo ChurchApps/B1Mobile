@@ -8,7 +8,7 @@ import { ApiHelper, Constants, globalStyles, UserSearchInterface, Utilities } fr
 
 interface Props {
     navigation: {
-      navigate: (screenName: string) => void;
+      navigate: (screenName: string, params: any) => void;
       goBack: () => void;
       openDrawer: () => void;
     };
@@ -78,7 +78,7 @@ export const SearchUserScreen = (props: Props) => {
       const userSelection = async (userData: UserSearchInterface) => {
         StoreToRecent(userData);
         try {
-            console.log("The current selected ---> ", userData.name.display);
+          props.navigation.navigate('MessagesScreen', { userDetails: userData })
         } catch (err) {
           console.log(err)
         }

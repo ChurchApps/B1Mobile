@@ -4,6 +4,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MessageIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import RNRestart from 'react-native-restart';
 import { NavigationHelper } from '../helpers/NavigationHelper';
@@ -135,7 +136,7 @@ export function CustomDrawer(props: any) {
     return (
       <TouchableOpacity onPress={() => navigate('SearchMessageUser', {})}>
         <View style={globalStyles.messageRootView}>
-          <Icon name={"android-messages"} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />
+          <MessageIcon name={"android-messages"} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />
           <Text style={{ ...globalStyles.churchText }}>
             {'Messages'}
           </Text>

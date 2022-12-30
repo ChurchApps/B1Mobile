@@ -1,5 +1,5 @@
 export interface ApiConfig { keyName: string, url: string, jwt: string, permisssions: RolePermissionInterface[] }
-export type ApiListType = "MembershipApi" | "AttendanceApi" | "B1Api" | "GivingApi";
+export type ApiListType = "MembershipApi" | "MessagingApi" | "AttendanceApi" | "B1Api" | "GivingApi";
 export interface AppearanceInterface { primaryColor?: string, primaryContrast?: string, secondaryColor?: string, secondaryContrast?: string, logoLight?: string, logoDark?: string }
 export interface LinkInterface { id?: string, churchId: string, category: string, url?: string, text: string, sort: number, linkType: string, linkData: string, icon: string, photo?: string }
 
@@ -41,3 +41,8 @@ export interface VisitSessionInterface { id?: string, visitId?: string, sessionI
 export interface IPermission { api: string, contentType: string, action: string }
 
 export interface UserSearchInterface {anniversary?: Date, birthDate?: Date, contactInfo: ContactInfoInterface, conversationId?: string, gender?: string, householdId?: string, householdRole?: string, id?: string, maritalStatus?: string, membershipStatus?: string, name: NameInterface, photo?: string, photoUpdated?: Date}
+
+// Messaging interfaces
+export interface ConversationCheckInterface { id: string, churchId: string, conversationId: string, fromPersonId: string, toPersonId: string, notifyPersonId: string, conversation: ConversationInterface }
+export interface ConversationInterface { id: string, churchId: string, contentType: string, contentId: string, title: string, dateCreated: Date, groupId: string, visibility: string, firstPostId: string, lastPostId: string, allowAnonymousPosts: boolean, postCount: number, messages: MessageInterface[]}
+export interface MessageInterface { id: string, churchId: string, conversationId: string, userId: string, displayName: string, timeSent: Date, messageType: string, content: string, personId: string, timeUpdated: Date }
