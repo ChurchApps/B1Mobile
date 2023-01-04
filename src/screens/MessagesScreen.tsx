@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MessageIcon from 'react-native-vector-icons/Feather';
 import { MainHeader } from "../components";
-import { ApiHelper, Constants, globalStyles, UserSearchInterface, ConversationCheckInterface, ConversationInterface, MessageInterface } from "../helpers";
+import { ApiHelper, Constants, globalStyles, UserSearchInterface, ConversationCheckInterface, ConversationInterface, MessageInterface, UserHelper, ConversationCreateInterface, PrivateMessagesCreate } from "../helpers";
 
 interface Props {
     navigation: {
@@ -39,9 +39,11 @@ export const MessagesScreen = (props: Props) => {
 
     const getConversations = () => {
         setLoading(true);
-        ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data: ConversationCheckInterface) => {
+        ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
             setLoading(false);
             setCurrentConversation(data);
+            console.log("The recerived ----> ", data);
+            
             if(Object.keys(data).length != 0 && data.conversationId != undefined){
                 ApiHelper.get("/messages/conversation/" + data.conversationId, "MessagingApi").then(data => {
                     setLoading(false);
@@ -49,16 +51,36 @@ export const MessagesScreen = (props: Props) => {
                     conversation.reverse();
                     setMessageList(conversation);
                 })
-            }  
+            }
         })
     }
 
-    const sendMessage = () => {
-       if(currentConversation == null || currentConversation == undefined){
-            Alert.alert('No conversation found');
-            return;
-        }
-        let params = [{"conversationId": currentConversation.conversationId, "content": messageText}]
+    const sendMessageInitiate = () => {
+       if(currentConversation == null || currentConversation == undefined || Object.keys(currentConversation).length == 0){
+        let params = [{ "allowAnonymousPosts": false, "contentType": "privateMessage", "contentId": UserHelper.currentUserChurch.person.id, "title": UserHelper.user.firstName + " " + UserHelper.user.lastName+" Private Message", "visibility": "hidden" }]
+        console.log("The new conversation params ---> ", UserHelper.user);
+        console.log("The new conversation church user ---> ", UserHelper.currentUserChurch);
+        ApiHelper.post("/conversations", params, "MessagingApi").then(async (data: ConversationCreateInterface[]) => {
+            console.log("NEw ---> ", data);
+            
+            if(data != null && data.length > 0 && data[0]?.id){
+                let params = [{"fromPersonId": UserHelper.currentUserChurch.person.id, "toPersonId": props.route.params.userDetails.id, "conversationId": data[0]?.id}]
+                ApiHelper.post("/privateMessages", params, "MessagingApi").then((data : PrivateMessagesCreate[]) => {
+                    console.log("The privaa ---> ", data);
+                    if(data != null && data.length > 0 && data[0]?.id){
+                        sendMessage(data[0].conversationId);
+                    }
+                });
+            }
+        });
+        } else{
+            sendMessage(currentConversation.conversationId);
+        }    
+    }
+
+    const sendMessage = (conversationId: string) => {
+        let params = [{"conversationId": conversationId, "content": messageText}]
+        console.log("The current conversation id ---> ",params);
         ApiHelper.post("/messages", params, "MessagingApi").then(async (data: any) => {
             if(data != null || data != undefined){
                 setMessageText('');
@@ -87,7 +109,7 @@ export const MessagesScreen = (props: Props) => {
                     value={messageText}
                     onChangeText={(text) => { setMessageText(text) }}
                 />
-                <TouchableOpacity style={globalStyles.sendIcon} onPress = {() => sendMessage()}>
+                <TouchableOpacity style={globalStyles.sendIcon} onPress = {() => sendMessageInitiate()}>
                     <MessageIcon name={"send"} color={"white"} size={wp('5%')}/>
                 </TouchableOpacity>
             </View>

@@ -21,7 +21,7 @@ export interface ResetPasswordRequestInterface { userEmail: string, fromEmail: s
 export interface ResetPasswordResponseInterface { emailed: boolean }
 export interface SwitchAppRequestInterface { appName: string, churchId: string }
 export interface SwitchAppResponseInterface { appName: string, churchId: string }
-export interface UserInterface { id?: string, email?: string, authGuid?: string, displayName?: string, registrationDate?: Date, lastLogin?: Date, password?: string }
+export interface UserInterface { id?: string, firstName?: string, lastName?: string, email?: string, authGuid?: string, displayName?: string, registrationDate?: Date, lastLogin?: Date, password?: string }
 export interface GenericSettingInterface { id?: string, churchId?: string, keyName?: string, value?: string, public?: number }
 
 export interface GroupServiceTimeInterface { id?: string, groupId?: string, serviceTimeId?: string, serviceTime?: ServiceTimeInterface }
@@ -46,3 +46,5 @@ export interface UserSearchInterface {anniversary?: Date, birthDate?: Date, cont
 export interface ConversationCheckInterface { id: string, churchId: string, conversationId: string, fromPersonId: string, toPersonId: string, notifyPersonId: string, conversation: ConversationInterface }
 export interface ConversationInterface { id: string, churchId: string, contentType: string, contentId: string, title: string, dateCreated: Date, groupId: string, visibility: string, firstPostId: string, lastPostId: string, allowAnonymousPosts: boolean, postCount: number, messages: MessageInterface[]}
 export interface MessageInterface { id: string, churchId: string, conversationId: string, userId: string, displayName: string, timeSent: Date, messageType: string, content: string, personId: string, timeUpdated: Date }
+export interface ConversationCreateInterface { allowAnonymousPosts: boolean, contentType: string, contentId: string, title: string, visibility: string, churchId: string, id: string }
+export interface PrivateMessagesCreate {fromPersonId: string, toPersonId: string, conversationId: string, churchId: string, id: string }

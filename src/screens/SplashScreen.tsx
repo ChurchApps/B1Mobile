@@ -58,8 +58,8 @@ const SplashScreen = (props: Props) => {
           if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
         }
         UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
-
         userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+        ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
         await UserHelper.setPersonRecord()
 
         props.navigation.navigate('MainStack');
