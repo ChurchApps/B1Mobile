@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Keyboard, PixelR
 import { TextInput } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { BlueHeader } from '../components';
-import { ApiHelper, Constants, globalStyles, UserSearchInterface, Utilities } from '../helpers';
+import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, globalStyles, UserHelper, UserSearchInterface, Utilities } from '../helpers';
 
 interface Props {
     navigation: {
@@ -31,11 +31,38 @@ export const SearchUserScreen = (props: Props) => {
     useEffect(() => {
         Utilities.trackEvent("User search Screen");
         GetRecentList();
+        getPreviousConversations();
         Dimensions.addEventListener('change', () => {
           const dim = Dimensions.get('screen')
           setDimension(dim);
         })
       }, [])
+
+      const getPreviousConversations = () => {
+        setLoading(true);
+        ApiHelper.get("/privateMessages", "MessagingApi").then((data : ConversationCheckInterface[]) => {
+          setLoading(false);
+          var userIdList : string[] = []
+          if(Object.keys(data).length != 0){
+            console.log("The data lent ---> ", data.length);
+            
+            userIdList = data.map((e) => UserHelper.currentUserChurch.person.id == e.fromPersonId ? e.toPersonId : e.fromPersonId);
+            if(userIdList.length != 0){
+              ApiHelper.get("/people/ids?ids=" + userIdList.join(','), "MembershipApi").then((userData : UserSearchInterface[]) => {
+                setLoading(false);
+                for (let i = 0; i < userData.length; i++) {
+                  const singleUser : UserSearchInterface = userData[i];
+                  const tempConvo : ConversationCheckInterface | undefined = data.find(x => x.fromPersonId == singleUser.id || x.toPersonId == singleUser.id)
+                  userData[i].conversationId = tempConvo?.conversationId
+                  console.log("The conversation id ----> "+tempConvo?.conversationId+ " and uyser -----> "+ singleUser.id);
+                  
+                }
+                setSearchList(userData);
+              })
+            }
+          }        
+        })
+      }
 
       const GetRecentList = async () => {
         try {
@@ -119,8 +146,6 @@ export const SearchUserScreen = (props: Props) => {
                   <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%'), width: wd('90%') }} onPress={() => searchUserApiCall(searchText)}>
                     {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
                   </TouchableOpacity>
-                  {searchText == '' && <Text style={globalStyles.recentText}> {recentListEmpty ? 'Recent Users' : 'No recent users available.'}
-              </Text>}
           </View>
           </TouchableWithoutFeedback>
           </View>
@@ -130,7 +155,7 @@ export const SearchUserScreen = (props: Props) => {
       return (
         <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
           <FlatList 
-            data={searchText == '' ? recentList : searchList} 
+            data={searchText == '' ? searchList.length != 0 ? searchList :recentList : searchList} 
             renderItem={({ item }) => renderUserItem(item)} 
             keyExtractor={(item: any) => item.id} 
             ListHeaderComponent={getHeaderView()}

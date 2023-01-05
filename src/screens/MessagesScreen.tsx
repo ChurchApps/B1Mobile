@@ -42,31 +42,28 @@ export const MessagesScreen = (props: Props) => {
         ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
             setLoading(false);
             setCurrentConversation(data);
-            console.log("The recerived ----> ", data);
-            
             if(Object.keys(data).length != 0 && data.conversationId != undefined){
-                ApiHelper.get("/messages/conversation/" + data.conversationId, "MessagingApi").then(data => {
-                    setLoading(false);
-                    var conversation : MessageInterface[] = data;
-                    conversation.reverse();
-                    setMessageList(conversation);
-                })
+                getMessagesList(data.conversationId)
             }
+        })
+    }
+
+    const getMessagesList = (conversationId : string) => {
+        ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi").then(data => {
+            setLoading(false);
+            var conversation : MessageInterface[] = data;
+            conversation.reverse();
+            setMessageList(conversation);
         })
     }
 
     const sendMessageInitiate = () => {
        if(currentConversation == null || currentConversation == undefined || Object.keys(currentConversation).length == 0){
         let params = [{ "allowAnonymousPosts": false, "contentType": "privateMessage", "contentId": UserHelper.currentUserChurch.person.id, "title": UserHelper.user.firstName + " " + UserHelper.user.lastName+" Private Message", "visibility": "hidden" }]
-        console.log("The new conversation params ---> ", UserHelper.user);
-        console.log("The new conversation church user ---> ", UserHelper.currentUserChurch);
         ApiHelper.post("/conversations", params, "MessagingApi").then(async (data: ConversationCreateInterface[]) => {
-            console.log("NEw ---> ", data);
-            
             if(data != null && data.length > 0 && data[0]?.id){
                 let params = [{"fromPersonId": UserHelper.currentUserChurch.person.id, "toPersonId": props.route.params.userDetails.id, "conversationId": data[0]?.id}]
                 ApiHelper.post("/privateMessages", params, "MessagingApi").then((data : PrivateMessagesCreate[]) => {
-                    console.log("The privaa ---> ", data);
                     if(data != null && data.length > 0 && data[0]?.id){
                         sendMessage(data[0].conversationId);
                     }
