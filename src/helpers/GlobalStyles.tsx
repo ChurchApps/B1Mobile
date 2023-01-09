@@ -181,5 +181,5 @@ export const globalStyles = StyleSheet.create({
   sendIcon: {height: wp('11%'), width: wp('11%'), justifyContent: 'center', alignItems: 'center', borderRadius: 100, borderColor: Constants.Colors.app_color, borderWidth: 2, backgroundColor: Constants.Colors.app_color},
   messageContainer : { flexDirection:'row', justifyContent: 'flex-start', alignItems: 'flex-start', paddingVertical: wp('1%'), marginVertical: wp('2%') },
   senderNameText : { fontSize:16, fontWeight:'bold', paddingVertical: wp('0.5%')},
-  messageView : { fontSize : 15, backgroundColor: Constants.Colors.app_color_light, borderWidth:1, borderRadius: 5, borderColor:'transparent', paddingHorizontal : wp('2%'), paddingVertical : wp("1%"), justifyContent:'center', alignItems: 'center'},
+  messageView : { fontSize : 15, backgroundColor: Constants.Colors.app_color_light, borderWidth:1, borderRadius: 5, borderColor:'transparent', paddingHorizontal : wp('2%'), paddingVertical : wp("1%"), justifyContent:'center', alignItems: 'flex-start'},
 })

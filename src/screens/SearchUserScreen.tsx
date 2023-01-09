@@ -30,7 +30,7 @@ export const SearchUserScreen = (props: Props) => {
   
     useEffect(() => {
         Utilities.trackEvent("User search Screen");
-        GetRecentList();
+        // GetRecentList();
         getPreviousConversations();
         Dimensions.addEventListener('change', () => {
           const dim = Dimensions.get('screen')
@@ -103,7 +103,7 @@ export const SearchUserScreen = (props: Props) => {
       }
 
       const userSelection = async (userData: UserSearchInterface) => {
-        StoreToRecent(userData);
+        // StoreToRecent(userData);
         try {
           props.navigation.navigate('MessagesScreen', { userDetails: userData })
         } catch (err) {
@@ -126,7 +126,7 @@ export const SearchUserScreen = (props: Props) => {
       const getHeaderView = () => {
         return (
           <View>
-            <BlueHeader />
+            <BlueHeader navigation={props.navigation} showMenu={true} />
               <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View style={globalStyles.grayContainer}>
                   <Text style={globalStyles.searchMainText}>Search for a person</Text>

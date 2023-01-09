@@ -92,7 +92,7 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {getUserInfo()}
-        <TouchableOpacity style={globalStyles.churchBtn} onPress={() => navigate('ChurchSearch', {})}>
+        <TouchableOpacity style={[globalStyles.churchBtn, {marginTop: churchEmpty ? wp('12%') : wp('6%')}]} onPress={() => navigate('ChurchSearch', {})}>
           {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
           <Text style={{ ...globalStyles.churchText }}>
             {churchEmpty ? 'Find your church...' : churchName}
@@ -105,7 +105,6 @@ export function CustomDrawer(props: any) {
   const drawerFooterComponent = () => {
     return (
       <View>
-        {UserHelper.user ? messagesView() : null}
         {loginOutToggle()}
       </View>
     );
@@ -116,6 +115,7 @@ export function CustomDrawer(props: any) {
       return (<View style={[globalStyles.headerView, {marginTop : wp('15%')}]}>
         <Image source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo || "" }} style={globalStyles.userIcon} />
         <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
+        {UserHelper.user ? messagesView() : null}
       </View>)
     }
   }
@@ -136,10 +136,7 @@ export function CustomDrawer(props: any) {
     return (
       <TouchableOpacity onPress={() => navigate('SearchMessageUser', {})}>
         <View style={globalStyles.messageRootView}>
-          <MessageIcon name={"android-messages"} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />
-          <Text style={{ ...globalStyles.churchText }}>
-            {'Messages'}
-          </Text>
+          <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />
         </View>
       </TouchableOpacity>
     );
