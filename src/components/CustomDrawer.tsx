@@ -24,27 +24,30 @@ export function CustomDrawer(props: any) {
     getChurch();
   }, [props.navigation])
 
+  
+
   const getChurch = async () => {
     try {
       const user = await AsyncStorage.getItem('USER_DATA')
       if (user !== null) {
         setUser(JSON.parse(user))
       }
-      let church: ChurchInterface | null = null
       let userChurch: LoginUserChurchInterface | null = null;
       const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
       
       if (churchvalue !== null) {
-        if (churchvalue) church = JSON.parse(churchvalue);
-        if (church?.id) {
-          userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
-          
-          if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
+        if (churchvalue) {
+          const church = JSON.parse(churchvalue);
+          setChurchName(church.name ?? "")
+          setChurchEmpty(false)
+          getDrawerList(church.id);
+          getMemberData(church?.personId);
+          if (church?.id) {
+            userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
+            
+            if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
+          }
         }
-        setChurchName(userChurch?.church.name ?? "")
-        setChurchEmpty(false)
-        getDrawerList(userChurch?.church.id);
-        getMemberData(userChurch?.person?.id);
       }
 
     } catch (e) {
@@ -92,7 +95,7 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {getUserInfo()}
-        <TouchableOpacity style={[globalStyles.churchBtn, {marginTop: churchEmpty ? wp('12%') : wp('6%')}]} onPress={() => navigate('ChurchSearch', {})}>
+        <TouchableOpacity style={[globalStyles.churchBtn, {marginTop: churchEmpty ? wp('12%') : user != null ? wp('6%') : wp('12%')}]} onPress={() => navigate('ChurchSearch', {})}>
           {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
           <Text style={{ ...globalStyles.churchText }}>
             {churchEmpty ? 'Find your church...' : churchName}
@@ -111,7 +114,7 @@ export function CustomDrawer(props: any) {
   }
 
   const getUserInfo = () => {
-    if (UserHelper.currentUserChurch?.person) {
+    if (UserHelper.currentUserChurch?.person && user != null) {
       return (<View style={[globalStyles.headerView, {marginTop : wp('15%')}]}>
         <Image source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo || "" }} style={globalStyles.userIcon} />
         <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
