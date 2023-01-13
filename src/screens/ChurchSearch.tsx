@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard, Dimensions, PixelRatio } from 'react-native';
-import { FlatList, ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { View,  Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard, Dimensions, PixelRatio } from 'react-native';
+import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ApiHelper, ArrayHelper, ChurchInterface, Constants, LoginUserChurchInterface, Utilities } from '../helpers';
+import { ApiHelper, ArrayHelper, ChurchInterface, Constants, Utilities } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles, UserHelper } from '../helpers';
 import { BlueHeader } from '../components';
@@ -111,12 +111,10 @@ export const ChurchSearch = (props: Props) => {
     );
   }
 
-  return (
-    <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
-      <ScrollView>
-        <SafeAreaView style={globalStyles.appContainer}>
-
-          <BlueHeader />
+  const getHeaderView = () => {
+    return (
+      <View>
+        <BlueHeader />
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={globalStyles.grayContainer}>
               <Text style={globalStyles.searchMainText}>Find Your Church</Text>
@@ -139,14 +137,20 @@ export const ChurchSearch = (props: Props) => {
               {searchText == '' && <Text style={globalStyles.recentText}>
                 {recentListEmpty ? 'Recent Churches' : 'No recent churches available.'}
               </Text>}
-              <ScrollView nestedScrollEnabled={false}>
-                <FlatList data={searchText == '' ? recentList : searchList} renderItem={({ item }) => renderChurchItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} scrollEnabled={false} />
-              </ScrollView>
-            </View>
-          </TouchableWithoutFeedback>
+      </View>
+      </TouchableWithoutFeedback>
+      </View>
+    );
+  }
 
-        </SafeAreaView>
-      </ScrollView>
+  return (
+    <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
+      <FlatList 
+        data={searchText == '' ? recentList : searchList} 
+        renderItem={({ item }) => renderChurchItem(item)} 
+        keyExtractor={(item: any) => item.id} 
+        ListHeaderComponent={getHeaderView()}
+      />
     </View>
   );
 };

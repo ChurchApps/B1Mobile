@@ -12,7 +12,7 @@ export const globalStyles = StyleSheet.create({
   roundBlueButton: { height: wp('12%'), borderRadius: wp('2%'), justifyContent: 'center', alignItems: 'center', alignSelf: 'center', backgroundColor: Constants.Colors.button_bg, marginTop: wp('8%') },
   roundBlueButtonText: { color: 'white', fontSize: wp('3.8%'), fontFamily: Constants.Fonts.RobotoMedium },
   searchIcon: { width: wp('6%'), height: wp('6%'), margin: wp('1.5%') },
-  listTextView: { height: wp('12%'), justifyContent: 'space-evenly' },
+  listTextView: { height: wp('12%'), justifyContent: 'space-evenly', width: wp('70%') },
   listTitleText: { fontSize: wp('4.2%'), fontFamily: Constants.Fonts.RobotoMedium },
   listMainView: { backgroundColor: 'white', alignSelf: 'center', justifyContent: 'flex-start', alignItems: 'center', marginVertical: wp('2%'), borderRadius: wp('2%'), shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.2, shadowRadius: wp('1.5%'), elevation: 5, shadowColor: Constants.Colors.app_color, flexDirection: 'row' },
   listContainerStyle: { marginVertical: wp('3%') },
