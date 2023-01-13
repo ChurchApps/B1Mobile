@@ -24,8 +24,6 @@ export function CustomDrawer(props: any) {
     getChurch();
   }, [props.navigation])
 
-  
-
   const getChurch = async () => {
     try {
       const user = await AsyncStorage.getItem('USER_DATA')
