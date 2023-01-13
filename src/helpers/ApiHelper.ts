@@ -41,7 +41,9 @@ export class ApiHelper {
     if (config === undefined) return;
     try {
       const requestOptions = { method: 'GET', headers: { 'Authorization': 'Bearer ' + config.jwt } };
-      return fetch(config.url + path, requestOptions).then(response => response.json())
+      console.log(config.url + path)
+      console.log(JSON.stringify(requestOptions))
+      return fetch(config.url + path, requestOptions).then(response => response.json()).catch(_ => null)
     } catch (e) {
       throw (e);
     }

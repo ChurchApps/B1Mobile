@@ -1,5 +1,5 @@
 export interface ApiConfig { keyName: string, url: string, jwt: string, permisssions: RolePermissionInterface[] }
-export type ApiListType = "MembershipApi" | "AttendanceApi" | "B1Api" | "GivingApi";
+export type ApiListType = "MembershipApi" | "MessagingApi" | "AttendanceApi" | "B1Api" | "GivingApi";
 export interface AppearanceInterface { primaryColor?: string, primaryContrast?: string, secondaryColor?: string, secondaryContrast?: string, logoLight?: string, logoDark?: string }
 export interface LinkInterface { id?: string, churchId: string, category: string, url?: string, text: string, sort: number, linkType: string, linkData: string, icon: string, photo?: string }
 
@@ -21,7 +21,7 @@ export interface ResetPasswordRequestInterface { userEmail: string, fromEmail: s
 export interface ResetPasswordResponseInterface { emailed: boolean }
 export interface SwitchAppRequestInterface { appName: string, churchId: string }
 export interface SwitchAppResponseInterface { appName: string, churchId: string }
-export interface UserInterface { id?: string, email?: string, authGuid?: string, displayName?: string, registrationDate?: Date, lastLogin?: Date, password?: string }
+export interface UserInterface { id?: string, firstName?: string, lastName?: string, email?: string, authGuid?: string, displayName?: string, registrationDate?: Date, lastLogin?: Date, password?: string }
 export interface GenericSettingInterface { id?: string, churchId?: string, keyName?: string, value?: string, public?: number }
 
 export interface GroupServiceTimeInterface { id?: string, groupId?: string, serviceTimeId?: string, serviceTime?: ServiceTimeInterface }
@@ -39,3 +39,12 @@ export interface SessionInterface { id?: string, groupId?: string, serviceTimeId
 export interface VisitInterface { id?: string, personId?: string, serviceId?: string, groupId?: string, visitDate?: Date, visitSessions?: VisitSessionInterface[], person?: PersonInterface }
 export interface VisitSessionInterface { id?: string, visitId?: string, sessionId?: string, visit?: VisitInterface, session?: SessionInterface }
 export interface IPermission { api: string, contentType: string, action: string }
+
+export interface UserSearchInterface {anniversary?: Date, birthDate?: Date, contactInfo: ContactInfoInterface, conversationId?: string, gender?: string, householdId?: string, householdRole?: string, id?: string, maritalStatus?: string, membershipStatus?: string, name: NameInterface, photo?: string, photoUpdated?: Date}
+
+// Messaging interfaces
+export interface ConversationCheckInterface { id: string, churchId: string, conversationId: string, fromPersonId: string, toPersonId: string, notifyPersonId: string, conversation: ConversationInterface }
+export interface ConversationInterface { id: string, churchId: string, contentType: string, contentId: string, title: string, dateCreated: Date, groupId: string, visibility: string, firstPostId: string, lastPostId: string, allowAnonymousPosts: boolean, postCount: number, messages: MessageInterface[]}
+export interface MessageInterface { id: string, churchId: string, conversationId: string, userId: string, displayName: string, timeSent: Date, messageType: string, content: string, personId: string, timeUpdated: Date }
+export interface ConversationCreateInterface { allowAnonymousPosts: boolean, contentType: string, contentId: string, title: string, visibility: string, churchId: string, id: string }
+export interface PrivateMessagesCreate {fromPersonId: string, toPersonId: string, conversationId: string, churchId: string, id: string }

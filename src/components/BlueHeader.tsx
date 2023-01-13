@@ -8,12 +8,14 @@ import { Constants } from '../helpers';
 
 interface Props {
   navigation?: {
-    navigate: (screenName: string) => void;
+    navigate: (screenName: string, params?: any) => void;
+    openDrawer?: () => void;
   };
   showBack : Boolean,
+  showMenu : Boolean,
 }
 
-export function BlueHeader(props: Props) {  
+export function BlueHeader(props: Props) {    
   return (
     <View style={globalStyles.headerContainer}>
       <View style={globalStyles.blueLogoView}>
@@ -21,6 +23,12 @@ export function BlueHeader(props: Props) {
           <TouchableOpacity onPressIn={() => { props?.navigation?.navigate("LoginScreen") }}>
             <Icon name={'angle-left'} color={Constants.Colors.white_color} style={globalStyles.inputIcon} size={wp('4.5%')}/>
           </TouchableOpacity>
+        </View>  : null}
+        {(props.showMenu && props.navigation?.openDrawer != undefined) ?
+        <View style={[globalStyles.blueMainBackIcon, {marginTop : wp('6%'), marginLeft : wp('3%')}]}>
+        <TouchableOpacity onPressIn={() => { props?.navigation?.openDrawer != undefined ? props?.navigation?.openDrawer() : null }}>
+          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
+        </TouchableOpacity>
         </View> : null}
         <Image source={Constants.Images.logoWhite} style={globalStyles.blueMainIcon} />
       </View>
@@ -30,4 +38,5 @@ export function BlueHeader(props: Props) {
 
 BlueHeader.defaultProps = {
   showBack : false,
+  showMenu : false,
 }

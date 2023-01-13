@@ -2,6 +2,7 @@ export class Constants {
 
   static Colors = {
     app_color: '#1C75BC',
+    app_color_light: 'rgba(28, 116, 188,0.3)',
     gray_bg: '#F6F6F8',
     button_bg: '#24B8FE',
     button_green: '#70DC87',

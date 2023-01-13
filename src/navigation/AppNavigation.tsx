@@ -19,6 +19,8 @@ import { globalStyles } from '../helpers';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { DashboardScreen } from '../screens/DashboardScreen';
 import { VotdScreen } from '../screens/VotdScreen';
+import { SearchUserScreen } from '../screens/SearchUserScreen';
+import { MessagesScreen } from '../screens/MessagesScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -57,6 +59,7 @@ const MainStack = () => {
       <Drawer.Screen name={'PageScreen'} component={WebsiteScreen} />
 
       <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
+      <Drawer.Screen name={'SearchMessageUser'} component={SearchUserScreen} />
       <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />
       <Drawer.Screen name={'MemberDetailScreen'} component={MemberDetailScreen} />
       <Drawer.Screen name={'ServiceScreen'} component={ServiceScreen} />
@@ -84,6 +87,7 @@ const AppNavigation = (props: {}) => {
         <AppNav.Screen name="SplashScreen" component={SplashScreen} />
         <AppNav.Screen name="AuthStack" component={AuthStack} />
         <AppNav.Screen name="MainStack" component={MainStack} />
+        <AppNav.Screen name={'MessagesScreen'} component={MessagesScreen} />
       </AppNav.Navigator>
     </NavigationContainer>
   );

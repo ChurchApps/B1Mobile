@@ -84,7 +84,7 @@ export const LoginScreen = (props: Props) => {
 
         ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
         userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
-
+        ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
         await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
         await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
         await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.userChurches))
