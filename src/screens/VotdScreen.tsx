@@ -9,12 +9,6 @@ interface Props {
     goBack: () => void;
     openDrawer: () => void;
   };
-  route: {
-    params: {
-      url: any,
-      title: string
-    }
-  };
 }
 
 export const VotdScreen = (props: Props) => {
