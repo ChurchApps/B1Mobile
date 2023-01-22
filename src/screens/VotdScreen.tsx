@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SafeAreaView, Image, Dimensions } from 'react-native';
+import { View, SafeAreaView, Image, Dimensions, Text } from 'react-native';
 import { SimpleHeader } from '../components';
 import { globalStyles, Utilities } from '../helpers';
 
@@ -46,11 +46,13 @@ export const VotdScreen = (props: Props) => {
   }, []);
 
   const day = getDayOfYear();
+  const url = "https://votd.org/v1/" + day.toString() + "/" + shape + ".jpg";
+
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
       <SimpleHeader onPress={() => openDrawer()} title="Verse of the Day" />
       <View style={globalStyles.webViewContainer}>
-        <Image source={{ uri: "https://livechurchsolutions.github.io/VotdContent/v1/" + day + "/" + shape + ".jpg" }} style={{ flex: 1 }} resizeMode="stretch" />
+        <Image source={{ uri: url }} style={{ flex: 1 }} resizeMode="stretch" />
       </View>
     </SafeAreaView>
   );
