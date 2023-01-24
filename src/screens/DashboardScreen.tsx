@@ -13,17 +13,10 @@ interface Props {
     goBack: () => void;
     openDrawer: () => void;
   };
-  route: {
-    params: {
-      url: any,
-      title: string
-    }
-  };
 }
 
-export const DashboardScreen = (props: Props) => {
+export const DashboardScreen  = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
-  const { params } = props.route;
   const [isLoading, setLoading] = useState(false);
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));

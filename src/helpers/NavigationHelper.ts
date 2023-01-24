@@ -8,7 +8,6 @@ import SafariView from "react-native-safari-view";
 export class NavigationHelper {
 
   static navigateToScreen = (item: LinkInterface, navigate: any) => {
-    console.log(EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentUserChurch?.church?.id)
     const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
     if (item.linkType == "stream") navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", UserHelper.currentUserChurch?.church?.subDomain || ""), title: item.text })
     if (item.linkType == "lessons") navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentUserChurch?.church?.id, title: item.text })
