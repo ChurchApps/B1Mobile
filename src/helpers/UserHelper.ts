@@ -1,5 +1,6 @@
 import { ApiHelper, IPermission, UserInterface } from ".";
 import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
+import analytics from '@react-native-firebase/analytics';
 
 export class UserHelper {
   static churches: ChurchInterface[];
@@ -32,4 +33,7 @@ export class UserHelper {
     return result;
   }
 
+  static async addAnalyticsEvent(eventName : string, dataBody : any) {
+    await analytics().logEvent(eventName, dataBody);
+  }
 }
