@@ -1,6 +1,7 @@
 import { ApiHelper, IPermission, UserInterface } from ".";
 import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
 import analytics from '@react-native-firebase/analytics';
+import { Platform } from "react-native";
 
 export class UserHelper {
   static churches: ChurchInterface[];
@@ -35,5 +36,13 @@ export class UserHelper {
 
   static async addAnalyticsEvent(eventName : string, dataBody : any) {
     await analytics().logEvent(eventName, dataBody);
+  }
+
+  static async addOpenScreenEvent(screenName: string){
+    await analytics().logEvent("page_view", {
+      id: Date.now(),
+      device : Platform.OS,
+      page: screenName,
+    });
   }
 }

@@ -5,7 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { globalStyles } from '../../helpers';
+import { globalStyles, UserHelper } from '../../helpers';
 import { BottomButton, WhiteHeader } from '../../components';
 
 interface Props {
@@ -38,6 +38,7 @@ export const GroupsScreen = (props: Props) => {
 
   useEffect(() => {
     getGroupListData();
+    UserHelper.addOpenScreenEvent('GroupsScreen');
     Dimensions.addEventListener('change', () => {
       const dim = Dimensions.get('screen')
       setDimension(dim);

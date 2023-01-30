@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { Loader, WhiteHeader } from '../../components';
-import { ApiHelper, globalStyles } from '../../helpers';
+import { ApiHelper, globalStyles, UserHelper } from '../../helpers';
 import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
 
 interface Props {
@@ -29,7 +29,7 @@ export const ServiceScreen = (props: Props) => {
 
   useEffect(() => {
     getServiceData();
-
+    UserHelper.addOpenScreenEvent('ServiceScreen');
     Dimensions.addEventListener('change', () => {
       const dim = Dimensions.get('screen')
       setDimension(dim);

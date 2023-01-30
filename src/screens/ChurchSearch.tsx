@@ -33,7 +33,7 @@ export const ChurchSearch = (props: Props) => {
   useEffect(() => {
     Utilities.trackEvent("Church Search Screen");
     GetRecentList();
-
+    UserHelper.addOpenScreenEvent('ChurchSearch');
     Dimensions.addEventListener('change', () => {
       const dim = Dimensions.get('screen')
       setDimension(dim);

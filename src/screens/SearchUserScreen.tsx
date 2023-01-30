@@ -32,6 +32,7 @@ export const SearchUserScreen = (props: Props) => {
         Utilities.trackEvent("User search Screen");
         // GetRecentList();
         getPreviousConversations();
+        UserHelper.addOpenScreenEvent('SearchMessageUser');
         Dimensions.addEventListener('change', () => {
           const dim = Dimensions.get('screen')
           setDimension(dim);

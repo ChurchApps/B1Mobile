@@ -38,6 +38,8 @@ export const DashboardScreen  = (props: Props) => {
       const dim = Dimensions.get('screen')
       setDimension(dim);
     })
+
+    UserHelper.addOpenScreenEvent('Dashboard');
   }, [])
 
   useEffect(() => {
