@@ -67,3 +67,7 @@ buck-out/
 
 # Env
 .env
+
+# services file
+/android/app/google-services.json
+/ios/GoogleService-Info.plist

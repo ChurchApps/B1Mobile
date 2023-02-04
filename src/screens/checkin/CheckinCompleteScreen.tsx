@@ -4,7 +4,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { WhiteHeader } from '../../components';
-import { globalStyles } from '../../helpers';
+import { globalStyles, UserHelper } from '../../helpers';
 
 
 interface Props {
@@ -20,6 +20,7 @@ const CheckinCompleteScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
 
   useEffect(() => {
+    UserHelper.addOpenScreenEvent('CheckinCompleteScreen');
     serviceNavigate();
   }, []);
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, Linking, Dimensions, PixelRatio } from 'react-native';
+import { View, SafeAreaView, Text, ActivityIndicator, Alert, Linking, Dimensions, PixelRatio, Platform } from 'react-native';
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ChurchInterface, Constants, EnvironmentHelper, LoginResponseInterface, LoginUserChurchInterface, Utilities } from '../helpers';
+import { ChurchInterface, Constants, DateHelper, EnvironmentHelper, LoginResponseInterface, LoginUserChurchInterface, Utilities } from '../helpers';
 import Icon from 'react-native-vector-icons/Fontisto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../helpers';
@@ -81,6 +81,12 @@ export const LoginScreen = (props: Props) => {
         data.userChurches.forEach(uc => churches.push(uc.church));
         UserHelper.churches = churches;
         if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
+
+        UserHelper.addAnalyticsEvent('login', {
+          id: Date.now(),
+          device : Platform.OS,
+          church: userChurch.church.name,
+        });
 
         ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
         userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))

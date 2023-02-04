@@ -3,7 +3,7 @@ import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View, Dimensions, P
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ApiHelper, Constants, EnvironmentHelper } from '../../helpers';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from '../../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../../helpers';
 import { BottomButton, Loader, WhiteHeader } from '../../components';
@@ -41,7 +41,7 @@ export const HouseholdScreen = (props: Props) => {
 
   useEffect(() => {
     getMemberFromStorage();
-
+    UserHelper.addOpenScreenEvent('HouseholdScreen');
     Dimensions.addEventListener('change', () => {
       const dim = Dimensions.get('screen')
       setDimension(dim);

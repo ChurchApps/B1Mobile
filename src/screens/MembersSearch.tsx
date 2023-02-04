@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, SafeAreaView, Image, Text, Alert, TextInput, StyleSheet, Dimensions, PixelRatio } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, listenOrientationChange as lor, removeOrientationListener as rol } from 'react-native-responsive-screen';
-import { ApiHelper, Constants, EnvironmentHelper, Utilities } from '../helpers';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities } from '../helpers';
 import { globalStyles } from '../helpers';
 import { BlueHeader, Loader, SimpleHeader, WhiteHeader } from '../components';
 
@@ -30,6 +30,7 @@ export const MembersSearch = (props: Props) => {
   useEffect(() => {
     Utilities.trackEvent("Member Search Screen");
     loadMembers()
+    UserHelper.addOpenScreenEvent('MembersSearch');
     Dimensions.addEventListener('change', () => {
       const dim = Dimensions.get('screen')
       setDimension(dim);

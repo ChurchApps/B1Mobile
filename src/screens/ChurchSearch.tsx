@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View,  Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard, Dimensions, PixelRatio } from 'react-native';
+import { View,  Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard, Dimensions, PixelRatio, Platform } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, ArrayHelper, ChurchInterface, Constants, Utilities } from '../helpers';
@@ -33,7 +33,7 @@ export const ChurchSearch = (props: Props) => {
   useEffect(() => {
     Utilities.trackEvent("Church Search Screen");
     GetRecentList();
-
+    UserHelper.addOpenScreenEvent('ChurchSearch');
     Dimensions.addEventListener('change', () => {
       const dim = Dimensions.get('screen')
       setDimension(dim);
@@ -52,6 +52,11 @@ export const ChurchSearch = (props: Props) => {
       if (existing) churchData = existing.church;
       const churchValue = JSON.stringify(churchData);
       await AsyncStorage.setItem('CHURCH_DATA', churchValue)
+      UserHelper.addAnalyticsEvent('church_selected', {
+        id: Date.now(),
+        device : Platform.OS,
+        church: churchData.name,
+      });
       //await UserHelper.setCurrentUserChurch(userChurch);
       if (UserHelper.user) UserHelper.setPersonRecord();
       //DevSettings.reload()
