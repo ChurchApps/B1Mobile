@@ -23,9 +23,8 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ### Android
 1. Follow the environment setup instructions [here](https://reactnative.dev/docs/environment-setup) (first time only)
 2. Hardcode stage="prod" in EnvironmentHelper.ts
-3. Make sure /android/app/google-services.json and /ios/GoogleService-Info.plist files exist.
-4. Run `npm start -- --reset-cache` to pick up .env changes
-5. Increment the version number in android/app/build.gradle
+3. Make sure `/android/app/google-services.json` and `/ios/GoogleService-Info.plist` files exist.
+4. Increment the version number in `android/app/build.gradle` and `package.json`
 6. Run `cd android` followed by `gradlew bundleRelease` to produce the release bundle.
 7. Plug in an Android phonet via USB so an apk is generated for the correct device.
 8. Run `cd..` followed by `react-native run-android --variant=release` to generate an apk file for Android devices.  You can close the node window when it completes.
