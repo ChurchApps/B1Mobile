@@ -1,9 +1,9 @@
-import { Alert, Platform } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 import { Permissions } from "../interfaces";
 import { EnvironmentHelper } from "./EnvironmentHelper";
 import { LinkInterface } from "./Interfaces";
 import { UserHelper } from "./UserHelper";
-import SafariView from "react-native-safari-view";
+//import SafariView from "react-native-safari-view";
 
 export class NavigationHelper {
 
@@ -59,9 +59,10 @@ export class NavigationHelper {
     if (Platform.OS === "ios") {
       let url = "https://" + UserHelper.currentUserChurch?.church?.subDomain + ".b1.church/login/?returnUrl=%2Fdonate%3FnoHeader%3D1";
       if (UserHelper.currentUserChurch.jwt) url += "&jwt=" + UserHelper.currentUserChurch.jwt;
-      SafariView.isAvailable().then(() => {
+      Linking.openURL(url);
+      /*SafariView.isAvailable().then(() => {
         SafariView.show({ url: url })
-      })
+      })*/
     } else navigate('DonationScreen')
   }
 
