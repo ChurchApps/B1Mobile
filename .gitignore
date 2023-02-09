@@ -1,7 +1,7 @@
 *.bat
 *.hprof
 appcenter-config.json
-
+GoogleService-Info.plist
 # OSX
 #
 .DS_Store
