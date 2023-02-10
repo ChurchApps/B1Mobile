@@ -28,7 +28,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 6. Run `cd android` followed by `gradlew bundleRelease` to produce the release bundle.
 7. Plug in an Android phonet via USB so an apk is generated for the correct device.
 8. Run `cd..` followed by `react-native run-android --variant=release` to generate an apk file for Android devices.  You can close the node window when it completes.
-9. Open the app in Android studio.  Choose Build -> Generate Signed Bundle and point to your keys.
+9. Open the app in Android studio.  Choose Build -> Generate Signed Bundle and point to your keys.  Note: It may be necessary to run `SET NODE_OPTIONS=--openssl-legacy-provider` and then launch Android Studio from the console `C:\Program Files\Android\Android Studio\bin\studio64.exe` in order to comiple the release bundle.
 10. The signed build will be at `\android\app\release`.  Upload it to the Google Play store.
 
 ### iOS
