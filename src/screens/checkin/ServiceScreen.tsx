@@ -4,6 +4,7 @@ import { SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } fr
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { Loader, WhiteHeader } from '../../components';
 import { ApiHelper, globalStyles, UserHelper } from '../../helpers';
+import { ErrorHelper } from '../../helpers/ErrorHelper';
 import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
 
 interface Props {
@@ -76,8 +77,9 @@ export const ServiceScreen = (props: Props) => {
       const memberValue = JSON.stringify(memberList)
       await AsyncStorage.setItem('MEMBER_LIST', memberValue)
         .then(() => getGroupListData(serviceId, memberList))
-    } catch (error) {
+    } catch (error : any) {
       console.log('SET MEMBER LIST ERROR', error)
+      ErrorHelper.logError("create-household", error);
     }
   }
 
@@ -115,8 +117,9 @@ export const ServiceScreen = (props: Props) => {
       await AsyncStorage.setItem('GROUP_LIST', JSON.stringify(group_tree))
       await AsyncStorage.setItem('SCREEN', 'SERVICE');
       props.navigation.navigate('HouseholdScreen', { serviceId: serviceId, people_Ids: peopleIds })
-    } catch (error) {
+    } catch (error : any) {
       console.log('SET MEMBER LIST ERROR', error)
+      ErrorHelper.logError("get-group-list", error);
     }
   }
 

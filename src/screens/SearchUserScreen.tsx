@@ -5,6 +5,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { BlueHeader } from '../components';
 import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, globalStyles, UserHelper, UserSearchInterface, Utilities } from '../helpers';
+import { ErrorHelper } from '../helpers/ErrorHelper';
 
 interface Props {
     navigation: {
@@ -107,8 +108,9 @@ export const SearchUserScreen = (props: Props) => {
         // StoreToRecent(userData);
         try {
           props.navigation.navigate('MessagesScreen', { userDetails: userData })
-        } catch (err) {
+        } catch (err : any) {
           console.log(err)
+          ErrorHelper.logError("user-selection", err);
         }
       }
 

@@ -7,6 +7,7 @@ import { MainHeader, PaymentMethods, Donations, DonationForm, RecurringDonations
 import { initStripe } from "@stripe/stripe-react-native"
 import { StripePaymentMethod } from '../interfaces';
 import { useIsFocused } from '@react-navigation/native';
+import { ErrorHelper } from '../helpers/ErrorHelper';
 
 interface Props {
   navigation: {
@@ -55,6 +56,7 @@ const DonationScreen = (props: Props) => {
       setAreMethodsLoading(false)
     } catch (err: any) {
       Alert.alert("Failed to fetch payment methods", err.message)
+      ErrorHelper.logError("load-donations", err);
     }
 
   }

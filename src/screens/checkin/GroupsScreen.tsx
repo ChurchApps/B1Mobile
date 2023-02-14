@@ -7,6 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { globalStyles, UserHelper } from '../../helpers';
 import { BottomButton, WhiteHeader } from '../../components';
+import { ErrorHelper } from '../../helpers/ErrorHelper';
 
 interface Props {
   navigation: {
@@ -69,8 +70,9 @@ export const GroupsScreen = (props: Props) => {
         setMemberList(JSON.parse(member_list))
         setGroupTree(JSON.parse(group_list));
       }
-    } catch (error) {
+    } catch (error : any) {
       console.log('MEMBER LIST ERROR', error)
+      ErrorHelper.logError("group-list-data", error);
     }
   }
 
@@ -88,8 +90,9 @@ export const GroupsScreen = (props: Props) => {
       const memberValue = JSON.stringify(memberList)
       await AsyncStorage.setItem('MEMBER_LIST', memberValue)
         .then(() => goBack());
-    } catch (error) {
+    } catch (error : any) {
       console.log('SET MEMBER LIST ERROR', error)
+      ErrorHelper.logError("select-group", error);
     }
   }
 

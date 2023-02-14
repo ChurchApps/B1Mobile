@@ -10,6 +10,7 @@ import { PaymentMethodModal } from "../modals/PaymentMethodModal"
 import { globalStyles, UserHelper, ApiHelper, Constants } from "../../helpers";
 import { StripePaymentMethod, Permissions } from "../../interfaces";
 import { useIsFocused } from "@react-navigation/native";
+import { ErrorHelper } from "../../helpers/ErrorHelper";
 
 interface Props {
   customerId: string;
@@ -59,8 +60,9 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
             await ApiHelper.delete("/paymentmethods/" + editPaymentMethod.id + "/" + customerId, "GivingApi");
             setMode("display");
             await updatedFunction();
-          } catch (err) {
+          } catch (err : any) {
             Alert.alert("Error in deleting the method");
+            ErrorHelper.logError("payment-method-delete", err);
           }
         },
       },
