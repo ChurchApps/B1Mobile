@@ -23,13 +23,13 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ### Android
 1. Follow the environment setup instructions [here](https://reactnative.dev/docs/environment-setup) (first time only)
 2. Hardcode stage="prod" in EnvironmentHelper.ts
-3. Run `npm start -- --reset-cache` to pick up .env changes
-4. Increment the version number in android/app/build.gradle
-5. Run `cd android` followed by `gradlew bundleRelease` to produce the release bundle.
-6. Plug in an Android phonet via USB so an apk is generated for the correct device.
-7. Run `cd..` followed by `react-native run-android --variant=release` to generate an apk file for Android devices.  You can close the node window when it completes.
-8. Open the app in Android studio.  Choose Build -> Generate Signed Bundle and point to your keys.
-9. The signed build will be at `\android\app\release`.  Upload it to the Google Play store.
+3. Make sure `/android/app/google-services.json` and `/ios/GoogleService-Info.plist` files exist.
+4. Increment the version number in `android/app/build.gradle` and `package.json`
+6. Run `cd android` followed by `gradlew bundleRelease` to produce the release bundle.
+7. Plug in an Android phonet via USB so an apk is generated for the correct device.
+8. Run `cd..` followed by `react-native run-android --variant=release` to generate an apk file for Android devices.  You can close the node window when it completes.
+9. Open the app in Android studio.  Choose Build -> Generate Signed Bundle and point to your keys.  Note: It may be necessary to run `SET NODE_OPTIONS=--openssl-legacy-provider` and then launch Android Studio from the console `C:\Program Files\Android\Android Studio\bin\studio64.exe` in order to comiple the release bundle.
+10. The signed build will be at `\android\app\release`.  Upload it to the Google Play store.
 
 ### iOS
 1. Follow instructions [here](https://help.dropsource.com/docs/documentation/after-dropsource/publishing-your-app/submitting-an-ios-app-to-the-app-store/#:~:text=Archive%20your%20App,Click%20Validate%20App)
