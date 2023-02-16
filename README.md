@@ -32,7 +32,11 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 10. The signed build will be at `\android\app\release`.  Upload it to the Google Play store.
 
 ### iOS
-1. Follow instructions [here](https://help.dropsource.com/docs/documentation/after-dropsource/publishing-your-app/submitting-an-ios-app-to-the-app-store/#:~:text=Archive%20your%20App,Click%20Validate%20App)
+Follow instructions [here](https://help.dropsource.com/docs/documentation/after-dropsource/publishing-your-app/submitting-an-ios-app-to-the-app-store/#:~:text=Archive%20your%20App,Click%20Validate%20App)
+1. Run `yarn`
+2. Run `cd ios` and `pod install`
+3. In XCode open `Info` and increase the version number and code.
+4. Build, archive, validate and distribute.
 
 ### Codepush release
 1. Hardcode stage="prod" in EnvironmentHelper.ts
