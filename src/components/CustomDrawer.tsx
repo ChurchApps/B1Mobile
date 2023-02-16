@@ -8,6 +8,7 @@ import MessageIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
 import RNRestart from 'react-native-restart';
 import { NavigationHelper } from '../helpers/NavigationHelper';
+import { ErrorHelper } from '../helpers/ErrorHelper';
 
 export function CustomDrawer(props: any) {
   const { navigate, goBack, openDrawer } = props.navigation;
@@ -48,8 +49,8 @@ export function CustomDrawer(props: any) {
         }
       }
 
-    } catch (e) {
-      console.log(e)
+    } catch (e : any) {
+      ErrorHelper.logError("custom-drawer", e);
     }
   }
 

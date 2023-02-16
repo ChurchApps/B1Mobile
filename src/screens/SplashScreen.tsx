@@ -4,6 +4,7 @@ import { View, Image, Dimensions, PixelRatio } from 'react-native';
 import { ChurchInterface, globalStyles, LoginUserChurchInterface, Utilities } from '../helpers';
 import { Constants } from '../helpers';
 import { ApiHelper, UserHelper } from "../helpers"
+import { ErrorHelper } from '../helpers/ErrorHelper';
 
 interface Props {
   navigation: {
@@ -76,8 +77,9 @@ const SplashScreen = (props: Props) => {
 
         props.navigation.navigate('MainStack');
       }
-    } catch (e) {
+    } catch (e : any) {
       console.log(e)
+      ErrorHelper.logError("splash-screen-error", e);
     }
   }
 

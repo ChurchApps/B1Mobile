@@ -9,6 +9,7 @@ import { CustomModal } from "../modals/CustomModal";
 import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper, Constants } from "../../helpers";
 import { DisplayBox } from "../";
 import { StripePaymentMethod, SubscriptionInterface } from "../../interfaces";
+import { ErrorHelper } from "../../helpers/ErrorHelper";
 
 interface Props {
   customerId: string;
@@ -134,9 +135,10 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               await updatedFunction();
               loadDonations();
             });
-          } catch (err) {
+          } catch (err : any) {
             setIsDeleting(false);
             Alert.alert("Error in deleting the method");
+            ErrorHelper.logError("Delete-recurring-payment", err);
           }
         },
       },

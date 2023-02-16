@@ -7,6 +7,7 @@ import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from '../../helpe
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../../helpers';
 import { BottomButton, Loader, WhiteHeader } from '../../components';
+import { ErrorHelper } from '../../helpers/ErrorHelper';
 
 interface Props {
   navigation: {
@@ -76,8 +77,9 @@ export const HouseholdScreen = (props: Props) => {
         }
       }
 
-    } catch (error) {
+    } catch (error : any) {
       console.log('MEMBER LIST ERROR', error)
+      ErrorHelper.logError("get-member-from-storage", error);
     }
   }
 
@@ -118,8 +120,9 @@ export const HouseholdScreen = (props: Props) => {
       setMemberList(member_list)
       const memberValue = JSON.stringify(member_list)
       await AsyncStorage.setItem('MEMBER_LIST', memberValue)
-    } catch (error) {
+    } catch (error : any) {
       console.log('SET MEMBER LIST ERROR', error)
+      ErrorHelper.logError("set-attendance", error);
     }
   }
 
@@ -148,8 +151,9 @@ export const HouseholdScreen = (props: Props) => {
       await AsyncStorage.removeItem('MEMBER_LIST')
       await AsyncStorage.removeItem('GROUP_LIST')
       navigate('CheckinCompleteScreen', {})
-    } catch (error) {
+    } catch (error : any) {
       console.log('CLEAR MEMBER LIST ERROR', error)
+      ErrorHelper.logError("submit-attendance", error);
     }
 
   }

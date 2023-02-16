@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles, UserHelper } from '../helpers';
 import { BlueHeader } from '../components';
 import RNRestart from 'react-native-restart';
+import { ErrorHelper } from '../helpers/ErrorHelper';
 
 interface Props {
   navigation: {
@@ -48,7 +49,9 @@ export const ChurchSearch = (props: Props) => {
       let existing = null;
       try {
         if (UserHelper.churches) existing = ArrayHelper.getOne(UserHelper.churches, "church.id", churchData.id);
-      } catch { }
+      } catch (e : any){ 
+        ErrorHelper.logError("store-recent-church", e);
+      }
       if (existing) churchData = existing.church;
       const churchValue = JSON.stringify(churchData);
       await AsyncStorage.setItem('CHURCH_DATA', churchValue)
@@ -61,8 +64,8 @@ export const ChurchSearch = (props: Props) => {
       if (UserHelper.user) UserHelper.setPersonRecord();
       //DevSettings.reload()
       RNRestart.Restart();
-    } catch (err) {
-      console.log(err)
+    } catch (err : any) {
+      ErrorHelper.logError("church-search", err);
     }
   }
 
@@ -84,8 +87,9 @@ export const ChurchSearch = (props: Props) => {
         let reverseList = list.reverse()
         setRecentList(reverseList);
       }
-    } catch (err) {
+    } catch (err : any) {
       console.log('GET RECENT CHURCHES ERROR', err)
+      ErrorHelper.logError("get-recent-church", err);
     }
   }
 
@@ -96,8 +100,9 @@ export const ChurchSearch = (props: Props) => {
     try {
       const churchlist = JSON.stringify(filteredItems)
       await AsyncStorage.setItem('RECENT_CHURCHES', churchlist)
-    } catch (err) {
+    } catch (err : any) {
       console.log('SET RECENT CHURCHES ERROR', err)
+      ErrorHelper.logError("store-recent-church", err);
     }
   }
 

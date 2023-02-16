@@ -1,3 +1,4 @@
+import { ErrorHelper } from "./ErrorHelper";
 import { ApiConfig, RolePermissionInterface, ApiListType } from "./Interfaces";
 
 export class ApiHelper {
@@ -44,7 +45,8 @@ export class ApiHelper {
       console.log(config.url + path)
       console.log(JSON.stringify(requestOptions))
       return fetch(config.url + path, requestOptions).then(response => response.json()).catch(_ => null)
-    } catch (e) {
+    } catch (e : any) {
+      ErrorHelper.logError("get-method", e);
       throw (e);
     }
   }
@@ -55,7 +57,8 @@ export class ApiHelper {
     try {
       const requestOptions = { method: "GET" };
       return fetch(config.url + path, requestOptions).then(response => response.json())
-    } catch (e) {
+    } catch (e : any) {
+      ErrorHelper.logError("get-anonymous-method", e);
       throw (e);
     }
   }

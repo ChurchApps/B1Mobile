@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import AppNavigator from './src/navigation/AppNavigation';
 import { View } from 'react-native';
 import { EnvironmentHelper } from "./src/helpers"
@@ -16,12 +16,16 @@ if (Platform.OS === "android") {
   }
 }
 import "intl/locale-data/jsonp/en";
+import { ErrorHelper } from './src/helpers/ErrorHelper';
 
 
 
 EnvironmentHelper.init();
 const App = () => {
 
+  useEffect(() => {
+    ErrorHelper.init();
+  }, []);
 
   return (
     <ActionSheetProvider>
