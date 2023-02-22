@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList,  ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList,  ActivityIndicator, Linking } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -112,14 +112,31 @@ export function CustomDrawer(props: any) {
     );
   }
 
-  const getUserInfo = () => {
+  const getUserInfo = () => {    
     if (UserHelper.currentUserChurch?.person && user != null) {
-      return (<View style={[globalStyles.headerView, {marginTop : wp('15%')}]}>
-        <Image source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo || "" }} style={globalStyles.userIcon} />
-        <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
-        {UserHelper.user ? messagesView() : null}
+      return (<View>
+        <View style={[globalStyles.headerView, {marginTop : wp('15%')}]}>
+          {(UserHelper.currentUserChurch.person.photo == null || UserHelper.currentUserChurch.person.photo == undefined) 
+            ? null 
+            : <Image 
+                source={{ uri: (EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo) || "" }} 
+                style={globalStyles.userIcon} 
+              />}
+          <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
+          {UserHelper.user ? messagesView() : null}
+        </View>
+        <TouchableOpacity style={globalStyles.headerView} onPress={() => editProfileAction()}>
+          <Text style={{fontSize: wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white'}}>{'Edit profile'}</Text>
+        </TouchableOpacity>
       </View>)
     }
+  }
+
+  const editProfileAction = () => {
+    let url = "https://app.chums.org/login?returnUrl=/profile";
+    if (UserHelper.currentUserChurch.jwt) url += "&jwt=" + UserHelper.currentUserChurch.jwt;
+    Linking.openURL(url);
+    logoutAction();
   }
 
   const loginOutToggle = () => {
