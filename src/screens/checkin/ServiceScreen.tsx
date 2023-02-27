@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { Loader, WhiteHeader } from '../../components';
-import { ApiHelper, globalStyles, UserHelper } from '../../helpers';
+import { ApiHelper, globalStyles, LoginUserChurchInterface, UserHelper } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
 import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
 
@@ -52,19 +52,20 @@ export const ServiceScreen = (props: Props) => {
     getMemberData(item.id);
   }
 
-  const getMemberData = async (serviceId: any) => {
+  const getMemberData = async (serviceId: any) => {    
+    const currentChurch = JSON.parse((await AsyncStorage.getItem('CHURCH_DATA'))!)
+    const churchesList = await AsyncStorage.getItem('CHURCHES_DATA')
+    const tst : LoginUserChurchInterface[] = JSON.parse(churchesList!);
+    const currentData : LoginUserChurchInterface | undefined = tst.find((value, index) => value.church.id == currentChurch!.id);
 
-    const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
-    if (churchvalue !== null) {
-      const churchData = JSON.parse(churchvalue);
-      const personId = churchData.personId
-
-      if (personId) {
-        const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
-        const householdMembers: PersonInterface[] = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
-        const serviceTimes: ServiceTimeInterface = await ApiHelper.get("/serviceTimes?serviceId" + serviceId, "AttendanceApi");
-        createHouseholdTree(serviceId, serviceTimes, householdMembers);
-      }
+    if(currentData != null || currentData != undefined){
+        const personId = currentData.person.id
+        if (personId) {
+          const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
+          const householdMembers: PersonInterface[] = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
+          const serviceTimes: ServiceTimeInterface = await ApiHelper.get("/serviceTimes?serviceId" + serviceId, "AttendanceApi");
+          createHouseholdTree(serviceId, serviceTimes, householdMembers);
+        }
     }
   }
 
