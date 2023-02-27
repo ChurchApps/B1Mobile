@@ -54,10 +54,10 @@ export class NavigationHelper {
     }
   }
 
-  static navDonations(navigate: any) {
+  static navDonations(navigate: any) {    
     UserHelper.addOpenScreenEvent('DonationScreen');
     if (Platform.OS === "ios") {
-      let url = "https://" + UserHelper.currentUserChurch?.church?.subDomain + ".b1.church/login/?returnUrl=%2Fdonate%3FnoHeader%3D1";
+      let url = "https://" + UserHelper.currentUserChurch?.church?.subDomain + ".b1.church/login/?returnUrl=%2Fdonation-landing";
       if (UserHelper.currentUserChurch.jwt) url += "&jwt=" + UserHelper.currentUserChurch.jwt;
       Linking.openURL(url);
       /*SafariView.isAvailable().then(() => {
