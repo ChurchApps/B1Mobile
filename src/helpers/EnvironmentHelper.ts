@@ -1,4 +1,4 @@
-import { STAGE, ACCESS_API, MEMBERSHIP_API, MESSAGING_API, ATTENDANCE_API, GIVING_API, B1_API, CONTENT_ROOT, LESSONS_ROOT, STREAMING_LIVE_ROOT, B1_WEB_ROOT } from "@env"
+import { STAGE, ACCESS_API, MEMBERSHIP_API, MESSAGING_API, ATTENDANCE_API, GIVING_API, CONTENT_API, CONTENT_ROOT, LESSONS_ROOT, STREAMING_LIVE_ROOT, B1_WEB_ROOT } from "@env"
 import { ApiHelper } from "./ApiHelper"
 
 export class EnvironmentHelper {
@@ -6,7 +6,7 @@ export class EnvironmentHelper {
   public static MessagingApi = "";
   public static AttendanceApi = "";
   public static GivingApi = "";
-  public static B1Api = "";
+  public static ContentApi = "";
   public static LessonsRoot = "";
   public static StreamingLiveRoot = "";
   public static B1WebRoot = "";
@@ -26,7 +26,7 @@ export class EnvironmentHelper {
       { keyName: "MessagingApi", url: EnvironmentHelper.MessagingApi, jwt: "", permisssions: [] },
       { keyName: "AttendanceApi", url: EnvironmentHelper.AttendanceApi, jwt: "", permisssions: [] },
       { keyName: "GivingApi", url: EnvironmentHelper.GivingApi, jwt: "", permisssions: [] },
-      { keyName: "B1Api", url: EnvironmentHelper.B1Api, jwt: "", permisssions: [] }
+      { keyName: "ContentApi", url: EnvironmentHelper.ContentApi, jwt: "", permisssions: [] }
     ]
 
 
@@ -39,7 +39,7 @@ export class EnvironmentHelper {
     EnvironmentHelper.MessagingApi = MESSAGING_API || "";
     EnvironmentHelper.AttendanceApi = ATTENDANCE_API || "";
     EnvironmentHelper.GivingApi = GIVING_API || "";
-    EnvironmentHelper.B1Api = B1_API || "";
+    EnvironmentHelper.ContentApi = CONTENT_API || "";
     EnvironmentHelper.ContentRoot = CONTENT_ROOT || "";
     EnvironmentHelper.LessonsRoot = LESSONS_ROOT || "";
     EnvironmentHelper.StreamingLiveRoot = STREAMING_LIVE_ROOT || "";
@@ -52,7 +52,7 @@ export class EnvironmentHelper {
     EnvironmentHelper.MessagingApi = "https://messagingapi.churchapps.org";
     EnvironmentHelper.AttendanceApi = "https://attendanceapi.churchapps.org";
     EnvironmentHelper.GivingApi = "https://givingapi.churchapps.org";
-    EnvironmentHelper.B1Api = "https://api.b1.church";
+    EnvironmentHelper.ContentApi = "https://contentapi.churchapps.org";
     EnvironmentHelper.ContentRoot = "https://content.churchapps.org";
     EnvironmentHelper.LessonsRoot = "https://lessons.church";
     EnvironmentHelper.StreamingLiveRoot = "https://{subdomain}.streaminglive.church";

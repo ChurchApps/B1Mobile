@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList,  ActivityIndicator, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Image, FlatList, ActivityIndicator, Linking } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,7 +33,7 @@ export function CustomDrawer(props: any) {
       }
       let userChurch: LoginUserChurchInterface | null = null;
       const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
-      
+
       if (churchvalue !== null) {
         if (churchvalue) {
           const church = JSON.parse(churchvalue);
@@ -43,20 +43,20 @@ export function CustomDrawer(props: any) {
           getMemberData(church?.personId);
           if (church?.id) {
             userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
-            
+
             if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
           }
         }
       }
 
-    } catch (e : any) {
+    } catch (e: any) {
       ErrorHelper.logError("custom-drawer", e);
     }
   }
 
   const getDrawerList = (churchId: any) => {
     setLoading(true);
-    ApiHelper.getAnonymous("/links/church/" + churchId + "?category=tab", "B1Api").then(data => {
+    ApiHelper.getAnonymous("/links/church/" + churchId + "?category=b1Tab", "ContentApi").then(data => {
       setLoading(false);
       setDrawerList(data);
       UserHelper.links = data;
@@ -77,7 +77,7 @@ export function CustomDrawer(props: any) {
   }
 
   const listItem = (topItem: boolean, item: any) => {
-    var tab_icon = item.icon != undefined ? item.icon.split("_").join("-") : '';    
+    var tab_icon = item.icon != undefined ? item.icon.split("_").join("-") : '';
     if (tab_icon === "calendar-month") tab_icon = "calendar-today"; //not sure why this is missing from https://oblador.github.io/react-native-vector-icons/
     //console.log(tab_icon);
     return (
@@ -85,7 +85,7 @@ export function CustomDrawer(props: any) {
       <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
           <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />}
-          <Text style={globalStyles.tabTitle}>{item.text}</Text>
+        <Text style={globalStyles.tabTitle}>{item.text}</Text>
       </TouchableOpacity>
     );
   }
@@ -94,7 +94,7 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {getUserInfo()}
-        <TouchableOpacity style={[globalStyles.churchBtn, {marginTop: churchEmpty ? wp('12%') : user != null ? wp('6%') : wp('12%')}]} onPress={() => navigate('ChurchSearch', {})}>
+        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? wp('12%') : user != null ? wp('6%') : wp('12%') }]} onPress={() => navigate('ChurchSearch', {})}>
           {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
           <Text style={{ ...globalStyles.churchText }}>
             {churchEmpty ? 'Find your church...' : churchName}
@@ -112,21 +112,21 @@ export function CustomDrawer(props: any) {
     );
   }
 
-  const getUserInfo = () => {    
+  const getUserInfo = () => {
     if (UserHelper.currentUserChurch?.person && user != null) {
       return (<View>
-        <View style={[globalStyles.headerView, {marginTop : wp('15%')}]}>
-          {(UserHelper.currentUserChurch.person.photo == null || UserHelper.currentUserChurch.person.photo == undefined) 
-            ? null 
-            : <Image 
-                source={{ uri: (EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo) || "" }} 
-                style={globalStyles.userIcon} 
-              />}
+        <View style={[globalStyles.headerView, { marginTop: wp('15%') }]}>
+          {(UserHelper.currentUserChurch.person.photo == null || UserHelper.currentUserChurch.person.photo == undefined)
+            ? null
+            : <Image
+              source={{ uri: (EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo) || "" }}
+              style={globalStyles.userIcon}
+            />}
           <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
           {UserHelper.user ? messagesView() : null}
         </View>
         <TouchableOpacity style={globalStyles.headerView} onPress={() => editProfileAction()}>
-          <Text style={{fontSize: wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white'}}>{'Edit profile'}</Text>
+          <Text style={{ fontSize: wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' }}>{'Edit profile'}</Text>
         </TouchableOpacity>
       </View>)
     }
@@ -163,16 +163,16 @@ export function CustomDrawer(props: any) {
 
   return (
     <View >
-        {
-          loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
-            <FlatList 
-              data={drawerList} 
-              renderItem={({ item }) => listItem(false, item)}
-              keyExtractor={(item: any) => item.id} 
-              ListHeaderComponent={drawerHeaderComponent()}
-              ListFooterComponent={drawerFooterComponent()}
-            />
-        }
+      {
+        loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
+          <FlatList
+            data={drawerList}
+            renderItem={({ item }) => listItem(false, item)}
+            keyExtractor={(item: any) => item.id}
+            ListHeaderComponent={drawerHeaderComponent()}
+            ListFooterComponent={drawerFooterComponent()}
+          />
+      }
     </View>
   );
 };

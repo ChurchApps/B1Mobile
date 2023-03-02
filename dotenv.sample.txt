@@ -5,7 +5,7 @@ CONTENT_ROOT=https://content.staging.churchapps.org
 MEMBERSHIP_API=https://membershipapi.staging.churchapps.org
 ATTENDANCE_API=https://attendanceapi.staging.churchapps.org
 GIVING_API=https://givingapi.staging.churchapps.org
-B1_API=https://api.staging.b1.church
+CONTENT_API=https://contentapi.churchapps.org
 
 LESSONS_ROOT=https://staging.lessons.church
 STREAMING_LIVE_ROOT=https://{subdomain}.staging.streaminglive.church
