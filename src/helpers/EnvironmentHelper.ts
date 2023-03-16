@@ -15,7 +15,7 @@ export class EnvironmentHelper {
 
   static init = () => {
     let stage = STAGE;
-    stage = "prod";
+    stage = "dev";
     switch (stage) {
       case "prod": EnvironmentHelper.initProd(); break;
       default: EnvironmentHelper.initDev(); break;
@@ -35,15 +35,15 @@ export class EnvironmentHelper {
   }
 
   static initDev = () => {
-    EnvironmentHelper.MembershipApi = MEMBERSHIP_API || "";
-    EnvironmentHelper.MessagingApi = MESSAGING_API || "";
-    EnvironmentHelper.AttendanceApi = ATTENDANCE_API || "";
-    EnvironmentHelper.GivingApi = GIVING_API || "";
-    EnvironmentHelper.ContentApi = CONTENT_API || "";
-    EnvironmentHelper.ContentRoot = CONTENT_ROOT || "";
-    EnvironmentHelper.LessonsRoot = LESSONS_ROOT || "";
-    EnvironmentHelper.StreamingLiveRoot = STREAMING_LIVE_ROOT || "";
-    EnvironmentHelper.B1WebRoot = B1_WEB_ROOT || "";
+    EnvironmentHelper.MembershipApi = MEMBERSHIP_API || "https://membershipapi.staging.churchapps.org";
+    EnvironmentHelper.MessagingApi = MESSAGING_API || "https://messagingapisstaging.churchapps.org";
+    EnvironmentHelper.AttendanceApi = ATTENDANCE_API || "https://attendanceapi.staging.churchapps.org";
+    EnvironmentHelper.GivingApi = GIVING_API || "https://givingapi.staging.churchapps.org";
+    EnvironmentHelper.ContentApi = CONTENT_API || "https://contentapi.staging.churchapps.org";
+    EnvironmentHelper.ContentRoot = CONTENT_ROOT || "https://content.staging.churchapps.org";
+    EnvironmentHelper.LessonsRoot = LESSONS_ROOT || "https://staging.lessons.church";
+    EnvironmentHelper.StreamingLiveRoot = STREAMING_LIVE_ROOT || "https://{subdomain}.staging.streaminglive.church";
+    EnvironmentHelper.B1WebRoot = B1_WEB_ROOT || "https://{subdomain}.staging.b1.church";
   }
 
   // NOTE - None of these values are secret
