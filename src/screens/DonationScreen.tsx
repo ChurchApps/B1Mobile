@@ -33,7 +33,7 @@ const DonationScreen = (props: Props) => {
     Utilities.trackEvent("Donation Screen");
     try {
       setAreMethodsLoading(true)
-      const data = await ApiHelper.get("/gateways", "GivingApi")
+      const data = await ApiHelper.get("/gateways/churchId/"+UserHelper.currentUserChurch.church.id, "GivingApi")      
       if (data.length && data[0]?.publicKey) {
         initStripe({
           publishableKey: data[0].publicKey
@@ -72,13 +72,14 @@ const DonationScreen = (props: Props) => {
         rightComponent={null}
       />
       <ScrollView>
+        {UserHelper.currentUserChurch?.person?.id ? 
         <PaymentMethods
           customerId={customerId}
           paymentMethods={paymentMethods}
           updatedFunction={loadData}
           isLoading={areMethodsLoading}
           publishKey={publishKey}
-        />
+        /> : null}
         <DonationForm
           paymentMethods={paymentMethods}
           customerId={customerId}
