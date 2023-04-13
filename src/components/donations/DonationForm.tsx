@@ -12,6 +12,7 @@ import { FundDonationInterface, FundInterface, StripePaymentMethod, StripeDonati
 import { FundDonations, } from ".";
 import { PreviewModal } from "../";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -97,11 +98,22 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setDonationType("");
   };
 
-  const loadData = () => {
-    ApiHelper.get("/funds/churchId/" + UserHelper.currentUserChurch.church.id, "GivingApi").then((data) => {
-      setFunds(data);
-      if (data.length) setFundDonations([{ fundId: data[0].id }]);
-    });
+  const loadData = async () => {
+    var churchId : string = ""; 
+    if(!UserHelper.currentUserChurch?.person?.id){
+      churchId = UserHelper.currentUserChurch.church.id ?? "";
+    }else{
+      const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+      if (churchvalue !== null) {
+        const church = JSON.parse(churchvalue);
+        console.log("CHURRRCHH -> ", church?.id);
+        churchId = church.id ?? "";
+      }
+    }    
+      ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then((data) => {
+        setFunds(data);
+        if (data.length) setFundDonations([{ fundId: data[0].id }]);
+      });
   };
 
   const handleFundDonationsChange = (fd: FundDonationInterface[]) => {
@@ -201,7 +213,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       setEmail('');
       setFirstName('');
       setLastName('')
-      Alert.alert("Payment Succesful!", message, [{ text: "OK", onPress: () => updatedFunction() }]);
+      Alert.alert("Thank you for your donation.", message, [{ text: "OK", onPress: () => updatedFunction() }]);
     }
     if (results?.raw?.message) {
       setShowPreviewModal(false);
@@ -245,7 +257,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setDonation(donationsCopy);
   };
 
-  useEffect(loadData, []);
+  useEffect(() => {
+    loadData();
+  }, []);
 
   useEffect(() => {
     setPaymentMethods(pm.map((p) => ({ label: `${p.name} ****${p.last4}`, value: p.id })));
@@ -353,26 +367,29 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     }}
                   />
                 </View>}
-              <Text style={[globalStyles.searchMainText, {marginTop: wp("5.5%")}]}>
-                {donationType === "once" ? "Donation Date" : "Recurring Donation Start Date"}
-              </Text>
-              <View style={globalStyles.dateInput}>
-                <Text style={globalStyles.dateText} numberOfLines={1}>
-                  {moment(date).format("DD-MM-YYYY")}
-                </Text>
-                <ModalDatePicker
-                  button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={wp("6%")} />}
-                  locale="en"
-                  onSelect={(date: any) => {
-                    setDate(date);
-                    const donationsCopy = { ...donation };
-                    donationsCopy.billing_cycle_anchor = date;
-                    setDonation(donationsCopy);
-                  }}
-                  isHideOnSelect={true}
-                  initialDate={new Date()}
-                />
-              </View>
+                {donationType === "once" ? null : 
+                <View>
+                  <Text style={[globalStyles.searchMainText, {marginTop: wp("5.5%")}]}>
+                    {donationType === "once" ? "Donation Date" : "Recurring Donation Start Date"}
+                  </Text>
+                  <View style={globalStyles.dateInput}>
+                    <Text style={globalStyles.dateText} numberOfLines={1}>
+                      {moment(date).format("DD-MM-YYYY")}
+                    </Text>
+                    <ModalDatePicker
+                      button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={wp("6%")} />}
+                      locale="en"
+                      onSelect={(date: any) => {
+                        setDate(date);
+                        const donationsCopy = { ...donation };
+                        donationsCopy.billing_cycle_anchor = date;
+                        setDonation(donationsCopy);
+                      }}
+                      isHideOnSelect={true}
+                      initialDate={new Date()}
+                    />
+                  </View>
+                </View>}
               {donationType === "recurring" && (
                 <View style={globalStyles.intervalView}>
                   {/* <View>
