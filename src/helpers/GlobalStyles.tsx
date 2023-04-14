@@ -176,6 +176,8 @@ export const globalStyles = StyleSheet.create({
   donationRowContainer: { width: wp("90%"), display: "flex", flexDirection: "row" },
   donationRowText: { width: wp("35%"), textAlign: "center", fontFamily: Constants.Fonts.RobotoRegular, fontSize: wp("4.2%") },
 
+  donationInputFieldContainer : { height: wp('12%'), flexDirection: 'row', alignItems: 'center', marginTop: wp('5.5%'), marginHorizontal: wp('5%'), backgroundColor: 'white', borderRadius: wp('2%'), borderColor:"lightgray", borderWidth:1},
+
   // Message screen
   messageInputContainer: {flexDirection:'row', justifyContent: 'space-between', marginTop: wp('2.5%'), marginBottom: wp('1%'), alignSelf: 'center', width: wp('90%')},
   messageInputStyle: { height: wp('10%'), width: wp('75%'), borderColor: Constants.Colors.app_color, borderWidth: 1, fontSize: wp('3.8%'), color: 'gray', alignItems:'center', justifyContent:'center', paddingHorizontal: wp('2%'), paddingVertical: wp('1%'), borderRadius: 5},

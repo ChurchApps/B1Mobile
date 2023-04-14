@@ -4,12 +4,15 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-nat
 import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
+import IconP from 'react-native-vector-icons/Fontisto';
 import moment from "moment";
 import { InputBox } from "../";
-import { globalStyles, ApiHelper, UserHelper, Constants } from "../../helpers";
+import { globalStyles, ApiHelper, UserHelper, Constants, UserInterface } from "../../helpers";
 import { FundDonationInterface, FundInterface, StripePaymentMethod, StripeDonationInterface, PersonInterface, } from "../../interfaces";
 import { FundDonations, } from ".";
 import { PreviewModal } from "../";
+import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -27,6 +30,12 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<{ label: string; value: string }[]>([]);
   const [total, setTotal] = React.useState<number>(0);
+  const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
+
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
   const initDonation: StripeDonationInterface = {
     id: pm[0]?.id,
     type: pm[0]?.type,
@@ -74,6 +83,13 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     if (donation.amount && donation.amount < 0.5) {
       Alert.alert("Donation amount must be greater than $0.50");
     } else {
+      if(!UserHelper.currentUserChurch?.person?.id){
+        donation.person = {
+          id: "",
+          email : email,
+          name : firstName + " " + lastName,
+        };
+      }
       setShowPreviewModal(true);
     }
   };
@@ -82,11 +98,21 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setDonationType("");
   };
 
-  const loadData = () => {
-    ApiHelper.get("/funds/churchId/" + UserHelper.currentUserChurch.church.id, "GivingApi").then((data) => {
-      setFunds(data);
-      if (data.length) setFundDonations([{ fundId: data[0].id }]);
-    });
+  const loadData = async () => {
+    var churchId : string = ""; 
+    if(!UserHelper.currentUserChurch?.person?.id){
+      churchId = UserHelper.currentUserChurch.church.id ?? "";
+    }else{
+      const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+      if (churchvalue !== null) {
+        const church = JSON.parse(churchvalue);
+        churchId = church.id ?? "";
+      }
+    }    
+      ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then((data) => {
+        setFunds(data);
+        if (data.length) setFundDonations([{ fundId: data[0].id }]);
+      });
   };
 
   const handleFundDonationsChange = (fd: FundDonationInterface[]) => {
@@ -106,16 +132,68 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   };
 
   const makeDonation = async (message: string) => {
-    let results;
     const method = pm.find((pm) => pm.id === selectedMethod);
-    const payload: StripeDonationInterface = {
-      ...donation,
-      id: selectedMethod,
-      customerId: customerId,
-      type: method?.type,
-      billing_cycle_anchor: +new Date(date),
-    };
+    if(!UserHelper.currentUserChurch?.person?.id){
+      ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi")
+        .catch(ex => { 
+          Alert.alert("Failed", ex.toString());
+          return;
+         })
+        .then(async userData => {
+          const personData = { churchId: UserHelper.currentUserChurch.church.id, firstName, lastName, email };
+          const person = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi")
+          saveCard(userData, person)
+        });
+    }else{
+      const payload: StripeDonationInterface = {
+        ...donation,
+        id: selectedMethod,
+        customerId: customerId,
+        type: method?.type,
+        billing_cycle_anchor: +new Date(date),
+      };
+      saveDonation(payload, '');
+    }
+  };
 
+  const saveCard = async (user: UserInterface, person: PersonInterface) => {
+    const stripePaymentMethod = await createPaymentMethod({
+      paymentMethodType : 'Card',
+      ...cardDetails,
+    });
+
+    if (stripePaymentMethod.error) {
+      Alert.alert("Failed", stripePaymentMethod.error.message);
+      return;
+    }else{
+      const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId: UserHelper.currentUserChurch.church.id }
+      await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi").then(result => {
+        if (result?.raw?.message) {
+          Alert.alert("Failed",result.raw.message);
+        } else {
+          const d: { paymentMethod: StripePaymentMethod, customerId: string } = result;
+          donation.person = {
+            name : firstName + " " + lastName,
+            id: person.id!,
+            email: email,
+          };
+          const payload: StripeDonationInterface = {
+            id: d.paymentMethod.id,
+            customerId: d.customerId,
+            type: d.paymentMethod?.type,
+            amount : donation.amount,
+            churchId: UserHelper.currentUserChurch.church.id,
+            funds: donation.funds,
+            person : donation.person,
+          };
+          saveDonation(payload, "");
+        }
+      });
+    }
+  }
+
+  const saveDonation = async (payload : StripeDonationInterface, message : string) => {
+    let results;
     if (donationType === "once") results = await ApiHelper.post("/donate/charge/", payload, "GivingApi");
     if (donationType === "recurring") results = await ApiHelper.post("/donate/subscribe/", payload, "GivingApi");
 
@@ -125,13 +203,16 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       setTotal(0);
       setFundDonations([{ fundId: funds[0]?.id }]);
       setDonation(initDonation);
-      Alert.alert("Payment Succesful!", message, [{ text: "OK", onPress: () => updatedFunction() }]);
+      setEmail('');
+      setFirstName('');
+      setLastName('')
+      Alert.alert("Thank you for your donation.", message, [{ text: "OK", onPress: () => updatedFunction() }]);
     }
     if (results?.raw?.message) {
       setShowPreviewModal(false);
       Alert.alert("Failed to make a donation", results?.raw?.message);
     }
-  };
+  }
 
   const handleIntervalChange = (key: string, value: any) => {
     const donationsCopy = { ...donation };
@@ -169,7 +250,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setDonation(donationsCopy);
   };
 
-  useEffect(loadData, []);
+  useEffect(() => {
+    loadData();
+  }, []);
 
   useEffect(() => {
     setPaymentMethods(pm.map((p) => ({ label: `${p.name} ****${p.last4}`, value: p.id })));
@@ -227,48 +310,79 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
           </View>
           {donationType ? (
             <View>
-              <Text style={{ ...globalStyles.searchMainText, marginTop: wp("4%") }}>Payment Method</Text>
-              <View style={{ width: wp("100%"), marginBottom: wp("12%") }}>
-                <DropDownPicker
-                  listMode="SCROLLVIEW"
-                  open={isMethodsDropdownOpen}
-                  items={paymentMethods}
-                  value={selectedMethod}
-                  setOpen={setIsMethodsDropdownOpen}
-                  setValue={setSelectedMethod}
-                  setItems={setPaymentMethods}
-                  containerStyle={{
-                    ...globalStyles.containerStyle,
-                    height: isMethodsDropdownOpen ? paymentMethods.length * wp("12%") : 0,
-                  }}
-                  style={globalStyles.dropDownMainStyle}
-                  labelStyle={globalStyles.labelStyle}
-                  listItemContainerStyle={globalStyles.itemStyle}
-                  dropDownContainerStyle={globalStyles.dropDownStyle}
-                  scrollViewProps={{ scrollEnabled: true }}
-                  dropDownDirection="BOTTOM"
-                />
-              </View>
-              <Text style={globalStyles.searchMainText}>
-                {donationType === "once" ? "Donation Date" : "Recurring Donation Start Date"}
-              </Text>
-              <View style={globalStyles.dateInput}>
-                <Text style={globalStyles.dateText} numberOfLines={1}>
-                  {moment(date).format("DD-MM-YYYY")}
-                </Text>
-                <ModalDatePicker
-                  button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={wp("6%")} />}
-                  locale="en"
-                  onSelect={(date: any) => {
-                    setDate(date);
-                    const donationsCopy = { ...donation };
-                    donationsCopy.billing_cycle_anchor = date;
-                    setDonation(donationsCopy);
-                  }}
-                  isHideOnSelect={true}
-                  initialDate={new Date()}
-                />
-              </View>
+              {!UserHelper.currentUserChurch?.person?.id ? (
+                <View style={{ width: wp("100%") }}>
+                  <View style={[globalStyles.donationInputFieldContainer, {width: wd('90%'),}]}>
+                    <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: wd('90%'), color: 'black'}]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
+                  </View>
+                  <View style={[globalStyles.donationInputFieldContainer, { width: wd('90%') }]}>
+                    <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: wd('90%'), color: 'black'}]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
+                  </View>
+                  <View style={[globalStyles.donationInputFieldContainer, { width: wd('90%') }]}>
+                    <IconP name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: wd('90%'), color: 'black'}]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+                  </View>
+                </View>
+              ) : null}
+              <Text style={{ ...globalStyles.searchMainText, marginTop: wp("5.5%") }}>{UserHelper.currentUserChurch?.person?.id ? "Payment Method" : "Add Card"}</Text>
+              {UserHelper.currentUserChurch?.person?.id ? 
+                <View style={{ width: wp("100%"), marginBottom: wp("12%") }}>
+                  <DropDownPicker
+                    listMode="SCROLLVIEW"
+                    open={isMethodsDropdownOpen}
+                    items={paymentMethods}
+                    value={selectedMethod}
+                    setOpen={setIsMethodsDropdownOpen}
+                    setValue={setSelectedMethod}
+                    setItems={setPaymentMethods}
+                    containerStyle={{
+                      ...globalStyles.containerStyle,
+                      height: isMethodsDropdownOpen ? paymentMethods.length * wp("12%") : 0,
+                    }}
+                    style={globalStyles.dropDownMainStyle}
+                    labelStyle={globalStyles.labelStyle}
+                    listItemContainerStyle={globalStyles.itemStyle}
+                    dropDownContainerStyle={globalStyles.dropDownStyle}
+                    scrollViewProps={{ scrollEnabled: true }}
+                    dropDownDirection="BOTTOM"
+                  />
+                </View>
+              : <View style={[globalStyles.donationInputFieldContainer, { width: wd('90%'), padding:10, marginTop: wp('3%') }]}>
+                  <CardField
+                    postalCodeEnabled={true}
+                    placeholders={{ number: "4242 4242 4242 4242", cvc : "123" }}
+                    cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000" }}
+                    style={{ width: "88%", height: 50, backgroundColor: "white" }}
+                    onCardChange={(cardDetails) => {
+                      setCardDetails(cardDetails);
+                    }}
+                  />
+                </View>}
+                {donationType === "once" ? null : 
+                <View>
+                  <Text style={[globalStyles.searchMainText, {marginTop: wp("5.5%")}]}>
+                    {donationType === "once" ? "Donation Date" : "Recurring Donation Start Date"}
+                  </Text>
+                  <View style={globalStyles.dateInput}>
+                    <Text style={globalStyles.dateText} numberOfLines={1}>
+                      {moment(date).format("DD-MM-YYYY")}
+                    </Text>
+                    <ModalDatePicker
+                      button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={wp("6%")} />}
+                      locale="en"
+                      onSelect={(date: any) => {
+                        setDate(date);
+                        const donationsCopy = { ...donation };
+                        donationsCopy.billing_cycle_anchor = date;
+                        setDonation(donationsCopy);
+                      }}
+                      isHideOnSelect={true}
+                      initialDate={new Date()}
+                    />
+                  </View>
+                </View>}
               {donationType === "recurring" && (
                 <View style={globalStyles.intervalView}>
                   {/* <View>

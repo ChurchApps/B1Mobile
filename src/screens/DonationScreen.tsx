@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Image, Text, TouchableOpacity, Alert, Platform } from 'react-native';
+import { SafeAreaView, Image, Text, TouchableOpacity, Alert, Platform, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Constants, Utilities } from '../helpers';
 import { globalStyles, UserHelper, ApiHelper } from '../helpers';;
@@ -8,6 +8,7 @@ import { initStripe } from "@stripe/stripe-react-native"
 import { StripePaymentMethod } from '../interfaces';
 import { useIsFocused } from '@react-navigation/native';
 import { ErrorHelper } from '../helpers/ErrorHelper';
+import { widthPercentageToDP } from 'react-native-responsive-screen';
 
 interface Props {
   navigation: {
@@ -33,7 +34,7 @@ const DonationScreen = (props: Props) => {
     Utilities.trackEvent("Donation Screen");
     try {
       setAreMethodsLoading(true)
-      const data = await ApiHelper.get("/gateways", "GivingApi")
+      const data = await ApiHelper.get("/gateways/churchId/"+UserHelper.currentUserChurch.church.id, "GivingApi")      
       if (data.length && data[0]?.publicKey) {
         initStripe({
           publishableKey: data[0].publicKey
@@ -72,24 +73,31 @@ const DonationScreen = (props: Props) => {
         rightComponent={null}
       />
       <ScrollView>
+        {UserHelper.currentUserChurch?.person?.id ? 
         <PaymentMethods
           customerId={customerId}
           paymentMethods={paymentMethods}
           updatedFunction={loadData}
           isLoading={areMethodsLoading}
           publishKey={publishKey}
-        />
+        /> : null}
         <DonationForm
           paymentMethods={paymentMethods}
           customerId={customerId}
           updatedFunction={loadData}
         />
-        <RecurringDonations
-          customerId={customerId}
-          paymentMethods={paymentMethods}
-          updatedFunction={loadData}
-        />
-        <Donations />
+        {!UserHelper.currentUserChurch?.person?.id 
+          ? <Text style={ [globalStyles.paymentDetailText, {marginVertical: widthPercentageToDP('2%'),}] }>
+          Please login to view existing donations
+        </Text>
+          : <View>
+              <RecurringDonations
+                customerId={customerId}
+                paymentMethods={paymentMethods}
+                updatedFunction={loadData}
+              />
+              <Donations />
+          </View>}
       </ScrollView>
     </SafeAreaView >
   );

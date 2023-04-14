@@ -26,8 +26,9 @@ export class NavigationHelper {
       navigate('VotdScreen', {})
     }
     if (item.linkType == "donation") {
-      if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.")
-      else NavigationHelper.navDonations(navigate);
+      // if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.")
+      // else NavigationHelper.navDonations(navigate);
+      NavigationHelper.navDonations(navigate);
     }
     if (item.linkType == "url") {
       UserHelper.addOpenScreenEvent('WebsiteScreen');
