@@ -106,7 +106,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
       if (churchvalue !== null) {
         const church = JSON.parse(churchvalue);
-        console.log("CHURRRCHH -> ", church?.id);
         churchId = church.id ?? "";
       }
     }    
@@ -163,8 +162,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       ...cardDetails,
     });
 
-    console.log("The new card ----> ",stripePaymentMethod);
-    
     if (stripePaymentMethod.error) {
       Alert.alert("Failed", stripePaymentMethod.error.message);
       return;
@@ -189,7 +186,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             funds: donation.funds,
             person : donation.person,
           };
-          console.log("The current payload ---> ", payload);
           saveDonation(payload, "");
         }
       });
@@ -200,9 +196,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     let results;
     if (donationType === "once") results = await ApiHelper.post("/donate/charge/", payload, "GivingApi");
     if (donationType === "recurring") results = await ApiHelper.post("/donate/subscribe/", payload, "GivingApi");
-
-    console.log("The results 00000> ", results);
-    
 
     if (results?.status === "succeeded" || results?.status === "pending" || results?.status === "active") {
       setShowPreviewModal(false);
