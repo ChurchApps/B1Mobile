@@ -48,3 +48,60 @@ export interface ConversationInterface { id: string, churchId: string, contentTy
 export interface MessageInterface { id: string, churchId: string, conversationId: string, userId: string, displayName: string, timeSent: Date, messageType: string, content: string, personId: string, timeUpdated: Date }
 export interface ConversationCreateInterface { allowAnonymousPosts: boolean, contentType: string, contentId: string, title: string, visibility: string, churchId: string, id: string }
 export interface PrivateMessagesCreate { fromPersonId: string, toPersonId: string, conversationId: string, churchId: string, id: string }
+
+// My Group Interface
+export interface GroupInterface { id?: string, name?: string, categoryName?: string, memberCount?: number, trackAttendance?: boolean, parentPickup?: boolean, about?: string, photoUrl?: string }
+export interface PersonInterface {
+    id?: string,
+    name: NameInterface,
+    contactInfo: ContactInfoInterface,
+    membershipStatus?: string,
+    gender?: string,
+    birthDate?: Date,
+    maritalStatus?: string,
+    anniversary?: Date,
+    photo?: string,
+    photoUpdated?: Date,
+    householdId?: string,
+    householdRole?: string,
+    userId?: string,
+    school?: string,
+    grade?: string,
+    graduationDate?: string,
+    employer?: string,
+    formSubmissions?: [FormSubmissionInterface]
+    child?: boolean,
+    inactiveReason?: string,
+    inactiveDate?: Date,
+    servicesUser?: boolean,
+    calendarUser?: boolean,
+    checkInsUser?: boolean,
+    registrationsUser?: boolean,
+    givingUser?: boolean,
+    groupsUser?: boolean,
+    conversationId?: string,
+    optedOut?: boolean
+  }
+
+  export interface Message {
+    timeSent: string;
+    timeUpdated: string;
+    person: PersonInterface;
+    displayName: string;
+    content: string;
+    conversationId?: string,
+  }
+  export interface NotesInterface {
+    item: any;
+    message: Message;
+    idx?: number;
+    showReplyBox?: number | null;
+    handleReply: (param: any) => void;
+    onUpdate: () => void;
+  }
+
+  export interface PrivateMessageInterface {
+    id?: string, churchId?: string, fromPersonId?: string, toPersonId?: string, conversationId?: string, notifyPersonId?: string
+    conversation?: ConversationInterface;
+    person?: PersonInterface;
+  }

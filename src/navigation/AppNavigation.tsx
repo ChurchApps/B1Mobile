@@ -21,6 +21,8 @@ import { DashboardScreen } from '../screens/DashboardScreen';
 import { VotdScreen } from '../screens/VotdScreen';
 import { SearchUserScreen } from '../screens/SearchUserScreen';
 import { MessagesScreen } from '../screens/MessagesScreen';
+import MyGroups from '../screens/MyGroups';
+import GroupDetails from '../screens/GroupDetails';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -67,6 +69,8 @@ const MainStack = () => {
       <Drawer.Screen name={'GroupsScreen'} component={GroupsScreen} />
       <Drawer.Screen name={'CheckinCompleteScreen'} component={CheckinCompleteScreen} />
       <Drawer.Screen name={'DonationScreen'} component={DonationScreen} />
+      <Drawer.Screen name={'MyGroups'} component={MyGroups} />
+      <Drawer.Screen name={'GroupDetails'} component={GroupDetails} />
     </Drawer.Navigator>
   );
 }
