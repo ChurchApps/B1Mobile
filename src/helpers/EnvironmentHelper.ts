@@ -39,7 +39,7 @@ export class EnvironmentHelper {
     EnvironmentHelper.MessagingApi = MESSAGING_API || "https://messagingapi.staging.churchapps.org";
     EnvironmentHelper.AttendanceApi = ATTENDANCE_API || "https://attendanceapi.staging.churchapps.org";
     EnvironmentHelper.GivingApi = GIVING_API || "https://givingapi.staging.churchapps.org";
-    EnvironmentHelper.ContentApi = "https://contentapi.staging.churchapps.org";
+    EnvironmentHelper.ContentApi = CONTENT_API || "https://contentapi.staging.churchapps.org";
     EnvironmentHelper.ContentRoot = CONTENT_ROOT || "https://content.staging.churchapps.org";
     EnvironmentHelper.LessonsRoot = LESSONS_ROOT || "https://staging.lessons.church";
     EnvironmentHelper.StreamingLiveRoot = STREAMING_LIVE_ROOT || "https://{subdomain}.staging.streaminglive.church";

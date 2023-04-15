@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, FlatList, Image, Dimensions, PixelRatio } from 'react-native';
-import { ApiHelper, LinkInterface, UserHelper, Utilities } from '../helpers';
+import { LinkInterface, UserHelper, Utilities } from '../helpers';
 import { Loader, SimpleHeader } from '../components';
 import { globalStyles } from '../helpers';
 import { ImageButton } from '../components/ImageButton';
@@ -52,7 +52,6 @@ export const DashboardScreen  = (props: Props) => {
   }
 
   const getButton = (topItem: boolean, item: LinkInterface) => {
-    console.log(item)
     let img = require("../assets/images/dash_worship.png"); //https://www.pexels.com/photo/man-raising-his-left-hand-2351722/
 
     if (item.photo) {

@@ -37,6 +37,7 @@
     "react-native-dropdown-picker": "^5.4.4",
     "react-native-exception-handler": "^2.10.10",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-markdown-display": "^7.0.0-alpha.2",
     "react-native-material-date-picker": "^1.0.0",
     "react-native-modal": "^13.0.1",
     "react-native-modal-datetime-picker": "^10.2.0",
