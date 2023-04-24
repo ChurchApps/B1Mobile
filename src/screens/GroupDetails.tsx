@@ -139,7 +139,7 @@ const GroupDetails = (props: any) => {
             groupId={groupId}
           />
         ) : (
-          <View style={[globalStyles.webViewContainer, { marginTop: 0 }]}>
+          <View>
             {getGroupMembers()}
           </View>
         )}

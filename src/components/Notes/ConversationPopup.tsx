@@ -10,19 +10,18 @@ import {
   ApiHelper,
   Constants,
   ConversationInterface,
-  Message,
+  MessageInterface,
   UserHelper,
   globalStyles,
 } from "../../helpers";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import Notes from "./Notes";
-import { onChange } from "react-native-reanimated";
 
 interface NewConversation {
   placeholder: string;
   type: string;
-  message?: any;
+  message?: MessageInterface;
 }
 
 const ConversationPopup = ({
@@ -30,7 +29,7 @@ const ConversationPopup = ({
   loadConversations,
   groupId,
 }: any) => {
-  const [newMessage] = useState<Message>();
+  const [newMessage] = useState<MessageInterface>();
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
 
   const textRef = React.useRef('')
@@ -38,7 +37,7 @@ const ConversationPopup = ({
   const handleReply = (value: number) => setShowReplyBox(value);
   const onUpdate = () => loadConversations();
 
-  const validate = (message: Message) => {
+  const validate = (message: MessageInterface) => {
     const result = [];
     if (!message?.content.trim()) result.push("Please enter a note.");
     return result.length === 0;
@@ -46,7 +45,7 @@ const ConversationPopup = ({
 
   const handleSave = async (message: any) => {
     try {
-      let m = { ...newMessage } as Message;
+      let m = { ...newMessage } as MessageInterface;
       m.content = textRef.current;
       
       if (m && validate(m)) {
@@ -66,7 +65,7 @@ const ConversationPopup = ({
     }
   };
 
-  const createConversation = async (message: Message) => {
+  const createConversation = async (message: MessageInterface) => {
     const conv: any = {
       groupId,
       allowAnonymousPosts: false,
@@ -99,7 +98,6 @@ const ConversationPopup = ({
           message={item.messages[i]}
           showReplyBox={showReplyBox}
           handleReply={handleReply}
-          onUpdate={onUpdate}
         />
       );
     return noteArray;
@@ -122,7 +120,6 @@ const ConversationPopup = ({
           idx={idx}
           showReplyBox={showReplyBox}
           handleReply={handleReply}
-          onUpdate={onUpdate}
         />
         {idx === showReplyBox && (
           <RenderNewConversation placeholder={"Reply ..."} type="reply" message={message} />

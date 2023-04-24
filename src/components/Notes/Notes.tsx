@@ -8,17 +8,17 @@ import {
 } from "react-native";
 import React from "react";
 import moment from "moment";
-import { Constants, globalStyles } from "../../helpers";
+import { Constants, MessageInterface, globalStyles } from "../../helpers";
 import { PersonHelper } from "../../helpers/PersonHelper";
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from "react-native-responsive-screen";
-import {
-  Message,
-  MessageInterface,
-  NotesInterface,
-} from "../../helpers/Interfaces";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+
+interface NotesInterface {
+  item: any;
+  message: MessageInterface;
+  idx?: number;
+  showReplyBox?: number | null;
+  handleReply: (param: any) => void;
+}
 
 const Notes = ({
   item,
@@ -26,8 +26,9 @@ const Notes = ({
   idx,
   showReplyBox,
   handleReply,
-  onUpdate,
 }: NotesInterface) => {
+  console.log("Message ==", message);
+
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
     return PixelRatio.roundToNearestPixel(
@@ -44,7 +45,7 @@ const Notes = ({
       <View style={[globalStyles.conversationList, { width: wd("100%") }]}>
         <Image
           source={
-            message.person.photo
+            message?.person?.photo
               ? { uri: PersonHelper.getPhotoUrl(message.person) }
               : Constants.Images.ic_member
           }
