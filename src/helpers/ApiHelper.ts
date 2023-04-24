@@ -42,8 +42,6 @@ export class ApiHelper {
     if (config === undefined) return;
     try {
       const requestOptions = { method: 'GET', headers: { 'Authorization': 'Bearer ' + config.jwt } };
-      console.log(config.url + path)
-      console.log(JSON.stringify(requestOptions))
       return fetch(config.url + path, requestOptions).then(response => response.json()).catch(_ => null)
     } catch (e : any) {
       ErrorHelper.logError("get-method", e);
@@ -64,15 +62,15 @@ export class ApiHelper {
   }
 
   static async post(path: string, data: any[] | {}, apiName: ApiListType) {
+    
     const config = this.getConfig(apiName);
     if (config === undefined) return;
+  
     const requestOptions = {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + config.jwt, 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     };
-    console.log(config.url + path)
-    console.log(JSON.stringify(requestOptions))
     return fetch(config.url + path, requestOptions).then(response => response.json()).catch(_ => null);
   }
 

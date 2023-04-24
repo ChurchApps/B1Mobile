@@ -185,4 +185,10 @@ export const globalStyles = StyleSheet.create({
   messageContainer : { flexDirection:'row', justifyContent: 'flex-start', alignItems: 'flex-start', paddingVertical: wp('1%'), marginVertical: wp('2%') },
   senderNameText : { fontSize:16, fontWeight:'bold', paddingVertical: wp('0.5%')},
   messageView : { fontSize : 15, backgroundColor: Constants.Colors.app_color_light, borderWidth:1, borderRadius: 5, borderColor:'transparent', paddingHorizontal : wp('2%'), paddingVertical : wp("1%"), justifyContent:'center', alignItems: 'flex-start'},
+
+  // My Group Screen
+  groupImage: { width: wp('92%'), height: wp('40%'), borderRadius: wp('1.5%')  },
+  conversationList: {
+    backgroundColor: 'white', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row', paddingVertical: 12
+}
 })

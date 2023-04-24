@@ -46,8 +46,6 @@ export const SearchUserScreen = (props: Props) => {
           setLoading(false);
           var userIdList : string[] = []
           if(Object.keys(data).length != 0){
-            console.log("The data lent ---> ", data.length);
-            
             userIdList = data.map((e) => UserHelper.currentUserChurch.person.id == e.fromPersonId ? e.toPersonId : e.fromPersonId);
             if(userIdList.length != 0){
               ApiHelper.get("/people/ids?ids=" + userIdList.join(','), "MembershipApi").then((userData : UserSearchInterface[]) => {
@@ -56,8 +54,6 @@ export const SearchUserScreen = (props: Props) => {
                   const singleUser : UserSearchInterface = userData[i];
                   const tempConvo : ConversationCheckInterface | undefined = data.find(x => x.fromPersonId == singleUser.id || x.toPersonId == singleUser.id)
                   userData[i].conversationId = tempConvo?.conversationId
-                  console.log("The conversation id ----> "+tempConvo?.conversationId+ " and uyser -----> "+ singleUser.id);
-                  
                 }
                 setSearchList(userData);
               })

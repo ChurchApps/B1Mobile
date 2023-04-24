@@ -36,7 +36,7 @@ export class EnvironmentHelper {
 
   static initDev = () => {
     EnvironmentHelper.MembershipApi = MEMBERSHIP_API || "https://membershipapi.staging.churchapps.org";
-    EnvironmentHelper.MessagingApi = MESSAGING_API || "https://messagingapisstaging.churchapps.org";
+    EnvironmentHelper.MessagingApi = MESSAGING_API || "https://messagingapi.staging.churchapps.org";
     EnvironmentHelper.AttendanceApi = ATTENDANCE_API || "https://attendanceapi.staging.churchapps.org";
     EnvironmentHelper.GivingApi = GIVING_API || "https://givingapi.staging.churchapps.org";
     EnvironmentHelper.ContentApi = CONTENT_API || "https://contentapi.staging.churchapps.org";

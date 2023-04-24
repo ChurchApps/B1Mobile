@@ -53,6 +53,11 @@ export class NavigationHelper {
         navigate('ServiceScreen', {})
       }
     }
+    if(item.linkType === 'groups'){
+      if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.")
+      UserHelper.addOpenScreenEvent('MyGroups');
+      navigate('MyGroups')
+    }
   }
 
   static navDonations(navigate: any) {
