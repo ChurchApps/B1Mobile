@@ -29,7 +29,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
 
   const createCard = async () => {
     const stripePaymentMethod = await createPaymentMethod({
-      type: "Card",
+      paymentMethodType : 'Card',
       ...cardDetails,
     });
 
@@ -94,7 +94,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
         <View>
           <CardField
             postalCodeEnabled={true}
-            placeholder={{ number: "4242 4242 4242 4242" }}
+            placeholders={{ number: "4242 4242 4242 4242" }}
             cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000" }}
             style={{ width: "100%", height: 50, marginTop: wp("2%"), backgroundColor: "white" }}
             onCardChange={(cardDetails) => {

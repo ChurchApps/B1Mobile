@@ -5,11 +5,13 @@ import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-e
 export class ErrorHelper {
 
     static logEvent(eventType: string, source: string, message: string) {
+      //console.log("***************Adding new event to analytics : ",{source, message});
       Analytics.trackEvent(eventType, { source, message })
     }
   
-    static logError(source: string, message: string) {
-      console.log("Adding new error to analytics : ",{source, message});
+    static logError(source: string, error: any) {
+      const message = error.message || error;
+      //console.log("***************Adding new error to analytics : ",{source, message});
       
       Analytics.trackEvent("Error", { source, message })
     }

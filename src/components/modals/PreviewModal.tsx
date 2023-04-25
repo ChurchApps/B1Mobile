@@ -61,7 +61,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
           </View>
           <View style={globalStyles.previewView}>
             <Text style={globalStyles.previewTitleText}>Payment Method:</Text>
-            <Text style={{ ...globalStyles.previewDetailText }}>{paymentMethodName}</Text>
+            <Text style={{ ...globalStyles.previewDetailText }}>{paymentMethodName == undefined || paymentMethodName == ""  ? "Card" : paymentMethodName}</Text>
           </View>
           <View style={globalStyles.previewView}>
             <Text style={globalStyles.previewTitleText}>Type:</Text>
