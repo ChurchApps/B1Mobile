@@ -42,7 +42,7 @@ export const WebsiteScreen = (props: Props) => {
     <SafeAreaView style={globalStyles.homeContainer}>
       <SimpleHeader onPress={() => openDrawer()} title={getTitle()} />
       <View style={globalStyles.webViewContainer}>
-        <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: UserHelper.currentUserChurch?.church?.subDomain + params?.url }} scalesPageToFit={false} />
+        <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: params?.url }} scalesPageToFit={false} />
       </View>
       {isLoading && <Loader isLoading={isLoading} />}
     </SafeAreaView>

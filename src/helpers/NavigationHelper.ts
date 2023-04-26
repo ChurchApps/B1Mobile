@@ -36,7 +36,7 @@ export class NavigationHelper {
     }
     if (item.linkType == "page") {
       UserHelper.addOpenScreenEvent('PageScreen');
-      navigate('PageScreen', { url: item.url, title: item.text })
+      navigate('PageScreen', { url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", UserHelper.currentUserChurch?.church?.subDomain || "") + item.url, title: item.text })
     }
     if (item.linkType == "directory") {
       if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.")
