@@ -15,6 +15,7 @@
     "@react-native-community/datetimepicker": "6.3.4",
     "@react-native-firebase/analytics": "^16.5.2",
     "@react-native-firebase/app": "^16.5.2",
+    "@react-native-firebase/messaging": "^18.3.0",
     "@react-native-masked-view/masked-view": "^0.2.8",
     "@react-navigation/drawer": "^5.12.9",
     "@react-navigation/native": "^5.9.8",

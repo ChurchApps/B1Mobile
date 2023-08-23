@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { EnvironmentHelper } from "./src/helpers"
 import CodePush from 'react-native-code-push';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+import { requestUserPermission, NotificationListener} from './src/utils/PushNotificationHelper';
 
 // Need manually add Intl polyfill for react-native app
 import "intl";
@@ -27,6 +28,11 @@ const App = () => {
     ErrorHelper.init();
   }, []);
 
+
+  useEffect(()=>{
+    requestUserPermission();
+    NotificationListener();
+  })
   return (
     <ActionSheetProvider>
       <View style={{ flex: 1 }}>
