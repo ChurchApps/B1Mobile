@@ -24,6 +24,9 @@ export const WebsiteScreen = (props: Props) => {
   const { params } = props.route;
   const [isLoading, setLoading] = useState(false);
 
+
+  console.log("params from previous screen---->",params)
+
   const checkRedirect = () => {
     if (!UserHelper.currentUserChurch) props.navigation.navigate("ChurchSearch")
   }

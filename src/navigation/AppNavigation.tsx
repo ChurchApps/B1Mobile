@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Dimensions,PixelRatio} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import {Text, Linking, Platform} from 'react-native'
+import { Dimensions,PixelRatio, } from 'react-native';
+import { NavigationContainer, getStateFromPath } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import SplashScreen from '../screens/SplashScreen';
@@ -15,7 +16,7 @@ import { ServiceScreen } from '../screens/checkin/ServiceScreen';
 import { MembersSearch } from '../screens/MembersSearch';
 import { MemberDetailScreen } from '../screens/MemberDetailScreen';
 import DonationScreen from '../screens/DonationScreen';
-import { globalStyles } from '../helpers';
+import { globalStyles,UserHelper } from '../helpers';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { DashboardScreen } from '../screens/DashboardScreen';
 import { VotdScreen } from '../screens/VotdScreen';
@@ -28,10 +29,52 @@ const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
+const linking={
+  prefixes:[`https://*.b1.church/member`],
+  config:{
+    screens:{
+      MainStack:{
+        screens:{
+          Donation:{
+            path: 'donation' 
+          },
+          VotdScreen :{
+            path:'votd'
+          },
+          ServiceScreen: {
+            path: 'checkin',
+          },
+          MembersSearch:{
+            path:'directory'
+          },
+          MyGroups:{
+            path:'groups'
+          },
+          LessonsScreen:{
+            path:'lessons'
+          }
+        },
+
+      }
+    }
+  }
+  
+}
 const MainStack = () => {
 
   const [dimension, setDimension] = React.useState(Dimensions.get('screen'));
   
+
+  React.useEffect(() => {
+      const navigateToInitialUrl = async () => {
+      const initialUrl = await Linking.getInitialURL()
+      console.log("initial url ---->", initialUrl)
+      if (initialUrl) {
+      await Linking.openURL(initialUrl)
+      }
+    }
+    navigateToInitialUrl()
+  }, [])
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -42,24 +85,23 @@ const MainStack = () => {
     return PixelRatio.roundToNearestPixel((dimension.height * givenWidth) / 100);
   };
 
- React.useEffect(() => {
+  React.useEffect(() => {
     Dimensions.addEventListener('change', () => {
       const dim = Dimensions.get('screen')
       setDimension(dim);
     })
   }, [dimension])
-  //Note:  By not combining the Website screen users can toggle between them without their current page on each tab being lost
+ //Note:  By not combining the Website screen users can toggle between them without their current page on each tab being lost
 
   return (
     <Drawer.Navigator initialRouteName={'WebsiteScreen'} drawerType={'slide'} drawerStyle={[globalStyles.drawerStyle,{width:wd('60%'),height:hd('100%')}]} drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name={'Dashboard'} component={DashboardScreen} />
       <Drawer.Screen name={'BibleScreen'} component={WebsiteScreen} />
-      <Drawer.Screen name={'VotdScreen'} component={VotdScreen} />
+      <Drawer.Screen name={'VotdScreen'} component={VotdScreen}  />
       <Drawer.Screen name={'LessonsScreen'} component={WebsiteScreen} />
       <Drawer.Screen name={'StreamScreen'} component={WebsiteScreen} />
       <Drawer.Screen name={'WebsiteScreen'} component={WebsiteScreen} />
       <Drawer.Screen name={'PageScreen'} component={WebsiteScreen} />
-
       <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
       <Drawer.Screen name={'SearchMessageUser'} component={SearchUserScreen} />
       <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />
@@ -86,8 +128,8 @@ const AuthStack = () => {
 
 const AppNavigation = (props: {}) => {
   return (
-    <NavigationContainer>
-      <AppNav.Navigator headerMode="none" initialRouteName='SplashScreen'  >
+    <NavigationContainer linking={linking}>
+      <AppNav.Navigator headerMode="none"  initialRouteName='SplashScreen' >
         <AppNav.Screen name="SplashScreen" component={SplashScreen} />
         <AppNav.Screen name="AuthStack" component={AuthStack} />
         <AppNav.Screen name="MainStack" component={MainStack} />
