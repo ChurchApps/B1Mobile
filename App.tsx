@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import AppNavigator from './src/navigation/AppNavigation';
-import { View } from 'react-native';
+import { View, Linking } from 'react-native';
 import { EnvironmentHelper } from "./src/helpers"
 import CodePush from 'react-native-code-push';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
@@ -23,11 +23,38 @@ import { ErrorHelper } from './src/helpers/ErrorHelper';
 EnvironmentHelper.init();
 const App = () => {
 
-  useEffect(() => {
-    ErrorHelper.init();
-  }, []);
+  
 
-  return (
+//   React.useEffect(() => {
+//     Linking.addEventListener("url", Linking.getInitialURL);
+
+//     return () => {
+//         Linking.removeEventListener("url", Linking.getInitialURL);
+//     };
+// }, []);
+React.useEffect(() => {
+      const navigateToInitialUrl = async () => {
+      const initialUrl = await Linking.getInitialURL()
+      console.log("initial url ---->", initialUrl)
+      if (initialUrl !=undefined && initialUrl != null) {
+        setTimeout(()=>{
+       Linking.openURL(initialUrl)
+        },1000)
+      
+      console.log("initial url which open the screen through deep link", initialUrl)
+      }
+      return initialUrl;
+    }
+    
+    navigateToInitialUrl();
+    
+  }, [])
+  
+useEffect(() => {
+  ErrorHelper.init();
+  }, []);
+          
+    return (
     <ActionSheetProvider>
       <View style={{ flex: 1 }}>
         <AppNavigator />

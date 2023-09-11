@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, Linking, Platform} from 'react-native'
+import {Text, Linking, Platform, View} from 'react-native'
 import { Dimensions,PixelRatio, } from 'react-native';
 import { NavigationContainer, getStateFromPath } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -35,7 +35,7 @@ const linking={
     screens:{
       MainStack:{
         screens:{
-          Donation:{
+          DonationScreen:{
             path: 'donation' 
           },
           VotdScreen :{
@@ -64,18 +64,8 @@ const MainStack = () => {
 
   const [dimension, setDimension] = React.useState(Dimensions.get('screen'));
   
-
-  React.useEffect(() => {
-      const navigateToInitialUrl = async () => {
-      const initialUrl = await Linking.getInitialURL()
-      console.log("initial url ---->", initialUrl)
-      if (initialUrl) {
-      await Linking.openURL(initialUrl)
-      }
-    }
-    navigateToInitialUrl()
-  }, [])
-
+  
+  
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
     return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
@@ -128,7 +118,7 @@ const AuthStack = () => {
 
 const AppNavigation = (props: {}) => {
   return (
-    <NavigationContainer linking={linking}>
+    <NavigationContainer  linking={linking} fallback={<View><Text>Loading.......</Text></View>}>
       <AppNav.Navigator headerMode="none"  initialRouteName='SplashScreen' >
         <AppNav.Screen name="SplashScreen" component={SplashScreen} />
         <AppNav.Screen name="AuthStack" component={AuthStack} />

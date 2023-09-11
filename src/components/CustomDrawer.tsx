@@ -33,7 +33,7 @@ export function CustomDrawer(props: any) {
       }
       let userChurch: LoginUserChurchInterface | null = null;
       const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
-
+      console.log("church data ===>", churchvalue)
       if (churchvalue !== null) {
         if (churchvalue) {
           const church = JSON.parse(churchvalue);
