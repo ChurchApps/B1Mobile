@@ -71,6 +71,7 @@ export class ApiHelper {
       headers: { 'Authorization': 'Bearer ' + config.jwt, 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     };
+    console.log(config.url + path, requestOptions);
     return fetch(config.url + path, requestOptions).then(response => response.json()).catch(_ => null);
   }
 

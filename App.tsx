@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import AppNavigator from './src/navigation/AppNavigation';
 import { View } from 'react-native';
-import { EnvironmentHelper } from "./src/helpers"
+import { ApiHelper, EnvironmentHelper, UserHelper } from "./src/helpers"
 import CodePush from 'react-native-code-push';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
-import { requestUserPermission, NotificationListener} from './src/utils/PushNotificationHelper';
+import { PushNotificationHelper} from './src/helpers/PushNotificationHelper';
 
 // Need manually add Intl polyfill for react-native app
 import "intl";
@@ -30,9 +30,10 @@ const App = () => {
 
 
   useEffect(()=>{
-    requestUserPermission();
-    NotificationListener();
-  })
+    PushNotificationHelper.requestUserPermission();
+    PushNotificationHelper.NotificationListener();
+  });
+
   return (
     <ActionSheetProvider>
       <View style={{ flex: 1 }}>

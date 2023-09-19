@@ -5,6 +5,7 @@ import { ChurchInterface, globalStyles, LoginUserChurchInterface, Utilities } fr
 import { Constants } from '../helpers';
 import { ApiHelper, UserHelper } from "../helpers"
 import { ErrorHelper } from '../helpers/ErrorHelper';
+import { PushNotificationHelper } from '../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -50,6 +51,7 @@ const SplashScreen = (props: Props) => {
       if (user !== null) {
         UserHelper.user = JSON.parse(user);
         ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
+        if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice()
 
         let church: ChurchInterface | null = null
         let userChurch: LoginUserChurchInterface | null = null;
