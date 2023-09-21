@@ -90,6 +90,9 @@ export const MessagesScreen = (props: Props) => {
                 getConversations();
             }
         });
+
+        ApiHelper.post("/devices/tempMessageUser", {"userId":props.route.params.userDetails.id,  "body" : "test body new ", "title" : "Test title new" }, 
+        "MessagingApi");
     }
 
     const deleteMessage = (messageId: string) => {

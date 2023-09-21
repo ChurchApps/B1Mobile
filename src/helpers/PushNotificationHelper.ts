@@ -8,7 +8,7 @@ export class PushNotificationHelper {
   static async registerUserDevice() {
     const fcmToken = await AsyncStorage.getItem("fcmToken");
     console.log("Registering Device for user id:", UserHelper.user.id);
-    ApiHelper.post("/devices/register", { fcmToken }, "MessagingApi");
+    ApiHelper.post("/devices/register", {"userId":UserHelper.user.id , "fcmToken":fcmToken }, "MessagingApi");
   }
 
   static async requestUserPermission() {
