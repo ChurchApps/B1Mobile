@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , FunctionComponent } from 'react';
 import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -24,7 +24,7 @@ interface Props {
   };
 }
 
-export const HouseholdScreen = (props: Props) => {
+export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [selected, setSelected] = useState(null);
   const [isLoading, setLoading] = useState(false);

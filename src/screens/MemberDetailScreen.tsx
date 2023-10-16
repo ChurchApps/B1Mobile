@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, FunctionComponent } from 'react';
 import { View, SafeAreaView, Image, Text, Alert, Linking, Dimensions, PixelRatio } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities } from '../helpers';

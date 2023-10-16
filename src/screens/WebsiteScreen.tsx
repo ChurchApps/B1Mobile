@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , FunctionComponent } from 'react';
 import { View, SafeAreaView } from 'react-native';
 import { UserHelper, Utilities } from '../helpers';
 import WebView from 'react-native-webview';
@@ -39,12 +39,12 @@ export const WebsiteScreen = (props: Props) => {
   }
 
   return (
-    <SafeAreaView style={globalStyles.homeContainer}>
+        <SafeAreaView style={globalStyles.homeContainer}>
       <SimpleHeader onPress={() => openDrawer()} title={getTitle()} />
       <View style={globalStyles.webViewContainer}>
         <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: params?.url }} scalesPageToFit={false} />
       </View>
       {isLoading && <Loader isLoading={isLoading} />}
     </SafeAreaView>
-  );
+      );
 };

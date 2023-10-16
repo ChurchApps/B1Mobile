@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , FunctionComponent} from 'react';
 import { ActionSheetIOS, Alert, Dimensions, FlatList, Image, KeyboardAvoidingView, PixelRatio, Text, TouchableWithoutFeedback, View } from "react-native";
 import { LongPressGestureHandler, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
@@ -22,7 +22,7 @@ interface Props {
     }
 }
 
-export const MessagesScreen = (props: Props) => {
+export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
     const [messageText, setMessageText] = useState('');
     const [messageList, setMessageList] = useState<MessageInterface[]>([]);
     const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
