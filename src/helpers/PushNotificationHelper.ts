@@ -2,13 +2,31 @@ import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ApiHelper } from './ApiHelper';
 import { UserHelper } from './UserHelper';
+import DeviceInfo from 'react-native-device-info';
 
 export class PushNotificationHelper {
 
   static async registerUserDevice() {
     const fcmToken = await AsyncStorage.getItem("fcmToken");
     console.log("Registering Device for user id:", UserHelper.user.id);
-    ApiHelper.post("/devices/register", {"userId":UserHelper.user.id , "fcmToken":fcmToken }, "MessagingApi");
+    const deviceName = await DeviceInfo.getDeviceName();
+    const deviceInfo = await PushNotificationHelper.getDeviceInfo();
+    ApiHelper.post("/devices/register", {"userId":UserHelper.user.id , fcmToken, label: deviceName, deviceInfo:JSON.stringify(deviceInfo) }, "MessagingApi");
+  }
+
+  static async getDeviceInfo() {
+    const details: any = {}
+    details.appName = DeviceInfo.getApplicationName();
+    details.buildId = await DeviceInfo.getBuildId();
+    details.buildNumber = DeviceInfo.getBuildNumber();
+    details.brand = DeviceInfo.getBrand();
+    details.device = await DeviceInfo.getDevice();
+    details.deviceId = DeviceInfo.getDeviceId();
+    details.deviceType = DeviceInfo.getDeviceType();
+    details.hardware = await DeviceInfo.getHardware();
+    details.manufacturer = await DeviceInfo.getManufacturer();
+    details.version = DeviceInfo.getReadableVersion();
+    return details;
   }
 
   static async requestUserPermission() {
