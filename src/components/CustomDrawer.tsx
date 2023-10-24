@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList, ActivityIndicator, Linking } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface } from '../helpers';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import MessageIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
-import RNRestart from 'react-native-restart';
-import { NavigationHelper } from '../helpers/NavigationHelper';
-import { ErrorHelper } from '../helpers/ErrorHelper';
+import  { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image, FlatList, ActivityIndicator, Linking } from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { Constants } from "../helpers";
+import { ApiHelper , ChurchInterface ,  LoginUserChurchInterface , ErrorHelper} from "@churchapps/mobilehelper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import MessageIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import { globalStyles, EnvironmentHelper, UserHelper } from "../helpers";
+import RNRestart from "react-native-restart";
+import { NavigationHelper } from "../helpers/NavigationHelper";
+
 
 export function CustomDrawer(props: any) {
   const { navigate, goBack, openDrawer } = props.navigation;
-  const [churchName, setChurchName] = useState('');
+  const [churchName, setChurchName] = useState("");
   const [churchEmpty, setChurchEmpty] = useState(true);
   const [drawerList, setDrawerList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [userProfile, setUserProfile] = useState('');
+  const [userProfile, setUserProfile] = useState("");
 
   const menuList: any[] = [];
 
@@ -27,12 +28,12 @@ export function CustomDrawer(props: any) {
 
   const getChurch = async () => {
     try {
-      const user = await AsyncStorage.getItem('USER_DATA')
+      const user = await AsyncStorage.getItem("USER_DATA")
       if (user !== null) {
         setUser(JSON.parse(user))
       }
       let userChurch: LoginUserChurchInterface | null = null;
-      const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+      const churchvalue = await AsyncStorage.getItem("CHURCH_DATA")
 
       if (churchvalue !== null) {
         if (churchvalue) {
@@ -61,7 +62,7 @@ export function CustomDrawer(props: any) {
       setDrawerList(data);
       UserHelper.links = data;
       //if (data.length > 0) navigateToScreen(data[0]);
-            navigate('Dashboard')
+            navigate("Dashboard")
 
     });
   }
@@ -77,14 +78,14 @@ export function CustomDrawer(props: any) {
   }
 
   const listItem = (topItem: boolean, item: any) => {
-    var tab_icon = item.icon != undefined ? item.icon.split("_").join("-") : '';
+    var tab_icon = item.icon != undefined ? item.icon.split("_").join("-") : "";
     if (tab_icon === "calendar-month") tab_icon = "calendar-today"; //not sure why this is missing from https://oblador.github.io/react-native-vector-icons/
     //console.log(tab_icon);
     return (
 
       <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />}
+          <Icon name={tab_icon} color={"black"} style={globalStyles.tabIcon} size={wp("5%")} />}
         <Text style={globalStyles.tabTitle}>{item.text}</Text>
       </TouchableOpacity>
     );
@@ -94,10 +95,10 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {getUserInfo()}
-        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? wp('12%') : user != null ? wp('6%') : wp('12%') }]} onPress={() => navigate('ChurchSearch', {})}>
+        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? wp("12%") : user != null ? wp("6%") : wp("12%") }]} onPress={() => navigate("ChurchSearch", {})}>
           {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
           <Text style={{ ...globalStyles.churchText }}>
-            {churchEmpty ? 'Find your church...' : churchName}
+            {churchEmpty ? "Find your church..." : churchName}
           </Text>
         </TouchableOpacity>
       </View>
@@ -115,18 +116,18 @@ export function CustomDrawer(props: any) {
   const getUserInfo = () => {
     if (UserHelper.currentUserChurch?.person && user != null) {
       return (<View>
-        <View style={[globalStyles.headerView, { marginTop: wp('15%') }]}>
+        <View style={[globalStyles.headerView, { marginTop: wp("15%") }]}>
           {(UserHelper.currentUserChurch.person.photo == null || UserHelper.currentUserChurch.person.photo == undefined)
             ? null
             : <Image
               source={{ uri: (EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo) || "" }}
               style={globalStyles.userIcon}
             />}
-          <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
+          <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ""}</Text>
           {UserHelper.user ? messagesView() : null}
         </View>
         <TouchableOpacity style={globalStyles.headerView} onPress={() => editProfileAction()}>
-          <Text style={{ fontSize: wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' }}>{'Edit profile'}</Text>
+          <Text style={{ fontSize: wp("3.5%"), fontFamily: Constants.Fonts.RobotoRegular, color: "white" }}>{"Edit profile"}</Text>
         </TouchableOpacity>
       </View>)
     }
@@ -145,7 +146,7 @@ export function CustomDrawer(props: any) {
         <Text style={globalStyles.tabTitle}>Log out</Text>
       </TouchableOpacity>);
     } else {
-      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => navigate('AuthStack')}>
+      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => navigate("AuthStack")}>
         <Text style={globalStyles.tabTitle}>Login</Text>
       </TouchableOpacity>);
     }
@@ -153,9 +154,9 @@ export function CustomDrawer(props: any) {
 
   const messagesView = () => {
     return (
-      <TouchableOpacity onPress={() => navigate('SearchMessageUser', {})}>
+      <TouchableOpacity onPress={() => navigate("SearchMessageUser", {})}>
         <View style={globalStyles.messageRootView}>
-          <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />
+          <MessageIcon name={"email"} color={"black"} style={globalStyles.tabIcon} size={wp("5%")} />
         </View>
       </TouchableOpacity>
     );
@@ -164,7 +165,7 @@ export function CustomDrawer(props: any) {
   return (
     <View >
       {
-        loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
+        loading ? <ActivityIndicator size="small" color="gray" animating={loading} /> :
           <FlatList
             data={drawerList}
             renderItem={({ item }) => listItem(false, item)}

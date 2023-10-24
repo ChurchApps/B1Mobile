@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking, PixelRatio, Dimensions } from 'react-native';
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants, EnvironmentHelper, LoginResponseInterface, Utilities } from '../helpers';
-import Icon from 'react-native-vector-icons/Fontisto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles } from '../helpers';
-import { BlueHeader } from '../components';
-import { ChurchInterface, ApiHelper, UserHelper } from '../helpers';
-import RNRestart from 'react-native-restart';
+import React, { useState, useEffect } from "react";
+import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking, PixelRatio, Dimensions } from "react-native";
+import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { Constants, EnvironmentHelper,  Utilities , UserHelper} from "../helpers";
+import Icon from "react-native-vector-icons/Fontisto";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { globalStyles } from "../helpers";
+import { BlueHeader } from "../components";
+import { ChurchInterface, ApiHelper, LoginResponseInterface  } from "@churchapps/mobilehelper";
+import RNRestart from "react-native-restart";
 
 interface Props {
   navigation: {
@@ -23,7 +23,7 @@ export const RegisterScreen = (props: Props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [registered, setRegistered] = useState(false)
-  const [dimension, setDimension] = useState(Dimensions.get('window'));
+  const [dimension, setDimension] = useState(Dimensions.get("window"));
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -36,20 +36,20 @@ export const RegisterScreen = (props: Props) => {
 
   const validateDetails = () => {
     let result = true;
-    if (email != '') {
+    if (email != "") {
       let emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
-        Alert.alert("Alert", 'Please enter valid email.');
+        Alert.alert("Alert", "Please enter valid email.");
         result = false;
-      } else if (firstName === '') {
-        Alert.alert("Alert", 'Please enter first name.');
+      } else if (firstName === "") {
+        Alert.alert("Alert", "Please enter first name.");
         result = false;
-      } else if (lastName === '') {
-        Alert.alert("Alert", 'Please enter last name.');
+      } else if (lastName === "") {
+        Alert.alert("Alert", "Please enter last name.");
         result = false;
       }
     } else {
-      Alert.alert("Alert", 'Please enter email.');
+      Alert.alert("Alert", "Please enter email.");
       result = false;
     }
     return result;
@@ -68,21 +68,21 @@ export const RegisterScreen = (props: Props) => {
   const getForm = () => {
     return (<>
       <Text style={globalStyles.mainText}>Register an Account</Text>
-      <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-        <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
+      <View style={[globalStyles.textInputView, { width: wd("90%") }]}>
+        <Icon name={"person"} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp("4.5%")} />
+        <TextInput style={[globalStyles.textInputStyle, { width: wd("90%") }]} placeholder={"First name"} autoCorrect={false} placeholderTextColor={"lightgray"} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
       </View>
-      <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-        <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
+      <View style={[globalStyles.textInputView, { width: wd("90%") }]}>
+        <Icon name={"person"} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp("4.5%")} />
+        <TextInput style={[globalStyles.textInputStyle, { width: wd("90%") }]} placeholder={"Last name"} autoCorrect={false} placeholderTextColor={"lightgray"} value={lastName} onChangeText={(text) => { setLastName(text) }} />
       </View>
-      <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-        <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-        <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+      <View style={[globalStyles.textInputView, { width: wd("90%") }]}>
+        <Icon name={"email"} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp("4.5%")} />
+        <TextInput style={[globalStyles.textInputStyle, { width: wd("90%") }]} placeholder={"Email"} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholderTextColor={"lightgray"} value={email} onChangeText={(text) => { setEmail(text) }} />
       </View>
-      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { validateDetails() && registerApiCall() }}>
+      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd("90%") }]} onPress={() => { validateDetails() && registerApiCall() }}>
         {loading ?
-          <ActivityIndicator size='small' color='white' animating={loading} /> :
+          <ActivityIndicator size="small" color="white" animating={loading} /> :
           <Text style={globalStyles.roundBlueButtonText}>Register</Text>
         }
       </TouchableOpacity>
@@ -92,7 +92,7 @@ export const RegisterScreen = (props: Props) => {
   const getContent = () => {
     if (registered) return (<>
       <Text style={globalStyles.mainText}>Success: A temporary password has been sent to {email}. </Text>
-      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { props.navigation.navigate("LoginScreen") }}>
+      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd("90%") }]} onPress={() => { props.navigation.navigate("LoginScreen") }}>
         <Text style={globalStyles.roundBlueButtonText}>Login</Text>
       </TouchableOpacity>
     </>);

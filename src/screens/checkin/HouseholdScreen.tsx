@@ -1,13 +1,13 @@
-import React, { useState, useEffect , FunctionComponent } from 'react';
-import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from '../../helpers';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles } from '../../helpers';
-import { BottomButton, Loader, WhiteHeader } from '../../components';
-import { ErrorHelper } from '../../helpers/ErrorHelper';
+import React, { useState, useEffect , FunctionComponent } from "react";
+import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from "react-native";
+import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import Icon from "react-native-vector-icons/FontAwesome";
+import {  Constants, EnvironmentHelper, UserHelper } from "../../helpers";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { globalStyles } from "../../helpers";
+import { BottomButton, Loader, WhiteHeader } from "../../components";
+import { ErrorHelper , ApiHelper} from "@churchapps/mobilehelper"
 
 interface Props {
   navigation: {
@@ -32,7 +32,7 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
   const [groupTree, setGroupTree] = useState<any[]>([]);
 
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [dimension, setDimension] = useState(Dimensions.get("screen"));
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -42,9 +42,9 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
 
   useEffect(() => {
     getMemberFromStorage();
-    UserHelper.addOpenScreenEvent('HouseholdScreen');
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
+    UserHelper.addOpenScreenEvent("HouseholdScreen");
+    Dimensions.addEventListener("change", () => {
+      const dim = Dimensions.get("screen")
       setDimension(dim);
     })
   }, []);
@@ -55,7 +55,7 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
 
   useEffect(() => {
     getMemberFromStorage();
-    const init = props.navigation.addListener('focus', async () => {
+    const init = props.navigation.addListener("focus", async () => {
       await getMemberFromStorage();
     });
     return init;
@@ -63,22 +63,22 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
 
   const getMemberFromStorage = async () => {
     try {
-      const member_list = await AsyncStorage.getItem('MEMBER_LIST')
-      const group_list = await AsyncStorage.getItem('GROUP_LIST')
-      const screen = await AsyncStorage.getItem('SCREEN')
+      const member_list = await AsyncStorage.getItem("MEMBER_LIST")
+      const group_list = await AsyncStorage.getItem("GROUP_LIST")
+      const screen = await AsyncStorage.getItem("SCREEN")
       if (group_list != null && member_list != null) {
         const groups = JSON.parse(group_list);
         const members = JSON.parse(member_list);
         setGroupTree(groups);
         setMemberList(members);
-        if (screen == 'SERVICE') {
+        if (screen == "SERVICE") {
           setSelected(null);
           loadExistingAttendance(members, groups);
         }
       }
 
     } catch (error : any) {
-      console.log('MEMBER LIST ERROR', error)
+      console.log("MEMBER LIST ERROR", error)
       ErrorHelper.logError("get-member-from-storage", error);
     }
   }
@@ -106,7 +106,7 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
                 groupTree.forEach((group_item: any) => {
                   group_item.items.forEach((itemG: any) => {
                     if (visitSession.session.groupId == itemG.id) {
-                      time['selectedGroup'] = itemG;
+                      time["selectedGroup"] = itemG;
                     }
                   })
                 })
@@ -119,9 +119,9 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
     try {
       setMemberList(member_list)
       const memberValue = JSON.stringify(member_list)
-      await AsyncStorage.setItem('MEMBER_LIST', memberValue)
+      await AsyncStorage.setItem("MEMBER_LIST", memberValue)
     } catch (error : any) {
-      console.log('SET MEMBER LIST ERROR', error)
+      console.log("SET MEMBER LIST ERROR", error)
       ErrorHelper.logError("set-attendance", error);
     }
   }
@@ -148,11 +148,11 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
     ApiHelper.post("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + people_Ids, pendingVisits, "AttendanceApi");
     setLoading(false);
     try {
-      await AsyncStorage.removeItem('MEMBER_LIST')
-      await AsyncStorage.removeItem('GROUP_LIST')
-      navigate('CheckinCompleteScreen', {})
+      await AsyncStorage.removeItem("MEMBER_LIST")
+      await AsyncStorage.removeItem("GROUP_LIST")
+      navigate("CheckinCompleteScreen", {})
     } catch (error : any) {
-      console.log('CLEAR MEMBER LIST ERROR', error)
+      console.log("CLEAR MEMBER LIST ERROR", error)
       ErrorHelper.logError("submit-attendance", error);
     }
 
@@ -161,8 +161,8 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
   const renderMemberItem = (item: any) => {
     return (
       <View>
-        <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
-          <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
+        <TouchableOpacity style={[globalStyles.listMainView, { width: wd("90%") }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
+          <Icon name={selected == item.id ? "angle-down" : "angle-right"} style={globalStyles.selectionIcon} size={wp("6%")} />
           <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={globalStyles.memberListIcon} />
           <View style={globalStyles.memberListTextView}>
             <Text style={[globalStyles.listTitleText, globalStyles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
@@ -181,15 +181,15 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
         </TouchableOpacity>
         {selected == item.id && item.serviceTime && item.serviceTime.map((item_time: any, index: any) => {
           return (
-            <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1,width:wd('90%') }} key={item_time.id}>
+            <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1,width:wd("90%") }} key={item_time.id}>
               <View style={globalStyles.classesTimeView}>
-                <Icon name={'clock-o'} style={globalStyles.timeIcon} size={wp('5%')} />
+                <Icon name={"clock-o"} style={globalStyles.timeIcon} size={wp("5%")} />
                 <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
               </View>
               <TouchableOpacity style={{ ...globalStyles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
-                onPress={() => item_time.selection ? null : navigate('GroupsScreen', { member: item, time: item_time, serviceId: props.route.params.serviceId })}>
+                onPress={() => item_time.selection ? null : navigate("GroupsScreen", { member: item, time: item_time, serviceId: props.route.params.serviceId })}>
                 <Text style={globalStyles.classesNoneText} numberOfLines={3}>
-                  {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
+                  {item_time.selectedGroup ? item_time.selectedGroup.name : "NONE"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -205,7 +205,7 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
         <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
         <SafeAreaView style={{ flex: 1 }}>
           <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
-          <BottomButton title='CHECKIN' onPress={() => submitAttendance()} style={wd('100%')}/>
+          <BottomButton title="CHECKIN" onPress={() => submitAttendance()} style={wd("100%")}/>
         </SafeAreaView>
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}

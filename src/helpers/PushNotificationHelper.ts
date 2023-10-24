@@ -1,7 +1,7 @@
-import messaging from '@react-native-firebase/messaging';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApiHelper } from './ApiHelper';
-import { UserHelper } from './UserHelper';
+import messaging from "@react-native-firebase/messaging";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ApiHelper } from "@churchapps/mobilehelper";
+import { UserHelper } from "./UserHelper";
 
 export class PushNotificationHelper {
 
@@ -17,7 +17,7 @@ export class PushNotificationHelper {
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
     if (enabled) {
-      console.log('Authorization status:', authStatus);
+      console.log("Authorization status:", authStatus);
       PushNotificationHelper.GetFCMToken();
     }
   }
@@ -41,7 +41,7 @@ export class PushNotificationHelper {
   static NotificationListener = () => {
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
-        'Notification caused app to open from background state:',
+        "Notification caused app to open from background state:",
         JSON.stringify(remoteMessage.notification),
       );
     });
@@ -50,7 +50,7 @@ export class PushNotificationHelper {
       .then(remoteMessage => {
         if (remoteMessage) {
           console.log(
-            'Notification caused app to open from quit state:',
+            "Notification caused app to open from quit state:",
             JSON.stringify(remoteMessage.notification),
           );
 

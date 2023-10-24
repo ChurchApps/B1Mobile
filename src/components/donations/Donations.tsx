@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { Image, Text, ActivityIndicator, ScrollView, View, TouchableOpacity } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
@@ -6,7 +6,8 @@ import { useIsFocused } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { CustomModal } from "../modals/CustomModal";
 import { DisplayBox } from "../";
-import { globalStyles, ApiHelper, UserHelper, DateHelper, CurrencyHelper, Constants } from "../../helpers";
+import { globalStyles,  UserHelper, DateHelper, CurrencyHelper, Constants } from "../../helpers";
+import { ApiHelper } from "@churchapps/mobilehelper";
 import { DonationInterface } from "../../interfaces";
 
 export function Donations() {

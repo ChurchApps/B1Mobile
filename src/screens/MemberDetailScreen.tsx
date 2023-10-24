@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useRef, FunctionComponent } from 'react';
-import { View, SafeAreaView, Image, Text, Alert, Linking, Dimensions, PixelRatio } from 'react-native';
-import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities } from '../helpers';
-import { globalStyles } from '../helpers';
-import { BlueHeader, Loader, SimpleHeader, WhiteHeader } from '../components';
-import Icon from 'react-native-vector-icons/Zocial';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import React, { useState, useEffect, useRef, FunctionComponent } from "react";
+import { View, SafeAreaView, Image, Text, Alert, Linking, Dimensions, PixelRatio } from "react-native";
+import { FlatList, ScrollView, TouchableOpacity, } from "react-native-gesture-handler";
+import {  Constants, EnvironmentHelper, UserHelper, Utilities } from "../helpers";
+import { ApiHelper } from "@churchapps/mobilehelper";
+import { globalStyles } from "../helpers";
+import { BlueHeader, Loader, SimpleHeader, WhiteHeader } from "../components";
+import Icon from "react-native-vector-icons/Zocial";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 interface Props {
   navigation: {
@@ -29,7 +30,7 @@ export const MemberDetailScreen = (props: Props) => {
   const [householdList, setHouseholdList] = useState([]);
   const scrollViewRef = useRef<any>();
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [dimension, setDimension] = useState(Dimensions.get("screen"));
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -39,9 +40,9 @@ export const MemberDetailScreen = (props: Props) => {
   useEffect(() => {
     Utilities.trackEvent("Member Detail Screen");
     getHouseholdMembersList();
-    UserHelper.addOpenScreenEvent('MemberDetailScreen');
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
+    UserHelper.addOpenScreenEvent("MemberDetailScreen");
+    Dimensions.addEventListener("change", () => {
+      const dim = Dimensions.get("screen")
       setDimension(dim);
     })
   }, [props.route.params])
@@ -55,7 +56,7 @@ export const MemberDetailScreen = (props: Props) => {
     if (email) {
       Linking.openURL(`mailto:${email}`)
     } else {
-      Alert.alert("Sorry", 'Email of this user is not available.');
+      Alert.alert("Sorry", "Email of this user is not available.");
     }
   }
 
@@ -63,7 +64,7 @@ export const MemberDetailScreen = (props: Props) => {
     if (phone) {
       Linking.openURL(`tel:${phone}`)
     } else {
-      Alert.alert("Sorry", 'Phone number of this user is not available.');
+      Alert.alert("Sorry", "Phone number of this user is not available.");
     }
   }
 
@@ -71,7 +72,7 @@ export const MemberDetailScreen = (props: Props) => {
     if (memberinfo.address1) {
       Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${memberinfo.address1}`);
     } else {
-      Alert.alert("Sorry", 'Address of this user is not available.');
+      Alert.alert("Sorry", "Address of this user is not available.");
     }
   }
 
@@ -86,12 +87,12 @@ export const MemberDetailScreen = (props: Props) => {
 
   const onMembersClick = (item: any) => {
     scrollViewRef.current.scrollTo({ y: 0, animated: false })
-    navigate('MemberDetailScreen', { member: item })
+    navigate("MemberDetailScreen", { member: item })
   }
 
   const renderMemberItem = (item: any) => {
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => onMembersClick(item)}>
+      <TouchableOpacity style={[globalStyles.listMainView, { width: wd("90%") }]} onPress={() => onMembersClick(item)}>
         <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText} numberOfLines={1}>{item.name.display}</Text>
@@ -109,33 +110,33 @@ export const MemberDetailScreen = (props: Props) => {
         <Image source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
         <Text style={globalStyles.memberName}>{member.name.display}</Text>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd('90%') }]} onPress={() => onEmailClick(memberinfo.email)}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd("90%") }]} onPress={() => onEmailClick(memberinfo.email)}>
           <View style={globalStyles.detailIconContainer}>
-            <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+            <Icon name={"email"} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp("4.8%")} />
             <Text style={globalStyles.detailHeader}>Email :</Text>
           </View>
-          <Text style={globalStyles.detailValue}>{memberinfo.email ? memberinfo.email : '-'}</Text>
+          <Text style={globalStyles.detailValue}>{memberinfo.email ? memberinfo.email : "-"}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd('90%') }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd("90%") }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
           <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'phone-alt'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+            <FontAwesome5 name={"phone-alt"} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp("4.8%")} />
             <Text style={globalStyles.detailHeader}>Phone :</Text>
           </View>
-          <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
+          <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : "-"}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd('90%') }]} onPress={() => onAddressClick()}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd("90%") }]} onPress={() => onAddressClick()}>
           <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'location-arrow'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+            <FontAwesome5 name={"location-arrow"} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp("4.8%")} />
             <Text style={globalStyles.detailHeader}>Address :</Text>
           </View>
           {memberinfo.address1 ? <Text style={globalStyles.detailValue}>{memberinfo.address1}</Text> : null}
           {memberinfo.address2 ? <Text style={globalStyles.detailValue}>{memberinfo.address2}</Text> : null}
-          <Text style={globalStyles.detailValue}>{memberinfo.city ? memberinfo.city + ',' : ''} {memberinfo.state ? memberinfo.state + '-' : ''} {memberinfo.zip}</Text>
+          <Text style={globalStyles.detailValue}>{memberinfo.city ? memberinfo.city + "," : ""} {memberinfo.state ? memberinfo.state + "-" : ""} {memberinfo.zip}</Text>
         </TouchableOpacity>
 
-        <Text style={[globalStyles.searchMainText, { alignSelf: 'center' }]}>- Household Members -</Text>
+        <Text style={[globalStyles.searchMainText, { alignSelf: "center" }]}>- Household Members -</Text>
         <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}

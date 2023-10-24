@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { Text, Image, View, TextInput, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../interfaces";
 import { InputBox } from "..";
-import { globalStyles, UserHelper, ApiHelper, StripeHelper, Constants } from "../../helpers";
+import { globalStyles, UserHelper,  StripeHelper, Constants } from "../../helpers";
+import { ApiHelper } from "@churchapps/mobilehelper"
 
 interface Props {
   setMode: any;

@@ -1,12 +1,12 @@
 
-import Analytics from 'appcenter-analytics';
-import { UserHelper } from './UserHelper';
+import Analytics from "appcenter-analytics";
+import { UserHelper } from "./UserHelper";
 
 
 export class Utilities {
 
   static trackEvent(name: string, data?: any) {
-    var pkg = require('../../package.json');
+    let pkg = require('../../package.json');
 
     const props = (data) ? data : {}
     props.church = UserHelper.currentUserChurch?.church?.name;

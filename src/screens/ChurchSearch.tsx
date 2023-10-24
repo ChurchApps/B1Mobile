@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View,  Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard, Dimensions, PixelRatio, Platform } from 'react-native';
-import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ApiHelper, ArrayHelper, ChurchInterface, Constants, Utilities } from '../helpers';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles, UserHelper } from '../helpers';
-import { BlueHeader } from '../components';
-import RNRestart from 'react-native-restart';
-import { ErrorHelper } from '../helpers/ErrorHelper';
+import  { useState, useEffect } from "react";
+import { View,  Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard, Dimensions, PixelRatio, Platform } from "react-native";
+import { FlatList, TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {  ArrayHelper,  Constants, Utilities } from "../helpers";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { globalStyles, UserHelper } from "../helpers";
+import { BlueHeader } from "../components";
+import RNRestart from "react-native-restart";
+import { ErrorHelper, ApiHelper, ChurchInterface } from "@churchapps/mobilehelper"
 
 interface Props {
   navigation: {
@@ -18,13 +18,13 @@ interface Props {
 }
 
 export const ChurchSearch = (props: Props) => {
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [searchList, setSearchList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [recentList, setRecentList] = useState([]);
   const [recentListEmpty, setRecentListEmpty] = useState(false);
 
-  const [dimension, setDimension] = useState(Dimensions.get('window'));
+  const [dimension, setDimension] = useState(Dimensions.get("window"));
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -34,9 +34,9 @@ export const ChurchSearch = (props: Props) => {
   useEffect(() => {
     Utilities.trackEvent("Church Search Screen");
     GetRecentList();
-    UserHelper.addOpenScreenEvent('ChurchSearch');
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
+    UserHelper.addOpenScreenEvent("ChurchSearch");
+    Dimensions.addEventListener("change", () => {
+      const dim = Dimensions.get("screen")
       setDimension(dim);
     })
   }, [])
@@ -54,8 +54,8 @@ export const ChurchSearch = (props: Props) => {
       }
       if (existing) churchData = existing.church;
       const churchValue = JSON.stringify(churchData);
-      await AsyncStorage.setItem('CHURCH_DATA', churchValue)
-      UserHelper.addAnalyticsEvent('church_selected', {
+      await AsyncStorage.setItem("CHURCH_DATA", churchValue)
+      UserHelper.addAnalyticsEvent("church_selected", {
         id: Date.now(),
         device : Platform.OS,
         church: churchData.name,
@@ -80,7 +80,7 @@ export const ChurchSearch = (props: Props) => {
 
   const GetRecentList = async () => {
     try {
-      const church_list = await AsyncStorage.getItem('RECENT_CHURCHES');
+      const church_list = await AsyncStorage.getItem("RECENT_CHURCHES");
       if (church_list != null) {
         setRecentListEmpty(true)
         let list = JSON.parse(church_list);
@@ -88,7 +88,7 @@ export const ChurchSearch = (props: Props) => {
         setRecentList(reverseList);
       }
     } catch (err : any) {
-      console.log('GET RECENT CHURCHES ERROR', err)
+      console.log("GET RECENT CHURCHES ERROR", err)
       ErrorHelper.logError("get-recent-church", err);
     }
   }
@@ -99,9 +99,9 @@ export const ChurchSearch = (props: Props) => {
     filteredItems.push(churchData);
     try {
       const churchlist = JSON.stringify(filteredItems)
-      await AsyncStorage.setItem('RECENT_CHURCHES', churchlist)
+      await AsyncStorage.setItem("RECENT_CHURCHES", churchlist)
     } catch (err : any) {
-      console.log('SET RECENT CHURCHES ERROR', err)
+      console.log("SET RECENT CHURCHES ERROR", err)
       ErrorHelper.logError("store-recent-church", err);
     }
   }
@@ -109,7 +109,7 @@ export const ChurchSearch = (props: Props) => {
   const renderChurchItem = (item: any) => {
     const churchImage = item.settings && item.settings[0].value
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: wd('90%') }]} onPress={() => churchSelection(item)}>
+      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: wd("90%") }]} onPress={() => churchSelection(item)}>
         {
           churchImage ? <Image source={{ uri: churchImage }} style={globalStyles.churchListIcon} /> :
             <Image source={Constants.Images.ic_church} style={globalStyles.churchListIcon} />
@@ -128,24 +128,24 @@ export const ChurchSearch = (props: Props) => {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={globalStyles.grayContainer}>
               <Text style={globalStyles.searchMainText}>Find Your Church</Text>
-              <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
+              <View style={[globalStyles.textInputView, { width: wd("90%") }]}>
                 <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
                 <TextInput
-                  style={[globalStyles.textInputStyle, { width: wd('90%') }]}
-                  placeholder={'Church name'}
+                  style={[globalStyles.textInputStyle, { width: wd("90%") }]}
+                  placeholder={"Church name"}
                   autoCapitalize="none"
                   autoCorrect={false}
-                  keyboardType='default'
-                  placeholderTextColor={'lightgray'}
+                  keyboardType="default"
+                  placeholderTextColor={"lightgray"}
                   value={searchText}
                   onChangeText={(text) => { setSearchText(text) }}
                 />
               </View>
-              <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%'), width: wd('90%') }} onPress={() => searchApiCall(searchText)}>
-                {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
+              <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp("6%"), width: wd("90%") }} onPress={() => searchApiCall(searchText)}>
+                {loading ? <ActivityIndicator size="small" color="white" animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
               </TouchableOpacity>
-              {searchText == '' && <Text style={globalStyles.recentText}>
-                {recentListEmpty ? 'Recent Churches' : 'No recent churches available.'}
+              {searchText == "" && <Text style={globalStyles.recentText}>
+                {recentListEmpty ? "Recent Churches" : "No recent churches available."}
               </Text>}
       </View>
       </TouchableWithoutFeedback>
@@ -156,7 +156,7 @@ export const ChurchSearch = (props: Props) => {
   return (
     <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
       <FlatList 
-        data={searchText == '' ? recentList : searchList} 
+        data={searchText == "" ? recentList : searchList} 
         renderItem={({ item }) => renderChurchItem(item)} 
         keyExtractor={(item: any) => item.id} 
         ListHeaderComponent={getHeaderView()}

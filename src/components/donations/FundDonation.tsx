@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Text, View, TextInput } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";

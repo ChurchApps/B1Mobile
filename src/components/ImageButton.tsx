@@ -14,10 +14,10 @@ export function ImageButton(props: Props) {
     absoluteView: {
       width: "100%",
       height: widthPercentageToDP(25),
-      position: 'absolute',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'transparent'
+      position: "absolute",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "transparent"
     },
     img: { width:"100%", height: "100%", opacity: 0.6 },
     btn: { width: "100%", height: widthPercentageToDP(25), marginBottom: 5, marginTop: 5, backgroundColor: "#000000" }

@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { View, Image, Alert, TextInput, Text } from "react-native";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { InputBox } from "../";
-import { globalStyles, UserHelper, ApiHelper, Constants } from "../../helpers";
+import { globalStyles, UserHelper, Constants } from "../../helpers";
+import { ApiHelper } from "@churchapps/mobilehelper";
 import { StripePaymentMethod, PaymentMethodInterface, StripeCardUpdateInterface } from "../../interfaces";
 
 interface Props {
@@ -17,8 +18,8 @@ interface Props {
 export function CardForm({ setMode, card, customerId, updatedFunction, handleDelete }: Props) {
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [month, setMonth] = React.useState<string>(card.exp_month?.toString() || "");
-  const [year, setYear] = React.useState<string>(card.exp_year?.toString().slice(-2) || "");
+  const [month, setMonth] = useState<string>(card.exp_month?.toString() || "");
+  const [year, setYear] = useState<string>(card.exp_year?.toString().slice(-2) || "");
   const { createPaymentMethod } = useStripe();
   const person = UserHelper.currentUserChurch?.person;
 
@@ -29,7 +30,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
 
   const createCard = async () => {
     const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType : 'Card',
+      paymentMethodType : "Card",
       ...cardDetails,
     });
 

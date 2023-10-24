@@ -1,5 +1,5 @@
 import { EnvironmentHelper } from "./EnvironmentHelper";
-import { PersonInterface } from "./Interfaces";
+import { PersonInterface } from "@churchapps/mobilehelper";
 
 export class PersonHelper {
   static getPhotoUrl(person: PersonInterface) {

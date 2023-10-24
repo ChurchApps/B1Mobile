@@ -1,23 +1,23 @@
 export class Constants {
 
   static Colors = {
-    app_color: '#1C75BC',
-    app_color_light: 'rgba(28, 116, 188,0.3)',
-    gray_bg: '#F6F6F8',
-    button_bg: '#24B8FE',
-    button_green: '#70DC87',
-    button_red: '#B0120C',
-    button_dark_green: '#77CC01',
-    button_yellow: '#FAC108',
-    white_color: '#FFFFFF'
+    app_color: "#1C75BC",
+    app_color_light: "rgba(28, 116, 188,0.3)",
+    gray_bg: "#F6F6F8",
+    button_bg: "#24B8FE",
+    button_green: "#70DC87",
+    button_red: "#B0120C",
+    button_dark_green: "#77CC01",
+    button_yellow: "#FAC108",
+    white_color: "#FFFFFF"
   };
 
   static Fonts = {
-    RobotoLight: 'Roboto-Light',
-    RobotoBold: 'Roboto-Bold',
-    RobotoBlack: 'Roboto-Black',
-    RobotoMedium: 'Roboto-Medium',
-    RobotoRegular: 'Roboto-Regular',
+    RobotoLight: "Roboto-Light",
+    RobotoBold: "Roboto-Bold",
+    RobotoBlack: "Roboto-Black",
+    RobotoMedium: "Roboto-Medium",
+    RobotoRegular: "Roboto-Regular",
   };
 
   static Images = {

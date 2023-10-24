@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, SafeAreaView, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
-import { ApiHelper, GroupInterface, globalStyles } from "../helpers";
+import {  globalStyles } from "../helpers";
+import { ApiHelper, GroupInterface } from "@churchapps/mobilehelper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ImageButton } from "../components/ImageButton";
 import { NavigationHelper } from "../helpers/NavigationHelper";
@@ -25,7 +26,7 @@ const MyGroups = (props: any) => {
         <ImageButton
           image={{uri: item.photoUrl}}
           text={item.name}
-          onPress={() => props.navigation.navigate('GroupDetails', {group: item})}
+          onPress={() => props.navigation.navigate("GroupDetails", {group: item})}
         />
       </View>
     );
@@ -42,7 +43,7 @@ const MyGroups = (props: any) => {
   };
 
   return (
-    <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
+    <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: "100%" }]}>
       <SimpleHeader onPress={() => openDrawer()} title="My Groups" />
       <View style={[globalStyles.webViewContainer, {marginTop: 16}]}>{getGroups()}</View>
     </SafeAreaView>

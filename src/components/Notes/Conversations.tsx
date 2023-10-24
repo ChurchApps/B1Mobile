@@ -1,6 +1,7 @@
 import { Dimensions, PixelRatio, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import { ApiHelper, ArrayHelper, ConversationInterface } from "../../helpers";
+import { useEffect, useState } from "react";
+import { ArrayHelper,  } from "../../helpers";
+import { ApiHelper, ConversationInterface } from "@churchapps/mobilehelper";
 import ConversationPopup from "./ConversationPopup";
 
 interface CustomConversationInterface {

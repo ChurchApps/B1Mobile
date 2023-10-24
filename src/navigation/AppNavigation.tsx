@@ -1,28 +1,28 @@
-import * as React from 'react';
-import { Dimensions,PixelRatio} from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import SplashScreen from '../screens/SplashScreen';
-import { WebsiteScreen } from '../screens/WebsiteScreen';
-import { CustomDrawer } from '../components';
-import { ChurchSearch } from '../screens/ChurchSearch';
-import { LoginScreen } from '../screens/LoginScreen';
-import { HouseholdScreen } from '../screens/checkin/HouseholdScreen';
-import { GroupsScreen } from '../screens/checkin/GroupsScreen';
-import CheckinCompleteScreen from '../screens/checkin/CheckinCompleteScreen';
-import { ServiceScreen } from '../screens/checkin/ServiceScreen';
-import { MembersSearch } from '../screens/MembersSearch';
-import { MemberDetailScreen } from '../screens/MemberDetailScreen';
-import DonationScreen from '../screens/DonationScreen';
-import { Constants, globalStyles } from '../helpers';
-import { RegisterScreen } from '../screens/RegisterScreen';
-import { DashboardScreen } from '../screens/DashboardScreen';
-import { VotdScreen } from '../screens/VotdScreen';
-import { SearchUserScreen } from '../screens/SearchUserScreen';
-import { MessagesScreen } from '../screens/MessagesScreen';
-import MyGroups from '../screens/MyGroups';
-import GroupDetails from '../screens/GroupDetails';
+import * as React from "react";
+import { Dimensions,PixelRatio} from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import SplashScreen from "../screens/SplashScreen";
+import { WebsiteScreen } from "../screens/WebsiteScreen";
+import { CustomDrawer } from "../components";
+import { ChurchSearch } from "../screens/ChurchSearch";
+import { LoginScreen } from "../screens/LoginScreen";
+import { HouseholdScreen } from "../screens/checkin/HouseholdScreen";
+import { GroupsScreen } from "../screens/checkin/GroupsScreen";
+import CheckinCompleteScreen from "../screens/checkin/CheckinCompleteScreen";
+import { ServiceScreen } from "../screens/checkin/ServiceScreen";
+import { MembersSearch } from "../screens/MembersSearch";
+import { MemberDetailScreen } from "../screens/MemberDetailScreen";
+import DonationScreen from "../screens/DonationScreen";
+import { Constants, globalStyles } from "../helpers";
+import { RegisterScreen } from "../screens/RegisterScreen";
+import { DashboardScreen } from "../screens/DashboardScreen";
+import { VotdScreen } from "../screens/VotdScreen";
+import { SearchUserScreen } from "../screens/SearchUserScreen";
+import { MessagesScreen } from "../screens/MessagesScreen";
+import MyGroups from "../screens/MyGroups";
+import GroupDetails from "../screens/GroupDetails";
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -30,7 +30,7 @@ const Drawer = createDrawerNavigator();
 
 const MainStack = () => {
 
-  const [dimension, setDimension] = React.useState(Dimensions.get('screen'));
+  const [dimension, setDimension] = React.useState(Dimensions.get("screen"));
   
 
   const wd = (number: string) => {
@@ -43,8 +43,8 @@ const MainStack = () => {
   };
 
  React.useEffect(() => {
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
+    Dimensions.addEventListener("change", () => {
+      const dim = Dimensions.get("screen")
       setDimension(dim);
     })
   }, [dimension])
@@ -52,35 +52,35 @@ const MainStack = () => {
 
   return (
     <Drawer.Navigator screenOptions={{headerShown : false , drawerStyle: {
-      width:wd('60%'),height:hd('100%'), backgroundColor: Constants.Colors.app_color
-    }, drawerType:'slide' }} initialRouteName={'WebsiteScreen'}   drawerContent={(props) => <CustomDrawer {...props} />}>
-      <Drawer.Screen name={'Dashboard'} component={DashboardScreen} />
-      <Drawer.Screen name={'BibleScreen'} component={WebsiteScreen} />
-      <Drawer.Screen name={'VotdScreen'} component={VotdScreen} />
-      <Drawer.Screen name={'LessonsScreen'} component={WebsiteScreen} />
-      <Drawer.Screen name={'StreamScreen'} component={WebsiteScreen} />
-      <Drawer.Screen name={'WebsiteScreen'} component={WebsiteScreen} />
-      <Drawer.Screen name={'PageScreen'} component={WebsiteScreen} />
-      <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
-      <Drawer.Screen name={'SearchMessageUser'} component={SearchUserScreen} />
-      <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />
-      <Drawer.Screen name={'MemberDetailScreen'} component={MemberDetailScreen} />
-      <Drawer.Screen name={'ServiceScreen'} component={ServiceScreen} />
-      <Drawer.Screen name={'HouseholdScreen'} component={HouseholdScreen} />
-      <Drawer.Screen name={'GroupsScreen'} component={GroupsScreen} />
-      <Drawer.Screen name={'CheckinCompleteScreen'} component={CheckinCompleteScreen} />
-      <Drawer.Screen name={'DonationScreen'} component={DonationScreen} />
-      <Drawer.Screen name={'MyGroups'} component={MyGroups} />
-      <Drawer.Screen name={'GroupDetails'} component={GroupDetails} />
+      width:wd("60%"),height:hd("100%"), backgroundColor: Constants.Colors.app_color
+    }, drawerType:"slide" }} initialRouteName={"WebsiteScreen"}   drawerContent={(props) => <CustomDrawer {...props} />}>
+      <Drawer.Screen name={"Dashboard"} component={DashboardScreen} />
+      <Drawer.Screen name={"BibleScreen"} component={WebsiteScreen} />
+      <Drawer.Screen name={"VotdScreen"} component={VotdScreen} />
+      <Drawer.Screen name={"LessonsScreen"} component={WebsiteScreen} />
+      <Drawer.Screen name={"StreamScreen"} component={WebsiteScreen} />
+      <Drawer.Screen name={"WebsiteScreen"} component={WebsiteScreen} />
+      <Drawer.Screen name={"PageScreen"} component={WebsiteScreen} />
+      <Drawer.Screen name={"ChurchSearch"} component={ChurchSearch} />
+      <Drawer.Screen name={"SearchMessageUser"} component={SearchUserScreen} />
+      <Drawer.Screen name={"MembersSearch"} component={MembersSearch} />
+      <Drawer.Screen name={"MemberDetailScreen"} component={MemberDetailScreen} />
+      <Drawer.Screen name={"ServiceScreen"} component={ServiceScreen} />
+      <Drawer.Screen name={"HouseholdScreen"} component={HouseholdScreen} />
+      <Drawer.Screen name={"GroupsScreen"} component={GroupsScreen} />
+      <Drawer.Screen name={"CheckinCompleteScreen"} component={CheckinCompleteScreen} />
+      <Drawer.Screen name={"DonationScreen"} component={DonationScreen} />
+      <Drawer.Screen name={"MyGroups"} component={MyGroups} />
+      <Drawer.Screen name={"GroupDetails"} component={GroupDetails} />
     </Drawer.Navigator>
   );
 }
 
 const AuthStack = () => {
   return (
-    <AuthNav.Navigator screenOptions={{headerShown:false}} initialRouteName={'LoginScreen'}>
-      <AuthNav.Screen name={'LoginScreen'} component={LoginScreen} />
-      <AuthNav.Screen name={'RegisterScreen'} component={RegisterScreen} />
+    <AuthNav.Navigator screenOptions={{headerShown:false}} initialRouteName={"LoginScreen"}>
+      <AuthNav.Screen name={"LoginScreen"} component={LoginScreen} />
+      <AuthNav.Screen name={"RegisterScreen"} component={RegisterScreen} />
     </AuthNav.Navigator>
   );
 }
@@ -88,11 +88,11 @@ const AuthStack = () => {
 const AppNavigation = (props: {}) => {
   return (
     <NavigationContainer>
-      <AppNav.Navigator screenOptions={{headerShown:false}} initialRouteName='SplashScreen'  >
+      <AppNav.Navigator screenOptions={{headerShown:false}} initialRouteName="SplashScreen"  >
         <AppNav.Screen name="SplashScreen" component={SplashScreen} />
         <AppNav.Screen name="AuthStack" component={AuthStack} />
         <AppNav.Screen name="MainStack" component={MainStack} />
-        <AppNav.Screen name={'MessagesScreen'} component={MessagesScreen} />
+        <AppNav.Screen name={"MessagesScreen"} component={MessagesScreen} />
       </AppNav.Navigator>
     </NavigationContainer>
   );

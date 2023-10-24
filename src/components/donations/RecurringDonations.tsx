@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Image, ActivityIndicator, Text, View, TouchableOpacity, TextInput, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -6,10 +6,10 @@ import { useIsFocused } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import DropDownPicker from "react-native-dropdown-picker";
 import { CustomModal } from "../modals/CustomModal";
-import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper, Constants } from "../../helpers";
+import { globalStyles,  DateHelper, CurrencyHelper, UserHelper, Constants } from "../../helpers";
 import { DisplayBox } from "../";
 import { StripePaymentMethod, SubscriptionInterface } from "../../interfaces";
-import { ErrorHelper } from "../../helpers/ErrorHelper";
+import { ErrorHelper , ApiHelper } from "@churchapps/mobilehelper"
 
 interface Props {
   customerId: string;
@@ -18,7 +18,7 @@ interface Props {
 }
 
 export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunction }: Props) {
-  const [subscriptions, setSubscriptions] = React.useState<SubscriptionInterface[]>([]);
+  const [subscriptions, setSubscriptions] = useState<SubscriptionInterface[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionInterface>({} as SubscriptionInterface);

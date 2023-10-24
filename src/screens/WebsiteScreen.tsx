@@ -1,9 +1,9 @@
-import React, { useState, useEffect , FunctionComponent } from 'react';
-import { View, SafeAreaView } from 'react-native';
-import { UserHelper, Utilities } from '../helpers';
-import WebView from 'react-native-webview';
-import { Loader, SimpleHeader } from '../components';
-import { globalStyles } from '../helpers';
+import React, { useState, useEffect , FunctionComponent } from "react";
+import { View, SafeAreaView } from "react-native";
+import { UserHelper, Utilities } from "../helpers";
+import WebView from "react-native-webview";
+import { Loader, SimpleHeader } from "../components";
+import { globalStyles } from "../helpers";
 
 interface Props {
   navigation: {
@@ -35,7 +35,7 @@ export const WebsiteScreen = (props: Props) => {
 
   const getTitle = () => {
     const title = params && params.title && params.title;
-    return title == undefined ? 'Home' : title;
+    return title == undefined ? "Home" : title;
   }
 
   return (

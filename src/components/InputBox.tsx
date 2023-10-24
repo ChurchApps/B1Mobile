@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import {useState,useEffect} from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator ,Dimensions,PixelRatio} from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { Constants, globalStyles } from "../helpers";
@@ -23,20 +23,20 @@ export function InputBox({
   isSubmitting = false,
 }: Props) {
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [dimension, setDimension] = useState(Dimensions.get("screen"));
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
     return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
   };
   useEffect(()=>{
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
+    Dimensions.addEventListener("change", () => {
+      const dim = Dimensions.get("screen")
       setDimension(dim);
     })
   },[dimension])
 
-  let buttons: JSX.Element[] = [];
+  let buttons: React.JSX.Element[] = [];
 
   const widthClass = deleteFunction ? wp("33.33%") : wp("50%");
   if (cancelFunction) {

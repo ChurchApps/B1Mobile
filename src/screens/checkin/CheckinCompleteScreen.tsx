@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import { WhiteHeader } from '../../components';
-import { globalStyles, UserHelper } from '../../helpers';
+import React, { useEffect } from "react";
+import { SafeAreaView, Text, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { WhiteHeader } from "../../components";
+import { globalStyles, UserHelper } from "../../helpers";
 
 
 interface Props {
@@ -20,18 +20,18 @@ const CheckinCompleteScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
 
   useEffect(() => {
-    UserHelper.addOpenScreenEvent('CheckinCompleteScreen');
+    UserHelper.addOpenScreenEvent("CheckinCompleteScreen");
     serviceNavigate();
   }, []);
 
   useEffect(() => {
     serviceNavigate();
-    const init = props.navigation.addListener('focus', async () => { serviceNavigate() });
+    const init = props.navigation.addListener("focus", async () => { serviceNavigate() });
     return init;
   }, [props.navigation]);
 
   const serviceNavigate = () => {
-    setTimeout(() => { navigate('ServiceScreen') }, 1000);
+    setTimeout(() => { navigate("ServiceScreen") }, 1000);
   }
 
   return (
@@ -39,7 +39,7 @@ const CheckinCompleteScreen = (props: Props) => {
       <ScrollView>
       <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
       <SafeAreaView style={globalStyles.safeAreaContainer}>
-        <Icon name={'check-circle'} style={globalStyles.successIcon} size={wp('20%')} />
+        <Icon name={"check-circle"} style={globalStyles.successIcon} size={wp("20%")} />
         <Text style={globalStyles.successText}>Checkin Complete.</Text>
       </SafeAreaView>
       </ScrollView>

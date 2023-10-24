@@ -41,7 +41,7 @@ export class ApiHelper {
     const config = this.getConfig(apiName);
     if (config === undefined) return;
     try {
-      const requestOptions = { method: 'GET', headers: { 'Authorization': 'Bearer ' + config.jwt } };
+      const requestOptions = { method: 'GET', headers: { Authorization: 'Bearer ' + config.jwt } };
       return fetch(config.url + path, requestOptions).then(response => response.json()).catch(_ => null)
     } catch (e : any) {
       ErrorHelper.logError("get-method", e);
@@ -53,7 +53,7 @@ export class ApiHelper {
     const config = this.getConfig(apiName);
     if (!config) return
     try {
-      const requestOptions = { method: "GET" };
+      const requestOptions = { method: 'GET' };
       return fetch(config.url + path, requestOptions).then(response => response.json())
     } catch (e : any) {
       ErrorHelper.logError("get-anonymous-method", e);
@@ -68,7 +68,7 @@ export class ApiHelper {
   
     const requestOptions = {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + config.jwt, 'Content-Type': 'application/json' },
+      headers: { Authorization: 'Bearer ' + config.jwt, 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     };
     console.log(config.url + path, requestOptions);
@@ -80,7 +80,7 @@ export class ApiHelper {
     if (config === undefined) return;
     const requestOptions = {
       method: 'DELETE',
-      headers: { 'Authorization': 'Bearer ' + config.jwt }
+      headers: { Authorization: 'Bearer ' + config.jwt }
     };
     return fetch(config.url + path, requestOptions);
   }

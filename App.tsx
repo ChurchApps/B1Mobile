@@ -1,10 +1,12 @@
-import React, { useEffect } from 'react';
-import AppNavigator from './src/navigation/AppNavigation';
-import { View } from 'react-native';
-import { ApiHelper, EnvironmentHelper, UserHelper } from "./src/helpers"
-import CodePush from 'react-native-code-push';
-import { ActionSheetProvider } from '@expo/react-native-action-sheet';
-import { PushNotificationHelper} from './src/helpers/PushNotificationHelper';
+import React, { useEffect } from "react";
+import AppNavigator from "./src/navigation/AppNavigation";
+import { View } from "react-native";
+import { EnvironmentHelper, UserHelper } from "./src/helpers"
+
+
+import CodePush from "react-native-code-push";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import { PushNotificationHelper} from "./src/helpers/PushNotificationHelper";
 
 // Need manually add Intl polyfill for react-native app
 import "intl";
@@ -17,7 +19,7 @@ if (Platform.OS === "android") {
   }
 }
 import "intl/locale-data/jsonp/en";
-import { ErrorHelper } from './src/helpers/ErrorHelper';
+import { ErrorHelper } from "@churchapps/mobilehelper";
 
 
 

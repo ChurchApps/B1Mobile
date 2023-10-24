@@ -1,5 +1,5 @@
-import Analytics from 'appcenter-analytics';
-import { DeviceEventEmitter } from 'react-native';
+import Analytics from "appcenter-analytics";
+import { DeviceEventEmitter } from "react-native";
 import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
 export class ErrorHelper {
@@ -30,8 +30,8 @@ export class ErrorHelper {
     }
   
     static initJava() {
-      DeviceEventEmitter.addListener('onError', ErrorHelper.onJavaError);
-      DeviceEventEmitter.addListener('onEvent', ErrorHelper.onJavaEvent);
+      DeviceEventEmitter.addListener("onError", ErrorHelper.onJavaError);
+      DeviceEventEmitter.addListener("onEvent", ErrorHelper.onJavaEvent);
     }
   
     static initUnhandled() {

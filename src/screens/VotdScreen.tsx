@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, SafeAreaView, Image, Dimensions, Text } from 'react-native';
-import { SimpleHeader } from '../components';
-import { globalStyles, Utilities } from '../helpers';
+import React from "react";
+import { View, SafeAreaView, Image, Dimensions, Text } from "react-native";
+import { SimpleHeader } from "../components";
+import { globalStyles, Utilities } from "../helpers";
 
 interface Props {
   navigation: {

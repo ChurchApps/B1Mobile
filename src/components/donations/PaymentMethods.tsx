@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { TouchableOpacity, View, Text, ActivityIndicator, Alert } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -7,10 +7,11 @@ import { FlatList } from "react-native-gesture-handler";
 import { CardForm, BankForm } from ".";
 import { DisplayBox } from "../";
 import { PaymentMethodModal } from "../modals/PaymentMethodModal"
-import { globalStyles, UserHelper, ApiHelper, Constants } from "../../helpers";
+import { globalStyles, UserHelper,  Constants } from "../../helpers";
 import { StripePaymentMethod, Permissions } from "../../interfaces";
 import { useIsFocused } from "@react-navigation/native";
-import { ErrorHelper } from "../../helpers/ErrorHelper";
+import { ErrorHelper , ApiHelper } from "@churchapps/mobilehelper";
+
 
 interface Props {
   customerId: string;

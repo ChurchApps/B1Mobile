@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Image, Text, TouchableOpacity, Alert, Platform, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Constants, Utilities } from '../helpers';
-import { globalStyles, UserHelper, ApiHelper } from '../helpers';;
-import { MainHeader, PaymentMethods, Donations, DonationForm, RecurringDonations } from '../components';
+import {useState, useEffect} from "react";
+import { SafeAreaView, Image, Text, TouchableOpacity, Alert, Platform, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { Constants, Utilities } from "../helpers";
+import { globalStyles, UserHelper} from "../helpers";;
+import { MainHeader, PaymentMethods, Donations, DonationForm, RecurringDonations } from "../components";
 import { initStripe } from "@stripe/stripe-react-native"
-import { StripePaymentMethod } from '../interfaces';
-import { useIsFocused } from '@react-navigation/native';
-import { ErrorHelper } from '../helpers/ErrorHelper';
-import { widthPercentageToDP } from 'react-native-responsive-screen';
+import { StripePaymentMethod } from "../interfaces";
+import { useIsFocused } from "@react-navigation/native";
+import { ErrorHelper, ApiHelper } from "@churchapps/mobilehelper";
+import { widthPercentageToDP } from "react-native-responsive-screen";
 
 interface Props {
   navigation: {
@@ -87,7 +87,7 @@ const DonationScreen = (props: Props) => {
           updatedFunction={loadData}
         />
         {!UserHelper.currentUserChurch?.person?.id 
-          ? <Text style={ [globalStyles.paymentDetailText, {marginVertical: widthPercentageToDP('2%'),}] }>
+          ? <Text style={ [globalStyles.paymentDetailText, {marginVertical: widthPercentageToDP("2%"),}] }>
           Please login to view existing donations
         </Text>
           : <View>

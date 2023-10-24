@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Image, ScrollView, View, TouchableOpacity, Text, Alert, TextInput, Dimensions, PixelRatio } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
-import IconP from 'react-native-vector-icons/Fontisto';
+import IconP from "react-native-vector-icons/Fontisto";
 import moment from "moment";
 import { InputBox } from "../";
-import { globalStyles, ApiHelper, UserHelper, Constants, UserInterface } from "../../helpers";
+import { globalStyles, UserHelper, Constants,  } from "../../helpers";
+import { ApiHelper , UserInterface  } from "@churchapps/mobilehelper";
 import { FundDonationInterface, FundInterface, StripePaymentMethod, StripeDonationInterface, PersonInterface, } from "../../interfaces";
 import { FundDonations, } from ".";
 import { PreviewModal } from "../";
@@ -29,7 +30,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [funds, setFunds] = useState<FundInterface[]>([]);
   const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<{ label: string; value: string }[]>([]);
-  const [total, setTotal] = React.useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
 
   const [email, setEmail] = useState("");
@@ -53,7 +54,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     },
     funds: [],
   };
-  const [donation, setDonation] = React.useState<StripeDonationInterface>(initDonation);
+  const [donation, setDonation] = useState<StripeDonationInterface>(initDonation);
   const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [isIntervalDropdownOpen, setIsIntervalDropdownOpen] = useState<boolean>(false);
   const [intervalTypes, setIntervalTypes] = useState<{ label: string; value: string }[]>([
@@ -65,7 +66,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   ]);
   const [selectedInterval, setSelectedInterval] = useState<string>("one_week");
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [dimension, setDimension] = useState(Dimensions.get("screen"));
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -73,8 +74,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   };
 
   useEffect(() => {
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
+    Dimensions.addEventListener("change", () => {
+      const dim = Dimensions.get("screen")
       setDimension(dim);
     })
   }, [dimension])
@@ -103,7 +104,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     if(!UserHelper.currentUserChurch?.person?.id){
       churchId = UserHelper.currentUserChurch.church.id ?? "";
     }else{
-      const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+      const churchvalue = await AsyncStorage.getItem("CHURCH_DATA")
       if (churchvalue !== null) {
         const church = JSON.parse(churchvalue);
         churchId = church.id ?? "";
@@ -152,13 +153,13 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         type: method?.type,
         billing_cycle_anchor: +new Date(date),
       };
-      saveDonation(payload, '');
+      saveDonation(payload, "");
     }
   };
 
   const saveCard = async (user: UserInterface, person: PersonInterface) => {
     const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType : 'Card',
+      paymentMethodType : "Card",
       ...cardDetails,
     });
 
@@ -203,9 +204,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       setTotal(0);
       setFundDonations([{ fundId: funds[0]?.id }]);
       setDonation(initDonation);
-      setEmail('');
-      setFirstName('');
-      setLastName('')
+      setEmail("");
+      setFirstName("");
+      setLastName("")
       Alert.alert("Thank you for your donation.", message, [{ text: "OK", onPress: () => updatedFunction() }]);
     }
     if (results?.raw?.message) {
@@ -272,7 +273,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       />
       <InputBox
         title="Donate"
-        headerIcon={<Image source={Constants.Images.ic_give} style={[globalStyles.donationIcon, { marginLeft: wd('4%') }]} />}
+        headerIcon={<Image source={Constants.Images.ic_give} style={[globalStyles.donationIcon, { marginLeft: wd("4%") }]} />}
         saveFunction={donationType ? handleSave : undefined}
         cancelFunction={donationType ? handleCancel : undefined}
       >
@@ -312,17 +313,17 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             <View>
               {!UserHelper.currentUserChurch?.person?.id ? (
                 <View style={{ width: wp("100%") }}>
-                  <View style={[globalStyles.donationInputFieldContainer, {width: wd('90%'),}]}>
-                    <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-                    <TextInput style={[globalStyles.textInputStyle, { width: wd('90%'), color: 'black'}]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
+                  <View style={[globalStyles.donationInputFieldContainer, {width: wd("90%"),}]}>
+                    <IconP name={"person"} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp("4.5%")} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: wd("90%"), color: "black"}]} placeholder={"First name"} autoCorrect={false} placeholderTextColor={"lightgray"} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
                   </View>
-                  <View style={[globalStyles.donationInputFieldContainer, { width: wd('90%') }]}>
-                    <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-                    <TextInput style={[globalStyles.textInputStyle, { width: wd('90%'), color: 'black'}]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
+                  <View style={[globalStyles.donationInputFieldContainer, { width: wd("90%") }]}>
+                    <IconP name={"person"} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp("4.5%")} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: wd("90%"), color: "black"}]} placeholder={"Last name"} autoCorrect={false} placeholderTextColor={"lightgray"} value={lastName} onChangeText={(text) => { setLastName(text) }} />
                   </View>
-                  <View style={[globalStyles.donationInputFieldContainer, { width: wd('90%') }]}>
-                    <IconP name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-                    <TextInput style={[globalStyles.textInputStyle, { width: wd('90%'), color: 'black'}]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+                  <View style={[globalStyles.donationInputFieldContainer, { width: wd("90%") }]}>
+                    <IconP name={"email"} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp("4.5%")} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: wd("90%"), color: "black"}]} placeholder={"Email"} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" placeholderTextColor={"lightgray"} value={email} onChangeText={(text) => { setEmail(text) }} />
                   </View>
                 </View>
               ) : null}
@@ -349,7 +350,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     dropDownDirection="BOTTOM"
                   />
                 </View>
-              : <View style={[globalStyles.donationInputFieldContainer, { width: wd('90%'), padding:10, marginTop: wp('3%') }]}>
+              : <View style={[globalStyles.donationInputFieldContainer, { width: wd("90%"), padding:10, marginTop: wp("3%") }]}>
                   <CardField
                     postalCodeEnabled={true}
                     placeholders={{ number: "4242 4242 4242 4242", cvc : "123" }}
@@ -408,7 +409,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       }}
                       containerStyle={{
                         ...globalStyles.containerStyle,
-                        height: isIntervalDropdownOpen ? intervalTypes.length * wp("12.5%") : wp('12%'),
+                        height: isIntervalDropdownOpen ? intervalTypes.length * wp("12.5%") : wp("12%"),
                       }}
                       style={globalStyles.dropDownMainStyle}
                       labelStyle={globalStyles.labelStyle}

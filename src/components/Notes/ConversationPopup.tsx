@@ -5,15 +5,13 @@ import {
   FlatList,
   TextInput,
 } from "react-native";
-import React, { useState } from "react";
+import  { useState, useRef } from "react";
 import {
-  ApiHelper,
   Constants,
-  ConversationInterface,
-  MessageInterface,
   UserHelper,
   globalStyles,
 } from "../../helpers";
+import { ApiHelper, ConversationInterface, MessageInterface } from "@churchapps/mobilehelper";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
 import Notes from "./Notes";
@@ -32,7 +30,7 @@ const ConversationPopup = ({
   const [newMessage] = useState<MessageInterface>();
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
 
-  const textRef = React.useRef('')
+  const textRef = useRef("")
 
   const handleReply = (value: number) => setShowReplyBox(value);
   const onUpdate = () => loadConversations();
@@ -173,7 +171,7 @@ const ConversationPopup = ({
 
   return (
     <View>
-      <View style={{height: 'auto', maxHeight: hp('40%')}}>
+      <View style={{height: "auto", maxHeight: hp("40%")}}>
         <FlatList
           data={conversations}
           renderItem={({ item, index }) => renderConversations(item, index)}

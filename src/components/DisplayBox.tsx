@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function DisplayBox({ title, rightHeaderComponent, headerIcon, children }: Props) {
-  const [dimension, setDimension] = React.useState(Dimensions.get('screen'));
+  const [dimension, setDimension] = React.useState(Dimensions.get("screen"));
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -19,17 +19,17 @@ export function DisplayBox({ title, rightHeaderComponent, headerIcon, children }
   };
 
   React.useEffect(()=>{
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
+    Dimensions.addEventListener("change", () => {
+      const dim = Dimensions.get("screen")
       setDimension(dim);
     })
   },[dimension])
 
   return (
-    <View style={[globalStyles.paymentTitleContainer,{width:wd('100%')}]}>
+    <View style={[globalStyles.paymentTitleContainer,{width:wd("100%")}]}>
       <View style={{ width: wd("100%") }}>
-        <View style={[globalStyles.paymentTitleHeaderLine,{width:wd('100%')}]} />
-        <View style={[globalStyles.paymentTitleView,{paddingHorizontal:wd('4%')}]}>
+        <View style={[globalStyles.paymentTitleHeaderLine,{width:wd("100%")}]} />
+        <View style={[globalStyles.paymentTitleView,{paddingHorizontal:wd("4%")}]}>
           {headerIcon}
           <Text style={globalStyles.paymentTitleText}>{title}</Text>
           {rightHeaderComponent || <View style={{ width: wd("6%") }} />}

@@ -1,13 +1,14 @@
-import React, { useState, useEffect , FunctionComponent} from 'react';
+import React, { useState, useEffect , FunctionComponent} from "react";
 import { ActionSheetIOS, Alert, Dimensions, FlatList, Image, KeyboardAvoidingView, PixelRatio, Text, TouchableWithoutFeedback, View } from "react-native";
-import { LongPressGestureHandler, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { LongPressGestureHandler, TextInput, TouchableOpacity } from "react-native-gesture-handler";
+import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import MessageIcon from 'react-native-vector-icons/Feather';
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import MessageIcon from "react-native-vector-icons/Feather";
 import { MainHeader } from "../components";
-import { ApiHelper, Constants, globalStyles, UserSearchInterface, ConversationCheckInterface, ConversationInterface, MessageInterface, UserHelper, ConversationCreateInterface, PrivateMessagesCreate } from "../helpers";
-import { useActionSheet } from '@expo/react-native-action-sheet';
+import {  Constants, globalStyles,  UserHelper,  } from "../helpers";
+import { ApiHelper, UserSearchInterface, ConversationCheckInterface,ConversationInterface, MessageInterface, ConversationCreateInterface, PrivateMessagesCreate } from "@churchapps/mobilehelper";
+import { useActionSheet } from "@expo/react-native-action-sheet";
 
 interface Props {
     navigation: {
@@ -23,10 +24,10 @@ interface Props {
 }
 
 export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
-    const [messageText, setMessageText] = useState('');
+    const [messageText, setMessageText] = useState("");
     const [messageList, setMessageList] = useState<MessageInterface[]>([]);
     const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
-    const [dimension, setDimension] = useState(Dimensions.get('window'));
+    const [dimension, setDimension] = useState(Dimensions.get("window"));
     const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
 
     const { showActionSheetWithOptions } = useActionSheet();
@@ -85,7 +86,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
         }
         ApiHelper.post("/messages", params, "MessagingApi").then(async (data: any) => {
             if(data != null || data != undefined){
-                setMessageText('');
+                setMessageText("");
                 setEditingMessage(null);
                 getConversations();
             }
@@ -98,7 +99,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
     const deleteMessage = (messageId: string) => {
         ApiHelper.delete("/messages/"+messageId, "MessagingApi").then(async (data: any) => {
             if(data != null || data != undefined){
-                setMessageText('');
+                setMessageText("");
                 setEditingMessage(null);
                 getConversations();
             }
@@ -107,7 +108,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
 
     const backIconComponent = (
         <TouchableOpacity onPress={() => props.navigation.goBack()}>
-            <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={wp('5%')} />
+            <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={wp("5%")} />
         </TouchableOpacity>);
 
     const mainComponent = (<Text style={globalStyles.headerText}>{props.route.params.userDetails.name.display}</Text>);
@@ -117,11 +118,11 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
             <View style={globalStyles.messageInputContainer}>
                 <TextInput
                     style={globalStyles.messageInputStyle}
-                    placeholder={'Enter'}
+                    placeholder={"Enter"}
                     autoCapitalize="none"
                     autoCorrect={false}
-                    keyboardType='default'
-                    placeholderTextColor={'lightgray'}
+                    keyboardType="default"
+                    placeholderTextColor={"lightgray"}
                     value={messageText}
                     onChangeText={(text) => { 
                         if(text == "") setEditingMessage(null)
@@ -129,7 +130,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
                     }}
                 />
                 <TouchableOpacity style={globalStyles.sendIcon} onPress = {() => sendMessageInitiate()}>
-                    <MessageIcon name={"send"} color={"white"} size={wp('5%')}/>
+                    <MessageIcon name={"send"} color={"white"} size={wp("5%")}/>
                 </TouchableOpacity>
             </View>
         );
@@ -141,7 +142,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
                 <FlatList
                     inverted
                     data={messageList} 
-                    style = {{paddingVertical: wp('2%')}}
+                    style = {{paddingVertical: wp("2%")}}
                     renderItem={({ item }) => singleMessageItem(item)} 
                     keyExtractor={(item: any) => item.id} 
                 />
@@ -152,21 +153,21 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
     const singleMessageItem = (item : MessageInterface) => {
         return (
             <TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
-                <View style={[globalStyles.messageContainer, { alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
+                <View style={[globalStyles.messageContainer, { alignSelf: item.personId != props.route.params.userDetails.id ? "flex-end" : "flex-start"}]}>
                     {item.personId == props.route.params.userDetails.id ? 
-                        <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp('9%'), width: wp('9%')}]}/> 
+                        <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp("9%"), width: wp("9%")}]}/> 
                     : null}
                     <View>
-                        <Text style={[globalStyles.senderNameText, {alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
+                        <Text style={[globalStyles.senderNameText, {alignSelf: item.personId != props.route.params.userDetails.id ? "flex-end" : "flex-start"}]}>
                             {item.displayName}
                         </Text>
-                        <View style={[globalStyles.messageView,{width: item.content.length > 15 ? wp('65%') : wp((item.content.length + 14).toString() + "%"), 
-                            alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
+                        <View style={[globalStyles.messageView,{width: item.content.length > 15 ? wp("65%") : wp((item.content.length + 14).toString() + "%"), 
+                            alignSelf: item.personId != props.route.params.userDetails.id ? "flex-end" : "flex-start"}]}>
                             <Text>{item.content}</Text>
                         </View>
                     </View>
                     {item.personId != props.route.params.userDetails.id ? 
-                        <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp('9%'), width: wp('9%')}]}/> 
+                        <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp("9%"), width: wp("9%")}]}/> 
                     : null}
                 </View>
             </TouchableWithoutFeedback>
@@ -174,7 +175,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
     }
 
     const openContextMenu = (item : MessageInterface) => {
-        const options = ['Edit', 'Delete', 'Cancel'];
+        const options = ["Edit", "Delete", "Cancel"];
         const destructiveButtonIndex = 0;
         const cancelButtonIndex = 2;
         showActionSheetWithOptions({

@@ -12,12 +12,12 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ApiHelper,
   Constants,
   EnvironmentHelper,
   UserHelper,
   globalStyles,
 } from "../helpers";
+import { ApiHelper } from "@churchapps/mobilehelper";
 import { SimpleHeader } from "../components";
 import Markdown from "react-native-markdown-display";
 import { TouchableOpacity } from "react-native-gesture-handler";

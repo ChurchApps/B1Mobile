@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { Image, NativeModules, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants, UserHelper } from '../helpers';
-import { globalStyles } from '../helpers';
-import { MainHeader } from './MainHeader';
+import * as React from "react";
+import { Image, NativeModules, Platform, Text, TouchableOpacity, View } from "react-native";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import { Constants, UserHelper } from "../helpers";
+import { globalStyles } from "../helpers";
+import { MainHeader } from "./MainHeader";
 const { StatusBarManager } = NativeModules;
 
 interface Props {

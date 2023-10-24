@@ -1,5 +1,5 @@
 import { format as dateFormat } from "date-fns";
-import { ErrorHelper } from "./ErrorHelper";
+import { ErrorHelper } from "@churchapps/mobilehelper";
 
 export class DateHelper {
   static formatHtml5Date(date: Date): string {

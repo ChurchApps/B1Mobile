@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import  { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -19,7 +19,7 @@ interface Props {
 
 export function PreviewModal({ show, close, donation, paymentMethodName, donationType: d, handleDonate }: Props) {
   const donationType: any = { once: "One-time Donation", recurring: "Recurring Donation" };
-  const [isLoading, setLoading] = React.useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   const handleClick = async () => {
     setLoading(true);

@@ -1,4 +1,4 @@
-import * as React from "react";
+import  React from "react";
 import { TouchableOpacity, FlatList, Text, View } from "react-native";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import Icon from "react-native-vector-icons/FontAwesome";

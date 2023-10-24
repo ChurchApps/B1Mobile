@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import React from "react";
 import moment from "moment";
-import { Constants, MessageInterface, globalStyles } from "../../helpers";
+import { Constants,  globalStyles } from "../../helpers";
+import { MessageInterface } from "@churchapps/mobilehelper";
 import { PersonHelper } from "../../helpers/PersonHelper";
 import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 

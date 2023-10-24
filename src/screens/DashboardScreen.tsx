@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, FlatList, Image, Dimensions, PixelRatio } from 'react-native';
-import { LinkInterface, UserHelper, Utilities } from '../helpers';
-import { Loader, SimpleHeader } from '../components';
-import { globalStyles } from '../helpers';
-import { ImageButton } from '../components/ImageButton';
-import { widthPercentageToDP } from 'react-native-responsive-screen';
-import { NavigationHelper } from '../helpers/NavigationHelper';
+import React, { useState, useEffect } from "react";
+import { View, SafeAreaView, Text, FlatList, Image, Dimensions, PixelRatio } from "react-native";
+import {  UserHelper, Utilities } from "../helpers";
+import { LinkInterface } from "@churchapps/mobilehelper";
+import { Loader, SimpleHeader } from "../components";
+import { globalStyles } from "../helpers";
+import { ImageButton } from "../components/ImageButton";
+import { widthPercentageToDP } from "react-native-responsive-screen";
+import { NavigationHelper } from "../helpers/NavigationHelper";
 
 interface Props {
   navigation: {
@@ -19,7 +20,7 @@ export const DashboardScreen  = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [isLoading, setLoading] = useState(false);
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [dimension, setDimension] = useState(Dimensions.get("screen"));
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -34,12 +35,12 @@ export const DashboardScreen  = (props: Props) => {
 
   useEffect(() => {
 
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
+    Dimensions.addEventListener("change", () => {
+      const dim = Dimensions.get("screen")
       setDimension(dim);
     })
 
-    UserHelper.addOpenScreenEvent('Dashboard');
+    UserHelper.addOpenScreenEvent("Dashboard");
   }, [])
 
   useEffect(() => {
