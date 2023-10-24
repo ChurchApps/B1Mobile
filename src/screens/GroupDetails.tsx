@@ -19,7 +19,7 @@ import {
 } from "../helpers";
 import { ApiHelper } from "@churchapps/mobilehelper";
 import { SimpleHeader } from "../components";
-import Markdown from "react-native-markdown-display";
+import Markdown from '@ronradtke/react-native-markdown-display'
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Conversations from "../components/Notes/Conversations";
 import { GroupMemberInterface } from "../interfaces";
@@ -47,7 +47,7 @@ const GroupDetails = (props: any) => {
 
   useEffect(() => {
     loadData();
-  }, []);
+      }, []);
 
   const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => {
     return (
