@@ -1,6 +1,6 @@
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApiHelper } from './ApiHelper';
+import { ApiHelper } from '@churchapps/mobilehelper';
 import { UserHelper } from './UserHelper';
 import DeviceInfo from 'react-native-device-info';
 

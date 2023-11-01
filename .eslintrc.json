@@ -1,19 +1,24 @@
-{
+ {
     "extends": ["eslint:recommended", "plugin:react/recommended"],
+    "root": true,
     "plugins": [
       "react",
-      "react-native"
+      "react-native",
+      "unused-import"
     ],
     "parser": "@babel/eslint-parser",
     "parserOptions": {
+      "project" : ["./tsconfig.json"],
+      "requireConfigFile" : "false",
+      "sourceType": "module",
       "ecmaFeatures": {
         "jsx": true
       },
       "ecmaVersion": 2023
     },
     "rules": {
-      "@next/next/no-img-element": "off",
-      "@next/next/no-html-link-for-pages": "off",
+      // "@next/next/no-img-element": "off",
+      // "@next/next/no-html-link-for-pages": "off",
       "react/jsx-key": "off",
       "react/no-unescaped-entities": "off",
       "react-hooks/exhaustive-deps": "off",
@@ -33,5 +38,6 @@
       "no-undef": "off",
       "no-unused-vars": "off",
       "no-useless-catch": "off"
+      
     }
   }

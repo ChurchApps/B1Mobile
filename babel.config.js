@@ -9,16 +9,14 @@ module.exports = {
       safe: false,
       allowUndefined: true
     },
- ],
- ["module:churchapps" , {
-    moduleName: "@churchapps",
-    path: "./src/@churchapps/mobilehelper",
-    blacklist: null,
-    whitelist: null,
-    safe: false,
-    allowUndefined: true
-
-}],
+    ],
+    ["module-resolver" , {
+      extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
+      root:["."],
+      alias:{
+        "@churchapps/mobilehelper": "./src/churchapps/mobilehelper",
+      }
+    }],
     ["react-native-reanimated/plugin"]
   ]
 };

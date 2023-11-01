@@ -16,17 +16,10 @@
      "moduleResolution": "node",                                   
     
     "baseUrl": "./",
-    "paths": {
-      //We will have to add the same thing in babel.config.js
-      "@churchapps/mobilehelper": ["src/churchapps/mobilehelper/index"], 
-    },                           
+    "paths": { "@churchapps/mobilehelper": ["./src/churchapps/mobilehelper"] },                           
      "allowSyntheticDefaultImports": true,     
     "esModuleInterop": true,                       
     "skipLibCheck": false ,
     "resolveJsonModule": true                        
-  },
-   "exclude": [
-     "node_modules", "babel.config.js", "metro.config.js", "jest.config.js"
-   ],
-  
+  },   
 }
