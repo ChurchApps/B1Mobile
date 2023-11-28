@@ -42,6 +42,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
 
     const getConversations = () => {
         ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
+            console.log("data in private message in message screen --->",data)
             setCurrentConversation(data);
             if(Object.keys(data).length != 0 && data.conversationId != undefined){
                 getMessagesList(data.conversationId)
@@ -84,6 +85,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
             params = [{"id": editedMessage.id, "churchId": editedMessage.churchId, "conversationId": conversationId, "userId": editedMessage.userId, "displayName": editedMessage.displayName, "timeSent": editedMessage.timeSent, "messageType": "message", "content": messageText, "personId": editedMessage.personId, "timeUpdated": null}]
         }
         ApiHelper.post("/messages", params, "MessagingApi").then(async (data: any) => {
+            console.log("send message api response ----->", data)
             if(data != null || data != undefined){
                 setMessageText('');
                 setEditingMessage(null);
@@ -91,10 +93,12 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
             }
         });
 
-        ApiHelper.post("/devices/tempMessageUser", {"userId":props.route.params.userDetails.id,  "body" : "test body new ", "title" : "Test title new" }, 
-        "MessagingApi");
+        ApiHelper.post("/devices/tempMessageUser", {"peronId":props.route.params?.userDetails.id,  "body" : "test body new ", "title" : "new message" }, 
+        "MessagingApi").then(async(data:any)=>{
+            console.log("temp message api response---->",data)
+        })
     }
-
+    
     const deleteMessage = (messageId: string) => {
         ApiHelper.delete("/messages/"+messageId, "MessagingApi").then(async (data: any) => {
             if(data != null || data != undefined){
@@ -110,7 +114,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
             <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={wp('5%')} />
         </TouchableOpacity>);
 
-    const mainComponent = (<Text style={globalStyles.headerText}>{props.route.params.userDetails.name.display}</Text>);
+    const mainComponent = (<Text style={globalStyles.headerText}>{props?.route?.params?.userDetails?.name?.display ? props?.route?.params?.userDetails?.name?.display : props?.route?.params?.userDetails?.DisplayName }</Text>);
 
     const messageInputView = () => {
         return (

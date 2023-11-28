@@ -1,18 +1,27 @@
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApiHelper } from './ApiHelper';
-import { UserHelper } from './UserHelper';
+import { ApiHelper } from './ApiHelper'
+import { LoginUserChurchInterface } from './Interfaces';
 import DeviceInfo from 'react-native-device-info';
 
 export class PushNotificationHelper {
 
-  static async registerUserDevice() {
+   static async registerUserDevice() {
     const fcmToken = await AsyncStorage.getItem("fcmToken");
-    console.log("Registering Device for user id:", UserHelper.user.id);
     const deviceName = await DeviceInfo.getDeviceName();
     const deviceInfo = await PushNotificationHelper.getDeviceInfo();
-    ApiHelper.post("/devices/register", {"userId":UserHelper.user.id , fcmToken, label: deviceName, deviceInfo:JSON.stringify(deviceInfo) }, "MessagingApi");
+    console.log("device info is as =====>", deviceInfo)
+    const currentChurch = JSON.parse((await AsyncStorage.getItem('CHURCH_DATA'))!)
+    const churchesString  = await AsyncStorage.getItem("CHURCHES_DATA")
+    const tst : LoginUserChurchInterface[] = JSON.parse(churchesString)
+    const currentData : LoginUserChurchInterface | undefined = tst.find((value, index) => value.church.id == currentChurch!.id);
+    if(currentData != null || currentData != undefined){
+    console.log("person object in helper class churches data----->",currentData.person.id)
+    ApiHelper.post("/devices/register", {"personId":currentData.person.id  , fcmToken, label: deviceName, deviceInfo:JSON.stringify(deviceInfo) }, "MessagingApi").then(async(data)=>{
+      console.log("register device api response ====>", data)
+    });
   }
+   }
 
   static async getDeviceInfo() {
     const details: any = {}

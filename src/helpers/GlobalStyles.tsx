@@ -19,9 +19,13 @@ export const globalStyles = StyleSheet.create({
   selectionIcon: { color: 'gray', marginLeft: wp('3%') },
   groupListTitle: { fontSize: wp('4.5%'), fontFamily: Constants.Fonts.RobotoMedium, color: Constants.Colors.app_color },
   safeAreaContainer: {  alignItems: 'center', justifyContent: 'center' },
-
+  tabStyle: { borderRadius: 10, borderColor: 'transparent', fontSize: 18, margin: 5},
+  tabTextStyle: { color: '#818181', fontSize: 18},
+  activeTabStyle: { backgroundColor: 'white', borderRadius: 10, borderColor: 'transparent', margin: 5, borderBottomColor:Constants.Colors.Active_TabColor, borderBottomWidth:1},
+  activeTabTextStyle: { color: 'black', fontSize: 18 },
+  textStyle: { color: 'white', fontSize: 20, fontWeight: '700', marginTop: 40 },
+  tabContainerViewStyle: { backgroundColor: 'white', width: '100%', paddingVertical:5, borderRadius: 10},
   loginLinks: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',marginTop:200 },
-
   simpleLink: { textDecorationLine: "underline", color: Constants.Colors.button_bg },
 
 
@@ -40,9 +44,16 @@ export const globalStyles = StyleSheet.create({
   recentText: { marginHorizontal: wp('5%'), marginTop: wp('5%'), fontSize: wp('4%'), fontFamily: Constants.Fonts.RobotoRegular },
 
   //Home
-  homeContainer: { flex: 1, backgroundColor: 'white' },
+  homeContainer: { flex: 1, backgroundColor: 'white' , position:'relative' },
   menuIcon: { width: wp('6%'), height: wp('6%'), margin: wp('5%'), tintColor: 'white' },
   headerText: { color: 'white', textAlign: 'center', fontSize: wp('4.5%'), fontWeight: 'bold' },
+  TabIndicatorStyle: { backgroundColor: Constants.Colors.white_color, shadowOffset: { height: 0, width: 0 }, shadowColor: 'transparent', shadowOpacity: 0, elevation: 0 },
+  text: { color: 'white', fontSize: 20 },
+  tabBar: {height: '100%', top: 0   },
+  MessagetabView: {position: 'relative', height: '100%', backgroundColor: Constants.Colors.white_color },
+  NotificationtabView: {height: '50%', backgroundColor: Constants.Colors.white_color},
+  activeTabTextColor: {color: Constants.Colors.Active_TabColor ,},
+  tabTextColor: {color: Constants.Colors.Dark_Gray , },
   webViewContainer: { flex: 1, height: "100%", width: "100%" },
 
   //Service
@@ -175,7 +186,6 @@ export const globalStyles = StyleSheet.create({
 
   donationRowContainer: { width: wp("90%"), display: "flex", flexDirection: "row" },
   donationRowText: { width: wp("35%"), textAlign: "center", fontFamily: Constants.Fonts.RobotoRegular, fontSize: wp("4.2%") },
-
   donationInputFieldContainer : { height: wp('12%'), flexDirection: 'row', alignItems: 'center', marginTop: wp('5.5%'), marginHorizontal: wp('5%'), backgroundColor: 'white', borderRadius: wp('2%'), borderColor:"lightgray", borderWidth:1},
 
   // Message screen
@@ -188,7 +198,12 @@ export const globalStyles = StyleSheet.create({
 
   // My Group Screen
   groupImage: { width: wp('92%'), height: wp('40%'), borderRadius: wp('1.5%')  },
-  conversationList: {
-    backgroundColor: 'white', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row', paddingVertical: 12
-}
+  conversationList: {backgroundColor: 'white', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row', paddingVertical: 12},
+
+//Notification screen
+NotificationView:{ marginTop:hp('2%'), flexDirection:'row', width : wp('90%'), borderRadius: wp('2%'), borderWidth:1, paddingHorizontal : wp('1%'), backgroundColor : Constants.Colors.white_color, borderColor: 'lightgray', alignSelf:'center', alignItems:'center', paddingVertical : wp('3%')},
+bellIcon: { width: wp('6%'), height: wp('6%'),  tintColor: 'gray' },
+NotificationText : { fontSize:16, color:'gray'},
+bellIconView:{ flex:0.12, alignItems:'center'},
+notimsgView:{flex:0.9}
 })

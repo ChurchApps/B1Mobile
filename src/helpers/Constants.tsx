@@ -9,7 +9,9 @@ export class Constants {
     button_red: '#B0120C',
     button_dark_green: '#77CC01',
     button_yellow: '#FAC108',
-    white_color: '#FFFFFF'
+    white_color: '#FFFFFF',
+    Dark_Gray : '#808080',
+    Active_TabColor : 'rgb(25, 118, 210);'
   };
 
   static Fonts = {
@@ -36,7 +38,8 @@ export class Constants {
     logoBlue: require("../assets/images/logoBlue.png"),
     logoWhite: require("../assets/images/logoWhite.png"),
     ic_church: require("../assets/images/ic_church.png"),
-    ic_member: require("../assets/images/ic_member.png")
+    ic_member: require("../assets/images/ic_member.png"),
+    dash_bell: require("../assets/images/dash_bell.png")
   };
 
 }
