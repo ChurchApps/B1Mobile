@@ -1,7 +1,7 @@
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ApiHelper } from './ApiHelper'
-import { LoginUserChurchInterface } from './Interfaces';
+import { LoginUserChurchInterface } from './Interfaces'
 import DeviceInfo from 'react-native-device-info';
 
 export class PushNotificationHelper {

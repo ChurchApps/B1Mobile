@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, SafeAreaView, Text, FlatList, Image, Dimensions, PixelRatio, TouchableOpacity, ScrollView } from 'react-native';
-import { LinkInterface, UserHelper, Utilities } from '../helpers';
+import { LinkInterface, UserHelper, Utilities, EnvironmentHelper } from '../helpers';
 import { Loader } from '../components';
 import { globalStyles } from '../helpers';
 import { ImageButton } from '../components/ImageButton';
@@ -59,6 +59,7 @@ export const DashboardScreen = (props: Props) => {
             id: commonId,
             message: item1.conversation.messages[0].content,
             displayName: matchingItem2.name.display,
+            photo : matchingItem2.photo
           });
         }
       });
@@ -96,7 +97,9 @@ export const DashboardScreen = (props: Props) => {
     // setLoading(true);
     ApiHelper.get("/privateMessages", "MessagingApi").then((data: ConversationCheckInterface[]) => {
       console.log("private message api response =====>",data)
-      setChatList(data)
+      if (data && data.length != 0) {
+        setChatList(data);
+      }  
       // setLoading(false);
       var userIdList: string[] = []
       if (Object.keys(data).length != 0) {
@@ -119,12 +122,13 @@ export const DashboardScreen = (props: Props) => {
   const renderChatListItems = (item: any, index: number) => {
     let userchatDetails = {
       id: item.id,
-      DisplayName: item.displayName
+      DisplayName: item.displayName, 
+      photo: item.photo
     }
     return (
       <TouchableOpacity onPress={() => props.navigation.navigate('MessagesScreen', { userDetails: userchatDetails })}>
         <View style={[globalStyles.messageContainer, { alignSelf: 'flex-start' }]}>
-          <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: Constants.Colors.app_color, height: widthPercentageToDP('9%'), width: widthPercentageToDP('9%') }]} />
+          <Image source={ item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } :Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: item.photo ? '' : Constants.Colors.app_color, height: widthPercentageToDP('9%'), width: widthPercentageToDP('9%') , borderRadius :widthPercentageToDP('9%') }]} />
           <View>
             <Text style={[globalStyles.senderNameText, { alignSelf: 'flex-start' }]}>
               {item.displayName}

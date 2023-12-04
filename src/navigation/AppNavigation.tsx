@@ -23,7 +23,6 @@ import { SearchUserScreen } from '../screens/SearchUserScreen';
 import { MessagesScreen } from '../screens/MessagesScreen';
 import MyGroups from '../screens/MyGroups';
 import GroupDetails from '../screens/GroupDetails';
-import NotificationScreen from '../screens/NotificationScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -94,7 +93,6 @@ const AppNavigation = (props: {}) => {
         <AppNav.Screen name="AuthStack" component={AuthStack} />
         <AppNav.Screen name="MainStack" component={MainStack} />
         <AppNav.Screen name={'MessagesScreen'} component={MessagesScreen} />
-        <AppNav.Screen name={"Notification"} component={NotificationScreen}/>
       </AppNav.Navigator>
     </NavigationContainer>
   );

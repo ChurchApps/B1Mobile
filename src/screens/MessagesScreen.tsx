@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MessageIcon from 'react-native-vector-icons/Feather';
 import { MainHeader } from "../components";
-import { ApiHelper, Constants, globalStyles, UserSearchInterface, ConversationCheckInterface, ConversationInterface, MessageInterface, UserHelper, ConversationCreateInterface, PrivateMessagesCreate } from "../helpers";
+import { ApiHelper, Constants, EnvironmentHelper, globalStyles, UserSearchInterface, ConversationCheckInterface, ConversationInterface, MessageInterface, UserHelper, ConversationCreateInterface, PrivateMessagesCreate } from "../helpers";
 import { useActionSheet } from '@expo/react-native-action-sheet';
 
 interface Props {
@@ -28,6 +28,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
     const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
     const [dimension, setDimension] = useState(Dimensions.get('window'));
     const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
+    const [UserProfilePic, setUserProfilePic]= useState<string>('')
 
     const { showActionSheetWithOptions } = useActionSheet();
 
@@ -38,11 +39,11 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
 
     useEffect(() => {
         getConversations();
+        loadMembers();
     }, []);
 
     const getConversations = () => {
         ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
-            console.log("data in private message in message screen --->",data)
             setCurrentConversation(data);
             if(Object.keys(data).length != 0 && data.conversationId != undefined){
                 getMessagesList(data.conversationId)
@@ -50,6 +51,14 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
         })
     }
 
+        const loadMembers = () => {
+        ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi").then(data => {
+        if(data != null && data.length > 0){
+            setUserProfilePic(data[0].photo)
+            console.log(UserProfilePic)
+        }
+        })
+      }
     const getMessagesList = (conversationId : string) => {
         ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi").then(data => {
             var conversation : MessageInterface[] = data;
@@ -85,18 +94,16 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
             params = [{"id": editedMessage.id, "churchId": editedMessage.churchId, "conversationId": conversationId, "userId": editedMessage.userId, "displayName": editedMessage.displayName, "timeSent": editedMessage.timeSent, "messageType": "message", "content": messageText, "personId": editedMessage.personId, "timeUpdated": null}]
         }
         ApiHelper.post("/messages", params, "MessagingApi").then(async (data: any) => {
-            console.log("send message api response ----->", data)
             if(data != null || data != undefined){
+                ApiHelper.post("/devices/tempMessageUser", {"personId":props.route.params?.userDetails.id,  "body" : messageText, "title" : "new message" }, 
+                "MessagingApi").then(async(data:any)=>{
+                    console.log("temp message api response---->",data)
+                })
                 setMessageText('');
                 setEditingMessage(null);
                 getConversations();
             }
         });
-
-        ApiHelper.post("/devices/tempMessageUser", {"peronId":props.route.params?.userDetails.id,  "body" : "test body new ", "title" : "new message" }, 
-        "MessagingApi").then(async(data:any)=>{
-            console.log("temp message api response---->",data)
-        })
     }
     
     const deleteMessage = (messageId: string) => {
@@ -157,8 +164,8 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
         return (
             <TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
                 <View style={[globalStyles.messageContainer, { alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
-                    {item.personId == props.route.params.userDetails.id ? 
-                        <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp('9%'), width: wp('9%')}]}/> 
+                     {item.personId == props.route.params.userDetails.id ? 
+                        <Image source={props?.route?.params?.userDetails?.photo ? { uri: EnvironmentHelper.ContentRoot + props?.route?.params?.userDetails?.photo} : Constants.Images.ic_user } style={[globalStyles.churchListIcon, {tintColor: props.route.params.userDetails.photo ? '' : Constants.Colors.app_color, height: wp('9%'), width: wp('9%'), borderRadius : wp('9%')}]}/> 
                     : null}
                     <View>
                         <Text style={[globalStyles.senderNameText, {alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
@@ -169,8 +176,8 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
                             <Text>{item.content}</Text>
                         </View>
                     </View>
-                    {item.personId != props.route.params.userDetails.id ? 
-                        <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp('9%'), width: wp('9%')}]}/> 
+                     {item.personId != props.route.params.userDetails.id ? 
+                        <Image source={ UserProfilePic  ? {uri : EnvironmentHelper.ContentRoot + UserProfilePic}  :  Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: wp('9%'), width: wp('9%'), borderRadius:wp('9%')}]}/> 
                     : null}
                 </View>
             </TouchableWithoutFeedback>
