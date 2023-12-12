@@ -3,7 +3,7 @@ import { View, SafeAreaView, Image, Text, Alert, Linking, Dimensions, PixelRatio
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities } from '../helpers';
 import { globalStyles } from '../helpers';
-import { BlueHeader, Loader, SimpleHeader, WhiteHeader } from '../components';
+import { Loader, MainHeader, NotificationTab } from '../components';
 import Icon from 'react-native-vector-icons/Zocial';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
@@ -27,6 +27,7 @@ export const MemberDetailScreen = (props: Props) => {
   const memberinfo = member.contactInfo;
   const [isLoading, setLoading] = useState(false);
   const [householdList, setHouseholdList] = useState([]);
+  const [NotificationModal, setNotificationModal] = useState(false);
   const scrollViewRef = useRef<any>();
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
@@ -84,6 +85,15 @@ export const MemberDetailScreen = (props: Props) => {
     })
   }
 
+  const RightComponent = (
+    <TouchableOpacity onPress={() => toggleTabView()}>
+      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    </TouchableOpacity>
+  );
+
+  const toggleTabView = () => {
+    setNotificationModal(!NotificationModal);
+  };
   const onMembersClick = (item: any) => {
     scrollViewRef.current.scrollTo({ y: 0, animated: false })
     navigate('MemberDetailScreen', { member: item })
@@ -103,8 +113,13 @@ export const MemberDetailScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-
-      <SimpleHeader onPress={() => openDrawer()} title="Directory" />
+      <MainHeader
+        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
+          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
+        </TouchableOpacity>}
+        mainComponent={<Text style={globalStyles.headerText}>Directory</Text>}
+        rightComponent={RightComponent}
+      />
       <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
         <Image source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
         <Text style={globalStyles.memberName}>{member.name.display}</Text>
@@ -140,6 +155,11 @@ export const MemberDetailScreen = (props: Props) => {
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
 
+      {
+        NotificationModal ?
+          <NotificationTab /> : null
+
+      }
     </SafeAreaView>
   );
 };

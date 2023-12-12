@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from '../../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../../helpers';
-import { BottomButton, Loader, WhiteHeader } from '../../components';
+import { BottomButton, Loader, WhiteHeader, MainHeader, NotificationTab } from '../../components';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
 
 interface Props {
@@ -30,6 +30,7 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [memberList, setMemberList] = useState<any[]>([]);
   const [groupTree, setGroupTree] = useState<any[]>([]);
+  const [NotificationModal, setNotificationModal] = useState(false);
 
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
@@ -126,7 +127,15 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
     }
   }
 
+  const RightComponent = (
+    <TouchableOpacity onPress={() =>toggleTabView()}>
+      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    </TouchableOpacity>
+  );
 
+  const toggleTabView = () => {
+    setNotificationModal(!NotificationModal);
+  };
   const submitAttendance = async () => {
     setLoading(true);
     const serviceId = props.route.params.serviceId;
@@ -198,17 +207,31 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
       </View>
     );
   }
-
+  const logoSrc = Constants.Images.logoBlue;
   return (
     <View style={globalStyles.grayContainer}>
+      <MainHeader
+        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
+          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
+        </TouchableOpacity>}
+        mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
+        rightComponent={RightComponent}
+      />
+     <View style={logoSrc}>
+        <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
+      </View>
       <ScrollView>
-        <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
+        {/* <WhiteHeader onPress={() => openDrawer()} title="Checkin" /> */}
+        
         <SafeAreaView style={{ flex: 1 }}>
           <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
           <BottomButton title='CHECKIN' onPress={() => submitAttendance()} style={wd('100%')}/>
         </SafeAreaView>
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
+      {NotificationModal ? 
+      <NotificationTab/>
+    : null}
     </View>
   );
 };

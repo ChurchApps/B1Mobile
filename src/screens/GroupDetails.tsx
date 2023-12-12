@@ -18,7 +18,7 @@ import {
   UserHelper,
   globalStyles,
 } from "../helpers";
-import { SimpleHeader } from "../components";
+import { MainHeader, NotificationTab } from "../components";
 import Markdown from '@ronradtke/react-native-markdown-display'
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Conversations from "../components/Notes/Conversations";
@@ -31,6 +31,7 @@ const GroupDetails = (props: any) => {
   const [groupMembers, setGroupMembers] = useState([]);
   const [dimension] = useState(Dimensions.get("screen"));
   const [activeTab, setActiveTab] = useState(0);
+  const [NotificationModal, setNotificationModal] = useState(false);
 
   const { id: groupId, name, photoUrl, about } = props?.route?.params?.group;
 
@@ -100,6 +101,15 @@ const GroupDetails = (props: any) => {
     );
   }
 
+  const RightComponent = (
+    <TouchableOpacity onPress={() =>toggleTabView()}>
+      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    </TouchableOpacity>
+  );
+
+  const toggleTabView = () => {
+    setNotificationModal(!NotificationModal);
+  };
   return (
     <SafeAreaView
       style={[
@@ -107,12 +117,18 @@ const GroupDetails = (props: any) => {
         { alignSelf: "center", width: "100%", backgroundColor: "white" },
       ]}
     >
+       <MainHeader
+        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
+          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
+        </TouchableOpacity>}
+        mainComponent={<Text style={globalStyles.headerText}>{name}</Text>}
+        rightComponent={RightComponent}
+      />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "position" : "height"}
         enabled
       >
-        <SimpleHeader onPress={() => openDrawer()} title={name} />
         <View style={{ margin: 16 }}>
           <Image source={{ uri: photoUrl }} style={globalStyles.groupImage} />
           <Markdown>{about}</Markdown>
@@ -143,7 +159,12 @@ const GroupDetails = (props: any) => {
             {getGroupMembers()}
           </View>
         )}
+        
       </KeyboardAvoidingView>
+      {
+          NotificationModal ? 
+          <NotificationTab/>:null
+        }
     </SafeAreaView>
   );
 };

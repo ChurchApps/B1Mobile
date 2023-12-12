@@ -88,7 +88,7 @@ const AuthStack = () => {
 const AppNavigation = (props: {}) => {
   return (
     <NavigationContainer>
-      <AppNav.Navigator screenOptions={{headerShown:false}} initialRouteName='SplashScreen'  >
+      <AppNav.Navigator screenOptions={{headerShown:false, animationEnabled:false}} initialRouteName='SplashScreen'  >
         <AppNav.Screen name="SplashScreen" component={SplashScreen} />
         <AppNav.Screen name="AuthStack" component={AuthStack} />
         <AppNav.Screen name="MainStack" component={MainStack} />

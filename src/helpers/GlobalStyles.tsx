@@ -51,7 +51,7 @@ export const globalStyles = StyleSheet.create({
   text: { color: 'white', fontSize: 20 },
   tabBar: {height: '100%', top: 0   },
   MessagetabView: {position: 'relative', height: '100%', backgroundColor: Constants.Colors.white_color },
-  NotificationtabView: {height: '50%', backgroundColor: Constants.Colors.white_color},
+  NotificationtabView: {height: '100%', backgroundColor: Constants.Colors.white_color},
   activeTabTextColor: {color: Constants.Colors.Active_TabColor ,},
   tabTextColor: {color: Constants.Colors.Dark_Gray , },
   webViewContainer: { flex: 1, height: "100%", width: "100%" },

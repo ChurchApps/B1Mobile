@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
+import { SafeAreaView, Text, TouchableOpacity, Image, View, Dimensions, PixelRatio } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
-import { Loader, WhiteHeader } from '../../components';
-import { ApiHelper, globalStyles, LoginUserChurchInterface, UserHelper } from '../../helpers';
+import { Loader, WhiteHeader, MainHeader, NotificationTab} from '../../components';
+import { ApiHelper, globalStyles, LoginUserChurchInterface, UserHelper, Constants } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
 import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
 
@@ -19,6 +19,7 @@ export const ServiceScreen = (props: Props) => {
   const { goBack, openDrawer } = props.navigation;
   const [isLoading, setLoading] = useState(false);
   const [serviceList, setServiceList] = useState([]);
+  const [NotificationModal, setNotificationModal] = useState(false);
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
@@ -123,7 +124,7 @@ export const ServiceScreen = (props: Props) => {
       ErrorHelper.logError("get-group-list", error);
     }
   }
-
+  
   const renderGroupItem = (item: any) => {
     return (
       <View>
@@ -134,10 +135,29 @@ export const ServiceScreen = (props: Props) => {
     );
   }
 
+  const RightComponent = (
+    <TouchableOpacity onPress={() =>toggleTabView()}>
+      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    </TouchableOpacity>
+  );
+
+  const toggleTabView = () => {
+    setNotificationModal(!NotificationModal);
+  };
+  const logoSrc = Constants.Images.logoBlue;
   return (
     <View style={globalStyles.grayContainer}>
+       <MainHeader
+        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
+          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
+        </TouchableOpacity>}
+        mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
+        rightComponent={RightComponent}
+      />
+     <View style={logoSrc}>
+        <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
+      </View>
       <ScrollView>
-        <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
         <SafeAreaView style={{ flex: 1 }}>
           <FlatList
             data={serviceList}
@@ -148,6 +168,8 @@ export const ServiceScreen = (props: Props) => {
         </SafeAreaView>
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
+      {NotificationModal ? 
+      <NotificationTab/> : null}
     </View>
   );
 };

@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, SafeAreaView, Image, Dimensions, Text } from 'react-native';
-import { SimpleHeader } from '../components';
-import { globalStyles, Utilities } from '../helpers';
+import React, { useState } from 'react';
+import { View, SafeAreaView, Image, Dimensions, Text, TouchableOpacity } from 'react-native';
+import { MainHeader, NotificationTab } from '../components';
+import { globalStyles, Utilities, Constants } from '../helpers';
 
 interface Props {
   navigation: {
@@ -14,6 +14,7 @@ interface Props {
 export const VotdScreen = (props: Props) => {
   const { openDrawer } = props.navigation;
   const [shape, setShape] = React.useState("9x16");
+  const [NotificationModal, setNotificationModal] = useState(false);
 
   const getShape = () => {
     const dim = Dimensions.get("screen");
@@ -38,7 +39,15 @@ export const VotdScreen = (props: Props) => {
     return day;
   }
 
+  const RightComponent = (
+    <TouchableOpacity onPress={() => toggleTabView()}>
+      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    </TouchableOpacity>
+  );
 
+  const toggleTabView = () => {
+    setNotificationModal(!NotificationModal);
+  };
   React.useEffect(() => {
     Utilities.trackEvent("VOTD Screen");
     getShape();
@@ -50,10 +59,20 @@ export const VotdScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <SimpleHeader onPress={() => openDrawer()} title="Verse of the Day" />
+      <MainHeader
+        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
+          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
+        </TouchableOpacity>}
+        mainComponent={<Text style={globalStyles.headerText}>Verse of the Day</Text>}
+        rightComponent={RightComponent}
+      />
       <View style={globalStyles.webViewContainer}>
         <Image source={{ uri: url }} style={{ flex: 1 }} resizeMode="stretch" />
       </View>
+      {
+        NotificationModal ?
+          <NotificationTab /> : null
+      }
     </SafeAreaView>
   );
 };
