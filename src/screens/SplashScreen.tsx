@@ -60,6 +60,7 @@ const SplashScreen = (props: Props) => {
           userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
           //I think this is what's causing the splash screen to hang sometimes.
           if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
+          else await AsyncStorage.setItem('USER_DATA', "")
         }
         UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
         userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
