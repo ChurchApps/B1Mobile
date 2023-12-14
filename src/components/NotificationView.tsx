@@ -40,9 +40,7 @@ export function NotificationTab(props: any) {
   const getNotifications = () => {
     setLoading(true)
     ApiHelper.get("/notifications/my", "MessagingApi").then((data) => {
-      if (data && data.length != 0) {
-        setNotificationData(data);
-      }
+      if (data && data.length != 0) setNotificationData(data);
     })
   }
 

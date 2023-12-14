@@ -51,7 +51,7 @@ const SplashScreen = (props: Props) => {
       if (user !== null) {
         UserHelper.user = JSON.parse(user);
         ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
-        if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice()
+        
 
         let church: ChurchInterface | null = null
         let userChurch: LoginUserChurchInterface | null = null;
@@ -66,6 +66,7 @@ const SplashScreen = (props: Props) => {
         userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
         await UserHelper.setPersonRecord()
+        if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice();
 
         props.navigation.navigate('MainStack');
       } else {
