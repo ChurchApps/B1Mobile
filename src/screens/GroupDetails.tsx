@@ -23,6 +23,7 @@ import Markdown from '@ronradtke/react-native-markdown-display'
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Conversations from "../components/Notes/Conversations";
 import { GroupMemberInterface } from "../interfaces";
+import { eventBus } from "../helpers/PushNotificationHelper";
 
 const TABS = ["Conversations", "Group Members"];
 
@@ -32,7 +33,7 @@ const GroupDetails = (props: any) => {
   const [dimension] = useState(Dimensions.get("screen"));
   const [activeTab, setActiveTab] = useState(0);
   const [NotificationModal, setNotificationModal] = useState(false);
-
+  const [badgeCount, setBadgeCount] = useState(0);
   const { id: groupId, name, photoUrl, about } = props?.route?.params?.group;
 
   const wd = (number: string) => {
@@ -49,7 +50,17 @@ const GroupDetails = (props: any) => {
   useEffect(() => {
     loadData();
       }, []);
+      useEffect(() => {
+        const handleNewMessage = () => {
+          setBadgeCount((prevCount) => prevCount + 1);
+        };
+        eventBus.addListener("badge", handleNewMessage);
+        return () => {
+          eventBus.removeListener("badge");
+        };
+      }, []);
 
+  
   const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => {
     return (
       <TouchableOpacity
@@ -102,13 +113,21 @@ const GroupDetails = (props: any) => {
   }
 
   const RightComponent = (
-    <TouchableOpacity onPress={() =>toggleTabView()}>
-      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
     </TouchableOpacity>
   );
 
   const toggleTabView = () => {
     setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
   };
   return (
     <SafeAreaView

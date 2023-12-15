@@ -55,12 +55,12 @@ const MainStack = () => {
       width:wd('60%'),height:hd('100%'), backgroundColor: Constants.Colors.app_color
     }, drawerType:'slide' }} initialRouteName={'WebsiteScreen'}   drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name={'Dashboard'} component={DashboardScreen} />
-      <Drawer.Screen name={'BibleScreen'} component={WebsiteScreen} />
+      <Drawer.Screen name={'BibleScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}}/>
       <Drawer.Screen name={'VotdScreen'} component={VotdScreen} />
-      <Drawer.Screen name={'LessonsScreen'} component={WebsiteScreen} />
-      <Drawer.Screen name={'StreamScreen'} component={WebsiteScreen} />
-      <Drawer.Screen name={'WebsiteScreen'} component={WebsiteScreen} />
-      <Drawer.Screen name={'PageScreen'} component={WebsiteScreen} />
+      <Drawer.Screen name={'LessonsScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}}/>
+      <Drawer.Screen name={'StreamScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}}/>
+      <Drawer.Screen name={'WebsiteScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}} />
+      <Drawer.Screen name={'PageScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}}/>
       <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
       <Drawer.Screen name={'SearchMessageUser'} component={SearchUserScreen} />
       <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />

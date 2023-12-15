@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { globalStyles } from '../../helpers';
 import { BottomButton, Loader, WhiteHeader, MainHeader, NotificationTab } from '../../components';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
+import { eventBus } from '../../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -31,7 +32,7 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
   const [memberList, setMemberList] = useState<any[]>([]);
   const [groupTree, setGroupTree] = useState<any[]>([]);
   const [NotificationModal, setNotificationModal] = useState(false);
-
+  const [badgeCount, setBadgeCount] = useState(0);
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
@@ -52,7 +53,15 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
   useEffect(()=>{
   },[dimension])
 
-
+  useEffect(() => {
+    const handleNewMessage = () => {
+      setBadgeCount((prevCount) => prevCount + 1);
+    };
+    eventBus.addListener("badge", handleNewMessage);
+    return () => {
+      eventBus.removeListener("badge");
+    };
+  }, []);
 
   useEffect(() => {
     getMemberFromStorage();
@@ -127,14 +136,22 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
     }
   }
 
-  const RightComponent = (
-    <TouchableOpacity onPress={() =>toggleTabView()}>
-      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+ const RightComponent = (
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
     </TouchableOpacity>
   );
 
   const toggleTabView = () => {
     setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
   };
   const submitAttendance = async () => {
     setLoading(true);
@@ -217,13 +234,13 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
         mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
         rightComponent={RightComponent}
       />
-     <View style={logoSrc}>
-        <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
-      </View>
       <ScrollView>
         {/* <WhiteHeader onPress={() => openDrawer()} title="Checkin" /> */}
         
         <SafeAreaView style={{ flex: 1 }}>
+        <View style={logoSrc}>
+        <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
+      </View>
           <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
           <BottomButton title='CHECKIN' onPress={() => submitAttendance()} style={wd('100%')}/>
         </SafeAreaView>

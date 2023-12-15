@@ -8,8 +8,8 @@ import { widthPercentageToDP, } from 'react-native-responsive-screen';
 import { NavigationHelper } from '../helpers/NavigationHelper';
 import { MainHeader } from '../components';
 import { Constants, ApiHelper, MessageInterface, UserSearchInterface, ConversationCheckInterface, } from '../helpers';
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view'
 import { NotificationTab } from '../components';
+import { eventBus } from '../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -22,14 +22,10 @@ interface Props {
 export const DashboardScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [isLoading, setLoading] = useState(false);
-  const [index, setIndex] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState(0)
   const [NotificationModal, setNotificationModal] = useState(false);
-  const [NotificationData, setNotificationData] = useState([])
-  const [Chatlist, setChatList] = useState([])
-  const [UserData, setUserData] = useState([])
-  const [mergeData, setMergedData] = useState([])
+  const [badgeCount, setBadgeCount] = useState(0);
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [NotiUnReadCount, setNotiUnReadCount] = useState([])
   const [routes] = React.useState([
     { key: 'first', title: 'MESSAGES' },
     { key: 'second', title: 'NOTIFICATIONS' },
@@ -47,6 +43,15 @@ export const DashboardScreen = (props: Props) => {
   }, [dimension])
 
   useEffect(() => {
+    const handleNewMessage = () => {
+      setBadgeCount((prevCount) => prevCount + 1);
+    };
+    eventBus.addListener("badge", handleNewMessage);
+      return () => {
+     eventBus.removeListener("badge");
+     };
+  }, []);
+  useEffect(() => {
     checkRedirect();
   },
     [])
@@ -59,8 +64,15 @@ export const DashboardScreen = (props: Props) => {
   const mainComponent = (<Text style={globalStyles.headerText}>Home</Text>);
 
   const RightComponent = (
-    <TouchableOpacity onPress={() => toggleTabView()}>
-      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
     </TouchableOpacity>
   );
 
@@ -71,6 +83,7 @@ export const DashboardScreen = (props: Props) => {
 
   const toggleTabView = () => {
     setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
   };
 
   const getButton = (topItem: boolean, item: LinkInterface) => {

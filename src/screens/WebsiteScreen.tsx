@@ -3,7 +3,8 @@ import { View, SafeAreaView, TouchableOpacity, Image, Text } from 'react-native'
 import { UserHelper, Utilities } from '../helpers';
 import WebView from 'react-native-webview';
 import { Loader, MainHeader, NotificationTab } from '../components';
-import { globalStyles, Constants } from '../helpers';
+import { globalStyles, Constants, ApiHelper } from '../helpers';
+import { eventBus } from '../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -24,7 +25,7 @@ export const WebsiteScreen = (props: Props) => {
   const { params } = props.route;
   const [isLoading, setLoading] = useState(false);
   const [NotificationModal, setNotificationModal] = useState(false);
-
+  const [badgeCount, setBadgeCount] = useState(0);  
   const checkRedirect = () => {
     if (!UserHelper.currentUserChurch) props.navigation.navigate("ChurchSearch")
   }
@@ -33,19 +34,36 @@ export const WebsiteScreen = (props: Props) => {
     Utilities.trackEvent("Website Screen", { url: props.route?.params?.url });
     checkRedirect();
   }, [])
+  useEffect(() => {
+    const handleNewMessage = () => {
+      setBadgeCount((prevCount) => prevCount + 1);
+    };
+    eventBus.addListener("badge", handleNewMessage);
+    return () => {
+      eventBus.removeListener("badge");
+    };
+  }, []);
 
   const getTitle = () => {
     const title = params && params.title && params.title;
     return title == undefined ? 'Home' : title;
   }
   const RightComponent = (
-    <TouchableOpacity onPress={() => toggleTabView()}>
-      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
     </TouchableOpacity>
   );
 
   const toggleTabView = () => {
     setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
   };
 
   return (

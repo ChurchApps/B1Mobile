@@ -5,6 +5,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp, listenOrientatio
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities } from '../helpers';
 import { globalStyles } from '../helpers';
 import { BlueHeader, Loader, MainHeader, WhiteHeader, NotificationTab } from '../components';
+import { eventBus } from '../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -22,6 +23,7 @@ export const MembersSearch = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [NotificationModal, setNotificationModal] = useState(false);
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [badgeCount, setBadgeCount] = useState(0);
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -40,7 +42,16 @@ export const MembersSearch = (props: Props) => {
 
   useEffect(()=>{
   },[dimension])
-
+  
+  useEffect(() => {
+    const handleNewMessage = () => {
+      setBadgeCount((prevCount) => prevCount + 1);
+    };
+    eventBus.addListener("badge", handleNewMessage);
+    return () => {
+      eventBus.removeListener("badge");
+    };
+  }, []);
 
 
   const loadMembers = () => {
@@ -75,13 +86,21 @@ export const MembersSearch = (props: Props) => {
   }
 
   const RightComponent = (
-    <TouchableOpacity onPress={() =>toggleTabView()}>
-      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
     </TouchableOpacity>
   );
 
   const toggleTabView = () => {
     setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
   };
   const getResults = () => {
     if (isLoading) return <></>

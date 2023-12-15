@@ -45,7 +45,7 @@ export const globalStyles = StyleSheet.create({
 
   //Home
   homeContainer: { flex: 1, backgroundColor: 'white' , position:'relative' },
-  menuIcon: { width: wp('6%'), height: wp('6%'), margin: wp('5%'), tintColor: 'white' },
+  menuIcon: { width: wp('6%'), height: wp('6%'), margin: wp('5%'), tintColor: 'white'},
   headerText: { color: 'white', textAlign: 'center', fontSize: wp('4.5%'), fontWeight: 'bold' },
   TabIndicatorStyle: { backgroundColor: Constants.Colors.white_color, shadowOffset: { height: 0, width: 0 }, shadowColor: 'transparent', shadowOpacity: 0, elevation: 0 },
   text: { color: 'white', fontSize: 20 },
@@ -54,6 +54,9 @@ export const globalStyles = StyleSheet.create({
   NotificationtabView: {height: '100%', backgroundColor: Constants.Colors.white_color},
   activeTabTextColor: {color: Constants.Colors.Active_TabColor ,},
   tabTextColor: {color: Constants.Colors.Dark_Gray , },
+  BadgeIconStyle:{ width: wp('6%'), height: wp('6%')}, 
+  BadgemenuIcon: { width: wp('6%'), height: wp('6%'), marginLeft: wp('4%'), tintColor: 'white'},
+  BadgeDot:{ position:'absolute', right:25, width:wp('2.5%'), height: wp('2.5%'),borderRadius: wp('1.25%'),backgroundColor: 'red'},
   webViewContainer: { flex: 1, height: "100%", width: "100%" },
 
   //Service
@@ -204,6 +207,6 @@ export const globalStyles = StyleSheet.create({
 NotificationView:{ marginTop:hp('2%'), flexDirection:'row', width : wp('90%'), borderRadius: wp('2%'), borderWidth:1, paddingHorizontal : wp('1%'), backgroundColor : Constants.Colors.white_color, borderColor: 'lightgray', alignSelf:'center', alignItems:'center', paddingVertical : wp('3%')},
 bellIcon: { width: wp('6%'), height: wp('6%'),  tintColor: 'gray' },
 NotificationText : { fontSize:16, color:'gray'},
-bellIconView:{ flex:0.12, alignItems:'center'},
+bellIconView:{ flex:0.12, alignItems:'center', },
 notimsgView:{flex:0.9}
 })

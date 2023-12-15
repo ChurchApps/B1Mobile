@@ -38,6 +38,7 @@
     "react-native-device-info": "^10.11.0",
     "react-native-dotenv": "^3.4.9",
     "react-native-dropdown-picker": "^5.4.6",
+    "react-native-event-bus": "^1.0.0",
     "react-native-exception-handler": "^2.10.10",
     "react-native-gesture-handler": "^2.13.1",
     "react-native-material-date-picker": "^1.0.0",

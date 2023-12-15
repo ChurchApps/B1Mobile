@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ImageButton } from "../components/ImageButton";
 import { NavigationHelper } from "../helpers/NavigationHelper";
 import { MainHeader, NotificationTab } from "../components";
+import { eventBus } from "../helpers/PushNotificationHelper";
 
 
 
@@ -12,6 +13,7 @@ const MyGroups = (props: any) => {
   const { openDrawer } = props.navigation;
   const [groups, setGroups] = useState([]);
   const [NotificationModal, setNotificationModal] = useState(false);
+  const [badgeCount, setBadgeCount] = useState(0);
 
   const loadData = async () => {
     const data = await ApiHelper.get("/groups/my", "MembershipApi");
@@ -22,6 +24,15 @@ const MyGroups = (props: any) => {
     loadData();
   }, []);
 
+  useEffect(() => {
+    const handleNewMessage = () => {
+      setBadgeCount((prevCount) => prevCount + 1);
+    };
+    eventBus.addListener("badge", handleNewMessage);
+    return () => {
+      eventBus.removeListener("badge");
+    };
+  }, []);
   const showGroups = (topItem: boolean, item: any) => {
     return (
       <View style={{ marginHorizontal: 16 }}>
@@ -35,13 +46,21 @@ const MyGroups = (props: any) => {
   };
 
   const RightComponent = (
-    <TouchableOpacity onPress={() => toggleTabView()}>
-      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
     </TouchableOpacity>
   );
 
   const toggleTabView = () => {
     setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
   };
   const getGroups = () => {
     return (

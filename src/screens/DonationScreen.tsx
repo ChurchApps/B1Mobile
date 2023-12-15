@@ -10,6 +10,7 @@ import { useIsFocused } from '@react-navigation/native';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
 import { NotificationTab } from '../components';
+import { eventBus } from '../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -26,11 +27,21 @@ const DonationScreen = (props: Props) => {
   const [areMethodsLoading, setAreMethodsLoading] = useState<boolean>(false)
   const [publishKey, setPublishKey] = useState<string>("")
   const [NotificationModal, setNotificationModal] = useState(false);
+  const [badgeCount, setBadgeCount] = useState(0);
   const isFocused = useIsFocused();
   const person = UserHelper.currentUserChurch?.person
 
   useEffect(() => { if (isFocused) loadData() }, [isFocused])
 
+  useEffect(() => {
+    const handleNewMessage = () => {
+      setBadgeCount((prevCount) => prevCount + 1);
+    };
+    eventBus.addListener("badge", handleNewMessage);
+    return () => {
+      eventBus.removeListener("badge");
+    };
+  }, []);
   // initialise stripe
   const loadData = async () => {
     Utilities.trackEvent("Donation Screen");
@@ -65,13 +76,21 @@ const DonationScreen = (props: Props) => {
   }
 
   const RightComponent = (
-    <TouchableOpacity onPress={() => toggleTabView()}>
-      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
     </TouchableOpacity>
   );
 
   const toggleTabView = () => {
     setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
   };
   return (
     <SafeAreaView style={globalStyles.grayContainer}>

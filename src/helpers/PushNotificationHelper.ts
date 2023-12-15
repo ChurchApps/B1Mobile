@@ -1,3 +1,5 @@
+import EventBus from 'react-native-event-bus'
+import { DeviceEventEmitter } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ApiHelper } from './ApiHelper'
@@ -67,8 +69,8 @@ export class PushNotificationHelper {
 
   }
 
-  static NotificationListener = () => {
-    messaging().onNotificationOpenedApp(remoteMessage => {
+static async NotificationListener() {
+     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
         'Notification caused app to open from background state:',
         JSON.stringify(remoteMessage.notification),
@@ -81,14 +83,24 @@ export class PushNotificationHelper {
           console.log(
             'Notification caused app to open from quit state:',
             JSON.stringify(remoteMessage.notification),
-          );
-
+          ); 
         }
       });
     messaging().onMessage(async remoteMessage => {
       console.log("notification on forground state.......", JSON.stringify(remoteMessage))
+      const badge = JSON.stringify(remoteMessage);
+      eventBus.emit("badge", badge)
     })
-
-  }
-
 }
+}
+export const eventBus = {
+  emit(eventName: string, data?: any) {
+    DeviceEventEmitter.emit(eventName, data);
+  },
+  addListener(eventName: string, callback: (data?: any) => void) {
+    DeviceEventEmitter.addListener(eventName, callback);
+  },
+  removeListener(eventName: string) {
+    DeviceEventEmitter.removeAllListeners(eventName );
+  },
+};

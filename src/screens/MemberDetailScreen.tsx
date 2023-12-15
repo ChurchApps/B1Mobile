@@ -7,6 +7,7 @@ import { Loader, MainHeader, NotificationTab } from '../components';
 import Icon from 'react-native-vector-icons/Zocial';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { eventBus } from '../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -28,8 +29,8 @@ export const MemberDetailScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [householdList, setHouseholdList] = useState([]);
   const [NotificationModal, setNotificationModal] = useState(false);
+  const [badgeCount, setBadgeCount] = useState(0);
   const scrollViewRef = useRef<any>();
-
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
   const wd = (number: string) => {
@@ -51,7 +52,6 @@ export const MemberDetailScreen = (props: Props) => {
   }, [dimension])
 
 
-
   const onEmailClick = (email: string) => {
     if (email) {
       Linking.openURL(`mailto:${email}`)
@@ -67,7 +67,15 @@ export const MemberDetailScreen = (props: Props) => {
       Alert.alert("Sorry", 'Phone number of this user is not available.');
     }
   }
-
+  useEffect(() => {
+    const handleNewMessage = () => {
+      setBadgeCount((prevCount) => prevCount + 1);
+    };
+    eventBus.addListener("badge", handleNewMessage);
+    return () => {
+      eventBus.removeListener("badge");
+    };
+  }, []);
   const onAddressClick = () => {
     if (memberinfo.address1) {
       Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${memberinfo.address1}`);
@@ -86,13 +94,21 @@ export const MemberDetailScreen = (props: Props) => {
   }
 
   const RightComponent = (
-    <TouchableOpacity onPress={() => toggleTabView()}>
-      <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
     </TouchableOpacity>
   );
 
   const toggleTabView = () => {
     setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
   };
   const onMembersClick = (item: any) => {
     scrollViewRef.current.scrollTo({ y: 0, animated: false })
