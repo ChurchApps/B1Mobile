@@ -1,5 +1,6 @@
+import React, {useEffect} from 'react';
 import EventBus from 'react-native-event-bus'
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ApiHelper } from './ApiHelper'
@@ -53,6 +54,17 @@ export class PushNotificationHelper {
     }
   }
 
+  
+    static async NotificationPermissionAndroid () {
+      if (Platform.OS === 'android') {
+        try {
+          await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+          );
+        } catch (error) {
+        }
+      }
+    };
   static async GetFCMToken() {
     let fcmToken = await AsyncStorage.getItem("fcmToken")
     console.log("fcm token ", fcmToken)
@@ -86,10 +98,10 @@ static async NotificationListener() {
           ); 
         }
       });
-    messaging().onMessage(async remoteMessage => {
+      messaging().onMessage(async remoteMessage => {
       console.log("notification on forground state.......", JSON.stringify(remoteMessage))
-      const badge = JSON.stringify(remoteMessage);
-      eventBus.emit("badge", badge)
+       const badge = JSON.stringify(remoteMessage);
+       eventBus.emit("badge", badge)
     })
 }
 }

@@ -8,6 +8,7 @@ import MessageIcon from 'react-native-vector-icons/Feather';
 import { MainHeader } from "../components";
 import { ApiHelper, Constants, EnvironmentHelper, globalStyles, UserSearchInterface, ConversationCheckInterface, ConversationInterface, MessageInterface, UserHelper, ConversationCreateInterface, PrivateMessagesCreate } from "../helpers";
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import { eventBus } from '../helpers/PushNotificationHelper';
 
 interface Props {
     navigation: {
@@ -42,6 +43,15 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
         loadMembers();
     }, []);
 
+    useEffect(() => {
+        const handleNewMessage = () => {
+          getConversations();
+        };
+        eventBus.addListener("badge", handleNewMessage);
+          return () => {
+         eventBus.removeListener("badge");
+         };
+      }, []);
     const getConversations = () => {
         ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
             setCurrentConversation(data);
@@ -95,10 +105,6 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
         }
         ApiHelper.post("/messages", params, "MessagingApi").then(async (data: any) => {
             if(data != null || data != undefined){            
-                ApiHelper.post("/devices/tempMessageUser", {"personId":props.route.params?.userDetails.id,  "body" : messageText, "title" : "new message" }, 
-                "MessagingApi").then(async(data:any)=>{
-                    console.log("temp message api response---->",data)
-                })
                 setMessageText('');
                 setEditingMessage(null);
                 getConversations();

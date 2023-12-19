@@ -32,7 +32,8 @@ const App = () => {
   useEffect(()=>{
     PushNotificationHelper.requestUserPermission();
     PushNotificationHelper.NotificationListener();
-  });
+    PushNotificationHelper.NotificationPermissionAndroid();
+  },[]);
 
   return (
     <ActionSheetProvider>
