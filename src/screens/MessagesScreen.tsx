@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , FunctionComponent} from 'react';
 import { ActionSheetIOS, Alert, Dimensions, FlatList, Image, KeyboardAvoidingView, PixelRatio, Text, TouchableWithoutFeedback, View } from "react-native";
 import { LongPressGestureHandler, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
@@ -6,8 +6,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MessageIcon from 'react-native-vector-icons/Feather';
 import { MainHeader } from "../components";
-import { ApiHelper, Constants, globalStyles, UserSearchInterface, ConversationCheckInterface, ConversationInterface, MessageInterface, UserHelper, ConversationCreateInterface, PrivateMessagesCreate } from "../helpers";
+import { ApiHelper, Constants, EnvironmentHelper, globalStyles, UserSearchInterface, ConversationCheckInterface, ConversationInterface, MessageInterface, UserHelper, ConversationCreateInterface, PrivateMessagesCreate } from "../helpers";
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import { eventBus } from '../helpers/PushNotificationHelper';
 
 interface Props {
     navigation: {
@@ -22,12 +23,13 @@ interface Props {
     }
 }
 
-export const MessagesScreen = (props: Props) => {
+export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
     const [messageText, setMessageText] = useState('');
     const [messageList, setMessageList] = useState<MessageInterface[]>([]);
     const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
     const [dimension, setDimension] = useState(Dimensions.get('window'));
     const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
+    const [UserProfilePic, setUserProfilePic]= useState<string>('')
 
     const { showActionSheetWithOptions } = useActionSheet();
 
@@ -38,8 +40,18 @@ export const MessagesScreen = (props: Props) => {
 
     useEffect(() => {
         getConversations();
+        loadMembers();
     }, []);
 
+    useEffect(() => {
+        const handleNewMessage = () => {
+          getConversations();
+        };
+        eventBus.addListener("badge", handleNewMessage);
+          return () => {
+         eventBus.removeListener("badge");
+         };
+      }, []);
     const getConversations = () => {
         ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
             setCurrentConversation(data);
@@ -49,6 +61,14 @@ export const MessagesScreen = (props: Props) => {
         })
     }
 
+        const loadMembers = () => {
+        ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi").then(data => {
+        if(data != null && data.length > 0){
+            setUserProfilePic(data[0].photo)
+            console.log(UserProfilePic)
+        }
+        })
+      }
     const getMessagesList = (conversationId : string) => {
         ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi").then(data => {
             var conversation : MessageInterface[] = data;
@@ -84,14 +104,14 @@ export const MessagesScreen = (props: Props) => {
             params = [{"id": editedMessage.id, "churchId": editedMessage.churchId, "conversationId": conversationId, "userId": editedMessage.userId, "displayName": editedMessage.displayName, "timeSent": editedMessage.timeSent, "messageType": "message", "content": messageText, "personId": editedMessage.personId, "timeUpdated": null}]
         }
         ApiHelper.post("/messages", params, "MessagingApi").then(async (data: any) => {
-            if(data != null || data != undefined){
+            if(data != null || data != undefined){            
                 setMessageText('');
                 setEditingMessage(null);
                 getConversations();
             }
         });
     }
-
+    
     const deleteMessage = (messageId: string) => {
         ApiHelper.delete("/messages/"+messageId, "MessagingApi").then(async (data: any) => {
             if(data != null || data != undefined){
@@ -107,7 +127,7 @@ export const MessagesScreen = (props: Props) => {
             <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={wp('5%')} />
         </TouchableOpacity>);
 
-    const mainComponent = (<Text style={globalStyles.headerText}>{props.route.params.userDetails.name.display}</Text>);
+    const mainComponent = (<Text style={globalStyles.headerText}>{props?.route?.params?.userDetails?.name?.display ? props?.route?.params?.userDetails?.name?.display : props?.route?.params?.userDetails?.DisplayName }</Text>);
 
     const messageInputView = () => {
         return (
@@ -150,8 +170,8 @@ export const MessagesScreen = (props: Props) => {
         return (
             <TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
                 <View style={[globalStyles.messageContainer, { alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
-                    {item.personId == props.route.params.userDetails.id ? 
-                        <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp('9%'), width: wp('9%')}]}/> 
+                     {item.personId == props.route.params.userDetails.id ? 
+                        <Image source={props?.route?.params?.userDetails?.photo ? { uri: EnvironmentHelper.ContentRoot + props?.route?.params?.userDetails?.photo} : Constants.Images.ic_user } style={[globalStyles.churchListIcon, {tintColor: props.route.params.userDetails.photo ? '' : Constants.Colors.app_color, height: wp('9%'), width: wp('9%'), borderRadius : wp('9%')}]}/> 
                     : null}
                     <View>
                         <Text style={[globalStyles.senderNameText, {alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
@@ -162,8 +182,8 @@ export const MessagesScreen = (props: Props) => {
                             <Text>{item.content}</Text>
                         </View>
                     </View>
-                    {item.personId != props.route.params.userDetails.id ? 
-                        <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp('9%'), width: wp('9%')}]}/> 
+                     {item.personId != props.route.params.userDetails.id ? 
+                        <Image source={ UserProfilePic  ? {uri : EnvironmentHelper.ContentRoot + UserProfilePic}  :  Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: wp('9%'), width: wp('9%'), borderRadius:wp('9%')}]}/> 
                     : null}
                 </View>
             </TouchableWithoutFeedback>

@@ -5,6 +5,7 @@ import { ChurchInterface, globalStyles, LoginUserChurchInterface, Utilities } fr
 import { Constants } from '../helpers';
 import { ApiHelper, UserHelper } from "../helpers"
 import { ErrorHelper } from '../helpers/ErrorHelper';
+import { PushNotificationHelper } from '../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -50,6 +51,7 @@ const SplashScreen = (props: Props) => {
       if (user !== null) {
         UserHelper.user = JSON.parse(user);
         ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
+        
 
         let church: ChurchInterface | null = null
         let userChurch: LoginUserChurchInterface | null = null;
@@ -58,11 +60,13 @@ const SplashScreen = (props: Props) => {
           userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
           //I think this is what's causing the splash screen to hang sometimes.
           if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
+          else await AsyncStorage.setItem('USER_DATA', "")
         }
         UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
         userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
         ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
         await UserHelper.setPersonRecord()
+        if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice();
 
         props.navigation.navigate('MainStack');
       } else {

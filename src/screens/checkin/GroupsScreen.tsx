@@ -1,13 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
+import React, { useState, useEffect, FunctionComponent } from 'react';
+import { SafeAreaView, ScrollView, Text, Image, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-import { globalStyles, UserHelper } from '../../helpers';
-import { BottomButton, WhiteHeader } from '../../components';
+import { globalStyles, UserHelper, Constants, ApiHelper } from '../../helpers';
+import { BottomButton, MainHeader, NotificationTab } from '../../components';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
+import { eventBus } from '../../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -24,11 +24,13 @@ interface Props {
   };
 }
 
-export const GroupsScreen = (props: Props) => {
+export const GroupsScreen: FunctionComponent<Props> = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [selected, setSelected] = useState(null);
   const [groupTree, setGroupTree] = useState<any[]>([]);
   const [memberList, setMemberList] = useState([]);
+  const [NotificationModal, setNotificationModal] = useState(false);
+  const [badgeCount, setBadgeCount] = useState(0);
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
@@ -36,6 +38,15 @@ export const GroupsScreen = (props: Props) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
     return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
   };
+  useEffect(() => {
+    const handleNewMessage = () => {
+      setBadgeCount((prevCount) => prevCount + 1);
+    };
+    eventBus.addListener("badge", handleNewMessage);
+    return () => {
+      eventBus.removeListener("badge");
+    };
+  }, []);
 
   useEffect(() => {
     getGroupListData();
@@ -49,7 +60,23 @@ export const GroupsScreen = (props: Props) => {
   useEffect(() => {
   }, [dimension])
 
+  const RightComponent = (
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
+    </TouchableOpacity>
+  );
 
+  const toggleTabView = () => {
+    setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
+  };
 
   useEffect(() => {
     getGroupListData();
@@ -70,7 +97,7 @@ export const GroupsScreen = (props: Props) => {
         setMemberList(JSON.parse(member_list))
         setGroupTree(JSON.parse(group_list));
       }
-    } catch (error : any) {
+    } catch (error: any) {
       console.log('MEMBER LIST ERROR', error)
       ErrorHelper.logError("group-list-data", error);
     }
@@ -90,7 +117,7 @@ export const GroupsScreen = (props: Props) => {
       const memberValue = JSON.stringify(memberList)
       await AsyncStorage.setItem('MEMBER_LIST', memberValue)
         .then(() => goBack());
-    } catch (error : any) {
+    } catch (error: any) {
       console.log('SET MEMBER LIST ERROR', error)
       ErrorHelper.logError("select-group", error);
     }
@@ -117,16 +144,32 @@ export const GroupsScreen = (props: Props) => {
       </View>
     );
   }
-
+  const logoSrc = Constants.Images.logoBlue;
   return (
     <View style={globalStyles.grayContainer}>
+       <MainHeader
+          leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
+            <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
+          </TouchableOpacity>}
+          mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
+          rightComponent={RightComponent}
+        />
+        <View style={logoSrc}>
+          <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
+        </View>
       <ScrollView>
-        <WhiteHeader onPress={() => openDrawer()} title="Checkin" />
+       
         <SafeAreaView style={{ flex: 1 }}>
+        <View style={logoSrc}>
+        <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
+      </View>
           <FlatList data={groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
           <BottomButton title='NONE' onPress={() => selectGroup(null)} style={wd('100%')} />
         </SafeAreaView>
       </ScrollView>
+      {NotificationModal ?
+      <NotificationTab/>
+      : null}
     </View>
   );
 };

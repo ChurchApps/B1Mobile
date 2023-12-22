@@ -40,7 +40,7 @@ export interface VisitInterface { id?: string, personId?: string, serviceId?: st
 export interface VisitSessionInterface { id?: string, visitId?: string, sessionId?: string, visit?: VisitInterface, session?: SessionInterface }
 export interface IPermission { api: string, contentType: string, action: string }
 
-export interface UserSearchInterface { anniversary?: Date, birthDate?: Date, contactInfo: ContactInfoInterface, conversationId?: string, gender?: string, householdId?: string, householdRole?: string, id?: string, maritalStatus?: string, membershipStatus?: string, name: NameInterface, photo?: string, photoUpdated?: Date }
+export interface UserSearchInterface {toPersonId?: string, anniversary?: Date, birthDate?: Date, contactInfo: ContactInfoInterface, conversationId?: string, gender?: string, householdId?: string, householdRole?: string, id?: string, maritalStatus?: string, membershipStatus?: string, name: NameInterface, photo?: string, photoUpdated?: Date , conversation?: Object, messages?: Object, DisplayName?: string}
 
 // Messaging interfaces
 export interface ConversationCheckInterface { id: string, churchId: string, conversationId: string, fromPersonId: string, toPersonId: string, notifyPersonId: string, conversation: ConversationInterface }

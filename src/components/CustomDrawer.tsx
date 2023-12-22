@@ -61,7 +61,7 @@ export function CustomDrawer(props: any) {
       setDrawerList(data);
       UserHelper.links = data;
       //if (data.length > 0) navigateToScreen(data[0]);
-      navigate('Dashboard')
+            navigate('Dashboard')
 
     });
   }

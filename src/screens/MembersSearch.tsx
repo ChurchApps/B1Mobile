@@ -4,7 +4,8 @@ import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-han
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, listenOrientationChange as lor, removeOrientationListener as rol } from 'react-native-responsive-screen';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities } from '../helpers';
 import { globalStyles } from '../helpers';
-import { BlueHeader, Loader, SimpleHeader, WhiteHeader } from '../components';
+import { BlueHeader, Loader, MainHeader, WhiteHeader, NotificationTab } from '../components';
+import { eventBus } from '../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -20,7 +21,9 @@ export const MembersSearch = (props: Props) => {
   const [searchList, setSearchList] = useState([]);
   const [membersList, setMembersList] = useState([]);
   const [isLoading, setLoading] = useState(false);
+  const [NotificationModal, setNotificationModal] = useState(false);
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [badgeCount, setBadgeCount] = useState(0);
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -39,7 +42,16 @@ export const MembersSearch = (props: Props) => {
 
   useEffect(()=>{
   },[dimension])
-
+  
+  useEffect(() => {
+    const handleNewMessage = () => {
+      setBadgeCount((prevCount) => prevCount + 1);
+    };
+    eventBus.addListener("badge", handleNewMessage);
+    return () => {
+      eventBus.removeListener("badge");
+    };
+  }, []);
 
 
   const loadMembers = () => {
@@ -73,6 +85,23 @@ export const MembersSearch = (props: Props) => {
     );
   }
 
+  const RightComponent = (
+    <TouchableOpacity onPress={() => { toggleTabView() }}>
+      {badgeCount > 0 ?
+        <View style={{ flexDirection: 'row' }}>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
+          <View style={globalStyles.BadgeDot}></View>
+        </View>
+        : <View>
+          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
+        </View>}
+    </TouchableOpacity>
+  );
+
+  const toggleTabView = () => {
+    setNotificationModal(!NotificationModal);
+    setBadgeCount(0)
+  };
   const getResults = () => {
     if (isLoading) return <></>
     else if (searchList.length == 0) return <Text style={globalStyles.recentText}>No results found</Text>
@@ -81,8 +110,14 @@ export const MembersSearch = (props: Props) => {
 
   return (
     <SafeAreaView style={[globalStyles.grayContainer,{alignSelf:'center'}]}>
+      <MainHeader
+        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
+          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
+        </TouchableOpacity>}
+        mainComponent={<Text style={globalStyles.headerText}>Directory</Text>}
+        rightComponent={RightComponent}
+      />
       <View style={{ width: dimension.width, flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <SimpleHeader onPress={() => openDrawer()} title="Directory" />
         <ScrollView style={globalStyles.grayContainer} >
           <Text style={[globalStyles.searchMainText, { marginHorizontal: wd('5%') }]}>Find Members</Text>
           <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
@@ -97,7 +132,12 @@ export const MembersSearch = (props: Props) => {
             {getResults()}
         </ScrollView>
         {isLoading && <Loader isLoading={isLoading} />}
+       
       </View>
+      {
+        NotificationModal ? 
+        <NotificationTab/> : null
+      }
     </SafeAreaView>
   );
 };
