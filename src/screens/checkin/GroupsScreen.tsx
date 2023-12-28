@@ -24,7 +24,7 @@ interface Props {
   };
 }
 
-export const GroupsScreen: FunctionComponent<Props> = (props: Props) => {
+export const GroupsScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [selected, setSelected] = useState(null);
   const [groupTree, setGroupTree] = useState<any[]>([]);
@@ -146,7 +146,7 @@ export const GroupsScreen: FunctionComponent<Props> = (props: Props) => {
   }
   const logoSrc = Constants.Images.logoBlue;
   return (
-    <View style={globalStyles.grayContainer}>
+    <SafeAreaView style={globalStyles.grayContainer}>
        <MainHeader
           leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
             <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
@@ -170,6 +170,6 @@ export const GroupsScreen: FunctionComponent<Props> = (props: Props) => {
       {NotificationModal ?
       <NotificationTab/>
       : null}
-    </View>
+    </SafeAreaView>
   );
 };

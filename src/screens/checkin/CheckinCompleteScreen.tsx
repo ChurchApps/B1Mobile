@@ -64,7 +64,7 @@ const CheckinCompleteScreen = (props: Props) => {
   };
   const logoSrc = Constants.Images.logoBlue;
   return (
-    <View style={globalStyles.grayContainer}>
+    <SafeAreaView style={globalStyles.grayContainer}>
       <ScrollView>
         <MainHeader
           leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
@@ -85,7 +85,7 @@ const CheckinCompleteScreen = (props: Props) => {
         NotificationModal ?
           <NotificationTab /> : null
       }
-    </View>
+    </SafeAreaView>
   );
 };
 

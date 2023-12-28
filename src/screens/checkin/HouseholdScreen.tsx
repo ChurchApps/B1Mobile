@@ -25,7 +25,7 @@ interface Props {
   };
 }
 
-export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
+export const HouseholdScreen = (props: Props) => {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [selected, setSelected] = useState(null);
   const [isLoading, setLoading] = useState(false);
@@ -226,7 +226,7 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
   }
   const logoSrc = Constants.Images.logoBlue;
   return (
-    <View style={globalStyles.grayContainer}>
+    <SafeAreaView style={globalStyles.grayContainer}>
       <MainHeader
         leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
           <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
@@ -249,7 +249,7 @@ export const HouseholdScreen : FunctionComponent<Props> = (props: Props) => {
       {NotificationModal ? 
       <NotificationTab/>
     : null}
-    </View>
+    </SafeAreaView>
   );
 };
 

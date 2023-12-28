@@ -163,7 +163,7 @@ export const ServiceScreen = (props: Props) => {
   };
   const logoSrc = Constants.Images.logoBlue;
   return (
-    <View style={globalStyles.grayContainer}>
+    <SafeAreaView style={globalStyles.grayContainer}>
        <MainHeader
         leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
           <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
@@ -187,7 +187,7 @@ export const ServiceScreen = (props: Props) => {
       {isLoading && <Loader isLoading={isLoading} />}
       {NotificationModal ? 
       <NotificationTab/> : null}
-    </View>
+    </SafeAreaView>
   );
 };
 
