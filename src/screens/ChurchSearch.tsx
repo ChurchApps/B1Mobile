@@ -110,10 +110,8 @@ export const ChurchSearch = (props: Props) => {
     const churchImage = item.settings && item.settings[0].value
     return (
       <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: wd('90%') }]} onPress={() => churchSelection(item)}>
-        {
-          churchImage ? <Image source={{ uri: churchImage }} style={globalStyles.churchListIcon} /> :
-            <Image source={Constants.Images.ic_church} style={globalStyles.churchListIcon} />
-        }
+        { churchImage && churchImage != null ? <Image source={{ uri: churchImage }} style={globalStyles.churchListIcon} />  :
+           churchImage == undefined ? <Image source={Constants.Images.ic_church} style={globalStyles.churchListIcon} /> : null }
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText}>{item.name}</Text>
         </View>
