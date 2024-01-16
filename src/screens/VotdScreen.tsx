@@ -70,7 +70,7 @@ export const VotdScreen = (props: Props) => {
     return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
  
   const day = getDayOfYear();
   const url = "https://votd.org/v1/" + day.toString() + "/" + shape + ".jpg";

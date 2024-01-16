@@ -50,7 +50,7 @@ export const DashboardScreen = (props: Props) => {
       return () => {
      eventBus.removeListener("badge");
      };
-  }, []);
+  });
   useEffect(() => {
     checkRedirect();
   },

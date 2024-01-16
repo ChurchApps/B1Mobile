@@ -33,7 +33,7 @@ const App = () => {
     PushNotificationHelper.requestUserPermission();
     PushNotificationHelper.NotificationListener();
     PushNotificationHelper.NotificationPermissionAndroid();
-  },[]);
+  });
 
   return (
     <ActionSheetProvider>

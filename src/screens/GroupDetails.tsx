@@ -58,7 +58,7 @@ const GroupDetails = (props: any) => {
         return () => {
           eventBus.removeListener("badge");
         };
-      }, []);
+      });
 
   
   const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => {

@@ -48,7 +48,7 @@ export const ServiceScreen = (props: Props) => {
     return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
   
 
 

@@ -51,7 +51,7 @@ export const MembersSearch = (props: Props) => {
     return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
 
 
   const loadMembers = () => {

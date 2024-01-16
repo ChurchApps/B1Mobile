@@ -41,7 +41,7 @@ const DonationScreen = (props: Props) => {
     return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
   // initialise stripe
   const loadData = async () => {
     Utilities.trackEvent("Donation Screen");

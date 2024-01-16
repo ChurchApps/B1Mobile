@@ -46,7 +46,7 @@ export const GroupsScreen = (props: Props) => {
     return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
 
   useEffect(() => {
     getGroupListData();
