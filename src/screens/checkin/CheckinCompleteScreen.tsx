@@ -35,7 +35,7 @@ const CheckinCompleteScreen = (props: Props) => {
      return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
   useEffect(() => {
     serviceNavigate();
     const init = props.navigation.addListener('focus', async () => { serviceNavigate() });

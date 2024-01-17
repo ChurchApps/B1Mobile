@@ -75,7 +75,7 @@ export const MemberDetailScreen = (props: Props) => {
     return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
   const onAddressClick = () => {
     if (memberinfo.address1) {
       Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${memberinfo.address1}`);

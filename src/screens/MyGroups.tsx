@@ -32,7 +32,7 @@ const MyGroups = (props: any) => {
     return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
   const showGroups = (topItem: boolean, item: any) => {
     return (
       <View style={{ marginHorizontal: 16 }}>

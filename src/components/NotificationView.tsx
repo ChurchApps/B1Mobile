@@ -141,7 +141,7 @@ export function NotificationTab(props: any) {
         showsVerticalScrollIndicator={false}
         data={mergeData}
         renderItem={({ item, index }) => renderChatListItems(item, index)}
-        keyExtractor={(item: any) => item.id}
+        keyExtractor={(item, index) => String(index)}
         ItemSeparatorComponent={({ item }) => <View style={globalStyles.cardListSeperator} />}
       />
     </View>
@@ -153,7 +153,7 @@ export function NotificationTab(props: any) {
         showsVerticalScrollIndicator={false}
         data={NotificationData}
         renderItem={({ item, index }) => renderItems(item, index)}
-        keyExtractor={(item: any) => item.id}
+        keyExtractor={(item, index) => String(index)}
         ItemSeparatorComponent={({ item }) => <View style={globalStyles.cardListSeperator} />}
       /></View>
   );

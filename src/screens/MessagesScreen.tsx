@@ -51,7 +51,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
           return () => {
          eventBus.removeListener("badge");
          };
-      }, []);
+      });
     const getConversations = () => {
         ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
             setCurrentConversation(data);
@@ -104,11 +104,12 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
             params = [{"id": editedMessage.id, "churchId": editedMessage.churchId, "conversationId": conversationId, "userId": editedMessage.userId, "displayName": editedMessage.displayName, "timeSent": editedMessage.timeSent, "messageType": "message", "content": messageText, "personId": editedMessage.personId, "timeUpdated": null}]
         }
         ApiHelper.post("/messages", params, "MessagingApi").then(async (data: any) => {
-            if(data != null || data != undefined){            
+            console.log("messages api response ------>", data)
+                       
                 setMessageText('');
                 setEditingMessage(null);
                 getConversations();
-            }
+            
         });
     }
     

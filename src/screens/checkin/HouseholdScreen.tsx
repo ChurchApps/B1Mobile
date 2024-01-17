@@ -61,7 +61,7 @@ export const HouseholdScreen = (props: Props) => {
     return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
 
   useEffect(() => {
     getMemberFromStorage();

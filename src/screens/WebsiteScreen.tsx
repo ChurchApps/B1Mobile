@@ -42,7 +42,7 @@ export const WebsiteScreen = (props: Props) => {
     return () => {
       eventBus.removeListener("badge");
     };
-  }, []);
+  });
 
   const getTitle = () => {
     const title = params && params.title && params.title;
