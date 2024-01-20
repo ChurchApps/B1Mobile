@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { View, SafeAreaView, Image, Text, Alert, TextInput, StyleSheet, Dimensions, PixelRatio } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Dimensions, Image, PixelRatio, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp, listenOrientationChange as lor, removeOrientationListener as rol } from 'react-native-responsive-screen';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities } from '../helpers';
-import { globalStyles } from '../helpers';
-import { BlueHeader, Loader, MainHeader, WhiteHeader, NotificationTab } from '../components';
-import { eventBus } from '../helpers/PushNotificationHelper';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { Loader, MainHeader } from '../components';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
 
 interface Props {
   navigation: {
@@ -23,7 +21,6 @@ export const MembersSearch = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [NotificationModal, setNotificationModal] = useState(false);
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
-  const [badgeCount, setBadgeCount] = useState(0);
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -34,25 +31,8 @@ export const MembersSearch = (props: Props) => {
     Utilities.trackEvent("Member Search Screen");
     loadMembers()
     UserHelper.addOpenScreenEvent('MembersSearch');
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
+    Dimensions.addEventListener('change', () => { const dim = Dimensions.get('screen'); setDimension(dim); })
   }, [])
-
-  useEffect(()=>{
-  },[dimension])
-  
-  useEffect(() => {
-    const handleNewMessage = () => {
-      setBadgeCount((prevCount) => prevCount + 1);
-    };
-    eventBus.addListener("badge", handleNewMessage);
-    return () => {
-      eventBus.removeListener("badge");
-    };
-  });
-
 
   const loadMembers = () => {
     ApiHelper.get("/people", "MembershipApi").then(data => {
@@ -67,11 +47,8 @@ export const MembersSearch = (props: Props) => {
     let filterList = membersList.filter((item: any) => {
       if (item.name.display.toLowerCase().match(searchText.toLowerCase())) { return item }
     })
-    if (searchText != '') {
-      setSearchList(filterList)
-    } else {
-      setSearchList(membersList)
-    }
+    if (searchText != '') setSearchList(filterList)
+    else setSearchList(membersList)
   }
 
   const renderMemberItem = (item: any) => {
@@ -85,23 +62,6 @@ export const MembersSearch = (props: Props) => {
     );
   }
 
-  const RightComponent = (
-    <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0 ?
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
-          <View style={globalStyles.BadgeDot}></View>
-        </View>
-        : <View>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
-        </View>}
-    </TouchableOpacity>
-  );
-
-  const toggleTabView = () => {
-    setNotificationModal(!NotificationModal);
-    setBadgeCount(0)
-  };
   const getResults = () => {
     if (isLoading) return <></>
     else if (searchList.length == 0) return <Text style={globalStyles.recentText}>No results found</Text>
@@ -110,13 +70,7 @@ export const MembersSearch = (props: Props) => {
 
   return (
     <SafeAreaView style={[globalStyles.grayContainer,{alignSelf:'center'}]}>
-      <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>Directory</Text>}
-        rightComponent={RightComponent}
-      />
+      <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} />
       <View style={{ width: dimension.width, flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ScrollView style={globalStyles.grayContainer} >
           <Text style={[globalStyles.searchMainText, { marginHorizontal: wd('5%') }]}>Find Members</Text>
@@ -134,10 +88,6 @@ export const MembersSearch = (props: Props) => {
         {isLoading && <Loader isLoading={isLoading} />}
        
       </View>
-      {
-        NotificationModal ? 
-        <NotificationTab/> : null
-      }
     </SafeAreaView>
   );
 };

@@ -4,10 +4,9 @@ import { Dimensions, Image, PixelRatio, SafeAreaView, ScrollView, Text, Touchabl
 import { FlatList } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { BottomButton, MainHeader, NotificationTab } from '../../components';
+import { BottomButton, MainHeader } from '../../components';
 import { Constants, UserHelper, globalStyles } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
-import { eventBus } from '../../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -29,8 +28,6 @@ export const GroupsScreen = (props: Props) => {
   const [selected, setSelected] = useState(null);
   const [groupTree, setGroupTree] = useState<any[]>([]);
   const [memberList, setMemberList] = useState([]);
-  const [NotificationModal, setNotificationModal] = useState(false);
-  const [badgeCount, setBadgeCount] = useState(0);
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
@@ -38,15 +35,6 @@ export const GroupsScreen = (props: Props) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
     return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
   };
-  useEffect(() => {
-    const handleNewMessage = () => {
-      setBadgeCount((prevCount) => prevCount + 1);
-    };
-    eventBus.addListener("badge", handleNewMessage);
-    return () => {
-      eventBus.removeListener("badge");
-    };
-  });
 
   useEffect(() => {
     getGroupListData();
@@ -59,24 +47,6 @@ export const GroupsScreen = (props: Props) => {
 
   useEffect(() => {
   }, [dimension])
-
-  const RightComponent = (
-    <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0
-        ? <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
-          <View style={globalStyles.BadgeDot}></View>
-        </View>
-        : <View>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
-        </View>}
-    </TouchableOpacity>
-  );
-
-  const toggleTabView = () => {
-    setNotificationModal(!NotificationModal);
-    setBadgeCount(0)
-  };
 
   useEffect(() => {
     getGroupListData();
@@ -143,15 +113,8 @@ export const GroupsScreen = (props: Props) => {
   const logoSrc = Constants.Images.logoBlue;
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-      <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
-        rightComponent={RightComponent}
-      />
+      <MainHeader title="Checkin" openDrawer={props.navigation.openDrawer} />
       <ScrollView>
-
         <SafeAreaView style={{ flex: 1 }}>
           <View style={logoSrc}>
             <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
@@ -160,9 +123,6 @@ export const GroupsScreen = (props: Props) => {
           <BottomButton title="NONE" onPress={() => selectGroup(null)} style={wd('100%')} />
         </SafeAreaView>
       </ScrollView>
-      {NotificationModal
-        ? <NotificationTab />
-        : null}
     </SafeAreaView>
   );
 };

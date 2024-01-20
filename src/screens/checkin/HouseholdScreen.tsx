@@ -4,10 +4,9 @@ import { Dimensions, Image, PixelRatio, SafeAreaView, Text, TouchableOpacity, Vi
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { BottomButton, Loader, MainHeader, NotificationTab } from '../../components';
+import { BottomButton, Loader, MainHeader } from '../../components';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
-import { eventBus } from '../../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -30,8 +29,6 @@ export const HouseholdScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [memberList, setMemberList] = useState<any[]>([]);
   const [groupTree, setGroupTree] = useState<any[]>([]);
-  const [NotificationModal, setNotificationModal] = useState(false);
-  const [badgeCount, setBadgeCount] = useState(0);
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
@@ -52,15 +49,6 @@ export const HouseholdScreen = (props: Props) => {
   useEffect(()=>{
   },[dimension])
 
-  useEffect(() => {
-    const handleNewMessage = () => {
-      setBadgeCount((prevCount) => prevCount + 1);
-    };
-    eventBus.addListener("badge", handleNewMessage);
-    return () => {
-      eventBus.removeListener("badge");
-    };
-  });
 
   useEffect(() => {
     getMemberFromStorage();
@@ -135,23 +123,6 @@ export const HouseholdScreen = (props: Props) => {
     }
   }
 
-  const RightComponent = (
-    <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0
-        ? <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
-          <View style={globalStyles.BadgeDot}></View>
-        </View>
-        : <View>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
-        </View>}
-    </TouchableOpacity>
-  );
-
-  const toggleTabView = () => {
-    setNotificationModal(!NotificationModal);
-    setBadgeCount(0)
-  };
   const submitAttendance = async () => {
     setLoading(true);
     const serviceId = props.route.params.serviceId;
@@ -220,16 +191,8 @@ export const HouseholdScreen = (props: Props) => {
   const logoSrc = Constants.Images.logoBlue;
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-      <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
-        rightComponent={RightComponent}
-      />
+      <MainHeader title="Checkin" openDrawer={props.navigation.openDrawer} />
       <ScrollView>
-        {/* <WhiteHeader onPress={() => openDrawer()} title="Checkin" /> */}
-
         <SafeAreaView style={{ flex: 1 }}>
           <View style={logoSrc}>
             <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
@@ -239,9 +202,6 @@ export const HouseholdScreen = (props: Props) => {
         </SafeAreaView>
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
-      {NotificationModal
-        ? <NotificationTab />
-        : null}
     </SafeAreaView>
   );
 };

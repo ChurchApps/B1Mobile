@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Image, Text, TouchableOpacity, Alert, Platform, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { Constants, Utilities } from '../helpers';
-import { globalStyles, UserHelper, ApiHelper } from '../helpers';;
-import { MainHeader, PaymentMethods, Donations, DonationForm, RecurringDonations } from '../components';
-import { initStripe } from "@stripe/stripe-react-native"
-import { StripePaymentMethod } from '../interfaces';
 import { useIsFocused } from '@react-navigation/native';
-import { ErrorHelper } from '../helpers/ErrorHelper';
+import { initStripe } from "@stripe/stripe-react-native";
+import React, { useEffect, useState } from 'react';
+import { Alert, SafeAreaView, Text, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { widthPercentageToDP } from 'react-native-responsive-screen';
-import { NotificationTab } from '../components';
-import { eventBus } from '../helpers/PushNotificationHelper';
+import { DonationForm, Donations, MainHeader, PaymentMethods, RecurringDonations } from '../components';
+import { ApiHelper, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ErrorHelper } from '../helpers/ErrorHelper';
+import { StripePaymentMethod } from '../interfaces';
+;
 
 interface Props {
   navigation: {
@@ -21,27 +19,15 @@ interface Props {
 }
 
 const DonationScreen = (props: Props) => {
-  const { openDrawer } = props.navigation;
   const [customerId, setCustomerId] = useState<string>("")
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
   const [areMethodsLoading, setAreMethodsLoading] = useState<boolean>(false)
   const [publishKey, setPublishKey] = useState<string>("")
-  const [NotificationModal, setNotificationModal] = useState(false);
-  const [badgeCount, setBadgeCount] = useState(0);
   const isFocused = useIsFocused();
   const person = UserHelper.currentUserChurch?.person
 
   useEffect(() => { if (isFocused) loadData() }, [isFocused])
 
-  useEffect(() => {
-    const handleNewMessage = () => {
-      setBadgeCount((prevCount) => prevCount + 1);
-    };
-    eventBus.addListener("badge", handleNewMessage);
-    return () => {
-      eventBus.removeListener("badge");
-    };
-  });
   // initialise stripe
   const loadData = async () => {
     Utilities.trackEvent("Donation Screen");
@@ -75,32 +61,9 @@ const DonationScreen = (props: Props) => {
 
   }
 
-  const RightComponent = (
-    <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0 ?
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
-          <View style={globalStyles.BadgeDot}></View>
-        </View>
-        : <View>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
-        </View>}
-    </TouchableOpacity>
-  );
-
-  const toggleTabView = () => {
-    setNotificationModal(!NotificationModal);
-    setBadgeCount(0)
-  };
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-      <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>Donate</Text>}
-        rightComponent={RightComponent}
-      />
+      <MainHeader title="Donate" openDrawer={props.navigation.openDrawer} />
       <ScrollView>
         {UserHelper.currentUserChurch?.person?.id ?
           <PaymentMethods
@@ -128,11 +91,6 @@ const DonationScreen = (props: Props) => {
             <Donations />
           </View>}
       </ScrollView>
-      {
-        NotificationModal ?
-          <NotificationTab /> : null
-
-      }
     </SafeAreaView >
   );
 };

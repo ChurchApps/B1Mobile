@@ -1,12 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState, useEffect } from 'react';
-import { SafeAreaView, Text, TouchableOpacity, Image, View, Dimensions, PixelRatio } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, PixelRatio, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
-import { Loader, WhiteHeader, MainHeader, NotificationTab} from '../../components';
-import { ApiHelper, globalStyles, LoginUserChurchInterface, UserHelper, Constants } from '../../helpers';
+import { Loader, MainHeader } from '../../components';
+import { ApiHelper, Constants, LoginUserChurchInterface, UserHelper, globalStyles } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
 import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
-import { eventBus } from '../../helpers/PushNotificationHelper';
 
 interface Props {
   navigation: {
@@ -17,12 +16,9 @@ interface Props {
 }
 
 export const ServiceScreen = (props: Props) => {
-  const { goBack, openDrawer } = props.navigation;
   const [isLoading, setLoading] = useState(false);
   const [serviceList, setServiceList] = useState([]);
-  const [NotificationModal, setNotificationModal] = useState(false);
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
-  const [badgeCount, setBadgeCount] = useState(0);
 
   const wd = (number: string) => {
     let givenWidth = typeof number === "number" ? number : parseFloat(number);
@@ -40,17 +36,6 @@ export const ServiceScreen = (props: Props) => {
   }, [])
   useEffect(()=>{
   },[dimension])
-  useEffect(() => {
-    const handleNewMessage = () => {
-      setBadgeCount((prevCount) => prevCount + 1);
-    };
-    eventBus.addListener("badge", handleNewMessage);
-    return () => {
-      eventBus.removeListener("badge");
-    };
-  });
-  
-
 
   const getServiceData = async () => {
     setLoading(true);
@@ -144,33 +129,10 @@ export const ServiceScreen = (props: Props) => {
     );
   }
 
-  const RightComponent = (
-    <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0 ?
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
-          <View style={globalStyles.BadgeDot}></View>
-        </View>
-        : <View>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
-        </View>}
-    </TouchableOpacity>
-  );
-
-  const toggleTabView = () => {
-    setNotificationModal(!NotificationModal);
-    setBadgeCount(0)
-  };
   const logoSrc = Constants.Images.logoBlue;
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-       <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
-        rightComponent={RightComponent}
-      />  
+      <MainHeader title="Checkin" openDrawer={props.navigation.openDrawer} />
       <ScrollView>
         <SafeAreaView style={{ flex: 1 }}>
           <View style={logoSrc}>
@@ -185,8 +147,6 @@ export const ServiceScreen = (props: Props) => {
         </SafeAreaView>
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
-      {NotificationModal ? 
-      <NotificationTab/> : null}
     </SafeAreaView>
   );
 };

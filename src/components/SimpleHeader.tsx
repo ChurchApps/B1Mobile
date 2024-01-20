@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Image, NativeModules, Text, TouchableOpacity } from 'react-native';
-import { Constants } from '../helpers';
-import { globalStyles } from '../helpers';
-import { MainHeader } from './MainHeader';
+import { Constants, globalStyles } from '../helpers';
+import { MainHeader } from './wrapper/MainHeader';
 const { StatusBarManager } = NativeModules;
 
 interface Props {
@@ -17,5 +16,5 @@ export function SimpleHeader(props: Props) {
 
   const mainComponent = (<Text style={globalStyles.headerText}>{props.title}</Text>);
 
-  return <MainHeader leftComponent={leftComponent} mainComponent={mainComponent} rightComponent={null} />
+  return <MainHeader title={props.title} hideBell={true} /> 
 };

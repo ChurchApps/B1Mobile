@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useRef, FunctionComponent } from 'react';
-import { View, SafeAreaView, Image, Text, Alert, Linking, Dimensions, PixelRatio } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Dimensions, Image, Linking, PixelRatio, SafeAreaView, Text, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities } from '../helpers';
-import { globalStyles } from '../helpers';
-import { Loader, MainHeader, NotificationTab } from '../components';
-import Icon from 'react-native-vector-icons/Zocial';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
-import { eventBus } from '../helpers/PushNotificationHelper';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/Zocial';
+import { Loader, MainHeader } from '../components';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
 
 interface Props {
   navigation: {
@@ -28,8 +26,6 @@ export const MemberDetailScreen = (props: Props) => {
   const memberinfo = member.contactInfo;
   const [isLoading, setLoading] = useState(false);
   const [householdList, setHouseholdList] = useState([]);
-  const [NotificationModal, setNotificationModal] = useState(false);
-  const [badgeCount, setBadgeCount] = useState(0);
   const scrollViewRef = useRef<any>();
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
@@ -42,10 +38,7 @@ export const MemberDetailScreen = (props: Props) => {
     Utilities.trackEvent("Member Detail Screen");
     getHouseholdMembersList();
     UserHelper.addOpenScreenEvent('MemberDetailScreen');
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
+    Dimensions.addEventListener('change', () => { const dim = Dimensions.get('screen'); setDimension(dim); });
   }, [props.route.params])
 
   useEffect(() => {
@@ -53,35 +46,17 @@ export const MemberDetailScreen = (props: Props) => {
 
 
   const onEmailClick = (email: string) => {
-    if (email) {
-      Linking.openURL(`mailto:${email}`)
-    } else {
-      Alert.alert("Sorry", 'Email of this user is not available.');
-    }
+    if (email) Linking.openURL(`mailto:${email}`)
+    else Alert.alert("Sorry", 'Email of this user is not available.');
   }
 
   const onPhoneClick = (phone: any) => {
-    if (phone) {
-      Linking.openURL(`tel:${phone}`)
-    } else {
-      Alert.alert("Sorry", 'Phone number of this user is not available.');
-    }
+    if (phone) Linking.openURL(`tel:${phone}`)
+    else Alert.alert("Sorry", 'Phone number of this user is not available.');
   }
-  useEffect(() => {
-    const handleNewMessage = () => {
-      setBadgeCount((prevCount) => prevCount + 1);
-    };
-    eventBus.addListener("badge", handleNewMessage);
-    return () => {
-      eventBus.removeListener("badge");
-    };
-  });
   const onAddressClick = () => {
-    if (memberinfo.address1) {
-      Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${memberinfo.address1}`);
-    } else {
-      Alert.alert("Sorry", 'Address of this user is not available.');
-    }
+    if (memberinfo.address1) Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${memberinfo.address1}`);
+    else Alert.alert("Sorry", 'Address of this user is not available.');
   }
 
   const getHouseholdMembersList = async () => {
@@ -93,23 +68,6 @@ export const MemberDetailScreen = (props: Props) => {
     })
   }
 
-  const RightComponent = (
-    <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0 ?
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
-          <View style={globalStyles.BadgeDot}></View>
-        </View>
-        : <View>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
-        </View>}
-    </TouchableOpacity>
-  );
-
-  const toggleTabView = () => {
-    setNotificationModal(!NotificationModal);
-    setBadgeCount(0)
-  };
   const onMembersClick = (item: any) => {
     scrollViewRef.current.scrollTo({ y: 0, animated: false })
     navigate('MemberDetailScreen', { member: item })
@@ -129,13 +87,7 @@ export const MemberDetailScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-      <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>Directory</Text>}
-        rightComponent={RightComponent}
-      />
+      <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} />
       <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
         <Image source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
         <Text style={globalStyles.memberName}>{member.name.display}</Text>
@@ -170,12 +122,6 @@ export const MemberDetailScreen = (props: Props) => {
         <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
-
-      {
-        NotificationModal ?
-          <NotificationTab /> : null
-
-      }
     </SafeAreaView>
   );
 };
