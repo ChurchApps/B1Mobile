@@ -1,11 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState, useEffect, FunctionComponent } from 'react';
-import { SafeAreaView, ScrollView, Text, Image, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, PixelRatio, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { globalStyles, UserHelper, Constants, ApiHelper } from '../../helpers';
 import { BottomButton, MainHeader, NotificationTab } from '../../components';
+import { Constants, UserHelper, globalStyles } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
 import { eventBus } from '../../helpers/PushNotificationHelper';
 
@@ -62,8 +62,8 @@ export const GroupsScreen = (props: Props) => {
 
   const RightComponent = (
     <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0 ?
-        <View style={{ flexDirection: 'row' }}>
+      {badgeCount > 0
+        ? <View style={{ flexDirection: 'row' }}>
           <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
           <View style={globalStyles.BadgeDot}></View>
         </View>
@@ -123,50 +123,46 @@ export const GroupsScreen = (props: Props) => {
     }
   }
 
-  const renderGroupItem = (item: any) => {
-    return (
-      <View>
-        <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
-          <Icon name={selected == item.key ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
-          <View style={globalStyles.listTextView}>
-            <Text style={[globalStyles.groupListTitle, globalStyles.groupMainTitle]} numberOfLines={1}>{item.name}</Text>
-          </View>
-        </TouchableOpacity>
-        {selected == item.key && item.items.map((item_group: any, index: any) => {
-          return (
-            <View style={{ ...globalStyles.groupView, borderBottomWidth: (index == item.items.length - 1) ? 0 : 1, width: wd('80%') }} key={item_group.id}>
-              <TouchableOpacity style={globalStyles.groupBtn} onPress={() => selectGroup(item_group)}>
-                <Text style={globalStyles.groupText}> {item_group.name} </Text>
-              </TouchableOpacity>
-            </View>
-          );
-        })}
-      </View>
-    );
-  }
+  const renderGroupItem = (item: any) => (
+    <View>
+      <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
+        <Icon name={selected == item.key ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
+        <View style={globalStyles.listTextView}>
+          <Text style={[globalStyles.groupListTitle, globalStyles.groupMainTitle]} numberOfLines={1}>{item.name}</Text>
+        </View>
+      </TouchableOpacity>
+      {selected == item.key && item.items.map((item_group: any, index: any) => (
+        <View style={{ ...globalStyles.groupView, borderBottomWidth: (index == item.items.length - 1) ? 0 : 1, width: wd('80%') }} key={item_group.id}>
+          <TouchableOpacity style={globalStyles.groupBtn} onPress={() => selectGroup(item_group)}>
+            <Text style={globalStyles.groupText}> {item_group.name} </Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+    </View>
+  )
   const logoSrc = Constants.Images.logoBlue;
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-       <MainHeader
-          leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-            <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-          </TouchableOpacity>}
-          mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
-          rightComponent={RightComponent}
-        />
+      <MainHeader
+        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
+          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
+        </TouchableOpacity>}
+        mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
+        rightComponent={RightComponent}
+      />
       <ScrollView>
-       
+
         <SafeAreaView style={{ flex: 1 }}>
           <View style={logoSrc}>
             <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
           </View>
           <FlatList data={groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
-          <BottomButton title='NONE' onPress={() => selectGroup(null)} style={wd('100%')} />
+          <BottomButton title="NONE" onPress={() => selectGroup(null)} style={wd('100%')} />
         </SafeAreaView>
       </ScrollView>
-      {NotificationModal ?
-      <NotificationTab/>
-      : null}
+      {NotificationModal
+        ? <NotificationTab />
+        : null}
     </SafeAreaView>
   );
 };
