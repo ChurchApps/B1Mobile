@@ -1,7 +1,7 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, PixelRatio, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Image, View } from 'react-native';
 import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { PushNotificationHelper } from '../helpers/PushNotificationHelper';
@@ -13,30 +13,10 @@ interface Props {
 
 const SplashScreen = (props: Props) => {
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
-  const hd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.height * givenWidth) / 100);
-  };
-
-
   useEffect(() => {
     Utilities.trackEvent("Splash Screen");
     checkUser()
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
   }, [])
-
-  useEffect(() => {
-  }, [dimension])
 
 
   const checkUser = async () => {
@@ -84,16 +64,16 @@ const SplashScreen = (props: Props) => {
     }
   }
 
-  if (dimension.width > dimension.height) {
+  if (DimensionHelper.wp(100) > DimensionHelper.hp(100)) {
     return (
       <View style={[globalStyles.safeAreaContainer, { flex: 1, backgroundColor: Constants.Colors.app_color }]}>
-        <Image source={Constants.Images.splash_screen} style={{ width: hd('100%'), height: hd('100%') }} />
+        <Image source={Constants.Images.splash_screen} style={{ width: DimensionHelper.hp('100%'), height: DimensionHelper.hp('100%') }} />
       </View>
     );
   } else {
     return (
       <View style={[globalStyles.safeAreaContainer, { flex: 1 }]}>
-        <Image source={Constants.Images.splash_screen} style={{ width: DimensionHelper.wp('100%'), height: hd('100%') }} />
+        <Image source={Constants.Images.splash_screen} style={{ width: DimensionHelper.wp('100%'), height: DimensionHelper.hp('100%') }} />
       </View>
     );
   }

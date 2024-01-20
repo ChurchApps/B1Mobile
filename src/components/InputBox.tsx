@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, PixelRatio, Text, TouchableOpacity, View } from "react-native";
+import { DimensionHelper } from "@churchapps/mobilehelper";
+import React from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { Constants, globalStyles } from "../helpers";
 
 interface Props {
@@ -22,18 +23,6 @@ export function InputBox({
   isSubmitting = false,
 }: Props) {
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-  useEffect(()=>{
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
-  },[dimension])
 
   let buttons: JSX.Element[] = [];
 

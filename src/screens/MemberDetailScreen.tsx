@@ -1,6 +1,6 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Dimensions, Image, Linking, PixelRatio, SafeAreaView, Text, View } from 'react-native';
+import { Alert, Image, Linking, SafeAreaView, Text, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Zocial';
@@ -23,25 +23,15 @@ export const MemberDetailScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [householdList, setHouseholdList] = useState([]);
   const scrollViewRef = useRef<any>();
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
+ 
 
   useEffect(() => {
     Utilities.trackEvent("Member Detail Screen");
     getHouseholdMembersList();
     UserHelper.addOpenScreenEvent('MemberDetailScreen');
-    Dimensions.addEventListener('change', () => { const dim = Dimensions.get('screen'); setDimension(dim); });
   }, [props.route.params])
 
-  useEffect(() => {
-  }, [dimension])
-
-
-  const onEmailClick = (email: string) => {
+   const onEmailClick = (email: string) => {
     if (email) Linking.openURL(`mailto:${email}`)
     else Alert.alert("Sorry", 'Email of this user is not available.');
   }

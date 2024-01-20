@@ -1,6 +1,7 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, Linking, PixelRatio, Platform, SafeAreaView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, Platform, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
 import Icon from 'react-native-vector-icons/Fontisto';
@@ -18,23 +19,10 @@ export const LoginScreen = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [dimension, setDimension] = useState(Dimensions.get('window'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
 
   useEffect(() => {
     Utilities.trackEvent("Login Screen");
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
   }, [])
-  useEffect(() => {
-  }, [dimension])
 
   const validateDetails = () => {
     if (email != '') {

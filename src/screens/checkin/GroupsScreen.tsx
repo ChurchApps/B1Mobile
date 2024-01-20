@@ -1,7 +1,7 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, PixelRatio, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { BottomButton, MainHeader } from '../../components';
@@ -24,24 +24,10 @@ export const GroupsScreen = (props: Props) => {
   const [groupTree, setGroupTree] = useState<any[]>([]);
   const [memberList, setMemberList] = useState([]);
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
   useEffect(() => {
     getGroupListData();
     UserHelper.addOpenScreenEvent('GroupsScreen');
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
   }, []);
-
-  useEffect(() => {
-  }, [dimension])
 
   useEffect(() => {
     getGroupListData();

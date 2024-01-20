@@ -1,11 +1,11 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, PixelRatio, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { BottomButton, Loader, MainHeader } from '../../components';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '../../helpers';
+import { ApiHelper, Constants, EnvironmentHelper, globalStyles } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
 import { NavigationProps } from '../../interfaces';
 
@@ -25,25 +25,6 @@ export const HouseholdScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [memberList, setMemberList] = useState<any[]>([]);
   const [groupTree, setGroupTree] = useState<any[]>([]);
-
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
-
-  useEffect(() => {
-    getMemberFromStorage();
-    UserHelper.addOpenScreenEvent('HouseholdScreen');
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
-  }, []);
-  useEffect(()=>{
-  },[dimension])
 
 
   useEffect(() => {

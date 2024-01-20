@@ -1,14 +1,13 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, KeyboardAvoidingView, PixelRatio, Text, TouchableWithoutFeedback, View } from "react-native";
+import { FlatList, Image, KeyboardAvoidingView, Text, TouchableWithoutFeedback, View } from "react-native";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from "react-native-safe-area-context";
 import MessageIcon from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { MainHeader } from "../components";
 import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, EnvironmentHelper, MessageInterface, PrivateMessagesCreate, UserHelper, UserSearchInterface, globalStyles } from "../helpers";
-import { eventBus } from '../helpers/PushNotificationHelper';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -22,31 +21,16 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
   const [messageText, setMessageText] = useState('');
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
-  const [dimension, setDimension] = useState(Dimensions.get('window'));
   const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
   const [UserProfilePic, setUserProfilePic]= useState<string>('')
 
   const { showActionSheetWithOptions } = useActionSheet();
-
-  const wd = (number: string) => {
-      let givenWidth = typeof number === "number" ? number : parseFloat(number);
-      return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
 
   useEffect(() => {
       getConversations();
       loadMembers();
   }, []);
 
-  useEffect(() => {
-      const handleNewMessage = () => {
-        getConversations();
-      };
-      eventBus.addListener("badge", handleNewMessage);
-        return () => {
-        eventBus.removeListener("badge");
-        };
-    });
   const getConversations = () => {
       ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
           setCurrentConversation(data);

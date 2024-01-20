@@ -1,5 +1,6 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, PixelRatio, SafeAreaView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, SafeAreaView, Text, View } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Fontisto';
 import { BlueHeader } from '../components';
@@ -18,13 +19,7 @@ export const RegisterScreen = (props: Props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [registered, setRegistered] = useState(false)
-  const [dimension, setDimension] = useState(Dimensions.get('window'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
+  
   useEffect(() => {
     Utilities.trackEvent("Register Screen");
   }, [])
