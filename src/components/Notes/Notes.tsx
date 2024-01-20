@@ -1,16 +1,15 @@
-import {
-  Dimensions,
-  Image,
-  PixelRatio,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import React from "react";
 import moment from "moment";
+import React from "react";
+import {
+    Dimensions,
+    Image,
+    PixelRatio,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 import { Constants, MessageInterface, globalStyles } from "../../helpers";
 import { PersonHelper } from "../../helpers/PersonHelper";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 interface NotesInterface {
   item: any;
@@ -42,7 +41,7 @@ const Notes = ({
 
   return (
     <>
-      <View style={[globalStyles.conversationList, { width: wd("100%") }]}>
+      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp("100%") }]}>
         <Image
           source={
             message?.person?.photo
@@ -51,7 +50,7 @@ const Notes = ({
           }
           style={[
             globalStyles.memberListIcon,
-            { width: wp("12%"), height: wp("12%"), borderRadius: 8888 },
+            { width: DimensionHelper.wp("12%"), height: DimensionHelper.wp("12%"), borderRadius: 8888 },
           ]}
         />
 
@@ -76,7 +75,7 @@ const Notes = ({
             paddingTop: 0,
             height: 24,
             fontSize: 11,
-            width: wp("100%"),
+            width: DimensionHelper.wp("100%"),
             left: 72,
             top: -4,
           },

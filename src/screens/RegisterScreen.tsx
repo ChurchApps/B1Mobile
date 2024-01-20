@@ -1,14 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, DevSettings, Linking, PixelRatio, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Dimensions, PixelRatio, SafeAreaView, Text, View } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Constants, EnvironmentHelper, LoginResponseInterface, Utilities } from '../helpers';
 import Icon from 'react-native-vector-icons/Fontisto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles } from '../helpers';
 import { BlueHeader } from '../components';
-import { ChurchInterface, ApiHelper, UserHelper } from '../helpers';
-import RNRestart from 'react-native-restart';
+import { ApiHelper, Constants, Utilities, globalStyles } from '../helpers';
 
 interface Props {
   navigation: {
@@ -68,19 +63,19 @@ export const RegisterScreen = (props: Props) => {
   const getForm = () => {
     return (<>
       <Text style={globalStyles.mainText}>Register an Account</Text>
-      <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-        <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
+      <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
+        <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
       </View>
-      <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-        <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
+      <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
+        <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
       </View>
-      <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-        <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-        <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+      <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+        <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
+        <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
       </View>
-      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { validateDetails() && registerApiCall() }}>
+      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp('90%') }]} onPress={() => { validateDetails() && registerApiCall() }}>
         {loading ?
           <ActivityIndicator size='small' color='white' animating={loading} /> :
           <Text style={globalStyles.roundBlueButtonText}>Register</Text>
@@ -92,7 +87,7 @@ export const RegisterScreen = (props: Props) => {
   const getContent = () => {
     if (registered) return (<>
       <Text style={globalStyles.mainText}>Success: A temporary password has been sent to {email}. </Text>
-      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { props.navigation.navigate("LoginScreen") }}>
+      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp('90%') }]} onPress={() => { props.navigation.navigate("LoginScreen") }}>
         <Text style={globalStyles.roundBlueButtonText}>Login</Text>
       </TouchableOpacity>
     </>);

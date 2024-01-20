@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, Linking, Dimensions, PixelRatio, Platform } from 'react-native';
-import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ChurchInterface, Constants, DateHelper, EnvironmentHelper, LoginResponseInterface, LoginUserChurchInterface, Utilities } from '../helpers';
-import Icon from 'react-native-vector-icons/Fontisto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles } from '../helpers';
-import { BlueHeader } from '../components';
-import { ApiHelper, UserHelper } from '../helpers';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Dimensions, Linking, PixelRatio, Platform, SafeAreaView, Text, View } from 'react-native';
+import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
+import Icon from 'react-native-vector-icons/Fontisto';
+import { BlueHeader } from '../components';
+import { ApiHelper, ChurchInterface, Constants, EnvironmentHelper, LoginResponseInterface, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
 
 interface Props {
   navigation: {
@@ -114,16 +111,16 @@ export const LoginScreen = (props: Props) => {
           <BlueHeader />
           <View style={globalStyles.grayContainer}>
             <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
-            <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-              <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-              <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+              <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
+              <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
             </View>
-            <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-              <Icon name={'key'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-              <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
+            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+              <Icon name={'key'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
+              <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
             </View>
 
-            <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { validateDetails() && loginApiCall() }}>
+            <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp('90%') }]} onPress={() => { validateDetails() && loginApiCall() }}>
               {loading ?
                 <ActivityIndicator size='small' color='white' animating={loading} /> :
                 <Text style={globalStyles.roundBlueButtonText}>LOGIN</Text>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { globalStyles } from '../../helpers';
 
 export function FundDropDown(props: any) {
@@ -38,7 +37,7 @@ export function FundDropDown(props: any) {
 
   const getHeight = () => {
     if (openFundDropDown) {
-      return props.type == 'funds' ? props.type == 'interval' ? itemsType.length * wp('16%') : intervalType.length * wp('16%') : acHolderType.length * wp('16%')
+      return props.type == 'funds' ? props.type == 'interval' ? itemsType.length * DimensionHelper.wp('16%') : intervalType.length * DimensionHelper.wp('16%') : acHolderType.length * DimensionHelper.wp('16%')
     } else {
       return 0
     }
@@ -53,11 +52,11 @@ export function FundDropDown(props: any) {
       value={valueType}
       setValue={setValueType}
       onChangeValue={(value) => setFundTypeValues}
-      containerStyle={{ ...globalStyles.containerStyle, width: props.type == 'funds' ? wp('40%') : wp('90%'), height: getHeight() }}
-      style={{ ...globalStyles.dropDownMainStyle, height: wp('12%') }}
+      containerStyle={{ ...globalStyles.containerStyle, width: props.type == 'funds' ? DimensionHelper.wp('40%') : DimensionHelper.wp('90%'), height: getHeight() }}
+      style={{ ...globalStyles.dropDownMainStyle, height: DimensionHelper.wp('12%') }}
       labelStyle={globalStyles.labelStyle}
       listItemContainerStyle={globalStyles.itemStyle}
-      dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: props.type == 'funds' ? wp('40%') : wp('90%') }}
+      dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: props.type == 'funds' ? DimensionHelper.wp('40%') : DimensionHelper.wp('90%') }}
       scrollViewProps={{ nestedScrollEnabled: true }}
     />
   );

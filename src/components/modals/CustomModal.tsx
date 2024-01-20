@@ -1,7 +1,6 @@
 import React from "react";
 import { View } from "react-native";
 import Modal from "react-native-modal";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 interface Props {
   isVisible: boolean;
@@ -28,7 +27,7 @@ export function CustomModal({ isVisible, close, children, width, height }: Props
           flex: 1,
         }}
       >
-        <View style={{ backgroundColor: "#fff", padding: wp("3%"), borderRadius: 8, height, width }}>{children}</View>
+        <View style={{ backgroundColor: "#fff", padding: DimensionHelper.wp("3%"), borderRadius: 8, height, width }}>{children}</View>
       </View>
     </Modal>
   );

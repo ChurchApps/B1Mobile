@@ -1,22 +1,16 @@
-import React, { useState, useEffect , FunctionComponent } from 'react';
-import { Alert, Image, SafeAreaView, Text, TouchableOpacity, View, Dimensions, PixelRatio } from 'react-native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from '../../helpers';
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles } from '../../helpers';
-import { BottomButton, Loader, WhiteHeader, MainHeader, NotificationTab } from '../../components';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Image, PixelRatio, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { BottomButton, Loader, MainHeader } from '../../components';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
-import { eventBus } from '../../helpers/PushNotificationHelper';
+import { NavigationProps } from '../../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string, params: any) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-    addListener: (type: string, callback: any) => void;
-  };
+  navigation: NavigationProps;
   route: {
     params: {
       serviceId: any,
@@ -31,8 +25,6 @@ export const HouseholdScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [memberList, setMemberList] = useState<any[]>([]);
   const [groupTree, setGroupTree] = useState<any[]>([]);
-  const [NotificationModal, setNotificationModal] = useState(false);
-  const [badgeCount, setBadgeCount] = useState(0);
 
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
@@ -53,15 +45,6 @@ export const HouseholdScreen = (props: Props) => {
   useEffect(()=>{
   },[dimension])
 
-  useEffect(() => {
-    const handleNewMessage = () => {
-      setBadgeCount((prevCount) => prevCount + 1);
-    };
-    eventBus.addListener("badge", handleNewMessage);
-    return () => {
-      eventBus.removeListener("badge");
-    };
-  });
 
   useEffect(() => {
     getMemberFromStorage();
@@ -104,7 +87,7 @@ export const HouseholdScreen = (props: Props) => {
   }
 
   const setExistingAttendance = async (existingAttendance: any, memberList: any, group_tree: any) => {
-    var member_list = [...memberList];
+    let member_list = [...memberList];
     const groupTree = [...group_tree];
 
     existingAttendance?.forEach((item: any) => {
@@ -136,31 +119,14 @@ export const HouseholdScreen = (props: Props) => {
     }
   }
 
- const RightComponent = (
-    <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0 ?
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
-          <View style={globalStyles.BadgeDot}></View>
-        </View>
-        : <View>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
-        </View>}
-    </TouchableOpacity>
-  );
-
-  const toggleTabView = () => {
-    setNotificationModal(!NotificationModal);
-    setBadgeCount(0)
-  };
   const submitAttendance = async () => {
     setLoading(true);
     const serviceId = props.route.params.serviceId;
     const people_Ids = props.route.params.people_Ids;
 
-    var pendingVisits: any[] = [];
+    let pendingVisits: any[] = [];
     memberList?.forEach((member: any) => {
-      var visitSessionList: any[] = [];
+      let visitSessionList: any[] = [];
       member.serviceTime?.forEach((time: any) => {
         if (time.selectedGroup != null) {
           visitSessionList.push({ session: { serviceTimeId: time.id, groupId: time.selectedGroup.id, displayName: time.selectedGroup.name } })
@@ -184,71 +150,54 @@ export const HouseholdScreen = (props: Props) => {
 
   }
 
-  const renderMemberItem = (item: any) => {
-    return (
-      <View>
-        <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
-          <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
-          <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={globalStyles.memberListIcon} />
-          <View style={globalStyles.memberListTextView}>
-            <Text style={[globalStyles.listTitleText, globalStyles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
-            {selected != item.id && item.serviceTime.map((item_time: any, index: any) => {
-              return (
-                <View key={item_time.id}>
-                  {item_time.selectedGroup ?
-                    <Text style={globalStyles.selectedText} numberOfLines={1}>
-                      {item_time.name}{" - "}{item_time.selectedGroup.name}
-                    </Text>
-                    : null}
-                </View>
-              );
-            })}
-          </View>
-        </TouchableOpacity>
-        {selected == item.id && item.serviceTime && item.serviceTime.map((item_time: any, index: any) => {
-          return (
-            <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1,width:wd('90%') }} key={item_time.id}>
-              <View style={globalStyles.classesTimeView}>
-                <Icon name={'clock-o'} style={globalStyles.timeIcon} size={wp('5%')} />
-                <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
-              </View>
-              <TouchableOpacity style={{ ...globalStyles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
-                onPress={() => item_time.selection ? null : navigate('GroupsScreen', { member: item, time: item_time, serviceId: props.route.params.serviceId })}>
-                <Text style={globalStyles.classesNoneText} numberOfLines={3}>
-                  {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
+  const renderMemberItem = (item: any) => (
+    <View>
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp('90%') }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
+        <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={DimensionHelper.wp('6%')} />
+        <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={globalStyles.memberListIcon} />
+        <View style={globalStyles.memberListTextView}>
+          <Text style={[globalStyles.listTitleText, globalStyles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
+          {selected != item.id && item.serviceTime.map((item_time: any, index: any) => (
+            <View key={item_time.id}>
+              {item_time.selectedGroup
+                ? <Text style={globalStyles.selectedText} numberOfLines={1}>
+                  {item_time.name}{" - "}{item_time.selectedGroup.name}
                 </Text>
-              </TouchableOpacity>
+                : null}
             </View>
-          );
-        })}
-      </View>
-    );
-  }
+          ))}
+        </View>
+      </TouchableOpacity>
+      {selected == item.id && item.serviceTime && item.serviceTime.map((item_time: any, index: any) => (
+        <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1,width:DimensionHelper.wp('90%') }} key={item_time.id}>
+          <View style={globalStyles.classesTimeView}>
+            <Icon name={'clock-o'} style={globalStyles.timeIcon} size={DimensionHelper.wp('5%')} />
+            <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
+          </View>
+          <TouchableOpacity style={{ ...globalStyles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
+            onPress={() => item_time.selection ? null : navigate('GroupsScreen', { member: item, time: item_time, serviceId: props.route.params.serviceId })}>
+            <Text style={globalStyles.classesNoneText} numberOfLines={3}>
+              {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+    </View>
+  )
   const logoSrc = Constants.Images.logoBlue;
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-      <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
-        rightComponent={RightComponent}
-      />
+      <MainHeader title="Checkin" openDrawer={props.navigation.openDrawer} />
       <ScrollView>
-        {/* <WhiteHeader onPress={() => openDrawer()} title="Checkin" /> */}
-        
         <SafeAreaView style={{ flex: 1 }}>
-        <View style={logoSrc}>
-        <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
-      </View>
+          <View style={logoSrc}>
+            <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
+          </View>
           <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
-          <BottomButton title='CHECKIN' onPress={() => submitAttendance()} style={wd('100%')}/>
+          <BottomButton title="CHECKIN" onPress={() => submitAttendance()} style={DimensionHelper.wp('100%')} />
         </SafeAreaView>
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
-      {NotificationModal ? 
-      <NotificationTab/>
-    : null}
     </SafeAreaView>
   );
 };

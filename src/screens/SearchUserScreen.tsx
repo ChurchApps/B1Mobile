@@ -1,18 +1,15 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Keyboard, PixelRatio, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { BlueHeader } from '../components';
-import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, globalStyles, UserHelper, UserSearchInterface, Utilities } from '../helpers';
+import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-    navigation: {
-      navigate: (screenName: string, params: any) => void;
-      goBack: () => void;
-      openDrawer: () => void;
-    };
+    navigation: NavigationProps;
 }
 
 export const SearchUserScreen = (props: Props) => {
@@ -88,10 +85,10 @@ export const SearchUserScreen = (props: Props) => {
       const renderUserItem = (item: UserSearchInterface) => {
         const userImage = item.photo
         return (
-          <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: wd('90%') }]} onPress={() => userSelection(item)}>
+          <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: DimensionHelper.wp('90%') }]} onPress={() => userSelection(item)}>
             {
               userImage ? <Image source={{ uri: userImage }} style={globalStyles.churchListIcon} /> :
-                <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: wp('9%'), width: wp('9%')}]}/>
+                <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%')}]}/>
             }
             <View style={globalStyles.listTextView}>
               <Text style={globalStyles.listTitleText}>{item.name.display}</Text>
@@ -129,10 +126,10 @@ export const SearchUserScreen = (props: Props) => {
               <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <View style={globalStyles.grayContainer}>
                   <Text style={globalStyles.searchMainText}>Search for a person</Text>
-                  <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
+                  <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
                     <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
                     <TextInput
-                      style={[globalStyles.textInputStyle, { width: wd('90%') }]}
+                      style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]}
                       placeholder={'Name'}
                       autoCapitalize="none"
                       autoCorrect={false}
@@ -142,7 +139,7 @@ export const SearchUserScreen = (props: Props) => {
                       onChangeText={(text) => { setSearchText(text) }}
                     />
                   </View>
-                  <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%'), width: wd('90%') }} onPress={() => searchUserApiCall(searchText)}>
+                  <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: DimensionHelper.wp('6%'), width: DimensionHelper.wp('90%') }} onPress={() => searchUserApiCall(searchText)}>
                     {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
                   </TouchableOpacity>
           </View>

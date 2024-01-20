@@ -1,21 +1,20 @@
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  FlatList,
-  TextInput,
-} from "react-native";
 import React, { useState } from "react";
 import {
-  ApiHelper,
-  Constants,
-  ConversationInterface,
-  MessageInterface,
-  UserHelper,
-  globalStyles,
-} from "../../helpers";
+    FlatList,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {
+    ApiHelper,
+    Constants,
+    ConversationInterface,
+    MessageInterface,
+    UserHelper,
+    globalStyles,
+} from "../../helpers";
 import Notes from "./Notes";
 
 interface NewConversation {
@@ -146,7 +145,7 @@ const ConversationPopup = ({
             ...globalStyles.fundInput,
             marginTop: 0,
             marginLeft: type === "new" ? 8 : 64,
-            width: type === "new" ? wp("80%") : wp("66%"),
+            width: type === "new" ? DimensionHelper.wp("80%") : DimensionHelper.wp("66%"),
             paddingTop: 12,
             paddingLeft: 16,
             borderRadius: 60,
@@ -164,7 +163,7 @@ const ConversationPopup = ({
           <Icon
             name={"send"}
             color={Constants.Colors.app_color}
-            size={wp("5%")}
+            size={DimensionHelper.wp("5%")}
           />
         </TouchableOpacity>
       </View>
@@ -173,7 +172,7 @@ const ConversationPopup = ({
 
   return (
     <View>
-      <View style={{height: 'auto', maxHeight: hp('40%')}}>
+      <View style={{height: 'auto', maxHeight: DimensionHelper.hp('40%')}}>
         <FlatList
           data={conversations}
           renderItem={({ item, index }) => renderConversations(item, index)}
