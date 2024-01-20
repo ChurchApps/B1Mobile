@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList, ActivityIndicator, Linking } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface } from '../helpers';
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import MessageIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { globalStyles, EnvironmentHelper, UserHelper } from '../helpers';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
 import RNRestart from 'react-native-restart';
-import { NavigationHelper } from '../helpers/NavigationHelper';
+import MessageIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { ApiHelper, Constants, EnvironmentHelper, LoginUserChurchInterface, UserHelper, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
+import { NavigationHelper } from '../helpers/NavigationHelper';
 
 export function CustomDrawer(props: any) {
   const { navigate, goBack, openDrawer } = props.navigation;
@@ -84,7 +83,7 @@ export function CustomDrawer(props: any) {
 
       <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />}
+          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />}
         <Text style={globalStyles.tabTitle}>{item.text}</Text>
       </TouchableOpacity>
     );
@@ -94,7 +93,7 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {getUserInfo()}
-        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? wp('12%') : user != null ? wp('6%') : wp('12%') }]} onPress={() => navigate('ChurchSearch', {})}>
+        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? DimensionHelper.wp('12%') : user != null ? DimensionHelper.wp('6%') : DimensionHelper.wp('12%') }]} onPress={() => navigate('ChurchSearch', {})}>
           {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
           <Text style={{ ...globalStyles.churchText }}>
             {churchEmpty ? 'Find your church...' : churchName}
@@ -115,7 +114,7 @@ export function CustomDrawer(props: any) {
   const getUserInfo = () => {
     if (UserHelper.currentUserChurch?.person && user != null) {
       return (<View>
-        <View style={[globalStyles.headerView, { marginTop: wp('15%') }]}>
+        <View style={[globalStyles.headerView, { marginTop: DimensionHelper.wp('15%') }]}>
           {(UserHelper.currentUserChurch.person.photo == null || UserHelper.currentUserChurch.person.photo == undefined)
             ? null
             : <Image
@@ -126,7 +125,7 @@ export function CustomDrawer(props: any) {
           {UserHelper.user ? messagesView() : null}
         </View>
         <TouchableOpacity style={globalStyles.headerView} onPress={() => editProfileAction()}>
-          <Text style={{ fontSize: wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' }}>{'Edit profile'}</Text>
+          <Text style={{ fontSize: DimensionHelper.wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' }}>{'Edit profile'}</Text>
         </TouchableOpacity>
       </View>)
     }
@@ -155,7 +154,7 @@ export function CustomDrawer(props: any) {
     return (
       <TouchableOpacity onPress={() => navigate('SearchMessageUser', {})}>
         <View style={globalStyles.messageRootView}>
-          <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={wp('5%')} />
+          <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />
         </View>
       </TouchableOpacity>
     );

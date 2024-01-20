@@ -1,7 +1,7 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Dimensions, Image, Linking, PixelRatio, SafeAreaView, Text, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Zocial';
 import { Loader, MainHeader } from '../components';
@@ -71,7 +71,7 @@ export const MemberDetailScreen = (props: Props) => {
 
   const renderMemberItem = (item: any) => {
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => onMembersClick(item)}>
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp('90%') }]} onPress={() => onMembersClick(item)}>
         <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText} numberOfLines={1}>{item.name.display}</Text>
@@ -88,25 +88,25 @@ export const MemberDetailScreen = (props: Props) => {
         <Image source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
         <Text style={globalStyles.memberName}>{member.name.display}</Text>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd('90%') }]} onPress={() => onEmailClick(memberinfo.email)}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onEmailClick(memberinfo.email)}>
           <View style={globalStyles.detailIconContainer}>
-            <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+            <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Email :</Text>
           </View>
           <Text style={globalStyles.detailValue}>{memberinfo.email ? memberinfo.email : '-'}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd('90%') }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
           <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'phone-alt'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+            <FontAwesome5 name={'phone-alt'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Phone :</Text>
           </View>
           <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: wd('90%') }]} onPress={() => onAddressClick()}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onAddressClick()}>
           <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'location-arrow'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={wp('4.8%')} />
+            <FontAwesome5 name={'location-arrow'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Address :</Text>
           </View>
           {memberinfo.address1 ? <Text style={globalStyles.detailValue}>{memberinfo.address1}</Text> : null}

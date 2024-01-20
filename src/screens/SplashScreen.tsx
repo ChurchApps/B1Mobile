@@ -1,3 +1,4 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, PixelRatio, View } from 'react-native';
@@ -92,7 +93,7 @@ const SplashScreen = (props: Props) => {
   } else {
     return (
       <View style={[globalStyles.safeAreaContainer, { flex: 1 }]}>
-        <Image source={Constants.Images.splash_screen} style={{ width: wd('100%'), height: hd('100%') }} />
+        <Image source={Constants.Images.splash_screen} style={{ width: DimensionHelper.wp('100%'), height: hd('100%') }} />
       </View>
     );
   }

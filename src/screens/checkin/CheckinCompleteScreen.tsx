@@ -1,7 +1,7 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect } from 'react';
 import { Image, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { MainHeader } from '../../components';
 import { Constants, UserHelper, globalStyles } from '../../helpers';
@@ -12,8 +12,6 @@ interface Props {
 }
 
 const CheckinCompleteScreen = (props: Props) => {
-  const { navigate, goBack, openDrawer } = props.navigation;
-
   useEffect(() => {
     UserHelper.addOpenScreenEvent('CheckinCompleteScreen');
     serviceNavigate();
@@ -26,7 +24,7 @@ const CheckinCompleteScreen = (props: Props) => {
   }, [props.navigation]);
 
   const serviceNavigate = () => {
-    setTimeout(() => { navigate('ServiceScreen', {}) }, 1000);
+    setTimeout(() => { props.navigation.navigate('ServiceScreen', {}) }, 1000);
   }
   
   const logoSrc = Constants.Images.logoBlue;
@@ -38,7 +36,7 @@ const CheckinCompleteScreen = (props: Props) => {
         <View style={logoSrc}>
         <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
       </View>
-          <Icon name={'check-circle'} style={globalStyles.successIcon} size={wp('20%')} />
+          <Icon name={'check-circle'} style={globalStyles.successIcon} size={DimensionHelper.wp('20%')} />
           <Text style={globalStyles.successText}>Checkin Complete.</Text>
         </SafeAreaView>
       </ScrollView>

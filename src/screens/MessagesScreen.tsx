@@ -1,8 +1,8 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, KeyboardAvoidingView, PixelRatio, Text, TouchableWithoutFeedback, View } from "react-native";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { SafeAreaView } from "react-native-safe-area-context";
 import MessageIcon from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -120,7 +120,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
 
   const backIconComponent = (
       <TouchableOpacity onPress={() => props.navigation.goBack()}>
-          <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={wp('5%')} />
+          <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={DimensionHelper.wp('5%')} />
       </TouchableOpacity>);
 
   const mainComponent = (<Text style={globalStyles.headerText}>{props?.route?.params?.userDetails?.name?.display ? props?.route?.params?.userDetails?.name?.display : props?.route?.params?.userDetails?.DisplayName }</Text>);
@@ -142,7 +142,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
                   }}
               />
               <TouchableOpacity style={globalStyles.sendIcon} onPress = {() => sendMessageInitiate()}>
-                  <MessageIcon name={"send"} color={"white"} size={wp('5%')}/>
+                  <MessageIcon name={"send"} color={"white"} size={DimensionHelper.wp('5%')}/>
               </TouchableOpacity>
           </View>
       );
@@ -154,7 +154,7 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
               <FlatList
                   inverted
                   data={messageList} 
-                  style = {{paddingVertical: wp('2%')}}
+                  style = {{paddingVertical: DimensionHelper.wp('2%')}}
                   renderItem={({ item }) => singleMessageItem(item)} 
                   keyExtractor={(item: any) => item.id} 
               />
@@ -167,19 +167,19 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
           <TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
               <View style={[globalStyles.messageContainer, { alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
                     {item.personId == props.route.params.userDetails.id ? 
-                      <Image source={props?.route?.params?.userDetails?.photo ? { uri: EnvironmentHelper.ContentRoot + props?.route?.params?.userDetails?.photo} : Constants.Images.ic_user } style={[globalStyles.churchListIcon, {tintColor: props.route.params.userDetails.photo ? '' : Constants.Colors.app_color, height: wp('9%'), width: wp('9%'), borderRadius : wp('9%')}]}/> 
+                      <Image source={props?.route?.params?.userDetails?.photo ? { uri: EnvironmentHelper.ContentRoot + props?.route?.params?.userDetails?.photo} : Constants.Images.ic_user } style={[globalStyles.churchListIcon, {tintColor: props.route.params.userDetails.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius : DimensionHelper.wp('9%')}]}/> 
                   : null}
                   <View>
                       <Text style={[globalStyles.senderNameText, {alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
                           {item.displayName}
                       </Text>
-                      <View style={[globalStyles.messageView,{width: item.content.length > 15 ? wp('65%') : wp((item.content.length + 14).toString() + "%"), 
+                      <View style={[globalStyles.messageView,{width: item.content.length > 15 ? DimensionHelper.wp('65%') : DimensionHelper.wp((item.content.length + 14).toString() + "%"), 
                           alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
                           <Text>{item.content}</Text>
                       </View>
                   </View>
                     {item.personId != props.route.params.userDetails.id ? 
-                      <Image source={ UserProfilePic  ? {uri : EnvironmentHelper.ContentRoot + UserProfilePic}  :  Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: wp('9%'), width: wp('9%'), borderRadius:wp('9%')}]}/> 
+                      <Image source={ UserProfilePic  ? {uri : EnvironmentHelper.ContentRoot + UserProfilePic}  :  Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius:DimensionHelper.wp('9%')}]}/> 
                   : null}
               </View>
           </TouchableWithoutFeedback>

@@ -12,6 +12,7 @@
     "ecmaVersion": 2023
   },
   "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
     "unused-imports/no-unused-imports": "error",
     "@next/next/no-img-element": "off",
     "@next/next/no-html-link-for-pages": "off",

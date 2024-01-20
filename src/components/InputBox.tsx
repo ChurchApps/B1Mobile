@@ -1,6 +1,5 @@
-import React,{useState,useEffect} from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator ,Dimensions,PixelRatio} from "react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Dimensions, PixelRatio, Text, TouchableOpacity, View } from "react-native";
 import { Constants, globalStyles } from "../helpers";
 
 interface Props {
@@ -38,7 +37,7 @@ export function InputBox({
 
   let buttons: JSX.Element[] = [];
 
-  const widthClass = deleteFunction ? wp("33.33%") : wp("50%");
+  const widthClass = deleteFunction ? DimensionHelper.wp("33.33%") : DimensionHelper.wp("50%");
   if (cancelFunction) {
     buttons.push(
       <TouchableOpacity
@@ -84,12 +83,12 @@ export function InputBox({
 
   return (
     <View style={globalStyles.paymentTitleContainer}>
-      <View style={{ width: wd("100%") }}>
+      <View style={{ width: DimensionHelper.wp("100%") }}>
         <View style={globalStyles.paymentTitleHeaderLine} />
         <View style={globalStyles.paymentTitleView}>
           {headerIcon}
           <Text style={globalStyles.paymentTitleText}>{title}</Text>
-          <View style={{ width: wp("6%") }} />
+          <View style={{ width: DimensionHelper.wp("6%") }} />
         </View>
       </View>
       {children}

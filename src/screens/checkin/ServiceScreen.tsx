@@ -1,3 +1,4 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, PixelRatio, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
@@ -118,7 +119,7 @@ export const ServiceScreen = (props: Props) => {
   const renderGroupItem = (item: any) => {
     return (
       <View>
-        <TouchableOpacity style={[globalStyles.listMainView, globalStyles.groupListView, { width: wd('90%') }]} onPress={() => ServiceSelection(item)}>
+        <TouchableOpacity style={[globalStyles.listMainView, globalStyles.groupListView, { width: DimensionHelper.wp('90%') }]} onPress={() => ServiceSelection(item)}>
           <Text style={globalStyles.groupListTitle} numberOfLines={1}>{item.campus.name} - {item.name}</Text>
         </TouchableOpacity>
       </View>

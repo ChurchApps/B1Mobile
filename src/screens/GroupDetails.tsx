@@ -32,7 +32,7 @@ const GroupDetails = (props: any) => {
   
   const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => {
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: wd("90%") }]} onPress={() => { navigate("MemberDetailScreen", { member: item.person }); }} >
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp("90%") }]} onPress={() => { navigate("MemberDetailScreen", { member: item.person }); }} >
         <Image style={globalStyles.memberListIcon} source={
           item?.person?.photo
             ? { uri: EnvironmentHelper.ContentRoot + item.person.photo }

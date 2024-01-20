@@ -1,8 +1,8 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, Image, Keyboard, PixelRatio, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import RNRestart from 'react-native-restart';
 import { BlueHeader } from '../components';
 import { ApiHelper, ArrayHelper, ChurchInterface, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
@@ -105,7 +105,7 @@ export const ChurchSearch = (props: Props) => {
   const renderChurchItem = (item: any) => {
     const churchImage = item.settings && item.settings[0].value
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: wd('90%') }]} onPress={() => churchSelection(item)}>
+      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: DimensionHelper.wp('90%') }]} onPress={() => churchSelection(item)}>
         {
           churchImage ? <Image source={{ uri: churchImage }} style={globalStyles.churchListIcon} /> :
             <Image source={Constants.Images.ic_church} style={globalStyles.churchListIcon} />
@@ -124,10 +124,10 @@ export const ChurchSearch = (props: Props) => {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <View style={globalStyles.grayContainer}>
               <Text style={globalStyles.searchMainText}>Find Your Church</Text>
-              <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
+              <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
                 <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
                 <TextInput
-                  style={[globalStyles.textInputStyle, { width: wd('90%') }]}
+                  style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]}
                   placeholder={'Church name'}
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -137,7 +137,7 @@ export const ChurchSearch = (props: Props) => {
                   onChangeText={(text) => { setSearchText(text) }}
                 />
               </View>
-              <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: wp('6%'), width: wd('90%') }} onPress={() => searchApiCall(searchText)}>
+              <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: DimensionHelper.wp('6%'), width: DimensionHelper.wp('90%') }} onPress={() => searchApiCall(searchText)}>
                 {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
               </TouchableOpacity>
               {searchText == '' && <Text style={globalStyles.recentText}>

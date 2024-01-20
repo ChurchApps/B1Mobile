@@ -1,12 +1,11 @@
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import { globalStyles, DateHelper, CurrencyHelper } from "../../helpers";
+import { Constants, CurrencyHelper, DateHelper, globalStyles } from "../../helpers";
 import { StripeDonationInterface } from "../../interfaces";
 import { CustomModal } from "./CustomModal";
-import { Constants } from "../../helpers";
 
 interface Props {
   show: boolean;
@@ -41,8 +40,8 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
   }, []);
 
   return (
-    <CustomModal isVisible={show} close={close} width={wp(90)}>
-      <View style={{ paddingHorizontal: wp(1) }}>
+    <CustomModal isVisible={show} close={close} width={DimensionHelper.wp(90)}>
+      <View style={{ paddingHorizontal: DimensionHelper.wp(1) }}>
         <View style={globalStyles.donationPreviewView}>
           <Text style={globalStyles.donationText}>Donation Preview</Text>
           <TouchableOpacity
@@ -51,7 +50,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
             }}
             style={globalStyles.donationCloseBtn}
           >
-            <Icon name={"close"} style={globalStyles.closeIcon} size={wp("6%")} />
+            <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp("6%")} />
           </TouchableOpacity>
         </View>
         <ScrollView>

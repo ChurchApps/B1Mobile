@@ -1,8 +1,8 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Image, PixelRatio, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { BottomButton, Loader, MainHeader } from '../../components';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '../../helpers';
@@ -152,8 +152,8 @@ export const HouseholdScreen = (props: Props) => {
 
   const renderMemberItem = (item: any) => (
     <View>
-      <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
-        <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={wp('6%')} />
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp('90%') }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
+        <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={DimensionHelper.wp('6%')} />
         <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={globalStyles.memberListIcon} />
         <View style={globalStyles.memberListTextView}>
           <Text style={[globalStyles.listTitleText, globalStyles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
@@ -169,9 +169,9 @@ export const HouseholdScreen = (props: Props) => {
         </View>
       </TouchableOpacity>
       {selected == item.id && item.serviceTime && item.serviceTime.map((item_time: any, index: any) => (
-        <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1,width:wd('90%') }} key={item_time.id}>
+        <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTime.length - 1) ? 0 : 1,width:DimensionHelper.wp('90%') }} key={item_time.id}>
           <View style={globalStyles.classesTimeView}>
-            <Icon name={'clock-o'} style={globalStyles.timeIcon} size={wp('5%')} />
+            <Icon name={'clock-o'} style={globalStyles.timeIcon} size={DimensionHelper.wp('5%')} />
             <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
           </View>
           <TouchableOpacity style={{ ...globalStyles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
@@ -194,7 +194,7 @@ export const HouseholdScreen = (props: Props) => {
             <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
           </View>
           <FlatList data={memberList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
-          <BottomButton title="CHECKIN" onPress={() => submitAttendance()} style={wd('100%')} />
+          <BottomButton title="CHECKIN" onPress={() => submitAttendance()} style={DimensionHelper.wp('100%')} />
         </SafeAreaView>
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}

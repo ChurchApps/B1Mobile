@@ -1,9 +1,9 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import { useIsFocused } from '@react-navigation/native';
 import { initStripe } from "@stripe/stripe-react-native";
 import React, { useEffect, useState } from 'react';
 import { Alert, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { widthPercentageToDP } from 'react-native-responsive-screen';
 import { DonationForm, Donations, MainHeader, PaymentMethods, RecurringDonations } from '../components';
 import { ApiHelper, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
@@ -61,7 +61,7 @@ const DonationScreen = (props: Props) => {
         }
         <DonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />
         {!UserHelper.currentUserChurch?.person?.id
-          ? <Text style={[globalStyles.paymentDetailText, { marginVertical: widthPercentageToDP('2%'), }]}>Please login to view existing donations</Text>
+          ? <Text style={[globalStyles.paymentDetailText, { marginVertical: DimensionHelper.wp('2%'), }]}>Please login to view existing donations</Text>
           : <View>
             <RecurringDonations customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} />
             <Donations />

@@ -1,6 +1,6 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native';
-import { widthPercentageToDP, } from 'react-native-responsive-screen';
 import { Loader, MainHeader } from '../components';
 import { ImageButton } from '../components/ImageButton';
 import { LinkInterface, UserHelper, Utilities, globalStyles } from '../helpers';
@@ -73,7 +73,7 @@ export const DashboardScreen = (props: Props) => {
   }
 
   const getBrand = () => {
-    if (UserHelper.churchAppearance?.logoLight) return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={{ width: "100%", height: widthPercentageToDP(25) }} />
+    if (UserHelper.churchAppearance?.logoLight) return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} />
     else return <Text style={{ fontSize: 20, width: "100%", textAlign: "center", marginTop: 0 }}>{UserHelper.currentUserChurch?.church?.name}</Text>
   }
 

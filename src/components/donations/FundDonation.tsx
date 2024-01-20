@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, TextInput } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 import { globalStyles } from "../../helpers";
 import { FundDonationInterface, FundInterface } from "../../interfaces";
 
@@ -50,13 +49,13 @@ export function FundDonation({ fundDonation, funds, index, updatedFunction }: Pr
             setItems={setFundList}
             containerStyle={{
               ...globalStyles.containerStyle,
-              height: isDropdownOpen ? fundList.length * wp("18%") : 0,
-              width: wp("45%"),
+              height: isDropdownOpen ? fundList.length * DimensionHelper.wp("18%") : 0,
+              width: DimensionHelper.wp("45%"),
             }}
             style={globalStyles.dropDownMainStyle}
             labelStyle={globalStyles.labelStyle}
             listItemContainerStyle={globalStyles.itemStyle}
-            dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("45%") }}
+            dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: DimensionHelper.wp("45%") }}
             scrollViewProps={{ scrollEnabled: true }}
             dropDownDirection="BOTTOM"
           />
