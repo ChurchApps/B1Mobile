@@ -1,8 +1,7 @@
 import { ArrayHelper, DimensionHelper, ErrorHelper } from '@churchapps/mobilehelper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import { ApiHelper, CheckinHelper, LoginUserChurchInterface, PersonInterface, ServiceTimeInterface, UserHelper, globalStyles } from '../../helpers';
+import { ApiHelper, CheckinHelper, PersonInterface, UserHelper, globalStyles } from '../../helpers';
 import { Loader } from '../Loader';
 
 interface Props {
@@ -29,34 +28,31 @@ export const CheckinServices = (props: Props) => {
   }
 
   const getMemberData = async (serviceId: any) => {    
-    const currentChurch = JSON.parse((await AsyncStorage.getItem('CHURCH_DATA'))!)
-    const churchesList = await AsyncStorage.getItem('CHURCHES_DATA')
-    const tst : LoginUserChurchInterface[] = JSON.parse(churchesList!);
-    const currentData : LoginUserChurchInterface | undefined = tst.find((value, index) => value.church.id == currentChurch!.id);
-
-    if(currentData != null || currentData != undefined){
-        const personId = currentData.person.id
-        if (personId) {
-          const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
-          const householdMembers: PersonInterface[] = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
-          const serviceTimes: ServiceTimeInterface = await ApiHelper.get("/serviceTimes?serviceId" + serviceId, "AttendanceApi");
-          createHouseholdTree(serviceId, serviceTimes, householdMembers);
-        }
+    const personId = UserHelper.currentUserChurch?.person?.id;
+    if (personId) {
+      const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
+      CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
+      CheckinHelper.serviceTimes = await ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi");
+      createHouseholdTree(serviceId);
+      loadExistingAttendance(serviceId);
     }
   }
 
-  const createHouseholdTree = async (serviceId: any, serviceTime: any, memberList: any) => {
-    memberList?.forEach((member: any) => {
-      member['serviceTime'] = serviceTime;
-    })
+  const createHouseholdTree = async (serviceId: any) => {
+    CheckinHelper.householdMembers?.forEach((member:any) => { member.serviceTimes = CheckinHelper.serviceTimes; });
     try {
-      const memberValue = JSON.stringify(memberList)
-      await AsyncStorage.setItem('MEMBER_LIST', memberValue)
-        .then(() => getGroupListData(serviceId, memberList))
+      getGroupListData(serviceId)
     } catch (error : any) {
       console.log('SET MEMBER LIST ERROR', error)
       ErrorHelper.logError("create-household", error);
     }
+  }
+
+  const loadExistingAttendance = async (serviceId: string) => {
+    setLoading(true);
+    const data = ApiHelper.get("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + CheckinHelper.peopleIds + "&include=visitSessions", "AttendanceApi");
+    setLoading(false);
+    CheckinHelper.setExistingAttendance(data)
   }
 
   const createGroupTree = (groups: any) => {
@@ -75,14 +71,15 @@ export const CheckinServices = (props: Props) => {
     return group_tree;
   }
 
-  const getGroupListData = async (serviceId: any, memberList: any) => {
+  const getGroupListData = async (serviceId: any) => {
     const data = await ApiHelper.get("/groups", "MembershipApi")
     setLoading(false);
     try {
       const group_tree = createGroupTree(data);
       CheckinHelper.groupTree = group_tree;
       CheckinHelper.serviceId = serviceId;
-      CheckinHelper.peopleIds = ArrayHelper.getIds(memberList, "id");
+      CheckinHelper.peopleIds = ArrayHelper.getIds(CheckinHelper.householdMembers, "id");
+      console.log("SETTING AS DONE")
       props.onDone();
     } catch (error : any) {
       console.log('SET MEMBER LIST ERROR', error)
