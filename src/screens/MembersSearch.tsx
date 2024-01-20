@@ -4,22 +4,17 @@ import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-han
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { Loader, MainHeader } from '../components';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string, params: any) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
 }
 
 export const MembersSearch = (props: Props) => {
-  const { navigate, goBack, openDrawer } = props.navigation;
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState([]);
   const [membersList, setMembersList] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const [NotificationModal, setNotificationModal] = useState(false);
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
   const wd = (number: string) => {
@@ -53,7 +48,7 @@ export const MembersSearch = (props: Props) => {
 
   const renderMemberItem = (item: any) => {
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => { navigate('MemberDetailScreen', { member: item }) }}>
+      <TouchableOpacity style={[globalStyles.listMainView, { width: wd('90%') }]} onPress={() => { props.navigation.navigate('MemberDetailScreen', { member: item }) }}>
         <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText}>{item.name.display}</Text>

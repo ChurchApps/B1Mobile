@@ -5,14 +5,10 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { Loader, MainHeader } from '../../components';
 import { ApiHelper, Constants, LoginUserChurchInterface, UserHelper, globalStyles } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
-import { PersonInterface, ServiceTimeInterface } from '../../interfaces';
+import { NavigationProps, PersonInterface, ServiceTimeInterface } from '../../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string, params: any) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
 }
 
 export const ServiceScreen = (props: Props) => {

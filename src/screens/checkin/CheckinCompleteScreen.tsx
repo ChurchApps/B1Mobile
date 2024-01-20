@@ -5,15 +5,10 @@ import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { MainHeader } from '../../components';
 import { Constants, UserHelper, globalStyles } from '../../helpers';
-
+import { NavigationProps } from '../../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-    addListener: (type: string, callback: any) => void;
-  };
+  navigation: NavigationProps;
 }
 
 const CheckinCompleteScreen = (props: Props) => {
@@ -31,7 +26,7 @@ const CheckinCompleteScreen = (props: Props) => {
   }, [props.navigation]);
 
   const serviceNavigate = () => {
-    setTimeout(() => { navigate('ServiceScreen') }, 1000);
+    setTimeout(() => { navigate('ServiceScreen', {}) }, 1000);
   }
   
   const logoSrc = Constants.Images.logoBlue;

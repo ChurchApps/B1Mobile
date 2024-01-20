@@ -2,13 +2,10 @@ import React from 'react';
 import { Dimensions, Image, SafeAreaView, View } from 'react-native';
 import { MainHeader } from '../components';
 import { Utilities, globalStyles } from '../helpers';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
 }
 
 export const VotdScreen = (props: Props) => {

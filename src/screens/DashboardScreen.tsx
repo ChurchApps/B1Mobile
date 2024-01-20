@@ -5,17 +5,13 @@ import { Loader, MainHeader } from '../components';
 import { ImageButton } from '../components/ImageButton';
 import { LinkInterface, UserHelper, Utilities, globalStyles } from '../helpers';
 import { NavigationHelper } from '../helpers/NavigationHelper';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string, params: any) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
 }
 
 export const DashboardScreen = (props: Props) => {
-  const { navigate, goBack, openDrawer } = props.navigation;
   const [isLoading, setLoading] = useState(false);
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
@@ -69,7 +65,7 @@ export const DashboardScreen = (props: Props) => {
           break;
       }
     }
-    return (<ImageButton image={img} text={item.text} onPress={() => NavigationHelper.navigateToScreen(item, navigate)} />);
+    return (<ImageButton image={img} text={item.text} onPress={() => NavigationHelper.navigateToScreen(item, props.navigation.navigate)} />);
   }
 
   const getButtons = () => {

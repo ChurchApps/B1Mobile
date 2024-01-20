@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { View,  Image, Text, ActivityIndicator, Alert, DevSettings, TouchableWithoutFeedback, Keyboard, Dimensions, PixelRatio, Platform } from 'react-native';
-import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ApiHelper, ArrayHelper, ChurchInterface, Constants, Utilities } from '../helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles, UserHelper } from '../helpers';
-import { BlueHeader } from '../components';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Dimensions, Image, Keyboard, PixelRatio, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import RNRestart from 'react-native-restart';
+import { BlueHeader } from '../components';
+import { ApiHelper, ArrayHelper, ChurchInterface, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
 }
 
 export const ChurchSearch = (props: Props) => {
@@ -46,7 +42,7 @@ export const ChurchSearch = (props: Props) => {
   const churchSelection = async (churchData: ChurchInterface) => {
     StoreToRecent(churchData);
     try {
-      let existing = null;
+      let existing:any = null;
       try {
         if (UserHelper.churches) existing = ArrayHelper.getOne(UserHelper.churches, "church.id", churchData.id);
       } catch (e : any){ 

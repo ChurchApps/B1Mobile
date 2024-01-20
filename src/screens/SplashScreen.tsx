@@ -1,17 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { View, Image, Dimensions, PixelRatio } from 'react-native';
-import { ChurchInterface, globalStyles, LoginUserChurchInterface, Utilities } from '../helpers';
-import { Constants } from '../helpers';
-import { ApiHelper, UserHelper } from "../helpers"
+import { Dimensions, Image, PixelRatio, View } from 'react-native';
+import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { PushNotificationHelper } from '../helpers/PushNotificationHelper';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string) => void;
-    goBack: () => void;
-  };
+  navigation: NavigationProps;
 }
 
 const SplashScreen = (props: Props) => {
@@ -68,7 +64,7 @@ const SplashScreen = (props: Props) => {
         await UserHelper.setPersonRecord()
         if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice();
 
-        props.navigation.navigate('MainStack');
+        props.navigation.navigate('MainStack', {});
       } else {
         if (churchString) {
           let church = JSON.parse(churchString);
@@ -79,7 +75,7 @@ const SplashScreen = (props: Props) => {
 
 
 
-        props.navigation.navigate('MainStack');
+        props.navigation.navigate('MainStack', {});
       }
     } catch (e : any) {
       console.log(e)

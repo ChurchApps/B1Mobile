@@ -6,13 +6,10 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/Zocial';
 import { Loader, MainHeader } from '../components';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string, params: any) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
   route: {
     params: {
       member: any,
@@ -21,7 +18,6 @@ interface Props {
 }
 
 export const MemberDetailScreen = (props: Props) => {
-  const { navigate, goBack, openDrawer } = props.navigation;
   const member = props.route.params.member;
   const memberinfo = member.contactInfo;
   const [isLoading, setLoading] = useState(false);
@@ -70,7 +66,7 @@ export const MemberDetailScreen = (props: Props) => {
 
   const onMembersClick = (item: any) => {
     scrollViewRef.current.scrollTo({ y: 0, animated: false })
-    navigate('MemberDetailScreen', { member: item })
+    props.navigation.navigate('MemberDetailScreen', { member: item })
   }
 
   const renderMemberItem = (item: any) => {

@@ -3,13 +3,10 @@ import { SafeAreaView, View } from 'react-native';
 import WebView from 'react-native-webview';
 import { Loader, MainHeader } from '../components';
 import { UserHelper, Utilities, globalStyles } from '../helpers';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
   route: {
     params: {
       url: any,
@@ -23,7 +20,7 @@ export const WebsiteScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
 
   const checkRedirect = () => {
-    if (!UserHelper.currentUserChurch) props.navigation.navigate("ChurchSearch")
+    if (!UserHelper.currentUserChurch) props.navigation.navigate("ChurchSearch", {})
   }
 
   useEffect(() => {

@@ -7,15 +7,11 @@ import { widthPercentageToDP } from 'react-native-responsive-screen';
 import { DonationForm, Donations, MainHeader, PaymentMethods, RecurringDonations } from '../components';
 import { ApiHelper, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
-import { StripePaymentMethod } from '../interfaces';
+import { NavigationProps, StripePaymentMethod } from '../interfaces';
 ;
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
 }
 
 const DonationScreen = (props: Props) => {
@@ -35,14 +31,10 @@ const DonationScreen = (props: Props) => {
       setAreMethodsLoading(true)
       const data = await ApiHelper.get("/gateways/churchId/" + UserHelper.currentUserChurch.church.id, "GivingApi")
       if (data.length && data[0]?.publicKey) {
-        initStripe({
-          publishableKey: data[0].publicKey
-        })
+        initStripe({ publishableKey: data[0].publicKey })
         setPublishKey(data[0].publicKey)
         const results = await ApiHelper.get("/paymentmethods/personid/" + person.id, "GivingApi")
-        if (!results.length) {
-          setPaymentMethods([])
-        }
+        if (!results.length) setPaymentMethods([])
         else {
           let cards = results[0].cards.data.map((card: any) => new StripePaymentMethod(card));
           let banks = results[0].banks.data.map((bank: any) => new StripePaymentMethod(bank));
@@ -50,9 +42,7 @@ const DonationScreen = (props: Props) => {
           setCustomerId(results[0].customer.id);
           setPaymentMethods(methods);
         }
-      } else {
-        setPaymentMethods([])
-      }
+      } else setPaymentMethods([])
       setAreMethodsLoading(false)
     } catch (err: any) {
       Alert.alert("Failed to fetch payment methods", err.message)
@@ -66,28 +56,14 @@ const DonationScreen = (props: Props) => {
       <MainHeader title="Donate" openDrawer={props.navigation.openDrawer} />
       <ScrollView>
         {UserHelper.currentUserChurch?.person?.id ?
-          <PaymentMethods
-            customerId={customerId}
-            paymentMethods={paymentMethods}
-            updatedFunction={loadData}
-            isLoading={areMethodsLoading}
-            publishKey={publishKey}
-          /> : null}
-        <DonationForm
-          paymentMethods={paymentMethods}
-          customerId={customerId}
-          updatedFunction={loadData}
-        />
+          <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} /> 
+          : null
+        }
+        <DonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />
         {!UserHelper.currentUserChurch?.person?.id
-          ? <Text style={[globalStyles.paymentDetailText, { marginVertical: widthPercentageToDP('2%'), }]}>
-            Please login to view existing donations
-          </Text>
+          ? <Text style={[globalStyles.paymentDetailText, { marginVertical: widthPercentageToDP('2%'), }]}>Please login to view existing donations</Text>
           : <View>
-            <RecurringDonations
-              customerId={customerId}
-              paymentMethods={paymentMethods}
-              updatedFunction={loadData}
-            />
+            <RecurringDonations customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} />
             <Donations />
           </View>}
       </ScrollView>

@@ -1,18 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Keyboard, PixelRatio, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { BlueHeader } from '../components';
-import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, globalStyles, UserHelper, UserSearchInterface, Utilities } from '../helpers';
+import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-    navigation: {
-      navigate: (screenName: string, params: any) => void;
-      goBack: () => void;
-      openDrawer: () => void;
-    };
+    navigation: NavigationProps;
 }
 
 export const SearchUserScreen = (props: Props) => {

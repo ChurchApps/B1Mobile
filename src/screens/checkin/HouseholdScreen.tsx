@@ -7,14 +7,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { BottomButton, Loader, MainHeader } from '../../components';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '../../helpers';
 import { ErrorHelper } from '../../helpers/ErrorHelper';
+import { NavigationProps } from '../../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string, params: any) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-    addListener: (type: string, callback: any) => void;
-  };
+  navigation: NavigationProps;
   route: {
     params: {
       serviceId: any,
