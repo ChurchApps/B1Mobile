@@ -154,15 +154,12 @@ export const GroupsScreen = (props: Props) => {
           mainComponent={<Text style={globalStyles.headerText}>Checkin</Text>}
           rightComponent={RightComponent}
         />
-        <View style={logoSrc}>
-          <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
-        </View>
       <ScrollView>
        
         <SafeAreaView style={{ flex: 1 }}>
-        <View style={logoSrc}>
-        <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
-      </View>
+          <View style={logoSrc}>
+            <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
+          </View>
           <FlatList data={groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
           <BottomButton title='NONE' onPress={() => selectGroup(null)} style={wd('100%')} />
         </SafeAreaView>
