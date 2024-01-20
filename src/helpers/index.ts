@@ -1,5 +1,6 @@
 export { ApiHelper } from "./ApiHelper"
 export { ArrayHelper } from "./ArrayHelper"
+export { CheckinHelper } from "./CheckinHelper"
 export { Constants } from "./Constants"
 export { CurrencyHelper } from "./CurrencyHelper"
 export { DateHelper } from './DateHelper'
