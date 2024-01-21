@@ -1,13 +1,9 @@
-import React, {useEffect} from 'react';
-import EventBus from 'react-native-event-bus'
-import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
-import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApiHelper } from './ApiHelper'
-import { LoginUserChurchInterface } from './Interfaces'
+import messaging from '@react-native-firebase/messaging';
+import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { EnvironmentHelper } from './EnvironmentHelper';
-import { UserHelper } from './UserHelper';
+import { ApiHelper } from './ApiHelper';
+import { LoginUserChurchInterface } from './Interfaces';
 
 export class PushNotificationHelper {
 
@@ -67,7 +63,6 @@ export class PushNotificationHelper {
     };
   static async GetFCMToken() {
     let fcmToken = await AsyncStorage.getItem("fcmToken")
-    console.log("fcm token ", fcmToken)
     if (!fcmToken) {
       try {
         let fcmToken = await messaging().getToken();

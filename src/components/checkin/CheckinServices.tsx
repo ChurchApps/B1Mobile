@@ -33,7 +33,7 @@ export const CheckinServices = (props: Props) => {
       const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
       CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
       CheckinHelper.serviceTimes = await ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi");
-      createHouseholdTree(serviceId);
+      await createHouseholdTree(serviceId);
       loadExistingAttendance(serviceId);
     }
   }
@@ -41,7 +41,7 @@ export const CheckinServices = (props: Props) => {
   const createHouseholdTree = async (serviceId: any) => {
     CheckinHelper.householdMembers?.forEach((member:any) => { member.serviceTimes = CheckinHelper.serviceTimes; });
     try {
-      getGroupListData(serviceId)
+      await getGroupListData(serviceId)
     } catch (error : any) {
       console.log('SET MEMBER LIST ERROR', error)
       ErrorHelper.logError("create-household", error);
@@ -50,7 +50,8 @@ export const CheckinServices = (props: Props) => {
 
   const loadExistingAttendance = async (serviceId: string) => {
     setLoading(true);
-    const data = ApiHelper.get("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + CheckinHelper.peopleIds + "&include=visitSessions", "AttendanceApi");
+    const data = await ApiHelper.get("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + CheckinHelper.peopleIds + "&include=visitSessions", "AttendanceApi");
+
     setLoading(false);
     CheckinHelper.setExistingAttendance(data)
   }
@@ -79,7 +80,6 @@ export const CheckinServices = (props: Props) => {
       CheckinHelper.groupTree = group_tree;
       CheckinHelper.serviceId = serviceId;
       CheckinHelper.peopleIds = ArrayHelper.getIds(CheckinHelper.householdMembers, "id");
-      console.log("SETTING AS DONE")
       props.onDone();
     } catch (error : any) {
       console.log('SET MEMBER LIST ERROR', error)

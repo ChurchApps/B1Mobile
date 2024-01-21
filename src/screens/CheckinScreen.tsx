@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Image, SafeAreaView, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { MainHeader } from "../components";
 import { CheckinComplete, CheckinGroups, CheckinHousehold } from "../components/checkin";
 import { CheckinServices } from "../components/checkin/CheckinServices";
@@ -35,16 +34,13 @@ export const CheckinScreen = (props: Props) => {
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
       <MainHeader title="Checkin" openDrawer={props.navigation.openDrawer} />
-      <ScrollView>
         <SafeAreaView style={{ flex: 1 }}>
           <View style={logoSrc}><Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} /></View>
           {step==="Services" && <CheckinServices onDone={() => setStep("Household")} />}
           {step==="Household" && <CheckinHousehold showGroups={handleShowGroups} onDone={() => setStep("Complete")} />}
           {step==="Groups" && <CheckinGroups member={groupMember!} time={groupTime!} onDone={() => setStep("Household")} />}
           {step==="Complete" && <CheckinComplete onDone={clearData} /> }
-          
         </SafeAreaView>
-      </ScrollView>
     </SafeAreaView>
   );
 };

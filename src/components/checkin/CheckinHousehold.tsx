@@ -1,7 +1,7 @@
 import { DimensionHelper, ErrorHelper } from '@churchapps/mobilehelper';
 import React, { useState } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface, globalStyles } from '../../helpers';
 import { BottomButton } from '../BottomButton';
 import { Loader } from '../Loader';
@@ -21,7 +21,7 @@ export const CheckinHousehold = (props: Props) => {
     let pendingVisits: any[] = [];
     CheckinHelper.householdMembers?.forEach((member: any) => {
       let visitSessionList: any[] = [];
-      member.serviceTime?.forEach((time: any) => {
+      member.serviceTimes?.forEach((time: any) => {
         if (time.selectedGroup != null) {
           visitSessionList.push({ session: { serviceTimeId: time.id, groupId: time.selectedGroup.id, displayName: time.selectedGroup.name } })
         }

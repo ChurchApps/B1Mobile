@@ -1,7 +1,7 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect } from 'react';
-import { Text } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import { Text, View } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { UserHelper, globalStyles } from '../../helpers';
 
 interface Props {
@@ -12,14 +12,14 @@ export const CheckinComplete = (props: Props) => {
   
   useEffect(() => {
     UserHelper.addOpenScreenEvent('CheckinCompleteScreen');
-    setTimeout(() => { props.onDone() }, 1000);
+    setTimeout(() => { props.onDone() }, 1500);
   }, []);
 
 
   return (
-    <>
-      <Icon name={'check-circle'} style={globalStyles.successIcon} size={DimensionHelper.wp('20%')} />
-      <Text style={globalStyles.successText}>Checkin Complete.</Text>
-    </>
+    <View>
+      <Icon name={'check-circle'} style={{...globalStyles.successIcon, marginLeft:"auto", marginRight:"auto"}} size={DimensionHelper.wp('20%')} />
+      <Text style={{...globalStyles.successText, textAlign:"center"}}>Checkin Complete.</Text>
+    </View>
   );
 };

@@ -1,3 +1,4 @@
+import { ArrayHelper } from "@churchapps/mobilehelper";
 import { PersonInterface, ServiceTimeInterface } from "./Interfaces";
 
 export class CheckinHelper {
@@ -18,24 +19,19 @@ export class CheckinHelper {
   static setExistingAttendance = async (existingAttendance: any) => {
     existingAttendance?.forEach((item: any) => {
       item.visitSessions?.forEach(async (visitSession: any) => {
-        this.householdMembers?.forEach((member: any) => {
-          if (member.id == item.personId) {
-            member.serviceTime?.forEach((time: any) => {
-              if (time.id == visitSession.session.serviceTimeId) {
-                this.groupTree.forEach((group_item: any) => {
-                  group_item.items.forEach((itemG: any) => {
-                    if (visitSession.session.groupId == itemG.id) {
-                      time['selectedGroup'] = itemG;
-                    }
-                  })
-                })
-              }
+        const member = ArrayHelper.getOne(this.householdMembers, "id", item.personId);
+        if (member) {
+          const time = ArrayHelper.getOne(member.serviceTimes, "id", visitSession.session.serviceTimeId);
+          if (time) {
+            this.groupTree.forEach((group_item: any) => {
+              group_item.items.forEach((itemG: any) => {
+                if (visitSession.session.groupId == itemG.id) time.selectedGroup = itemG;
+              })
             })
           }
-        })
+        }
       })
     })
   }
-
   
 }

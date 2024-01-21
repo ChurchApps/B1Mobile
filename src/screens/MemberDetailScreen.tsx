@@ -2,7 +2,7 @@ import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Image, Linking, SafeAreaView, Text, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/Zocial';
 import { Loader, MainHeader } from '../components';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
