@@ -1,8 +1,8 @@
+import { ApiHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { ApiHelper } from './ApiHelper';
 import { LoginUserChurchInterface } from './Interfaces';
 
 export class PushNotificationHelper {
@@ -13,7 +13,7 @@ export class PushNotificationHelper {
     const deviceInfo = await PushNotificationHelper.getDeviceInfo();
     const currentChurch = JSON.parse((await AsyncStorage.getItem('CHURCH_DATA'))!)
     const churchesString  = await AsyncStorage.getItem("CHURCHES_DATA")
-    const tst : LoginUserChurchInterface[] = JSON.parse(churchesString)
+    const tst : LoginUserChurchInterface[] = JSON.parse(churchesString as string)
     const currentData : LoginUserChurchInterface | undefined = tst.find((value, index) => value.church.id == currentChurch!.id);
     if(currentData != null || currentData != undefined){
 

@@ -1,4 +1,4 @@
-export { ApiHelper } from "./ApiHelper"
+export { ApiHelper } from "@churchapps/mobilehelper"
 export { ArrayHelper } from "./ArrayHelper"
 export { CheckinHelper } from "./CheckinHelper"
 export { Constants } from "./Constants"
@@ -10,3 +10,4 @@ export * from "./Interfaces"
 export { StripeHelper } from "./StripeHelper"
 export { UserHelper } from "./UserHelper"
 export { Utilities } from "./Utilities"
+

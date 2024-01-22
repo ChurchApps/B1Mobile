@@ -1,7 +1,8 @@
-import { ApiHelper, IPermission, UserInterface } from ".";
-import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
+import { ApiHelper } from "@churchapps/mobilehelper";
 import analytics from '@react-native-firebase/analytics';
 import { Platform } from "react-native";
+import { IPermission, UserInterface } from ".";
+import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
 
 export class UserHelper {
   static churches: ChurchInterface[];

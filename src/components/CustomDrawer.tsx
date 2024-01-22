@@ -1,11 +1,11 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { ApiHelper, DimensionHelper } from "@churchapps/mobilehelper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
 import RNRestart from 'react-native-restart';
 import MessageIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { ApiHelper, Constants, EnvironmentHelper, LoginUserChurchInterface, UserHelper, globalStyles } from '../helpers';
+import { Constants, EnvironmentHelper, LoginUserChurchInterface, UserHelper, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { NavigationHelper } from '../helpers/NavigationHelper';
 
