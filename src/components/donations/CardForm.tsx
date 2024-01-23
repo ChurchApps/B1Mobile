@@ -1,3 +1,4 @@
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
 import React, { useState } from "react";
 import { Alert, Image, Text, TextInput, View } from "react-native";

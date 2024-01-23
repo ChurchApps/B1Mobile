@@ -1,3 +1,4 @@
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
@@ -68,7 +69,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     ]);
   };
 
-  let editModeContent = null;
+  let editModeContent:any = null;
   switch (editPaymentMethod.type) {
     case "card":
       editModeContent = (

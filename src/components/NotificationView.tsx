@@ -7,16 +7,15 @@ import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, Us
 import { Loader } from './Loader';
 
 
-
 export function NotificationTab(props: any) {
   const navigation = useNavigation();
 
   const [isLoading, setLoading] = useState(false);
   const [index, setIndex] = useState(0);
   const [NotificationData, setNotificationData] = useState([])
-  const [Chatlist, setChatList] = useState([])
-  const [UserData, setUserData] = useState([])
-  const [mergeData, setMergedData] = useState([])
+  const [Chatlist, setChatList] = useState<any[]>([])
+  const [UserData, setUserData] = useState<any[]>([])
+  const [mergeData, setMergedData] = useState<any[]>([])
   
   const [routes] = React.useState([
     { key: 'first', title: 'MESSAGES' },

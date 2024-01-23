@@ -389,8 +389,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       value={selectedInterval}
                       setOpen={setIsIntervalDropdownOpen}
                       setValue={(value) => {
-                        setSelectedInterval(value())
-                        handleIntervalChange("type", value())
+                        setSelectedInterval(value)
+                        handleIntervalChange("type", value)
                       }}
                       containerStyle={{
                         ...globalStyles.containerStyle,
