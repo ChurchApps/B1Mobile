@@ -1,10 +1,9 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper, LoginResponseInterface } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect } from 'react';
 import { Image, View } from 'react-native';
-import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, Constants, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
-import { PushNotificationHelper } from '../helpers/PushNotificationHelper';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -18,32 +17,52 @@ const SplashScreen = (props: Props) => {
     checkUser()
   }, [])
 
+  /*
+  const setUserDataOld = async (user: any, churchString:string, churchesString:string) => {
+    UserHelper.user = JSON.parse(user);
+    ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
+
+    let church: ChurchInterface | null = null
+    let userChurch: LoginUserChurchInterface | null = null;
+    if (churchString) church = JSON.parse(churchString);
+    if (church?.id) {
+      userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
+      //I think this is what's causing the splash screen to hang sometimes.
+      if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
+      else await AsyncStorage.setItem('USER_DATA', "")
+    }
+    UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
+    userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+    ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
+    await UserHelper.setPersonRecord()
+    if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice();
+  }
+  */
+
+  const setUserDataNew = async (userString: string) => {
+    const user = JSON.parse(userString);
+
+    ApiHelper.postAnonymous("/users/login", {jwt: user.jwt}, "MembershipApi").then(async (data: LoginResponseInterface) => {
+      if (data.user != null) {
+        await UserHelper.handleLogin(data);
+      }
+    }).catch(() => {});
+    if (ApiHelper.isAuthenticated)
+    {
+
+    }
+    props.navigation.navigate('MainStack', {});
+  }
 
   const checkUser = async () => {
     try {
       const user = await AsyncStorage.getItem('USER_DATA')
       const churchString = await AsyncStorage.getItem("CHURCH_DATA")
-      const churchesString = await AsyncStorage.getItem("CHURCHES_DATA")
+      //const churchesString = await AsyncStorage.getItem("CHURCHES_DATA")
 
       if (user !== null) {
-        UserHelper.user = JSON.parse(user);
-        ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
-        
-
-        let church: ChurchInterface | null = null
-        let userChurch: LoginUserChurchInterface | null = null;
-        if (churchString) church = JSON.parse(churchString);
-        if (church?.id) {
-          userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
-          //I think this is what's causing the splash screen to hang sometimes.
-          if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
-          else await AsyncStorage.setItem('USER_DATA', "")
-        }
-        UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
-        userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
-        ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
-        await UserHelper.setPersonRecord()
-        if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice();
+        //setUserData(user, churchString as string, churchesString as string);
+        setUserDataNew(user);
 
         props.navigation.navigate('MainStack', {});
       } else {
@@ -53,8 +72,6 @@ const SplashScreen = (props: Props) => {
 
           UserHelper.setCurrentUserChurch(userChurch);
         }
-
-
 
         props.navigation.navigate('MainStack', {});
       }
