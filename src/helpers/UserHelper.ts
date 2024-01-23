@@ -53,7 +53,7 @@ export class UserHelper {
 
     let church = CacheHelper.church;
     if (church != null && church?.id != null && church.id != "") {
-      currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? CacheHelper.church ?? data.userChurches[0]
+      currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
     }
 
     const userChurch: LoginUserChurchInterface = currentChurch
@@ -76,7 +76,9 @@ export class UserHelper {
     ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
     await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
     await CacheHelper.setValue("user", data.user);
-    if (userChurch) await CacheHelper.setValue("church", userChurch.church);
+
+
+    if (userChurch && !church) await CacheHelper.setValue("church", userChurch.church);
 
     
   }
