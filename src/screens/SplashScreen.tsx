@@ -39,7 +39,7 @@ const SplashScreen = (props: Props) => {
   }
   */
 
-  const setUserDataNew = async (userString: string) => {
+  const setUserDataNew = async (userString: string, churchString:string) => {
     const user = JSON.parse(userString);
 
     ApiHelper.postAnonymous("/users/login", {jwt: user.jwt}, "MembershipApi").then(async (data: LoginResponseInterface) => {
@@ -49,7 +49,15 @@ const SplashScreen = (props: Props) => {
     }).catch(() => {});
     if (ApiHelper.isAuthenticated)
     {
-
+      if (churchString) {
+        const church = JSON.parse(churchString);
+        if (church?.id) {
+          const userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
+          //I think this is what's causing the splash screen to hang sometimes.
+          if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
+          else await AsyncStorage.setItem('USER_DATA', "")
+        }
+      }
     }
     props.navigation.navigate('MainStack', {});
   }
@@ -62,7 +70,7 @@ const SplashScreen = (props: Props) => {
 
       if (user !== null) {
         //setUserData(user, churchString as string, churchesString as string);
-        setUserDataNew(user);
+        setUserDataNew(user, churchString as string);
 
         props.navigation.navigate('MainStack', {});
       } else {

@@ -104,9 +104,11 @@ export function CustomDrawer(props: any) {
   }
 
   const drawerFooterComponent = () => {
+    let pkg = require('../../package.json');
     return (
       <View>
         {loginOutToggle()}
+        <Text style={{ fontSize: DimensionHelper.wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: '#a0d3fc', marginTop: DimensionHelper.wp('5%'), textAlign: 'center' }}>{'Version ' + pkg.version}</Text>
       </View>
     );
   }
