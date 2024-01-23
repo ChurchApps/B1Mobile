@@ -1,9 +1,10 @@
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import React, { useState } from "react";
-import { Image, SafeAreaView, View } from "react-native";
+import { Image, SafeAreaView } from "react-native";
 import { MainHeader } from "../components";
 import { CheckinComplete, CheckinGroups, CheckinHousehold } from "../components/checkin";
 import { CheckinServices } from "../components/checkin/CheckinServices";
-import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, globalStyles } from "../helpers";
+import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper, globalStyles } from "../helpers";
 import { NavigationProps } from "../interfaces";
 
 interface Props {
@@ -30,12 +31,20 @@ export const CheckinScreen = (props: Props) => {
     props.navigation.navigate("Dashboard", {});
   }
 
-  const logoSrc = Constants.Images.logoBlue;
+  const getBrand = () => {
+    
+    if (UserHelper.churchAppearance?.logoLight) return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} />
+    else return <Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} />
+  }
+
+  //const logoSrc = Constants.Images.logoBlue;
+
+  
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
       <MainHeader title="Checkin" openDrawer={props.navigation.openDrawer} />
         <SafeAreaView style={{ flex: 1 }}>
-          <View style={logoSrc}><Image source={Constants.Images.logoBlue} style={globalStyles.whiteMainIcon} /></View>
+          {getBrand()}
           {step==="Services" && <CheckinServices onDone={() => setStep("Household")} />}
           {step==="Household" && <CheckinHousehold showGroups={handleShowGroups} onDone={() => setStep("Complete")} />}
           {step==="Groups" && <CheckinGroups member={groupMember!} time={groupTime!} onDone={() => setStep("Household")} />}
