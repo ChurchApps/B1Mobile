@@ -9,7 +9,7 @@ export class CacheHelper {
 
   static loadFromStorage = async () => {
     const data = await AsyncStorage.multiGet(["CHURCH_DATA", "RECENT_CHURCHES", "fcmToken", "USER_DATA"]);
-    data.map((item) => {
+    data.forEach((item) => {
       switch (item[0]) {
         case "CHURCH_DATA": this.church = JSON.parse(item[1] || ""); break;
         case "fcmToken": this.fcmToken = item[1] || ""; break;
@@ -17,7 +17,6 @@ export class CacheHelper {
         case "USER_DATA": UserHelper.user = JSON.parse(item[1] || ""); break;
       }
     });
-    
   }
 
   static setValue = async (key: "fcmToken" | "church" | "recentChurches" | "user", value: any) => {

@@ -20,6 +20,7 @@ export const WebsiteScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
 
   const checkRedirect = () => {
+    console.log("WEBSITE CHECK REDIRECT", UserHelper.currentUserChurch?.church?.name)
     if (!UserHelper.currentUserChurch) props.navigation.navigate("ChurchSearch", {})
   }
 

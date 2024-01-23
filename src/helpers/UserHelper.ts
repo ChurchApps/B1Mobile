@@ -63,6 +63,7 @@ export class UserHelper {
     data.userChurches.forEach(uc => churches.push(uc.church));
     UserHelper.churches = churches;
     if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
+    //console.log("USER CHURCH IS", userChurch);
 
     UserHelper.addAnalyticsEvent('login', {
       id: Date.now(),

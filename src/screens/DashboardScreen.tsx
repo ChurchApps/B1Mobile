@@ -32,8 +32,15 @@ export const DashboardScreen = (props: Props) => {
     [])
 
   const checkRedirect = () => {
-    if (!UserHelper.currentUserChurch) props.navigation.navigate("ChurchSearch", {})
-    else Utilities.trackEvent("Dashboard Screen");
+    console.log("******CHECK REDIRECT", UserHelper.currentUserChurch?.church?.name);
+    if (!UserHelper.currentUserChurch) {
+      console.log("REDIRECTING")
+      props.navigation.navigate("ChurchSearch", {})
+    }
+    else {
+      console.log("NOT REDIRECTING")
+      Utilities.trackEvent("Dashboard Screen");
+    }
   }
 
   const getButton = (topItem: boolean, item: LinkInterface) => {

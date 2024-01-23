@@ -1,7 +1,7 @@
-import { DimensionHelper, LoginResponseInterface } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect } from 'react';
 import { Image, View } from 'react-native';
-import { ApiHelper, CacheHelper, Constants, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, CacheHelper, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { PushNotificationHelper } from '../helpers/PushNotificationHelper';
 import { NavigationProps } from '../interfaces';
@@ -49,20 +49,21 @@ const SplashScreen = (props: Props) => {
     console.log("SET USER DATA NEW", UserHelper.user)
     const user = UserHelper.user;
 
-    ApiHelper.postAnonymous("/users/login", {jwt: user.jwt}, "MembershipApi").then(async (data: LoginResponseInterface) => {
-      if (data.user != null) await UserHelper.handleLogin(data);
-    }).catch(() => {});
+    const data = await ApiHelper.postAnonymous("/users/login", {jwt: user.jwt}, "MembershipApi");
+    //console.log("DATA IS", data)
+    console.log("CHURCH IS", CacheHelper.church)
+    if (data.user != null) await UserHelper.handleLogin(data);
     if (ApiHelper.isAuthenticated)
     {
+      /*
       if (CacheHelper.church?.id) {
         const userChurch = await ApiHelper.post("/churches/select", { churchId: CacheHelper.church.id }, "MembershipApi");
         //I think this is what's causing the splash screen to hang sometimes.
         if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
         else await CacheHelper.setValue("user", null);
-      }
-
+      }*/
     }
-    props.navigation.navigate('MainStack', {});
+    
   }
 
   const checkUser = async () => {
@@ -70,20 +71,15 @@ const SplashScreen = (props: Props) => {
 
       if (UserHelper.user?.jwt) {
         console.log("USER FOUND", UserHelper.user.jwt)
-        setUserDataNew();
-        props.navigation.navigate('MainStack', {});
+        await setUserDataNew();
       } else {
         console.log("NO USER, Checking church", CacheHelper.church)
-        if (CacheHelper.church?.id) {
-          const userChurch: LoginUserChurchInterface = { person: { name: {}, contactInfo: {} }, church: CacheHelper.church, apis: [], jwt: "", groups: [] };
-          UserHelper.setCurrentUserChurch(userChurch);
-        }
-        props.navigation.navigate('MainStack', {});
       }
     } catch (e : any) {
       console.log(e)
       ErrorHelper.logError("splash-screen-error", e);
     }
+    props.navigation.navigate('MainStack', {});
   }
 
   if (DimensionHelper.wp(100) > DimensionHelper.hp(100)) {

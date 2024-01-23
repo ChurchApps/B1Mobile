@@ -44,6 +44,7 @@ export const ChurchSearch = (props: Props) => {
       });
       //await UserHelper.setCurrentUserChurch(userChurch);
       if (UserHelper.user) UserHelper.setPersonRecord();
+      props.navigation.navigate("Dashboard", {});
       //DevSettings.reload()
       RNRestart.Restart();
     } catch (err : any) {
