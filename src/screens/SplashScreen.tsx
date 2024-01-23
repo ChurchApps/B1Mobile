@@ -46,35 +46,14 @@ const SplashScreen = (props: Props) => {
   */
 
   const setUserDataNew = async () => {
-    console.log("SET USER DATA NEW", UserHelper.user)
     const user = UserHelper.user;
-
     const data = await ApiHelper.postAnonymous("/users/login", {jwt: user.jwt}, "MembershipApi");
-    //console.log("DATA IS", data)
-    console.log("CHURCH IS", CacheHelper.church)
     if (data.user != null) await UserHelper.handleLogin(data);
-    if (ApiHelper.isAuthenticated)
-    {
-      /*
-      if (CacheHelper.church?.id) {
-        const userChurch = await ApiHelper.post("/churches/select", { churchId: CacheHelper.church.id }, "MembershipApi");
-        //I think this is what's causing the splash screen to hang sometimes.
-        if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
-        else await CacheHelper.setValue("user", null);
-      }*/
-    }
-    
   }
 
   const checkUser = async () => {
     try {
-
-      if (UserHelper.user?.jwt) {
-        console.log("USER FOUND", UserHelper.user.jwt)
-        await setUserDataNew();
-      } else {
-        console.log("NO USER, Checking church", CacheHelper.church)
-      }
+      if (UserHelper.user?.jwt) await setUserDataNew();
     } catch (e : any) {
       console.log(e)
       ErrorHelper.logError("splash-screen-error", e);

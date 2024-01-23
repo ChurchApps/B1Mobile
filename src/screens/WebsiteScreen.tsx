@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import WebView from 'react-native-webview';
 import { Loader, MainHeader } from '../components';
-import { UserHelper, Utilities, globalStyles } from '../helpers';
+import { CacheHelper, Utilities, globalStyles } from '../helpers';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -20,8 +20,8 @@ export const WebsiteScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
 
   const checkRedirect = () => {
-    console.log("WEBSITE CHECK REDIRECT", UserHelper.currentUserChurch?.church?.name)
-    if (!UserHelper.currentUserChurch) props.navigation.navigate("ChurchSearch", {})
+    console.log("WEBSITE CHECK REDIRECT", CacheHelper.church?.name)
+    if (!CacheHelper.church) props.navigation.navigate("ChurchSearch", {})
   }
 
   useEffect(() => {

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { DonationForm, Donations, MainHeader, PaymentMethods, RecurringDonations } from '../components';
-import { ApiHelper, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, CacheHelper, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { NavigationProps, StripePaymentMethod } from '../interfaces';
 ;
@@ -29,7 +29,7 @@ const DonationScreen = (props: Props) => {
     Utilities.trackEvent("Donation Screen");
     try {
       setAreMethodsLoading(true)
-      const data = await ApiHelper.get("/gateways/churchId/" + UserHelper.currentUserChurch.church.id, "GivingApi")
+      const data = await ApiHelper.get("/gateways/churchId/" + CacheHelper.church!.id, "GivingApi")
       if (data.length && data[0]?.publicKey) {
         initStripe({ publishableKey: data[0].publicKey })
         setPublishKey(data[0].publicKey)

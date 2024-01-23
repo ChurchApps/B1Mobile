@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native';
 import { Loader, MainHeader } from '../components';
 import { ImageButton } from '../components/ImageButton';
-import { LinkInterface, UserHelper, Utilities, globalStyles } from '../helpers';
+import { CacheHelper, LinkInterface, UserHelper, Utilities, globalStyles } from '../helpers';
 import { NavigationHelper } from '../helpers/NavigationHelper';
 import { NavigationProps } from '../interfaces';
 
@@ -32,15 +32,8 @@ export const DashboardScreen = (props: Props) => {
     [])
 
   const checkRedirect = () => {
-    console.log("******CHECK REDIRECT", UserHelper.currentUserChurch?.church?.name);
-    if (!UserHelper.currentUserChurch) {
-      console.log("REDIRECTING")
-      props.navigation.navigate("ChurchSearch", {})
-    }
-    else {
-      console.log("NOT REDIRECTING")
-      Utilities.trackEvent("Dashboard Screen");
-    }
+    if (!CacheHelper.church) props.navigation.navigate("ChurchSearch", {});
+    else Utilities.trackEvent("Dashboard Screen");
   }
 
   const getButton = (topItem: boolean, item: LinkInterface) => {

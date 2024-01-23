@@ -119,7 +119,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
           return;
          })
         .then(async userData => {
-          const personData = { churchId: UserHelper.currentUserChurch.church.id, firstName, lastName, email };
+          const personData = { churchId: CacheHelper.church!.id, firstName, lastName, email };
           const person = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi")
           saveCard(userData, person)
         });
@@ -161,7 +161,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             customerId: d.customerId,
             type: d.paymentMethod?.type,
             amount : donation.amount,
-            churchId: UserHelper.currentUserChurch.church.id,
+            churchId: CacheHelper.church!.id,
             funds: donation.funds,
             person : donation.person,
           };
