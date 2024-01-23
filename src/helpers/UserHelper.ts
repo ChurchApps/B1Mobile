@@ -53,7 +53,7 @@ export class UserHelper {
 
     let church = CacheHelper.church;
     if (church != null && church?.id != null && church.id != "") {
-      currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
+      currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? CacheHelper.church ?? data.userChurches[0]
     }
 
     const userChurch: LoginUserChurchInterface = currentChurch

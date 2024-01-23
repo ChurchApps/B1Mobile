@@ -18,9 +18,9 @@ interface Props {
 export const WebsiteScreen = (props: Props) => {
   const { params } = props.route;
   const [isLoading, setLoading] = useState(false);
+  //console.log(params?.url)
 
   const checkRedirect = () => {
-    console.log("WEBSITE CHECK REDIRECT", CacheHelper.church?.name)
     if (!CacheHelper.church) props.navigation.navigate("ChurchSearch", {})
   }
 
