@@ -1,6 +1,6 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions, Image, PixelRatio, SafeAreaView, Text, TextInput, View } from 'react-native';
+import { Alert, Image, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Loader, MainHeader } from '../components';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
@@ -15,18 +15,11 @@ export const MembersSearch = (props: Props) => {
   const [searchList, setSearchList] = useState([]);
   const [membersList, setMembersList] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
 
   useEffect(() => {
     Utilities.trackEvent("Member Search Screen");
     loadMembers()
     UserHelper.addOpenScreenEvent('MembersSearch');
-    Dimensions.addEventListener('change', () => { const dim = Dimensions.get('screen'); setDimension(dim); })
   }, [])
 
   const loadMembers = () => {
@@ -66,7 +59,7 @@ export const MembersSearch = (props: Props) => {
   return (
     <SafeAreaView style={[globalStyles.grayContainer,{alignSelf:'center'}]}>
       <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} />
-      <View style={{ width: dimension.width, flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ width: DimensionHelper.wp(100), flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ScrollView style={globalStyles.grayContainer} >
           <Text style={[globalStyles.searchMainText, { marginHorizontal: DimensionHelper.wp('5%') }]}>Find Members</Text>
           <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>

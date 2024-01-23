@@ -1,5 +1,5 @@
-import { Dimensions, PixelRatio, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { ApiHelper, ArrayHelper, ConversationInterface } from "../../helpers";
 import ConversationPopup from "./ConversationPopup";
 
@@ -51,12 +51,6 @@ const Conversations = ({
     loadConversations();
   }, []);
 
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel(
-      (Dimensions.get("screen").width * givenWidth) / 100
-    );
-  };
 
   const ShowConversationModal = () => {
     return (

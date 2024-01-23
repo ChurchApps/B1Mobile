@@ -1,10 +1,9 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper, LoginResponseInterface } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, Image, PixelRatio, View } from 'react-native';
-import { ApiHelper, ChurchInterface, Constants, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
+import React, { useEffect } from 'react';
+import { Image, View } from 'react-native';
+import { ApiHelper, Constants, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
-import { PushNotificationHelper } from '../helpers/PushNotificationHelper';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -13,57 +12,65 @@ interface Props {
 
 const SplashScreen = (props: Props) => {
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
-  const hd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.height * givenWidth) / 100);
-  };
-
-
   useEffect(() => {
     Utilities.trackEvent("Splash Screen");
     checkUser()
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
   }, [])
 
-  useEffect(() => {
-  }, [dimension])
+  /*
+  const setUserDataOld = async (user: any, churchString:string, churchesString:string) => {
+    UserHelper.user = JSON.parse(user);
+    ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
 
+    let church: ChurchInterface | null = null
+    let userChurch: LoginUserChurchInterface | null = null;
+    if (churchString) church = JSON.parse(churchString);
+    if (church?.id) {
+      userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
+      //I think this is what's causing the splash screen to hang sometimes.
+      if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
+      else await AsyncStorage.setItem('USER_DATA', "")
+    }
+    UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
+    userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+    ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
+    await UserHelper.setPersonRecord()
+    if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice();
+  }
+  */
+
+  const setUserDataNew = async (userString: string, churchString:string) => {
+    const user = JSON.parse(userString);
+
+    ApiHelper.postAnonymous("/users/login", {jwt: user.jwt}, "MembershipApi").then(async (data: LoginResponseInterface) => {
+      if (data.user != null) {
+        await UserHelper.handleLogin(data);
+      }
+    }).catch(() => {});
+    if (ApiHelper.isAuthenticated)
+    {
+      if (churchString) {
+        const church = JSON.parse(churchString);
+        if (church?.id) {
+          const userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
+          //I think this is what's causing the splash screen to hang sometimes.
+          if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
+          else await AsyncStorage.setItem('USER_DATA', "")
+        }
+      }
+    }
+    props.navigation.navigate('MainStack', {});
+  }
 
   const checkUser = async () => {
     try {
       const user = await AsyncStorage.getItem('USER_DATA')
       const churchString = await AsyncStorage.getItem("CHURCH_DATA")
-      const churchesString = await AsyncStorage.getItem("CHURCHES_DATA")
+      //const churchesString = await AsyncStorage.getItem("CHURCHES_DATA")
 
       if (user !== null) {
-        UserHelper.user = JSON.parse(user);
-        ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
-        
-
-        let church: ChurchInterface | null = null
-        let userChurch: LoginUserChurchInterface | null = null;
-        if (churchString) church = JSON.parse(churchString);
-        if (church?.id) {
-          userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
-          //I think this is what's causing the splash screen to hang sometimes.
-          if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
-          else await AsyncStorage.setItem('USER_DATA', "")
-        }
-        UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
-        userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
-        ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
-        await UserHelper.setPersonRecord()
-        if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice();
+        //setUserData(user, churchString as string, churchesString as string);
+        setUserDataNew(user, churchString as string);
 
         props.navigation.navigate('MainStack', {});
       } else {
@@ -74,8 +81,6 @@ const SplashScreen = (props: Props) => {
           UserHelper.setCurrentUserChurch(userChurch);
         }
 
-
-
         props.navigation.navigate('MainStack', {});
       }
     } catch (e : any) {
@@ -84,16 +89,16 @@ const SplashScreen = (props: Props) => {
     }
   }
 
-  if (dimension.width > dimension.height) {
+  if (DimensionHelper.wp(100) > DimensionHelper.hp(100)) {
     return (
       <View style={[globalStyles.safeAreaContainer, { flex: 1, backgroundColor: Constants.Colors.app_color }]}>
-        <Image source={Constants.Images.splash_screen} style={{ width: hd('100%'), height: hd('100%') }} />
+        <Image source={Constants.Images.splash_screen} style={{ width: DimensionHelper.hp('100%'), height: DimensionHelper.hp('100%') }} />
       </View>
     );
   } else {
     return (
       <View style={[globalStyles.safeAreaContainer, { flex: 1 }]}>
-        <Image source={Constants.Images.splash_screen} style={{ width: DimensionHelper.wp('100%'), height: hd('100%') }} />
+        <Image source={Constants.Images.splash_screen} style={{ width: DimensionHelper.wp('100%'), height: DimensionHelper.hp('100%') }} />
       </View>
     );
   }

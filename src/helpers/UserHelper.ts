@@ -1,7 +1,9 @@
-import { ApiHelper, IPermission, UserInterface } from ".";
-import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
+import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import analytics from '@react-native-firebase/analytics';
 import { Platform } from "react-native";
+import { IPermission, UserInterface } from ".";
+import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
 
 export class UserHelper {
   static churches: ChurchInterface[];
@@ -45,4 +47,41 @@ export class UserHelper {
       page: screenName,
     });
   }
+
+
+  static handleLogin = async (data:LoginResponseInterface) => {
+    var currentChurch: LoginUserChurchInterface = data.userChurches[0];
+    const churchString = await AsyncStorage.getItem("CHURCH_DATA");
+    let church: ChurchInterface | null = null
+    if (churchString) church = JSON.parse(churchString);
+    if (church != null && church?.id != null && church.id != "") {
+      currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
+    }
+
+    const userChurch: LoginUserChurchInterface = currentChurch
+
+    UserHelper.user = data.user;
+    const churches: ChurchInterface[] = [];
+    data.userChurches.forEach(uc => churches.push(uc.church));
+    UserHelper.churches = churches;
+    if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
+
+    UserHelper.addAnalyticsEvent('login', {
+      id: Date.now(),
+      device : Platform.OS,
+      church: userChurch.church.name,
+    });
+
+    ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
+    userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+    ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
+    await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
+    await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
+    await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.userChurches))
+    if (userChurch) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(userChurch.church))
+
+    
+  }
+
+
 }

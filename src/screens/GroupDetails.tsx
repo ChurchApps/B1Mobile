@@ -1,6 +1,7 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import Markdown from '@ronradtke/react-native-markdown-display';
 import React, { useEffect, useState } from "react";
-import { Dimensions, FlatList, Image, KeyboardAvoidingView, PixelRatio, Platform, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { FlatList, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { MainHeader } from "../components";
 import Conversations from "../components/Notes/Conversations";
@@ -12,14 +13,9 @@ const TABS = ["Conversations", "Group Members"];
 const GroupDetails = (props: any) => {
   const { navigate } = props.navigation;
   const [groupMembers, setGroupMembers] = useState([]);
-  const [dimension] = useState(Dimensions.get("screen"));
   const [activeTab, setActiveTab] = useState(0);
   const { id: groupId, name, photoUrl, about } = props?.route?.params?.group;
 
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
 
   const loadData = async () => {
     ApiHelper.get(`/groupmembers?groupId=${groupId}`, "MembershipApi").then(

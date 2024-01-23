@@ -1,20 +1,8 @@
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import React, { useState } from "react";
-import {
-    FlatList,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import {
-    ApiHelper,
-    Constants,
-    ConversationInterface,
-    MessageInterface,
-    UserHelper,
-    globalStyles,
-} from "../../helpers";
+import { ApiHelper, Constants, ConversationInterface, MessageInterface, UserHelper, globalStyles } from "../../helpers";
 import Notes from "./Notes";
 
 interface NewConversation {
@@ -37,7 +25,7 @@ const ConversationPopup = ({
   const onUpdate = () => loadConversations();
 
   const validate = (message: MessageInterface) => {
-    const result = [];
+    const result:string[] = [];
     if (!message?.content.trim()) result.push("Please enter a note.");
     return result.length === 0;
   };

@@ -1,5 +1,5 @@
-import { STAGE, ACCESS_API, MEMBERSHIP_API, MESSAGING_API, ATTENDANCE_API, GIVING_API, CONTENT_API, CONTENT_ROOT, LESSONS_ROOT, STREAMING_LIVE_ROOT, B1_WEB_ROOT } from "@env"
-import { ApiHelper } from "./ApiHelper"
+import { ApiHelper } from "@churchapps/mobilehelper";
+import { ATTENDANCE_API, B1_WEB_ROOT, CONTENT_API, CONTENT_ROOT, GIVING_API, LESSONS_ROOT, MEMBERSHIP_API, MESSAGING_API, STAGE, STREAMING_LIVE_ROOT } from "@env";
 
 export class EnvironmentHelper {
   public static MembershipApi = "";

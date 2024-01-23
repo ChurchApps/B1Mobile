@@ -1,11 +1,11 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { ApiHelper, DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, Image, Keyboard, PixelRatio, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
 import { BlueHeader } from '../components';
-import { ApiHelper, ArrayHelper, ChurchInterface, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ArrayHelper, ChurchInterface, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { NavigationProps } from '../interfaces';
 
@@ -20,25 +20,13 @@ export const ChurchSearch = (props: Props) => {
   const [recentList, setRecentList] = useState([]);
   const [recentListEmpty, setRecentListEmpty] = useState(false);
 
-  const [dimension, setDimension] = useState(Dimensions.get('window'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
 
   useEffect(() => {
     Utilities.trackEvent("Church Search Screen");
     GetRecentList();
     UserHelper.addOpenScreenEvent('ChurchSearch');
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
   }, [])
-  useEffect(() => {
-  }, [dimension])
-
+  
   const churchSelection = async (churchData: ChurchInterface) => {
     StoreToRecent(churchData);
     try {

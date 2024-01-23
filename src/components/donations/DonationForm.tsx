@@ -1,8 +1,9 @@
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { Alert, Dimensions, Image, PixelRatio, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -63,19 +64,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   ]);
   const [selectedInterval, setSelectedInterval] = useState<string>("one_week");
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
-  useEffect(() => {
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
-  }, [dimension])
 
   const handleSave = () => {
     if (donation.amount && donation.amount < 0.5) {
@@ -401,8 +389,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       value={selectedInterval}
                       setOpen={setIsIntervalDropdownOpen}
                       setValue={(value) => {
-                        setSelectedInterval(value())
-                        handleIntervalChange("type", value())
+                        setSelectedInterval(value)
+                        handleIntervalChange("type", value)
                       }}
                       containerStyle={{
                         ...globalStyles.containerStyle,

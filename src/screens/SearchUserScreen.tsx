@@ -1,7 +1,7 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, FlatList, Image, Keyboard, PixelRatio, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Alert, FlatList, Image, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { BlueHeader } from '../components';
 import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface, Utilities, globalStyles } from '../helpers';
@@ -18,23 +18,12 @@ export const SearchUserScreen = (props: Props) => {
     const [loading, setLoading] = useState(false);
     const [recentList, setRecentList] = useState([]);
     const [recentListEmpty, setRecentListEmpty] = useState(false);
-
-    const [dimension, setDimension] = useState(Dimensions.get('window'));
-
-    const wd = (number: string) => {
-      let givenWidth = typeof number === "number" ? number : parseFloat(number);
-      return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-    };
   
     useEffect(() => {
         Utilities.trackEvent("User search Screen");
         // GetRecentList();
         getPreviousConversations();
         UserHelper.addOpenScreenEvent('SearchMessageUser');
-        Dimensions.addEventListener('change', () => {
-          const dim = Dimensions.get('screen')
-          setDimension(dim);
-        })
       }, [])
 
       const getPreviousConversations = () => {
@@ -57,20 +46,6 @@ export const SearchUserScreen = (props: Props) => {
             }
           }        
         })
-      }
-
-      const GetRecentList = async () => {
-        try {
-          const church_list = await AsyncStorage.getItem('RECENT_USERS_SEARCH');
-          if (church_list != null) {
-            setRecentListEmpty(true)
-            let list = JSON.parse(church_list);
-            let reverseList = list.reverse()
-            setRecentList(reverseList);
-          }
-        } catch (err) {
-          console.log('GET RECENT USER SEARCH ERROR', err)
-        }
       }
 
       const searchUserApiCall = (text: String) => {

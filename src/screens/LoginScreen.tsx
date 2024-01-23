@@ -1,11 +1,11 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DimensionHelper, LoginResponseInterface } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Dimensions, Linking, PixelRatio, Platform, SafeAreaView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Linking, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
 import Icon from 'react-native-vector-icons/Fontisto';
 import { BlueHeader } from '../components';
-import { ApiHelper, ChurchInterface, Constants, EnvironmentHelper, LoginResponseInterface, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
 
 interface Props {
   navigation: {
@@ -18,23 +18,10 @@ export const LoginScreen = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [dimension, setDimension] = useState(Dimensions.get('window'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
 
   useEffect(() => {
     Utilities.trackEvent("Login Screen");
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
   }, [])
-  useEffect(() => {
-  }, [dimension])
 
   const validateDetails = () => {
     if (email != '') {
@@ -56,53 +43,28 @@ export const LoginScreen = (props: Props) => {
     }
   }
 
-  const loginApiCall = () => {
+  
 
+  const loginApiCall = () => {
     let params = { "email": email, "password": password }
     setLoading(true);
-    ApiHelper.post("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
+    ApiHelper.postAnonymous("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
       setLoading(false);
       if (data.user != null) {
-        var currentChurch: LoginUserChurchInterface = data.userChurches[0];
-        const churchString = await AsyncStorage.getItem("CHURCH_DATA");
-        let church: ChurchInterface | null = null
-        if (churchString) church = JSON.parse(churchString);
-        if (church != null && church?.id != null && church.id != "") {
-          currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
-        }
-
-        const userChurch: LoginUserChurchInterface = currentChurch
-
-        UserHelper.user = data.user;
-        const churches: ChurchInterface[] = [];
-        data.userChurches.forEach(uc => churches.push(uc.church));
-        UserHelper.churches = churches;
-        if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
-
-        UserHelper.addAnalyticsEvent('login', {
-          id: Date.now(),
-          device : Platform.OS,
-          church: userChurch.church.name,
-        });
-
-        ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
-        userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
-        ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
-        await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
-        await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
-        await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.userChurches))
-        if (userChurch) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(userChurch.church))
-
+        await UserHelper.handleLogin(data);
         props.navigation.navigate('MainStack');
-
         //DevSettings.reload();
         RNRestart.Restart();
-      } else Alert.alert("Alert", "Invalid login");
+      }
+      else Alert.alert("Alert", "Invalid login");
+    }).catch(() => {
+      setLoading(false);
+      Alert.alert("Alert", "Invalid login");
     });
   }
 
   const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
-  const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
+  //const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
     <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>

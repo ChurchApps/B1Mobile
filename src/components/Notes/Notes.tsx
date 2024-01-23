@@ -1,13 +1,7 @@
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import moment from "moment";
 import React from "react";
-import {
-    Dimensions,
-    Image,
-    PixelRatio,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { Constants, MessageInterface, globalStyles } from "../../helpers";
 import { PersonHelper } from "../../helpers/PersonHelper";
 
@@ -28,12 +22,6 @@ const Notes = ({
 }: NotesInterface) => {
   console.log("Message ==", message);
 
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel(
-      (Dimensions.get("screen").width * givenWidth) / 100
-    );
-  };
 
   const displayDuration = moment(message?.timeSent).fromNow();
   const isEdited = message.timeUpdated &&

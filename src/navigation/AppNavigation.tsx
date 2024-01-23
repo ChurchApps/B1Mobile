@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { CustomDrawer } from '../components';
 import { Constants } from '../helpers';
+import { CheckinScreen } from '../screens/CheckinScreen';
 import { ChurchSearch } from '../screens/ChurchSearch';
 import { DashboardScreen } from '../screens/DashboardScreen';
 import DonationScreen from '../screens/DonationScreen';
@@ -19,10 +20,6 @@ import { SearchUserScreen } from '../screens/SearchUserScreen';
 import SplashScreen from '../screens/SplashScreen';
 import { VotdScreen } from '../screens/VotdScreen';
 import { WebsiteScreen } from '../screens/WebsiteScreen';
-import CheckinCompleteScreen from '../screens/checkin/CheckinCompleteScreen';
-import { GroupsScreen } from '../screens/checkin/GroupsScreen';
-import { HouseholdScreen } from '../screens/checkin/HouseholdScreen';
-import { ServiceScreen } from '../screens/checkin/ServiceScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
@@ -65,10 +62,7 @@ const MainStack = () => {
       <Drawer.Screen name={'SearchMessageUser'} component={SearchUserScreen} />
       <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />
       <Drawer.Screen name={'MemberDetailScreen'} component={MemberDetailScreen} />
-      <Drawer.Screen name={'ServiceScreen'} component={ServiceScreen} />
-      <Drawer.Screen name={'HouseholdScreen'} component={HouseholdScreen} />
-      <Drawer.Screen name={'GroupsScreen'} component={GroupsScreen} />
-      <Drawer.Screen name={'CheckinCompleteScreen'} component={CheckinCompleteScreen} />
+      <Drawer.Screen name={'ServiceScreen'} component={CheckinScreen} />
       <Drawer.Screen name={'DonationScreen'} component={DonationScreen} />
       <Drawer.Screen name={'MyGroups'} component={MyGroups} />
       <Drawer.Screen name={'GroupDetails'} component={GroupDetails} />
