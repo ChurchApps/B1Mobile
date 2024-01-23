@@ -1,5 +1,4 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Image, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
@@ -73,24 +72,11 @@ export const SearchUserScreen = (props: Props) => {
       }
 
       const userSelection = async (userData: UserSearchInterface) => {
-        // StoreToRecent(userData);
         try {
           props.navigation.navigate('MessagesScreen', { userDetails: userData })
         } catch (err : any) {
           console.log(err)
           ErrorHelper.logError("user-selection", err);
-        }
-      }
-
-      const StoreToRecent = async (userData: UserSearchInterface) => {
-        var filteredItems: UserSearchInterface[] = [];
-        filteredItems = recentList.filter((item: UserSearchInterface) => item.id !== userData.id);
-        filteredItems.push(userData);
-        try {
-          const usersList = JSON.stringify(filteredItems)
-          await AsyncStorage.setItem('RECENT_USERS_SEARCH', usersList)
-        } catch (err) {
-          console.log('SET RECENT USER ERROR', err)
         }
       }
 

@@ -1,4 +1,5 @@
 export { ApiHelper, ArrayHelper } from "@churchapps/mobilehelper"
+export { CacheHelper } from "./CacheHelper"
 export { CheckinHelper } from "./CheckinHelper"
 export { Constants } from "./Constants"
 export { CurrencyHelper } from "./CurrencyHelper"

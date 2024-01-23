@@ -1,11 +1,10 @@
 import { ApiHelper, DimensionHelper } from '@churchapps/mobilehelper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
 import { BlueHeader } from '../components';
-import { ArrayHelper, ChurchInterface, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { NavigationProps } from '../interfaces';
 
@@ -17,7 +16,7 @@ export const ChurchSearch = (props: Props) => {
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [recentList, setRecentList] = useState([]);
+  const [recentList, setRecentList] = useState<ChurchInterface[]>([]);
   const [recentListEmpty, setRecentListEmpty] = useState(false);
 
 
@@ -37,8 +36,7 @@ export const ChurchSearch = (props: Props) => {
         ErrorHelper.logError("store-recent-church", e);
       }
       if (existing) churchData = existing.church;
-      const churchValue = JSON.stringify(churchData);
-      await AsyncStorage.setItem('CHURCH_DATA', churchValue)
+      await CacheHelper.setValue("church", churchData);
       UserHelper.addAnalyticsEvent('church_selected', {
         id: Date.now(),
         device : Platform.OS,
@@ -64,10 +62,9 @@ export const ChurchSearch = (props: Props) => {
 
   const GetRecentList = async () => {
     try {
-      const church_list = await AsyncStorage.getItem('RECENT_CHURCHES');
-      if (church_list != null) {
-        setRecentListEmpty(true)
-        let list = JSON.parse(church_list);
+      const list = CacheHelper.recentChurches;
+      if (list.length === 0) setRecentListEmpty(true);
+      else {
         let reverseList = list.reverse()
         setRecentList(reverseList);
       }
@@ -82,8 +79,7 @@ export const ChurchSearch = (props: Props) => {
     filteredItems = recentList.filter((item: any) => item.id !== churchData.id);
     filteredItems.push(churchData);
     try {
-      const churchlist = JSON.stringify(filteredItems)
-      await AsyncStorage.setItem('RECENT_CHURCHES', churchlist)
+      await CacheHelper.setValue("recentChurches", filteredItems);
     } catch (err : any) {
       console.log('SET RECENT CHURCHES ERROR', err)
       ErrorHelper.logError("store-recent-church", err);

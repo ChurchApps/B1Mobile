@@ -5,7 +5,7 @@ import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, Vi
 import RNRestart from 'react-native-restart';
 import MessageIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Constants, EnvironmentHelper, LoginUserChurchInterface, UserHelper, globalStyles } from '../helpers';
+import { CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { NavigationHelper } from '../helpers/NavigationHelper';
 
@@ -26,25 +26,17 @@ export function CustomDrawer(props: any) {
 
   const getChurch = async () => {
     try {
-      const user = await AsyncStorage.getItem('USER_DATA')
-      if (user !== null) {
-        setUser(JSON.parse(user))
-      }
-      let userChurch: LoginUserChurchInterface | null = null;
-      const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
+      if (UserHelper.user) setUser(UserHelper.user);
 
-      if (churchvalue !== null) {
-        if (churchvalue) {
-          const church = JSON.parse(churchvalue);
-          setChurchName(church.name ?? "")
-          setChurchEmpty(false)
-          getDrawerList(church.id);
-          getMemberData(church?.personId);
-          if (church?.id) {
-            userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
+      if (CacheHelper.church !== null) {
+        setChurchName(CacheHelper.church.name ?? "")
+        setChurchEmpty(false)
+        getDrawerList(CacheHelper.church.id);
+        getMemberData(UserHelper.currentUserChurch?.person?.id);
+        if (CacheHelper.church.id) {
+          //userChurch = await ApiHelper.post("/churches/select", { churchId: CacheHelper.church.id }, "MembershipApi");
 
-            if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
-          }
+          //if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
         }
       }
 
