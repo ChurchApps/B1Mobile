@@ -21,7 +21,7 @@ export interface ResetPasswordRequestInterface { userEmail: string, fromEmail: s
 export interface ResetPasswordResponseInterface { emailed: boolean }
 export interface SwitchAppRequestInterface { appName: string, churchId: string }
 export interface SwitchAppResponseInterface { appName: string, churchId: string }
-export interface UserInterface { id?: string, firstName?: string, lastName?: string, email?: string, authGuid?: string, displayName?: string, registrationDate?: Date, lastLogin?: Date, password?: string }
+export interface UserInterface { id?: string, firstName?: string, lastName?: string, email?: string, authGuid?: string, displayName?: string, registrationDate?: Date, lastLogin?: Date, password?: string, jwt?: string }
 export interface GenericSettingInterface { id?: string, churchId?: string, keyName?: string, value?: string, public?: number }
 
 export interface GroupServiceTimeInterface { id?: string, groupId?: string, serviceTimeId?: string, serviceTime?: ServiceTimeInterface }

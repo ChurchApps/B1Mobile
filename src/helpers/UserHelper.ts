@@ -1,8 +1,7 @@
 import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import analytics from '@react-native-firebase/analytics';
 import { Platform } from "react-native";
-import { IPermission, UserInterface } from ".";
+import { CacheHelper, IPermission, UserInterface } from ".";
 import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
 
 export class UserHelper {
@@ -51,9 +50,8 @@ export class UserHelper {
 
   static handleLogin = async (data:LoginResponseInterface) => {
     var currentChurch: LoginUserChurchInterface = data.userChurches[0];
-    const churchString = await AsyncStorage.getItem("CHURCH_DATA");
-    let church: ChurchInterface | null = null
-    if (churchString) church = JSON.parse(churchString);
+
+    let church = CacheHelper.church;
     if (church != null && church?.id != null && church.id != "") {
       currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
     }
@@ -65,6 +63,7 @@ export class UserHelper {
     data.userChurches.forEach(uc => churches.push(uc.church));
     UserHelper.churches = churches;
     if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
+    //console.log("USER CHURCH IS", userChurch);
 
     UserHelper.addAnalyticsEvent('login', {
       id: Date.now(),
@@ -76,9 +75,10 @@ export class UserHelper {
     userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
     ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
     await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
-    await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
-    await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.userChurches))
-    if (userChurch) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(userChurch.church))
+    await CacheHelper.setValue("user", data.user);
+
+
+    if (userChurch && !church) await CacheHelper.setValue("church", userChurch.church);
 
     
   }

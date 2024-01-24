@@ -1,5 +1,4 @@
 import { DimensionHelper } from "@churchapps/mobilehelper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -10,7 +9,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import IconP from 'react-native-vector-icons/Fontisto';
 import { FundDonations, } from ".";
 import { InputBox, PreviewModal } from "../";
-import { ApiHelper, Constants, UserHelper, UserInterface, globalStyles } from "../../helpers";
+import { ApiHelper, CacheHelper, Constants, UserHelper, UserInterface, globalStyles } from "../../helpers";
 import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod, } from "../../interfaces";
 
 interface Props {
@@ -86,19 +85,13 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
   const loadData = async () => {
     var churchId : string = ""; 
-    if(!UserHelper.currentUserChurch?.person?.id){
-      churchId = UserHelper.currentUserChurch.church.id ?? "";
-    }else{
-      const churchvalue = await AsyncStorage.getItem('CHURCH_DATA')
-      if (churchvalue !== null) {
-        const church = JSON.parse(churchvalue);
-        churchId = church.id ?? "";
-      }
-    }    
-      ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then((data) => {
-        setFunds(data);
-        if (data.length) setFundDonations([{ fundId: data[0].id }]);
-      });
+    if(!UserHelper.currentUserChurch?.person?.id) churchId = UserHelper.currentUserChurch.church.id ?? "";
+    else churchId = CacheHelper.church?.id || "";
+
+    ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then((data) => {
+      setFunds(data);
+      if (data.length) setFundDonations([{ fundId: data[0].id }]);
+    });
   };
 
   const handleFundDonationsChange = (fd: FundDonationInterface[]) => {
@@ -126,7 +119,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
           return;
          })
         .then(async userData => {
-          const personData = { churchId: UserHelper.currentUserChurch.church.id, firstName, lastName, email };
+          const personData = { churchId: CacheHelper.church!.id, firstName, lastName, email };
           const person = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi")
           saveCard(userData, person)
         });
@@ -168,7 +161,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             customerId: d.customerId,
             type: d.paymentMethod?.type,
             amount : donation.amount,
-            churchId: UserHelper.currentUserChurch.church.id,
+            churchId: CacheHelper.church!.id,
             funds: donation.funds,
             person : donation.person,
           };

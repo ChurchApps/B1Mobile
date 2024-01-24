@@ -1,9 +1,9 @@
-import { DimensionHelper, LoginResponseInterface } from '@churchapps/mobilehelper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect } from 'react';
 import { Image, View } from 'react-native';
-import { ApiHelper, Constants, LoginUserChurchInterface, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, CacheHelper, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
+import { PushNotificationHelper } from '../helpers/PushNotificationHelper';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -12,10 +12,16 @@ interface Props {
 
 const SplashScreen = (props: Props) => {
 
-  useEffect(() => {
+  const init = async () => {
     Utilities.trackEvent("Splash Screen");
+    await CacheHelper.loadFromStorage();
+    PushNotificationHelper.requestUserPermission();
+    PushNotificationHelper.NotificationListener();
+    PushNotificationHelper.NotificationPermissionAndroid();
     checkUser()
-  }, [])
+  }
+
+  useEffect(() => { init(); }, [])
 
   /*
   const setUserDataOld = async (user: any, churchString:string, churchesString:string) => {
@@ -39,54 +45,20 @@ const SplashScreen = (props: Props) => {
   }
   */
 
-  const setUserDataNew = async (userString: string, churchString:string) => {
-    const user = JSON.parse(userString);
-
-    ApiHelper.postAnonymous("/users/login", {jwt: user.jwt}, "MembershipApi").then(async (data: LoginResponseInterface) => {
-      if (data.user != null) {
-        await UserHelper.handleLogin(data);
-      }
-    }).catch(() => {});
-    if (ApiHelper.isAuthenticated)
-    {
-      if (churchString) {
-        const church = JSON.parse(churchString);
-        if (church?.id) {
-          const userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
-          //I think this is what's causing the splash screen to hang sometimes.
-          if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
-          else await AsyncStorage.setItem('USER_DATA', "")
-        }
-      }
-    }
-    props.navigation.navigate('MainStack', {});
+  const setUserDataNew = async () => {
+    const user = UserHelper.user;
+    const data = await ApiHelper.postAnonymous("/users/login", {jwt: user.jwt}, "MembershipApi");
+    if (data.user != null) await UserHelper.handleLogin(data);
   }
 
   const checkUser = async () => {
     try {
-      const user = await AsyncStorage.getItem('USER_DATA')
-      const churchString = await AsyncStorage.getItem("CHURCH_DATA")
-      //const churchesString = await AsyncStorage.getItem("CHURCHES_DATA")
-
-      if (user !== null) {
-        //setUserData(user, churchString as string, churchesString as string);
-        setUserDataNew(user, churchString as string);
-
-        props.navigation.navigate('MainStack', {});
-      } else {
-        if (churchString) {
-          let church = JSON.parse(churchString);
-          const userChurch: LoginUserChurchInterface = { person: { name: {}, contactInfo: {} }, church: church, apis: [], jwt: "", groups: [] };
-
-          UserHelper.setCurrentUserChurch(userChurch);
-        }
-
-        props.navigation.navigate('MainStack', {});
-      }
+      if (UserHelper.user?.jwt) await setUserDataNew();
     } catch (e : any) {
       console.log(e)
       ErrorHelper.logError("splash-screen-error", e);
     }
+    props.navigation.navigate('MainStack', {});
   }
 
   if (DimensionHelper.wp(100) > DimensionHelper.hp(100)) {

@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { View } from 'react-native';
 import CodePush from 'react-native-code-push';
 import { EnvironmentHelper } from "./src/helpers";
-import { PushNotificationHelper } from './src/helpers/PushNotificationHelper';
 import AppNavigator from './src/navigation/AppNavigation';
 
 // Need manually add Intl polyfill for react-native app
@@ -26,6 +25,7 @@ EnvironmentHelper.init();
 
 const App = () => {
 
+  
   useEffect(() => {
     ErrorHelper.init();
     //ApiHelper.onRequest = (url:string, requestOptions:any) => { console.log("Request: ", url, requestOptions); }
@@ -33,11 +33,6 @@ const App = () => {
   }, []);
 
 
-  useEffect(()=>{
-    PushNotificationHelper.requestUserPermission();
-    PushNotificationHelper.NotificationListener();
-    PushNotificationHelper.NotificationPermissionAndroid();
-  });
 
   return (
     <ActionSheetProvider>
