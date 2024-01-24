@@ -54,7 +54,7 @@ export const ChurchSearch = (props: Props) => {
 
   const searchApiCall = (text: String) => {
     setLoading(true);
-    ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=logoSquare", "MembershipApi").then(data => {
+    ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=favicon_400x400", "MembershipApi").then(data => {
       setLoading(false);
       setSearchList(data);
       if (data.length === 0) Alert.alert("Alert", "No matches found");
@@ -88,13 +88,16 @@ export const ChurchSearch = (props: Props) => {
   }
 
   const renderChurchItem = (item: any) => {
-    const churchImage = item.settings && item.settings[0].value
+    let churchImage = Constants.Images.ic_church;
+    if (item.settings && item.settings.length>0)
+    {
+      let setting = ArrayHelper.getOne(item.settings, "keyName", "favicon_400x400");
+      if (!setting) setting = item.settings[0];
+      churchImage = { uri: setting.value };
+    }
     return (
       <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: DimensionHelper.wp('90%') }]} onPress={() => churchSelection(item)}>
-        {
-          churchImage ? <Image source={{ uri: churchImage }} style={globalStyles.churchListIcon} /> :
-            <Image source={Constants.Images.ic_church} style={globalStyles.churchListIcon} />
-        }
+          <Image source={ churchImage } style={globalStyles.churchListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText}>{item.name}</Text>
         </View>
