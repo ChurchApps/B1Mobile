@@ -170,7 +170,7 @@ export function NotificationTab(props: any) {
         onIndexChange={setIndex}
         swipeEnabled={false}
         renderTabBar={props => <TabBar renderLabel={renderLabel}{...props} indicatorStyle={{ backgroundColor: Constants.Colors.Active_TabColor }} style={globalStyles.TabIndicatorStyle} />}
-        initialLayout={{ width: DimensionHelper.wp('100'), height: hd('200') }}
+        initialLayout={{ width: DimensionHelper.wp('100'), height: DimensionHelper.hp('200') }}
         sceneContainerStyle={{ marginTop: 0 }}
       />
 
