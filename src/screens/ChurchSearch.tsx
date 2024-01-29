@@ -1,10 +1,10 @@
-import { ApiHelper, DimensionHelper } from '@churchapps/mobilehelper';
+import { ApiHelper, AppCenterHelper, DimensionHelper, FirebaseHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
 import { BlueHeader } from '../components';
-import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { NavigationProps } from '../interfaces';
 
@@ -21,9 +21,9 @@ export const ChurchSearch = (props: Props) => {
 
 
   useEffect(() => {
-    Utilities.trackEvent("Church Search Screen");
+    AppCenterHelper.trackEvent("Church Search Screen");
     GetRecentList();
-    UserHelper.addOpenScreenEvent('ChurchSearch');
+    FirebaseHelper.addOpenScreenEvent('ChurchSearch');
   }, [])
   
   const churchSelection = async (churchData: ChurchInterface) => {
@@ -37,7 +37,7 @@ export const ChurchSearch = (props: Props) => {
       }
       if (existing) churchData = existing.church;
       await CacheHelper.setValue("church", churchData);
-      UserHelper.addAnalyticsEvent('church_selected', {
+      FirebaseHelper.addAnalyticsEvent('church_selected', {
         id: Date.now(),
         device : Platform.OS,
         church: churchData.name,

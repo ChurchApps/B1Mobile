@@ -1,8 +1,9 @@
+import { AppCenterHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, View } from 'react-native';
 import WebView from 'react-native-webview';
 import { Loader, MainHeader } from '../components';
-import { CacheHelper, Utilities, globalStyles } from '../helpers';
+import { CacheHelper, globalStyles } from '../helpers';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -25,7 +26,7 @@ export const WebsiteScreen = (props: Props) => {
   }
 
   useEffect(() => {
-    Utilities.trackEvent("Website Screen", { url: props.route?.params?.url });
+    AppCenterHelper.trackEvent("Website Screen", { url: props.route?.params?.url });
     checkRedirect();
   }, [])
 

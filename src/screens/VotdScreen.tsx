@@ -1,7 +1,8 @@
+import { AppCenterHelper } from '@churchapps/mobilehelper';
 import React from 'react';
 import { Dimensions, Image, SafeAreaView, View } from 'react-native';
 import { MainHeader } from '../components';
-import { Utilities, globalStyles } from '../helpers';
+import { globalStyles } from '../helpers';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -35,7 +36,7 @@ export const VotdScreen = (props: Props) => {
   }
 
   React.useEffect(() => {
-    Utilities.trackEvent("VOTD Screen");
+    AppCenterHelper.trackEvent("VOTD Screen");
     getShape();
     Dimensions.addEventListener("change", getShape);
   }, []);

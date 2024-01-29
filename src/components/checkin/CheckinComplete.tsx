@@ -1,8 +1,8 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper, FirebaseHelper } from '@churchapps/mobilehelper';
 import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { UserHelper, globalStyles } from '../../helpers';
+import { globalStyles } from '../../helpers';
 
 interface Props {
   onDone: () => void
@@ -11,7 +11,7 @@ interface Props {
 export const CheckinComplete = (props: Props) => {
   
   useEffect(() => {
-    UserHelper.addOpenScreenEvent('CheckinCompleteScreen');
+    FirebaseHelper.addOpenScreenEvent('CheckinCompleteScreen');
     setTimeout(() => { props.onDone() }, 1500);
   }, []);
 

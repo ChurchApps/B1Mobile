@@ -1,7 +1,7 @@
-import { DimensionHelper, PushNotificationHelper } from '@churchapps/mobilehelper';
+import { AppCenterHelper, DimensionHelper, PushNotificationHelper } from '@churchapps/mobilehelper';
 import React, { useEffect } from 'react';
 import { Image, View } from 'react-native';
-import { ApiHelper, CacheHelper, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, CacheHelper, Constants, UserHelper, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { NavigationProps } from '../interfaces';
 
@@ -12,7 +12,7 @@ interface Props {
 const SplashScreen = (props: Props) => {
 
   const init = async () => {
-    Utilities.trackEvent("Splash Screen");
+    AppCenterHelper.trackEvent("Splash Screen");
     await CacheHelper.loadFromStorage();
     PushNotificationHelper.requestUserPermission();
     PushNotificationHelper.NotificationListener();

@@ -1,5 +1,4 @@
-import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
-import analytics from '@react-native-firebase/analytics';
+import { ApiHelper, FirebaseHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
 import { Platform } from "react-native";
 import { CacheHelper, IPermission, UserInterface } from ".";
 import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
@@ -35,18 +34,6 @@ export class UserHelper {
     return result;
   }
 
-  static async addAnalyticsEvent(eventName : string, dataBody : any) {
-    await analytics().logEvent(eventName, dataBody);
-  }
-
-  static async addOpenScreenEvent(screenName: string){
-    await analytics().logEvent("page_view", {
-      id: Date.now(),
-      device : Platform.OS,
-      page: screenName,
-    });
-  }
-
 
   static handleLogin = async (data:LoginResponseInterface) => {
     var currentChurch: LoginUserChurchInterface = data.userChurches[0];
@@ -65,7 +52,7 @@ export class UserHelper {
     if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
     //console.log("USER CHURCH IS", userChurch);
 
-    UserHelper.addAnalyticsEvent('login', {
+    FirebaseHelper.addAnalyticsEvent('login', {
       id: Date.now(),
       device : Platform.OS,
       church: userChurch.church.name,

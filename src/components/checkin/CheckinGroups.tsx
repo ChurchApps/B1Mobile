@@ -1,8 +1,8 @@
-import { ArrayHelper, DimensionHelper } from '@churchapps/mobilehelper';
+import { ArrayHelper, DimensionHelper, FirebaseHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { CheckinHelper, PersonInterface, ServiceTimeInterface, UserHelper, globalStyles } from '../../helpers';
+import { CheckinHelper, PersonInterface, ServiceTimeInterface, globalStyles } from '../../helpers';
 import { BottomButton } from '../BottomButton';
 
 interface Props {
@@ -16,7 +16,7 @@ export const CheckinGroups = (props: Props) => {
 
   useEffect(() => {
     setSelected(null);
-    UserHelper.addOpenScreenEvent('GroupsScreen');
+    FirebaseHelper.addOpenScreenEvent('GroupsScreen');
   }, []);
 
   const selectGroup = async (group_item: any) => {

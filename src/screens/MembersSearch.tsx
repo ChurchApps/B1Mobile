@@ -1,9 +1,9 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { AppCenterHelper, DimensionHelper, FirebaseHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Loader, MainHeader } from '../components';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, Constants, EnvironmentHelper, globalStyles } from '../helpers';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -17,9 +17,9 @@ export const MembersSearch = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    Utilities.trackEvent("Member Search Screen");
+    AppCenterHelper.trackEvent("Member Search Screen");
     loadMembers()
-    UserHelper.addOpenScreenEvent('MembersSearch');
+    FirebaseHelper.addOpenScreenEvent('MembersSearch');
   }, [])
 
   const loadMembers = () => {

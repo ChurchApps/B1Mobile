@@ -1,11 +1,11 @@
-import { DimensionHelper, LoginResponseInterface } from '@churchapps/mobilehelper';
+import { AppCenterHelper, DimensionHelper, LoginResponseInterface } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Linking, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
 import Icon from 'react-native-vector-icons/Fontisto';
 import { BlueHeader } from '../components';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '../helpers';
 
 interface Props {
   navigation: {
@@ -20,7 +20,7 @@ export const LoginScreen = (props: Props) => {
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    Utilities.trackEvent("Login Screen");
+    AppCenterHelper.trackEvent("Login Screen");
   }, [])
 
   const validateDetails = () => {

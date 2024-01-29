@@ -1,9 +1,9 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { AppCenterHelper, DimensionHelper, FirebaseHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native';
 import { Loader, MainHeader } from '../components';
 import { ImageButton } from '../components/ImageButton';
-import { CacheHelper, LinkInterface, UserHelper, Utilities, globalStyles } from '../helpers';
+import { CacheHelper, LinkInterface, UserHelper, globalStyles } from '../helpers';
 import { NavigationHelper } from '../helpers/NavigationHelper';
 import { NavigationProps } from '../interfaces';
 
@@ -20,7 +20,7 @@ export const DashboardScreen = (props: Props) => {
       const dim = Dimensions.get('screen')
       setDimension(dim);
     })
-    UserHelper.addOpenScreenEvent('Dashboard');
+    FirebaseHelper.addOpenScreenEvent('Dashboard');
   }, [])
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export const DashboardScreen = (props: Props) => {
 
   const checkRedirect = () => {
     if (!CacheHelper.church) props.navigation.navigate("ChurchSearch", {});
-    else Utilities.trackEvent("Dashboard Screen");
+    else AppCenterHelper.trackEvent("Dashboard Screen");
   }
 
   const getButton = (topItem: boolean, item: LinkInterface) => {

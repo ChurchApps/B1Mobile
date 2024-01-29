@@ -1,10 +1,10 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { AppCenterHelper, DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, SafeAreaView, Text, View } from 'react-native';
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Fontisto';
 import { BlueHeader } from '../components';
-import { ApiHelper, Constants, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, Constants, globalStyles } from '../helpers';
 
 interface Props {
   navigation: {
@@ -21,7 +21,7 @@ export const RegisterScreen = (props: Props) => {
   const [registered, setRegistered] = useState(false)
   
   useEffect(() => {
-    Utilities.trackEvent("Register Screen");
+    AppCenterHelper.trackEvent("Register Screen");
   }, [])
 
   const validateDetails = () => {

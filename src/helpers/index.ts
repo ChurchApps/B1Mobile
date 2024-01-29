@@ -9,5 +9,4 @@ export { globalStyles } from "./GlobalStyles"
 export * from "./Interfaces"
 export { StripeHelper } from "./StripeHelper"
 export { UserHelper } from "./UserHelper"
-export { Utilities } from "./Utilities"
 

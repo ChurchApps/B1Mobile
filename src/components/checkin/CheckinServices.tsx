@@ -1,4 +1,4 @@
-import { ArrayHelper, DimensionHelper, ErrorHelper } from '@churchapps/mobilehelper';
+import { ArrayHelper, DimensionHelper, ErrorHelper, FirebaseHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { ApiHelper, CheckinHelper, PersonInterface, UserHelper, globalStyles } from '../../helpers';
@@ -14,7 +14,7 @@ export const CheckinServices = (props: Props) => {
  
   useEffect(() => {
     getServiceData();
-    UserHelper.addOpenScreenEvent('ServiceScreen');
+    FirebaseHelper.addOpenScreenEvent('ServiceScreen');
   }, [])
 
   const getServiceData = async () => {

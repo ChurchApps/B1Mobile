@@ -1,9 +1,9 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { AppCenterHelper, DimensionHelper, FirebaseHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Image, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { BlueHeader } from '../components';
-import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
 import { NavigationProps } from '../interfaces';
 
@@ -19,10 +19,10 @@ export const SearchUserScreen = (props: Props) => {
     const [recentListEmpty, setRecentListEmpty] = useState(false);
   
     useEffect(() => {
-        Utilities.trackEvent("User search Screen");
+        AppCenterHelper.trackEvent("User search Screen");
         // GetRecentList();
         getPreviousConversations();
-        UserHelper.addOpenScreenEvent('SearchMessageUser');
+        FirebaseHelper.addOpenScreenEvent('SearchMessageUser');
       }, [])
 
       const getPreviousConversations = () => {

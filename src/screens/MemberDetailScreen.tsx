@@ -1,11 +1,11 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { AppCenterHelper, DimensionHelper, FirebaseHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Image, Linking, SafeAreaView, Text, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/Zocial';
 import { Loader, MainHeader } from '../components';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
+import { ApiHelper, Constants, EnvironmentHelper, globalStyles } from '../helpers';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -26,9 +26,9 @@ export const MemberDetailScreen = (props: Props) => {
  
 
   useEffect(() => {
-    Utilities.trackEvent("Member Detail Screen");
+    AppCenterHelper.trackEvent("Member Detail Screen");
     getHouseholdMembersList();
-    UserHelper.addOpenScreenEvent('MemberDetailScreen');
+    FirebaseHelper.addOpenScreenEvent('MemberDetailScreen');
   }, [props.route.params])
 
    const onEmailClick = (email: string) => {

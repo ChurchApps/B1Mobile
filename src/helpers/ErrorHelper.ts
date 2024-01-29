@@ -1,4 +1,4 @@
-import Analytics from 'appcenter-analytics';
+import { AppCenterHelper } from '@churchapps/mobilehelper';
 import { DeviceEventEmitter } from 'react-native';
 import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
@@ -6,14 +6,14 @@ export class ErrorHelper {
 
     static logEvent(eventType: string, source: string, message: string) {
       //console.log("***************Adding new event to analytics : ",{source, message});
-      Analytics.trackEvent(eventType, { source, message })
+      AppCenterHelper.trackEvent(eventType, { source, message })
     }
   
     static logError(source: string, error: any) {
       const message = error.message || error;
       //console.log("***************Adding new error to analytics : ",{source, message});
       
-      Analytics.trackEvent("Error", { source, message })
+      AppCenterHelper.trackEvent("Error", { source, message })
     }
   
     static onJavaError(event: any) {
