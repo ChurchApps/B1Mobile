@@ -1,9 +1,8 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper, PushNotificationHelper } from '@churchapps/mobilehelper';
 import React, { useEffect } from 'react';
 import { Image, View } from 'react-native';
 import { ApiHelper, CacheHelper, Constants, UserHelper, Utilities, globalStyles } from '../helpers';
 import { ErrorHelper } from '../helpers/ErrorHelper';
-import { PushNotificationHelper } from '../helpers/PushNotificationHelper';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -58,6 +57,7 @@ const SplashScreen = (props: Props) => {
       console.log(e)
       ErrorHelper.logError("splash-screen-error", e);
     }
+    PushNotificationHelper.registerUserDevice("B1");
     props.navigation.navigate('MainStack', {});
   }
 

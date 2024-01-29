@@ -1,7 +1,7 @@
+import { pushEventBus } from "@churchapps/mobilehelper";
 import React, { useEffect, useState } from "react";
 import { Image, TouchableOpacity, View } from "react-native";
 import { Constants, globalStyles } from "../../helpers";
-import { eventBus } from "../../helpers/PushNotificationHelper";
 
 interface Props {
   toggleNotifications: () => void;
@@ -21,8 +21,8 @@ export const HeaderBell = (props: Props) => {
   };
   
   useEffect(() => {
-    eventBus.addListener("badge", handleNewMessage);
-    return () => { eventBus.removeListener("badge"); };
+    pushEventBus.addListener("badge", handleNewMessage);
+    return () => { pushEventBus.removeListener("badge"); };
   });
 
   return (<>
