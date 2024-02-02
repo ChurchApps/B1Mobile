@@ -1,3 +1,4 @@
+*.aab
 yarn.lock
 package-lock.json
 *.bat
