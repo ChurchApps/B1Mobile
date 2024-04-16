@@ -20,7 +20,7 @@ const Notes = ({
   showReplyBox,
   handleReply,
 }: NotesInterface) => {
-  console.log("Message ==", message);
+  //console.log("Message ==", message);
 
 
   const displayDuration = moment(message?.timeSent).fromNow();
@@ -29,7 +29,7 @@ const Notes = ({
 
   return (
     <>
-      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp("100%") }]}>
+      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp("70%") }]}>
         <Image
           source={
             message?.person?.photo
@@ -45,6 +45,7 @@ const Notes = ({
         <View
           style={{
             backgroundColor: Constants.Colors.gray_bg,
+            width :DimensionHelper.wp('60%'),
             paddingVertical: 10,
             paddingHorizontal: 16,
             borderRadius: 24,

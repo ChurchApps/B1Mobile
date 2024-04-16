@@ -9,16 +9,17 @@ interface NewConversation {
   placeholder: string;
   type: string;
   message?: MessageInterface;
+  from?: string
 }
 
 const ConversationPopup = ({
   conversations,
   loadConversations,
   groupId,
+  from 
 }: any) => {
   const [newMessage] = useState<MessageInterface>();
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
-
   const textRef = React.useRef('')
 
   const handleReply = (value: number) => setShowReplyBox(value);
@@ -123,21 +124,25 @@ const ConversationPopup = ({
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
+          width: '100%', 
           marginTop: type === "new" ? 16 : 0,
           marginBottom: type === "new" ? 0 : 16,
         }}
-      >
+      > 
         <TextInput
           onChangeText={text => textRef.current = text }
-          style={{
+          placeholderTextColor={'gray'}
+          style={[{
             ...globalStyles.fundInput,
-            marginTop: 0,
+            fontSize: from =='myGroup' ?  DimensionHelper.hp('1.6%') : DimensionHelper.wp('4.2%'),
+            borderBottomWidth : from =='myGroup' ? 1 : 1 ,  
+            borderWidth: from =='GroupDetails' ? 1 : 0, 
+            borderColor: from =='GroupDetails' || from =='myGroup' ? 'lightgray' : 'transparent', 
+            borderRadius: from =='GroupDetails' ? DimensionHelper.wp('6%') : 0,
             marginLeft: type === "new" ? 8 : 64,
             width: type === "new" ? DimensionHelper.wp("80%") : DimensionHelper.wp("66%"),
-            paddingTop: 12,
-            paddingLeft: 16,
-            borderRadius: 60,
-          }}
+            paddingTop: DimensionHelper.hp('1.8%'),
+          }]}
           multiline
           numberOfLines={4}
           placeholder={placeholder}
@@ -145,7 +150,7 @@ const ConversationPopup = ({
           // onChange={(e) => handleChange(e.nativeEvent.text)}
         />
         <TouchableOpacity
-          style={{ marginRight: 16 }}
+          style={{ marginHorizontal: DimensionHelper.wp('2.5%')}}
           onPress={() => handleSave(message)}
         >
           <Icon
@@ -160,7 +165,7 @@ const ConversationPopup = ({
 
   return (
     <View>
-      <View style={{height: 'auto', maxHeight: DimensionHelper.hp('40%')}}>
+      <View style={{height: 'auto', maxHeight: DimensionHelper.hp('60%')}}>
         <FlatList
           data={conversations}
           renderItem={({ item, index }) => renderConversations(item, index)}
