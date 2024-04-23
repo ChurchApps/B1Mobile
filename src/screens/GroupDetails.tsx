@@ -75,7 +75,7 @@ const GroupDetails = (props: any) => {
         {/* RENDER CONVERSATION */}
 
         {activeTab === 0 
-          ? (<Conversations contentType="group" contentId={groupId} groupId={groupId} />) 
+          ? (<Conversations contentType="group" contentId={groupId} groupId={groupId} from="GroupDetails" />) 
           : (<View>{getGroupMembers()}</View>)
         }
         

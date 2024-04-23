@@ -44,7 +44,7 @@ export interface UserSearchInterface {toPersonId?: string, anniversary?: Date, b
 
 // Messaging interfaces
 export interface ConversationCheckInterface { id: string, churchId: string, conversationId: string, fromPersonId: string, toPersonId: string, notifyPersonId: string, conversation: ConversationInterface }
-export interface ConversationInterface { id: string, churchId: string, contentType: string, contentId: string, title: string, dateCreated: Date, groupId: string, visibility: string, firstPostId: string, lastPostId: string, allowAnonymousPosts: boolean, postCount: number, messages: MessageInterface[] }
+export interface ConversationInterface { id: string, churchId: string, contentType: string, contentId: string, title: string, dateCreated: Date, groupId: string, visibility: string, firstPostId: string, lastPostId: string, allowAnonymousPosts: boolean, postCount: number, messages: MessageInterface[], conversationId : string }
 
 
 
@@ -54,3 +54,28 @@ export interface PrivateMessagesCreate { fromPersonId: string, toPersonId: strin
 
 // My Group Interface
 export interface GroupInterface { id?: string, name?: string, categoryName?: string, memberCount?: number, trackAttendance?: boolean, parentPickup?: boolean, about?: string, photoUrl?: string }
+export interface TimelinePostInterface {
+  UniqueId?: string;
+  postType?: string;
+  postId?: string;
+  groupId?: string;
+  timeSent?: Date;
+  timeUpdated?: Date;
+  conversationId?: string;
+  conversation?: ConversationInterface;
+  data?: any;
+}
+
+export interface UserPostInterface {
+  index: string;
+  postType?: string;
+  postId?: string;
+  groupId?: string;
+  timeSent?: Date;
+  timeUpdated?: Date;
+  conversationId?: string;
+  conversation?: ConversationInterface;
+  data?: any;
+  groupPhoto?: string;
+  groupName : string
+}

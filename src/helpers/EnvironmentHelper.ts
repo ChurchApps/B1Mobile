@@ -1,5 +1,5 @@
 import { ApiHelper } from "@churchapps/mobilehelper";
-import { ATTENDANCE_API, B1_WEB_ROOT, CONTENT_API, CONTENT_ROOT, GIVING_API, LESSONS_ROOT, MEMBERSHIP_API, MESSAGING_API, STAGE, STREAMING_LIVE_ROOT } from "@env";
+import { ATTENDANCE_API, B1_WEB_ROOT, CONTENT_API, CONTENT_ROOT, DOING_API, GIVING_API, LESSONS_API, LESSONS_ROOT, MEMBERSHIP_API, MESSAGING_API, STAGE, STREAMING_LIVE_ROOT } from "@env";
 
 export class EnvironmentHelper {
   public static MembershipApi = "";
@@ -8,6 +8,8 @@ export class EnvironmentHelper {
   public static GivingApi = "";
   public static ContentApi = "";
   public static LessonsRoot = "";
+  public static DoingApi = "";
+  public static LessonsApi = "";
   public static StreamingLiveRoot = "";
   public static B1WebRoot = "";
 
@@ -26,7 +28,9 @@ export class EnvironmentHelper {
       { keyName: "MessagingApi", url: EnvironmentHelper.MessagingApi, jwt: "", permisssions: [] },
       { keyName: "AttendanceApi", url: EnvironmentHelper.AttendanceApi, jwt: "", permisssions: [] },
       { keyName: "GivingApi", url: EnvironmentHelper.GivingApi, jwt: "", permisssions: [] },
-      { keyName: "ContentApi", url: EnvironmentHelper.ContentApi, jwt: "", permisssions: [] }
+      { keyName: "ContentApi", url: EnvironmentHelper.ContentApi,jwt: "", permisssions: [] },
+      { keyName: "DoingApi", url: EnvironmentHelper.DoingApi, jwt: "", permisssions: [] },
+      { keyName: "LessonsApi", url: EnvironmentHelper.LessonsApi, jwt: "", permisssions: [] }
     ]
 
 
@@ -39,6 +43,8 @@ export class EnvironmentHelper {
     EnvironmentHelper.MessagingApi = MESSAGING_API || "https://messagingapi.staging.churchapps.org";
     EnvironmentHelper.AttendanceApi = ATTENDANCE_API || "https://attendanceapi.staging.churchapps.org";
     EnvironmentHelper.GivingApi = GIVING_API || "https://givingapi.staging.churchapps.org";
+    EnvironmentHelper.LessonsApi = LESSONS_API || "https://api.staging.lessons.church";
+    EnvironmentHelper.DoingApi = DOING_API || "https://doingapi.staging.churchapps.org";
     EnvironmentHelper.ContentApi = CONTENT_API || "https://contentapi.staging.churchapps.org";
     EnvironmentHelper.ContentRoot = CONTENT_ROOT || "https://content.staging.churchapps.org";
     EnvironmentHelper.LessonsRoot = LESSONS_ROOT || "https://staging.lessons.church";
@@ -52,6 +58,8 @@ export class EnvironmentHelper {
     EnvironmentHelper.MessagingApi = "https://messagingapi.churchapps.org";
     EnvironmentHelper.AttendanceApi = "https://attendanceapi.churchapps.org";
     EnvironmentHelper.GivingApi = "https://givingapi.churchapps.org";
+    EnvironmentHelper.LessonsApi =  "https://api.lessons.church";
+    EnvironmentHelper.DoingApi =  "https://doingapi.churchapps.org";
     EnvironmentHelper.ContentApi = "https://contentapi.churchapps.org";
     EnvironmentHelper.ContentRoot = "https://content.churchapps.org";
     EnvironmentHelper.LessonsRoot = "https://lessons.church";
