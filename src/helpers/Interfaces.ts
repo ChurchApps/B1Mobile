@@ -11,7 +11,7 @@ export interface ChurchInterface { id?: string, name?: string, registrationDate?
 export interface ForgotResponse { emailed: boolean }
 export interface LoadCreateUserRequestInterface { userEmail: string, fromEmail?: string, subject?: string, body?: string, userName: string }
 export interface LoginResponseInterface { user: UserInterface, userChurches: LoginUserChurchInterface[], errors: string[] }
-export interface LoginUserChurchInterface { person: PersonInterface, church: ChurchInterface, apis: ApiInterface[], jwt: string, groups: { id: string, name: string }[] }
+export interface LoginUserChurchInterface { person: PersonInterface, church: ChurchInterface, apis: ApiInterface[], jwt: string, groups: { id: string, name: string, tags:string }[] }
 export interface PermissionInterface { apiName?: string, section?: string, action?: string, displaySection?: string, displayAction?: string }
 export interface RegisterInterface { churchName?: string, displayName?: string, email?: string, password?: string }
 export interface RoleInterface { id?: string, churchId?: string, appName?: string, name?: string }
@@ -44,7 +44,7 @@ export interface UserSearchInterface {toPersonId?: string, anniversary?: Date, b
 
 // Messaging interfaces
 export interface ConversationCheckInterface { id: string, churchId: string, conversationId: string, fromPersonId: string, toPersonId: string, notifyPersonId: string, conversation: ConversationInterface }
-export interface ConversationInterface { id: string, churchId: string, contentType: string, contentId: string, title: string, dateCreated: Date, groupId: string, visibility: string, firstPostId: string, lastPostId: string, allowAnonymousPosts: boolean, postCount: number, messages: MessageInterface[] }
+export interface ConversationInterface { id: string, churchId: string, contentType: string, contentId: string, title: string, dateCreated: Date, groupId: string, visibility: string, firstPostId: string, lastPostId: string, allowAnonymousPosts: boolean, postCount: number, messages: MessageInterface[], conversationId : string }
 
 
 
@@ -54,3 +54,28 @@ export interface PrivateMessagesCreate { fromPersonId: string, toPersonId: strin
 
 // My Group Interface
 export interface GroupInterface { id?: string, name?: string, categoryName?: string, memberCount?: number, trackAttendance?: boolean, parentPickup?: boolean, about?: string, photoUrl?: string }
+export interface TimelinePostInterface {
+  UniqueId?: string;
+  postType?: string;
+  postId?: string;
+  groupId?: string;
+  timeSent?: Date;
+  timeUpdated?: Date;
+  conversationId?: string;
+  conversation?: ConversationInterface;
+  data?: any;
+}
+
+export interface UserPostInterface {
+  index: string;
+  postType?: string;
+  postId?: string;
+  groupId?: string;
+  timeSent?: Date;
+  timeUpdated?: Date;
+  conversationId?: string;
+  conversation?: ConversationInterface;
+  data?: any;
+  groupPhoto?: string;
+  groupName : string
+}

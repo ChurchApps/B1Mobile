@@ -7,12 +7,14 @@ interface CustomConversationInterface {
   contentType: string;
   contentId: string;
   groupId: string;
+  from : string;
 }
 
 const Conversations = ({
   contentType,
   contentId,
   groupId,
+  from
 }: CustomConversationInterface) => {
   const [conversations, setConversations] = useState<ConversationInterface[]>(
     []
@@ -59,6 +61,7 @@ const Conversations = ({
           conversations={conversations}
           loadConversations={loadConversations}
           groupId={groupId}
+          from={from}
         />
       </View>
     );
