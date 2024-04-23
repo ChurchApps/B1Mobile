@@ -1,4 +1,4 @@
-import { ApiHelper, DimensionHelper } from "@churchapps/mobilehelper";
+import { ApiHelper, DimensionHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
@@ -13,7 +13,7 @@ export function CustomDrawer(props: any) {
   const { navigate, goBack, openDrawer } = props.navigation;
   const [churchName, setChurchName] = useState('');
   const [churchEmpty, setChurchEmpty] = useState(true);
-  const [drawerList, setDrawerList] = useState([]);
+  const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState('');
@@ -22,6 +22,7 @@ export function CustomDrawer(props: any) {
 
   useEffect(() => {
     getChurch();
+    updateDrawerList();
   }, [props.navigation])
 
   const getChurch = async () => {
@@ -31,7 +32,7 @@ export function CustomDrawer(props: any) {
       if (CacheHelper.church !== null) {
         setChurchName(CacheHelper.church.name ?? "")
         setChurchEmpty(false)
-        getDrawerList(CacheHelper.church.id);
+        //updateDrawerList();
         getMemberData(UserHelper.currentUserChurch?.person?.id);
         if (CacheHelper.church.id) {
           //userChurch = await ApiHelper.post("/churches/select", { churchId: CacheHelper.church.id }, "MembershipApi");
@@ -45,16 +46,68 @@ export function CustomDrawer(props: any) {
     }
   }
 
-  const getDrawerList = (churchId: any) => {
-    setLoading(true);
-    ApiHelper.getAnonymous("/links/church/" + churchId + "?category=b1Tab", "ContentApi").then(data => {
-      setLoading(false);
-      setDrawerList(data);
-      UserHelper.links = data;
-      //if (data.length > 0) navigateToScreen(data[0]);
-            navigate('Dashboard')
+  const updateDrawerList = async () => {
+    let tabs: LinkInterface[] = [];
+    if (CacheHelper.church) {
+      tabs = await ApiHelper.getAnonymous("/links/church/" + CacheHelper.church?.id + "?category=b1Tab", "ContentApi");
+    }
 
-    });
+
+    
+    let specialTabs = await getSpecialTabs();
+    const data = specialTabs.concat(tabs);
+
+    console.log("DATA IS", data);
+
+    //setLoading(false);
+    setDrawerList(data);
+    UserHelper.links = data;
+    setLoading(false);
+    //if (data.length > 0) navigateToScreen(data[0]);
+          navigate('Dashboard')
+
+    
+  }
+
+
+  const getSpecialTabs = async () => {
+    let specialTabs:LinkInterface[] = [];
+    let showWebsite = false, showDonations = false, showMyGroups = false, showPlans = false, showDirectory = false, showLessons = false, showChums = false;
+    const uc = UserHelper.currentUserChurch;
+
+    if (CacheHelper.church)
+    {
+      const page = await ApiHelper.getAnonymous("/pages/" + CacheHelper.church.id + "/tree?url=/", "ContentApi")
+      if (page.url) showWebsite = true;
+      const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + CacheHelper.church.id, "GivingApi");
+      if (gateways.length > 0) showDonations = true;
+      
+    }
+    
+    if (uc?.person) {
+      try {
+        const classrooms = await ApiHelper.get("/classrooms/person", "LessonsApi");
+        showLessons = classrooms.length>0;
+      } catch {}
+      showChums = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
+      showDirectory = uc.person?.membershipStatus?.toLowerCase() === "member";
+      uc.groups.forEach(group => {
+        if (group.tags.indexOf("team")>-1) showPlans = true;
+      });
+      showMyGroups = uc?.groups?.length > 0;
+      
+    }
+
+    
+    if (showWebsite) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
+    if (showMyGroups) specialTabs.push({ linkType: "groups", linkData:"", category:"", text: 'My Groups', icon: 'group', url: "" });
+    if (showDonations) specialTabs.push({ linkType: "donation", linkData:"", category:"", text: 'Donate', icon: 'volunteer_activism', url: "" });
+    if (showDirectory) specialTabs.push({ linkType: "directory", linkData:"", category:"", text: 'Member Directory', icon: 'groups', url: "" });
+    if (showPlans) specialTabs.push({ linkType: "plans", linkData:"", category:"", text: 'Plans', icon: 'event', url: "" });
+    if (showLessons) specialTabs.push({ linkType: "lessons", linkData:"", category:"", text: 'Lessons', icon: 'school', url: "" });
+    if (showChums) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Chums', icon: 'account_circle', url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id });
+
+    return specialTabs;
   }
 
   const getMemberData = async (personId: any) => {
