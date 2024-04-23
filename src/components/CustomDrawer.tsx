@@ -58,6 +58,7 @@ export function CustomDrawer(props: any) {
           case "plans":
           case "lessons":
           case "website":
+          case "checkin":
             break;
           default:
             tabs.push(tab);
@@ -71,14 +72,20 @@ export function CustomDrawer(props: any) {
     let specialTabs = await getSpecialTabs();
     const data = specialTabs.concat(tabs);
 
-    console.log("DATA IS", data);
-
     //setLoading(false);
     setDrawerList(data);
     UserHelper.links = data;
     setLoading(false);
+
+    console.log("NAVIGATING", data[0].linkType);
+    if (data.length > 0) {
+      if (data[0].linkType === "groups") navigate('MyGroups');
+      else navigate('Dashboard')
+    }
+    
+    //if (data.length > 0) navigate(data[0].linkType);
     //if (data.length > 0) navigateToScreen(data[0]);
-          navigate('Dashboard')
+          //navigate('Dashboard')
 
     
   }
@@ -86,7 +93,7 @@ export function CustomDrawer(props: any) {
 
   const getSpecialTabs = async () => {
     let specialTabs:LinkInterface[] = [];
-    let showWebsite = false, showDonations = false, showMyGroups = false, showPlans = false, showDirectory = false, showLessons = false, showChums = false;
+    let showWebsite = false, showDonations = false, showMyGroups = false, showPlans = false, showDirectory = false, showLessons = false, showChums = false, showCheckin;
     const uc = UserHelper.currentUserChurch;
 
     if (CacheHelper.church)
@@ -103,6 +110,11 @@ export function CustomDrawer(props: any) {
         const classrooms = await ApiHelper.get("/classrooms/person", "LessonsApi");
         showLessons = classrooms.length>0;
       } catch {}
+      try {
+        const campuses = await ApiHelper.get("/campuses", "AttendanceApi");
+        console.log("CAMPUSES", campuses);
+        showCheckin = campuses.length>0;
+      } catch {}
       showChums = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
       showDirectory = uc.person?.membershipStatus?.toLowerCase() === "member";
       uc.groups.forEach(group => {
@@ -113,6 +125,7 @@ export function CustomDrawer(props: any) {
     }
 
     if (showMyGroups) specialTabs.push({ linkType: "groups", linkData:"", category:"", text: 'My Groups', icon: 'group', url: "" });
+    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData:"", category:"", text: 'Checkin', icon: 'check_box', url: "" });
     if (showWebsite) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
     if (showDonations) specialTabs.push({ linkType: "donation", linkData:"", category:"", text: 'Donate', icon: 'volunteer_activism', url: "" });
     if (showDirectory) specialTabs.push({ linkType: "directory", linkData:"", category:"", text: 'Member Directory', icon: 'groups', url: "" });
@@ -136,7 +149,6 @@ export function CustomDrawer(props: any) {
   const listItem = (topItem: boolean, item: any) => {
     var tab_icon = item.icon != undefined ? item.icon.split("_").join("-") : '';
     if (tab_icon === "calendar-month") tab_icon = "calendar-today"; //not sure why this is missing from https://oblador.github.io/react-native-vector-icons/
-    //console.log(tab_icon);
     return (
 
       <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
