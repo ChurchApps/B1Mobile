@@ -49,7 +49,21 @@ export function CustomDrawer(props: any) {
   const updateDrawerList = async () => {
     let tabs: LinkInterface[] = [];
     if (CacheHelper.church) {
-      tabs = await ApiHelper.getAnonymous("/links/church/" + CacheHelper.church?.id + "?category=b1Tab", "ContentApi");
+      const tempTabs = await ApiHelper.getAnonymous("/links/church/" + CacheHelper.church?.id + "?category=b1Tab", "ContentApi");
+      tempTabs.forEach((tab: LinkInterface) => {
+        switch (tab.linkType) {
+          case "groups":
+          case "donation":
+          case "directory":
+          case "plans":
+          case "lessons":
+          case "website":
+            break;
+          default:
+            tabs.push(tab);
+            break;
+        }
+      });
     }
 
 
@@ -98,9 +112,8 @@ export function CustomDrawer(props: any) {
       
     }
 
-    
-    if (showWebsite) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
     if (showMyGroups) specialTabs.push({ linkType: "groups", linkData:"", category:"", text: 'My Groups', icon: 'group', url: "" });
+    if (showWebsite) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
     if (showDonations) specialTabs.push({ linkType: "donation", linkData:"", category:"", text: 'Donate', icon: 'volunteer_activism', url: "" });
     if (showDirectory) specialTabs.push({ linkType: "directory", linkData:"", category:"", text: 'Member Directory', icon: 'groups', url: "" });
     if (showPlans) specialTabs.push({ linkType: "plans", linkData:"", category:"", text: 'Plans', icon: 'event', url: "" });
