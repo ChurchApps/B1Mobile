@@ -17,7 +17,7 @@ export class EnvironmentHelper {
 
   static init = () => {
     let stage = STAGE;
-    //stage = "prod";
+    stage = "prod";
     switch (stage) {
       case "prod": EnvironmentHelper.initProd(); break;
       default: EnvironmentHelper.initDev(); break;
