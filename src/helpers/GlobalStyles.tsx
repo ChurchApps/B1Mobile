@@ -50,7 +50,7 @@ export const globalStyles = StyleSheet.create({
   text: { color: 'white', fontSize: 20 },
   tabBar: {height: '100%', top: 0   },
   MessagetabView: {position: 'relative', height: '100%', backgroundColor: Constants.Colors.white_color },
-  NotificationtabView: {height: '100%', backgroundColor: Constants.Colors.white_color},
+  NotificationtabView: {height: '100%', backgroundColor: Constants.Colors.white_color, marginTop : DimensionHelper.hp('2%')},
   activeTabTextColor: {color: Constants.Colors.Active_TabColor ,},
   tabTextColor: {color: Constants.Colors.Dark_Gray , },
   BadgeIconStyle:{ width: DimensionHelper.wp('6%'), height: DimensionHelper.wp('6%')}, 
@@ -107,6 +107,7 @@ export const globalStyles = StyleSheet.create({
   TitleTextStyle:{fontSize : DimensionHelper.hp('2%'), color:Constants.Colors.white_color, fontFamily:Constants.Fonts.RobotoMedium},
   eventTextStyle:{fontSize : DimensionHelper.hp('1.6%'), color:'black', fontFamily:Constants.Fonts.RobotoMedium},
   DateTextColor : { fontFamily : Constants.Fonts.RobotoRegular},
+  planTextStyle:{ fontSize : DimensionHelper.hp('1.5%'), color:'black', fontFamily:Constants.Fonts.RobotoRegular},
   TaskCreatorColor : { color:Constants.Colors.app_color, fontFamily : Constants.Fonts.RobotoMedium},
   //Complete
   successIcon: { fontSize: DimensionHelper.wp('20%'), color: Constants.Colors.button_green },
@@ -232,9 +233,46 @@ export const globalStyles = StyleSheet.create({
   conversationList: {backgroundColor: 'white', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row', paddingVertical: 12},
 
 //Notification screen
-NotificationView:{ marginTop:DimensionHelper.hp('2%'), flexDirection:'row', width : DimensionHelper.wp('90%'), borderRadius: DimensionHelper.wp('2%'), borderWidth:1, paddingHorizontal : DimensionHelper.wp('1%'), backgroundColor : Constants.Colors.white_color, borderColor: 'lightgray', alignSelf:'center', alignItems:'center', paddingVertical : DimensionHelper.wp('3%')},
-bellIcon: { width: DimensionHelper.wp('6%'), height: DimensionHelper.wp('6%'),  tintColor: 'gray' },
-NotificationText : { fontSize:16, color:'gray'},
-bellIconView:{ flex:0.12, alignItems:'center', },
-notimsgView:{flex:0.9}
+NotificationView:{ marginVertical:DimensionHelper.hp('0.5%'), flexDirection:'row', width : DimensionHelper.wp('94%'), borderRadius: DimensionHelper.wp('2%'),  borderColor: 'lightgray', alignSelf:'center', borderWidth : 1,  alignItems:'center', paddingVertical : DimensionHelper.hp('1%'), paddingRight:DimensionHelper.wp('1%')},
+bellIcon: { width: DimensionHelper.wp('6%'), height: DimensionHelper.wp('6%') },
+NotificationText : { fontSize:DimensionHelper.hp('1.5%'), color:'black', fontFamily:Constants.Fonts.RobotoMedium},
+bellIconView:{ flex:0.1, alignItems:'center' },
+notimsgView:{flex:0.8 },
+timeSentView:{ flex : 0.1,  alignItems:'flex-end'},
+//Planscreen
+InputBtnView: { 
+  borderRadius:DimensionHelper.wp('1.1%'),
+  alignSelf: 'center',
+  backgroundColor:Constants.Colors.gray_bg,
+  paddingHorizontal: DimensionHelper.wp('3%'),
+  paddingVertical:DimensionHelper.hp('1.5%'),
+  marginVertical:DimensionHelper.hp('0.5%'),
+  flexDirection:'row' , 
+  justifyContent:'space-between', 
+  alignItems:'center'  
+},
+InputView : {
+  width:DimensionHelper.wp('66%'),    
+},
+PassInputTextStyle: {
+  fontFamily: Constants.Fonts.RobotoMedium,
+  color: 'black',
+  fontSize: DimensionHelper.hp('1.8%'),
+  alignItems: 'flex-start', 
+},
+ScrollViewStyles:{flexGrow:1, marginBottom: DimensionHelper.hp('5%')},
+StatusFont:{ fontFamily:Constants.Fonts.RobotoBold, fontSize : DimensionHelper.hp('1.5%')},
+PlanTitleTextStyle : {paddingLeft: DimensionHelper.wp('3%'), color: Constants.Colors.app_color, fontSize: DimensionHelper.hp('2%'), fontFamily:Constants.Fonts.RobotoMedium },
+BlockOutDatesView:{ marginHorizontal: DimensionHelper.wp('2%'), marginVertical: DimensionHelper.hp('2%'), flexDirection: 'row', alignItems: 'center', justifyContent:'space-between' },
+StatusTextStyle: { fontFamily : Constants.Fonts.RobotoBold, marginLeft : DimensionHelper.wp('2%')},
+neededTimeView : {  width : '95%', alignSelf:'center' , marginTop: DimensionHelper.hp('1.5%')},
+PlanIconTitleView: {alignItems:'center', justifyContent:'space-between', flexDirection:'row'},
+TableHeaderTitle:{ fontSize : DimensionHelper.hp('1.7%'), color:'black', fontFamily:Constants.Fonts.RobotoMedium},
+CancelAddbuttonView: { alignItems:'center',  marginVertical: DimensionHelper.hp('2%'), flexDirection: 'row', alignSelf:'flex-end',  },
+SaveButtonStyle : {marginLeft: DimensionHelper.wp('3%'),  backgroundColor:Constants.Colors.app_color, borderRadius : DimensionHelper.wp('1.5%'), paddingVertical: DimensionHelper.hp('1%'), paddingHorizontal:DimensionHelper.wp('2%')},
+DeleteButtonStyle : {marginLeft: DimensionHelper.wp('3%'), borderWidth : DimensionHelper.wp('0.5%'), borderColor:Constants.Colors.button_red, borderRadius : DimensionHelper.wp('1.5%'), padding: DimensionHelper.wp('1.5%')},
+ButtonTextStyle: { color:'black', fontFamily:Constants.Fonts.RobotoMedium, fontSize:DimensionHelper.wp('3%'), },
+planTitleView: { marginLeft: DimensionHelper.wp('2%'), marginVertical : DimensionHelper.hp('2%'), flexDirection:'row' , alignItems:'center', },
+statusView: { marginHorizontal: DimensionHelper.wp('2%'),  flexDirection:'row' , alignItems:'center', padding : DimensionHelper.hp('1.5%') },
+BorderSeparatorView: { width : '98%', flexDirection: 'row', alignSelf: 'center', justifyContent: 'space-between', alignItems: 'center', marginTop: DimensionHelper.wp('0.5%'),  borderBottomWidth: 1, borderBottomColor: 'lightgray' },
 })

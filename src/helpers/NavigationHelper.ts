@@ -22,6 +22,10 @@ export class NavigationHelper {
       UserHelper.addOpenScreenEvent('BibleScreen');
       navigate('BibleScreen', { url: bibleUrl, title: item.text })
     }
+    if (item.linkType == "Plans") {
+      UserHelper.addOpenScreenEvent('PlanScreen');
+      navigate('PlanScreen', {})
+    }
     if (item.linkType == "votd") {
       UserHelper.addOpenScreenEvent('VotdScreen');
       navigate('VotdScreen', {})

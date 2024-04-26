@@ -49,6 +49,31 @@ export function CustomDrawer(props: any) {
     setLoading(true);
     ApiHelper.getAnonymous("/links/church/" + churchId + "?category=b1Tab", "ContentApi").then(data => {
       setLoading(false);
+      console.log("drawer data is -=--->", data)
+      if (UserHelper.currentUserChurch)
+        {
+          let showPlans = false;
+          UserHelper.currentUserChurch.groups.forEach(group => {
+            console.log("TAGS", group.tags)
+            if (group.tags.indexOf("team")>-1) showPlans = true;
+          });
+          if (showPlans)
+            console.log(showPlans)
+          data.push({
+            "category": "b1Tab",
+            "churchId": churchId,
+            "icon": "calendar-month",
+            "id": "", // You may want to change this to a unique ID
+            "linkData": "",
+            "linkType": "Plans",
+            "parentId": null,
+            "photo": null,
+            "sort": "10",
+            "text": "Plans",
+            "url": ""
+          }); 
+        }
+      
       setDrawerList(data);
       UserHelper.links = data;
       //if (data.length > 0) navigateToScreen(data[0]);

@@ -63,6 +63,9 @@ export const DashboardScreen = (props: Props) => {
         case "votd":
           img = require("../assets/images/dash_votd.png"); //https://www.pexels.com/photo/empty-gray-road-under-white-clouds-3041347/
           break;
+          case "Plans":
+            img = require("../assets/images/dash_votd.png"); //https://www.pexels.com/photo/empty-gray-road-under-white-clouds-3041347/
+            break;
       }
     }
     return (<ImageButton image={img} text={item.text} onPress={() => NavigationHelper.navigateToScreen(item, props.navigation.navigate)} />);

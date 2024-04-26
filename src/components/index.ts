@@ -9,6 +9,7 @@ export { SimpleHeader } from "./SimpleHeader"
 export { WhiteHeader } from "./WhiteHeader"
 export { MainHeader } from "./wrapper/MainHeader"
 
+export * from "./Plans"
 export * from "./donations"
 
 

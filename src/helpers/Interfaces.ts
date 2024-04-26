@@ -1,5 +1,5 @@
 export interface ApiConfig { keyName: string, url: string, jwt: string, permisssions: RolePermissionInterface[] }
-export type ApiListType = "MembershipApi" | "MessagingApi" | "AttendanceApi" | "ContentApi" | "GivingApi";
+export type ApiListType = "MembershipApi" | "MessagingApi" | "AttendanceApi" | "ContentApi" | "GivingApi" ;
 export interface AppearanceInterface { primaryColor?: string, primaryContrast?: string, secondaryColor?: string, secondaryContrast?: string, logoLight?: string, logoDark?: string }
 export interface LinkInterface { id?: string, churchId: string, category: string, url?: string, text: string, sort: number, linkType: string, linkData: string, icon: string, photo?: string }
 
@@ -11,7 +11,7 @@ export interface ChurchInterface { id?: string, name?: string, registrationDate?
 export interface ForgotResponse { emailed: boolean }
 export interface LoadCreateUserRequestInterface { userEmail: string, fromEmail?: string, subject?: string, body?: string, userName: string }
 export interface LoginResponseInterface { user: UserInterface, userChurches: LoginUserChurchInterface[], errors: string[] }
-export interface LoginUserChurchInterface { person: PersonInterface, church: ChurchInterface, apis: ApiInterface[], jwt: string, groups: { id: string, name: string }[] }
+export interface LoginUserChurchInterface { person: PersonInterface, church: ChurchInterface, apis: ApiInterface[], jwt: string, groups: { id: string, tags: string, name: string }[] }
 export interface PermissionInterface { apiName?: string, section?: string, action?: string, displaySection?: string, displayAction?: string }
 export interface RegisterInterface { churchName?: string, displayName?: string, email?: string, password?: string }
 export interface RoleInterface { id?: string, churchId?: string, appName?: string, name?: string }
@@ -79,3 +79,8 @@ export interface UserPostInterface {
   groupPhoto?: string;
   groupName : string
 }
+export interface PlanInterface { id?: string, churchId?:string, name?: string, serviceDate?: Date , notes?: string }
+export interface PositionInterface { id?: string, churchId?:string, planId?:string, categoryName?:string, name?: string, count?:number, groupId?:string }
+export interface AssignmentInterface { id?: string, churchId?:string, positionId?:string, personId?:string, status?:string }
+export interface TimeInterface { id?: string, churchId?:string, planId?:string, displayName?:string, startTime?:Date, endTime?:Date, teams?:string, teamList?:string[] }
+export interface BlockoutDateInterface { id?: string; churchId?: string; personId?: string; startDate?:  Date | string ; endDate?:  Date | string ; }
