@@ -70,13 +70,12 @@ export function CustomDrawer(props: any) {
 
     
     let specialTabs = await getSpecialTabs();
-    const data = specialTabs.concat(tabs);
+    const data = tabs.concat(specialTabs)
 
     //setLoading(false);
     setDrawerList(data);
     UserHelper.links = data;
     setLoading(false);
-
     console.log("NAVIGATING", data[0].linkType);
     if (data.length > 0) {
       if (data[0].linkType === "groups") navigate('MyGroups');
@@ -121,18 +120,16 @@ export function CustomDrawer(props: any) {
         if (group.tags.indexOf("team")>-1) showPlans = true;
       });
       showMyGroups = uc?.groups?.length > 0;
-      
-    }
-
+    }   
+    specialTabs.push({ linkType: 'separator', linkData:"", category:"", text: '', icon: '', url: "" });
+    if (showWebsite) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
     if (showMyGroups) specialTabs.push({ linkType: "groups", linkData:"", category:"", text: 'My Groups', icon: 'group', url: "" });
     if (showCheckin) specialTabs.push({ linkType: "checkin", linkData:"", category:"", text: 'Checkin', icon: 'check_box', url: "" });
-    if (showWebsite) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
     if (showDonations) specialTabs.push({ linkType: "donation", linkData:"", category:"", text: 'Donate', icon: 'volunteer_activism', url: "" });
     if (showDirectory) specialTabs.push({ linkType: "directory", linkData:"", category:"", text: 'Member Directory', icon: 'groups', url: "" });
     if (showPlans) specialTabs.push({ linkType: "plans", linkData:"", category:"", text: 'Plans', icon: 'event', url: "" });
     if (showLessons) specialTabs.push({ linkType: "lessons", linkData:"", category:"", text: 'Lessons', icon: 'school', url: "" });
-    if (showChums) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Chums', icon: 'account_circle', url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id });
-
+    if (showChums) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Chums', icon: 'account_circle', url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id }); 
     return specialTabs;
   }
 
@@ -148,10 +145,18 @@ export function CustomDrawer(props: any) {
 
   const listItem = (topItem: boolean, item: any) => {
     var tab_icon = item.icon != undefined ? item.icon.split("_").join("-") : '';
-    if (tab_icon === "calendar-month") tab_icon = "calendar-today"; //not sure why this is missing from https://oblador.github.io/react-native-vector-icons/
+    if (tab_icon === "calendar-month"){
+      tab_icon = "calendar-today";
+    } else if(tab_icon === "local-library-outlined"){
+      tab_icon = "local-library";
+    }
+    if(item.linkType == 'separator'){
+      return(
+        <View style={[globalStyles.BorderSeparatorView,{width:'100%', borderColor : '#175ec1'}]} />
+      )
+    }else
     return (
-
-      <TouchableOpacity style={globalStyles.headerView} onPress={() => NavigationHelper.navigateToScreen(item, navigate)}>
+      <TouchableOpacity style={globalStyles.headerView} onPress={() => {NavigationHelper.navigateToScreen(item, navigate), props.navigation.closeDrawer()}}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
           <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />}
         <Text style={globalStyles.tabTitle}>{item.text}</Text>

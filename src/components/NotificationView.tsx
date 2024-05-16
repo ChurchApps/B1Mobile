@@ -61,7 +61,6 @@ export function NotificationTab(props: any) {
   const getPreviousConversations = () => {
     setLoading(true);
     ApiHelper.get("/privateMessages", "MessagingApi").then((data: ConversationCheckInterface[]) => {
-      console.log("private message api response =====>", data)
       if (data && data.length != 0) {
         setChatList(data);
       }
@@ -86,13 +85,11 @@ export function NotificationTab(props: any) {
 
 
   const renderChatListItems = (item: any, index: number) => {
-    console.log("item ---->", item)
     let userchatDetails = {
       id: item.id,
       DisplayName: item.displayName,
       photo: item.photo
     }
-    console.log("user chat details--->", userchatDetails)
     return (
       <TouchableOpacity onPress={() => navigation.navigate('MessagesScreen', { userDetails: userchatDetails })}>
         <View style={[globalStyles.messageContainer, { alignSelf: 'flex-start' }]}>
@@ -115,14 +112,12 @@ export function NotificationTab(props: any) {
     )
   }
   const renderItems = (item: any, index: number) => {
-    console.log("item is ====>", item)
     const currentDate = moment();
    const endDate = moment(item?.timeSent)
     const timeDifference =currentDate.diff(endDate, 'hours') 
     const dayDiff = currentDate.diff(endDate, 'days');
-    console.log("day and hour data is ---->", timeDifference, dayDiff )
     return (
-      <TouchableOpacity style={globalStyles.NotificationView} onPress={()=>{if (item?.contentId !== "1"){navigation.navigate('PlanDetails', {id : item?.contentId})}}}>
+      <TouchableOpacity style={globalStyles.NotificationView} onPress={()=>{navigation.navigate('PlanDetails', {id : item?.contentId})}}>
         <View style={globalStyles.bellIconView}><Image source={Constants.Images.dash_bell} style={globalStyles.bellIcon} tintColor={Constants.Colors.Black_color} /></View>
         <View style={globalStyles.notimsgView}><Text style={globalStyles.NotificationText}>{item.message}</Text>
         </View>
@@ -172,9 +167,6 @@ export function NotificationTab(props: any) {
     <View style={globalStyles.tabBar} >
 
       {isLoading && <Loader isLoading={isLoading} />}
-
-
-
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}

@@ -52,8 +52,8 @@ export const PlanScreen   = (props: Props) => {
             <MainHeader title={'Plans'} openDrawer={props.navigation.openDrawer}/>
             { isLoading ?  <Loader isLoading={isLoading} /> : 
                 <>
-                  <ScrollView showsVerticalScrollIndicator={false} style={{flexGrow:1, marginBottom: DimensionHelper.hp('5%')}}>
-                  <View style={{ marginLeft: DimensionHelper.wp('3%'), marginVertical : DimensionHelper.hp('2%'), flexDirection:'row' , alignItems:'center'}}>
+                  <ScrollView showsVerticalScrollIndicator={false} style={globalStyles.ScrollViewStyles}>
+                  <View style={globalStyles.planTitleView}>
                   <Icons name='assignment' size={DimensionHelper.wp('5.5%')} />
                     <Text style={[globalStyles.LatestUpdateTextStyle, {paddingLeft: DimensionHelper.wp('3%')}]}>Plans</Text>
                   </View>

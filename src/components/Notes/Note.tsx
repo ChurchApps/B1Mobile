@@ -2,34 +2,23 @@ import { DimensionHelper } from "@churchapps/mobilehelper";
 import moment from "moment";
 import React from "react";
 import { Image, Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Constants, MessageInterface, globalStyles } from "../../helpers";
 import { PersonHelper } from "../../helpers/PersonHelper";
 
 interface NotesInterface {
-  item: any;
   message: MessageInterface;
-  idx?: number;
-  showReplyBox?: number | null;
-  handleReply: (param: any) => void;
+  showEditNote: (noteId: any) => void
 }
 
-const Notes = ({
-  item,
-  message,
-  idx,
-  showReplyBox,
-  handleReply,
-}: NotesInterface) => {
-  //console.log("Message ==", message);
-
-
+const Note = ({message,showEditNote }: NotesInterface) => {
+console.log("message props is ----->", message)
   const displayDuration = moment(message?.timeSent).fromNow();
-  const isEdited = message.timeUpdated &&
-    message.timeUpdated !== message.timeSent && <> • (edited)</>;
 
   return (
     <>
-      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp("70%") , marginLeft:DimensionHelper.wp('2%') }]}>
+      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp("70%") }]}>
         <Image
           source={
             message?.person?.photo
@@ -41,14 +30,14 @@ const Notes = ({
             { width: DimensionHelper.wp("12%"), height: DimensionHelper.wp("12%"), borderRadius: 8888 },
           ]}
         />
-
-        <View
-          style={globalStyles.NoteTextInputView}
-        >
+        <View style={globalStyles.NoteTextInputView}>
           <View>
-          <Text style={globalStyles.name}>{message?.displayName}</Text>
-          <Text>{message?.content}</Text>
+            <Text style={globalStyles.name}>{message?.displayName}</Text>
+            <Text>{message?.content}</Text>
           </View>
+          <TouchableOpacity style={globalStyles.EditIconStyles} onPress={() => { showEditNote(message.id) }}>
+            <Icon name="edit" color={Constants.Colors.app_color} size={DimensionHelper.wp("5%")} />
+          </TouchableOpacity>
         </View>
       </View>
       <Text
@@ -68,20 +57,9 @@ const Notes = ({
       >
         <Text>{displayDuration}</Text>
         {"  "}
-        <Text> {isEdited}</Text>
-        {"       "}
-        <Text
-          style={globalStyles.replyBtn}
-          onPress={() =>
-            showReplyBox === idx ? handleReply(null) : handleReply(idx)
-          }
-        >
-          {item.postCount &&
-            `${item.postCount - 1 === 0 ? "" : item?.postCount - 1} REPLY`}
-        </Text>
       </Text>
     </>
   );
 };
 
-export default Notes;
+export default Note;

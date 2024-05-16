@@ -108,6 +108,7 @@ export const globalStyles = StyleSheet.create({
   eventTextStyle:{fontSize : DimensionHelper.hp('1.6%'), color:'black', fontFamily:Constants.Fonts.RobotoMedium},
   DateTextColor : { fontFamily : Constants.Fonts.RobotoRegular},
   planTextStyle:{ fontSize : DimensionHelper.hp('1.5%'), color:'black', fontFamily:Constants.Fonts.RobotoRegular},
+  ErrorMessageView :{ flex:1, justifyContent: "center", alignItems: "center" },
   TaskCreatorColor : { color:Constants.Colors.app_color, fontFamily : Constants.Fonts.RobotoMedium},
   //Complete
   successIcon: { fontSize: DimensionHelper.wp('20%'), color: Constants.Colors.button_green },
@@ -228,6 +229,28 @@ export const globalStyles = StyleSheet.create({
   senderNameText : { fontSize:16, fontWeight:'bold', paddingVertical: DimensionHelper.wp('0.5%')},
   messageView : { fontSize : 15, backgroundColor: Constants.Colors.app_color_light, borderWidth:1, borderRadius: 5, borderColor:'transparent', paddingHorizontal : DimensionHelper.wp('2%'), paddingVertical : DimensionHelper.wp("1%"), justifyContent:'center', alignItems: 'flex-start'},
 
+  // notes component
+  name: {
+    fontWeight: "bold",
+    fontSize: 13,
+    lineHeight: 24,
+  },
+  replyBtn: {
+    fontSize: 10,
+    fontWeight: "bold",
+    color: Constants.Colors.app_color,
+  },
+  NoteTextInputView : {
+    backgroundColor: Constants.Colors.gray_bg,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: DimensionHelper.wp('60%'),
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 24,
+  },
+  EditIconStyles :{ alignItems: 'flex-end', alignSelf: 'center', paddingTop: 5 },
+  
   // My Group Screen
   groupImage: { width: DimensionHelper.wp('92%'), height: DimensionHelper.wp('40%'), borderRadius: DimensionHelper.wp('1.5%')  },
   conversationList: {backgroundColor: 'white', justifyContent: 'flex-start', alignItems: 'center', flexDirection: 'row', paddingVertical: 12},

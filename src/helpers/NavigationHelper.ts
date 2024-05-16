@@ -22,7 +22,7 @@ export class NavigationHelper {
       UserHelper.addOpenScreenEvent('BibleScreen');
       navigate('BibleScreen', { url: bibleUrl, title: item.text })
     }
-    if (item.linkType == "Plans") {
+    if (item.linkType == "plans") {
       UserHelper.addOpenScreenEvent('PlanScreen');
       navigate('PlanScreen', {})
     }
