@@ -1,4 +1,5 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
+import { useIsFocused } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 import Icons from 'react-native-vector-icons/MaterialIcons';
@@ -15,14 +16,21 @@ interface Props {
 
 export const PlanDetails  = (props: Props) => {
   console.log("props from planscreen------>", props?.route?.params?.id)
-  const [plan, setPlan] = useState<PlanInterface>();
+  const [plan, setPlan] = useState<PlanInterface | null>();
   const [positions, setPositions] = useState<PositionInterface[]>([]);
   const [assignments, setAssignments] = useState<AssignmentInterface[]>([]);
   const [times, setTimes] = useState<TimeInterface[]>([]);
   const [people, setPeople] = useState<PersonInterface[]>([]);
   const [isLoading, setLoading] = useState(false);
- 
+  const [errorMessage, setErrorMessage] = useState('');
+  const isFocused = useIsFocused();
+  
+ useEffect(()=>{
+ setErrorMessage('')
+ }, [isFocused]) 
+  
   const loadData = async () => {
+    console.log("plan id exist or not------>", props?.route?.params?.id)
       setLoading(true);
       try{
           const tempPlan = await ApiHelper.get("/plans/" + props?.route?.params?.id, "DoingApi");
@@ -33,21 +41,21 @@ export const PlanDetails  = (props: Props) => {
           const tempAssignments = await ApiHelper.get("/assignments/plan/" + props?.route?.params?.id, "DoingApi");
           const peopleIds = ArrayHelper.getIds(tempAssignments, "personId");
           const tempPeople = await ApiHelper.get("/people/ids?ids=" + escape(peopleIds.join(",")), "MembershipApi");
-      
           setPositions(tempPositions);
           setAssignments(tempAssignments);
           setPeople(tempPeople);
           setLoading(false);
         }catch(error) {
-              console.error("Error loading Plan Details data:", error);
+              console.log("Error loading Plan Details data:", error);
+              setErrorMessage('No Data found for given Plan id')
           } finally {
             setLoading(false);
        } 
   };
 
   useEffect(() => { loadData() }, [props?.route?.params?.id]);
- 
-    const getTeams = () => {
+  
+const getTeams = () => {
       const rows:JSX.Element[] = [];
       ArrayHelper.getUniqueValues(positions, "categoryName").forEach((category) => {
         const pos = ArrayHelper.getAll(positions, "categoryName", category);
@@ -84,18 +92,22 @@ export const PlanDetails  = (props: Props) => {
       <SafeAreaView style={globalStyles.homeContainer}>
           <MainHeader title={'Plan Details'} openDrawer={props.navigation.openDrawer}/>
           { isLoading ?  <Loader isLoading={isLoading} /> : 
+          errorMessage  ? <View style={globalStyles.ErrorMessageView} >
+          <Text style={globalStyles.searchMainText}>{errorMessage}</Text>
+        </View> :
           <>
           <ScrollView scrollEnabled={true} showsVerticalScrollIndicator={false} style={globalStyles.ScrollViewStyles} >
+            {plan ?
               <View style={globalStyles.planTitleView}>
                 <Icons name='assignment' size={DimensionHelper.wp('5.5%')} />
                 <Text style={[globalStyles.LatestUpdateTextStyle, {paddingLeft: DimensionHelper.wp('3%')}]}>{plan?.name}</Text>
-              </View>
+              </View> : null}
                 <View>
                 {getPositionDetails()}
                 {getNotes()}
                 </View>
-                <ScrollView horizontal>
-              <View>
+                <ScrollView nestedScrollEnabled={true} style={globalStyles.ScrollViewStyles}>
+              <View style={globalStyles.ErrorMessageView}>
                 {getTeams()}
               </View>
               </ScrollView>
