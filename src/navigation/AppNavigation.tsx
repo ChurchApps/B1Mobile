@@ -15,6 +15,8 @@ import { MemberDetailScreen } from '../screens/MemberDetailScreen';
 import { MembersSearch } from '../screens/MembersSearch';
 import { MessagesScreen } from '../screens/MessagesScreen';
 import MyGroups from '../screens/MyGroups';
+import { PlanDetails } from '../screens/PlanDetails';
+import { PlanScreen } from '../screens/PlanScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { SearchUserScreen } from '../screens/SearchUserScreen';
 import SplashScreen from '../screens/SplashScreen';
@@ -66,6 +68,9 @@ const MainStack = () => {
       <Drawer.Screen name={'DonationScreen'} component={DonationScreen} />
       <Drawer.Screen name={'MyGroups'} component={MyGroups} />
       <Drawer.Screen name={'GroupDetails'} component={GroupDetails} />
+      <Drawer.Screen name={'PlanScreen'} component={PlanScreen} />
+      <Drawer.Screen name={'PlanDetails'} component={PlanDetails} />
+      
     </Drawer.Navigator>
   );
 }

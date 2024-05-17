@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { Constants, globalStyles } from '../../helpers';
@@ -13,6 +14,11 @@ interface Props {
 export function MainHeader(props: Props) {
 
   const [showNotifications, setShowNotifications] = React.useState(false);
+  const isFocused = useIsFocused();
+  
+  React.useEffect(()=>{
+  setShowNotifications(false)
+  }, [isFocused]) 
 
   const LeftComponent = (props.openDrawer) 
     ? (<TouchableOpacity onPress={() => { if (props.openDrawer) props.openDrawer(); }}><Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} /></TouchableOpacity>)

@@ -1,5 +1,5 @@
 export interface ApiConfig { keyName: string, url: string, jwt: string, permisssions: RolePermissionInterface[] }
-export type ApiListType = "MembershipApi" | "MessagingApi" | "AttendanceApi" | "ContentApi" | "GivingApi";
+export type ApiListType = "MembershipApi" | "MessagingApi" | "AttendanceApi" | "ContentApi" | "GivingApi" ;
 export interface AppearanceInterface { primaryColor?: string, primaryContrast?: string, secondaryColor?: string, secondaryContrast?: string, logoLight?: string, logoDark?: string }
 export interface LinkInterface { id?: string, churchId: string, category: string, url?: string, text: string, sort: number, linkType: string, linkData: string, icon: string, photo?: string }
 
@@ -79,3 +79,8 @@ export interface UserPostInterface {
   groupPhoto?: string;
   groupName : string
 }
+export interface PlanInterface { id?: string, churchId?:string, name?: string, serviceDate?: Date , notes?: string }
+export interface PositionInterface { id?: string, churchId?:string, planId?:string, categoryName?:string, name?: string, count?:number, groupId?:string }
+export interface AssignmentInterface { id?: string, churchId?:string, positionId?:string, personId?:string, status?:string }
+export interface TimeInterface { id?: string, churchId?:string, planId?:string, displayName?:string, startTime?:Date, endTime?:Date, teams?:string, teamList?:string[] }
+export interface BlockoutDateInterface { id?: string; churchId?: string; personId?: string; startDate?:  Date | string ; endDate?:  Date | string ; }

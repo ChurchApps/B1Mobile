@@ -1,6 +1,6 @@
 import { DimensionHelper } from "@churchapps/mobilehelper";
 import React, { useState } from "react";
-import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import { FlatList, Keyboard, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { ApiHelper, Constants, ConversationInterface, MessageInterface, UserHelper, globalStyles } from "../../helpers";
 import Notes from "./Notes";
@@ -9,14 +9,12 @@ interface NewConversation {
   placeholder: string;
   type: string;
   message?: MessageInterface;
-  from?: string
 }
 
 const ConversationPopup = ({
   conversations,
   loadConversations,
   groupId,
-  from 
 }: any) => {
   const [newMessage] = useState<MessageInterface>();
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
@@ -41,12 +39,13 @@ const ConversationPopup = ({
         if (!cId) cId = m && (await createConversation(m));
         const nM = { ...m };
         nM.conversationId = cId;
-        const data = await ApiHelper.post("/messages", [nM], "MessagingApi");
-        if (data) {
+        await ApiHelper.post("/messages", [nM], "MessagingApi").then((data)=>{
+         if(data){
           onUpdate();
           textRef.current = "";
           setShowReplyBox(null);
-        }
+         }
+        }) 
       }
     } catch (err) {
       console.log("err", err);
@@ -90,7 +89,6 @@ const ConversationPopup = ({
       );
     return noteArray;
   };
-
   const renderConversations = (item: any, index: number) => {
     return (
       <View>
@@ -134,20 +132,21 @@ const ConversationPopup = ({
           placeholderTextColor={'gray'}
           style={[{
             ...globalStyles.fundInput,
-            fontSize: from =='myGroup' ?  DimensionHelper.hp('1.6%') : DimensionHelper.wp('4.2%'),
-            borderBottomWidth : from =='myGroup' ? 1 : 1 ,  
-            borderWidth: from =='GroupDetails' ? 1 : 0, 
-            borderColor: from =='GroupDetails' || from =='myGroup' ? 'lightgray' : 'transparent', 
-            borderRadius: from =='GroupDetails' ? DimensionHelper.wp('6%') : 0,
+            fontSize:DimensionHelper.wp('4.2%'),
+            borderBottomWidth:1 ,  
+            borderWidth:1, 
+            borderColor:'lightgray', 
+            borderRadius:DimensionHelper.wp('6%'),
             marginLeft: type === "new" ? 8 : 64,
             width: type === "new" ? DimensionHelper.wp("80%") : DimensionHelper.wp("66%"),
             paddingTop: DimensionHelper.hp('1.8%'),
           }]}
           multiline
+          blurOnSubmit={true}
+          onSubmitEditing={()=>Keyboard.dismiss()}
           numberOfLines={4}
           placeholder={placeholder}
           value={newMessage?.content}
-          // onChange={(e) => handleChange(e.nativeEvent.text)}
         />
         <TouchableOpacity
           style={{ marginHorizontal: DimensionHelper.wp('2.5%')}}
@@ -168,8 +167,9 @@ const ConversationPopup = ({
       <View style={{height: 'auto', maxHeight: DimensionHelper.hp('60%')}}>
         <FlatList
           data={conversations}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item, index }) => renderConversations(item, index)}
-          keyExtractor={(item: any) => item.id}
+          keyExtractor={(item, index) => item.id.toString()}
         />
       </View>
       <RenderNewConversation placeholder={"Start Conversation"} type="new" />
@@ -179,15 +179,4 @@ const ConversationPopup = ({
 
 export default ConversationPopup;
 
-const styles = StyleSheet.create({
-  name: {
-    fontWeight: "bold",
-    fontSize: 13,
-    lineHeight: 24,
-  },
-  replyBtn: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: Constants.Colors.app_color,
-  },
-});
+

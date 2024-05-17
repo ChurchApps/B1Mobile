@@ -1,5 +1,6 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 import React, { useEffect, useState, } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
@@ -34,6 +35,7 @@ export function NotificationTab(props: any) {
 
   useEffect(() => {
     if (Chatlist.length > 0 && UserData.length > 0) {
+      setLoading(true)
       const merged:any[] = [];
       Chatlist.forEach((item1:any) => {
         const commonId = UserHelper.currentUserChurch.person.id == item1.fromPersonId ? item1.toPersonId : item1.fromPersonId// item1.toPersonId;
@@ -48,6 +50,7 @@ export function NotificationTab(props: any) {
         }
       });
       setMergedData(merged);
+      setLoading(false)
     }
   }, [Chatlist, UserData])
 
@@ -58,7 +61,6 @@ export function NotificationTab(props: any) {
   const getPreviousConversations = () => {
     setLoading(true);
     ApiHelper.get("/privateMessages", "MessagingApi").then((data: ConversationCheckInterface[]) => {
-      console.log("private message api response =====>", data)
       if (data && data.length != 0) {
         setChatList(data);
       }
@@ -83,17 +85,15 @@ export function NotificationTab(props: any) {
 
 
   const renderChatListItems = (item: any, index: number) => {
-    console.log("item ---->", item)
     let userchatDetails = {
       id: item.id,
       DisplayName: item.displayName,
       photo: item.photo
     }
-    console.log("user chat details--->", userchatDetails)
     return (
       <TouchableOpacity onPress={() => navigation.navigate('MessagesScreen', { userDetails: userchatDetails })}>
         <View style={[globalStyles.messageContainer, { alignSelf: 'flex-start' }]}>
-          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: item.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} />
+          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, {height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} tintColor={ item.photo ? '#00000000' : Constants.Colors.app_color}/>
           <View>
             <Text style={[globalStyles.senderNameText, { alignSelf: 'flex-start' }]}>
               {item.displayName}
@@ -112,12 +112,18 @@ export function NotificationTab(props: any) {
     )
   }
   const renderItems = (item: any, index: number) => {
+    const currentDate = moment();
+   const endDate = moment(item?.timeSent)
+    const timeDifference =currentDate.diff(endDate, 'hours') 
+    const dayDiff = currentDate.diff(endDate, 'days');
     return (
-      <View style={globalStyles.NotificationView}>
-        <View style={globalStyles.bellIconView}><Image source={Constants.Images.dash_bell} style={globalStyles.bellIcon} /></View>
+      <TouchableOpacity style={globalStyles.NotificationView} onPress={()=>{navigation.navigate('PlanDetails', {id : item?.contentId})}}>
+        <View style={globalStyles.bellIconView}><Image source={Constants.Images.dash_bell} style={globalStyles.bellIcon} tintColor={Constants.Colors.Black_color} /></View>
         <View style={globalStyles.notimsgView}><Text style={globalStyles.NotificationText}>{item.message}</Text>
         </View>
-      </View>
+        <View style={globalStyles.timeSentView}><Text style={globalStyles.NotificationText}>{dayDiff === 0 ?  `${timeDifference}h` :  `${dayDiff}d`}</Text>
+        </View>
+      </TouchableOpacity>
     )
   }
 
@@ -140,7 +146,7 @@ export function NotificationTab(props: any) {
         data={NotificationData}
         renderItem={({ item, index }) => renderItems(item, index)}
         keyExtractor={(item, index) => String(index)}
-        ItemSeparatorComponent={({ item }) => <View style={globalStyles.cardListSeperator} />}
+       
       /></View>
   );
   const renderLabel = ({ route, focused, color }) => {
@@ -161,9 +167,6 @@ export function NotificationTab(props: any) {
     <View style={globalStyles.tabBar} >
 
       {isLoading && <Loader isLoading={isLoading} />}
-
-
-
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}

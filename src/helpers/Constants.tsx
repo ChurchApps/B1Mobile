@@ -11,6 +11,11 @@ export class Constants {
     button_yellow: '#FAC108',
     white_color: '#FFFFFF',
     Dark_Gray : '#808080',
+    Light_Green : '#AFE1AF',    
+    Dark_Green : '#2e7d32',
+    Light_Red : '#ffdddd',
+    Black_color : '#000000',
+    Orange_color : '#ed6c02',
     Active_TabColor : 'rgb(25, 118, 210);'
   };
 
