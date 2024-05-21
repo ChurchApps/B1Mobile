@@ -1,4 +1,4 @@
-import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
+import { ApiHelper, LoginResponseInterface, PushNotificationHelper } from "@churchapps/mobilehelper";
 import analytics from '@react-native-firebase/analytics';
 import { Platform } from "react-native";
 import { CacheHelper, IPermission, UserInterface } from ".";
@@ -21,6 +21,7 @@ export class UserHelper {
       const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       UserHelper.currentUserChurch.person = data;
     }
+    PushNotificationHelper.registerUserDevice("B1Mobile");
   }
 
   static checkAccess({ api, contentType, action }: IPermission): boolean {
