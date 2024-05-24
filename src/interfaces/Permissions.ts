@@ -49,6 +49,9 @@ export class Permissions {
       viewMembers: { api: "MembershipApi", contentType: "People", action: "View Members" },
       edit: { api: "MembershipApi", contentType: "People", action: "Edit" }
     },
+    plans: {
+      edit: { api: "MembershipApi", contentType: "Plans", action: "Edit" }
+    },
     groupMembers: {
       edit: { api: "MembershipApi", contentType: "Group Members", action: "Edit" },
       view: { api: "MembershipApi", contentType: "Group Members", action: "View" }

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, } from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList, Dimensions, SafeAreaView, PixelRatio } from 'react-native';
-import { widthPercentageToDP } from 'react-native-responsive-screen';
-import { ApiHelper, UserHelper, UserSearchInterface, ConversationCheckInterface, EnvironmentHelper, Constants, globalStyles } from '../helpers';
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
+import React, { useEffect, useState, } from 'react';
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
+import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface, globalStyles } from '../helpers';
 import { Loader } from './Loader';
-
 
 
 export function NotificationTab(props: any) {
@@ -14,26 +14,15 @@ export function NotificationTab(props: any) {
   const [isLoading, setLoading] = useState(false);
   const [index, setIndex] = useState(0);
   const [NotificationData, setNotificationData] = useState([])
-  const [Chatlist, setChatList] = useState([])
-  const [UserData, setUserData] = useState([])
-  const [mergeData, setMergedData] = useState([])
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [Chatlist, setChatList] = useState<any[]>([])
+  const [UserData, setUserData] = useState<any[]>([])
+  const [mergeData, setMergedData] = useState<any[]>([])
   
   const [routes] = React.useState([
     { key: 'first', title: 'MESSAGES' },
     { key: 'second', title: 'NOTIFICATIONS' },
   ]);
 
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
-  const hd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.height * givenWidth) / 100);
-  };
   useEffect(() => {
     getNotifications();
   }, [])
@@ -46,10 +35,11 @@ export function NotificationTab(props: any) {
 
   useEffect(() => {
     if (Chatlist.length > 0 && UserData.length > 0) {
-      const merged = [];
-      Chatlist.forEach(item1 => {
+      setLoading(true)
+      const merged:any[] = [];
+      Chatlist.forEach((item1:any) => {
         const commonId = UserHelper.currentUserChurch.person.id == item1.fromPersonId ? item1.toPersonId : item1.fromPersonId// item1.toPersonId;
-        const matchingItem2 = UserData.find(item2 => item2.id === commonId);
+        const matchingItem2:any = UserData.find((item2:any) => item2.id === commonId);
         if (matchingItem2) {
           merged.push({
             id: commonId,
@@ -60,11 +50,10 @@ export function NotificationTab(props: any) {
         }
       });
       setMergedData(merged);
+      setLoading(false)
     }
   }, [Chatlist, UserData])
 
-  useEffect(() => {
-  }, [dimension])
   useEffect(() => {
     getPreviousConversations();
   }, [])
@@ -72,7 +61,6 @@ export function NotificationTab(props: any) {
   const getPreviousConversations = () => {
     setLoading(true);
     ApiHelper.get("/privateMessages", "MessagingApi").then((data: ConversationCheckInterface[]) => {
-      console.log("private message api response =====>", data)
       if (data && data.length != 0) {
         setChatList(data);
       }
@@ -97,23 +85,21 @@ export function NotificationTab(props: any) {
 
 
   const renderChatListItems = (item: any, index: number) => {
-    console.log("item ---->", item)
     let userchatDetails = {
       id: item.id,
       DisplayName: item.displayName,
       photo: item.photo
     }
-    console.log("user chat details--->", userchatDetails)
     return (
       <TouchableOpacity onPress={() => navigation.navigate('MessagesScreen', { userDetails: userchatDetails })}>
         <View style={[globalStyles.messageContainer, { alignSelf: 'flex-start' }]}>
-          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: item.photo ? '' : Constants.Colors.app_color, height: widthPercentageToDP('9%'), width: widthPercentageToDP('9%'), borderRadius: widthPercentageToDP('9%') }]} />
+          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, {height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} tintColor={ item.photo ? '#00000000' : Constants.Colors.app_color}/>
           <View>
             <Text style={[globalStyles.senderNameText, { alignSelf: 'flex-start' }]}>
               {item.displayName}
             </Text>
             <View style={[globalStyles.messageView, {
-              width: item.message.length > 15 ? widthPercentageToDP('65%') : widthPercentageToDP((item.message.length + 14).toString() + "%"),
+              width: item.message.length > 15 ? DimensionHelper.wp('65%') : DimensionHelper.wp((item.message.length + 14).toString() + "%"),
               alignSelf: 'flex-start'
             }]}>
               <Text>{item.message}</Text>
@@ -126,12 +112,18 @@ export function NotificationTab(props: any) {
     )
   }
   const renderItems = (item: any, index: number) => {
+    const currentDate = moment();
+   const endDate = moment(item?.timeSent)
+    const timeDifference =currentDate.diff(endDate, 'hours') 
+    const dayDiff = currentDate.diff(endDate, 'days');
     return (
-      <View style={globalStyles.NotificationView}>
-        <View style={globalStyles.bellIconView}><Image source={Constants.Images.dash_bell} style={globalStyles.bellIcon} /></View>
+      <TouchableOpacity style={globalStyles.NotificationView} onPress={()=>{navigation.navigate('PlanDetails', {id : item?.contentId})}}>
+        <View style={globalStyles.bellIconView}><Image source={Constants.Images.dash_bell} style={globalStyles.bellIcon} tintColor={Constants.Colors.Black_color} /></View>
         <View style={globalStyles.notimsgView}><Text style={globalStyles.NotificationText}>{item.message}</Text>
         </View>
-      </View>
+        <View style={globalStyles.timeSentView}><Text style={globalStyles.NotificationText}>{dayDiff === 0 ?  `${timeDifference}h` :  `${dayDiff}d`}</Text>
+        </View>
+      </TouchableOpacity>
     )
   }
 
@@ -154,7 +146,7 @@ export function NotificationTab(props: any) {
         data={NotificationData}
         renderItem={({ item, index }) => renderItems(item, index)}
         keyExtractor={(item, index) => String(index)}
-        ItemSeparatorComponent={({ item }) => <View style={globalStyles.cardListSeperator} />}
+       
       /></View>
   );
   const renderLabel = ({ route, focused, color }) => {
@@ -175,16 +167,13 @@ export function NotificationTab(props: any) {
     <View style={globalStyles.tabBar} >
 
       {isLoading && <Loader isLoading={isLoading} />}
-
-
-
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
         swipeEnabled={false}
         renderTabBar={props => <TabBar renderLabel={renderLabel}{...props} indicatorStyle={{ backgroundColor: Constants.Colors.Active_TabColor }} style={globalStyles.TabIndicatorStyle} />}
-        initialLayout={{ width: wd('100'), height: hd('200') }}
+        initialLayout={{ width: DimensionHelper.wp('100'), height: DimensionHelper.hp('200') }}
         sceneContainerStyle={{ marginTop: 0 }}
       />
 

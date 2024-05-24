@@ -1,6 +1,6 @@
-import React,{useState,useEffect} from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator ,Dimensions,PixelRatio} from "react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { DimensionHelper } from "@churchapps/mobilehelper";
+import React from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { Constants, globalStyles } from "../helpers";
 
 interface Props {
@@ -23,22 +23,10 @@ export function InputBox({
   isSubmitting = false,
 }: Props) {
 
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-  useEffect(()=>{
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
-  },[dimension])
 
   let buttons: JSX.Element[] = [];
 
-  const widthClass = deleteFunction ? wp("33.33%") : wp("50%");
+  const widthClass = deleteFunction ? DimensionHelper.wp("33.33%") : DimensionHelper.wp("50%");
   if (cancelFunction) {
     buttons.push(
       <TouchableOpacity
@@ -84,12 +72,12 @@ export function InputBox({
 
   return (
     <View style={globalStyles.paymentTitleContainer}>
-      <View style={{ width: wd("100%") }}>
+      <View style={{ width: DimensionHelper.wp("100%") }}>
         <View style={globalStyles.paymentTitleHeaderLine} />
         <View style={globalStyles.paymentTitleView}>
           {headerIcon}
           <Text style={globalStyles.paymentTitleText}>{title}</Text>
-          <View style={{ width: wp("6%") }} />
+          <View style={{ width: DimensionHelper.wp("6%") }} />
         </View>
       </View>
       {children}

@@ -1,3 +1,5 @@
+yarn.lock
+package-lock.json
 *.bat
 *.hprof
 appcenter-config.json

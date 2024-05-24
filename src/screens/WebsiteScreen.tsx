@@ -1,17 +1,12 @@
-import React, { useState, useEffect, FunctionComponent } from 'react';
-import { View, SafeAreaView, TouchableOpacity, Image, Text } from 'react-native';
-import { UserHelper, Utilities } from '../helpers';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, View } from 'react-native';
 import WebView from 'react-native-webview';
-import { Loader, MainHeader, NotificationTab } from '../components';
-import { globalStyles, Constants, ApiHelper } from '../helpers';
-import { eventBus } from '../helpers/PushNotificationHelper';
+import { Loader, MainHeader } from '../components';
+import { CacheHelper, Utilities, globalStyles } from '../helpers';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
   route: {
     params: {
       url: any,
@@ -21,60 +16,27 @@ interface Props {
 }
 
 export const WebsiteScreen = (props: Props) => {
-  const { openDrawer } = props.navigation;
   const { params } = props.route;
   const [isLoading, setLoading] = useState(false);
-  const [NotificationModal, setNotificationModal] = useState(false);
-  const [badgeCount, setBadgeCount] = useState(0);  
+  //console.log(params?.url)
+
   const checkRedirect = () => {
-    if (!UserHelper.currentUserChurch) props.navigation.navigate("ChurchSearch")
+    if (!CacheHelper.church) props.navigation.navigate("ChurchSearch", {})
   }
 
   useEffect(() => {
     Utilities.trackEvent("Website Screen", { url: props.route?.params?.url });
     checkRedirect();
   }, [])
-  useEffect(() => {
-    const handleNewMessage = () => {
-      setBadgeCount((prevCount) => prevCount + 1);
-    };
-    eventBus.addListener("badge", handleNewMessage);
-    return () => {
-      eventBus.removeListener("badge");
-    };
-  });
 
   const getTitle = () => {
     const title = params && params.title && params.title;
     return title == undefined ? 'Home' : title;
   }
-  const RightComponent = (
-    <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0 ?
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
-          <View style={globalStyles.BadgeDot}></View>
-        </View>
-        : <View>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
-        </View>}
-    </TouchableOpacity>
-  );
-
-  const toggleTabView = () => {
-    setNotificationModal(!NotificationModal);
-    setBadgeCount(0)
-  };
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>{getTitle()}</Text>}
-        rightComponent={RightComponent}
-      />
+      <MainHeader title={getTitle()} openDrawer={props.navigation.openDrawer} />
       <>
         <View style={globalStyles.webViewContainer}>
           <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: params?.url }} scalesPageToFit={false} />
@@ -82,8 +44,6 @@ export const WebsiteScreen = (props: Props) => {
 
         {isLoading && <Loader isLoading={isLoading} />}
       </>
-      {NotificationModal ?
-        <NotificationTab /> : null}
     </SafeAreaView>
   );
 };

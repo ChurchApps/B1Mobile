@@ -1,5 +1,5 @@
-import { Dimensions, PixelRatio, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
+import { View } from "react-native";
 import { ApiHelper, ArrayHelper, ConversationInterface } from "../../helpers";
 import ConversationPopup from "./ConversationPopup";
 
@@ -7,6 +7,7 @@ interface CustomConversationInterface {
   contentType: string;
   contentId: string;
   groupId: string;
+  from : string;
 }
 
 const Conversations = ({
@@ -14,49 +15,57 @@ const Conversations = ({
   contentId,
   groupId,
 }: CustomConversationInterface) => {
-  const [conversations, setConversations] = useState<ConversationInterface[]>(
-    []
-  );
-
+  const [conversations, setConversations] = useState<ConversationInterface[]>([]);
   const loadConversations = async () => {
-    const conversations: ConversationInterface[] = contentId
-      ? await ApiHelper.get(
-          "/conversations/" + contentType + "/" + contentId,
-          "MessagingApi"
-        )
-      : [];
-    if (conversations.length > 0) {
-      const peopleIds: string[] = [];
-      conversations.forEach((c) => {
-        c.messages.forEach((m: any) => {
-          if (peopleIds.indexOf(m.personId) === -1) peopleIds.push(m.personId);
+    try {
+      const conversations: ConversationInterface[] = contentId
+        ? await ApiHelper.get(
+            "/conversations/" + contentType + "/" + contentId,
+            "MessagingApi"
+          )
+        : [];
+  
+      if (conversations.length > 0) {
+        const peopleIds: string[] = [];
+        const filteredConversations = conversations.filter((conversation) => {
+          conversation.messages = conversation.messages.filter(
+            (message) => message !== null
+          );
+          if (conversation.messages.length > 0) {
+            conversation.messages.forEach((message: any) => {
+              if (
+                message.personId &&
+                peopleIds.indexOf(message.personId) === -1
+              ) {
+                peopleIds.push(message.personId);
+              }
+            });
+            return true; 
+          }
+          return false;
         });
-      });
-      const people = await ApiHelper.get(
-        "/people/ids?ids=" + peopleIds.join(","),
-        "MembershipApi"
-      );
-      people.reverse();
-      conversations.forEach((c) => {
-        c.messages.forEach((m: any) => {
-          m.person = ArrayHelper.getOne(people, "id", m.personId);
+        const people = await ApiHelper.get(
+          "/people/ids?ids=" + peopleIds.join(","),
+          "MembershipApi"
+        );
+        people.reverse();
+        filteredConversations.forEach((conversation) => {
+          conversation.messages.forEach((message: any) => {
+            if (message.personId) {
+              message.person = ArrayHelper.getOne(people, "id", message.personId);
+            }
+          });
         });
-      });
+        setConversations(filteredConversations);
+      }
+    } catch (error) {
+      console.error("Error loading conversations:", error);
     }
-
-    setConversations(conversations);
-  };
-
+  }; 
   useEffect(() => {
     loadConversations();
   }, []);
 
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel(
-      (Dimensions.get("screen").width * givenWidth) / 100
-    );
-  };
 
   const ShowConversationModal = () => {
     return (
@@ -74,5 +83,3 @@ const Conversations = ({
 };
 
 export default Conversations;
-
-const styles = StyleSheet.create({});

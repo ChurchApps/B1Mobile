@@ -1,5 +1,6 @@
 import { Alert, Linking, Platform } from "react-native";
 import { Permissions } from "../interfaces";
+import { CacheHelper } from "./CacheHelper";
 import { EnvironmentHelper } from "./EnvironmentHelper";
 import { LinkInterface } from "./Interfaces";
 import { UserHelper } from "./UserHelper";
@@ -11,15 +12,19 @@ export class NavigationHelper {
     const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
     if (item.linkType == "stream") {
       UserHelper.addOpenScreenEvent('StreamScreen');
-      navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", UserHelper.currentUserChurch?.church?.subDomain || ""), title: item.text })
+      navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", CacheHelper.church!.subDomain || ""), title: item.text })
     }
     if (item.linkType == "lessons") {
       UserHelper.addOpenScreenEvent('LessonsScreen');
-      navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + UserHelper.currentUserChurch?.church?.id, title: item.text })
+      navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + CacheHelper.church!.id, title: item.text })
     }
     if (item.linkType == "bible") {
       UserHelper.addOpenScreenEvent('BibleScreen');
       navigate('BibleScreen', { url: bibleUrl, title: item.text })
+    }
+    if (item.linkType == "plans") {
+      UserHelper.addOpenScreenEvent('PlanScreen');
+      navigate('PlanScreen', {})
     }
     if (item.linkType == "votd") {
       UserHelper.addOpenScreenEvent('VotdScreen');
@@ -36,7 +41,7 @@ export class NavigationHelper {
     }
     if (item.linkType == "page") {
       UserHelper.addOpenScreenEvent('PageScreen');
-      navigate('PageScreen', { url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", UserHelper.currentUserChurch?.church?.subDomain || "") + item.url, title: item.text })
+      navigate('PageScreen', { url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") + item.url, title: item.text })
     }
     if (item.linkType == "directory") {
       if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.")
@@ -63,7 +68,7 @@ export class NavigationHelper {
   static navDonations(navigate: any) {
     UserHelper.addOpenScreenEvent('DonationScreen');
     if (Platform.OS === "ios") {
-      let url = "https://" + UserHelper.currentUserChurch?.church?.subDomain + ".b1.church/login/?returnUrl=%2Fdonation-landing";
+      let url = "https://" + CacheHelper.church!.subDomain + ".b1.church/login/?returnUrl=%2Fdonation-landing";
       if (UserHelper.currentUserChurch.jwt) url += "&jwt=" + UserHelper.currentUserChurch.jwt;
       Linking.openURL(url);
       /*SafariView.isAvailable().then(() => {

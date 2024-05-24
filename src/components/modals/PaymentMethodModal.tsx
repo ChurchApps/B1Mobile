@@ -1,8 +1,8 @@
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import * as React from "react";
-import { TouchableOpacity, FlatList, Text, View } from "react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { globalStyles, Constants } from "../../helpers";
+import { Constants, globalStyles } from "../../helpers";
 import { StripePaymentMethod } from "../../interfaces";
 import { CustomModal } from "./CustomModal";
 
@@ -16,10 +16,10 @@ export function PaymentMethodModal({ show, close, onSelect }: Props) {
   const methods: string[] = ["card", "bank"];
 
   return (
-    <CustomModal isVisible={show} close={close} width={wp(48.5)}>
+    <CustomModal isVisible={show} close={close} width={DimensionHelper.wp(48.5)}>
       <FlatList
         data={methods}
-        style={{ marginVertical: wp("-2%") }}
+        style={{ marginVertical: DimensionHelper.wp("-2%") }}
         renderItem={({ item, index }) => (
           <TouchableOpacity
             onPress={() => {
@@ -30,15 +30,15 @@ export function PaymentMethodModal({ show, close, onSelect }: Props) {
           >
             <Icon
               name={index == 0 ? "credit-card-alt" : "bank"}
-              style={{ color: Constants.Colors.button_green, marginHorizontal: wp("4%") }}
-              size={wp("6%")}
+              style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp("4%") }}
+              size={DimensionHelper.wp("6%")}
             />
             <Text
               style={{
-                fontSize: wp("4.8%"),
+                fontSize: DimensionHelper.wp("4.8%"),
                 fontFamily: Constants.Fonts.RobotoRegular,
                 textAlign: "center",
-                paddingVertical: wp("2%"),
+                paddingVertical: DimensionHelper.wp("2%"),
               }}
             >
               Add {item[0].toUpperCase() + item.slice(1).toLowerCase()}

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { View, Image, Alert, TextInput, Text } from "react-native";
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
+import React, { useState } from "react";
+import { Alert, Image, Text, TextInput, View } from "react-native";
 import { InputBox } from "../";
-import { globalStyles, UserHelper, ApiHelper, Constants } from "../../helpers";
-import { StripePaymentMethod, PaymentMethodInterface, StripeCardUpdateInterface } from "../../interfaces";
+import { ApiHelper, Constants, UserHelper, globalStyles } from "../../helpers";
+import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "../../interfaces";
 
 interface Props {
   setMode: any;
@@ -96,7 +96,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
             postalCodeEnabled={true}
             placeholders={{ number: "4242 4242 4242 4242" }}
             cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000" }}
-            style={{ width: "100%", height: 50, marginTop: wp("2%"), backgroundColor: "white" }}
+            style={{ width: "100%", height: 50, marginTop: DimensionHelper.wp("2%"), backgroundColor: "white" }}
             onCardChange={(cardDetails) => {
               setCardDetails(cardDetails);
             }}
@@ -105,7 +105,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
       ) : (
         <View style={globalStyles.cardDatesView}>
           <View>
-            <Text style={{ ...globalStyles.searchMainText, marginTop: wp("4%") }}>Expiration Month</Text>
+            <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp("4%") }}>Expiration Month</Text>
             <TextInput
               style={globalStyles.cardDates}
               keyboardType="number-pad"
@@ -116,7 +116,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
             />
           </View>
           <View>
-            <Text style={{ ...globalStyles.searchMainText, marginTop: wp("4%") }}>Expiration Year</Text>
+            <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp("4%") }}>Expiration Year</Text>
             <TextInput
               style={globalStyles.cardDates}
               keyboardType="number-pad"

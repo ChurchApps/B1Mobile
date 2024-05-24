@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Image, ActivityIndicator, Text, View, TouchableOpacity, TextInput, Alert } from "react-native";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import { useIsFocused } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { CustomModal } from "../modals/CustomModal";
-import { globalStyles, ApiHelper, DateHelper, CurrencyHelper, UserHelper, Constants } from "../../helpers";
+import Icon from "react-native-vector-icons/FontAwesome";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { DisplayBox } from "../";
-import { StripePaymentMethod, SubscriptionInterface } from "../../interfaces";
+import { ApiHelper, Constants, CurrencyHelper, DateHelper, UserHelper, globalStyles } from "../../helpers";
 import { ErrorHelper } from "../../helpers/ErrorHelper";
+import { StripePaymentMethod, SubscriptionInterface } from "../../interfaces";
+import { CustomModal } from "../modals/CustomModal";
 
 interface Props {
   customerId: string;
@@ -104,9 +104,9 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 setIntervalNumber(sub.plan.interval_count);
                 setSelectedInterval(sub.plan.interval);
               }}
-              style={{ marginLeft: wp("6%") }}
+              style={{ marginLeft: DimensionHelper.wp("6%") }}
             >
-              <FontAwesome5 name={"pencil-alt"} style={{ color: Constants.Colors.app_color }} size={wp("5.5%")} />
+              <FontAwesome5 name={"pencil-alt"} style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp("5.5%")} />
             </TouchableOpacity>
           </View>
         </View>
@@ -126,7 +126,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
         onPress: async () => {
           try {
             setIsDeleting(true);
-            let promises = [];
+            let promises:any[] = [];
             promises.push(ApiHelper.delete("/subscriptions/" + selectedSubscription.id, "GivingApi"));
             promises.push(ApiHelper.delete("/subscriptionfunds/subscription/" + selectedSubscription.id, "GivingApi"));
             Promise.all(promises).then(async () => {
@@ -166,15 +166,15 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   // };
 
   const getFunds = (subscription: SubscriptionInterface) => {
-    let result = [];
+    let result:any[] = [];
 
     subscription?.funds?.forEach((fund: any) => {
       result.push(
         <View
           key={subscription.id + fund.id}
-          style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: wp("40%") }}
+          style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: DimensionHelper.wp("40%") }}
         >
-          <Text style={{ width: wp("30%"), overflow: "hidden" }}>{fund.name}</Text>
+          <Text style={{ width: DimensionHelper.wp("30%"), overflow: "hidden" }}>{fund.name}</Text>
           <Text>{CurrencyHelper.formatCurrency(fund.amount)}</Text>
         </View>
       );
@@ -183,9 +183,9 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     result.push(
       <View
         key={subscription.id + "-total"}
-        style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: wp("40%") }}
+        style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: DimensionHelper.wp("40%") }}
       >
-        <Text style={{ width: wp("30%"), overflow: "hidden" }}>Total</Text>
+        <Text style={{ width: DimensionHelper.wp("30%"), overflow: "hidden" }}>Total</Text>
         <Text>{CurrencyHelper.formatCurrency(total)}</Text>
       </View>
     );
@@ -193,8 +193,8 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   };
 
   const donationsTable = (
-    <View style={{ ...globalStyles.donationContainer, marginVertical: wp("5%") }}>
-      <View style={{ ...globalStyles.donationRowContainer, marginBottom: wp("5%") }}>
+    <View style={{ ...globalStyles.donationContainer, marginVertical: DimensionHelper.wp("5%") }}>
+      <View style={{ ...globalStyles.donationRowContainer, marginBottom: DimensionHelper.wp("5%") }}>
         <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Start Date</Text>
         <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Amount</Text>
       </View>
@@ -212,8 +212,8 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     );
   return (
     <>
-      <CustomModal width={wp(85)} isVisible={showModal} close={() => setShowModal(false)}>
-        <View style={{ paddingHorizontal: wp(1) }}>
+      <CustomModal width={DimensionHelper.wp(85)} isVisible={showModal} close={() => setShowModal(false)}>
+        <View style={{ paddingHorizontal: DimensionHelper.wp(1) }}>
           <View style={globalStyles.donationPreviewView}>
             <Text style={globalStyles.donationText}>Edit Subscription</Text>
             <TouchableOpacity
@@ -222,7 +222,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               }}
               style={globalStyles.donationCloseBtn}
             >
-              <Icon name={"close"} style={globalStyles.closeIcon} size={wp("6%")} />
+              <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp("6%")} />
             </TouchableOpacity>
           </View>
           {/* <ScrollView> */}
@@ -242,8 +242,8 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
             <Text style={globalStyles.previewTitleText}>Interval:</Text>
             <Text style={{ ...globalStyles.previewDetailText }}>Every {getInterval(selectedSubscription)}</Text>
           </View>
-          <Text style={{ ...globalStyles.previewTitleText, marginTop: wp("4%") }}>Method:</Text>
-          <View style={{ width: wp("100%"), marginBottom: wp("12%") }}>
+          <Text style={{ ...globalStyles.previewTitleText, marginTop: DimensionHelper.wp("4%") }}>Method:</Text>
+          <View style={{ width: DimensionHelper.wp("100%"), marginBottom: DimensionHelper.wp("12%") }}>
             <DropDownPicker
               listMode="SCROLLVIEW"
               open={isMethodsDropdownOpen}
@@ -254,29 +254,29 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               setItems={setPaymentMethods}
               containerStyle={{
                 ...globalStyles.containerStyle,
-                height: isMethodsDropdownOpen ? paymentMethods.length * wp("12%") : wp("1%"),
-                width: wp("76%"),
-                marginHorizontal: wp("0%"),
+                height: isMethodsDropdownOpen ? paymentMethods.length * DimensionHelper.wp("12%") : DimensionHelper.wp("1%"),
+                width: DimensionHelper.wp("76%"),
+                marginHorizontal: DimensionHelper.wp("0%"),
               }}
               style={globalStyles.dropDownMainStyle}
               labelStyle={globalStyles.labelStyle}
               listItemContainerStyle={globalStyles.itemStyle}
-              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("76%"), marginHorizontal: wp("0%") }}
+              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: DimensionHelper.wp("76%"), marginHorizontal: DimensionHelper.wp("0%") }}
               scrollViewProps={{ scrollEnabled: true }}
               dropDownDirection="BOTTOM"
             />
           </View>
-          <Text style={{ ...globalStyles.previewTitleText, marginTop: wp("4%"), width: wp("40%") }}>
+          <Text style={{ ...globalStyles.previewTitleText, marginTop: DimensionHelper.wp("4%"), width: DimensionHelper.wp("40%") }}>
             Interval Number:
           </Text>
           <TextInput
-            style={{ ...globalStyles.intervalInput, width: wp("76%"), marginLeft: wp("0%") }}
+            style={{ ...globalStyles.intervalInput, width: DimensionHelper.wp("76%"), marginLeft: DimensionHelper.wp("0%") }}
             keyboardType="number-pad"
             value={intervalNumber?.toString()}
             onChangeText={(text) => setIntervalNumber(text)}
           />
-          <Text style={{ ...globalStyles.previewTitleText, marginTop: wp("4%") }}>Interval Type</Text>
-          <View style={{ width: wp("100%"), marginBottom: wp("12%") }}>
+          <Text style={{ ...globalStyles.previewTitleText, marginTop: DimensionHelper.wp("4%") }}>Interval Type</Text>
+          <View style={{ width: DimensionHelper.wp("100%"), marginBottom: DimensionHelper.wp("12%") }}>
             <DropDownPicker
               listMode="SCROLLVIEW"
               open={isIntervalDropdownOpen}
@@ -287,14 +287,14 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               setItems={setIntervalTypes}
               containerStyle={{
                 ...globalStyles.containerStyle,
-                height: isIntervalDropdownOpen ? intervalTypes.length * wp("12%") : wp("1%"),
-                width: wp("76%"),
-                marginHorizontal: wp("0%"),
+                height: isIntervalDropdownOpen ? intervalTypes.length * DimensionHelper.wp("12%") : DimensionHelper.wp("1%"),
+                width: DimensionHelper.wp("76%"),
+                marginHorizontal: DimensionHelper.wp("0%"),
               }}
               style={globalStyles.dropDownMainStyle}
               labelStyle={globalStyles.labelStyle}
               listItemContainerStyle={globalStyles.itemStyle}
-              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: wp("76%"), marginHorizontal: wp("0%") }}
+              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: DimensionHelper.wp("76%"), marginHorizontal: DimensionHelper.wp("0%") }}
               scrollViewProps={{ scrollEnabled: true }}
               dropDownDirection="BOTTOM"
             />
@@ -307,7 +307,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 backgroundColor: "#6C757D",
                 borderTopRightRadius: 0,
                 borderBottomRightRadius: 0,
-                width: wp("26%"),
+                width: DimensionHelper.wp("26%"),
               }}
               onPress={() => setShowModal(false)}
               disabled={isDeleting}
@@ -331,7 +331,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 backgroundColor: Constants.Colors.button_bg,
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
-                width: wp("26%"),
+                width: DimensionHelper.wp("26%"),
               }}
               onPress={() => handleSave()}
               disabled={isSaving || isDeleting}
@@ -350,7 +350,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
         headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
       >
         {isLoading ? (
-          <ActivityIndicator size="large" style={{ margin: wp("2%") }} color="gray" animating={isLoading} />
+          <ActivityIndicator size="large" style={{ margin: DimensionHelper.wp("2%") }} color="gray" animating={isLoading} />
         ) : (
           content
         )}

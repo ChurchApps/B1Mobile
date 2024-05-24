@@ -1,59 +1,58 @@
-import * as React from 'react';
-import { Dimensions,PixelRatio} from 'react-native';
+import { DimensionHelper } from '@churchapps/mobilehelper';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import SplashScreen from '../screens/SplashScreen';
-import { WebsiteScreen } from '../screens/WebsiteScreen';
+import * as React from 'react';
 import { CustomDrawer } from '../components';
+import { Constants } from '../helpers';
+import { CheckinScreen } from '../screens/CheckinScreen';
 import { ChurchSearch } from '../screens/ChurchSearch';
-import { LoginScreen } from '../screens/LoginScreen';
-import { HouseholdScreen } from '../screens/checkin/HouseholdScreen';
-import { GroupsScreen } from '../screens/checkin/GroupsScreen';
-import CheckinCompleteScreen from '../screens/checkin/CheckinCompleteScreen';
-import { ServiceScreen } from '../screens/checkin/ServiceScreen';
-import { MembersSearch } from '../screens/MembersSearch';
-import { MemberDetailScreen } from '../screens/MemberDetailScreen';
-import DonationScreen from '../screens/DonationScreen';
-import { Constants, globalStyles } from '../helpers';
-import { RegisterScreen } from '../screens/RegisterScreen';
 import { DashboardScreen } from '../screens/DashboardScreen';
-import { VotdScreen } from '../screens/VotdScreen';
-import { SearchUserScreen } from '../screens/SearchUserScreen';
+import DonationScreen from '../screens/DonationScreen';
+import GroupDetails from '../screens/GroupDetails';
+import { LoginScreen } from '../screens/LoginScreen';
+import { MemberDetailScreen } from '../screens/MemberDetailScreen';
+import { MembersSearch } from '../screens/MembersSearch';
 import { MessagesScreen } from '../screens/MessagesScreen';
 import MyGroups from '../screens/MyGroups';
-import GroupDetails from '../screens/GroupDetails';
+import { PlanDetails } from '../screens/PlanDetails';
+import { PlanScreen } from '../screens/PlanScreen';
+import { RegisterScreen } from '../screens/RegisterScreen';
+import { SearchUserScreen } from '../screens/SearchUserScreen';
+import SplashScreen from '../screens/SplashScreen';
+import { VotdScreen } from '../screens/VotdScreen';
+import { WebsiteScreen } from '../screens/WebsiteScreen';
 
 const AppNav = createStackNavigator();
 const AuthNav = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 const MainStack = () => {
-
-  const [dimension, setDimension] = React.useState(Dimensions.get('screen'));
+  const [dimensions, setDimensions] = React.useState("1,1");
   
+  const init = () => {
+    DimensionHelper.listenOrientationChange(this, () => {
+      setDimensions(DimensionHelper.wp("100%") + "," + DimensionHelper.hp("100%"))
+    });
 
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-  const hd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.height * givenWidth) / 100);
-  };
+    return destroy;
+  }
 
- React.useEffect(() => {
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
-  }, [dimension])
+  const destroy = () => {
+    DimensionHelper.removeOrientationListener();
+  }
+
+  React.useEffect(init, []);
+  if (dimensions!=="1,1") console.log(dimensions);
+  
   //Note:  By not combining the Website screen users can toggle between them without their current page on each tab being lost
 
   return (
-    <Drawer.Navigator screenOptions={{headerShown : false , drawerStyle: {
-      width:wd('60%'),height:hd('100%'), backgroundColor: Constants.Colors.app_color
-    }, drawerType:'slide' }} initialRouteName={'WebsiteScreen'}   drawerContent={(props) => <CustomDrawer {...props} />}>
+    <Drawer.Navigator screenOptions={{
+      headerShown : false , 
+      drawerStyle: { width:DimensionHelper.wp('60%'),height:DimensionHelper.hp('100%'), backgroundColor: Constants.Colors.app_color }, drawerType:'slide' }} 
+      initialRouteName={'WebsiteScreen'} 
+      drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name={'Dashboard'} component={DashboardScreen} />
       <Drawer.Screen name={'BibleScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}}/>
       <Drawer.Screen name={'VotdScreen'} component={VotdScreen} />
@@ -65,13 +64,13 @@ const MainStack = () => {
       <Drawer.Screen name={'SearchMessageUser'} component={SearchUserScreen} />
       <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />
       <Drawer.Screen name={'MemberDetailScreen'} component={MemberDetailScreen} />
-      <Drawer.Screen name={'ServiceScreen'} component={ServiceScreen} />
-      <Drawer.Screen name={'HouseholdScreen'} component={HouseholdScreen} />
-      <Drawer.Screen name={'GroupsScreen'} component={GroupsScreen} />
-      <Drawer.Screen name={'CheckinCompleteScreen'} component={CheckinCompleteScreen} />
+      <Drawer.Screen name={'ServiceScreen'} component={CheckinScreen} />
       <Drawer.Screen name={'DonationScreen'} component={DonationScreen} />
       <Drawer.Screen name={'MyGroups'} component={MyGroups} />
       <Drawer.Screen name={'GroupDetails'} component={GroupDetails} />
+      <Drawer.Screen name={'PlanScreen'} component={PlanScreen} />
+      <Drawer.Screen name={'PlanDetails'} component={PlanDetails} />
+      
     </Drawer.Navigator>
   );
 }
@@ -85,7 +84,7 @@ const AuthStack = () => {
   );
 }
 
-const AppNavigation = (props: {}) => {
+const AppNavigation = (props: any) => {
   return (
     <NavigationContainer>
       <AppNav.Navigator screenOptions={{headerShown:false, animationEnabled:false}} initialRouteName='SplashScreen'  >

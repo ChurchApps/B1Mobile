@@ -1,23 +1,18 @@
-import React, {useEffect} from 'react';
-import EventBus from 'react-native-event-bus'
-import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
+import { ApiHelper, UserHelper } from '@churchapps/mobilehelper';
 import messaging from '@react-native-firebase/messaging';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApiHelper } from './ApiHelper'
-import { LoginUserChurchInterface } from './Interfaces'
+import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { EnvironmentHelper } from './EnvironmentHelper';
-import { UserHelper } from './UserHelper';
+import { CacheHelper } from './CacheHelper';
+import { LoginUserChurchInterface } from './Interfaces';
 
 export class PushNotificationHelper {
 
    static async registerUserDevice() {
-    const fcmToken = await AsyncStorage.getItem("fcmToken");
+    const fcmToken = CacheHelper.fcmToken;
     const deviceName = await DeviceInfo.getDeviceName();
     const deviceInfo = await PushNotificationHelper.getDeviceInfo();
-    const currentChurch = JSON.parse((await AsyncStorage.getItem('CHURCH_DATA'))!)
-    const churchesString  = await AsyncStorage.getItem("CHURCHES_DATA")
-    const tst : LoginUserChurchInterface[] = JSON.parse(churchesString)
+    const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
+    const tst : LoginUserChurchInterface[] = UserHelper.userChurches; 
     const currentData : LoginUserChurchInterface | undefined = tst.find((value, index) => value.church.id == currentChurch!.id);
     if(currentData != null || currentData != undefined){
 
@@ -66,14 +61,11 @@ export class PushNotificationHelper {
       }
     };
   static async GetFCMToken() {
-    let fcmToken = await AsyncStorage.getItem("fcmToken")
-    console.log("fcm token ", fcmToken)
+    let fcmToken = CacheHelper.fcmToken;
     if (!fcmToken) {
       try {
         let fcmToken = await messaging().getToken();
-        if (fcmToken) {
-          await AsyncStorage.setItem("fcmToken", fcmToken)
-        }
+        if (fcmToken) CacheHelper.setValue("fcmToken", fcmToken);
       } catch (error) {
         console.log(error, "fcm token not created")
       }

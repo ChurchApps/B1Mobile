@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, Text, ActivityIndicator, Alert, Linking, Dimensions, PixelRatio, Platform } from 'react-native';
+import { DimensionHelper, LoginResponseInterface } from '@churchapps/mobilehelper';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Linking, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { ChurchInterface, Constants, DateHelper, EnvironmentHelper, LoginResponseInterface, LoginUserChurchInterface, Utilities } from '../helpers';
-import Icon from 'react-native-vector-icons/Fontisto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { globalStyles } from '../helpers';
-import { BlueHeader } from '../components';
-import { ApiHelper, UserHelper } from '../helpers';
 import RNRestart from 'react-native-restart';
+import Icon from 'react-native-vector-icons/Fontisto';
+import { BlueHeader } from '../components';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
 
 interface Props {
   navigation: {
@@ -21,23 +18,10 @@ export const LoginScreen = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [dimension, setDimension] = useState(Dimensions.get('window'));
-
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel((dimension.width * givenWidth) / 100);
-  };
-
 
   useEffect(() => {
     Utilities.trackEvent("Login Screen");
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
   }, [])
-  useEffect(() => {
-  }, [dimension])
 
   const validateDetails = () => {
     if (email != '') {
@@ -59,53 +43,28 @@ export const LoginScreen = (props: Props) => {
     }
   }
 
-  const loginApiCall = () => {
+  
 
+  const loginApiCall = () => {
     let params = { "email": email, "password": password }
     setLoading(true);
-    ApiHelper.post("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
+    ApiHelper.postAnonymous("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
       setLoading(false);
       if (data.user != null) {
-        var currentChurch: LoginUserChurchInterface = data.userChurches[0];
-        const churchString = await AsyncStorage.getItem("CHURCH_DATA");
-        let church: ChurchInterface | null = null
-        if (churchString) church = JSON.parse(churchString);
-        if (church != null && church?.id != null && church.id != "") {
-          currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
-        }
-
-        const userChurch: LoginUserChurchInterface = currentChurch
-
-        UserHelper.user = data.user;
-        const churches: ChurchInterface[] = [];
-        data.userChurches.forEach(uc => churches.push(uc.church));
-        UserHelper.churches = churches;
-        if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
-
-        UserHelper.addAnalyticsEvent('login', {
-          id: Date.now(),
-          device : Platform.OS,
-          church: userChurch.church.name,
-        });
-
-        ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
-        userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
-        ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
-        await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
-        await AsyncStorage.setItem('USER_DATA', JSON.stringify(data.user))
-        await AsyncStorage.setItem('CHURCHES_DATA', JSON.stringify(data.userChurches))
-        if (userChurch) await AsyncStorage.setItem('CHURCH_DATA', JSON.stringify(userChurch.church))
-
+        await UserHelper.handleLogin(data);
         props.navigation.navigate('MainStack');
-
         //DevSettings.reload();
         RNRestart.Restart();
-      } else Alert.alert("Alert", "Invalid login");
+      }
+      else Alert.alert("Alert", "Invalid login");
+    }).catch(() => {
+      setLoading(false);
+      Alert.alert("Alert", "Invalid login");
     });
   }
 
   const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
-  const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
+  //const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
     <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
@@ -114,16 +73,16 @@ export const LoginScreen = (props: Props) => {
           <BlueHeader />
           <View style={globalStyles.grayContainer}>
             <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
-            <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-              <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-              <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+              <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
+              <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
             </View>
-            <View style={[globalStyles.textInputView, { width: wd('90%') }]}>
-              <Icon name={'key'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={wp('4.5%')} />
-              <TextInput style={[globalStyles.textInputStyle, { width: wd('90%') }]} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
+            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+              <Icon name={'key'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
+              <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
             </View>
 
-            <TouchableOpacity style={[globalStyles.roundBlueButton, { width: wd('90%') }]} onPress={() => { validateDetails() && loginApiCall() }}>
+            <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp('90%') }]} onPress={() => { validateDetails() && loginApiCall() }}>
               {loading ?
                 <ActivityIndicator size='small' color='white' animating={loading} /> :
                 <Text style={globalStyles.roundBlueButtonText}>LOGIN</Text>

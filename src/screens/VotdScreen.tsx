@@ -1,22 +1,15 @@
-import React, { useState,  } from 'react';
-import { View, SafeAreaView, Image, Dimensions, Text, TouchableOpacity } from 'react-native';
-import { MainHeader, NotificationTab } from '../components';
-import { globalStyles, Utilities, Constants, ApiHelper } from '../helpers';
-import { eventBus } from '../helpers/PushNotificationHelper';
+import React from 'react';
+import { Dimensions, Image, SafeAreaView, View } from 'react-native';
+import { MainHeader } from '../components';
+import { Utilities, globalStyles } from '../helpers';
+import { NavigationProps } from '../interfaces';
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string) => void;
-    goBack: () => void;
-    openDrawer: () => void;
-  };
+  navigation: NavigationProps;
 }
 
 export const VotdScreen = (props: Props) => {
-  const { openDrawer } = props.navigation;
   const [shape, setShape] = React.useState("9x16");
-  const [NotificationModal, setNotificationModal] = useState(false);
-  const [badgeCount, setBadgeCount] = useState(0);
 
   const getShape = () => {
     const dim = Dimensions.get("screen");
@@ -41,56 +34,21 @@ export const VotdScreen = (props: Props) => {
     return day;
   }
 
-  const RightComponent = (
-    <TouchableOpacity onPress={() => { toggleTabView() }}>
-      {badgeCount > 0 ?
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.BadgemenuIcon} />
-          <View style={globalStyles.BadgeDot}></View>
-        </View>
-        : <View>
-          <Image source={Constants.Images.dash_bell} style={globalStyles.menuIcon} />
-        </View>}
-    </TouchableOpacity>
-  );
-  const toggleTabView = () => {
-    setNotificationModal(!NotificationModal);
-    setBadgeCount(0)
-  };
   React.useEffect(() => {
     Utilities.trackEvent("VOTD Screen");
     getShape();
     Dimensions.addEventListener("change", getShape);
   }, []);
-  React.useEffect(() => {
-    const handleNewMessage = () => {
-      setBadgeCount((prevCount) => prevCount + 1);
-    };
-    eventBus.addListener("badge", handleNewMessage);
-    return () => {
-      eventBus.removeListener("badge");
-    };
-  });
- 
-  const day = getDayOfYear();
+  
+   const day = getDayOfYear();
   const url = "https://votd.org/v1/" + day.toString() + "/" + shape + ".jpg";
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader
-        leftComponent={<TouchableOpacity onPress={() => openDrawer()}>
-          <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-        </TouchableOpacity>}
-        mainComponent={<Text style={globalStyles.headerText}>Verse of the Day</Text>}
-        rightComponent={RightComponent}
-      />
+      <MainHeader title="Verse of the Day" openDrawer={props.navigation.openDrawer} />
       <View style={globalStyles.webViewContainer}>
         <Image source={{ uri: url }} style={{ flex: 1 }} resizeMode="stretch" />
       </View>
-      {
-        NotificationModal ?
-          <NotificationTab /> : null
-      }
     </SafeAreaView>
   );
 };

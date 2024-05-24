@@ -1,16 +1,9 @@
-import {
-  Dimensions,
-  Image,
-  PixelRatio,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import React from "react";
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import moment from "moment";
+import React from "react";
+import { Image, Text, View } from "react-native";
 import { Constants, MessageInterface, globalStyles } from "../../helpers";
 import { PersonHelper } from "../../helpers/PersonHelper";
-import { widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 interface NotesInterface {
   item: any;
@@ -27,14 +20,8 @@ const Notes = ({
   showReplyBox,
   handleReply,
 }: NotesInterface) => {
-  console.log("Message ==", message);
+  //console.log("Message ==", message);
 
-  const wd = (number: string) => {
-    let givenWidth = typeof number === "number" ? number : parseFloat(number);
-    return PixelRatio.roundToNearestPixel(
-      (Dimensions.get("screen").width * givenWidth) / 100
-    );
-  };
 
   const displayDuration = moment(message?.timeSent).fromNow();
   const isEdited = message.timeUpdated &&
@@ -42,7 +29,7 @@ const Notes = ({
 
   return (
     <>
-      <View style={[globalStyles.conversationList, { width: wd("100%") }]}>
+      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp("70%") , marginLeft:DimensionHelper.wp('2%') }]}>
         <Image
           source={
             message?.person?.photo
@@ -51,20 +38,17 @@ const Notes = ({
           }
           style={[
             globalStyles.memberListIcon,
-            { width: wp("12%"), height: wp("12%"), borderRadius: 8888 },
+            { width: DimensionHelper.wp("12%"), height: DimensionHelper.wp("12%"), borderRadius: 8888 },
           ]}
         />
 
         <View
-          style={{
-            backgroundColor: Constants.Colors.gray_bg,
-            paddingVertical: 10,
-            paddingHorizontal: 16,
-            borderRadius: 24,
-          }}
+          style={globalStyles.NoteTextInputView}
         >
-          <Text style={styles.name}>{message?.displayName}</Text>
+          <View>
+          <Text style={globalStyles.name}>{message?.displayName}</Text>
           <Text>{message?.content}</Text>
+          </View>
         </View>
       </View>
       <Text
@@ -76,7 +60,7 @@ const Notes = ({
             paddingTop: 0,
             height: 24,
             fontSize: 11,
-            width: wp("100%"),
+            width: DimensionHelper.wp("100%"),
             left: 72,
             top: -4,
           },
@@ -87,7 +71,7 @@ const Notes = ({
         <Text> {isEdited}</Text>
         {"       "}
         <Text
-          style={styles.replyBtn}
+          style={globalStyles.replyBtn}
           onPress={() =>
             showReplyBox === idx ? handleReply(null) : handleReply(idx)
           }
@@ -101,16 +85,3 @@ const Notes = ({
 };
 
 export default Notes;
-
-const styles = StyleSheet.create({
-  name: {
-    fontWeight: "bold",
-    fontSize: 13,
-    lineHeight: 24,
-  },
-  replyBtn: {
-    fontSize: 10,
-    fontWeight: "bold",
-    color: Constants.Colors.app_color,
-  },
-});

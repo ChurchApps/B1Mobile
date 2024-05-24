@@ -1,7 +1,8 @@
-import { ApiHelper, IPermission, UserInterface } from ".";
-import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
+import { ApiHelper, LoginResponseInterface, PushNotificationHelper } from "@churchapps/mobilehelper";
 import analytics from '@react-native-firebase/analytics';
 import { Platform } from "react-native";
+import { CacheHelper, IPermission, UserInterface } from ".";
+import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
 
 export class UserHelper {
   static churches: ChurchInterface[];
@@ -20,6 +21,7 @@ export class UserHelper {
       const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       UserHelper.currentUserChurch.person = data;
     }
+    PushNotificationHelper.registerUserDevice("B1Mobile");
   }
 
   static checkAccess({ api, contentType, action }: IPermission): boolean {
@@ -45,4 +47,42 @@ export class UserHelper {
       page: screenName,
     });
   }
+
+
+  static handleLogin = async (data:LoginResponseInterface) => {
+    var currentChurch: LoginUserChurchInterface = data.userChurches[0];
+
+    let church = CacheHelper.church;
+    if (church != null && church?.id != null && church.id != "") {
+      currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
+    }
+
+    const userChurch: LoginUserChurchInterface = currentChurch
+
+    UserHelper.user = data.user;
+    const churches: ChurchInterface[] = [];
+    data.userChurches.forEach(uc => churches.push(uc.church));
+    UserHelper.churches = churches;
+    if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
+    //console.log("USER CHURCH IS", userChurch);
+
+    UserHelper.addAnalyticsEvent('login', {
+      id: Date.now(),
+      device : Platform.OS,
+      church: userChurch.church.name,
+    });
+
+    ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
+    userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
+    ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
+    await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
+    await CacheHelper.setValue("user", data.user);
+
+
+    if (userChurch && !church) await CacheHelper.setValue("church", userChurch.church);
+
+    
+  }
+
+
 }
