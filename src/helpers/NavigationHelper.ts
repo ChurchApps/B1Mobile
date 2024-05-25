@@ -16,7 +16,8 @@ export class NavigationHelper {
     }
     if (item.linkType == "lessons") {
       UserHelper.addOpenScreenEvent('LessonsScreen');
-      navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/b1/" + CacheHelper.church!.id, title: item.text })
+      const jwt = UserHelper.currentUserChurch?.jwt;
+      navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/login?jwt=" + jwt + "&returnUrl=/b1/person&churchId=" + CacheHelper.church!.id, title: item.text })
     }
     if (item.linkType == "bible") {
       UserHelper.addOpenScreenEvent('BibleScreen');
