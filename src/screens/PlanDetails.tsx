@@ -40,7 +40,7 @@ export const PlanDetails  = (props: Props) => {
           const tempPositions = await ApiHelper.get("/positions/plan/" + props?.route?.params?.id, "DoingApi");
           const tempAssignments = await ApiHelper.get("/assignments/plan/" + props?.route?.params?.id, "DoingApi");
           const peopleIds = ArrayHelper.getIds(tempAssignments, "personId");
-          const tempPeople = await ApiHelper.get("/people/ids?ids=" + escape(peopleIds.join(",")), "MembershipApi");
+          const tempPeople = await ApiHelper.get("/people/basic?ids=" + escape(peopleIds.join(",")), "MembershipApi");
           setPositions(tempPositions);
           setAssignments(tempAssignments);
           setPeople(tempPeople);
