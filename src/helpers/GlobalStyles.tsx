@@ -55,7 +55,7 @@ export const globalStyles = StyleSheet.create({
   tabTextColor: {color: Constants.Colors.Dark_Gray , },
   BadgeIconStyle:{ width: DimensionHelper.wp('6%'), height: DimensionHelper.wp('6%')}, 
   BadgemenuIcon: { width: DimensionHelper.wp('6%'), height: DimensionHelper.wp('6%'), marginLeft: DimensionHelper.wp('4%'), tintColor: 'white'},
-  BadgeDot:{ position:'absolute', right:25, width:DimensionHelper.wp('2.5%'), height: DimensionHelper.wp('2.5%'),borderRadius: DimensionHelper.wp('1.25%')},
+  BadgeDot:{ position:'absolute', right:25, width:DimensionHelper.wp('2.5%'), backgroundColor : 'red', height: DimensionHelper.wp('2.5%'),borderRadius: DimensionHelper.wp('1.25%')},
   webViewContainer: { flex: 1, height: "100%", width: "100%" },
 
   //Service
@@ -154,7 +154,7 @@ export const globalStyles = StyleSheet.create({
   indicatorStyle: { position: 'absolute', left: 0, top: 0, backgroundColor: 'rgba(255,255,255,0.5)', width: DimensionHelper.wp('100%'), height: DimensionHelper.hp('100%'), alignItems: 'center', justifyContent: 'center' },
 
   //MainHeader
-  headerViewStyle: { flex: 0, flexDirection: 'row', zIndex: 30, alignItems: 'center', justifyContent: 'space-evenly', backgroundColor: Constants.Colors.app_color },
+  headerViewStyle: { flex: 0, flexDirection: 'row', zIndex: 30, alignItems: 'center', justifyContent: 'space-between', backgroundColor: Constants.Colors.app_color },
   componentStyle: { color: Constants.Colors.app_color, alignSelf: 'center', justifyContent: 'center' },
 
   //WhiteLogo

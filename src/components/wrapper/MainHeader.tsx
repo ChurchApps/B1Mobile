@@ -1,13 +1,16 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, Text, TouchableOpacity, View } from 'react-native';
+import Icon from 'react-native-vector-icons/Entypo';
 import { Constants, globalStyles } from '../../helpers';
 import { NotificationTab } from '../NotificationView';
 import { HeaderBell } from './HeaderBell';
 
 interface Props {
   title: string,
-  openDrawer?: () => void
+  back?: () => void,
+  openDrawer?: () => void,
   hideBell?: boolean
 }
 
@@ -20,15 +23,21 @@ export function MainHeader(props: Props) {
   setShowNotifications(false)
   }, [isFocused]) 
 
-  const LeftComponent = (props.openDrawer) 
-    ? (<TouchableOpacity onPress={() => { if (props.openDrawer) props.openDrawer(); }}><Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} /></TouchableOpacity>)
-    : null;
-
+ 
+    const LeftComponent = () =>{
+     return<View style={{flexDirection:'row', justifyContent: Platform.OS =='ios' ? 'space-around' : 'flex-start' , alignItems:'center'}}>
+    {Platform.OS=='ios' && props.back && (
+    <TouchableOpacity style={{paddingHorizontal: DimensionHelper.wp('1%')}} onPress={() => {if (props.back) props.back();}}>
+      <Icon name={'chevron-left'} size={DimensionHelper.hp('3.5%')} color={Constants.Colors.white_color}/></TouchableOpacity>
+      )}
+    <TouchableOpacity onPress={() => { if (props.openDrawer) props.openDrawer(); }}><Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} /></TouchableOpacity>
+    </View>
+    }
     
   return ( 
     <>
       <View style={globalStyles.headerViewStyle}>
-        <View style={[globalStyles.componentStyle, { flex: 2, justifyContent: 'flex-start' }]}>{LeftComponent}</View>
+        <View style={[globalStyles.componentStyle, { flex: 2 }]}>{LeftComponent()}</View>
         <View style={[globalStyles.componentStyle, { flex: 6.3 }]}><Text style={globalStyles.headerText}>{props.title}</Text></View>
         <View style={[globalStyles.componentStyle, { flex: 1.7, justifyContent: 'flex-end' }]}>
           { !props.hideBell && <HeaderBell toggleNotifications={() => { setShowNotifications(!showNotifications); }} /> }

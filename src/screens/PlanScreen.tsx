@@ -49,7 +49,7 @@ export const PlanScreen   = (props: Props) => {
  
     return (
         <SafeAreaView style={globalStyles.homeContainer}>
-            <MainHeader title={'Plans'} openDrawer={props.navigation.openDrawer}/>
+            <MainHeader title={'Plans'} openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
             { isLoading ?  <Loader isLoading={isLoading} /> : 
                 <>
                   <ScrollView showsVerticalScrollIndicator={false} style={globalStyles.ScrollViewStyles}>

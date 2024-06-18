@@ -45,7 +45,7 @@ export const VotdScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader title="Verse of the Day" openDrawer={props.navigation.openDrawer} />
+      <MainHeader title="Verse of the Day" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
       <View style={globalStyles.webViewContainer}>
         <Image source={{ uri: url }} style={{ flex: 1 }} resizeMode="stretch" />
       </View>

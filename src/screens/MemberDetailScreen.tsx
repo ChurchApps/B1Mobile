@@ -73,7 +73,7 @@ export const MemberDetailScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-      <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} />
+      <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
       <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
         <Image source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
         <Text style={globalStyles.memberName}>{member.name.display}</Text>

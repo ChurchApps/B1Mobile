@@ -6,7 +6,6 @@ import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from "react-native-safe-area-context";
 import MessageIcon from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { MainHeader } from "../components";
 import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, EnvironmentHelper, MessageInterface, PrivateMessagesCreate, UserHelper, UserSearchInterface, globalStyles } from "../helpers";
 import { NavigationProps } from '../interfaces';
 
@@ -109,6 +108,16 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
 
   const mainComponent = (<Text style={globalStyles.headerText}>{props?.route?.params?.userDetails?.name?.display ? props?.route?.params?.userDetails?.name?.display : props?.route?.params?.userDetails?.DisplayName }</Text>);
 
+  const MessageHeader = ()=>{
+    return(
+        <View style={globalStyles.headerViewStyle}>
+        <View style={[globalStyles.componentStyle, { flex: 2  }]}>{backIconComponent}</View>
+        <View style={[globalStyles.componentStyle, { flex: 6.3 }]}><Text style={globalStyles.headerText}>Messages</Text></View>
+        <View style={[globalStyles.componentStyle, { flex: 1.7, justifyContent: 'flex-end' }]}> 
+        </View>
+        </View>
+    )
+  }
   const messageInputView = () => {
       return (
           <View style={globalStyles.messageInputContainer}>
@@ -190,7 +199,8 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
 
   return (
   <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader title={'Messages'} ></MainHeader>
+      {/* <MainHeader title={'Messages'} openDrawer={props.navigation.openDrawer} ></MainHeader> */}
+      <MessageHeader/>
       {messagesView()}
       <KeyboardAvoidingView behavior="padding">{messageInputView()}</KeyboardAvoidingView>
   </SafeAreaView>

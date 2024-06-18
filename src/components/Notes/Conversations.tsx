@@ -45,7 +45,7 @@ const Conversations = ({
           return false;
         });
         const people = await ApiHelper.get(
-          "/people/ids?ids=" + peopleIds.join(","),
+          "/people/basic?ids=" + peopleIds.join(","),
           "MembershipApi"
         );
         people.reverse();

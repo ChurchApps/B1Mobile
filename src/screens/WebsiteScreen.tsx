@@ -36,7 +36,7 @@ export const WebsiteScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader title={getTitle()} openDrawer={props.navigation.openDrawer} />
+      <MainHeader title={getTitle()} openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
       <>
         <View style={globalStyles.webViewContainer}>
           <WebView onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: params?.url }} scalesPageToFit={false} />

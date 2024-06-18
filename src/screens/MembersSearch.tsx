@@ -58,7 +58,7 @@ export const MembersSearch = (props: Props) => {
 
   return (
     <SafeAreaView style={[globalStyles.grayContainer,{alignSelf:'center'}]}>
-      <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} />
+      <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
       <View style={{ width: DimensionHelper.wp(100), flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ScrollView style={globalStyles.grayContainer} >
           <Text style={[globalStyles.searchMainText, { marginHorizontal: DimensionHelper.wp('5%') }]}>Find Members</Text>

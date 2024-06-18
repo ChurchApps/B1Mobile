@@ -53,7 +53,7 @@ const DonationScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-      <MainHeader title="Donate" openDrawer={props.navigation.openDrawer} />
+      <MainHeader title="Donate" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
       <ScrollView>
         {UserHelper.currentUserChurch?.person?.id ?
           <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} /> 
