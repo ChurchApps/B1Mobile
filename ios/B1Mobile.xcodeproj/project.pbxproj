@@ -15,6 +15,7 @@
 		3CBC77F2F91843264DF7A7BD /* Pods_B1Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 313802EEDFEB6AFF76A79809 /* Pods_B1Mobile.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		FF7DA2392C00B3AF00FF6547 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FF7DA2382C00B3AF00FF6547 /* GoogleService-Info.plist */; };
+		FF9503972C399B0800B6BBB8 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FF9503962C399B0800B6BBB8 /* PrivacyInfo.xcprivacy */; };
 		FFD8E04027BB697500352D74 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = FFD8E03F27BB697500352D74 /* AppCenter-Config.plist */; };
 		FFD8E04127BB769600352D74 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D65D8118CB90485486340723 /* Roboto-Regular.ttf */; };
 		FFD8E04227BB76D500352D74 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6C541369DA324D0BB9854899 /* Roboto-Black.ttf */; };
@@ -73,7 +74,8 @@
 		D65D8118CB90485486340723 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../src/assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		DB12A16C8A854F0BB821FC77 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		FF7DA2382C00B3AF00FF6547 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FF7DA2382C00B3AF00FF6547 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		FF9503962C399B0800B6BBB8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		FFD8E03F27BB697500352D74 /* AppCenter-Config.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "AppCenter-Config.plist"; path = "B1Mobile/AppCenter-Config.plist"; sourceTree = "<group>"; };
 		FFF7D4282B45CBA70066CFDA /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		FFF7D42A2B45CC120066CFDA /* B1Mobile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = B1Mobile.entitlements; path = B1Mobile/B1Mobile.entitlements; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				FF9503962C399B0800B6BBB8 /* PrivacyInfo.xcprivacy */,
 				FF7DA2382C00B3AF00FF6547 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* B1Mobile */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -318,6 +321,7 @@
 				FFD8E04127BB769600352D74 /* Roboto-Regular.ttf in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				FF9503972C399B0800B6BBB8 /* PrivacyInfo.xcprivacy in Resources */,
 				FFD8E04027BB697500352D74 /* AppCenter-Config.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -697,10 +701,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 			};
@@ -773,10 +774,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
