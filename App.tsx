@@ -25,13 +25,12 @@ EnvironmentHelper.init();
 
 const App = () => {
 
-  
+
   useEffect(() => {
     ErrorHelper.init();
     //ApiHelper.onRequest = (url:string, requestOptions:any) => { console.log("Request: ", url, requestOptions); }
-    ApiHelper.onError = (url:string, requestOptions:any, error:any) => { console.log("***API Error: ", url, requestOptions, error); }
+    ApiHelper.onError = (url: string, requestOptions: any, error: any) => { console.log("***API Error: ", url, requestOptions, error); }
   }, []);
-
 
 
   return (
@@ -43,4 +42,10 @@ const App = () => {
   );
 };
 
-export default CodePush(App);
+
+let codePushOptions = {
+  checkFrequency: CodePush.CheckFrequency.ON_APP_START,
+}
+
+
+export default CodePush(codePushOptions)(App);
