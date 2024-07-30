@@ -6,15 +6,15 @@ import RNRestart from 'react-native-restart';
 import Icon from 'react-native-vector-icons/Fontisto';
 import { BlueHeader } from '../components';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
+import { NavigationProps } from '../interfaces';
+
+
 
 interface Props {
-  navigation: {
-    navigate: (screenName: string) => void;
-  };
+  navigation: NavigationProps;
 }
-
 export const LoginScreen = (props: Props) => {
-  const { navigate } = props.navigation;
+  
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -52,7 +52,10 @@ export const LoginScreen = (props: Props) => {
       setLoading(false);
       if (data.user != null) {
         await UserHelper.handleLogin(data);
-        props.navigation.navigate('MainStack');
+        props.navigation.reset({
+          index : 0, 
+          routes : [{ name : 'MainStack'}]
+        },500)
         //DevSettings.reload();
         RNRestart.Restart();
       }

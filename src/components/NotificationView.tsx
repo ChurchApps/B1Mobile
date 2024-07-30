@@ -5,11 +5,12 @@ import React, { useEffect, useState, } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface, globalStyles } from '../helpers';
+import { NavigationProps } from '../interfaces';
 import { Loader } from './Loader';
 
 
 export function NotificationTab(props: any) {
-  const navigation = useNavigation();
+  const navigation : NavigationProps = useNavigation();
 
   const [isLoading, setLoading] = useState(false);
   const [index, setIndex] = useState(0);

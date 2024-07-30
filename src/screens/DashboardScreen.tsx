@@ -83,7 +83,7 @@ export const DashboardScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.homeContainer} >
-      <MainHeader title="Home" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
+      <MainHeader title="Home" openDrawer={props.navigation.openDrawer} />
       <View style={globalStyles.webViewContainer}>
         {getBrand()}
         {getButtons()}

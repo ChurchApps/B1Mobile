@@ -1,5 +1,4 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
-import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { Image, Platform, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -17,12 +16,6 @@ interface Props {
 export function MainHeader(props: Props) {
 
   const [showNotifications, setShowNotifications] = React.useState(false);
-  const isFocused = useIsFocused();
-  
-  React.useEffect(()=>{
-  setShowNotifications(false)
-  }, [isFocused]) 
-
  
     const LeftComponent = () =>{
      return<View style={{flexDirection:'row', justifyContent: Platform.OS =='ios' ? 'space-around' : 'flex-start' , alignItems:'center'}}>
