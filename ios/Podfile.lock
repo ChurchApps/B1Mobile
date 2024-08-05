@@ -19,7 +19,7 @@ PODS:
     - AppCenter/Core (= 5.0.4)
   - Base64 (1.1.2)
   - boost (1.76.0)
-  - CodePush (8.3.0):
+  - CodePush (8.3.1):
     - Base64 (~> 1.1)
     - JWT (~> 3.0.0-beta.12)
     - React-Core
@@ -593,14 +593,14 @@ PODS:
     - FirebaseCoreExtension (= 10.20.0)
     - React-Core
     - RNFBApp
-  - RNGestureHandler (2.17.1):
+  - RNGestureHandler (2.18.1):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RNReanimated (3.14.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - ReactCommon/turbomodule/core
-  - RNScreens (3.32.0):
+  - RNScreens (3.33.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTImage
@@ -875,7 +875,7 @@ SPEC CHECKSUMS:
   AppCenterReactNativeShared: 22aea9046e80c449137f4e574ae1f229616e2358
   Base64: cecfb41a004124895a7bcee567a89bae5a89d49b
   boost: 7dcd2de282d72e344012f7d6564d024930a6a440
-  CodePush: 8c28cdffd7fe685351cce700c8a86d672d433161
+  CodePush: d892f13c5012e9e2cb36640f4929654b7be21fe5
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: 25cbffbaec517695d376ab4bc428948cd0f08088
   FBReactNativeSpec: e03b22fbf7017a6f76641ea4472e73c915dcdda7
@@ -941,9 +941,9 @@ SPEC CHECKSUMS:
   RNFBAnalytics: c79cf8da7d0bbbad0e0cc233402d2cadc4a694b9
   RNFBApp: a3e139715386fe79a09c387f2dbeb6890eb05b39
   RNFBMessaging: a65862d8eba03cb6c838241bd328166504996894
-  RNGestureHandler: 669a19ea8d0002e27873bd636e4a93cb240cab02
+  RNGestureHandler: e757730933e17b016ce69e0f8a682c534ff4404c
   RNReanimated: 749c2be0500c4a17b25139af2d1a6111ddb7137e
-  RNScreens: 63bef6a0e43add62eaa82d2e4ee753d89f3bc42d
+  RNScreens: f15b076168e4b2bdf3d327015758f36e6654247f
   RNVectorIcons: 82be274d00be231e5eee45f7c73d4a516aed50ab
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9

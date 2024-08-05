@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MessageIcon from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, EnvironmentHelper, MessageInterface, PrivateMessagesCreate, UserHelper, UserSearchInterface, globalStyles } from "../helpers";
+import { eventBus } from '../helpers/PushNotificationHelper';
 import { NavigationProps } from '../interfaces';
 
 interface Props {
@@ -28,7 +29,12 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
   useEffect(() => {
       getConversations();
       loadMembers();
-  }, []);
+      return () => {
+        eventBus.removeListener(
+          "badge"
+        );
+      };
+  }, [currentConversation]);
 
   const getConversations = () => {
       ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
@@ -43,7 +49,6 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
       ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi").then(data => {
       if(data != null && data.length > 0){
           setUserProfilePic(data[0].photo)
-          console.log(UserProfilePic)
       }
       })
     }
