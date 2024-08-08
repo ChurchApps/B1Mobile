@@ -17,7 +17,8 @@ export class EnvironmentHelper {
 
   static init = () => {
     let stage = STAGE;
-    stage = "prod";
+    //stage = "prod";
+    stage = "staging";
     switch (stage) {
       case "prod": EnvironmentHelper.initProd(); break;
       default: EnvironmentHelper.initDev(); break;
@@ -28,7 +29,7 @@ export class EnvironmentHelper {
       { keyName: "MessagingApi", url: EnvironmentHelper.MessagingApi, jwt: "", permisssions: [] },
       { keyName: "AttendanceApi", url: EnvironmentHelper.AttendanceApi, jwt: "", permisssions: [] },
       { keyName: "GivingApi", url: EnvironmentHelper.GivingApi, jwt: "", permisssions: [] },
-      { keyName: "ContentApi", url: EnvironmentHelper.ContentApi,jwt: "", permisssions: [] },
+      { keyName: "ContentApi", url: EnvironmentHelper.ContentApi, jwt: "", permisssions: [] },
       { keyName: "DoingApi", url: EnvironmentHelper.DoingApi, jwt: "", permisssions: [] },
       { keyName: "LessonsApi", url: EnvironmentHelper.LessonsApi, jwt: "", permisssions: [] }
     ]
@@ -58,8 +59,8 @@ export class EnvironmentHelper {
     EnvironmentHelper.MessagingApi = "https://messagingapi.churchapps.org";
     EnvironmentHelper.AttendanceApi = "https://attendanceapi.churchapps.org";
     EnvironmentHelper.GivingApi = "https://givingapi.churchapps.org";
-    EnvironmentHelper.LessonsApi =  "https://api.lessons.church";
-    EnvironmentHelper.DoingApi =  "https://doingapi.churchapps.org";
+    EnvironmentHelper.LessonsApi = "https://api.lessons.church";
+    EnvironmentHelper.DoingApi = "https://doingapi.churchapps.org";
     EnvironmentHelper.ContentApi = "https://contentapi.churchapps.org";
     EnvironmentHelper.ContentRoot = "https://content.churchapps.org";
     EnvironmentHelper.LessonsRoot = "https://lessons.church";
