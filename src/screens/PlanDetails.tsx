@@ -90,7 +90,7 @@ const getTeams = () => {
   
  return (
       <SafeAreaView style={globalStyles.homeContainer}>
-          <MainHeader title={'Plan Details'} openDrawer={props.navigation.openDrawer}/>
+          <MainHeader title={'Plan Details'} openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
           { isLoading ?  <Loader isLoading={isLoading} /> : 
           errorMessage  ? <View style={globalStyles.ErrorMessageView} >
           <Text style={globalStyles.searchMainText}>{errorMessage}</Text>

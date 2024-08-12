@@ -56,7 +56,7 @@ const GroupDetails = (props: any) => {
 
   return (
     <SafeAreaView style={[ globalStyles.grayContainer, { alignSelf: "center", width: "100%", backgroundColor: "white" } ]} >
-      <MainHeader title={name} openDrawer={props.navigation.openDrawer} />
+      <MainHeader title={name} openDrawer={props.navigation.openDrawer}  back={props.navigation.goBack}/>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
         <View style={{ margin: 16 }}>
           <Image source={{ uri: photoUrl }} style={globalStyles.groupImage} />

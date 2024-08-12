@@ -42,7 +42,7 @@ export const CheckinScreen = (props: Props) => {
   
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-      <MainHeader title="Checkin" openDrawer={props.navigation.openDrawer} />
+      <MainHeader title="Checkin" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
         <SafeAreaView style={{ flex: 1 }}>
           {getBrand()}
           {step==="Services" && <CheckinServices onDone={() => setStep("Household")} />}

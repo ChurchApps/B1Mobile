@@ -33,7 +33,7 @@ export const SearchUserScreen = (props: Props) => {
           if(Object.keys(data).length != 0){
             userIdList = data.map((e) => UserHelper.currentUserChurch.person.id == e.fromPersonId ? e.toPersonId : e.fromPersonId);
             if(userIdList.length != 0){
-              ApiHelper.get("/people/ids?ids=" + userIdList.join(','), "MembershipApi").then((userData : UserSearchInterface[]) => {
+              ApiHelper.get("/people/basic?ids=" + userIdList.join(','), "MembershipApi").then((userData : UserSearchInterface[]) => {
                 setLoading(false);
                 for (let i = 0; i < userData.length; i++) {
                   const singleUser : UserSearchInterface = userData[i];

@@ -5,11 +5,12 @@ import React, { useEffect, useState, } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface, globalStyles } from '../helpers';
+import { NavigationProps } from '../interfaces';
 import { Loader } from './Loader';
 
 
 export function NotificationTab(props: any) {
-  const navigation = useNavigation();
+  const navigation : NavigationProps = useNavigation();
 
   const [isLoading, setLoading] = useState(false);
   const [index, setIndex] = useState(0);
@@ -69,7 +70,7 @@ export function NotificationTab(props: any) {
       if (Object.keys(data).length != 0) {
         userIdList = data.map((e) => UserHelper.currentUserChurch.person.id == e.fromPersonId ? e.toPersonId : e.fromPersonId);
         if (userIdList.length != 0) {
-          ApiHelper.get("/people/ids?ids=" + userIdList.join(','), "MembershipApi").then((userData: UserSearchInterface[]) => {
+          ApiHelper.get("/people/basic?ids=" + userIdList.join(','), "MembershipApi").then((userData: UserSearchInterface[]) => {
             // setLoading(false);
             for (let i = 0; i < userData.length; i++) {
               const singleUser: UserSearchInterface = userData[i];

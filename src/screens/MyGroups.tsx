@@ -72,7 +72,7 @@ const MyGroups = (props: any) => {
 
   return (
     <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
-      <MainHeader title="My Groups" openDrawer={props.navigation.openDrawer} />
+      <MainHeader title="My Groups" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
 
       {loading ? <Loader isLoading={loading} /> :
         <FlatList data={mergeData}

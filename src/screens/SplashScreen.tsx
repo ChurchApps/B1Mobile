@@ -23,6 +23,9 @@ const SplashScreen = (props: Props) => {
 
   useEffect(() => { init(); }, [])
 
+  
+
+
   /*
   const setUserDataOld = async (user: any, churchString:string, churchesString:string) => {
     UserHelper.user = JSON.parse(user);
@@ -58,7 +61,11 @@ const SplashScreen = (props: Props) => {
       console.log(e)
       ErrorHelper.logError("splash-screen-error", e);
     }
-    props.navigation.navigate('MainStack', {});
+    //props.navigation.navigate('MainStack', {});
+    props.navigation.reset({
+      index : 0, 
+      routes : [{ name : 'MainStack'}]
+    },500)
   }
 
   if (DimensionHelper.wp(100) > DimensionHelper.hp(100)) {
