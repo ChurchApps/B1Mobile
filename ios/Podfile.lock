@@ -67,9 +67,9 @@ PODS:
     - GoogleUtilities/Logger (~> 7.12)
   - FirebaseCoreExtension (10.20.0):
     - FirebaseCore (~> 10.0)
-  - FirebaseCoreInternal (10.28.0):
+  - FirebaseCoreInternal (10.29.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseInstallations (10.28.0):
+  - FirebaseInstallations (10.29.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
@@ -883,8 +883,8 @@ SPEC CHECKSUMS:
   FirebaseAnalytics: a2731bf3670747ce8f65368b118d18aa8e368246
   FirebaseCore: 28045c1560a2600d284b9c45a904fe322dc890b6
   FirebaseCoreExtension: 0659f035b88c5a7a15a9763c48c2e6ca8c0a2977
-  FirebaseCoreInternal: 58d07f1362fddeb0feb6a857d1d1d1c5e558e698
-  FirebaseInstallations: 60c1d3bc1beef809fd1ad1189a8057a040c59f2e
+  FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
+  FirebaseInstallations: 913cf60d0400ebd5d6b63a28b290372ab44590dd
   FirebaseMessaging: 06c414a21b122396a26847c523d5c370f8325df5
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
