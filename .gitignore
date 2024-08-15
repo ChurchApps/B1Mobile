@@ -7,6 +7,7 @@ GoogleService-Info.plist
 # OSX
 #
 .DS_Store
+android/app/release
 
 npm-debug.*
 *.jks
