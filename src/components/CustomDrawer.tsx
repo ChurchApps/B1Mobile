@@ -124,7 +124,7 @@ export function CustomDrawer(props: any) {
     specialTabs.push({ linkType: 'separator', linkData:"", category:"", text: '', icon: '', url: "" });
     if (showWebsite) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
     if (showMyGroups) specialTabs.push({ linkType: "groups", linkData:"", category:"", text: 'My Groups', icon: 'group', url: "" });
-    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData:"", category:"", text: 'Checkin', icon: 'check_box', url: "" });
+    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData:"", category:"", text: 'Check In', icon: 'check_box', url: "" });
     if (showDonations) specialTabs.push({ linkType: "donation", linkData:"", category:"", text: 'Donate', icon: 'volunteer_activism', url: "" });
     if (showDirectory) specialTabs.push({ linkType: "directory", linkData:"", category:"", text: 'Member Directory', icon: 'groups', url: "" });
     if (showPlans) specialTabs.push({ linkType: "plans", linkData:"", category:"", text: 'Plans', icon: 'event', url: "" });
