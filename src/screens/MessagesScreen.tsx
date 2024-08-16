@@ -26,11 +26,17 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
 
   const { showActionSheetWithOptions } = useActionSheet();
 
-  useEffect(() => {
+  const loadData = () => {
     getConversations();
     loadMembers();
+  }
+
+  useEffect(() => {
+    loadData();
+    eventBus.addListener("badge", loadData);
     return () => { eventBus.removeListener("badge"); };
   }, []);
+  
 
   const getConversations = () => {
     ApiHelper.get("/privateMessages/existing/" + props.route.params.userDetails.id, "MessagingApi").then((data) => {
@@ -93,49 +99,47 @@ export const MessagesScreen  : FunctionComponent<Props> = (props: Props) => {
   }
 
   const backIconComponent = (<TouchableOpacity onPress={() => props.navigation.goBack()}>
-      <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={DimensionHelper.wp('5%')} />
-    </TouchableOpacity>);
+    <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={DimensionHelper.wp('5%')} />
+  </TouchableOpacity>);
 
   //const mainComponent = (<Text style={globalStyles.headerText}>{props?.route?.params?.userDetails?.name?.display ? props?.route?.params?.userDetails?.name?.display : props?.route?.params?.userDetails?.DisplayName }</Text>);
 
   const MessageHeader = ()=> (<View style={globalStyles.headerViewStyle}>
-      <View style={[globalStyles.componentStyle, { flex: 2  }]}>{backIconComponent}</View>
-      <View style={[globalStyles.componentStyle, { flex: 6.3 }]}><Text style={globalStyles.headerText}>Messages</Text></View>
-      <View style={[globalStyles.componentStyle, { flex: 1.7, justifyContent: 'flex-end' }]}></View>
-    </View>);
+    <View style={[globalStyles.componentStyle, { flex: 2  }]}>{backIconComponent}</View>
+    <View style={[globalStyles.componentStyle, { flex: 6.3 }]}><Text style={globalStyles.headerText}>Messages</Text></View>
+    <View style={[globalStyles.componentStyle, { flex: 1.7, justifyContent: 'flex-end' }]}></View>
+  </View>);
 
   const messageInputView = () => (<View style={globalStyles.messageInputContainer}>
-      <TextInput style={globalStyles.messageInputStyle} placeholder={'Enter'} autoCapitalize="none" 
-        autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} value={messageText}
-        onChangeText={(text) => { 
-            if(text == "") setEditingMessage(null)
-            setMessageText(text) 
-        }}
-      />
-      <TouchableOpacity style={globalStyles.sendIcon} onPress = {() => sendMessageInitiate()}>
-          <MessageIcon name={"send"} color={"white"} size={DimensionHelper.wp('5%')}/>
-      </TouchableOpacity>
-    </View>);
+    <TextInput style={globalStyles.messageInputStyle} placeholder={'Enter'} autoCapitalize="none" 
+      autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} value={messageText}
+      onChangeText={(text) => { 
+          if(text == "") setEditingMessage(null)
+          setMessageText(text) 
+      }}
+    />
+    <TouchableOpacity style={globalStyles.sendIcon} onPress = {() => sendMessageInitiate()}>
+        <MessageIcon name={"send"} color={"white"} size={DimensionHelper.wp('5%')}/>
+    </TouchableOpacity>
+  </View>);
   
 
-  const messagesView = () => (
-    <View style={{flex:1, backgroundColor:Constants.Colors.gray_bg}}>
-      <FlatList inverted data={messageList}  style = {{paddingVertical: DimensionHelper.wp('2%')}} renderItem={({ item }) => singleMessageItem(item)}  keyExtractor={(item: any) => item.id} />
-    </View>);
-  
+  const messagesView = () => (<View style={{flex:1, backgroundColor:Constants.Colors.gray_bg}}>
+    <FlatList inverted data={messageList}  style = {{paddingVertical: DimensionHelper.wp('2%')}} renderItem={({ item }) => singleMessageItem(item)}  keyExtractor={(item: any) => item.id} />
+  </View>);
 
   const singleMessageItem = (item : MessageInterface) => (<TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
-      <View style={[globalStyles.messageContainer, { alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
-        {item.personId == props.route.params.userDetails.id ? <Image source={props?.route?.params?.userDetails?.photo ? { uri: EnvironmentHelper.ContentRoot + props?.route?.params?.userDetails?.photo} : Constants.Images.ic_user } style={[globalStyles.churchListIcon, {tintColor: props.route.params.userDetails.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius : DimensionHelper.wp('9%')}]}/> : null}
-        <View>
-          <Text style={[globalStyles.senderNameText, {alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>{item.displayName}</Text>
-          <View style={[globalStyles.messageView,{width: item.content.length > 15 ? DimensionHelper.wp('65%') : DimensionHelper.wp((item.content.length + 14).toString() + "%"), alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
-            <Text>{item.content}</Text>
-          </View>
+    <View style={[globalStyles.messageContainer, { alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
+      {item.personId == props.route.params.userDetails.id ? <Image source={props?.route?.params?.userDetails?.photo ? { uri: EnvironmentHelper.ContentRoot + props?.route?.params?.userDetails?.photo} : Constants.Images.ic_user } style={[globalStyles.churchListIcon, {tintColor: props.route.params.userDetails.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius : DimensionHelper.wp('9%')}]}/> : null}
+      <View>
+        <Text style={[globalStyles.senderNameText, {alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>{item.displayName}</Text>
+        <View style={[globalStyles.messageView,{width: item.content.length > 15 ? DimensionHelper.wp('65%') : DimensionHelper.wp((item.content.length + 14).toString() + "%"), alignSelf: item.personId != props.route.params.userDetails.id ? 'flex-end' : 'flex-start'}]}>
+          <Text>{item.content}</Text>
         </View>
-        {item.personId != props.route.params.userDetails.id ? <Image source={ UserProfilePic  ? {uri : EnvironmentHelper.ContentRoot + UserProfilePic}  :  Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius:DimensionHelper.wp('9%')}]}/> : null}
       </View>
-    </TouchableWithoutFeedback>);
+      {item.personId != props.route.params.userDetails.id ? <Image source={ UserProfilePic  ? {uri : EnvironmentHelper.ContentRoot + UserProfilePic}  :  Constants.Images.ic_user} style={[globalStyles.churchListIcon, {tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius:DimensionHelper.wp('9%')}]}/> : null}
+    </View>
+  </TouchableWithoutFeedback>);
 
   const openContextMenu = (item : MessageInterface) => {
     const options = ['Edit', 'Delete', 'Cancel'];
