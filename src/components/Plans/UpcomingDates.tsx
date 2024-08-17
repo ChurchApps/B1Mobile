@@ -26,7 +26,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
               const endTimeMoment = moment(t.endTime); 
               const now = moment();
               if (endTimeMoment.isAfter(now)) {
-                if (t.teams.indexOf(position?.categoryName) > -1) {
+                if (t.teams?.indexOf(position?.categoryName) > -1) {
                   upcomingdata.push({ timeId: t.id, timeName: t.displayName, startTime: t.startTime, status: "Unconfirmed" });
                 }
               }
