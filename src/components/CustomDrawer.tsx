@@ -115,7 +115,8 @@ export function CustomDrawer(props: any) {
         showCheckin = campuses.length>0;
       } catch {}
       showChums = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
-      showDirectory = uc.person?.membershipStatus?.toLowerCase() === "member";
+      const memberStatus = uc.person?.membershipStatus?.toLowerCase();
+      showDirectory = memberStatus === "member" || memberStatus==="staff";
       uc.groups.forEach(group => {
         if (group.tags.indexOf("team")>-1) showPlans = true;
       });
