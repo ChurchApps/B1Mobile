@@ -1,7 +1,7 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, SafeAreaView, Text, TextInput, View } from 'react-native';
-import { FlatList, ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import { Loader, MainHeader } from '../components';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '../helpers';
 import { NavigationProps } from '../interfaces';
@@ -17,6 +17,7 @@ export const MembersSearch = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log("LOADED MEMBERS")
     Utilities.trackEvent("Member Search Screen");
     loadMembers()
     UserHelper.addOpenScreenEvent('MembersSearch');
@@ -60,7 +61,7 @@ export const MembersSearch = (props: Props) => {
     <SafeAreaView style={[globalStyles.grayContainer,{alignSelf:'center'}]}>
       <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
       <View style={{ width: DimensionHelper.wp(100), flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <ScrollView style={globalStyles.grayContainer} >
+        
           <Text style={[globalStyles.searchMainText, { marginHorizontal: DimensionHelper.wp('5%') }]}>Find Members</Text>
           <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
             <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
@@ -72,7 +73,7 @@ export const MembersSearch = (props: Props) => {
           </TouchableOpacity>
        
             {getResults()}
-        </ScrollView>
+        
         {isLoading && <Loader isLoading={isLoading} />}
        
       </View>

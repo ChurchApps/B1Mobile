@@ -1,6 +1,6 @@
 {
   "name": "B1Mobile",
-  "version": "1.10.4",
+  "version": "1.10.5",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
