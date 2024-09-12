@@ -14,9 +14,11 @@ interface Props {
   paymentMethodName: string;
   donationType: string;
   handleDonate: (message: string) => void;
+  isChecked: boolean
+  transactionFee: number;
 }
 
-export function PreviewModal({ show, close, donation, paymentMethodName, donationType: d, handleDonate }: Props) {
+export function PreviewModal({ show, close, donation, paymentMethodName, donationType: d, handleDonate, isChecked, transactionFee }: Props) {
   const donationType: any = { once: "One-time Donation", recurring: "Recurring Donation" };
   const [isLoading, setLoading] = React.useState<boolean>(false);
 
@@ -60,7 +62,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
           </View>
           <View style={globalStyles.previewView}>
             <Text style={globalStyles.previewTitleText}>Payment Method:</Text>
-            <Text style={{ ...globalStyles.previewDetailText }}>{paymentMethodName == undefined || paymentMethodName == ""  ? "Card" : paymentMethodName}</Text>
+            <Text style={{ ...globalStyles.previewDetailText }}>{paymentMethodName == undefined || paymentMethodName == "" ? "Card" : paymentMethodName}</Text>
           </View>
           <View style={globalStyles.previewView}>
             <Text style={globalStyles.previewTitleText}>Type:</Text>
@@ -102,10 +104,19 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
               ))}
             </View>
           </View>
+          {isChecked &&
+            <View style={globalStyles.previewView}>
+              <Text style={globalStyles.previewTitleText}>Transaction Fee:</Text>
+              <Text style={{ ...globalStyles.previewDetailText }}>
+                {CurrencyHelper.formatCurrency(transactionFee)}
+              </Text>
+            </View>
+          }
           <View style={globalStyles.previewView}>
             <Text style={globalStyles.previewTitleText}>Total:</Text>
             <Text style={{ ...globalStyles.previewDetailText }}>
-              {CurrencyHelper.formatCurrency(donation.amount || 0)}
+              {/* {CurrencyHelper.formatCurrency(donation.amount || 0)} */}
+              {isChecked ? (CurrencyHelper.formatCurrency((donation.amount || 0) + transactionFee)) : (CurrencyHelper.formatCurrency(donation.amount || 0))}
             </Text>
           </View>
         </ScrollView>

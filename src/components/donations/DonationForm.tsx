@@ -9,7 +9,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import IconP from 'react-native-vector-icons/Fontisto';
 import { FundDonations, } from ".";
 import { InputBox, PreviewModal } from "../";
-import { ApiHelper, CacheHelper, Constants, UserHelper, UserInterface, globalStyles } from "../../helpers";
+import { ApiHelper, CacheHelper, Constants, CurrencyHelper, UserHelper, UserInterface, globalStyles } from "../../helpers";
 import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod, } from "../../interfaces";
 
 interface Props {
@@ -20,6 +20,7 @@ interface Props {
 
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
   const person = UserHelper.currentUserChurch?.person;
+  const user = UserHelper.user
   const [donationType, setDonationType] = useState<string>("");
   const [isMethodsDropdownOpen, setIsMethodsDropdownOpen] = useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("");
@@ -29,6 +30,10 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [paymentMethods, setPaymentMethods] = useState<{ label: string; value: string }[]>([]);
   const [total, setTotal] = React.useState<number>(0);
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
+
+  const [isChecked, setIsChecked] = useState(false);
+  const [toggleIcon, setToggleIcon] = useState('checkbox-passive');
+  const [transactionFee, setTransactionFee] = useState<number>(0);
 
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -40,8 +45,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     customerId: customerId,
     person: {
       id: person?.id || "",
-      email: person?.contactInfo?.email || "",
-      name: person?.name?.display || "",
+      email: user?.email || "",
+      name: user?.firstName + " " + user?.lastName,
     },
     amount: 0,
     billing_cycle_anchor: +new Date(),
@@ -68,11 +73,11 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     if (donation.amount && donation.amount < 0.5) {
       Alert.alert("Donation amount must be greater than $0.50");
     } else {
-      if(!UserHelper.currentUserChurch?.person?.id){
+      if (!UserHelper.currentUserChurch?.person?.id) {
         donation.person = {
           id: "",
-          email : email,
-          name : firstName + " " + lastName,
+          email: email,
+          name: firstName + " " + lastName,
         };
       }
       setShowPreviewModal(true);
@@ -84,8 +89,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   };
 
   const loadData = async () => {
-    var churchId : string = ""; 
-    if(!UserHelper.currentUserChurch?.person?.id) churchId = UserHelper.currentUserChurch.church.id ?? "";
+    var churchId: string = "";
+    if (!UserHelper.currentUserChurch?.person?.id) churchId = UserHelper.currentUserChurch.church.id ?? "";
     else churchId = CacheHelper.church?.id || "";
 
     ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then((data) => {
@@ -107,29 +112,35 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     d.amount = totalAmount;
     d.funds = selectedFunds;
     setDonation(d);
-    setTotal(totalAmount);
+    // setTotal(totalAmount);
+    setTotal(calculateTotalWithFees(totalAmount, isChecked));
+    setTransactionFee(getTransactionFee(totalAmount));
   };
 
   const makeDonation = async (message: string) => {
     const method = pm.find((pm) => pm.id === selectedMethod);
-    if(!UserHelper.currentUserChurch?.person?.id){
+    if (!UserHelper.currentUserChurch?.person?.id) {
       ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi")
-        .catch(ex => { 
+        .catch(ex => {
           Alert.alert("Failed", ex.toString());
           return;
-         })
+        })
         .then(async userData => {
           const personData = { churchId: CacheHelper.church!.id, firstName, lastName, email };
           const person = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi")
           saveCard(userData, person)
         });
-    }else{
+    } else {
       const payload: StripeDonationInterface = {
         ...donation,
         id: selectedMethod,
         customerId: customerId,
         type: method?.type,
         billing_cycle_anchor: +new Date(date),
+        amount: parseFloat(total.toFixed(2)),
+        church: {
+          subDomain: CacheHelper.church?.subDomain
+        }
       };
       saveDonation(payload, '');
     }
@@ -137,22 +148,22 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
   const saveCard = async (user: UserInterface, person: PersonInterface) => {
     const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType : 'Card',
+      paymentMethodType: 'Card',
       ...cardDetails,
     });
 
     if (stripePaymentMethod.error) {
       Alert.alert("Failed", stripePaymentMethod.error.message);
       return;
-    }else{
+    } else {
       const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId: UserHelper.currentUserChurch.church.id }
       await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi").then(result => {
         if (result?.raw?.message) {
-          Alert.alert("Failed",result.raw.message);
+          Alert.alert("Failed", result.raw.message);
         } else {
           const d: { paymentMethod: StripePaymentMethod, customerId: string } = result;
           donation.person = {
-            name : firstName + " " + lastName,
+            name: firstName + " " + lastName,
             id: person.id!,
             email: email,
           };
@@ -160,10 +171,10 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             id: d.paymentMethod.id,
             customerId: d.customerId,
             type: d.paymentMethod?.type,
-            amount : donation.amount,
+            amount: donation.amount,
             churchId: CacheHelper.church!.id,
             funds: donation.funds,
-            person : donation.person,
+            person: donation.person,
           };
           saveDonation(payload, "");
         }
@@ -171,7 +182,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     }
   }
 
-  const saveDonation = async (payload : StripeDonationInterface, message : string) => {
+  const saveDonation = async (payload: StripeDonationInterface, message: string) => {
     let results;
     if (donationType === "once") results = await ApiHelper.post("/donate/charge/", payload, "GivingApi");
     if (donationType === "recurring") results = await ApiHelper.post("/donate/subscribe/", payload, "GivingApi");
@@ -185,6 +196,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       setEmail('');
       setFirstName('');
       setLastName('')
+      setToggleIcon('checkbox-passive')
       Alert.alert("Thank you for your donation.", message, [{ text: "OK", onPress: () => updatedFunction() }]);
     }
     if (results?.raw?.message) {
@@ -229,6 +241,24 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setDonation(donationsCopy);
   };
 
+  const calculateTotalWithFees = (baseAmount: number, isChecked: boolean) => {
+    const feeAmount = isChecked ? getTransactionFee(baseAmount) : 0;
+    return baseAmount + feeAmount;
+  };
+
+  const getTransactionFee = (amount: number) => {
+    const fixedFee = 0.30;
+    const fixedPercent = 0.029;
+    return Math.round(((amount + fixedFee) / (1 - fixedPercent) - amount) * 100) / 100;
+  }
+
+  const handleCheckboxPress = () => {
+    const newCheckedState = !isChecked;
+    setIsChecked(newCheckedState);
+    setToggleIcon(newCheckedState ? 'checkbox-active' : 'checkbox-passive');
+    setTotal(calculateTotalWithFees(donation.amount || 0, newCheckedState));
+  };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -248,6 +278,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         paymentMethodName={paymentMethods?.filter((p) => p.value === selectedMethod)[0]?.label}
         donationType={donationType}
         handleDonate={makeDonation}
+        isChecked={isChecked}
+        transactionFee={transactionFee}
       />
       <InputBox
         title="Donate"
@@ -275,7 +307,10 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                 ...globalStyles.methodButton,
                 backgroundColor: donationType === "recurring" ? Constants.Colors.app_color : "white",
               }}
-              onPress={() => setDonationType("recurring")}
+              onPress={() => {
+                setDonationType("recurring")
+                setDonation({ ...donation, interval: { interval_count: 1, interval: "week" } });
+              }}
             >
               <Text
                 style={{
@@ -291,22 +326,22 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             <View>
               {!UserHelper.currentUserChurch?.person?.id ? (
                 <View style={{ width: DimensionHelper.wp("100%") }}>
-                  <View style={[globalStyles.donationInputFieldContainer, {width: DimensionHelper.wp('90%'),}]}>
+                  <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%'), }]}>
                     <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
-                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%'), color: 'black'}]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%'), color: 'black' }]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
                   </View>
                   <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%') }]}>
                     <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
-                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%'), color: 'black'}]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%'), color: 'black' }]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
                   </View>
                   <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%') }]}>
                     <IconP name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
-                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%'), color: 'black'}]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%'), color: 'black' }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
                   </View>
                 </View>
               ) : null}
               <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp("5.5%") }}>{UserHelper.currentUserChurch?.person?.id ? "Payment Method" : "Add Card"}</Text>
-              {UserHelper.currentUserChurch?.person?.id ? 
+              {UserHelper.currentUserChurch?.person?.id ?
                 <View style={{ width: DimensionHelper.wp("100%"), marginBottom: DimensionHelper.wp("12%") }}>
                   <DropDownPicker
                     listMode="SCROLLVIEW"
@@ -328,10 +363,10 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     dropDownDirection="BOTTOM"
                   />
                 </View>
-              : <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%'), padding:10, marginTop: DimensionHelper.wp('3%') }]}>
+                : <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%'), padding: 10, marginTop: DimensionHelper.wp('3%') }]}>
                   <CardField
                     postalCodeEnabled={true}
-                    placeholders={{ number: "4242 4242 4242 4242", cvc : "123" }}
+                    placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }}
                     cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000" }}
                     style={{ width: "88%", height: 50, backgroundColor: "white" }}
                     onCardChange={(cardDetails) => {
@@ -339,9 +374,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     }}
                   />
                 </View>}
-                {donationType === "once" ? null : 
+              {donationType === "once" ? null :
                 <View>
-                  <Text style={[globalStyles.searchMainText, {marginTop: DimensionHelper.wp("5.5%")}]}>
+                  <Text style={[globalStyles.searchMainText, { marginTop: DimensionHelper.wp("5.5%") }]}>
                     {donationType === "once" ? "Donation Date" : "Recurring Donation Start Date"}
                   </Text>
                   <View style={globalStyles.dateInput}>
@@ -383,6 +418,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       setOpen={setIsIntervalDropdownOpen}
                       setValue={(value) => {
                         setSelectedInterval(value)
+                        // handleIntervalChange("type", value)
+                      }}
+                      onChangeValue={(value) => {
                         handleIntervalChange("type", value)
                       }}
                       containerStyle={{
@@ -402,7 +440,16 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
               <Text style={globalStyles.semiTitleText}>Fund</Text>
               <FundDonations funds={funds} fundDonations={fundDonations} updatedFunction={handleFundDonationsChange} />
-              {fundDonations.length > 1 && <Text style={globalStyles.totalText}>Total Donation Amount: ${total}</Text>}
+              {total >= 1 && (
+                <View style={globalStyles.feesContainer}>
+                  <IconP name={toggleIcon} color={Constants.Colors.app_color} style={globalStyles.checkBox} size={DimensionHelper.wp('4.5%')} onPress={handleCheckboxPress} />
+                  <Text style={globalStyles.feesText}>
+                    I'll generously add {CurrencyHelper.formatCurrency(transactionFee)} to cover the transaction fees so you can keep 100% of my donation.
+                  </Text>
+                </View>
+              )}
+              {/* {fundDonations.length > 1 && <Text style={globalStyles.totalText}>Total Donation Amount: {CurrencyHelper.formatCurrency(total)}</Text>} */}
+              {total >= 1 && <Text style={globalStyles.totalText}>Total Donation Amount: {CurrencyHelper.formatCurrency(total)}</Text>}
               <Text style={globalStyles.semiTitleText}>Notes</Text>
               <TextInput
                 multiline={true}
@@ -418,7 +465,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             </View>
           ) : null}
         </ScrollView>
-      </InputBox>
+      </InputBox >
     </>
   );
 }

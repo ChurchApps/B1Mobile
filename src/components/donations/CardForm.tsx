@@ -29,7 +29,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
 
   const createCard = async () => {
     const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType : 'Card',
+      paymentMethodType: 'Card',
       ...cardDetails,
     });
 
@@ -43,8 +43,10 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
       id: stripePaymentMethod.paymentMethod.id,
       customerId,
       personId: person.id,
-      email: person.contactInfo.email,
-      name: person.name.display,
+      // email: person.contactInfo.email,
+      // name: person.name.display,
+      email: person?.contactInfo?.email,
+      name: person?.name?.display,
     };
     const result = await ApiHelper.post("/paymentmethods/addcard", paymentMethod, "GivingApi");
     if (result?.raw?.message) {
@@ -95,7 +97,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
           <CardField
             postalCodeEnabled={true}
             placeholders={{ number: "4242 4242 4242 4242" }}
-            cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000" }}
+            cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000", placeholderColor: "#808080" }}
             style={{ width: "100%", height: 50, marginTop: DimensionHelper.wp("2%"), backgroundColor: "white" }}
             onCardChange={(cardDetails) => {
               setCardDetails(cardDetails);
