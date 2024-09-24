@@ -61,7 +61,7 @@ export class NavigationHelper {
         navigate('ServiceScreen', {})
       }
     }
-    if(item.linkType === 'groups'){
+    if (item.linkType === 'groups') {
       if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.")
       UserHelper.addOpenScreenEvent('MyGroups');
       navigate('MyGroups')
@@ -70,14 +70,24 @@ export class NavigationHelper {
 
   static navDonations(navigate: any) {
     UserHelper.addOpenScreenEvent('DonationScreen');
+    // if (Platform.OS === "ios") {
+    //   let url = "https://" + CacheHelper.church!.subDomain + ".b1.church/login/?returnUrl=%2Fdonation-landing";
+    //   if (UserHelper.currentUserChurch.jwt) url += "&jwt=" + UserHelper.currentUserChurch.jwt;
+    //   Linking.openURL(url);
+    //   /*SafariView.isAvailable().then(() => {
+    //     SafariView.show({ url: url })
+    //   })*/
+    // } else navigate('DonationScreen')
     if (Platform.OS === "ios") {
       let url = "https://" + CacheHelper.church!.subDomain + ".b1.church/login/?returnUrl=%2Fdonation-landing";
-      if (UserHelper.currentUserChurch.jwt) url += "&jwt=" + UserHelper.currentUserChurch.jwt;
+      const jwt = UserHelper.currentUserChurch?.jwt;
+      if (jwt) {
+        url += "&jwt=" + jwt;
+      }
       Linking.openURL(url);
-      /*SafariView.isAvailable().then(() => {
-        SafariView.show({ url: url })
-      })*/
-    } else navigate('DonationScreen')
+    } else {
+      navigate('DonationScreen');
+    }
   }
 
 }
