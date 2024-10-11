@@ -2,11 +2,12 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "30.0.3"
-        minSdkVersion = 21
-        compileSdkVersion = 33
+        buildToolsVersion = "34.0.0"
+        minSdkVersion = 23
+        compileSdkVersion = 34
         targetSdkVersion = 35
-        ndkVersion = "23.1.7779620"
+        ndkVersion = "26.1.10909125"
+        kotlinVersion = "1.9.24"
     }
     repositories {
         google()
@@ -15,7 +16,8 @@ buildscript {
     dependencies {
         classpath('com.android.tools.build:gradle:4.1.1')
         classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath 'com.google.gms:google-services:4.3.3'
+        classpath("com.google.gms:google-services:4.3.3")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -38,3 +40,5 @@ allprojects {
         maven { url 'https://www.jitpack.io' }
     }
 }
+
+apply plugin: "com.facebook.react.rootproject"

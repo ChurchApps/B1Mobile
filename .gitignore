@@ -66,7 +66,7 @@ buck-out/
 *.jsbundle
 
 # CocoaPods
-/ios/Pods/
+**/Pods/
 
 # Env
 .env
@@ -74,3 +74,13 @@ buck-out/
 # services file
 /android/app/google-services.json
 /ios/GoogleService-Info.plist
+
+**/.xcode.env.local
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
