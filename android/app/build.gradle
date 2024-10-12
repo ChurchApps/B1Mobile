@@ -202,18 +202,21 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
+    debugImplementation("com.facebook.flipper:flipper:0.125.0") {
       exclude group:'com.facebook.fbjni'
     }
 
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
+    debugImplementation("com.facebook.flipper:flipper-network-plugin:0.125.0") {
         exclude group:'com.facebook.flipper'
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
 
-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
+    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:0.125.0") {
         exclude group:'com.facebook.flipper'
     }
+
+    // Add required SoLoader dependency
+    debugImplementation 'com.facebook.soloader:soloader:0.10.1'
  
  if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
