@@ -90,8 +90,15 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
   const loadData = async () => {
     var churchId: string = "";
-    if (!UserHelper.currentUserChurch?.person?.id) churchId = UserHelper.currentUserChurch.church.id ?? "";
-    else churchId = CacheHelper.church?.id || "";
+    // if (!UserHelper.currentUserChurch?.person?.id) churchId = UserHelper.currentUserChurch.church.id ?? "";
+    // else churchId = CacheHelper.church?.id || "";
+    if (!UserHelper.currentUserChurch) {
+      churchId = CacheHelper.church?.id || "";
+    } else if (!UserHelper.currentUserChurch.person?.id) {
+      churchId = UserHelper.currentUserChurch.church.id ?? "";
+    } else {
+      churchId = CacheHelper.church?.id || "";
+    }
 
     ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then((data) => {
       setFunds(data);
@@ -156,7 +163,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       Alert.alert("Failed", stripePaymentMethod.error.message);
       return;
     } else {
-      const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId: UserHelper.currentUserChurch.church.id }
+      const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId: CacheHelper.church!.id }
       await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi").then(result => {
         if (result?.raw?.message) {
           Alert.alert("Failed", result.raw.message);
@@ -171,10 +178,16 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             id: d.paymentMethod.id,
             customerId: d.customerId,
             type: d.paymentMethod?.type,
-            amount: donation.amount,
+            // amount: donation.amount,
+            amount: parseFloat(total.toFixed(2)),
             churchId: CacheHelper.church!.id,
             funds: donation.funds,
             person: donation.person,
+            billing_cycle_anchor: +new Date(date),
+            interval: donation.interval,
+            church: {
+              subDomain: CacheHelper.church?.subDomain
+            }
           };
           saveDonation(payload, "");
         }
@@ -363,12 +376,12 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     dropDownDirection="BOTTOM"
                   />
                 </View>
-                : <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%'), padding: 10, marginTop: DimensionHelper.wp('3%') }]}>
+                : <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%'), height: DimensionHelper.wp('14%'), padding: 10, marginTop: DimensionHelper.wp('3%') }]}>
                   <CardField
                     postalCodeEnabled={true}
                     placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }}
-                    cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000" }}
-                    style={{ width: "88%", height: 50, backgroundColor: "white" }}
+                    cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000", placeholderColor: "#808080" }}
+                    style={{ width: "100%", height: 50, backgroundColor: "white" }}
                     onCardChange={(cardDetails) => {
                       setCardDetails(cardDetails);
                     }}
