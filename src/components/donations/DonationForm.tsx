@@ -394,7 +394,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                   </Text>
                   <View style={globalStyles.dateInput}>
                     <Text style={globalStyles.dateText} numberOfLines={1}>
-                      {moment(date).format("DD-MM-YYYY")}
+                      {moment(date).format("YYYY-MM-DD")}
                     </Text>
                     <ModalDatePicker
                       button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp("6%")} />}
