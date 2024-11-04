@@ -46,10 +46,29 @@ export const WebsiteScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader title={getTitle()} openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
+      <MainHeader title={getTitle()} openDrawer={props.navigation.openDrawer} back={props.navigation.goBack} />
       <>
         <View style={globalStyles.webViewContainer}>
-          <WebView ref={webviewRef} onMessage={handleMessage} onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} onNavigationStateChange={(state:any) => { setCurrentUrl(state.url) }} source={{ uri: params?.url }} scalesPageToFit={false} />
+          <WebView
+            ref={webviewRef}
+            onMessage={handleMessage}
+            onLoadStart={() => setLoading(true)}
+            onLoadEnd={() => setLoading(false)}
+            onNavigationStateChange={(state: any) => { setCurrentUrl(state.url) }}
+            source={{ uri: params?.url }}
+            scalesPageToFit={false}
+            allowsInlineMediaPlayback={true}
+            // onShouldStartLoadWithRequest={(request) => {
+            //   const { url } = request;
+            //   if (url.includes('signupgenius.com')) {
+            //     return true;
+            //   } else {
+            //     return false;
+            //   }
+            // }}
+            allowsBackForwardNavigationGestures={true}
+            mediaPlaybackRequiresUserAction={true}
+          />
         </View>
 
         {isLoading && <Loader isLoading={isLoading} />}
