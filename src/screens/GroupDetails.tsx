@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Calendar, DateData } from 'react-native-calendars';
 import Icon from "react-native-vector-icons/FontAwesome";
-import { MainHeader } from "../components";
+import { Loader, MainHeader } from "../components";
 import { CustomModal } from "../components/modals/CustomModal";
 import Conversations from "../components/Notes/Conversations";
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "../helpers";
@@ -24,11 +24,13 @@ const GroupDetails = (props: any) => {
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<any>(null)
   const { id: groupId, name, photoUrl, about } = props?.route?.params?.group;
+  const [loading, setLoading] = useState(false);
 
 
   const loadData = async () => {
+    setLoading(true);
     ApiHelper.get(`/groupmembers?groupId=${groupId}`, "MembershipApi").then(
-      (data) => setGroupMembers(data)
+      (data) => { setGroupMembers(data), setLoading(false); }
     );
   };
 
@@ -38,7 +40,7 @@ const GroupDetails = (props: any) => {
     );
   };
 
-  useEffect(() => { loadData(); loadEvents(); }, []);
+  useEffect(() => { loadData(); loadEvents(); }, [groupId]);
 
   const expandEvents = (events: any) => {
     const expandedEvents: EventInterface[] = [];
@@ -210,7 +212,7 @@ const GroupDetails = (props: any) => {
         } */}
 
         {activeTab === 0 && (<Conversations contentType="group" contentId={groupId} groupId={groupId} from="GroupDetails" />)}
-        {activeTab === 1 && (<View>{getGroupMembers()}</View>)}
+        {activeTab === 1 && (<View style={{ flex: 1 }}>{getGroupMembers()}</View>)}
         {activeTab === 2 && (<View>
           <Calendar
             current={selected}
@@ -250,6 +252,7 @@ const GroupDetails = (props: any) => {
           </View>
         </CustomModal>
       </KeyboardAvoidingView>
+      {loading && <Loader isLoading={loading} />}
     </SafeAreaView>
   );
 };
