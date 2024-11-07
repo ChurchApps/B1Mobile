@@ -120,12 +120,17 @@ export const globalStyles = StyleSheet.create({
 
   //Member Details
   memberIcon: { width: DimensionHelper.wp('25%'), height: DimensionHelper.wp('25%'), borderRadius: DimensionHelper.wp('12.5%'), alignSelf: 'center', marginTop: DimensionHelper.wp('8%') },
-  memberName: { marginHorizontal: DimensionHelper.wp('5%'), marginBottom: DimensionHelper.wp('2%'), fontSize: DimensionHelper.wp('4.8%'), fontFamily: Constants.Fonts.RobotoRegular, alignSelf: 'center', marginTop: DimensionHelper.wp('4%') },
+  // memberName: { marginHorizontal: DimensionHelper.wp('5%'), marginBottom: DimensionHelper.wp('2%'), fontSize: DimensionHelper.wp('4.8%'), fontFamily: Constants.Fonts.RobotoRegular, alignSelf: 'center', marginTop: DimensionHelper.wp('4%') },
   memberDetailContainer: { marginVertical: DimensionHelper.wp('2%'), backgroundColor: 'white', shadowColor: Constants.Colors.app_color, shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.15, shadowRadius: DimensionHelper.wp('1%'), elevation: 3, borderRadius: DimensionHelper.wp('1.5%'), alignSelf: 'center' },
   detailHeader: { marginVertical: DimensionHelper.wp('2%'), fontSize: DimensionHelper.wp('3.9%'), fontFamily: Constants.Fonts.RobotoLight },
   detailIcon: { width: DimensionHelper.wp('4.8%'), height: DimensionHelper.wp('4.8%'), margin: DimensionHelper.wp('3%'), marginTop: DimensionHelper.wp('2.5%'), marginLeft: DimensionHelper.wp('5%') },
   detailIconContainer: { flexDirection: 'row', alignItems: 'center' },
   detailValue: { marginHorizontal: DimensionHelper.wp('5%'), marginBottom: DimensionHelper.wp('2%'), fontSize: DimensionHelper.wp('4.4%'), fontFamily: Constants.Fonts.RobotoRegular },
+  nameMsgContainer: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
+  memberName: { marginHorizontal: DimensionHelper.wp('5%'), fontSize: DimensionHelper.wp('4.8% '), fontFamily: Constants.Fonts.RobotoRegular, alignSelf: 'center' },
+  msgButtonContainer: { paddingHorizontal: DimensionHelper.wp('2.5%'), paddingVertical: DimensionHelper.wp('2%'), backgroundColor: Constants.Colors.app_color, borderRadius: DimensionHelper.wp('1.5%') },
+  msgText: { color: '#fff', fontSize: DimensionHelper.wp('3.5%') },
+
 
   //BlueLogo
   headerContainer: { backgroundColor: Constants.Colors.gray_bg },
