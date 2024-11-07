@@ -23,7 +23,7 @@ export const MemberDetailScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [householdList, setHouseholdList] = useState([]);
   const scrollViewRef = useRef<any>();
- 
+
 
   useEffect(() => {
     Utilities.trackEvent("Member Detail Screen");
@@ -31,7 +31,7 @@ export const MemberDetailScreen = (props: Props) => {
     UserHelper.addOpenScreenEvent('MemberDetailScreen');
   }, [props.route.params])
 
-   const onEmailClick = (email: string) => {
+  const onEmailClick = (email: string) => {
     if (email) Linking.openURL(`mailto:${email}`)
     else Alert.alert("Sorry", 'Email of this user is not available.');
   }
@@ -73,10 +73,18 @@ export const MemberDetailScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.grayContainer}>
-      <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack}/>
+      <MainHeader title="Directory" openDrawer={props.navigation.openDrawer} back={props.navigation.goBack} />
       <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
         <Image source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
-        <Text style={globalStyles.memberName}>{member.name.display}</Text>
+        {/* <Text style={globalStyles.memberName}>{member.name.display}</Text> */}
+        <View style={globalStyles.nameMsgContainer}>
+          <Text style={globalStyles.memberName}>{member.name.display}</Text>
+          <TouchableOpacity style={globalStyles.msgButtonContainer}
+            onPress={() => props.navigation.navigate('MessagesScreen', { userDetails: member })}
+          >
+            <Text style={globalStyles.msgText}>MESSAGE</Text>
+          </TouchableOpacity>
+        </View>
 
         <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onEmailClick(memberinfo.email)}>
           <View style={globalStyles.detailIconContainer}>
@@ -88,7 +96,7 @@ export const MemberDetailScreen = (props: Props) => {
 
         <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
           <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'phone-alt'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp('4.8%')} />
+            <FontAwesome5 name={'phone'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Phone :</Text>
           </View>
           <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
@@ -105,7 +113,7 @@ export const MemberDetailScreen = (props: Props) => {
         </TouchableOpacity>
 
         <Text style={[globalStyles.searchMainText, { alignSelf: 'center' }]}>- Household Members -</Text>
-        <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
+        <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} scrollEnabled={false} />
       </ScrollView>
       {isLoading && <Loader isLoading={isLoading} />}
     </SafeAreaView>
