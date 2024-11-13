@@ -19,7 +19,7 @@ export const RegisterScreen = (props: Props) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [registered, setRegistered] = useState(false)
-  
+
   useEffect(() => {
     Utilities.trackEvent("Register Screen");
   }, [])
@@ -45,14 +45,28 @@ export const RegisterScreen = (props: Props) => {
     return result;
   }
 
-  const registerApiCall = () => {
+  const registerApiCall = async () => {
     const params = { email: email, firstName: firstName, lastName: lastName };
+    // setLoading(true);
+    // ApiHelper.post("/users/register", params, "MembershipApi").then(async (data: any) => {
+    //   setLoading(false);
+    //   if (data.email != null) setRegistered(true);
+    //   else Alert.alert("Alert", "User already exists.");
+    // });
     setLoading(true);
-    ApiHelper.post("/users/register", params, "MembershipApi").then(async (data: any) => {
-      setLoading(false);
+    try {
+      const data = await ApiHelper.post("/users/register", params, "MembershipApi");
       if (data.email != null) setRegistered(true);
       else Alert.alert("Alert", "User already exists.");
-    });
+    } catch (error) {
+      if (error.message && error.message.includes("user already exists")) {
+        Alert.alert("Error", "This user already exists. Please log in with your username and password.");
+      } else {
+        Alert.alert("Error", error.message || "Failed to register user");
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
   const getForm = () => {
@@ -92,7 +106,7 @@ export const RegisterScreen = (props: Props) => {
 
   return (
     <SafeAreaView style={globalStyles.appContainer}>
-      <BlueHeader navigation={props.navigation} showBack={true}/>
+      <BlueHeader navigation={props.navigation} showBack={true} />
       <View style={globalStyles.grayContainer}>
 
         {getContent()}
