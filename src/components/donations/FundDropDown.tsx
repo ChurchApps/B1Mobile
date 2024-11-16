@@ -7,7 +7,7 @@ export function FundDropDown(props: any) {
   const [openFundDropDown, setOpenFundDropDown] = useState(false);
   const [valueType, setValueType] = useState(null);
   const [itemsType, setItemsType] = useState([
-    { label: 'General Fund', value: 'General' },
+    { label: '(General Fund)', value: 'General' },
     { label: 'Van Fund', value: 'Van' },
     { label: 'Van Fund2', value: 'Van2' },
   ]);
