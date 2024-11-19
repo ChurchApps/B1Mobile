@@ -1,6 +1,7 @@
 import { EventInterface } from "@churchapps/helpers";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { DateHelper, DimensionHelper } from '@churchapps/mobilehelper';
+import { useIsFocused } from '@react-navigation/native';
 import Markdown from '@ronradtke/react-native-markdown-display';
 import moment from "moment";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -25,6 +26,7 @@ const GroupDetails = (props: any) => {
   const [selectedEvents, setSelectedEvents] = useState<any>(null)
   const { id: groupId, name, photoUrl, about } = props?.route?.params?.group;
   const [loading, setLoading] = useState(false);
+  const isFocused = useIsFocused();
 
 
   const loadData = async () => {
@@ -40,7 +42,12 @@ const GroupDetails = (props: any) => {
     );
   };
 
-  useEffect(() => { loadData(); loadEvents(); }, [groupId]);
+  useEffect(() => {
+    if (isFocused) {
+      loadData();
+      loadEvents();
+    }
+  }, [groupId, isFocused])
 
   const expandEvents = (events: any) => {
     const expandedEvents: EventInterface[] = [];
@@ -176,7 +183,7 @@ const GroupDetails = (props: any) => {
   };
 
   const getGroupMembers = () => {
-    return (<FlatList data={groupMembers} renderItem={({ item }) => showGroupMembers(false, item)} keyExtractor={(item: any) => item?.id} />);
+    return (<FlatList data={groupMembers} renderItem={({ item }) => showGroupMembers(false, item)} keyExtractor={(item: any) => item?.id} ListEmptyComponent={() => <Text style={styles.noMemberText}>No group members found.</Text>} />);
   };
 
   if (!UserHelper.currentUserChurch?.person?.id) {
@@ -191,7 +198,18 @@ const GroupDetails = (props: any) => {
       <MainHeader title={name} openDrawer={props.navigation.openDrawer} back={props.navigation.goBack} />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
         <View style={{ margin: 16 }}>
-          <Image source={{ uri: photoUrl }} style={globalStyles.groupImage} />
+          {photoUrl ? (
+            <Image source={{ uri: photoUrl }} style={globalStyles.groupImage} />
+          ) : (
+            <View
+              style={[
+                globalStyles.groupImage,
+                { justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0' },
+              ]}
+            >
+              <Text style={styles.noImageText}>No image available</Text>
+            </View>
+          )}
           <Markdown>{about}</Markdown>
         </View>
 
@@ -294,5 +312,11 @@ const styles = StyleSheet.create({
   },
   eventTime: {
     fontSize: DimensionHelper.wp('4%'), color: '#000'
+  },
+  noImageText: {
+    color: '#888'
+  },
+  noMemberText: {
+    textAlign: 'center', marginTop: 10
   }
 });
