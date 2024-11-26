@@ -58,16 +58,8 @@ export const WebsiteScreen = (props: Props) => {
             source={{ uri: params?.url }}
             scalesPageToFit={false}
             allowsInlineMediaPlayback={true}
-            // onShouldStartLoadWithRequest={(request) => {
-            //   const { url } = request;
-            //   if (url.includes('signupgenius.com')) {
-            //     return true;
-            //   } else {
-            //     return false;
-            //   }
-            // }}
             allowsBackForwardNavigationGestures={true}
-            mediaPlaybackRequiresUserAction={true}
+            mediaPlaybackRequiresUserAction={false}
           />
         </View>
 
