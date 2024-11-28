@@ -183,7 +183,13 @@ const GroupDetails = (props: any) => {
   };
 
   const getGroupMembers = () => {
-    return (<FlatList data={groupMembers} renderItem={({ item }) => showGroupMembers(false, item)} keyExtractor={(item: any) => item?.id} ListEmptyComponent={() => <Text style={styles.noMemberText}>No group members found.</Text>} />);
+    return (
+      <FlatList data={groupMembers}
+        renderItem={({ item }) => showGroupMembers(false, item)}
+        keyExtractor={(item: any) => item?.id}
+        ListEmptyComponent={() => <Text style={styles.noMemberText}>No group members found.</Text>}
+      />
+    );
   };
 
   if (!UserHelper.currentUserChurch?.person?.id) {
@@ -215,7 +221,11 @@ const GroupDetails = (props: any) => {
 
         <View style={styles.tabContainer}>
           {TABS.map((tab, idx) => (
-            <TouchableOpacity style={[styles.tab, activeTab === idx && styles.activeTab]} onPress={() => setActiveTab(idx)} >
+            <TouchableOpacity
+              key={`tab-${idx}`}
+              style={[styles.tab, activeTab === idx && styles.activeTab]}
+              onPress={() => setActiveTab(idx)}
+            >
               <Text style={[activeTab === idx && styles.activeTabText]}>
                 {tab}
               </Text>
@@ -224,13 +234,8 @@ const GroupDetails = (props: any) => {
         </View>
         {/* RENDER CONVERSATION */}
 
-        {/* {activeTab === 0
-          ? (<Conversations contentType="group" contentId={groupId} groupId={groupId} from="GroupDetails" />)
-          : (<View>{getGroupMembers()}</View>)
-        } */}
-
         {activeTab === 0 && (<Conversations contentType="group" contentId={groupId} groupId={groupId} from="GroupDetails" />)}
-        {activeTab === 1 && (<View style={{ flex: 1 }}>{getGroupMembers()}</View>)}
+        {activeTab === 1 && (<View style={{ height: DimensionHelper.hp('55%'), paddingBottom: DimensionHelper.wp('2%') }}>{getGroupMembers()}</View>)}
         {activeTab === 2 && (<View>
           <Calendar
             current={selected}
