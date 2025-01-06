@@ -1,0 +1,828 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/build/intermediates/cxx/Debug/60665053/obj/x86_64/libappmodules.so"
+		}
+	],
+	"backtrace" : 3,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"include",
+			"target_link_libraries",
+			"target_compile_options",
+			"target_include_directories"
+		],
+		"files" : 
+		[
+			"/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native/ReactAndroid/cmake-utils/ReactNative-application.cmake",
+			"CMakeLists.txt",
+			"/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
+			"/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 31,
+				"parent" : 0
+			},
+			{
+				"file" : 0,
+				"parent" : 1
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 41,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 86,
+				"parent" : 2
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 72,
+				"parent" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 48,
+				"parent" : 2
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 43,
+				"parent" : 2
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 4,
+				"file" : 2,
+				"line" : 82,
+				"parent" : 8
+			},
+			{
+				"file" : 3
+			},
+			{
+				"command" : 4,
+				"file" : 3,
+				"line" : 80,
+				"parent" : 10
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "-Werror"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "-Wno-error=cpp"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "-fexceptions"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "-frtti"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "-std=c++20"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "-DLOG_TAG=\\\"ReactNative\\\""
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "-DFOLLY_NO_CONFIG=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_CLOCK_GETTIME=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_USE_LIBCPP=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_CFG_NO_COROUTINES=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_MOBILE=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_RECVMMSG=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_PTHREAD=1"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-DFOLLY_HAVE_XSI_STRERROR_R=1"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "appmodules_EXPORTS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 7,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup"
+				},
+				{
+					"backtrace" : 7,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/build/generated/autolinking/src/main/jni"
+				},
+				{
+					"backtrace" : 9,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-safe-area-context/android/src/main/jni"
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-screens/android/src/main/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/react/renderer/components/rnasyncstorage"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/@react-native-community/datetimepicker/android/build/generated/source/codegen/jni/react/renderer/components/RNDateTimePickerCGen"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-date-picker/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-date-picker/android/build/generated/source/codegen/jni/react/renderer/components/RNDatePickerSpecs"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-gesture-handler/android/build/generated/source/codegen/jni/react/renderer/components/rngesturehandler_codegen"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-pager-view/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-pager-view/android/build/generated/source/codegen/jni/react/renderer/components/pagerview"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-reanimated/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-reanimated/android/build/generated/source/codegen/jni/react/renderer/components/rnreanimated"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-safe-area-context/android/src/main/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-safe-area-context/android/src/main/jni/../../../../common/cpp"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-safe-area-context/android/src/main/jni/../../../build/generated/source/codegen/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-safe-area-context/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/safeareacontext"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-screens/android/src/main/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-screens/android/src/main/jni/../../../../common/cpp"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-screens/android/src/main/jni/../../../build/generated/source/codegen/jni"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-screens/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnscreens"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-vector-icons/android/build/generated/source/codegen/jni/react/renderer/components/RNVectorIconsSpec"
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-webview/android/build/generated/source/codegen/jni/."
+				},
+				{
+					"backtrace" : 4,
+					"path" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-webview/android/build/generated/source/codegen/jni/react/renderer/components/RNCWebViewSpec"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "/Users/vishalsharma/.gradle/caches/8.10.2/transforms/ee4713c89dc69faa668500deaee892a4/transformed/fbjni-0.6.0/prefab/modules/fbjni/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "/Users/vishalsharma/.gradle/caches/8.10.2/transforms/512586cdb89cd2618502b3dee85521ce/transformed/react-android-0.76.5-debug/prefab/modules/jsi/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "/Users/vishalsharma/.gradle/caches/8.10.2/transforms/512586cdb89cd2618502b3dee85521ce/transformed/react-android-0.76.5-debug/prefab/modules/reactnative/include"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			],
+			"sysroot" : 
+			{
+				"path" : "/Users/vishalsharma/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot"
+			}
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNDateTimePickerCGen::@59b70ddc31ba2f8ef1d2"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNDatePickerSpecs::@c00f981c6e74346c63d4"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rngesturehandler_codegen::@39f233abcd2c728bc6ec"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_pagerview::@7032a8921530ec438d60"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnreanimated::@8afabad14bfffa3f8b9a"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNVectorIconsSpec::@479809fae146501fd34d"
+		},
+		{
+			"backtrace" : 4,
+			"id" : "react_codegen_RNCWebViewSpec::@eb48929f9f7453740a6c"
+		}
+	],
+	"id" : "appmodules::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "-Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "/Users/vishalsharma/Desktop/development/B1App/android/app/build/intermediates/cxx/Debug/60665053/obj/x86_64/libreact_codegen_safeareacontext.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "/Users/vishalsharma/Desktop/development/B1App/android/app/build/intermediates/cxx/Debug/60665053/obj/x86_64/libreact_codegen_rnscreens.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "/Users/vishalsharma/.gradle/caches/8.10.2/transforms/ee4713c89dc69faa668500deaee892a4/transformed/fbjni-0.6.0/prefab/modules/fbjni/libs/android.x86_64/libfbjni.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "/Users/vishalsharma/.gradle/caches/8.10.2/transforms/512586cdb89cd2618502b3dee85521ce/transformed/react-android-0.76.5-debug/prefab/modules/jsi/libs/android.x86_64/libjsi.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "/Users/vishalsharma/.gradle/caches/8.10.2/transforms/512586cdb89cd2618502b3dee85521ce/transformed/react-android-0.76.5-debug/prefab/modules/reactnative/libs/android.x86_64/libreactnative.so",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "-latomic -lm",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX",
+		"sysroot" : 
+		{
+			"path" : "/Users/vishalsharma/Library/Android/sdk/ndk/26.1.10909125/toolchains/llvm/prebuilt/darwin-x86_64/sysroot"
+		}
+	},
+	"name" : "appmodules",
+	"nameOnDisk" : "libappmodules.so",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1
+			]
+		},
+		{
+			"name" : "Object Libraries",
+			"sourceIndexes" : 
+			[
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20,
+				21,
+				22,
+				23,
+				24,
+				25,
+				26,
+				27,
+				28,
+				29,
+				30,
+				31,
+				32,
+				33,
+				34,
+				35,
+				36,
+				37,
+				38,
+				39,
+				40,
+				41,
+				42,
+				43,
+				44,
+				45,
+				46,
+				47,
+				48,
+				49,
+				50,
+				51,
+				52,
+				53,
+				54,
+				55,
+				56,
+				57
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 3,
+			"compileGroupIndex" : 0,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/build/generated/autolinking/src/main/jni/autolinking.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 3,
+			"compileGroupIndex" : 0,
+			"path" : "OnLoad.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/rnasyncstorageJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/rnasyncstorage-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDateTimePickerCGen_autolinked_build/CMakeFiles/react_codegen_RNDateTimePickerCGen.dir/RNDateTimePickerCGen-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDateTimePickerCGen_autolinked_build/CMakeFiles/react_codegen_RNDateTimePickerCGen.dir/react/renderer/components/RNDateTimePickerCGen/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDateTimePickerCGen_autolinked_build/CMakeFiles/react_codegen_RNDateTimePickerCGen.dir/react/renderer/components/RNDateTimePickerCGen/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDateTimePickerCGen_autolinked_build/CMakeFiles/react_codegen_RNDateTimePickerCGen.dir/react/renderer/components/RNDateTimePickerCGen/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDateTimePickerCGen_autolinked_build/CMakeFiles/react_codegen_RNDateTimePickerCGen.dir/react/renderer/components/RNDateTimePickerCGen/RNDateTimePickerCGenJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDateTimePickerCGen_autolinked_build/CMakeFiles/react_codegen_RNDateTimePickerCGen.dir/react/renderer/components/RNDateTimePickerCGen/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDateTimePickerCGen_autolinked_build/CMakeFiles/react_codegen_RNDateTimePickerCGen.dir/react/renderer/components/RNDateTimePickerCGen/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/RNDatePickerSpecs-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/RNDatePickerSpecsJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNDatePickerSpecs_autolinked_build/CMakeFiles/react_codegen_RNDatePickerSpecs.dir/react/renderer/components/RNDatePickerSpecs/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/react/renderer/components/rngesturehandler_codegen/rngesturehandler_codegenJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rngesturehandler_codegen_autolinked_build/CMakeFiles/react_codegen_rngesturehandler_codegen.dir/rngesturehandler_codegen-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/pagerview-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/pagerview_autolinked_build/CMakeFiles/react_codegen_pagerview.dir/react/renderer/components/pagerview/pagerviewJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnreanimated_autolinked_build/CMakeFiles/react_codegen_rnreanimated.dir/react/renderer/components/rnreanimated/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnreanimated_autolinked_build/CMakeFiles/react_codegen_rnreanimated.dir/react/renderer/components/rnreanimated/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnreanimated_autolinked_build/CMakeFiles/react_codegen_rnreanimated.dir/react/renderer/components/rnreanimated/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnreanimated_autolinked_build/CMakeFiles/react_codegen_rnreanimated.dir/react/renderer/components/rnreanimated/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnreanimated_autolinked_build/CMakeFiles/react_codegen_rnreanimated.dir/react/renderer/components/rnreanimated/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnreanimated_autolinked_build/CMakeFiles/react_codegen_rnreanimated.dir/react/renderer/components/rnreanimated/rnreanimatedJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/rnreanimated_autolinked_build/CMakeFiles/react_codegen_rnreanimated.dir/rnreanimated-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/RNVectorIconsSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/RNVectorIconsSpecJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNVectorIconsSpec_autolinked_build/CMakeFiles/react_codegen_RNVectorIconsSpec.dir/react/renderer/components/RNVectorIconsSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/RNCWebViewSpec-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/ComponentDescriptors.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/EventEmitters.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/Props.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/RNCWebViewSpecJSI-generated.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/ShadowNodes.cpp.o",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 4,
+			"isGenerated" : true,
+			"path" : "/Users/vishalsharma/Desktop/development/B1App/android/app/.cxx/Debug/60665053/x86_64/RNCWebViewSpec_autolinked_build/CMakeFiles/react_codegen_RNCWebViewSpec.dir/react/renderer/components/RNCWebViewSpec/States.cpp.o",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "SHARED_LIBRARY"
+}

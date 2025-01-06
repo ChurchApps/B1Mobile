@@ -1,82 +1,79 @@
-<img align="right" width="150" src="https://raw.githubusercontent.com/ChurchApps/B1App/main/public/images/logo.png">
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-# B1 Mobile
+# Getting Started
 
-> **B1 Mobile** is the mobile app companion to the [B1.church](https://github.com/ChurchApps/B1App) app. It runs on both iOS and Android and provides the same features as the web version including online giving, self-check-in for attendance, live streaming of services, and an interactive member directory. Visit [B1.church](https://b1.church/) to learn more.
+>**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
-## Preview
+## Step 1: Start the Metro Server
 
-<div style="display: flex;gap: 10px;">
-    <img style="width: 24%;" src="https://github.com/ChurchApps/B1Mobile/assets/1447203/69cec397-ac87-4bad-a4c4-f9505b8b5f2c">  
-    <img style="width: 24%;" src="https://github.com/ChurchApps/B1Mobile/assets/1447203/0f1ee735-f6be-4d05-9737-a13dac5be89b">
-    <img style="width: 24%;" src="https://github.com/ChurchApps/B1Mobile/assets/1447203/ba23768c-1e8b-449a-8c56-a8bdf5d8dbd9">
-    <img style="width: 24%;" src="https://github.com/ChurchApps/B1Mobile/assets/1447203/14b79a9c-08e8-4870-9587-2b03e050deb5">  
-</div>
+First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
 
-## Get Involved
+To start Metro, run the following command from the _root_ of your React Native project:
 
-### 🤝 Help Support Us
+```bash
+# using npm
+npm start
 
-The only reason this program is free is because of the generous support from users. If you want to support us to keep this free, please head over to [ChurchApps](https://churchapps/partner) or [sponsor us on GitHub](https://github.com/sponsors/ChurchApps/). Thank you so much!
+# OR using Yarn
+yarn start
+```
 
-### 🏘️ Join the Community
+## Step 2: Start your Application
 
-We have a great community for end-users on [Facebook](https://www.facebook.com/churchapps.org). It's a good way to ask questions, get tips and follow new updates. Come join us!
+Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
 
-### ⚠️ Report an Issue
+### For Android
 
-If you discover an issue or have a feature request, simply submit it to our [issues log](https://github.com/ChurchApps/ChurchAppsSupport/issues). Don't be shy, that's how the program gets better.
+```bash
+# using npm
+npm run android
 
-### 💬 Join us on Slack
+# OR using Yarn
+yarn android
+```
 
-If you would like to contribute in any way, head over to our [Slack Channel](https://join.slack.com/t/livechurchsolutions/shared_invite/zt-i88etpo5-ZZhYsQwQLVclW12DKtVflg) and introduce yourself. We'd love to hear from you.
+### For iOS
 
-### 🏗️ Start Coding
+```bash
+# using npm
+npm run ios
 
-If you'd like to set up the project locally, see our [development guide](https://churchapps.org/dev). For this app:
+# OR using Yarn
+yarn ios
+```
 
-1. Copy dotenv.sample.txt to .env
-2. Run `npm i` to install dependencies
+If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
 
-### Running the app
+This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
 
-#### Method 1
+## Step 3: Modifying your App
 
-1. **Start React Native** - Run `npm start` to start the React Native server (server runs on 8081 port).
-2. **Install Android App** - In Android Studio open the /android folder and click the run button to install the app on your device.
-3. **Connect App to React Native** - Either shake the device or run `adb shell input keyevent 82` to open the developer menu. Go to settings, Debug server host and enter YourIP:8081. Restart the app and it should work properly.
+Now that you have successfully run the app, let's modify it.
 
-#### Method 2
+1. Open `App.tsx` in your text editor of choice and edit some lines.
+2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
 
-1. **Start and Install** - Run `react-native run-android` to start the React Native server and install the app
-2. **Connect App to React Native** - Either shake the device or run `adb shell input keyevent 82` to open the developer menu. Go to settings, Debug server host and enter YourIP:8081. Restart the app and it should work properly.
+   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
 
-## Release build
+## Congratulations! :tada:
 
-### Android
+You've successfully run and modified your React Native App. :partying_face:
 
-1. Follow the environment setup instructions [here](https://reactnative.dev/docs/environment-setup) (first time only)
-2. Hardcode stage="prod" in EnvironmentHelper.ts
-3. Make sure `/android/app/google-services.json` and `/ios/GoogleService-Info.plist` files exist.
-4. Increment the version number in `android/app/build.gradle` and `package.json`
-5. Run `cd android` followed by `gradlew bundleRelease` to produce the release bundle.
-6. Plug in an Android phonet via USB so an apk is generated for the correct device.
-7. Run `cd..` followed by `react-native run-android --variant=release` to generate an apk file for Android devices. You can close the node window when it completes.
-8. Open the app in Android studio. Choose Build -> Generate Signed Bundle and point to your keys. Note: It may be necessary to run `SET NODE_OPTIONS=--openssl-legacy-provider` and then launch Android Studio from the console `C:\Program Files\Android\Android Studio\bin\studio64.exe` in order to comiple the release bundle.
-9. The signed build will be at `\android\app\release`. Upload it to the Google Play store.
+### Now what?
 
-### iOS
+- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
+- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
 
-Follow instructions [here](https://help.dropsource.com/docs/documentation/after-dropsource/publishing-your-app/submitting-an-ios-app-to-the-app-store/#:~:text=Archive%20your%20App,Click%20Validate%20App)
+# Troubleshooting
 
-1. Run `yarn`
-2. Run `cd ios` and `pod install`
-3. In XCode open `Info` and increase the version number and code.
-4. Build, archive, validate and distribute.
+If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
-### Codepush release
+# Learn More
 
-1. Hardcode stage="prod" in EnvironmentHelper.ts
-2. Update version number in package.json
-3. Run 'appcenter codepush release-react -a Live-Church-Solutions/B1Mobile -d Production' to push to Android
-4. Run 'appcenter codepush release-react -a Live-Church-Solutions/B1Mobile_iOS -d Production' to push to iOS
+To learn more about React Native, take a look at the following resources:
+
+- [React Native Website](https://reactnative.dev) - learn more about React Native.
+- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
+- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
+- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
+- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.

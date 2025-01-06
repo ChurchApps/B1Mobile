@@ -1,0 +1,23 @@
+                        -H/Users/vishalsharma/Desktop/development/agency/B1Mobile/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup
+-DCMAKE_SYSTEM_NAME=Android
+-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+-DCMAKE_SYSTEM_VERSION=24
+-DANDROID_PLATFORM=android-24
+-DANDROID_ABI=armeabi-v7a
+-DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a
+-DANDROID_NDK=/Users/vishalsharma/Library/Android/sdk/ndk/26.1.10909125
+-DCMAKE_ANDROID_NDK=/Users/vishalsharma/Library/Android/sdk/ndk/26.1.10909125
+-DCMAKE_TOOLCHAIN_FILE=/Users/vishalsharma/Library/Android/sdk/ndk/26.1.10909125/build/cmake/android.toolchain.cmake
+-DCMAKE_MAKE_PROGRAM=/Users/vishalsharma/Library/Android/sdk/cmake/3.22.1/bin/ninja
+-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=/Users/vishalsharma/Desktop/development/agency/B1Mobile/android/app/build/intermediates/cxx/Debug/3c9631k4/obj/armeabi-v7a
+-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=/Users/vishalsharma/Desktop/development/agency/B1Mobile/android/app/build/intermediates/cxx/Debug/3c9631k4/obj/armeabi-v7a
+-DCMAKE_BUILD_TYPE=Debug
+-DCMAKE_FIND_ROOT_PATH=/Users/vishalsharma/Desktop/development/agency/B1Mobile/android/app/.cxx/Debug/3c9631k4/prefab/armeabi-v7a/prefab
+-B/Users/vishalsharma/Desktop/development/agency/B1Mobile/android/app/.cxx/Debug/3c9631k4/armeabi-v7a
+-GNinja
+-DPROJECT_BUILD_DIR=/Users/vishalsharma/Desktop/development/agency/B1Mobile/android/app/build
+-DREACT_ANDROID_DIR=/Users/vishalsharma/Desktop/development/agency/B1Mobile/node_modules/react-native/ReactAndroid
+-DANDROID_STL=c++_shared
+-DANDROID_USE_LEGACY_TOOLCHAIN_FILE=ON
+                        Build command args: []
+                        Version: 2
