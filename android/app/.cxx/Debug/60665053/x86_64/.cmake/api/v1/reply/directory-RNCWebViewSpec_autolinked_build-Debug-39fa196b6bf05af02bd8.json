@@ -1,0 +1,14 @@
+{
+	"backtraceGraph" : 
+	{
+		"commands" : [],
+		"files" : [],
+		"nodes" : []
+	},
+	"installers" : [],
+	"paths" : 
+	{
+		"build" : "RNCWebViewSpec_autolinked_build",
+		"source" : "/Users/vishalsharma/Desktop/development/B1App/node_modules/react-native-webview/android/build/generated/source/codegen/jni"
+	}
+}

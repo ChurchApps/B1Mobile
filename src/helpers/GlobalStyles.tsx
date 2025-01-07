@@ -52,7 +52,7 @@ export const globalStyles = StyleSheet.create({
   MessagetabView: { position: 'relative', height: '100%', backgroundColor: Constants.Colors.white_color },
   NotificationtabView: { height: '100%', backgroundColor: Constants.Colors.white_color, marginTop: DimensionHelper.hp('2%') },
   activeTabTextColor: { color: Constants.Colors.Active_TabColor, },
-  tabTextColor: { color: Constants.Colors.Dark_Gray, },
+  tabTextColor: { color: Constants.Colors.Dark_Gray,fontFamily:Constants.Fonts.RobotoBold },
   BadgeIconStyle: { width: DimensionHelper.wp('6%'), height: DimensionHelper.wp('6%') },
   BadgemenuIcon: { width: DimensionHelper.wp('6%'), height: DimensionHelper.wp('6%'), marginLeft: DimensionHelper.wp('4%'), tintColor: 'white' },
   BadgeDot: { position: 'absolute', right: 25, width: DimensionHelper.wp('2.5%'), backgroundColor: 'red', height: DimensionHelper.wp('2.5%'), borderRadius: DimensionHelper.wp('1.25%') },

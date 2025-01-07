@@ -239,7 +239,7 @@ export function CustomDrawer(props: any) {
   }
 
   return (
-    <View >
+    <View>
       {
         loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
           <FlatList

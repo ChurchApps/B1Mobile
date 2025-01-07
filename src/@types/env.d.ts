@@ -4,6 +4,8 @@ declare module "@env" {
   export const MEMBERSHIP_API: string;
   export const MESSAGING_API: string;
   export const ATTENDANCE_API: string;
+  export const LESSONS_API: string;
+  export const DOING_API: string;
   export const GIVING_API: string;
   export const CONTENT_API: string;
   export const LESSONS_ROOT: string;

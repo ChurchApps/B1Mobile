@@ -1,0 +1,18 @@
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/nkf-0.2.0/ext/nkf
+/Users/vishalsharma/.rbenv/versions/3.3.6/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250102-36311-8y2osl sitelibdir\=./.gem.20250102-36311-8y2osl clean
+
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250102-36311-8y2osl sitelibdir\=./.gem.20250102-36311-8y2osl
+compiling nkf.c
+linking shared-object nkf.bundle
+
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250102-36311-8y2osl sitelibdir\=./.gem.20250102-36311-8y2osl install
+/opt/homebrew/bin/ginstall -c -m 0755 nkf.bundle ./.gem.20250102-36311-8y2osl
+
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250102-36311-8y2osl sitelibdir\=./.gem.20250102-36311-8y2osl clean

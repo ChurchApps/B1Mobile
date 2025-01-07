@@ -8,6 +8,8 @@ GoogleService-Info.plist
 #
 .DS_Store
 android/app/release
+android/app/.cxx
+
 
 npm-debug.*
 *.jks

@@ -4,7 +4,6 @@ import { View } from 'react-native';
 import CodePush from 'react-native-code-push';
 import { EnvironmentHelper } from "./src/helpers";
 import AppNavigator from './src/navigation/AppNavigation';
-
 // Need manually add Intl polyfill for react-native app
 import { ApiHelper } from '@churchapps/mobilehelper';
 import "intl";
