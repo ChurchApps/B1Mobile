@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
                BuildableName = "B1Mobile.app"
-               BlueprintName = "B1App"
-               ReferencedContainer = "container:B1App.xcodeproj">
+               BlueprintName = "B1Mobile"
+               ReferencedContainer = "container:B1Mobile.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "B1AppTests.xctest"
-               BlueprintName = "B1AppTests"
-               ReferencedContainer = "container:B1App.xcodeproj">
+               BuildableName = "B1MobileTests.xctest"
+               BlueprintName = "B1MobileTests"
+               ReferencedContainer = "container:B1Mobile.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -56,8 +56,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "B1Mobile.app"
-            BlueprintName = "B1App"
-            ReferencedContainer = "container:B1App.xcodeproj">
+            BlueprintName = "B1Mobile"
+            ReferencedContainer = "container:B1Mobile.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -73,8 +73,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "B1Mobile.app"
-            BlueprintName = "B1App"
-            ReferencedContainer = "container:B1App.xcodeproj">
+            BlueprintName = "B1Mobile"
+            ReferencedContainer = "container:B1Mobile.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

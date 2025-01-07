@@ -1,4 +1,4 @@
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
 /Users/vishalsharma/.rbenv/versions/3.3.6/bin/ruby extconf.rb
 checking for pkg-config for libffi... ["-I/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/ffi ", "-L/usr/lib", "-lffi"]
 checking for ffi_prep_closure_loc() in -lffi... yes
@@ -10,10 +10,10 @@ checking for whether -pthread is accepted as LDFLAGS... yes
 creating extconf.h
 creating Makefile
 
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
 make DESTDIR\= sitearchdir\=./.gem.20250102-36311-ts3ubd sitelibdir\=./.gem.20250102-36311-ts3ubd clean
 
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
 make DESTDIR\= sitearchdir\=./.gem.20250102-36311-ts3ubd sitelibdir\=./.gem.20250102-36311-ts3ubd
 compiling AbstractMemory.c
 compiling ArrayType.c
@@ -41,9 +41,9 @@ compiling ffi.c
 linking shared-object ffi_c.bundle
 ld: warning: ignoring duplicate libraries: '-lffi'
 
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
 make DESTDIR\= sitearchdir\=./.gem.20250102-36311-ts3ubd sitelibdir\=./.gem.20250102-36311-ts3ubd install
 /opt/homebrew/bin/ginstall -c -m 0755 ffi_c.bundle ./.gem.20250102-36311-ts3ubd
 
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/ffi-1.17.1/ext/ffi_c
 make DESTDIR\= sitearchdir\=./.gem.20250102-36311-ts3ubd sitelibdir\=./.gem.20250102-36311-ts3ubd clean

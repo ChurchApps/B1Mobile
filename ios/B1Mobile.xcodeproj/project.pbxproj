@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* B1AppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* B1AppTests.m */; };
+		00E356F31AD99517003FC87E /* B1MobileTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* B1MobileTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		5AE198CC9BD4340A14777DFB /* Pods_B1App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C29C0262C28C30F326B61E49 /* Pods_B1App.framework */; };
+		5AE198CC9BD4340A14777DFB /* Pods_B1Mobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C29C0262C28C30F326B61E49 /* Pods_B1Mobile.framework */; };
 		6733633F2D27B956005284F2 /* Roboto-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6733633E2D27B956005284F2 /* Roboto-Black.ttf */; };
 		673363412D27B969005284F2 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 673363402D27B969005284F2 /* Roboto-Bold.ttf */; };
 		673363432D27B97C005284F2 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 673363422D27B97C005284F2 /* Roboto-Light.ttf */; };
@@ -21,7 +21,7 @@
 		67B297A52D267F1900A8D816 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67B297A42D267F1900A8D816 /* UserNotifications.framework */; };
 		67B297A72D2690B100A8D816 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 67B297A62D2690B100A8D816 /* main.jsbundle */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		A7D2462899F04349AE96D8F0 /* Pods_B1App_B1AppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093735FF9C36F5A1A973D2B9 /* Pods_B1App_B1AppTests.framework */; };
+		A7D2462899F04349AE96D8F0 /* Pods_B1Mobile_B1MobileTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 093735FF9C36F5A1A973D2B9 /* Pods_B1Mobile_B1MobileTests.framework */; };
 		C5AABDA83D2AF44DBA09EA82 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -31,26 +31,26 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = B1App;
+			remoteInfo = B1Mobile;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00E356EE1AD99517003FC87E /* B1AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = B1AppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* B1MobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = B1MobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* B1AppTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = B1AppTests.m; sourceTree = "<group>"; };
-		093735FF9C36F5A1A973D2B9 /* Pods_B1App_B1AppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_B1App_B1AppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356F21AD99517003FC87E /* B1MobileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = B1MobileTests.m; sourceTree = "<group>"; };
+		093735FF9C36F5A1A973D2B9 /* Pods_B1Mobile_B1MobileTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_B1Mobile_B1MobileTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* B1Mobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = B1Mobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = B1App/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = B1App/AppDelegate.mm; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = B1App/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = B1App/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = B1App/main.m; sourceTree = "<group>"; };
-		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = B1App/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		29363097E7D681BAB39D5975 /* Pods-B1App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-B1App.debug.xcconfig"; path = "Target Support Files/Pods-B1App/Pods-B1App.debug.xcconfig"; sourceTree = "<group>"; };
-		326928C0775D293F8659D9C6 /* Pods-B1App-B1AppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-B1App-B1AppTests.debug.xcconfig"; path = "Target Support Files/Pods-B1App-B1AppTests/Pods-B1App-B1AppTests.debug.xcconfig"; sourceTree = "<group>"; };
-		3671EA25382C5C0C57A6AADC /* Pods-B1App.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-B1App.release.xcconfig"; path = "Target Support Files/Pods-B1App/Pods-B1App.release.xcconfig"; sourceTree = "<group>"; };
-		38507D0895AD405158E3815A /* Pods-B1App-B1AppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-B1App-B1AppTests.release.xcconfig"; path = "Target Support Files/Pods-B1App-B1AppTests/Pods-B1App-B1AppTests.release.xcconfig"; sourceTree = "<group>"; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = B1Mobile/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = B1Mobile/AppDelegate.mm; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = B1Mobile/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = B1Mobile/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = B1Mobile/main.m; sourceTree = "<group>"; };
+		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = B1Mobile/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		29363097E7D681BAB39D5975 /* Pods-B1Mobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-B1Mobile.debug.xcconfig"; path = "Target Support Files/Pods-B1Mobile/Pods-B1Mobile.debug.xcconfig"; sourceTree = "<group>"; };
+		326928C0775D293F8659D9C6 /* Pods-B1Mobile-B1MobileTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-B1Mobile-B1MobileTests.debug.xcconfig"; path = "Target Support Files/Pods-B1Mobile-B1MobileTests/Pods-B1Mobile-B1MobileTests.debug.xcconfig"; sourceTree = "<group>"; };
+		3671EA25382C5C0C57A6AADC /* Pods-B1Mobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-B1Mobile.release.xcconfig"; path = "Target Support Files/Pods-B1Mobile/Pods-B1Mobile.release.xcconfig"; sourceTree = "<group>"; };
+		38507D0895AD405158E3815A /* Pods-B1Mobile-B1MobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-B1Mobile-B1MobileTests.release.xcconfig"; path = "Target Support Files/Pods-B1Mobile-B1MobileTests/Pods-B1Mobile-B1MobileTests.release.xcconfig"; sourceTree = "<group>"; };
 		6733633E2D27B956005284F2 /* Roboto-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Black.ttf"; path = "../src/assets/fonts/Roboto-Black.ttf"; sourceTree = "<group>"; };
 		673363402D27B969005284F2 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Bold.ttf"; path = "../src/assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		673363422D27B97C005284F2 /* Roboto-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Roboto-Light.ttf"; path = "../src/assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
@@ -60,8 +60,8 @@
 		67B297A42D267F1900A8D816 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		67B297A62D2690B100A8D816 /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		67B297A82D26974D00A8D816 /* RNFBAnalytics.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RNFBAnalytics.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = B1App/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		C29C0262C28C30F326B61E49 /* Pods_B1App.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_B1App.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = B1Mobile/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		C29C0262C28C30F326B61E49 /* Pods_B1Mobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_B1Mobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -70,7 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A7D2462899F04349AE96D8F0 /* Pods_B1App_B1AppTests.framework in Frameworks */,
+				A7D2462899F04349AE96D8F0 /* Pods_B1Mobile_B1MobileTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,20 +79,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				67B297A52D267F1900A8D816 /* UserNotifications.framework in Frameworks */,
-				5AE198CC9BD4340A14777DFB /* Pods_B1App.framework in Frameworks */,
+				5AE198CC9BD4340A14777DFB /* Pods_B1Mobile.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* B1AppTests */ = {
+		00E356EF1AD99517003FC87E /* B1MobileTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* B1AppTests.m */,
+				00E356F21AD99517003FC87E /* B1MobileTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = B1AppTests;
+			path = B1MobileTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -103,7 +103,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* B1App */ = {
+		13B07FAE1A68108700A75B9A /* B1Mobile */ = {
 			isa = PBXGroup;
 			children = (
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -115,7 +115,7 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 			);
-			name = B1App;
+			name = B1Mobile;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -124,8 +124,8 @@
 				67B297A82D26974D00A8D816 /* RNFBAnalytics.framework */,
 				67B297A42D267F1900A8D816 /* UserNotifications.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				C29C0262C28C30F326B61E49 /* Pods_B1App.framework */,
-				093735FF9C36F5A1A973D2B9 /* Pods_B1App_B1AppTests.framework */,
+				C29C0262C28C30F326B61E49 /* Pods_B1Mobile.framework */,
+				093735FF9C36F5A1A973D2B9 /* Pods_B1Mobile_B1MobileTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -146,9 +146,9 @@
 				673363402D27B969005284F2 /* Roboto-Bold.ttf */,
 				6733633E2D27B956005284F2 /* Roboto-Black.ttf */,
 				67B297A62D2690B100A8D816 /* main.jsbundle */,
-				13B07FAE1A68108700A75B9A /* B1App */,
+				13B07FAE1A68108700A75B9A /* B1Mobile */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* B1AppTests */,
+				00E356EF1AD99517003FC87E /* B1MobileTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
@@ -163,7 +163,7 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* B1Mobile.app */,
-				00E356EE1AD99517003FC87E /* B1AppTests.xctest */,
+				00E356EE1AD99517003FC87E /* B1MobileTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -171,10 +171,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				29363097E7D681BAB39D5975 /* Pods-B1App.debug.xcconfig */,
-				3671EA25382C5C0C57A6AADC /* Pods-B1App.release.xcconfig */,
-				326928C0775D293F8659D9C6 /* Pods-B1App-B1AppTests.debug.xcconfig */,
-				38507D0895AD405158E3815A /* Pods-B1App-B1AppTests.release.xcconfig */,
+				29363097E7D681BAB39D5975 /* Pods-B1Mobile.debug.xcconfig */,
+				3671EA25382C5C0C57A6AADC /* Pods-B1Mobile.release.xcconfig */,
+				326928C0775D293F8659D9C6 /* Pods-B1Mobile-B1MobileTests.debug.xcconfig */,
+				38507D0895AD405158E3815A /* Pods-B1Mobile-B1MobileTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -190,9 +190,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* B1AppTests */ = {
+		00E356ED1AD99517003FC87E /* B1MobileTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "B1AppTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "B1MobileTests" */;
 			buildPhases = (
 				9FCDD13891AA561197806CA0 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -206,14 +206,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = B1AppTests;
-			productName = B1AppTests;
-			productReference = 00E356EE1AD99517003FC87E /* B1AppTests.xctest */;
+			name = B1MobileTests;
+			productName = B1MobileTests;
+			productReference = 00E356EE1AD99517003FC87E /* B1MobileTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* B1App */ = {
+		13B07F861A680F5B00A75B9A /* B1Mobile */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "B1App" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "B1Mobile" */;
 			buildPhases = (
 				A8BB6C4BE794920AF846D236 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -228,8 +228,8 @@
 			);
 			dependencies = (
 			);
-			name = B1App;
-			productName = B1App;
+			name = B1Mobile;
+			productName = B1Mobile;
 			productReference = 13B07F961A680F5B00A75B9A /* B1Mobile.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -250,7 +250,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "B1App" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "B1Mobile" */;
 			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -263,8 +263,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* B1App */,
-				00E356ED1AD99517003FC87E /* B1AppTests */,
+				13B07F861A680F5B00A75B9A /* B1Mobile */,
+				00E356ED1AD99517003FC87E /* B1MobileTests */,
 			);
 		};
 /* End PBXProject section */
@@ -319,15 +319,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-B1App/Pods-B1App-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-B1Mobile/Pods-B1Mobile-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-B1App/Pods-B1App-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-B1Mobile/Pods-B1Mobile-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-B1App/Pods-B1App-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-B1Mobile/Pods-B1Mobile-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7EFE36BD3B395716B0379EC6 /* [CP] Embed Pods Frameworks */ = {
@@ -336,15 +336,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-B1App-B1AppTests/Pods-B1App-B1AppTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-B1Mobile-B1MobileTests/Pods-B1Mobile-B1MobileTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-B1App-B1AppTests/Pods-B1App-B1AppTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-B1Mobile-B1MobileTests/Pods-B1Mobile-B1MobileTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-B1App-B1AppTests/Pods-B1App-B1AppTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-B1Mobile-B1MobileTests/Pods-B1Mobile-B1MobileTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		87D5FD67BA896AF3ED844308 /* [CP-User] [RNFB] Core Configuration */ = {
@@ -375,7 +375,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-B1App-B1AppTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-B1Mobile-B1MobileTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -397,7 +397,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-B1App-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-B1Mobile-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -410,15 +410,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-B1App-B1AppTests/Pods-B1App-B1AppTests-resources-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-B1Mobile-B1MobileTests/Pods-B1Mobile-B1MobileTests-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-B1App-B1AppTests/Pods-B1App-B1AppTests-resources-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-B1Mobile-B1MobileTests/Pods-B1Mobile-B1MobileTests-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-B1App-B1AppTests/Pods-B1App-B1AppTests-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-B1Mobile-B1MobileTests/Pods-B1Mobile-B1MobileTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		CE96BF6DD5B439D3C8BAFC8E /* [CP] Embed Pods Frameworks */ = {
@@ -427,15 +427,15 @@
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-B1App/Pods-B1App-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-B1Mobile/Pods-B1Mobile-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-B1App/Pods-B1App-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-B1Mobile/Pods-B1Mobile-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-B1App/Pods-B1App-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-B1Mobile/Pods-B1Mobile-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -445,7 +445,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* B1AppTests.m in Sources */,
+				00E356F31AD99517003FC87E /* B1MobileTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,7 +463,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* B1App */;
+			target = 13B07F861A680F5B00A75B9A /* B1Mobile */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -471,14 +471,14 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 326928C0775D293F8659D9C6 /* Pods-B1App-B1AppTests.debug.xcconfig */;
+			baseConfigurationReference = 326928C0775D293F8659D9C6 /* Pods-B1Mobile-B1MobileTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = B1AppTests/Info.plist;
+				INFOPLIST_FILE = B1MobileTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -492,17 +492,17 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/B1App.app/B1App";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/B1Mobile.app/B1Mobile";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 38507D0895AD405158E3815A /* Pods-B1App-B1AppTests.release.xcconfig */;
+			baseConfigurationReference = 38507D0895AD405158E3815A /* Pods-B1Mobile-B1MobileTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				INFOPLIST_FILE = B1AppTests/Info.plist;
+				INFOPLIST_FILE = B1MobileTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -516,26 +516,26 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/B1App.app/B1App";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/B1Mobile.app/B1Mobile";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 29363097E7D681BAB39D5975 /* Pods-B1App.debug.xcconfig */;
+			baseConfigurationReference = 29363097E7D681BAB39D5975 /* Pods-B1Mobile.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 15;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
-				INFOPLIST_FILE = B1App/Info.plist;
+				INFOPLIST_FILE = B1Mobile/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.11.00;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -551,13 +551,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3671EA25382C5C0C57A6AADC /* Pods-B1App.release.xcconfig */;
+			baseConfigurationReference = 3671EA25382C5C0C57A6AADC /* Pods-B1Mobile.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 15;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
-				INFOPLIST_FILE = B1App/Info.plist;
+				INFOPLIST_FILE = B1Mobile/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -753,7 +753,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "B1AppTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "B1MobileTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -762,7 +762,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "B1App" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "B1Mobile" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -771,7 +771,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "B1App" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "B1Mobile" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

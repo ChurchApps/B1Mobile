@@ -16,7 +16,7 @@
 #   use_frameworks! :linkage => linkage.to_sym
 # end
 
-# target 'B1App' do
+# target 'B1Mobile' do
 #   config = use_native_modules!
 #   use_frameworks!
 #   pod 'FirebaseCore', :modular_headers => true
@@ -30,7 +30,7 @@
 #     :app_path => "#{Pod::Config.instance.installation_root}/.."
 #   )
 
-#   target 'B1AppTests' do
+#   target 'B1MobileTests' do
 #     inherit! :complete
 #     # Pods for testing
 #   end
@@ -64,7 +64,7 @@ $RNFirebaseAnalyticsWithoutAdIdSupport = true
 # Use modular headers specifically for Firebase
 use_frameworks! :linkage => :static
 
-target 'B1App' do
+target 'B1Mobile' do
   config = use_native_modules!
 
   # Add Firebase dependencies with modular headers
@@ -78,7 +78,7 @@ target 'B1App' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'B1AppTests' do
+  target 'B1MobileTests' do
     inherit! :complete
     # Pods for testing
   end

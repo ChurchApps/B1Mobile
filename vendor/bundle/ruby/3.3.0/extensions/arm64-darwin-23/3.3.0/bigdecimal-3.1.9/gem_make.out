@@ -1,4 +1,4 @@
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
 /Users/vishalsharma/.rbenv/versions/3.3.6/bin/ruby extconf.rb
 checking for __builtin_clz()... yes
 checking for __builtin_clzl()... yes
@@ -25,18 +25,18 @@ checking for rb_category_warn() in ruby.h... yes
 checking for RB_WARN_CATEGORY_DEPRECATED in ruby.h... yes
 creating Makefile
 
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
 make DESTDIR\= sitearchdir\=./.gem.20250102-36311-upi6r3 sitelibdir\=./.gem.20250102-36311-upi6r3 clean
 
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
 make DESTDIR\= sitearchdir\=./.gem.20250102-36311-upi6r3 sitelibdir\=./.gem.20250102-36311-upi6r3
 compiling bigdecimal.c
 compiling missing.c
 linking shared-object bigdecimal.bundle
 
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
 make DESTDIR\= sitearchdir\=./.gem.20250102-36311-upi6r3 sitelibdir\=./.gem.20250102-36311-upi6r3 install
 /opt/homebrew/bin/ginstall -c -m 0755 bigdecimal.bundle ./.gem.20250102-36311-upi6r3
 
-current directory: /Users/vishalsharma/Desktop/development/B1App/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
+current directory: /Users/vishalsharma/Desktop/development/B1Mobile/vendor/bundle/ruby/3.3.0/gems/bigdecimal-3.1.9/ext/bigdecimal
 make DESTDIR\= sitearchdir\=./.gem.20250102-36311-upi6r3 sitelibdir\=./.gem.20250102-36311-upi6r3 clean
