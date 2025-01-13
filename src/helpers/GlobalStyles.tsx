@@ -24,8 +24,9 @@ export const globalStyles = StyleSheet.create({
   activeTabTextStyle: { color: 'black', fontSize: 18 },
   textStyle: { color: 'white', fontSize: 20, fontWeight: '700', marginTop: 40 },
   tabContainerViewStyle: { backgroundColor: 'white', width: '100%', paddingVertical: 5, borderRadius: 10 },
-  loginLinks: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 200 },
+  loginLinks: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 150 },
   simpleLink: { textDecorationLine: "underline", color: Constants.Colors.button_bg },
+  privacyPolicyView: { flexDirection: 'row', alignItems: 'center', },
 
 
   //Splash
@@ -34,6 +35,7 @@ export const globalStyles = StyleSheet.create({
   //Login
   inputIcon: { width: DimensionHelper.wp('4.5%'), height: DimensionHelper.wp('4.5%'), margin: DimensionHelper.wp('3%') },
   mainText: { marginHorizontal: DimensionHelper.wp('5%'), marginTop: DimensionHelper.wp('8%'), fontSize: DimensionHelper.wp('4.8%'), fontFamily: Constants.Fonts.RobotoMedium },
+  privacyText: { marginHorizontal: DimensionHelper.wp('5%'), marginTop: DimensionHelper.wp('8%'), fontSize: DimensionHelper.wp('3.8%'), fontFamily: Constants.Fonts.RobotoRegular },
 
   //Church Search
   searchMainText: { marginHorizontal: DimensionHelper.wp('5%'), marginTop: DimensionHelper.wp('8%'), fontSize: DimensionHelper.wp('4.5%'), fontFamily: Constants.Fonts.RobotoLight },
@@ -52,7 +54,7 @@ export const globalStyles = StyleSheet.create({
   MessagetabView: { position: 'relative', height: '100%', backgroundColor: Constants.Colors.white_color },
   NotificationtabView: { height: '100%', backgroundColor: Constants.Colors.white_color, marginTop: DimensionHelper.hp('2%') },
   activeTabTextColor: { color: Constants.Colors.Active_TabColor, },
-  tabTextColor: { color: Constants.Colors.Dark_Gray,fontFamily:Constants.Fonts.RobotoBold },
+  tabTextColor: { color: Constants.Colors.Dark_Gray, fontFamily: Constants.Fonts.RobotoBold },
   BadgeIconStyle: { width: DimensionHelper.wp('6%'), height: DimensionHelper.wp('6%') },
   BadgemenuIcon: { width: DimensionHelper.wp('6%'), height: DimensionHelper.wp('6%'), marginLeft: DimensionHelper.wp('4%'), tintColor: 'white' },
   BadgeDot: { position: 'absolute', right: 25, width: DimensionHelper.wp('2.5%'), backgroundColor: 'red', height: DimensionHelper.wp('2.5%'), borderRadius: DimensionHelper.wp('1.25%') },
