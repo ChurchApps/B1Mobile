@@ -17,6 +17,7 @@ import { MessagesScreen } from '../screens/MessagesScreen';
 import MyGroups from '../screens/MyGroups';
 import { PlanDetails } from '../screens/PlanDetails';
 import { PlanScreen } from '../screens/PlanScreen';
+import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 import { RegisterScreen } from '../screens/RegisterScreen';
 import { SearchUserScreen } from '../screens/SearchUserScreen';
 import SplashScreen from '../screens/SplashScreen';
@@ -29,7 +30,7 @@ const Drawer = createDrawerNavigator();
 
 const MainStack = () => {
   const [dimensions, setDimensions] = React.useState("1,1");
-  
+
   const init = () => {
     DimensionHelper.listenOrientationChange(this, () => {
       setDimensions(DimensionHelper.wp("100%") + "," + DimensionHelper.hp("100%"))
@@ -43,23 +44,24 @@ const MainStack = () => {
   }
 
   React.useEffect(init, []);
-  if (dimensions!=="1,1") console.log(dimensions);
-  
+  if (dimensions !== "1,1") console.log(dimensions);
+
   //Note:  By not combining the Website screen users can toggle between them without their current page on each tab being lost
 
   return (
     <Drawer.Navigator screenOptions={{
-      headerShown : false , 
-      drawerStyle: { width:DimensionHelper.wp('60%'),height:DimensionHelper.hp('100%'), backgroundColor: Constants.Colors.app_color }, drawerType:'slide' }} 
-      initialRouteName={'WebsiteScreen'} 
+      headerShown: false,
+      drawerStyle: { width: DimensionHelper.wp('60%'), height: DimensionHelper.hp('100%'), backgroundColor: Constants.Colors.app_color }, drawerType: 'slide'
+    }}
+      initialRouteName={'WebsiteScreen'}
       drawerContent={(props) => <CustomDrawer {...props} />}>
       <Drawer.Screen name={'Dashboard'} component={DashboardScreen} />
-      <Drawer.Screen name={'BibleScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}}/>
+      <Drawer.Screen name={'BibleScreen'} component={WebsiteScreen} options={{ unmountOnBlur: true }} />
       <Drawer.Screen name={'VotdScreen'} component={VotdScreen} />
-      <Drawer.Screen name={'LessonsScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}}/>
-      <Drawer.Screen name={'StreamScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}}/>
-      <Drawer.Screen name={'WebsiteScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}} />
-      <Drawer.Screen name={'PageScreen'} component={WebsiteScreen} options={{unmountOnBlur:true}}/>
+      <Drawer.Screen name={'LessonsScreen'} component={WebsiteScreen} options={{ unmountOnBlur: true }} />
+      <Drawer.Screen name={'StreamScreen'} component={WebsiteScreen} options={{ unmountOnBlur: true }} />
+      <Drawer.Screen name={'WebsiteScreen'} component={WebsiteScreen} options={{ unmountOnBlur: true }} />
+      <Drawer.Screen name={'PageScreen'} component={WebsiteScreen} options={{ unmountOnBlur: true }} />
       <Drawer.Screen name={'ChurchSearch'} component={ChurchSearch} />
       <Drawer.Screen name={'SearchMessageUser'} component={SearchUserScreen} />
       <Drawer.Screen name={'MembersSearch'} component={MembersSearch} />
@@ -70,16 +72,17 @@ const MainStack = () => {
       <Drawer.Screen name={'GroupDetails'} component={GroupDetails} />
       <Drawer.Screen name={'PlanScreen'} component={PlanScreen} />
       <Drawer.Screen name={'PlanDetails'} component={PlanDetails} />
-      
+
     </Drawer.Navigator>
   );
 }
 
 const AuthStack = () => {
   return (
-    <AuthNav.Navigator screenOptions={{headerShown:false}} initialRouteName={'LoginScreen'}>
+    <AuthNav.Navigator screenOptions={{ headerShown: false }} initialRouteName={'LoginScreen'}>
       <AuthNav.Screen name={'LoginScreen'} component={LoginScreen} />
       <AuthNav.Screen name={'RegisterScreen'} component={RegisterScreen} />
+      <AuthNav.Screen name={'PrivacyScreen'} component={PrivacyPolicyScreen} options={{ headerShown: true, headerTitle: "Privacy Policy", headerBackTitle: "" }} />
     </AuthNav.Navigator>
   );
 }
@@ -87,7 +90,7 @@ const AuthStack = () => {
 const AppNavigation = (props: any) => {
   return (
     <NavigationContainer>
-      <AppNav.Navigator screenOptions={{headerShown:false, animationEnabled:false}} initialRouteName='SplashScreen'  >
+      <AppNav.Navigator screenOptions={{ headerShown: false, animationEnabled: false }} initialRouteName='SplashScreen'  >
         <AppNav.Screen name="SplashScreen" component={SplashScreen} />
         <AppNav.Screen name="AuthStack" component={AuthStack} />
         <AppNav.Screen name="MainStack" component={MainStack} />

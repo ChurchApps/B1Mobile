@@ -50,6 +50,7 @@
 
 platform :ios, '17.0'
 
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(

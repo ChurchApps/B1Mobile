@@ -118,6 +118,14 @@
 			name = B1Mobile;
 			sourceTree = "<group>";
 		};
+		155C5AFEB43D4336BE93BCA1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -178,14 +186,6 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
-		};
-		155C5AFEB43D4336BE93BCA1 /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
 		};
 /* End PBXGroup section */
 
