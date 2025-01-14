@@ -1,3 +1,5 @@
+android/.cxx
+
 yarn.lock
 package-lock.json
 *.bat

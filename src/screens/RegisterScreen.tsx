@@ -84,6 +84,12 @@ export const RegisterScreen = (props: Props) => {
         <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
         <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
       </View>
+      <View style={{ ...globalStyles.privacyPolicyView, width: DimensionHelper.wp('90%') }}>
+        <Text style={{ ...globalStyles.privacyText, width: DimensionHelper.wp('90%') }}>By clicking on Register, I confirm that I have read the <Text style={{ color: Constants.Colors.app_color }} onPress={() => {
+          props.navigation.navigate("PrivacyScreen")
+        }}>privacy policy.</Text>
+        </Text>
+      </View>
       <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp('90%') }]} onPress={() => { validateDetails() && registerApiCall() }}>
         {loading ?
           <ActivityIndicator size='small' color='white' animating={loading} /> :

@@ -14,7 +14,7 @@ interface Props {
   navigation: NavigationProps;
 }
 export const LoginScreen = (props: Props) => {
-  
+
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,7 +43,7 @@ export const LoginScreen = (props: Props) => {
     }
   }
 
-  
+
 
   const loginApiCall = () => {
     let params = { "email": email, "password": password }
@@ -53,9 +53,9 @@ export const LoginScreen = (props: Props) => {
       if (data.user != null) {
         await UserHelper.handleLogin(data);
         props.navigation.reset({
-          index : 0, 
-          routes : [{ name : 'MainStack'}]
-        },500)
+          index: 0,
+          routes: [{ name: 'MainStack' }]
+        }, 500)
         //DevSettings.reload();
         RNRestart.Restart();
       }
@@ -83,6 +83,12 @@ export const LoginScreen = (props: Props) => {
             <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
               <Icon name={'key'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
               <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
+            </View>
+            <View style={{ ...globalStyles.privacyPolicyView, width: DimensionHelper.wp('90%') }}>
+              <Text style={{ ...globalStyles.privacyText, width: DimensionHelper.wp('90%') }}>By clicking on Login, I confirm that I have read the <Text style={{ color: Constants.Colors.app_color }} onPress={() => {
+                props.navigation.navigate("PrivacyScreen")
+              }}    >privacy policy.</Text>
+              </Text>
             </View>
 
             <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp('90%') }]} onPress={() => { validateDetails() && loginApiCall() }}>
