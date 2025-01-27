@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Linking, SafeAreaView, View } from 'react-native';
+import { Linking, Platform, SafeAreaView, View } from 'react-native';
 import WebView from 'react-native-webview';
 import { Loader, MainHeader } from '../components';
 import { CacheHelper, Utilities, globalStyles } from '../helpers';
@@ -14,6 +14,18 @@ interface Props {
     }
   };
 }
+
+const urlToScreenMapping: { [key: string]: string } = {
+  '/donate': 'DonationScreen',
+  '/groups/details/': 'GroupDetails',
+  '/my/checkin': 'ServiceScreen',
+  '/my/community': 'MembersSearch',
+  '/my/community/': 'MemberDetailScreen',
+  '/my/groups': 'MyGroups',
+  '/my/plans': 'PlanScreen',
+  '/my/plans/': 'PlanDetails',
+  '/votd': 'VotdScreen',
+};
 
 export const WebsiteScreen = (props: Props) => {
   const { params } = props.route;
@@ -36,6 +48,48 @@ export const WebsiteScreen = (props: Props) => {
     return title == undefined ? 'Home' : title;
   }
 
+  const extractIdFromUrl = (url: string, basePath: string) => {
+    if (url.startsWith(basePath)) {
+      return url.replace(basePath, '').split('?')[0];
+    }
+    return null;
+  };
+
+  const handleWebViewNavigationStateChange = (event: any) => {
+    const { url } = event;
+
+    // Dynamically extract base URL
+    const baseUrlMatch = url.match(/^(https?:\/\/[^/]+)/);
+    const baseUrl = baseUrlMatch ? baseUrlMatch[1] : '';
+
+    if (url.includes('/donate')) {
+      if (Platform.OS === 'android') {
+        props.navigation.navigate('DonationScreen');
+        return false;
+      } else if (Platform.OS === 'ios') {
+        return true;
+      }
+    }
+
+    for (const basePath in urlToScreenMapping) {
+      const screenName = urlToScreenMapping[basePath];
+
+      if (basePath.endsWith('/')) {
+        const fullUrl = `${baseUrl}${basePath}`;
+        const id = extractIdFromUrl(url, fullUrl);
+        if (id) {
+          props.navigation.navigate(screenName, { id });
+          return false;
+        }
+      } else if (url === `${baseUrl}${basePath}`) {
+        props.navigation.navigate(screenName);
+        return false;
+      }
+    }
+
+    return true;
+  };
+
   const handleMessage = (event: any) => {
 
     console.log("MADE IT")
@@ -54,12 +108,14 @@ export const WebsiteScreen = (props: Props) => {
             onMessage={handleMessage}
             onLoadStart={() => setLoading(true)}
             onLoadEnd={() => setLoading(false)}
-            onNavigationStateChange={(state: any) => { setCurrentUrl(state.url) }}
+            // onNavigationStateChange={(state: any) => { setCurrentUrl(state.url) }}
             source={{ uri: params?.url }}
             scalesPageToFit={false}
             allowsInlineMediaPlayback={true}
             allowsBackForwardNavigationGestures={true}
             mediaPlaybackRequiresUserAction={false}
+            // onShouldStartLoadWithRequest={handleWebViewNavigationStateChange}
+            onNavigationStateChange={handleWebViewNavigationStateChange}
           />
         </View>
 
