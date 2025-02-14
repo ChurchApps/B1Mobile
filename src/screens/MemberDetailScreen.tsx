@@ -17,12 +17,20 @@ interface Props {
   };
 }
 
+const phoneTypes = [
+  { key: 'mobilePhone', label: 'Mobile' },
+  { key: 'homePhone', label: 'Home' },
+  { key: 'workPhone', label: 'Work' },
+];
+
 export const MemberDetailScreen = (props: Props) => {
   const member = props.route.params.member;
   const memberinfo = member.contactInfo;
   const [isLoading, setLoading] = useState(false);
   const [householdList, setHouseholdList] = useState([]);
   const scrollViewRef = useRef<any>();
+
+  const validPhones = phoneTypes.filter(({ key }) => memberinfo[key]);
 
 
   useEffect(() => {
@@ -94,13 +102,31 @@ export const MemberDetailScreen = (props: Props) => {
           <Text style={globalStyles.detailValue}>{memberinfo.email ? memberinfo.email : '-'}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
+        {/* <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
           <View style={globalStyles.detailIconContainer}>
             <FontAwesome5 name={'phone'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp('4.8%')} />
             <Text style={globalStyles.detailHeader}>Phone :</Text>
           </View>
           <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        {validPhones.map(({ key, label }) => (
+          <TouchableOpacity
+            key={key}
+            style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]}
+            onPress={() => onPhoneClick(memberinfo[key])}
+          >
+            <View style={globalStyles.detailIconContainer}>
+              <FontAwesome5
+                name={'phone'}
+                color={Constants.Colors.app_color}
+                style={globalStyles.detailIcon}
+                size={DimensionHelper.wp('4.8%')}
+              />
+              <Text style={globalStyles.detailHeader}>{label} :</Text>
+            </View>
+            <Text style={globalStyles.detailValue}>{memberinfo[key]}</Text>
+          </TouchableOpacity>
+        ))}
 
         <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onAddressClick()}>
           <View style={globalStyles.detailIconContainer}>
