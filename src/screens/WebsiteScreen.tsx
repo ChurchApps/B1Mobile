@@ -110,7 +110,9 @@ export const WebsiteScreen = (props: Props) => {
             onLoadEnd={() => setLoading(false)}
             // onNavigationStateChange={(state: any) => { setCurrentUrl(state.url) }}
             source={{ uri: params?.url }}
+            renderLoading={() => <Loader isLoading={isLoading} />}
             scalesPageToFit={false}
+            startInLoadingState={true}
             allowsInlineMediaPlayback={true}
             allowsBackForwardNavigationGestures={true}
             mediaPlaybackRequiresUserAction={false}
@@ -118,8 +120,6 @@ export const WebsiteScreen = (props: Props) => {
             onNavigationStateChange={handleWebViewNavigationStateChange}
           />
         </View>
-
-        {isLoading && <Loader isLoading={isLoading} />}
       </>
     </SafeAreaView>
   );
