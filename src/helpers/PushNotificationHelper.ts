@@ -9,12 +9,14 @@ export class PushNotificationHelper {
 
   static async registerUserDevice() {
     const fcmToken = CacheHelper.fcmToken;
+
     const deviceName = await DeviceInfo.getDeviceName();
     const deviceInfo = await PushNotificationHelper.getDeviceInfo();
     const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
     const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
     const currentData: LoginUserChurchInterface | undefined = tst.find((value, index) => value.church.id == currentChurch!.id);
     if (currentData != null || currentData != undefined) {
+      console.log("registerrrrr", fcmToken)
       ApiHelper.post("/devices/register", { "personId": currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi").then(async (data) => {
         console.log("register device api response ====>", data)
       });
@@ -95,6 +97,7 @@ export class PushNotificationHelper {
     })
   }
 }
+
 export const eventBus = {
   emit(eventName: string, data?: any) {
     DeviceEventEmitter.emit(eventName, data);

@@ -10,7 +10,7 @@ import { Loader } from './Loader';
 
 
 export function NotificationTab(props: any) {
-  const navigation : NavigationProps = useNavigation();
+  const navigation: NavigationProps = useNavigation();
 
   const [isLoading, setLoading] = useState(false);
   const [index, setIndex] = useState(0);
@@ -18,7 +18,7 @@ export function NotificationTab(props: any) {
   const [Chatlist, setChatList] = useState<any[]>([])
   const [UserData, setUserData] = useState<any[]>([])
   const [mergeData, setMergedData] = useState<any[]>([])
-  
+
   const [routes] = React.useState([
     { key: 'first', title: 'MESSAGES' },
     { key: 'second', title: 'NOTIFICATIONS' },
@@ -30,6 +30,7 @@ export function NotificationTab(props: any) {
   const getNotifications = () => {
     setLoading(true)
     ApiHelper.get("/notifications/my", "MessagingApi").then((data) => {
+      console.log(data)
       if (data && data.length != 0) setNotificationData(data);
     })
   }
@@ -37,10 +38,10 @@ export function NotificationTab(props: any) {
   useEffect(() => {
     if (Chatlist.length > 0 && UserData.length > 0) {
       setLoading(true)
-      const merged:any[] = [];
-      Chatlist.forEach((item1:any) => {
+      const merged: any[] = [];
+      Chatlist.forEach((item1: any) => {
         const commonId = UserHelper.currentUserChurch.person.id == item1.fromPersonId ? item1.toPersonId : item1.fromPersonId// item1.toPersonId;
-        const matchingItem2:any = UserData.find((item2:any) => item2.id === commonId);
+        const matchingItem2: any = UserData.find((item2: any) => item2.id === commonId);
         if (matchingItem2) {
           merged.push({
             id: commonId,
@@ -50,6 +51,7 @@ export function NotificationTab(props: any) {
           });
         }
       });
+      console.log("itemin list ", merged)
       setMergedData(merged);
       setLoading(false)
     }
@@ -94,7 +96,7 @@ export function NotificationTab(props: any) {
     return (
       <TouchableOpacity onPress={() => navigation.navigate('MessagesScreen', { userDetails: userchatDetails })}>
         <View style={[globalStyles.messageContainer, { alignSelf: 'flex-start' }]}>
-          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, {height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} tintColor={ item.photo ? '#00000000' : Constants.Colors.app_color}/>
+          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} tintColor={item.photo ? '#00000000' : Constants.Colors.app_color} />
           <View>
             <Text style={[globalStyles.senderNameText, { alignSelf: 'flex-start' }]}>
               {item.displayName}
@@ -114,15 +116,15 @@ export function NotificationTab(props: any) {
   }
   const renderItems = (item: any, index: number) => {
     const currentDate = moment();
-   const endDate = moment(item?.timeSent)
-    const timeDifference =currentDate.diff(endDate, 'hours') 
+    const endDate = moment(item?.timeSent)
+    const timeDifference = currentDate.diff(endDate, 'hours')
     const dayDiff = currentDate.diff(endDate, 'days');
     return (
-      <TouchableOpacity style={globalStyles.NotificationView} onPress={()=>{navigation.navigate('PlanDetails', {id : item?.contentId})}}>
+      <TouchableOpacity style={globalStyles.NotificationView} onPress={() => { navigation.navigate('PlanDetails', { id: item?.contentId }) }}>
         <View style={globalStyles.bellIconView}><Image source={Constants.Images.dash_bell} style={globalStyles.bellIcon} tintColor={Constants.Colors.Black_color} /></View>
         <View style={globalStyles.notimsgView}><Text style={globalStyles.NotificationText}>{item.message}</Text>
         </View>
-        <View style={globalStyles.timeSentView}><Text style={globalStyles.NotificationText}>{dayDiff === 0 ?  `${timeDifference}h` :  `${dayDiff}d`}</Text>
+        <View style={globalStyles.timeSentView}><Text style={globalStyles.NotificationText}>{dayDiff === 0 ? `${timeDifference}h` : `${dayDiff}d`}</Text>
         </View>
       </TouchableOpacity>
     )
@@ -147,14 +149,14 @@ export function NotificationTab(props: any) {
         data={NotificationData}
         renderItem={({ item, index }) => renderItems(item, index)}
         keyExtractor={(item, index) => String(index)}
-       
+
       /></View>
   );
-  const renderLabel = ({ route, focused, color }:any) => {
+  const renderLabel = ({ route, focused, color }: any) => {
     return (
       <View>
         <Text style={[focused ? globalStyles.activeTabTextColor : globalStyles.tabTextColor]}>
-          {route.title} 
+          {route.title}
         </Text>
       </View>
     )

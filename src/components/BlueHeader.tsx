@@ -2,8 +2,9 @@ import { DimensionHelper } from '@churchapps/mobilehelper';
 import React from 'react';
 import { Image, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/Fontisto';
+import Icon from '@expo/vector-icons/Fontisto'
 import { Constants, globalStyles } from '../helpers';
+import { router } from 'expo-router';
 
 interface Props {
   navigation?: {
@@ -19,7 +20,7 @@ export function BlueHeader(props: Props) {
     <View style={globalStyles.headerContainer}>
       <View style={globalStyles.blueLogoView}>
         {(props.showBack && props.navigation != undefined) ? <View style={globalStyles.blueMainBackIcon}>
-          <TouchableOpacity onPressIn={() => { props?.navigation?.navigate("LoginScreen") }}>
+          <TouchableOpacity onPressIn={() => { router.back() }}>
             <Icon name={'angle-left'} color={Constants.Colors.white_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')}/>
           </TouchableOpacity>
         </View>  : null}

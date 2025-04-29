@@ -31,14 +31,14 @@ export class CacheHelper {
         break;
       case "church":
         this.church = value;
-        await AsyncStorage.setItem("CHURCH_DATA", (value===null) ? "" : JSON.stringify(value));
+        await AsyncStorage.setItem("CHURCH_DATA", (value === null) ? "" : JSON.stringify(value));
         break;
       case "recentChurches":
         this.recentChurches = value;
-        await AsyncStorage.setItem("RECENT_CHURCHES", (value===null) ? "" : JSON.stringify(value));
+        await AsyncStorage.setItem("RECENT_CHURCHES", (value === null) ? "" : JSON.stringify(value));
         break;
       case "user":
-        await AsyncStorage.setItem("USER_DATA", (value===null) ? "" : JSON.stringify(value));
+        await AsyncStorage.setItem("USER_DATA", (value === null) ? "" : JSON.stringify(value));
         UserHelper.user = value;
         break;
     }

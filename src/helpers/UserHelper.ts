@@ -36,20 +36,21 @@ export class UserHelper {
     return result;
   }
 
-  static async addAnalyticsEvent(eventName : string, dataBody : any) {
+  static async addAnalyticsEvent(eventName: string, dataBody: any) {
     await analytics().logEvent(eventName, dataBody);
   }
 
-  static async addOpenScreenEvent(screenName: string){
+  static async addOpenScreenEvent(screenName: string) {
     await analytics().logEvent("page_view", {
       id: Date.now(),
-      device : Platform.OS,
+      device: Platform.OS,
       page: screenName,
     });
   }
 
 
-  static handleLogin = async (data:LoginResponseInterface) => {
+  static handleLogin = async (data: LoginResponseInterface) => {
+    console.log("data", data.userChurches[0].apis)
     var currentChurch: LoginUserChurchInterface = data.userChurches[0];
 
     let church = CacheHelper.church;
@@ -68,7 +69,7 @@ export class UserHelper {
 
     UserHelper.addAnalyticsEvent('login', {
       id: Date.now(),
-      device : Platform.OS,
+      device: Platform.OS,
       church: userChurch.church.name,
     });
 
@@ -81,7 +82,7 @@ export class UserHelper {
 
     if (userChurch && !church) await CacheHelper.setValue("church", userChurch.church);
 
-    
+
   }
 
 

@@ -1,0 +1,36 @@
+{
+  "cli": {
+    "version": ">= 14.5.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "autoIncrement": true
+    },
+    "amazon": {
+      "autoIncrement": false,
+      "environment": "production",
+      "android": {
+        "distribution": "internal",
+        "buildType": "apk"
+      }
+    }
+  },
+  "submit": {
+    "GooglePlay": {
+      "android": {
+        "serviceAccountKeyPath": "./google-service-account.json"
+      }
+    }, "Amazon": {
+      "android": {
+      }
+    }
+  }
+}
