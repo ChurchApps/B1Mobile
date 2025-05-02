@@ -1,11 +1,11 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
-import React, { useEffect } from 'react';
-import { Image, Platform, View } from 'react-native';
-import { ApiHelper, CacheHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '@/src/helpers';
+import { ApiHelper, CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { PushNotificationHelper } from '@/src/helpers/PushNotificationHelper';
 import { NavigationProps } from '@/src/interfaces';
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import { router } from 'expo-router';
+import React, { useEffect } from 'react';
+import { Image, Platform, View } from 'react-native';
 
 
 interface Props {
@@ -27,10 +27,10 @@ EnvironmentHelper.init();
 const SplashScreen = (props: Props) => {
 
   const init = async () => {
-  //   setTimeout(() => {
-  // router.replace('/auth/login')
-      
-  //   }, 1000);
+    //   setTimeout(() => {
+    // router.replace('/auth/login')
+
+    //   }, 1000);
 
     // Utilities.trackEvent("Splash Screen");
     console.log("hello")
@@ -92,19 +92,28 @@ const SplashScreen = (props: Props) => {
 
 
   const checkUser = async () => {
-   console.log("here")
+    console.log("here")
     try {
       console.log(UserHelper.user?.jwt)
       if (UserHelper.user?.jwt) await setUserDataNew();
     } catch (e: any) {
       console.log(e)
-   console.log("here")
+      console.log("here")
 
       ErrorHelper.logError("splash-screen-error", e);
     }
 
 
-    router.replace('/(drawer)/dashboard')
+    if (!CacheHelper.church) {
+      console.log(CacheHelper.church)
+      console.log("chach")
+      router.navigate('/(drawer)/churchSearch')
+      // router.navigate('/churchSearch')
+    } else {
+      router.replace('/(drawer)/dashboard')
+    }
+
+
 
     // router.replace('/auth/login');
     //props.navigation.navigate('MainStack', {});

@@ -1,17 +1,18 @@
-import { View, Text, SafeAreaView, FlatList, Image, Dimensions, Button } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { CacheHelper, EnvironmentHelper, globalStyles, LinkInterface, UserHelper, Utilities } from '@/src/helpers'
-import { Loader, MainHeader } from '../components'
-import { DimensionHelper } from '@churchapps/mobilehelper'
-import { ImageButton } from '../components/ImageButton'
+import { CacheHelper, globalStyles, LinkInterface, UserHelper } from '@/src/helpers'
 import { NavigationHelper } from '@/src/helpers/NavigationHelper'
-import { router, useNavigation } from 'expo-router'
+import { DimensionHelper } from '@churchapps/mobilehelper'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
-import { NavigationProp } from '@react-navigation/native'
+import { NavigationProp, useIsFocused } from '@react-navigation/native'
+import { router, useNavigation } from 'expo-router'
+import React, { useEffect, useState } from 'react'
+import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native'
+import { Loader, MainHeader } from '../components'
+import { ImageButton } from '../components/ImageButton'
 
 const dashboard = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const nav = useNavigation<NavigationProp<any>>();
+  const focused = useIsFocused()
 
   const [isLoading, setLoading] = useState(false);
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
@@ -33,12 +34,13 @@ const dashboard = () => {
   useEffect(() => {
     checkRedirect();
   },
-    [])
+    [focused])
 
   const checkRedirect = () => {
-
-    console.log("hereeee thee screen")
-    if (!CacheHelper.church) router.navigate('/(drawer)/churchSearch');
+    if (!CacheHelper.church) {
+      router.navigate('/(drawer)/churchSearch')
+      // router.navigate('/churchSearch')
+    }
     else console.log("else");
   }
 

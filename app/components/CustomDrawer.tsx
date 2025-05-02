@@ -1,21 +1,21 @@
 import { ApiHelper, DimensionHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
 import RNRestart from 'react-native-restart';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import { CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 
 import { ErrorHelper } from "@/src/helpers/ErrorHelper";
 import { NavigationHelper } from "@/src/helpers/NavigationHelper";
-import { router, useNavigation } from "expo-router";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { router, useNavigation } from "expo-router";
 
 export function CustomDrawer(props: any) {
-      const navigation = useNavigation<DrawerNavigationProp<any>>();
-  
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
+
   const [churchName, setChurchName] = useState('');
   const [churchEmpty, setChurchEmpty] = useState(true);
   const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
@@ -162,7 +162,10 @@ export function CustomDrawer(props: any) {
     } else
       console.log("item", item)
     return (
-      <TouchableOpacity key={item.id} style={globalStyles.headerView} onPress={() => { NavigationHelper.navigateToScreen(item, router.navigate), navigation.closeDrawer() }}>
+      <TouchableOpacity key={item.id} style={globalStyles.headerView} onPress={() => {
+        NavigationHelper.navigateToScreen(item, router.navigate)
+        // navigation.closeDrawer()
+      }}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
           <MaterialIcons name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />}
         <Text style={globalStyles.tabTitle}>{item.text}</Text>
@@ -227,10 +230,11 @@ export function CustomDrawer(props: any) {
         <Text style={globalStyles.tabTitle}>Log out</Text>
       </TouchableOpacity>);
     } else {
-      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() =>{
-            
-        
-        router.navigate('/auth/login')}}>
+      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => {
+
+
+        router.navigate('/auth/login')
+      }}>
         <Text style={globalStyles.tabTitle}>Login</Text>
       </TouchableOpacity>);
     }
@@ -253,7 +257,7 @@ export function CustomDrawer(props: any) {
           <FlatList
             data={drawerList}
             renderItem={({ item }) => listItem(false, item)}
-            keyExtractor={(item: any, index : number) => index.toString()}
+            keyExtractor={(item: any, index: number) => index.toString()}
             ListHeaderComponent={drawerHeaderComponent()}
             ListFooterComponent={drawerFooterComponent()}
           />

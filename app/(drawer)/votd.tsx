@@ -3,16 +3,16 @@ import { Dimensions, Image, SafeAreaView, View } from 'react-native';
 import { MainHeader } from '../components';
 // import { Utilities, globalStyles } from '../helpers';
 // import { NavigationProps } from '../interfaces';
+import { globalStyles } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
-import { Utilities, globalStyles } from '@/src/helpers';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useNavigation } from 'expo-router';
 interface Props {
   navigation: NavigationProps;
 }
 
- const votd = (props: Props) => {
-   const navigation = useNavigation<DrawerNavigationProp<any>>();
+const votd = (props: Props) => {
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [shape, setShape] = React.useState("9x16");
 
   const getShape = () => {
@@ -39,17 +39,17 @@ interface Props {
   }
 
   React.useEffect(() => {
-    Utilities.trackEvent("VOTD Screen");
+    // Utilities.trackEvent("VOTD Screen");
     getShape();
     Dimensions.addEventListener("change", getShape);
   }, []);
-  
-   const day = getDayOfYear();
+
+  const day = getDayOfYear();
   const url = "https://votd.org/v1/" + day.toString() + "/" + shape + ".jpg";
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader title="Verse of the Day" openDrawer={navigation.openDrawer} back={navigation.goBack}/>
+      <MainHeader title="Verse of the Day" openDrawer={navigation.openDrawer} back={navigation.goBack} />
       <View style={globalStyles.webViewContainer}>
         <Image source={{ uri: url }} style={{ flex: 1 }} resizeMode="stretch" />
       </View>

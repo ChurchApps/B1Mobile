@@ -12,14 +12,13 @@ install! 'cocoapods',
   :deterministic_uuids => false
 
 prepare_react_native_project!
-use_frameworks! :linkage => :static
+pod 'FirebaseCoreInternal', :modular_headers => true
+pod 'GoogleUtilities', :modular_headers => true
+pod 'FirebaseCore', :modular_headers => true
+pod 'FirebaseMessaging', :modular_headers => true
 
-target 'ChumsCheckinlatest' do
+target 'B1Mobile' do
   use_expo_modules!
-
-  pod 'Firebase/Core', :modular_headers => true
-  pod 'Firebase/Analytics', :modular_headers => true
-  pod 'GoogleUtilities', :modular_headers => true
 
   if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
     config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];

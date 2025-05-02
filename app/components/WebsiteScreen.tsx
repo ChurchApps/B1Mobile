@@ -1,10 +1,10 @@
-import { useEffect, useState, useRef } from 'react';
-import { SafeAreaView, View, Linking, Text } from 'react-native';
-import { router, useNavigation } from 'expo-router';
-import WebView from 'react-native-webview';
-import { Loader, MainHeader } from '../components';
-import { CacheHelper, Utilities, globalStyles } from '../../src/helpers';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { router, useNavigation } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { Linking, SafeAreaView, View } from 'react-native';
+import WebView from 'react-native-webview';
+import { CacheHelper, globalStyles } from '../../src/helpers';
+import { Loader, MainHeader } from '../components';
 interface WebsiteScreenProps {
   url: any;
   title: any;
@@ -12,16 +12,20 @@ interface WebsiteScreenProps {
 
 export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   // const navigation = useNavigation();
-     const navigation = useNavigation<DrawerNavigationProp<any>>();
-  
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
+
+
+  console.log("can back", navigation.canGoBack())
+
+
   const [isLoading, setLoading] = useState(false);
   const [currentUrl, setCurrentUrl] = useState('');
   const webviewRef = useRef<any>();
 
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });
-    if (!CacheHelper.church)  router.navigate('/(drawer)/churchSearch');
-  
+    if (!CacheHelper.church) router.navigate('/(drawer)/churchSearch');
+
   }, []);
 
   const handleMessage = (event: any) => {
@@ -31,7 +35,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader title={title || 'Home'} openDrawer={navigation.openDrawer} back={navigation.goBack} />
+      <MainHeader title={title || 'Home'} openDrawer={navigation.openDrawer} back={() => router.navigate('/(drawer)/dashboard')} />
       <View style={globalStyles.webViewContainer}>
         <WebView
           ref={webviewRef}

@@ -21,7 +21,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension) { ex ->
   }
 }
 
-rootProject.name = 'ChumsCheckin'
+rootProject.name = 'B1Mobile'
 
 dependencyResolutionManagement {
   versionCatalogs {

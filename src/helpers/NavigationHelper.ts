@@ -71,7 +71,7 @@ export class NavigationHelper {
       console.log("WEBSITE******* ", item.url);
       // navigate('WebsiteScreen', { url: item.url, title: item.text })
       navigate({
-        pathname: '/(drawer)/url',
+        pathname: '/(drawer)/websiteUrl',
         params: { url: item.url, title: item.text },
       });
     }

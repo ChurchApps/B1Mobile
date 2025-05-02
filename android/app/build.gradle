@@ -93,8 +93,8 @@ android {
         applicationId 'church.b1.mobile'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 21
-        versionName "1.3.0"
+        versionCode 1
+        versionName "1.30.0"
     }
     signingConfigs {
         debug {
