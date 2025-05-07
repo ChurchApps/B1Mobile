@@ -1,8 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-apply plugin: 'com.google.gms.google-services' 
-
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
@@ -151,17 +149,6 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-
-        implementation fileTree(dir: "libs", include: ["*.jar"])
-
-
-
-  implementation 'com.dynamixsoftware.printingsdk:printingSDK:12'
-    implementation 'com.google.code.gson:gson:2.8.6'
-
-    implementation 'com.dynamixsoftware.intentapi:intentAPI:12'
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-    implementation files('libs/BrotherPrintLibrary.aar')
 
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";

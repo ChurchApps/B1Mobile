@@ -29,6 +29,7 @@
     "@react-navigation/native": "^7.0.14",
     "@ronradtke/react-native-markdown-display": "^8.1.0",
     "@stripe/stripe-react-native": "0.38.6",
+    "date-fns": "^4.1.0",
     "expo": "~52.0.37",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.7",
@@ -48,7 +49,7 @@
     "react-native": "0.76.7",
     "react-native-calendars": "^1.1311.1",
     "react-native-date-picker": "^5.0.12",
-    "react-native-device-info": "^14.0.4",
+    "react-native-device-info": "^10.0.2",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-exception-handler": "^2.10.10",
     "react-native-fs": "^2.20.0",
@@ -67,7 +68,8 @@
     "react-native-tab-view": "^4.0.10",
     "react-native-view-shot": "^4.0.3",
     "react-native-web": "~0.19.13",
-    "react-native-webview": "13.12.5"
+    "react-native-webview": "13.12.5",
+    "expo-device": "~7.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

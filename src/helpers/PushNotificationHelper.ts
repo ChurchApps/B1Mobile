@@ -1,7 +1,8 @@
 import { ApiHelper, UserHelper } from '@churchapps/mobilehelper';
 import messaging from '@react-native-firebase/messaging';
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import { CacheHelper } from './CacheHelper';
 import { LoginUserChurchInterface } from './Interfaces';
 
@@ -10,7 +11,7 @@ export class PushNotificationHelper {
   static async registerUserDevice() {
     const fcmToken = CacheHelper.fcmToken;
 
-    const deviceName = await DeviceInfo.getDeviceName();
+    const deviceName = Device.deviceName;
     const deviceInfo = await PushNotificationHelper.getDeviceInfo();
     const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
     const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
@@ -25,16 +26,16 @@ export class PushNotificationHelper {
 
   static async getDeviceInfo() {
     const details: any = {}
-    details.appName = DeviceInfo.getApplicationName();
-    details.buildId = await DeviceInfo.getBuildId();
-    details.buildNumber = DeviceInfo.getBuildNumber();
-    details.brand = DeviceInfo.getBrand();
-    details.device = await DeviceInfo.getDevice();
-    details.deviceId = DeviceInfo.getDeviceId();
-    details.deviceType = DeviceInfo.getDeviceType();
-    details.hardware = await DeviceInfo.getHardware();
-    details.manufacturer = await DeviceInfo.getManufacturer();
-    details.version = DeviceInfo.getReadableVersion();
+    details.appName = Constants.expoConfig?.name || '';
+    details.buildId = Constants.expoConfig?.version || '';
+    details.buildNumber = Constants.expoConfig?.version || '';
+    details.brand = Device.brand || '';
+    details.device = Device.modelName || '';
+    details.deviceId = Device.modelId || '';
+    details.deviceType = await Device.getDeviceTypeAsync();
+    details.hardware = Device.modelName || '';
+    details.manufacturer = Device.manufacturer || '';
+    details.version = Device.osVersion || '';
     return details;
   }
 
