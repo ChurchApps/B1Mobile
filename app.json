@@ -19,7 +19,12 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "church.b1.mobile"
+      "package": "church.b1.mobile",
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.BLUETOOTH",
+        "android.permission.READ_PHONE_STATE"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -41,7 +46,11 @@
       "typedRoutes": true
     },
     "ios": {
-      "bundleIdentifier": "church.b1.mobile"
+      "bundleIdentifier": "church.b1.mobile",
+      "infoPlist": {
+        "NSBluetoothAlwaysUsageDescription": "This app uses Bluetooth to gather device information",
+        "NSBluetoothPeripheralUsageDescription": "This app uses Bluetooth to gather device information"
+      }
     }
   }
 }
