@@ -1,5 +1,5 @@
 import { ApiHelper, UserHelper } from '@churchapps/mobilehelper';
-import messaging from '@react-native-firebase/messaging';
+// import messaging from '@react-native-firebase/messaging';
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { CacheHelper } from './CacheHelper';
