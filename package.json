@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@churchapps/mobilehelper": "^0.2.3",
+    "@churchapps/mobilehelper": "^0.2.9",
     "@expo/react-native-action-sheet": "^4.1.0",
     "@react-native-async-storage/async-storage": "1.21.0",
     "@react-native-community/cli-server-api": "^18.0.0",
@@ -26,10 +26,12 @@
     "dayjs": "^1.11.13",
     "expo": "~50.0.5",
     "expo-build-properties": "~0.11.0",
+    "expo-constants": "^17.0.8",
     "expo-device": "~5.9.3",
     "expo-firebase-analytics": "~8.0.0",
     "expo-firebase-core": "~1.0.0",
     "expo-firebase-messaging": "~1.0.0",
+    "expo-font": "^13.0.4",
     "expo-localization": "~14.8.3",
     "expo-router": "~5.0.0",
     "expo-status-bar": "~1.11.1",
