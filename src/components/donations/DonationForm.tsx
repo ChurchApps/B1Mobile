@@ -3,9 +3,8 @@ import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-r
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import DatePicker from 'react-native-date-picker';
 import DropDownPicker from "react-native-dropdown-picker";
-import { ModalDatePicker } from "react-native-material-date-picker";
-import Icon from "react-native-vector-icons/FontAwesome";
 import IconP from 'react-native-vector-icons/Fontisto';
 import { FundDonations, } from ".";
 import { InputBox, PreviewModal } from "../";
@@ -396,17 +395,15 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     <Text style={globalStyles.dateText} numberOfLines={1}>
                       {moment(date).format("YYYY-MM-DD")}
                     </Text>
-                    <ModalDatePicker
-                      button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp("6%")} />}
-                      locale="en"
-                      onSelect={(date: any) => {
-                        setDate(date);
+                    <DatePicker
+                      date={date}
+                      onDateChange={(newDate) => {
+                        setDate(newDate);
                         const donationsCopy = { ...donation };
-                        donationsCopy.billing_cycle_anchor = date;
+                        donationsCopy.billing_cycle_anchor = +newDate;
                         setDonation(donationsCopy);
                       }}
-                      isHideOnSelect={true}
-                      initialDate={new Date()}
+                      mode="date"
                     />
                   </View>
                 </View>}
