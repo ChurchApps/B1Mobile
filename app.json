@@ -1,4 +1,37 @@
 {
-  "name": "B1Mobile",
-  "displayName": "B1 Church"
+  "expo": {
+    "name": "B1Mobile",
+    "slug": "b1mobile",
+    "version": "1.11.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.b1church.mobile",
+      "googleServicesFile": "./GoogleService-Info.plist"
+    },
+    "android": {
+      "package": "com.b1church.mobile",
+      "googleServicesFile": "./google-services.json"
+    },
+    "plugins": [
+      "expo-localization",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    }
+  }
 }

@@ -1,7 +1,6 @@
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import React, { useEffect } from 'react';
 import { View } from 'react-native';
-import CodePush from 'react-native-code-push';
 import { EnvironmentHelper } from "./src/helpers";
 import AppNavigator from './src/navigation/AppNavigation';
 // Need manually add Intl polyfill for react-native app
@@ -41,8 +40,4 @@ const App = () => {
   );
 };
 
-let codePushOptions = {
-  checkFrequency: CodePush.CheckFrequency.ON_APP_START,
-}
-
-export default CodePush(codePushOptions)(App);
+export default App;

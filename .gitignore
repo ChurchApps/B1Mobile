@@ -1,29 +1,7 @@
-android/.cxx
-
-yarn.lock
-package-lock.json
-*.bat
-*.hprof
-appcenter-config.json
-GoogleService-Info.plist
 # OSX
-#
 .DS_Store
-android/app/release
-android/app/.cxx
-
-
-npm-debug.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
-web-build/
 
 # Xcode
-#
 build/
 *.pbxuser
 !default.pbxuser
@@ -40,31 +18,30 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
+ios/.xcode.env.local
 
 # Android/IntelliJ
-#
 build/
 .idea
 .gradle
 local.properties
 *.iml
+*.hprof
+.cxx/
+*.keystore
+!debug.keystore
 
-# node.js
-#
+# Node
 node_modules/
-npm-debug.log
-yarn-error.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+package-lock.json
+yarn.lock
 
 # BUCK
 buck-out/
 \.buckd/
-*.keystore
-!debug.keystore
-
-# fastlane
-*/fastlane/report.xml
-*/fastlane/Preview.html
-*/fastlane/screenshots
 
 # Bundle artifact
 *.jsbundle
@@ -72,9 +49,35 @@ buck-out/
 # CocoaPods
 /ios/Pods/
 
-# Env
-.env
+# Expo
+.expo/
+dist/
+web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+app.json
+app.config.js
 
-# services file
-/android/app/google-services.json
-/ios/GoogleService-Info.plist
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
+
+# Fastlane
+*/fastlane/report.xml
+*/fastlane/Preview.html
+*/fastlane/screenshots
+*/fastlane/test_output
+
+# Temporary files
+*.swp
+*.swo
+*~
