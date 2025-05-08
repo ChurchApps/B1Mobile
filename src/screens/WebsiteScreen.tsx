@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Linking, Platform, SafeAreaView, View } from 'react-native';
+import { Linking, Platform, SafeAreaView, Text, View } from 'react-native';
 import WebView from 'react-native-webview';
 import { Loader, MainHeader } from '../components';
 import { CacheHelper, Utilities, globalStyles } from '../helpers';
@@ -32,6 +32,7 @@ export const WebsiteScreen = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
   const webviewRef = useRef<any>();
+  const [isLayoutReady, setIsLayoutReady] = useState(false);
   //console.log(params?.url)
 
   const checkRedirect = () => {
@@ -98,27 +99,48 @@ export const WebsiteScreen = (props: Props) => {
     Linking.openURL(newUrl);
   }
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCurrentUrl(params?.url);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
       <MainHeader title={getTitle()} openDrawer={props.navigation.openDrawer} back={props.navigation.goBack} />
       <>
-        <View style={globalStyles.webViewContainer}>
-          <WebView
-            ref={webviewRef}
-            onMessage={handleMessage}
-            onLoadStart={() => setLoading(true)}
-            onLoadEnd={() => setLoading(false)}
-            // onNavigationStateChange={(state: any) => { setCurrentUrl(state.url) }}
-            source={{ uri: params?.url }}
-            renderLoading={() => <Loader isLoading={isLoading} />}
-            scalesPageToFit={false}
-            startInLoadingState={true}
-            allowsInlineMediaPlayback={true}
-            allowsBackForwardNavigationGestures={true}
-            mediaPlaybackRequiresUserAction={false}
-            // onShouldStartLoadWithRequest={handleWebViewNavigationStateChange}
-            onNavigationStateChange={handleWebViewNavigationStateChange}
-          />
+        <View style={globalStyles.webViewContainer} onLayout={() => setIsLayoutReady(true)}>
+          {isLayoutReady && (
+            <WebView
+              source={currentUrl ? { uri: params?.url } : undefined}
+
+              ref={webviewRef}
+              onMessage={handleMessage}
+              onLoadStart={() => setLoading(true)}
+              onLoadEnd={() => setLoading(false)}
+              // onNavigationStateChange={(state: any) => { setCurrentUrl(state.url) }}
+              // source={{ uri: params?.url }}
+              renderLoading={() => <Loader isLoading={isLoading} />}
+              renderError={(errorName) => (
+                <View>
+                  <Text>Oops, something went wrong. Retrying...</Text>
+                </View>
+              )}
+              userAgent={
+                Platform.OS === 'ios'
+                  ? 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'
+                  : undefined
+              }
+              scalesPageToFit={false}
+              startInLoadingState={true}
+              allowsInlineMediaPlayback={true}
+              allowsBackForwardNavigationGestures={true}
+              mediaPlaybackRequiresUserAction={false}
+              // onShouldStartLoadWithRequest={handleWebViewNavigationStateChange}
+              onNavigationStateChange={handleWebViewNavigationStateChange}
+            />
+          )}
         </View>
       </>
     </SafeAreaView>
