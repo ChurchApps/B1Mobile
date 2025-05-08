@@ -9,11 +9,6 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "owner": "churchapps",
-    "extra": {
-      "eas": {
-        "projectId": "3e543eda-7610-49dc-b345-38234d7b9059"
-      }
-    },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
@@ -42,6 +37,18 @@
     },
     "ios": {
       "bundleIdentifier": "church.b1.mobile"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f72e5911-b8d5-467c-ad9e-423c180e9938"
+      }
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/f72e5911-b8d5-467c-ad9e-423c180e9938"
     }
   }
 }
