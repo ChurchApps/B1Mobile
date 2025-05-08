@@ -9,6 +9,9 @@ GoogleService-Info.plist
 .DS_Store
 android/app/release
 android/app/.cxx
+.expo/*
+google-services.json
+android/app/.cxx/*
 
 
 npm-debug.*
