@@ -11,7 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@churchapps/mobilehelper": "^0.2.9",
+    "@churchapps/mobilehelper": "^0.2.12",
     "@expo/react-native-action-sheet": "^4.1.0",
     "@react-native-async-storage/async-storage": "1.21.0",
     "@react-native-community/cli-server-api": "^18.0.0",
