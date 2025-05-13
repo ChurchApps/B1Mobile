@@ -14,17 +14,7 @@
       "channel": "preview"
     },
     "production": {
-      "autoIncrement": true,
-      "channel": "production"
-    },
-    "amazon": {
-      "autoIncrement": false,
-      "environment": "production",
-      "android": {
-        "distribution": "internal",
-        "buildType": "apk"
-      },
-      "channel": "amazon"
+      "autoIncrement": true
     }
   },
   "submit": {
@@ -32,9 +22,6 @@
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json"
       }
-    },
-    "Amazon": {
-      "android": {}
     }
   }
 }

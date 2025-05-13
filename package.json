@@ -11,7 +11,7 @@
     "test": "jest --watchAll",
     "lint": "expo lint",
     "build:android": "eas build --platform android",
-    "build:amazon": "eas build --platform android --profile amazon"
+    "build:ios": "eas build --platform ios"
   },
   "jest": {
     "preset": "jest-expo"
@@ -21,9 +21,9 @@
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-async-storage/async-storage": "^2.1.1",
-    "@react-native-firebase/analytics": "^22.0.0",
-    "@react-native-firebase/app": "^22.0.0",
-    "@react-native-firebase/messaging": "^22.0.0",
+    "@react-native-firebase/analytics": "^18.8.0",
+    "@react-native-firebase/app": "^18.8.0",
+    "@react-native-firebase/messaging": "^18.8.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/drawer": "^7.3.9",
     "@react-navigation/native": "^7.0.14",

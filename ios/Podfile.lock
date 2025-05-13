@@ -15,7 +15,7 @@ PODS:
     - ExpoModulesCore
   - ExpoHaptics (14.0.1):
     - ExpoModulesCore
-  - ExpoHead (4.0.20):
+  - ExpoHead (4.0.21):
     - ExpoModulesCore
   - ExpoKeepAwake (14.0.3):
     - ExpoModulesCore
@@ -1878,14 +1878,14 @@ PODS:
     - Yoga
   - RNDeviceInfo (14.0.4):
     - React-Core
-  - RNFBAnalytics (22.0.0):
+  - RNFBAnalytics (22.1.0):
     - Firebase/Analytics (= 11.12.0)
     - React-Core
     - RNFBApp
-  - RNFBApp (22.0.0):
+  - RNFBApp (22.1.0):
     - Firebase/CoreOnly (= 11.12.0)
     - React-Core
-  - RNFBMessaging (22.0.0):
+  - RNFBMessaging (22.1.0):
     - Firebase/Messaging (= 11.12.0)
     - FirebaseCoreExtension
     - React-Core
@@ -2419,7 +2419,7 @@ SPEC CHECKSUMS:
   ExpoFileSystem: 42d363d3b96f9afab980dcef60d5657a4443c655
   ExpoFont: f354e926f8feae5e831ec8087f36652b44a0b188
   ExpoHaptics: 8d199b2f33245ea85289ff6c954c7ee7c00a5b5d
-  ExpoHead: cee2d16ef197aaadb0ac481cf221a663636eb074
+  ExpoHead: df924203fbf8e0913fc38b0f6aec71f9a9115482
   ExpoKeepAwake: b0171a73665bfcefcfcc311742a72a956e6aa680
   ExpoLinking: 8d12bee174ba0cdf31239706578e29e74a417402
   ExpoModulesCore: 98297c2cc7977c43740a2e52d850d94ac8dbf176
@@ -2508,9 +2508,9 @@ SPEC CHECKSUMS:
   ReactNativeExceptionHandler: a23922ca00122b050ae9412f960061791c232c47
   RNCAsyncStorage: 01d008a47892226320734b59f495f3847c3ce0c9
   RNDeviceInfo: d863506092aef7e7af3a1c350c913d867d795047
-  RNFBAnalytics: a06cec04f30d4b4d6e39d871fb9ff09ed1771adf
-  RNFBApp: 9185ad597a5433ff786659e4797f0153b3e13d88
-  RNFBMessaging: 94d71d7c91a7bb6cd29f155690a35b99106504c9
+  RNFBAnalytics: 6d2cf83992d34f2ce49c838af81a9b2d9a42d9e1
+  RNFBApp: cb46a0facdbd687c5379783d6dc35c5ae71e1c6d
+  RNFBMessaging: fef744ae75df2d990c5cfeb0ac895876c7a04bfc
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
   RNGestureHandler: 16ef3dc2d7ecb09f240f25df5255953c4098819b
   RNReanimated: a2692304a6568bc656c04c8ffea812887d37436e
