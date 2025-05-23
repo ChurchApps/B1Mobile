@@ -9,7 +9,6 @@ appcenter-config.json
 android/app/release
 android/app/.cxx
 .expo/*
-google-services.json
 android/app/.cxx/*
 
 
