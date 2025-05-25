@@ -17,7 +17,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@churchapps/mobilehelper": "0.3.5",
+    "@churchapps/mobilehelper": "0.3.7",
     "@craftzdog/react-native-buffer": "^6.0.5",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^14.1.0",
