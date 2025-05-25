@@ -4,6 +4,7 @@ import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHe
 import { NavigationProps } from "@/src/interfaces";
 import { DimensionHelper } from "@churchapps/mobilehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { Image, SafeAreaView } from "react-native";
@@ -12,7 +13,7 @@ interface Props {
   navigation: NavigationProps;
 }
 
-const service = (props: Props) => {
+const Service = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [step, setStep] = useState("Services");
   const [groupMember, setGroupMember] = useState<PersonInterface>();
@@ -54,4 +55,4 @@ const service = (props: Props) => {
     </SafeAreaView>
   );
 };
-export default service
+export default Service

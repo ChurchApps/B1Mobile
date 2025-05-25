@@ -1,16 +1,16 @@
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { FlatList, Image, KeyboardAvoidingView, Text, TouchableWithoutFeedback, View } from "react-native";
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
-import { SafeAreaView } from "react-native-safe-area-context";
-import MessageIcon from '@expo/vector-icons/Feather';
-import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, EnvironmentHelper, MessageInterface, PrivateMessagesCreate, UserHelper, UserSearchInterface, globalStyles } from "@/src/helpers";
 import { eventBus } from '@/src/helpers/PushNotificationHelper';
 import { NavigationProps } from '@/src/interfaces';
+import MessageIcon from '@expo/vector-icons/Feather';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useLocalSearchParams } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Image, KeyboardAvoidingView, Text, TouchableWithoutFeedback, View } from "react-native";
+import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   navigation: NavigationProps,
@@ -19,9 +19,9 @@ interface Props {
   }
 }
 
- const messageScreen: FunctionComponent<Props> = (props: Props) => {
-    const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
-    const details = JSON.parse(userDetails)
+const MessageScreen = (props: Props) => {
+  const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
+  const details = JSON.parse(userDetails)
   const [messageText, setMessageText] = useState('');
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
@@ -134,7 +134,7 @@ interface Props {
 
   const singleMessageItem = (item: MessageInterface) => (<TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
     <View style={[globalStyles.messageContainer, { alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>
-      {item.personId == details.id ? <Image source={details?.photo ? { uri: EnvironmentHelper.ContentRoot + details?.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor:details.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} /> : null}
+      {item.personId == details.id ? <Image source={details?.photo ? { uri: EnvironmentHelper.ContentRoot + details?.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: details.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} /> : null}
       <View>
         <Text style={[globalStyles.senderNameText, { alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>{item.displayName}</Text>
         <View style={[globalStyles.messageView, { width: item.content.length > 15 ? DimensionHelper.wp('65%') : DimensionHelper.wp((item.content.length + 14).toString() + "%"), alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>
@@ -168,4 +168,4 @@ interface Props {
   );
 }
 
-export default messageScreen
+export default MessageScreen

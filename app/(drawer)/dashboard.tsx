@@ -1,15 +1,15 @@
 import { Loader, MainHeader } from '@/src/components/exports'
 import { ImageButton } from '@/src/components/ImageButton'
-import { UserHelper, globalStyles } from '@/src/helpers'
+import { CacheHelper, LinkInterface, UserHelper, globalStyles } from '@/src/helpers'
 import { NavigationHelper } from '@/src/helpers/NavigationHelper'
 import { DimensionHelper } from '@churchapps/mobilehelper'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
-import { NavigationProp, useIsFocused } from '@react-navigation/native'
+import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
 import { router } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native'
 
-const dashboard = () => {
+const Dashboard = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const nav = useNavigation<NavigationProp<any>>();
   const focused = useIsFocused()
@@ -108,4 +108,4 @@ const dashboard = () => {
   )
 }
 
-export default dashboard
+export default Dashboard

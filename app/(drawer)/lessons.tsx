@@ -2,7 +2,7 @@ import { WebsiteScreen } from '@/src/components/exports';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
 
-const lessons = () => {
+const Lessons = () => {
   const { url, title } = useLocalSearchParams<{ url: any; title: any }>();
 
   return (
@@ -10,4 +10,4 @@ const lessons = () => {
   )
 }
 
-export default lessons
+export default Lessons

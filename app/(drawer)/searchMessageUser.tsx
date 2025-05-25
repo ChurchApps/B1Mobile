@@ -13,7 +13,7 @@ interface Props {
   navigation: NavigationProps;
 }
 
-const searchMessageUser = (props: Props) => {
+const SearchMessageUser = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState<UserSearchInterface[]>([]);
@@ -130,4 +130,4 @@ const searchMessageUser = (props: Props) => {
     </View>
   );
 }
-export default searchMessageUser
+export default SearchMessageUser

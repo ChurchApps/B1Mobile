@@ -11,7 +11,7 @@ interface Props {
   navigation: NavigationProps;
 }
 
-const votd = (props: Props) => {
+const Votd = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [shape, setShape] = React.useState("9x16");
 
@@ -56,4 +56,4 @@ const votd = (props: Props) => {
     </SafeAreaView>
   );
 };
-export default votd
+export default Votd

@@ -1,6 +1,7 @@
 import { BlockoutDates, Loader, MainHeader, ServingTimes, UpcomingDates } from "@/src/components/exports";
-import { ApiHelper, globalStyles } from "@/src/helpers";
-import { PlanInterface, PositionInterface } from "@/src/interfaces";
+import { ApiHelper, ArrayHelper, globalStyles } from "@/src/helpers";
+import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface, UserSearchInterface } from "@/src/helpers/Interfaces";
+import { NavigationProps } from "@/src/interfaces";
 import { DimensionHelper } from "@churchapps/mobilehelper";
 import Icons from '@expo/vector-icons/MaterialIcons';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
@@ -16,7 +17,7 @@ interface Props {
   }
 }
 
-const plan = (props: Props) => {
+const Plan = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [assignments, setAssignments] = useState<AssignmentInterface[]>([]);
   const [positions, setPositions] = useState<PositionInterface[]>([]);
@@ -69,5 +70,4 @@ const plan = (props: Props) => {
   );
 }
 
-
-export default plan
+export default Plan

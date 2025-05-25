@@ -8,7 +8,7 @@ import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
 
-const myGroups = (props: any) => {
+const MyGroups = (props: any) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [groups, setGroups] = useState([]);
   const [UserPost, setUserPost] = useState<TimelinePostInterface[]>([])
@@ -106,4 +106,4 @@ const myGroups = (props: any) => {
     </SafeAreaView>
   );
 };
-export default myGroups;
+export default MyGroups;

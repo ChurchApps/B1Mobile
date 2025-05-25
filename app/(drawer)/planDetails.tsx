@@ -16,7 +16,7 @@ interface Props {
   }
 }
 
-const planDetails = (props: Props) => {
+const PlanDetails = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams<{ id: any }>();
   const planId = JSON.parse(id)
@@ -126,4 +126,4 @@ const planDetails = (props: Props) => {
 }
 
 
-export default planDetails
+export default PlanDetails

@@ -19,7 +19,7 @@ interface Props {
   };
 }
 
-const memberDetail = (props: Props) => {
+const MemberDetail = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
 
   const { member } = useLocalSearchParams<{ member: any }>();
@@ -148,4 +148,4 @@ const memberDetail = (props: Props) => {
 };
 
 
-export default memberDetail
+export default MemberDetail

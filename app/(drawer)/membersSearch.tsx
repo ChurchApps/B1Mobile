@@ -12,7 +12,7 @@ interface Props {
   navigation: NavigationProps;
 }
 
-const membersSearch = (props: Props) => {
+const MembersSearch = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
 
   const [searchText, setSearchText] = useState('');
@@ -96,4 +96,4 @@ const membersSearch = (props: Props) => {
     </SafeAreaView>
   );
 };
-export default membersSearch
+export default MembersSearch

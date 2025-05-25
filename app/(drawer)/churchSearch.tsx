@@ -8,7 +8,7 @@ import { ActivityIndicator, Image, Keyboard, Platform, Text, TouchableWithoutFee
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
 
-const churchSearch = () => {
+const ChurchSearch = () => {
 
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState([]);
@@ -156,5 +156,5 @@ const churchSearch = () => {
   );
 }
 
-export default churchSearch
+export default ChurchSearch
 

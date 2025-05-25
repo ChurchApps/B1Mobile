@@ -15,7 +15,7 @@ interface Props {
   navigation: NavigationProps;
 }
 
-const donation = (props: Props) => {
+const Donation = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [customerId, setCustomerId] = useState<string>("")
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
@@ -73,4 +73,4 @@ const donation = (props: Props) => {
   );
 };
 
-export default donation;
+export default Donation;

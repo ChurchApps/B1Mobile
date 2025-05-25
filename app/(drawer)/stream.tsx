@@ -1,7 +1,8 @@
 import { WebsiteScreen } from '@/src/components/exports';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
-const stream = () => {
+
+const Stream = () => {
   const { url, title } = useLocalSearchParams<{ url: any; title: any }>();
 
   return (
@@ -9,4 +10,4 @@ const stream = () => {
   )
 }
 
-export default stream
+export default Stream

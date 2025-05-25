@@ -6,7 +6,7 @@ import { router, useNavigation } from 'expo-router'
 import React, { useState } from 'react'
 import { ActivityIndicator, Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
-const register = () => {
+const Register = () => {
   const navigation = useNavigation()
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -109,4 +109,4 @@ const register = () => {
   )
 }
 
-export default register
+export default Register
