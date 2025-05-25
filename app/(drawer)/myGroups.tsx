@@ -1,12 +1,12 @@
+import { Loader, MainHeader } from "@/src/components/exports";
+import { ImageButton, } from "@/src/components/ImageButton";
+import TimeLinePost from "@/src/components/MyGroup/TimeLinePost";
 import { ApiHelper, ArrayHelper, PersonInterface, TimelinePostInterface, UserPostInterface, globalStyles } from "@/src/helpers";
 import { TimelineHelper } from "@/src/helpers/Timelinehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
-import { Loader, MainHeader } from "../_components/exports";
-import { ImageButton, } from "../_components/ImageButton";
-import TimeLinePost from "../_components/MyGroup/TimeLinePost";
 
 const myGroups = (props: any) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();

@@ -1,3 +1,4 @@
+import { BlueHeader } from '@/src/components/exports';
 import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { NavigationProps } from '@/src/interfaces';
@@ -7,7 +8,6 @@ import { router, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Image, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import { BlueHeader } from '../_components/exports';
 
 interface Props {
   navigation: NavigationProps;

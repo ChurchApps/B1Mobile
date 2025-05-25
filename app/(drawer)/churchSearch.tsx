@@ -1,3 +1,4 @@
+import { BlueHeader } from '@/src/components/exports';
 import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { ApiHelper, DimensionHelper } from '@churchapps/mobilehelper';
@@ -6,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
-import { BlueHeader } from '../_components/exports';
 
 const churchSearch = () => {
 

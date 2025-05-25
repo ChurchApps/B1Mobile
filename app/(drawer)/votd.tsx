@@ -1,6 +1,6 @@
+import { MainHeader } from '@/src/components/exports';
 import React from 'react';
 import { Dimensions, Image, SafeAreaView, View } from 'react-native';
-import { MainHeader } from '../_components/exports';
 // import { Utilities, globalStyles } from '../helpers';
 // import { NavigationProps } from '../interfaces';
 import { globalStyles } from '@/src/helpers';

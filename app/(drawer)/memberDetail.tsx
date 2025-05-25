@@ -1,3 +1,4 @@
+import { Loader, MainHeader } from '@/src/components/exports';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@churchapps/mobilehelper';
@@ -8,7 +9,6 @@ import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Image, Linking, SafeAreaView, Text, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import { Loader, MainHeader } from '../_components/exports';
 
 interface Props {
   navigation: NavigationProps;

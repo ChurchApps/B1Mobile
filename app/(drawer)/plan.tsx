@@ -1,14 +1,13 @@
-import { ApiHelper, ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface, TimeInterface, UserSearchInterface, globalStyles } from "@/src/helpers";
-import { NavigationProps } from '@/src/interfaces';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { BlockoutDates, Loader, MainHeader, ServingTimes, UpcomingDates } from "@/src/components/exports";
+import { ApiHelper, globalStyles } from "@/src/helpers";
+import { PlanInterface, PositionInterface } from "@/src/interfaces";
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import Icons from '@expo/vector-icons/MaterialIcons';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useNavigation } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, Text, View } from "react-native";
 import { ScrollView } from 'react-native-gesture-handler';
-import { SafeAreaView } from "react-native-safe-area-context";
-import { BlockoutDates, Loader, MainHeader, ServingTimes, UpcomingDates } from "../_components/exports";
 
 interface Props {
   navigation: NavigationProps,

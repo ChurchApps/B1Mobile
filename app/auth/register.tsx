@@ -1,10 +1,10 @@
-import { Constants, globalStyles } from '@/src/helpers'
-import { ApiHelper, DimensionHelper } from '@churchapps/mobilehelper'
+import { BlueHeader } from '@/src/components/exports'
+import { ApiHelper, Constants, globalStyles } from '@/src/helpers'
+import { DimensionHelper } from '@churchapps/mobilehelper'
 import Icon from '@expo/vector-icons/Fontisto'
 import { router, useNavigation } from 'expo-router'
 import React, { useState } from 'react'
 import { ActivityIndicator, Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { BlueHeader } from '../_components/exports'
 
 const register = () => {
   const navigation = useNavigation()

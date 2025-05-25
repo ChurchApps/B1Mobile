@@ -1,3 +1,4 @@
+import { Loader, MainHeader, PositionDetails, Teams } from "@/src/components/exports";
 import { ApiHelper, ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "@/src/helpers";
 import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@churchapps/mobilehelper';
@@ -7,7 +8,6 @@ import { useIsFocused } from '@react-navigation/native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
-import { Loader, MainHeader, PositionDetails, Teams } from "../_components/exports";
 
 interface Props {
   navigation: NavigationProps,

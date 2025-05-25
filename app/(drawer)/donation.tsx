@@ -1,3 +1,4 @@
+import { DonationForm, Donations, MainHeader, PaymentMethods, RecurringDonations } from '@/src/components/exports';
 import { ApiHelper, CacheHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { NavigationProps, StripePaymentMethod } from '@/src/interfaces';
@@ -9,8 +10,6 @@ import { useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { DonationForm, Donations, MainHeader, PaymentMethods, RecurringDonations } from '../_components/exports';
-;
 
 interface Props {
   navigation: NavigationProps;
