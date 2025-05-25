@@ -11,7 +11,8 @@ export { WhiteHeader } from "./WhiteHeader"
 export { MainHeader } from "./wrapper/MainHeader"
 
 export * from "./donations/exports"
-export * from "./Plans/exports"
+// export * from "./Plans/exports" // Replaced with explicit exports below
+export { BlockoutDates, ServingTimes, UpcomingDates, PositionDetails, Teams } from "./Plans/exports";
 
 
 // Modals

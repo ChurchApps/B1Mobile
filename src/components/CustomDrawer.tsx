@@ -5,6 +5,7 @@ import { ApiHelper, DimensionHelper, LinkInterface, Permissions } from "@churcha
 import MessageIcon from '@expo/vector-icons/MaterialCommunityIcons';
 import Icon from '@expo/vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router'; // Added import for router
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
 import RNRestart from 'react-native-restart';
@@ -222,7 +223,7 @@ export function CustomDrawer(props: any) {
         <Text style={globalStyles.tabTitle}>Log out</Text>
       </TouchableOpacity>);
     } else {
-      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => navigate('AuthStack')}>
+      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => router.push('/auth')}>
         <Text style={globalStyles.tabTitle}>Login</Text>
       </TouchableOpacity>);
     }

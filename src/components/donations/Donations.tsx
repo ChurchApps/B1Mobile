@@ -1,5 +1,5 @@
 import { ApiHelper, Constants, CurrencyHelper, DateHelper, UserHelper, globalStyles } from "@/src/helpers";
-import { DonationInterface } from "@/src/interfaces";
+import { DonationInterface } from "@/src/interfaces/Donation";
 import { DimensionHelper } from "@churchapps/mobilehelper";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
