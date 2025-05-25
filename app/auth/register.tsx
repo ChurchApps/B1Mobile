@@ -1,10 +1,10 @@
-import { View, Text, SafeAreaView, TouchableOpacity, ActivityIndicator, Alert, TextInput } from 'react-native'
-import React, { useState } from 'react'
 import { Constants, globalStyles } from '@/src/helpers'
-import { BlueHeader } from '../components'
 import { ApiHelper, DimensionHelper } from '@churchapps/mobilehelper'
-import Icon from '@expo/vector-icons/Fontisto';
+import Icon from '@expo/vector-icons/Fontisto'
 import { router, useNavigation } from 'expo-router'
+import React, { useState } from 'react'
+import { ActivityIndicator, Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { BlueHeader } from '../_components/exports'
 
 const register = () => {
   const navigation = useNavigation()
@@ -13,7 +13,7 @@ const register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [registered, setRegistered] = useState(false)
-  
+
 
   const registerApiCall = async () => {
     const params = { email: email, firstName: firstName, lastName: lastName };
@@ -28,7 +28,7 @@ const register = () => {
       const data = await ApiHelper.post("/users/register", params, "MembershipApi");
       if (data.email != null) setRegistered(true);
       else Alert.alert("Alert", "User already exists.");
-    } catch (error:any) {
+    } catch (error: any) {
       if (error.message && error.message.includes("user already exists")) {
         Alert.alert("Error", "This user already exists. Please log in with your username and password.");
       } else {
@@ -76,7 +76,7 @@ const register = () => {
       </View>
       <View style={{ ...globalStyles.privacyPolicyView, width: DimensionHelper.wp('90%') }}>
         <Text style={{ ...globalStyles.privacyText, width: DimensionHelper.wp('90%') }}>By clicking on Register, I confirm that I have read the <Text style={{ color: Constants.Colors.app_color }} onPress={() => {
-           router.navigate('/auth/privacy')
+          router.navigate('/auth/privacy')
         }}>privacy policy.</Text>
         </Text>
       </View>
@@ -101,11 +101,11 @@ const register = () => {
 
   return (
     <SafeAreaView style={globalStyles.appContainer}>
-    <BlueHeader  navigation={navigation} showBack={true} />
-    <View style={globalStyles.grayContainer}>
-      {getContent()}
-    </View>
-  </SafeAreaView>
+      <BlueHeader navigation={navigation} showBack={true} />
+      <View style={globalStyles.grayContainer}>
+        {getContent()}
+      </View>
+    </SafeAreaView>
   )
 }
 

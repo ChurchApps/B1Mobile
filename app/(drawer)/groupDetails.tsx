@@ -1,26 +1,26 @@
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "@/src/helpers";
+import { GroupMemberInterface } from "@/src/interfaces";
 import { EventInterface } from "@churchapps/helpers";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { DimensionHelper } from '@churchapps/mobilehelper';
+import Icon from '@expo/vector-icons/FontAwesome';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused } from '@react-navigation/native';
 import Markdown from '@ronradtke/react-native-markdown-display';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import moment from "moment";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FlatList, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Calendar, DateData } from 'react-native-calendars';
-import Icon from '@expo/vector-icons/FontAwesome'
-import MaterialIcons from '@expo/vector-icons/MaterialIcons'
-import { Loader, MainHeader } from "../components";
-import CreateEvent from "../components/eventCalendar/CreateEvent";
-import { EventModal } from "../components/eventCalendar/EventModal";
-import { CustomModal } from "../components/modals/CustomModal";
-import Conversations from "../components/Notes/Conversations";
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "@/src/helpers";
-import { GroupMemberInterface } from "@/src/interfaces";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
+import CreateEvent from "../_components/eventCalendar/CreateEvent";
+import { EventModal } from "../_components/eventCalendar/EventModal";
+import { Loader, MainHeader } from "../_components/exports";
+import { CustomModal } from "../_components/modals/CustomModal";
+import Conversations from "../_components/Notes/Conversations";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

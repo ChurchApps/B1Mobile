@@ -1,15 +1,15 @@
+import { ApiHelper, CacheHelper, UserHelper, globalStyles } from '@/src/helpers';
+import { ErrorHelper } from '@/src/helpers/ErrorHelper';
+import { NavigationProps, StripePaymentMethod } from '@/src/interfaces';
 import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused } from '@react-navigation/native';
 import { initStripe } from "@stripe/stripe-react-native";
+import { useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { DonationForm, Donations, MainHeader, PaymentMethods, RecurringDonations } from '../components';
-import { ApiHelper, CacheHelper, UserHelper, Utilities, globalStyles } from '@/src/helpers';
-import { ErrorHelper } from '@/src/helpers/ErrorHelper';
-import { NavigationProps, StripePaymentMethod } from '@/src/interfaces';
-import { useNavigation } from 'expo-router';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { DonationForm, Donations, MainHeader, PaymentMethods, RecurringDonations } from '../_components/exports';
 ;
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 }
 
 const donation = (props: Props) => {
-   const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [customerId, setCustomerId] = useState<string>("")
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([])
   const [areMethodsLoading, setAreMethodsLoading] = useState<boolean>(false)

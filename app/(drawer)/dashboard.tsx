@@ -6,8 +6,8 @@ import { NavigationProp, useIsFocused } from '@react-navigation/native'
 import { router, useNavigation } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native'
-import { Loader, MainHeader } from '../components'
-import { ImageButton } from '../components/ImageButton'
+import { Loader, MainHeader } from '../_components/exports'
+import { ImageButton } from '../_components/ImageButton'
 
 const dashboard = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();

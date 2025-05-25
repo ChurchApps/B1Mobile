@@ -1,7 +1,6 @@
-import { View, Text } from 'react-native'
-import React from 'react'
 import { useLocalSearchParams } from 'expo-router';
-import { WebsiteScreen } from '../components';
+import React from 'react';
+import { WebsiteScreen } from '../_components/exports';
 const stream = () => {
   const { url, title } = useLocalSearchParams<{ url: any; title: any }>();
 

@@ -1,8 +1,8 @@
-import { ApiHelper, LoginResponseInterface, PushNotificationHelper } from "@churchapps/mobilehelper";
-import analytics from '@react-native-firebase/analytics';
+import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
+// import analytics from '@react-native-firebase/analytics';
 import { Platform } from "react-native";
-import { CacheHelper, IPermission, UserInterface } from ".";
-import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
+import { CacheHelper } from "./CacheHelper";
+import { AppearanceInterface, ChurchInterface, IPermission, LoginUserChurchInterface, UserInterface } from "./Interfaces";
 
 export class UserHelper {
   static churches: ChurchInterface[];
@@ -21,7 +21,7 @@ export class UserHelper {
       const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       UserHelper.currentUserChurch.person = data;
     }
-    PushNotificationHelper.registerUserDevice("B1Mobile");
+    // PushNotificationHelper.registerUserDevice("B1Mobile");
   }
 
   static checkAccess({ api, contentType, action }: IPermission): boolean {
@@ -37,15 +37,17 @@ export class UserHelper {
   }
 
   static async addAnalyticsEvent(eventName: string, dataBody: any) {
-    await analytics().logEvent(eventName, dataBody);
+    // await analytics().logEvent(eventName, dataBody);
+    console.log('Analytics event:', eventName, dataBody);
   }
 
   static async addOpenScreenEvent(screenName: string) {
-    await analytics().logEvent("page_view", {
-      id: Date.now(),
-      device: Platform.OS,
-      page: screenName,
-    });
+    // await analytics().logEvent("page_view", {
+    //   id: Date.now(),
+    //   device: Platform.OS,
+    //   page: screenName,
+    // });
+    console.log('Screen view:', screenName);
   }
 
 

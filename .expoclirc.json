@@ -1,0 +1,8 @@
+{
+  "router": {
+    "ignore": [
+      "**/index.ts",
+      "**/_components/**/index.ts"
+    ]
+  }
+} 

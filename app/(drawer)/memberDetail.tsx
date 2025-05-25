@@ -1,14 +1,14 @@
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
+import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@churchapps/mobilehelper';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome';
+import Icon from '@expo/vector-icons/Zocial';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Image, Linking, SafeAreaView, Text, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome';
-import Icon from '@expo/vector-icons/Zocial';
-import { Loader, MainHeader } from '../components';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '@/src/helpers';
-import { NavigationProps } from '@/src/interfaces';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { Loader, MainHeader } from '../_components/exports';
 
 interface Props {
   navigation: NavigationProps;
@@ -68,12 +68,12 @@ const memberDetail = (props: Props) => {
       pathname: '/(drawer)/memberDetail',
       params: {
         member: JSON.stringify(item),
-    }
-  })
+      }
+    })
     // ✅ Correct - object becomes a string
-    }
+  }
 
-    // props.navigation.navigate('MemberDetailScreen', { member: item })
+  // props.navigation.navigate('MemberDetailScreen', { member: item })
   // }
 
   const renderMemberItem = (item: any) => {

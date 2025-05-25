@@ -1,9 +1,9 @@
+import { DimensionHelper } from '@churchapps/mobilehelper';
 import { Drawer } from 'expo-router/drawer';
 import { useEffect, useState } from 'react';
-import { DimensionHelper } from '@churchapps/mobilehelper';
 
-import { CustomDrawer } from '../components/CustomDrawer';
 import { Constants } from '@/src/helpers';
+import { CustomDrawer } from '../_components/CustomDrawer';
 
 
 export default function DrawerLayout() {
@@ -29,7 +29,7 @@ export default function DrawerLayout() {
       }}
       drawerContent={(props) => <CustomDrawer {...props} />}
     >
-    
+
     </Drawer>
   );
 }

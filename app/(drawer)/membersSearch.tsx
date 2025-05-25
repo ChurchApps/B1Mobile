@@ -1,20 +1,20 @@
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
+import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { router, useNavigation } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
-import { Loader, MainHeader } from '../components';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, Utilities, globalStyles } from '@/src/helpers';
-import { NavigationProps } from '@/src/interfaces';
-import { router, useNavigation } from 'expo-router';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { Loader, MainHeader } from '../_components/exports';
 
 interface Props {
   navigation: NavigationProps;
 }
 
 const membersSearch = (props: Props) => {
-      const navigation = useNavigation<DrawerNavigationProp<any>>();
-  
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
+
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState([]);
   const [membersList, setMembersList] = useState([]);
@@ -47,7 +47,7 @@ const membersSearch = (props: Props) => {
   const renderMemberItem = (item: any) => {
     return (
       <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp('90%') }]} onPress={() => {
-        
+
 
         router.navigate({
           pathname: '/(drawer)/memberDetail',
@@ -56,9 +56,9 @@ const membersSearch = (props: Props) => {
           },
         });
         // navigation.navigate('MemberDetailScreen', { member: item }) 
-      
+
       }}
-        >
+      >
         <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText}>{item.name.display}</Text>

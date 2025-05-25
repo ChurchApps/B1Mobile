@@ -1,20 +1,19 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
-import React, { useState } from "react";
-import { Image, SafeAreaView } from "react-native";
-import { MainHeader } from "../components";
-import { CheckinComplete, CheckinGroups, CheckinHousehold } from "../components/checkin";
-import { CheckinServices } from "../components/checkin/CheckinServices";
 import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper, globalStyles } from "@/src/helpers";
 import { NavigationProps } from "@/src/interfaces";
-import { router, useNavigation } from "expo-router";
+import { DimensionHelper } from "@churchapps/mobilehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { router, useNavigation } from "expo-router";
+import React, { useState } from "react";
+import { Image, SafeAreaView } from "react-native";
+import { CheckinComplete, CheckinGroups, CheckinHousehold, CheckinServices } from "../_components/checkin/exports";
+import { MainHeader } from "../_components/exports";
 
 interface Props {
   navigation: NavigationProps;
 }
 
 const service = (props: Props) => {
-const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [step, setStep] = useState("Services");
   const [groupMember, setGroupMember] = useState<PersonInterface>();
   const [groupTime, setGroupTime] = useState<ServiceTimeInterface>();

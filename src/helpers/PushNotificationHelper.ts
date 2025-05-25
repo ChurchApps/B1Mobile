@@ -1,5 +1,5 @@
 import { ApiHelper, UserHelper } from '@churchapps/mobilehelper';
-import messaging from '@react-native-firebase/messaging';
+// import messaging from '@react-native-firebase/messaging';
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { CacheHelper } from './CacheHelper';
@@ -39,14 +39,15 @@ export class PushNotificationHelper {
   }
 
   static async requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-      PushNotificationHelper.GetFCMToken();
-    }
+    // const authStatus = await messaging().requestPermission();
+    // const enabled =
+    //   authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    //   authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    // if (enabled) {
+    //   console.log('Authorization status:', authStatus);
+    //   PushNotificationHelper.GetFCMToken();
+    // }
+    console.log('Push notification permission requested (Firebase disabled)');
   }
 
 
@@ -60,41 +61,43 @@ export class PushNotificationHelper {
       }
     }
   };
+
   static async GetFCMToken() {
     let fcmToken = CacheHelper.fcmToken;
     if (!fcmToken) {
       try {
-        let fcmToken = await messaging().getToken();
-        if (fcmToken) CacheHelper.setValue("fcmToken", fcmToken);
+        // let fcmToken = await messaging().getToken();
+        // if (fcmToken) CacheHelper.setValue("fcmToken", fcmToken);
+        console.log('FCM token generation skipped (Firebase disabled)');
       } catch (error) {
         console.log(error, "fcm token not created")
       }
     }
-
   }
 
   static async NotificationListener() {
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log(
-        'Notification caused app to open from background state:',
-        JSON.stringify(remoteMessage.notification),
-      );
-    });
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          console.log(
-            'Notification caused app to open from quit state:',
-            JSON.stringify(remoteMessage.notification),
-          );
-        }
-      });
-    messaging().onMessage(async remoteMessage => {
-      console.log("notification on forground state.......", JSON.stringify(remoteMessage))
-      const badge = JSON.stringify(remoteMessage);
-      eventBus.emit("badge", badge)
-    })
+    // messaging().onNotificationOpenedApp(remoteMessage => {
+    //   console.log(
+    //     'Notification caused app to open from background state:',
+    //     JSON.stringify(remoteMessage.notification),
+    //   );
+    // });
+    // messaging()
+    //   .getInitialNotification()
+    //   .then(remoteMessage => {
+    //     if (remoteMessage) {
+    //       console.log(
+    //         'Notification caused app to open from quit state:',
+    //         JSON.stringify(remoteMessage.notification),
+    //       );
+    //     }
+    //   });
+    // messaging().onMessage(async remoteMessage => {
+    //   console.log("notification on forground state.......", JSON.stringify(remoteMessage))
+    //   const badge = JSON.stringify(remoteMessage);
+    //   eventBus.emit("badge", badge)
+    // })
+    console.log('Notification listeners disabled (Firebase disabled)');
   }
 }
 
