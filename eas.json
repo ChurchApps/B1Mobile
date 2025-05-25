@@ -14,7 +14,12 @@
       "channel": "preview"
     },
     "production": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "android": {
+        "env": {
+          "GOOGLE_SERVICES_JSON": "1"
+        }
+      }
     }
   },
   "submit": {
