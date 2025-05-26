@@ -2,11 +2,11 @@ import { ApiHelper, Constants, CurrencyHelper, DateHelper, UserHelper, globalSty
 import { DonationInterface } from "@/src/interfaces";
 import { DimensionHelper } from "@churchapps/mobilehelper";
 import { useIsFocused } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { DisplayBox } from "../exports";
+import { DisplayBox } from "../DisplayBox";
 import { CustomModal } from "../modals/CustomModal";
 
 export function Donations() {

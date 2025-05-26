@@ -1,6 +1,5 @@
-import { WebsiteScreen } from '@/src/components/exports';
+import { WebsiteScreen } from '@/src/components/WebsiteScreen';
 import { useLocalSearchParams } from 'expo-router';
-import React from 'react';
 
 const Stream = () => {
   const { url, title } = useLocalSearchParams<{ url: any; title: any }>();

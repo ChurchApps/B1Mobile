@@ -1,4 +1,7 @@
-import { Loader, MainHeader, PositionDetails, Teams } from "@/src/components/exports";
+import { Loader } from "@/src/components/Loader";
+import { PositionDetails } from "@/src/components/Plans/PositionDetails";
+import { Teams } from "@/src/components/Plans/Teams";
+import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "@/src/helpers";
 import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@churchapps/mobilehelper';
@@ -6,7 +9,7 @@ import Icons from '@expo/vector-icons/MaterialIcons';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused } from '@react-navigation/native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 
 interface Props {

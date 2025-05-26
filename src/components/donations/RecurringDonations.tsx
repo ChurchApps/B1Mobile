@@ -8,7 +8,8 @@ import { ActivityIndicator, Alert, Image, Text, TextInput, TouchableOpacity, Vie
 import DropDownPicker from "react-native-dropdown-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { DisplayBox } from "../exports";
+
+import { DisplayBox } from "../DisplayBox";
 import { CustomModal } from "../modals/CustomModal";
 
 interface Props {

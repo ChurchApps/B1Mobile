@@ -1,15 +1,16 @@
 import CreateEvent from "@/src/components/eventCalendar/CreateEvent";
 import { EventModal } from "@/src/components/eventCalendar/EventModal";
-import { Loader, MainHeader } from "@/src/components/exports";
+import { Loader } from "@/src/components/Loader";
 import { CustomModal } from "@/src/components/modals/CustomModal";
 import Conversations from "@/src/components/Notes/Conversations";
+import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, Constants, UserHelper, globalStyles } from "@/src/helpers";
 import { EventInterface } from "@/src/interfaces";
 import { DimensionHelper } from "@churchapps/mobilehelper";
 import { useIsFocused } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import Icon from "react-native-vector-icons/FontAwesome";

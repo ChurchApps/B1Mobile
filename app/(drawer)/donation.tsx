@@ -1,4 +1,8 @@
-import { DonationForm, Donations, MainHeader, PaymentMethods, RecurringDonations } from '@/src/components/exports';
+import { DonationForm } from '@/src/components/donations/DonationForm';
+import { Donations } from '@/src/components/donations/Donations';
+import { PaymentMethods } from '@/src/components/donations/PaymentMethods';
+import { RecurringDonations } from '@/src/components/donations/RecurringDonations';
+import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import { ApiHelper, CacheHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { NavigationProps, StripePaymentMethod } from '@/src/interfaces';
@@ -7,7 +11,7 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused } from '@react-navigation/native';
 import { initStripe } from "@stripe/stripe-react-native";
 import { useNavigation } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, SafeAreaView, Text, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 

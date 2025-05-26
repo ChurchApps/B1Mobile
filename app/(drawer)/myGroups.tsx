@@ -1,6 +1,7 @@
-import { Loader, MainHeader } from "@/src/components/exports";
 import { ImageButton, } from "@/src/components/ImageButton";
+import { Loader } from "@/src/components/Loader";
 import TimeLinePost from "@/src/components/MyGroup/TimeLinePost";
+import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, ArrayHelper, PersonInterface, TimelinePostInterface, UserPostInterface, globalStyles } from "@/src/helpers";
 import { TimelineHelper } from "@/src/helpers/Timelinehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";

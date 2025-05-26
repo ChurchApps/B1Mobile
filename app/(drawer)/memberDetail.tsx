@@ -1,4 +1,5 @@
-import { Loader, MainHeader } from '@/src/components/exports';
+import { Loader } from '@/src/components/Loader';
+import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@churchapps/mobilehelper';
@@ -6,7 +7,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome';
 import Icon from '@expo/vector-icons/Zocial';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert, Image, Linking, SafeAreaView, Text, View } from 'react-native';
 import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
 

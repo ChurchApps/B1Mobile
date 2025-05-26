@@ -1,13 +1,14 @@
-import { Loader, MainHeader } from '@/src/components/exports'
-import { ImageButton } from '@/src/components/ImageButton'
-import { CacheHelper, LinkInterface, UserHelper, globalStyles } from '@/src/helpers'
-import { NavigationHelper } from '@/src/helpers/NavigationHelper'
-import { DimensionHelper } from '@churchapps/mobilehelper'
-import { DrawerNavigationProp } from '@react-navigation/drawer'
-import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native'
-import { router } from 'expo-router'
-import React, { useEffect, useState } from 'react'
-import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native'
+import { ImageButton } from '@/src/components/ImageButton';
+import { Loader } from '@/src/components/Loader';
+import { MainHeader } from '@/src/components/wrapper/MainHeader';
+import { CacheHelper, LinkInterface, UserHelper, globalStyles } from '@/src/helpers';
+import { NavigationHelper } from '@/src/helpers/NavigationHelper';
+import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native';
 
 const Dashboard = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();

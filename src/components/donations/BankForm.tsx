@@ -1,10 +1,10 @@
 import { ApiHelper, Constants, StripeHelper, UserHelper, globalStyles } from "@/src/helpers";
 import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "@/src/interfaces";
 import { DimensionHelper } from "@churchapps/mobilehelper";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Image, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { InputBox } from "../exports";
+import { InputBox } from "../InputBox";
 
 interface Props {
   setMode: any;

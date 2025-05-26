@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Linking, SafeAreaView, View } from 'react-native';
 import WebView from 'react-native-webview';
 import { CacheHelper, globalStyles } from '../../src/helpers';
-import { Loader, MainHeader } from './exports';
+import { Loader } from './Loader';
+import { MainHeader } from './wrapper/MainHeader';
+
 interface WebsiteScreenProps {
   url: any;
   title: any;

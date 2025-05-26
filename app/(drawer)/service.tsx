@@ -1,12 +1,15 @@
-import { CheckinComplete, CheckinGroups, CheckinHousehold, CheckinServices } from "@/src/components/checkin/exports";
-import { MainHeader } from "@/src/components/exports";
+import { CheckinComplete } from "@/src/components/checkin/CheckinComplete";
+import { CheckinGroups } from "@/src/components/checkin/CheckinGroups";
+import { CheckinHousehold } from "@/src/components/checkin/CheckinHousehold";
+import { CheckinServices } from "@/src/components/checkin/CheckinServices";
+import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper, globalStyles } from "@/src/helpers";
 import { NavigationProps } from "@/src/interfaces";
 import { DimensionHelper } from "@churchapps/mobilehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Image, SafeAreaView } from "react-native";
 
 interface Props {

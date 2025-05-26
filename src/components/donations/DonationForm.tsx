@@ -9,7 +9,8 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import IconP from 'react-native-vector-icons/Fontisto';
-import { InputBox, PreviewModal } from "../exports";
+import { InputBox } from "../InputBox";
+import { PreviewModal } from "../modals/PreviewModal";
 import { FundDonations } from "./FundDonations";
 
 interface Props {

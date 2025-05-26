@@ -1,4 +1,4 @@
-import { MainHeader } from '@/src/components/exports';
+import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import React from 'react';
 import { Dimensions, Image, SafeAreaView, View } from 'react-native';
 // import { Utilities, globalStyles } from '../helpers';

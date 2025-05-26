@@ -1,10 +1,11 @@
-import { Loader, MainHeader } from '@/src/components/exports';
+import { Loader } from '@/src/components/Loader';
+import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { router, useNavigation } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Image, SafeAreaView, Text, TextInput, View } from 'react-native';
 import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 
