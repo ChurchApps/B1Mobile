@@ -1,18 +1,29 @@
-// Firebase configuration for React Native
-// This file initializes Firebase for the app
+// Firebase configuration for Expo
+// This file initializes Firebase for the app using Expo Firebase SDK
 
-// Uncomment these imports when you're ready to use Firebase
-// import { firebase } from '@react-native-firebase/app';
-// import '@react-native-firebase/analytics';
-// import '@react-native-firebase/messaging';
+// import * as Analytics from 'expo-firebase-analytics';
 
-// Firebase is automatically initialized on React Native
-// No additional configuration needed for basic setup
+// Firebase is automatically initialized with Expo
+// Configuration is handled through app.json and GoogleService files
 
-export const initializeFirebase = () => {
-  // Firebase is automatically initialized
-  console.log('Firebase initialized');
+export const initializeFirebase = async () => {
+  try {
+    // Firebase is automatically initialized with Expo
+    console.log('Firebase initialized with Expo SDK');
+
+    // Enable analytics if available
+    // await Analytics.setAnalyticsCollectionEnabled(true);
+    console.log('Firebase Analytics disabled temporarily');
+  } catch (error) {
+    console.log('Firebase initialization error:', error);
+  }
 };
 
-// Export Firebase app instance when needed
-// export { firebase }; 
+export const logAnalyticsEvent = async (eventName: string, parameters?: any) => {
+  try {
+    // await Analytics.logEvent(eventName, parameters);
+    console.log('Analytics event (disabled):', eventName, parameters);
+  } catch (error) {
+    console.log('Analytics event logging error:', error);
+  }
+}; 

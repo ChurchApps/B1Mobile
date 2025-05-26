@@ -31,13 +31,17 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-notifications"
       ]
     ],
     "experiments": {
       "typedRoutes": true
     },
     "ios": {
-      "bundleIdentifier": "church.b1.mobile"
+      "bundleIdentifier": "church.b1.mobile",
+      "googleServicesFile": "./ios/GoogleService-Info.plist"
     },
     "extra": {
       "router": {

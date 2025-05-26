@@ -1,6 +1,6 @@
 import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
-// import analytics from '@react-native-firebase/analytics';
 import { Platform } from "react-native";
+// import { logAnalyticsEvent } from "../config/firebase";
 import { CacheHelper } from "./CacheHelper";
 import { AppearanceInterface, ChurchInterface, IPermission, LoginUserChurchInterface, UserInterface } from "./Interfaces";
 
@@ -37,8 +37,8 @@ export class UserHelper {
   }
 
   static async addAnalyticsEvent(eventName: string, dataBody: any) {
-    // await analytics().logEvent(eventName, dataBody);
-    console.log('Analytics event:', eventName, dataBody);
+    // logAnalyticsEvent(eventName, dataBody);
+    console.log('Analytics event (disabled):', eventName, dataBody);
   }
 
   static async addOpenScreenEvent(screenName: string) {
