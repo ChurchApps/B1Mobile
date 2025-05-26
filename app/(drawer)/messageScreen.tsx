@@ -1,5 +1,7 @@
+import React from 'react';
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import { useEffect, useState } from 'react';
 
 import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, EnvironmentHelper, MessageInterface, PrivateMessagesCreate, UserHelper, UserSearchInterface, globalStyles } from "@/src/helpers";
 import { eventBus } from '@/src/helpers/PushNotificationHelper';
@@ -7,7 +9,6 @@ import { NavigationProps } from '@/src/interfaces';
 import MessageIcon from '@expo/vector-icons/Feather';
 import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
 import { FlatList, Image, KeyboardAvoidingView, Text, TouchableWithoutFeedback, View } from "react-native";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from "react-native-safe-area-context";

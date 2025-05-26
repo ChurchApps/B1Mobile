@@ -1,3 +1,4 @@
+import React from 'react';
 import { DonationForm } from '@/src/components/donations/DonationForm';
 import { Donations } from '@/src/components/donations/Donations';
 import { PaymentMethods } from '@/src/components/donations/PaymentMethods';

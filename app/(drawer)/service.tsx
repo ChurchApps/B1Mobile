@@ -1,3 +1,4 @@
+import React from 'react';
 import { CheckinComplete } from "@/src/components/checkin/CheckinComplete";
 import { CheckinGroups } from "@/src/components/checkin/CheckinGroups";
 import { CheckinHousehold } from "@/src/components/checkin/CheckinHousehold";

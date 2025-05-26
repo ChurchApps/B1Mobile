@@ -2,8 +2,8 @@
   "editor.formatOnSave": true,
   "editor.insertSpaces": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "explicit"
+    "source.fixAll.eslint": "explicit"
+    // Remove this line: "source.organizeImports": "explicit"
   },
   "eslint.validate": [
     "javascript",

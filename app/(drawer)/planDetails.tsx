@@ -1,3 +1,4 @@
+import React from 'react';
 import { Loader } from "@/src/components/Loader";
 import { PositionDetails } from "@/src/components/Plans/PositionDetails";
 import { Teams } from "@/src/components/Plans/Teams";

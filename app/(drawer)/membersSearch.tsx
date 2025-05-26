@@ -1,3 +1,4 @@
+import React from 'react';
 import { Loader } from '@/src/components/Loader';
 import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';

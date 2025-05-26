@@ -1,3 +1,4 @@
+import React from 'react';
 import { ImageButton } from '@/src/components/ImageButton';
 import { Loader } from '@/src/components/Loader';
 import { MainHeader } from '@/src/components/wrapper/MainHeader';

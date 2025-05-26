@@ -1,3 +1,4 @@
+import React from 'react';
 import { Loader } from "@/src/components/Loader";
 import { BlockoutDates } from "@/src/components/Plans/BlockoutDates";
 import { ServingTimes } from "@/src/components/Plans/ServingTimes";

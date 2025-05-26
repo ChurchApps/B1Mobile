@@ -1,3 +1,4 @@
+import React from 'react';
 import { ImageButton, } from "@/src/components/ImageButton";
 import { Loader } from "@/src/components/Loader";
 import TimeLinePost from "@/src/components/MyGroup/TimeLinePost";
@@ -6,7 +7,7 @@ import { ApiHelper, ArrayHelper, PersonInterface, TimelinePostInterface, UserPos
 import { TimelineHelper } from "@/src/helpers/Timelinehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
 
 const MyGroups = (props: any) => {
@@ -14,8 +15,8 @@ const MyGroups = (props: any) => {
   const [groups, setGroups] = useState([]);
   const [UserPost, setUserPost] = useState<TimelinePostInterface[]>([])
   const [loading, setLoading] = useState(false);
-  const [people, setPeople] = React.useState<PersonInterface[]>([]);
-  const [UserGroups, setUserGroups] = React.useState<any[]>([]);
+  const [people, setPeople] = useState<PersonInterface[]>([]);
+  const [UserGroups, setUserGroups] = useState<any[]>([]);
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([])
 
   const LoadUserData = async () => {

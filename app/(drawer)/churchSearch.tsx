@@ -1,3 +1,4 @@
+import React from 'react';
 import { BlueHeader } from '@/src/components/BlueHeader';
 import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';

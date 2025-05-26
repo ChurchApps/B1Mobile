@@ -1,10 +1,11 @@
+import React from 'react';
 import { ApiHelper, CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { PushNotificationHelper } from '@/src/helpers/PushNotificationHelper';
 import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import { router } from 'expo-router';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Image, Platform, View } from 'react-native';
 
 
@@ -25,6 +26,7 @@ EnvironmentHelper.init();
 
 
 const SplashScreen = (props: Props) => {
+  console.log("*****SPLASH******")
 
   const init = async () => {
     //   setTimeout(() => {

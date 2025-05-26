@@ -1,6 +1,7 @@
+import React from 'react';
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import { Drawer } from 'expo-router/drawer';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CustomDrawer } from '@/src/components/CustomDrawer';
 import { Constants } from '@/src/helpers';

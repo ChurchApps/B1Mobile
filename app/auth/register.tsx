@@ -1,10 +1,11 @@
-import { BlueHeader } from '@/src/components/BlueHeader'
-import { ApiHelper, Constants, globalStyles } from '@/src/helpers'
-import { DimensionHelper } from '@churchapps/mobilehelper'
-import Icon from '@expo/vector-icons/Fontisto'
-import { router, useNavigation } from 'expo-router'
-import { useState } from 'react'
-import { ActivityIndicator, Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React from 'react';
+import { BlueHeader } from '@/src/components/BlueHeader';
+import { ApiHelper, Constants, globalStyles } from '@/src/helpers';
+import { DimensionHelper } from '@churchapps/mobilehelper';
+import Icon from '@expo/vector-icons/Fontisto';
+import { router, useNavigation } from 'expo-router';
+import { useState } from 'react';
+import { ActivityIndicator, Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const Register = () => {
   const navigation = useNavigation()

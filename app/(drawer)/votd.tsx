@@ -7,6 +7,7 @@ import { globalStyles } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useNavigation } from 'expo-router';
+
 interface Props {
   navigation: NavigationProps;
 }

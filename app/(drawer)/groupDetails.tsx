@@ -1,3 +1,4 @@
+import React from 'react';
 import CreateEvent from "@/src/components/eventCalendar/CreateEvent";
 import { EventModal } from "@/src/components/eventCalendar/EventModal";
 import { Loader } from "@/src/components/Loader";
