@@ -5,12 +5,13 @@ import { ApiHelper, DimensionHelper, LinkInterface, Permissions } from "@churcha
 import MessageIcon from '@expo/vector-icons/MaterialCommunityIcons';
 import Icon from '@expo/vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
 import RNRestart from 'react-native-restart';
 
 export function CustomDrawer(props: any) {
-  const { navigate, goBack, openDrawer } = props.navigation;
+  const { goBack, openDrawer } = props.navigation;
   const [churchName, setChurchName] = useState('');
   const [churchEmpty, setChurchEmpty] = useState(true);
   const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
@@ -78,13 +79,13 @@ export function CustomDrawer(props: any) {
     setLoading(false);
     console.log("NAVIGATING", data[0].linkType);
     if (data.length > 0) {
-      if (data[0].linkType === "groups") navigate('MyGroups');
-      else navigate('Dashboard')
+      if (data[0].linkType === "groups") router.navigate('/(drawer)/myGroups');
+      else router.navigate('/(drawer)/dashboard')
     }
 
     //if (data.length > 0) navigate(data[0].linkType);
     //if (data.length > 0) navigateToScreen(data[0]);
-    //navigate('Dashboard')
+    //router.navigate('/(drawer)/dashboard')
 
 
   }
@@ -157,7 +158,7 @@ export function CustomDrawer(props: any) {
     } else
       console.log("item", item)
     return (
-      <TouchableOpacity style={globalStyles.headerView} onPress={() => { NavigationHelper.navigateToScreen(item, navigate), props.navigation.closeDrawer() }}>
+      <TouchableOpacity style={globalStyles.headerView} onPress={() => { NavigationHelper.navigateToScreen(item, router.navigate), props.navigation.closeDrawer() }}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
           <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />}
         <Text style={globalStyles.tabTitle}>{item.text}</Text>
@@ -169,7 +170,7 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {getUserInfo()}
-        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? DimensionHelper.wp('12%') : user != null ? DimensionHelper.wp('6%') : DimensionHelper.wp('12%') }]} onPress={() => navigate('ChurchSearch', {})}>
+        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? DimensionHelper.wp('12%') : user != null ? DimensionHelper.wp('6%') : DimensionHelper.wp('12%') }]} onPress={() => router.navigate('/(drawer)/churchSearch')}>
           {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
           <Text style={{ ...globalStyles.churchText }}>
             {churchEmpty ? 'Find your church...' : churchName}
@@ -222,7 +223,7 @@ export function CustomDrawer(props: any) {
         <Text style={globalStyles.tabTitle}>Log out</Text>
       </TouchableOpacity>);
     } else {
-      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => navigate('AuthStack')}>
+      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => router.navigate('/auth/login')}>
         <Text style={globalStyles.tabTitle}>Login</Text>
       </TouchableOpacity>);
     }
@@ -230,7 +231,7 @@ export function CustomDrawer(props: any) {
 
   const messagesView = () => {
     return (
-      <TouchableOpacity onPress={() => navigate('SearchMessageUser', {})}>
+      <TouchableOpacity onPress={() => router.navigate('/(drawer)/searchMessageUser')}>
         <View style={globalStyles.messageRootView}>
           <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />
         </View>

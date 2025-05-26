@@ -33,7 +33,7 @@ const Service = (props: Props) => {
     setGroupMember(undefined);
     setGroupTime(undefined);
     setStep("Services");
-    router.navigate('/dashboard')
+    router.navigate('/(drawer)/dashboard')
   }
 
   const getBrand = () => {
