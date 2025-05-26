@@ -27,6 +27,7 @@
     "@react-navigation/native": "^7.1.6",
     "@ronradtke/react-native-markdown-display": "^8.1.0",
     "@stripe/stripe-react-native": "0.45.0",
+    "dayjs": "^1.11.13",
     "expo": "~53.0.9",
     "expo-blur": "~14.1.4",
     "expo-constants": "~17.1.6",
