@@ -2,9 +2,9 @@ import { Constants, globalStyles } from '@/src/helpers';
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import Icon from '@expo/vector-icons/Fontisto';
 import { router } from 'expo-router';
-import React from 'react';
 import { Image, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   navigation?: {
@@ -16,9 +16,11 @@ interface Props {
 }
 
 export function BlueHeader(props: Props) {
+  const insets = useSafeAreaInsets();
+
   return (
     <View style={globalStyles.headerContainer}>
-      <View style={globalStyles.blueLogoView}>
+      <View style={[globalStyles.blueLogoView, { paddingTop: insets.top }]}>
         {(props.showBack && props.navigation != undefined) ? <View style={globalStyles.blueMainBackIcon}>
           <TouchableOpacity onPressIn={() => { router.back() }}>
             <Icon name={'angle-left'} color={Constants.Colors.white_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
@@ -34,9 +36,9 @@ export function BlueHeader(props: Props) {
       </View>
     </View>
   );
-};
+}
 
 BlueHeader.defaultProps = {
   showBack: false,
   showMenu: false,
-}
+};

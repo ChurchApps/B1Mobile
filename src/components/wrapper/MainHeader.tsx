@@ -2,6 +2,7 @@ import { Constants, globalStyles } from '@/src/helpers';
 import { DimensionHelper } from '@churchapps/mobilehelper';
 import React from 'react';
 import { Image, Platform, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Entypo';
 import { NotificationTab } from '../NotificationView';
 import { HeaderBell } from './HeaderBell';
@@ -16,6 +17,7 @@ interface Props {
 export function MainHeader(props: Props) {
 
   const [showNotifications, setShowNotifications] = React.useState(false);
+  const insets = useSafeAreaInsets();
 
   const LeftComponent = () => {
     return <View style={{ flexDirection: 'row', justifyContent: Platform.OS == 'ios' ? 'space-around' : 'flex-start', alignItems: 'center' }}>
@@ -29,7 +31,7 @@ export function MainHeader(props: Props) {
 
   return (
     <>
-      <View style={globalStyles.headerViewStyle}>
+      <View style={[globalStyles.headerViewStyle, { paddingTop: insets.top }]}>
         <View style={[globalStyles.componentStyle, { flex: 2 }]}>{LeftComponent()}</View>
         <View style={[globalStyles.componentStyle, { flex: 6.3 }]}><Text style={globalStyles.headerText}>{props.title}</Text></View>
         <View style={[globalStyles.componentStyle, { flex: 1.7, justifyContent: 'flex-end' }]}>
@@ -40,5 +42,4 @@ export function MainHeader(props: Props) {
     </>
   );
 
-
-};
+}
