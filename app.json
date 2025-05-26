@@ -7,15 +7,13 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "owner": "churchapps",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "church.b1.mobile",
-      "googleServicesFile": "./google-services.json"
+      "package": "church.b1.mobile"
     },
     "web": {
       "bundler": "metro",
@@ -40,8 +38,7 @@
       "typedRoutes": true
     },
     "ios": {
-      "bundleIdentifier": "church.b1.mobile",
-      "googleServicesFile": "./ios/GoogleService-Info.plist"
+      "bundleIdentifier": "church.b1.mobile"
     },
     "extra": {
       "router": {
