@@ -1,4 +1,4 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -17,7 +17,7 @@ function RadioButton({ label, value, selectedValue, onSelect }: RadioButtonProps
       <View style={styles.outerCircle}>
         {selectedValue === value ? <View style={styles.innerCircle} /> : null}
       </View>
-      <Text style={{ fontSize: DimensionHelper.wp('3.5%') }}>{label}</Text>
+      <Text style={{ fontSize: DimensionHelper.wp(3.5) }}>{label}</Text>
     </TouchableOpacity>
   );
 }

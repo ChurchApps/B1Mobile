@@ -1,5 +1,5 @@
 import { Constants, globalStyles } from '@/src/helpers';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import Icon from '@expo/vector-icons/Fontisto';
 import { router } from 'expo-router';
 import { Image, View } from 'react-native';
@@ -23,11 +23,11 @@ export function BlueHeader(props: Props) {
       <View style={[globalStyles.blueLogoView, { paddingTop: insets.top }]}>
         {(props.showBack && props.navigation != undefined) ? <View style={globalStyles.blueMainBackIcon}>
           <TouchableOpacity onPressIn={() => { router.back() }}>
-            <Icon name={'angle-left'} color={Constants.Colors.white_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
+            <Icon name={'angle-left'} color={Constants.Colors.white_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
           </TouchableOpacity>
         </View> : null}
         {(props.showMenu && props.navigation?.openDrawer != undefined) ?
-          <View style={[globalStyles.blueMainBackIcon, { marginTop: DimensionHelper.wp('6%'), marginLeft: DimensionHelper.wp('3%') }]}>
+          <View style={[globalStyles.blueMainBackIcon, { marginTop: DimensionHelper.wp(6), marginLeft: DimensionHelper.wp(3) }]}>
             <TouchableOpacity onPressIn={() => { props?.navigation?.openDrawer != undefined ? props?.navigation?.openDrawer() : null }}>
               <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
             </TouchableOpacity>

@@ -1,5 +1,5 @@
 import { Constants, globalStyles } from '@/src/helpers';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React from 'react';
 import { Image, Platform, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -22,8 +22,8 @@ export function MainHeader(props: Props) {
   const LeftComponent = () => {
     return <View style={{ flexDirection: 'row', justifyContent: Platform.OS == 'ios' ? 'space-around' : 'flex-start', alignItems: 'center' }}>
       {Platform.OS == 'ios' && props.back && (
-        <TouchableOpacity style={{ paddingHorizontal: DimensionHelper.wp('1%') }} onPress={() => { if (props.back) props.back(); }}>
-          <Icon name={'chevron-left'} size={DimensionHelper.hp('3.5%')} color={Constants.Colors.white_color} /></TouchableOpacity>
+        <TouchableOpacity style={{ paddingHorizontal: DimensionHelper.wp(1) }} onPress={() => { if (props.back) props.back(); }}>
+          <Icon name={'chevron-left'} size={DimensionHelper.hp(3.5)} color={Constants.Colors.white_color} /></TouchableOpacity>
       )}
       <TouchableOpacity onPress={() => { if (props.openDrawer) props.openDrawer(); }}><Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} /></TouchableOpacity>
     </View>

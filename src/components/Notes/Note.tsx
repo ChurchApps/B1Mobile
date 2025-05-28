@@ -1,4 +1,4 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import moment from "moment";
 import React from "react";
 import { Image, Text, View } from "react-native";
@@ -12,13 +12,13 @@ interface NotesInterface {
   showEditNote: (noteId: any) => void
 }
 
-const Note = ({message,showEditNote }: NotesInterface) => {
-console.log("message props is ----->", message)
+const Note = ({ message, showEditNote }: NotesInterface) => {
+  console.log("message props is ----->", message)
   const displayDuration = moment(message?.timeSent).fromNow();
 
   return (
     <>
-      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp("70%") }]}>
+      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70) }]}>
         <Image
           source={
             message?.person?.photo
@@ -27,7 +27,7 @@ console.log("message props is ----->", message)
           }
           style={[
             globalStyles.memberListIcon,
-            { width: DimensionHelper.wp("12%"), height: DimensionHelper.wp("12%"), borderRadius: 8888 },
+            { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 },
           ]}
         />
         <View style={globalStyles.NoteTextInputView}>
@@ -36,7 +36,7 @@ console.log("message props is ----->", message)
             <Text>{message?.content}</Text>
           </View>
           <TouchableOpacity style={globalStyles.EditIconStyles} onPress={() => { showEditNote(message.id) }}>
-            <Icon name="edit" color={Constants.Colors.app_color} size={DimensionHelper.wp("5%")} />
+            <Icon name="edit" color={Constants.Colors.app_color} size={DimensionHelper.wp(5)} />
           </TouchableOpacity>
         </View>
       </View>
@@ -49,7 +49,7 @@ console.log("message props is ----->", message)
             paddingTop: 0,
             height: 24,
             fontSize: 11,
-            width: DimensionHelper.wp("100%"),
+            width: DimensionHelper.wp(100),
             left: 72,
             top: -4,
           },

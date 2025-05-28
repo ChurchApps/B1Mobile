@@ -1,6 +1,6 @@
 import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface, globalStyles } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import React, { useEffect, useState, } from 'react';
@@ -95,13 +95,13 @@ export function NotificationTab(props: any) {
     return (
       <TouchableOpacity onPress={() => navigation.navigate('MessagesScreen', { userDetails: userchatDetails })}>
         <View style={[globalStyles.messageContainer, { alignSelf: 'flex-start' }]}>
-          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} tintColor={item.photo ? '#00000000' : Constants.Colors.app_color} />
+          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} tintColor={item.photo ? '#00000000' : Constants.Colors.app_color} />
           <View>
             <Text style={[globalStyles.senderNameText, { alignSelf: 'flex-start' }]}>
               {item.displayName}
             </Text>
             <View style={[globalStyles.messageView, {
-              width: item.message.length > 15 ? DimensionHelper.wp('65%') : DimensionHelper.wp((item.message.length + 14).toString() + "%"),
+              width: item.message.length > 15 ? DimensionHelper.wp(65) : DimensionHelper.wp((item.message.length + 14)),
               alignSelf: 'flex-start'
             }]}>
               <Text>{item.message}</Text>
@@ -175,7 +175,7 @@ export function NotificationTab(props: any) {
         onIndexChange={setIndex}
         swipeEnabled={false}
         renderTabBar={props => <TabBar {...props} renderLabel={renderLabel} indicatorStyle={{ backgroundColor: Constants.Colors.Active_TabColor }} style={globalStyles.TabIndicatorStyle} />}
-        initialLayout={{ width: DimensionHelper.wp('100'), height: DimensionHelper.hp('200') }}
+        initialLayout={{ width: DimensionHelper.wp(100), height: DimensionHelper.hp(200) }}
         sceneContainerStyle={{ marginTop: 0 }}
       />
 

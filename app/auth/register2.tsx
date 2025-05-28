@@ -1,12 +1,17 @@
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React from 'react';
-import { Text } from 'react-native';
-
+import { globalStyles } from '@/src/helpers/GlobalStyles';
+import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+//import { ApiHelper } from '@churchapps/mobilehelper';
 
 const Register2 = () => {
 
   return (
-    <Text style={{ width: DimensionHelper.wp(20) }}>Login</Text>
+    <SafeAreaView style={globalStyles.appContainer}>
+
+      <View style={globalStyles.grayContainer}>
+        <Text style={globalStyles.roundBlueButtonText}>Login</Text>
+      </View>
+    </SafeAreaView>
   )
 }
 

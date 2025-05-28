@@ -1,5 +1,5 @@
 import { Constants, globalStyles } from "@/src/helpers";
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
@@ -24,9 +24,9 @@ export function InputBox({
 }: Props) {
 
 
-  let buttons: JSX.Element[] = [];
+  let buttons: React.ReactElement[] = [];
 
-  const widthClass = deleteFunction ? DimensionHelper.wp("33.33%") : DimensionHelper.wp("50%");
+  const widthClass = deleteFunction ? DimensionHelper.wp(33.33) : DimensionHelper.wp(50);
   if (cancelFunction) {
     buttons.push(
       <TouchableOpacity
@@ -72,12 +72,12 @@ export function InputBox({
 
   return (
     <View style={globalStyles.paymentTitleContainer}>
-      <View style={{ width: DimensionHelper.wp("100%") }}>
+      <View style={{ width: DimensionHelper.wp(100) }}>
         <View style={globalStyles.paymentTitleHeaderLine} />
         <View style={globalStyles.paymentTitleView}>
           {headerIcon}
           <Text style={globalStyles.paymentTitleText}>{title}</Text>
-          <View style={{ width: DimensionHelper.wp("6%") }} />
+          <View style={{ width: DimensionHelper.wp(6) }} />
         </View>
       </View>
       {children}

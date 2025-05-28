@@ -1,4 +1,4 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import moment from "moment";
 import React from "react";
 import { Image, Text, View } from "react-native";
@@ -29,7 +29,7 @@ const Notes = ({
 
   return (
     <>
-      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp("70%") , marginLeft:DimensionHelper.wp('2%') }]}>
+      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70), marginLeft: DimensionHelper.wp(2) }]}>
         <Image
           source={
             message?.person?.photo
@@ -38,7 +38,7 @@ const Notes = ({
           }
           style={[
             globalStyles.memberListIcon,
-            { width: DimensionHelper.wp("12%"), height: DimensionHelper.wp("12%"), borderRadius: 8888 },
+            { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 },
           ]}
         />
 
@@ -46,8 +46,8 @@ const Notes = ({
           style={globalStyles.NoteTextInputView}
         >
           <View>
-          <Text style={globalStyles.name}>{message?.displayName}</Text>
-          <Text>{message?.content}</Text>
+            <Text style={globalStyles.name}>{message?.displayName}</Text>
+            <Text>{message?.content}</Text>
           </View>
         </View>
       </View>
@@ -60,7 +60,7 @@ const Notes = ({
             paddingTop: 0,
             height: 24,
             fontSize: 11,
-            width: DimensionHelper.wp("100%"),
+            width: DimensionHelper.wp(100),
             left: 72,
             top: -4,
           },

@@ -1,11 +1,14 @@
 import React from 'react';
 import { BlueHeader } from '@/src/components/BlueHeader';
-import { ApiHelper, Constants, globalStyles } from '@/src/helpers';
+
+import { Constants } from '@/src/helpers/Constants';
+import { globalStyles } from '@/src/helpers/GlobalStyles';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import Icon from '@expo/vector-icons/Fontisto';
 import { router, useNavigation } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+//import { ApiHelper } from '@churchapps/mobilehelper';
 
 const Register = () => {
   const navigation = useNavigation()
@@ -26,9 +29,11 @@ const Register = () => {
     // });
     setLoading(true);
     try {
+      /*
       const data = await ApiHelper.post("/users/register", params, "MembershipApi");
       if (data.email != null) setRegistered(true);
       else Alert.alert("Alert", "User already exists.");
+      */
     } catch (error: any) {
       if (error.message && error.message.includes("user already exists")) {
         Alert.alert("Error", "This user already exists. Please log in with your username and password.");
@@ -100,9 +105,10 @@ const Register = () => {
     else return getForm();
   }
 
+  //<BlueHeader navigation={navigation} showBack={true} />
   return (
     <SafeAreaView style={globalStyles.appContainer}>
-      <BlueHeader navigation={navigation} showBack={true} />
+
       <View style={globalStyles.grayContainer}>
         {getContent()}
       </View>
