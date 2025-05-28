@@ -1,7 +1,7 @@
 import React from 'react';
 import { BlueHeader } from '@/src/components/BlueHeader';
 import { ApiHelper, Constants, globalStyles } from '@/src/helpers';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import Icon from '@expo/vector-icons/Fontisto';
 import { router, useNavigation } from 'expo-router';
 import { useState } from 'react';
@@ -63,25 +63,25 @@ const Register = () => {
   const getForm = () => {
     return (<>
       <Text style={globalStyles.mainText}>Register an Account</Text>
-      <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
-        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
-        <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
+      <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
+        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
+        <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
       </View>
-      <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
-        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
-        <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
+      <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
+        <Icon name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
+        <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
       </View>
-      <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
-        <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
-        <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+      <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
+        <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
+        <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
       </View>
-      <View style={{ ...globalStyles.privacyPolicyView, width: DimensionHelper.wp('90%') }}>
-        <Text style={{ ...globalStyles.privacyText, width: DimensionHelper.wp('90%') }}>By clicking on Register, I confirm that I have read the <Text style={{ color: Constants.Colors.app_color }} onPress={() => {
+      <View style={{ ...globalStyles.privacyPolicyView, width: DimensionHelper.wp(90) }}>
+        <Text style={{ ...globalStyles.privacyText, width: DimensionHelper.wp(90) }}>By clicking on Register, I confirm that I have read the <Text style={{ color: Constants.Colors.app_color }} onPress={() => {
           router.navigate('/auth/privacy')
         }}>privacy policy.</Text>
         </Text>
       </View>
-      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp('90%') }]} onPress={() => { validateDetails() && registerApiCall() }}>
+      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(90) }]} onPress={() => { validateDetails() && registerApiCall() }}>
         {loading ?
           <ActivityIndicator size='small' color='white' animating={loading} /> :
           <Text style={globalStyles.roundBlueButtonText}>Register</Text>
@@ -93,7 +93,7 @@ const Register = () => {
   const getContent = () => {
     if (registered) return (<>
       <Text style={globalStyles.mainText}>Success: A temporary password has been sent to {email}. </Text>
-      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp('90%') }]} onPress={() => { router.back() }}>
+      <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(90) }]} onPress={() => { router.back() }}>
         <Text style={globalStyles.roundBlueButtonText}>Login</Text>
       </TouchableOpacity>
     </>);
