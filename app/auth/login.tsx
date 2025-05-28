@@ -44,7 +44,7 @@ const Login = () => {
       setLoading(false);
       if (data.user != null) {
         console.log("here")
-        await UserHelper.handleLogin(data);
+        await UserHelper.handleLogin(data as any);
 
         // router.replace('(drawer)/dashboard');
         // props.navigation.reset({

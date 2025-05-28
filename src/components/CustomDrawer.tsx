@@ -1,7 +1,7 @@
 import { CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { NavigationHelper } from '@/src/helpers/NavigationHelper';
-import { ApiHelper, DimensionHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
+import { ApiHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
 import MessageIcon from '@expo/vector-icons/MaterialCommunityIcons';
 import Icon from '@expo/vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +9,7 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
 import RNRestart from 'react-native-restart';
+import { DimensionHelper } from '../helpers/DimensionHelper';
 
 export function CustomDrawer(props: any) {
   const { goBack, openDrawer } = props.navigation;
@@ -160,7 +161,7 @@ export function CustomDrawer(props: any) {
     return (
       <TouchableOpacity style={globalStyles.headerView} onPress={() => { NavigationHelper.navigateToScreen(item, router.navigate), props.navigation.closeDrawer() }}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />}
+          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp(5)} />}
         <Text style={globalStyles.tabTitle}>{item.text}</Text>
       </TouchableOpacity>
     );
@@ -170,7 +171,7 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {getUserInfo()}
-        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? DimensionHelper.wp('12%') : user != null ? DimensionHelper.wp('6%') : DimensionHelper.wp('12%') }]} onPress={() => router.navigate('/(drawer)/churchSearch')}>
+        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? DimensionHelper.wp(12) : user != null ? DimensionHelper.wp(6) : DimensionHelper.wp(12) }]} onPress={() => router.navigate('/(drawer)/churchSearch')}>
           {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
           <Text style={{ ...globalStyles.churchText }}>
             {churchEmpty ? 'Find your church...' : churchName}
@@ -185,7 +186,7 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {loginOutToggle()}
-        <Text style={{ fontSize: DimensionHelper.wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: '#a0d3fc', marginTop: DimensionHelper.wp('5%'), textAlign: 'center' }}>{'Version ' + pkg.version}</Text>
+        <Text style={{ fontSize: DimensionHelper.wp(3.5), fontFamily: Constants.Fonts.RobotoRegular, color: '#a0d3fc', marginTop: DimensionHelper.wp(5), textAlign: 'center' }}>{'Version ' + pkg.version}</Text>
       </View>
     );
   }
@@ -193,7 +194,7 @@ export function CustomDrawer(props: any) {
   const getUserInfo = () => {
     if (UserHelper.currentUserChurch?.person && user != null) {
       return (<View>
-        <View style={[globalStyles.headerView, { marginTop: DimensionHelper.wp('15%') }]}>
+        <View style={[globalStyles.headerView, { marginTop: DimensionHelper.wp(15) }]}>
           {(UserHelper.currentUserChurch.person.photo == null || UserHelper.currentUserChurch.person.photo == undefined)
             ? null
             : <Image
@@ -204,7 +205,7 @@ export function CustomDrawer(props: any) {
           {UserHelper.user ? messagesView() : null}
         </View>
         <TouchableOpacity style={globalStyles.headerView} onPress={() => editProfileAction()}>
-          <Text style={{ fontSize: DimensionHelper.wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' }}>{'Edit profile'}</Text>
+          <Text style={{ fontSize: DimensionHelper.wp(3.5), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' }}>{'Edit profile'}</Text>
         </TouchableOpacity>
       </View>)
     }
@@ -233,7 +234,7 @@ export function CustomDrawer(props: any) {
     return (
       <TouchableOpacity onPress={() => router.navigate('/(drawer)/searchMessageUser')}>
         <View style={globalStyles.messageRootView}>
-          <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />
+          <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp(5)} />
         </View>
       </TouchableOpacity>
     );

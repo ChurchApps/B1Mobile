@@ -1,18 +1,15 @@
 import React from 'react';
-import { globalStyles } from '@/src/helpers/GlobalStyles';
-import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
-import { ApiHelper } from '@churchapps/mobilehelper';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
+import { Constants as ConstantsHelper } from '@/src/helpers/TestIndex';
+import { View } from 'react-native';
 
 const Register2 = () => {
 
-  return (
-    <SafeAreaView style={globalStyles.appContainer}>
 
-      <View style={globalStyles.grayContainer}>
-        <Text style={{ width: DimensionHelper.wp(10) }}>Login</Text>
-      </View>
-    </SafeAreaView>
+  return (
+    <View style={{ flex: 1, backgroundColor: ConstantsHelper.Colors.gray_bg }}>
+
+
+    </View>
   )
 }
 

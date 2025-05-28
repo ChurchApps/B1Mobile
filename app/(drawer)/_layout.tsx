@@ -10,12 +10,14 @@ import { Constants } from '@/src/helpers';
 export default function DrawerLayout() {
   const [dimensions, setDimensions] = useState('1,1');
 
+  /*
   useEffect(() => {
     DimensionHelper.listenOrientationChange(undefined, () => {
       setDimensions(DimensionHelper.wp(100) + ',' + DimensionHelper.hp(100));
     });
     return () => DimensionHelper.removeOrientationListener();
   }, []);
+  */
 
   return (
     <Drawer
