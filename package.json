@@ -76,8 +76,11 @@
     "@types/react": "~19.0.10",
     "@types/react-native-material-ripple": "^0.9.6",
     "@types/react-test-renderer": "^19.0.10",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
     "jest": "^29.7.0",
     "jest-expo": "~53.0.5",
+    "prettier": "^3.5.3",
     "react-test-renderer": "19.0.0",
     "typescript": "^5.8.3"
   },
@@ -87,5 +90,19 @@
     "@types/react": "~19.0.10",
     "@types/react-dom": "~19.0.10"
   },
-  "private": true
+  "private": true,
+  "expo": {
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": [
+            "./assets/notification-sound.wav"
+          ]
+        }
+      ]
+    ]
+  }
 }

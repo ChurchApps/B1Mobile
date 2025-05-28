@@ -3,12 +3,14 @@
     "eslint:recommended", 
     "@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "plugin:react/jsx-runtime"
+    "plugin:react/jsx-runtime",
+    "prettier"
   ],
   "plugins": [
     "react",
     "react-native",
-    "@typescript-eslint"
+    "@typescript-eslint",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -46,6 +48,15 @@
     "no-undef": "off",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-imports": "off",
-    "no-useless-catch": "off"
+    "no-useless-catch": "off",
+    "prettier/prettier": ["error", {
+      "printWidth": 120,
+      "singleQuote": true,
+      "trailingComma": "none",
+      "bracketSpacing": true,
+      "arrowParens": "avoid",
+      "endOfLine": "auto",
+      "functionCallArguments": "single-line"
+    }]
   }
 }
