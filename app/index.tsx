@@ -2,6 +2,7 @@ import React from 'react';
 import { ApiHelper, CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { PushNotificationHelper } from '@/src/helpers/PushNotificationHelper';
+import { UpdateHelper } from '@/src/helpers/UpdateHelper';
 import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { router } from 'expo-router';
@@ -37,6 +38,7 @@ const SplashScreen = (props: Props) => {
     // Utilities.trackEvent("Splash Screen");
     console.log("hello")
     await CacheHelper.loadFromStorage();
+    await UpdateHelper.initializeUpdates();
     PushNotificationHelper.requestUserPermission();
     PushNotificationHelper.NotificationListener();
     PushNotificationHelper.NotificationPermissionAndroid();

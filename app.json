@@ -53,9 +53,14 @@
         "projectId": "f72e5911-b8d5-467c-ad9e-423c180e9938"
       }
     },
-    "runtimeVersion": "1.0.0",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "updates": {
-      "url": "https://u.expo.dev/f72e5911-b8d5-467c-ad9e-423c180e9938"
+      "url": "https://u.expo.dev/f72e5911-b8d5-467c-ad9e-423c180e9938",
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
     }
   }
 }
