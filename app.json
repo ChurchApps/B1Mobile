@@ -1,19 +1,28 @@
 {
   "expo": {
-    "name": "B1Mobile",
+    "name": "B1 Church",
     "slug": "B1Mobile",
     "version": "1.30.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "b1mobile",
     "userInterfaceStyle": "automatic",
+    "privacy": "https://churchapps.org/privacy",
     "owner": "churchapps",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "church.b1.mobile"
+      "package": "church.b1.mobile",
+      "versionCode": 30,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "NOTIFICATIONS"
+      ],
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=church.b1.mobile"
     },
     "web": {
       "bundler": "metro",
@@ -43,7 +52,20 @@
       "typedRoutes": true
     },
     "ios": {
-      "bundleIdentifier": "church.b1.mobile"
+      "bundleIdentifier": "church.b1.mobile",
+      "buildNumber": "30",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "B1 Church needs access to your photos to allow you to upload profile pictures and share images with your church community.",
+        "NSCameraUsageDescription": "B1 Church needs camera access to allow you to take photos for your profile and share with your church community.",
+        "NSMicrophoneUsageDescription": "B1 Church needs microphone access to allow you to record audio messages and participate in church communications.",
+        "NSLocationWhenInUseUsageDescription": "B1 Church uses your location to help you find nearby church events and connect with local church members.",
+        "NSUserNotificationsUsageDescription": "B1 Church sends notifications to keep you updated about church events, messages, and important announcements.",
+        "LSApplicationQueriesSchemes": ["mailto", "tel", "sms"]
+      },
+      "appStoreUrl": "https://apps.apple.com/us/app/b1-church/id1610587256",
+      "marketingUrl": "https://b1.church",
+      "requireFullScreen": true
     },
     "extra": {
       "router": {
@@ -51,7 +73,10 @@
       },
       "eas": {
         "projectId": "f72e5911-b8d5-467c-ad9e-423c180e9938"
-      }
+      },
+      "privacyPolicyUrl": "https://churchapps.org/privacy",
+      "websiteUrl": "https://b1.church",
+      "appStoreId": "1610587256"
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
