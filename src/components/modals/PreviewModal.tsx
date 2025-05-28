@@ -52,7 +52,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
             }}
             style={globalStyles.donationCloseBtn}
           >
-            <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp("6%")} />
+            <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
           </TouchableOpacity>
         </View>
         <ScrollView>

@@ -17,7 +17,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@churchapps/mobilehelper": "0.3.11",
+    "@churchapps/mobilehelper": "0.3.12",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^2.1.2",
@@ -75,6 +75,7 @@
     "@types/jest": "^29.5.14",
     "@types/react": "~19.0.10",
     "@types/react-native-material-ripple": "^0.9.6",
+    "@types/react-native-vector-icons": "^6.4.18",
     "@types/react-test-renderer": "^19.0.10",
     "jest": "^29.7.0",
     "jest-expo": "~53.0.5",
@@ -95,7 +96,9 @@
         {
           "icon": "./assets/notification-icon.png",
           "color": "#ffffff",
-          "sounds": ["./assets/notification-sound.wav"]
+          "sounds": [
+            "./assets/notification-sound.wav"
+          ]
         }
       ]
     ]

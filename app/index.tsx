@@ -3,7 +3,7 @@ import { ApiHelper, CacheHelper, Constants, EnvironmentHelper, UserHelper, globa
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { PushNotificationHelper } from '@/src/helpers/PushNotificationHelper';
 import { NavigationProps } from '@/src/interfaces';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { Image, Platform, View } from 'react-native';
@@ -128,13 +128,17 @@ const SplashScreen = (props: Props) => {
   if (DimensionHelper.wp(100) > DimensionHelper.hp(100)) {
     return (
       <View style={[globalStyles.safeAreaContainer, { flex: 1, backgroundColor: Constants.Colors.app_color }]}>
-        <Image source={Constants.Images.splash_screen} style={{ width: DimensionHelper.hp('100%'), height: DimensionHelper.hp('100%') }} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Image source={require('@/assets/images/logo.png')} style={{ width: DimensionHelper.wp(80), height: DimensionHelper.wp(80) }} />
+        </View>
       </View>
     );
   } else {
     return (
       <View style={[globalStyles.safeAreaContainer, { flex: 1 }]}>
-        <Image source={Constants.Images.splash_screen} style={{ width: DimensionHelper.wp('100%'), height: DimensionHelper.hp('100%') }} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Image source={require('@/assets/images/logo.png')} style={{ width: DimensionHelper.wp(80), height: DimensionHelper.wp(80) }} />
+        </View>
       </View>
     );
   }

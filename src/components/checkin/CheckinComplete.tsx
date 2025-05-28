@@ -1,8 +1,9 @@
-import { UserHelper, globalStyles } from '@/src/helpers';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { Constants, UserHelper, globalStyles } from '@/src/helpers';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 interface Props {
   onDone: () => void
@@ -17,9 +18,11 @@ export const CheckinComplete = (props: Props) => {
 
 
   return (
-    <View>
-      <Icon name={'check-circle'} style={{ ...globalStyles.successIcon, marginLeft: "auto", marginRight: "auto" }} size={DimensionHelper.wp('20%')} />
-      <Text style={{ ...globalStyles.successText, textAlign: "center" }}>Checkin Complete.</Text>
+    <View style={[globalStyles.safeAreaContainer, { flex: 1, backgroundColor: Constants.Colors.app_color }]}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Icon name="check-circle" size={DimensionHelper.wp(20)} color="green" />
+        <Text style={{ fontSize: DimensionHelper.wp(5), marginTop: DimensionHelper.wp(2), color: 'white' }}>Check-in Complete!</Text>
+      </View>
     </View>
   );
 };

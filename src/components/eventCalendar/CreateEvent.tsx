@@ -1,5 +1,6 @@
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { ApiHelper, DateHelper, DimensionHelper, EventExceptionInterface, EventInterface } from '@churchapps/mobilehelper';
+import { ApiHelper, DateHelper, EventExceptionInterface, EventInterface } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -137,7 +138,7 @@ export default function CreateEvent(props: Props) {
           <Icon
             name={"calendar-o"}
             style={globalStyles.selectionIcon}
-            size={DimensionHelper.wp("6%")}
+            size={DimensionHelper.wp(6)}
             onPress={() => setOpenStartPicker(true)}
           />
           <DatePicker
@@ -161,7 +162,7 @@ export default function CreateEvent(props: Props) {
           <Icon
             name={"calendar-o"}
             style={globalStyles.selectionIcon}
-            size={DimensionHelper.wp("6%")}
+            size={DimensionHelper.wp(6)}
             onPress={() => setOpenEndPicker(true)}
           />
           <DatePicker
@@ -189,7 +190,7 @@ export default function CreateEvent(props: Props) {
           <Icon
             name={"calendar-o"}
             style={globalStyles.selectionIcon}
-            size={DimensionHelper.wp("6%")}
+            size={DimensionHelper.wp(6)}
             onPress={() => setOpenStartPicker(true)}
           />
           <DatePicker
@@ -213,7 +214,7 @@ export default function CreateEvent(props: Props) {
           <Icon
             name={"calendar-o"}
             style={globalStyles.selectionIcon}
-            size={DimensionHelper.wp("6%")}
+            size={DimensionHelper.wp(6)}
             onPress={() => setOpenEndPicker(true)}
           />
           <DatePicker
@@ -293,11 +294,11 @@ export default function CreateEvent(props: Props) {
         />
       </View>
       {(event?.recurrenceRule && event.recurrenceRule.length > 0) && <RRuleEditor start={event.start || new Date()} rRule={event.recurrenceRule || ""} onChange={(rRule: string) => { setRRule(rRule); }} />}
-      <Text style={[styles.labelText, { marginTop: DimensionHelper.wp('3.5%') }]}>Title</Text>
+      <Text style={[styles.labelText, { marginTop: DimensionHelper.wp(3.5) }]}>Title</Text>
       <TextInput
         style={[globalStyles.textInputStyle, {
-          width: DimensionHelper.wp('88%'), borderWidth: 1, padding: 10, borderRadius: 10, borderColor: 'lightgray',
-          marginTop: DimensionHelper.wp('1%'),
+          width: DimensionHelper.wp(88), borderWidth: 1, padding: 10, borderRadius: 10, borderColor: 'lightgray',
+          marginTop: DimensionHelper.wp(1),
         }]}
         placeholder={'Title'}
         autoCapitalize="none"
@@ -310,11 +311,11 @@ export default function CreateEvent(props: Props) {
           setEvent((prev) => ({ ...prev, title: text }));
         }}
       />
-      <Text style={[styles.labelText, { marginTop: DimensionHelper.wp('3.5%') }]}>Description</Text>
+      <Text style={[styles.labelText, { marginTop: DimensionHelper.wp(3.5) }]}>Description</Text>
       <TextInput
         style={[globalStyles.textInputStyle, {
-          width: DimensionHelper.wp('88%'), borderWidth: 1, padding: 10, borderRadius: 10, borderColor: 'lightgray',
-          marginTop: DimensionHelper.wp('1%'), height: DimensionHelper.wp('22%'),
+          width: DimensionHelper.wp(88), borderWidth: 1, padding: 10, borderRadius: 10, borderColor: 'lightgray',
+          marginTop: DimensionHelper.wp(1), height: DimensionHelper.wp(22),
         }]}
         placeholder={'Description'}
         autoCapitalize="none"
@@ -331,7 +332,7 @@ export default function CreateEvent(props: Props) {
       />
       {!event?.id ? (
         <TouchableOpacity
-          style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp("50%") }]}
+          style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(50) }]}
           onPress={handleSave}
         >
           {loading ?
@@ -342,20 +343,20 @@ export default function CreateEvent(props: Props) {
       ) : (
         <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
           <TouchableOpacity
-            style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp("40%") }]}
+            style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(40) }]}
             onPress={handleEditEvent}
           >
             <Text style={globalStyles.roundBlueButtonText}>{"Edit"}</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp("40%") }]}
+            style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(40) }]}
             onPress={handleDelete}
           >
             <Text style={globalStyles.roundBlueButtonText}>{"Delete"}</Text>
           </TouchableOpacity>
         </View>
       )}
-      <CustomModal width={DimensionHelper.wp('85%')} isVisible={showEventEditModal} close={() => setShowEventEditModal(false)}>
+      <CustomModal width={DimensionHelper.wp(85)} isVisible={showEventEditModal} close={() => setShowEventEditModal(false)}>
         {recurrenceModalType && <EditRecurringModal
           action={recurrenceModalType}
           setModal={setShowEventEditModal}
@@ -371,26 +372,26 @@ const styles = StyleSheet.create({
   },
   dateConatiner: {
     borderWidth: 1,
-    paddingHorizontal: DimensionHelper.wp('2%'),
+    paddingHorizontal: DimensionHelper.wp(2),
     borderColor: 'lightgray',
-    borderRadius: DimensionHelper.wp('2%'),
-    height: DimensionHelper.wp('12%'),
-    marginTop: DimensionHelper.wp('2%'),
+    borderRadius: DimensionHelper.wp(2),
+    height: DimensionHelper.wp(12),
+    marginTop: DimensionHelper.wp(2),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   dateText: {
-    width: DimensionHelper.wp('25%'),
-    fontSize: DimensionHelper.wp('3.8%')
+    width: DimensionHelper.wp(25),
+    fontSize: DimensionHelper.wp(3.8)
   },
   labelText: {
-    fontSize: DimensionHelper.wp('4%'), fontWeight: '600'
+    fontSize: DimensionHelper.wp(4), fontWeight: '600'
   },
   dateTextConatiner: {
-    flexDirection: 'row', justifyContent: 'space-around', marginTop: DimensionHelper.wp('3.5%')
+    flexDirection: 'row', justifyContent: 'space-around', marginTop: DimensionHelper.wp(3.5)
   },
   visibilityConatiner: {
-    flexDirection: 'row', alignItems: 'center', marginTop: DimensionHelper.wp('3.5%')
+    flexDirection: 'row', alignItems: 'center', marginTop: DimensionHelper.wp(3.5)
   }
 })

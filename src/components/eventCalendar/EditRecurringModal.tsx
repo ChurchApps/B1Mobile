@@ -1,4 +1,4 @@
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -26,7 +26,7 @@ export default function EditRecurringModal(props: Props) {
         <TouchableOpacity
           onPress={() => { if (props.setModal) props.setModal(false); }}
         >
-          <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp("6%")} />
+          <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
         </TouchableOpacity>
       </View>
       <RadioButtonGroup
@@ -49,16 +49,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-evenly'
   },
   buttons: {
-    width: DimensionHelper.wp('30%'),
-    height: DimensionHelper.wp('12%'),
-    borderRadius: DimensionHelper.wp('2%'),
+    width: DimensionHelper.wp(30),
+    height: DimensionHelper.wp(12),
+    borderRadius: DimensionHelper.wp(2),
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
   },
   buttonsText: {
     color: Constants.Colors.app_color,
-    fontSize: DimensionHelper.wp('3.8%'),
+    fontSize: DimensionHelper.wp(3.8),
     fontFamily: Constants.Fonts.RobotoMedium
   },
   labelContainer: {
@@ -66,6 +66,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', alignItems: 'center'
   },
   labelText: {
-    marginVertical: 10, fontSize: DimensionHelper.wp('4.5%')
+    marginVertical: 10, fontSize: DimensionHelper.wp(4.5)
   }
 })

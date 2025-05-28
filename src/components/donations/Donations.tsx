@@ -1,6 +1,6 @@
 import { ApiHelper, Constants, CurrencyHelper, DateHelper, UserHelper, globalStyles } from "@/src/helpers";
 import { DonationInterface } from "@/src/interfaces";
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { useIsFocused } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -58,9 +58,9 @@ export function Donations() {
                 setShowDonationModal(true);
                 setSelectedDonation(d);
               }}
-              style={{ marginLeft: DimensionHelper.wp("6%") }}
+              style={{ marginLeft: DimensionHelper.wp(6) }}
             >
-              <FontAwesome5 name={"eye"} style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp("5.5%")} />
+              <FontAwesome5 name={"eye"} style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp(5.5)} />
             </TouchableOpacity>
           </View>
         </View>
@@ -70,8 +70,8 @@ export function Donations() {
 
   const donationsTable = (
     <ScrollView nestedScrollEnabled={true}>
-      <View style={{ ...globalStyles.donationContainer, marginVertical: DimensionHelper.wp("5%") }}>
-        <View style={{ ...globalStyles.donationRowContainer, marginBottom: DimensionHelper.wp("5%") }}>
+      <View style={{ ...globalStyles.donationContainer, marginVertical: DimensionHelper.wp(5) }}>
+        <View style={{ ...globalStyles.donationRowContainer, marginBottom: DimensionHelper.wp(5) }}>
           <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Date</Text>
           <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Amount</Text>
         </View>
@@ -99,7 +99,7 @@ export function Donations() {
               }}
               style={globalStyles.donationCloseBtn}
             >
-              <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp("6%")} />
+              <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
             </TouchableOpacity>
           </View>
           <ScrollView>
@@ -133,7 +133,7 @@ export function Donations() {
         headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
       >
         {isLoading ? (
-          <ActivityIndicator size="large" style={{ margin: DimensionHelper.wp("2%") }} color="gray" animating={isLoading} />
+          <ActivityIndicator size="large" style={{ margin: DimensionHelper.wp(2) }} color="gray" animating={isLoading} />
         ) : (
           content
         )}

@@ -4,7 +4,7 @@ import { Loader } from '@/src/components/Loader';
 import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import { CacheHelper, LinkInterface, UserHelper, globalStyles } from '@/src/helpers';
 import { NavigationHelper } from '@/src/helpers/NavigationHelper';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';

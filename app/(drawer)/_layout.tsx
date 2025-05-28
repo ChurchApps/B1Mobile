@@ -1,5 +1,5 @@
 import React from 'react';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { Drawer } from 'expo-router/drawer';
 import { useEffect, useState } from 'react';
 
@@ -12,7 +12,7 @@ export default function DrawerLayout() {
 
   useEffect(() => {
     DimensionHelper.listenOrientationChange(undefined, () => {
-      setDimensions(DimensionHelper.wp('100%') + ',' + DimensionHelper.hp('100%'));
+      setDimensions(DimensionHelper.wp(100) + ',' + DimensionHelper.hp(100));
     });
     return () => DimensionHelper.removeOrientationListener();
   }, []);
@@ -22,8 +22,8 @@ export default function DrawerLayout() {
       screenOptions={{
         headerShown: false,
         drawerStyle: {
-          width: DimensionHelper.wp('60%'),
-          height: DimensionHelper.hp('100%'),
+          width: DimensionHelper.wp(60),
+          height: DimensionHelper.hp(100),
           backgroundColor: Constants.Colors.app_color,
         },
         drawerType: 'slide',

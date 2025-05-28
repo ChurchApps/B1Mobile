@@ -8,7 +8,8 @@ import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "@/src/helpers";
 import { GroupMemberInterface } from "@/src/interfaces/Membership";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { DimensionHelper, EventInterface } from "@churchapps/mobilehelper";
+import { EventInterface } from "@churchapps/mobilehelper";
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import Markdown from "@ronradtke/react-native-markdown-display";
@@ -183,7 +184,7 @@ const GroupDetails = (props: any) => {
 
   const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => {
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp("90%") }]} onPress={() => {
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => {
         // navigate("MemberDetailScreen", { member: item.person });
         router.navigate({
           pathname: '/memberDetail',
@@ -282,13 +283,13 @@ const GroupDetails = (props: any) => {
         {/* RENDER CONVERSATION */}
 
         {activeTab === 0 && (<Conversations contentType="group" contentId={groupId} groupId={groupId} from="GroupDetails" />)}
-        {activeTab === 1 && (<View style={{ height: DimensionHelper.hp('55%'), paddingBottom: DimensionHelper.wp('2%') }}>{getGroupMembers()}</View>)}
+        {activeTab === 1 && (<View style={{ height: DimensionHelper.hp(55), paddingBottom: DimensionHelper.wp(2) }}>{getGroupMembers()}</View>)}
         {activeTab === 2 && (<View>
           {isLeader &&
             <TouchableOpacity style={styles.addButtonContainer}
               onPress={() => { setShowAddEventModal(true), handleAddEvent({ start: new Date(), end: new Date() }) }}
             >
-              <MaterialIcons name={'event-note'} size={DimensionHelper.wp('6%')} color={Constants.Colors.app_color} />
+              <MaterialIcons name={'event-note'} size={DimensionHelper.wp(6)} color={Constants.Colors.app_color} />
               <Text style={styles.addButtonText}>ADD EVENT</Text>
             </TouchableOpacity>
           }
@@ -309,7 +310,7 @@ const GroupDetails = (props: any) => {
           />
         </View>)}
         {showEventModal &&
-          <CustomModal width={DimensionHelper.wp('85%')} isVisible={showEventModal} close={() => setShowEventModal(false)}>
+          <CustomModal width={DimensionHelper.wp(85)} isVisible={showEventModal} close={() => setShowEventModal(false)}>
             <View style={styles.modalConatiner}>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalText}>Event Details</Text>
@@ -319,7 +320,7 @@ const GroupDetails = (props: any) => {
                   }}
                   style={styles.modalIcon}
                 >
-                  <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp("6%")} />
+                  <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
                 </TouchableOpacity>
               </View>
               {selectedEvents?.map((data: any, index: number) => (
@@ -328,7 +329,7 @@ const GroupDetails = (props: any) => {
                     <Text style={styles.eventText}>Event Name: {data.title}</Text>
                     <Text style={styles.eventTime}>Date and Time: {getDisplayTime(data)}</Text>
                   </View>
-                  <Icon name={"edit"} style={globalStyles.closeIcon} size={DimensionHelper.wp("6%")}
+                  <Icon name={"edit"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)}
                     onPress={() => { setShowEventModal(false); setEditEvent(data); setShowAddEventModal(true); }}
                   />
                 </View>
@@ -336,7 +337,7 @@ const GroupDetails = (props: any) => {
             </View>
           </CustomModal>}
         {showAddEventModal &&
-          <EventModal width={DimensionHelper.wp('95%')} height={DimensionHelper.hp('80%')} isVisible={showAddEventModal} close={() => setShowAddEventModal(false)}>
+          <EventModal width={DimensionHelper.wp(95)} height={DimensionHelper.hp(80)} isVisible={showAddEventModal} close={() => setShowAddEventModal(false)}>
             <View style={styles.modalConatiner}>
               <View style={styles.modalHeader}>
                 <Text style={styles.modalText}>{!editEvent?.id ? "Add" : "Edit"} Event</Text>
@@ -346,7 +347,7 @@ const GroupDetails = (props: any) => {
                   }}
                   style={styles.modalIcon}
                 >
-                  <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp("6%")} />
+                  <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
                 </TouchableOpacity>
               </View>
               <View style={{}}>
@@ -384,19 +385,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: DimensionHelper.wp(1)
   },
   modalHeader: {
-    width: '100%', height: DimensionHelper.wp('9%'), marginBottom: DimensionHelper.wp('3%'), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomColor: 'lightgray', borderBottomWidth: 1
+    width: '100%', height: DimensionHelper.wp(9), marginBottom: DimensionHelper.wp(3), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomColor: 'lightgray', borderBottomWidth: 1
   },
   modalText: {
-    fontSize: DimensionHelper.wp('5.5%'), color: '#000'
+    fontSize: DimensionHelper.wp(5.5), color: '#000'
   },
   modalIcon: {
-    height: DimensionHelper.wp('8%'), width: DimensionHelper.wp('5%'), justifyContent: 'center'
+    height: DimensionHelper.wp(8), width: DimensionHelper.wp(5), justifyContent: 'center'
   },
   eventText: {
-    fontSize: DimensionHelper.wp('4%'), fontWeight: '800', color: '#000'
+    fontSize: DimensionHelper.wp(4), fontWeight: '800', color: '#000'
   },
   eventTime: {
-    fontSize: DimensionHelper.wp('4%'), color: '#000'
+    fontSize: DimensionHelper.wp(4), color: '#000'
   },
   noImageText: {
     color: '#888'
@@ -405,11 +406,11 @@ const styles = StyleSheet.create({
     textAlign: 'center', marginTop: 10
   },
   addButtonContainer: {
-    borderWidth: 1, paddingVertical: DimensionHelper.wp('2%'), paddingHorizontal: DimensionHelper.wp('2.5%'), margin: DimensionHelper.wp('2%'), marginBottom: 0,
-    borderRadius: DimensionHelper.wp('1%'), alignItems: 'center', alignSelf: 'flex-end', borderColor: Constants.Colors.app_color, flexDirection: 'row'
+    borderWidth: 1, paddingVertical: DimensionHelper.wp(2), paddingHorizontal: DimensionHelper.wp(2.5), margin: DimensionHelper.wp(2), marginBottom: 0,
+    borderRadius: DimensionHelper.wp(1), alignItems: 'center', alignSelf: 'flex-end', borderColor: Constants.Colors.app_color, flexDirection: 'row'
   },
   addButtonText: {
-    fontSize: DimensionHelper.wp('4%'), marginLeft: DimensionHelper.wp('2%'), color: Constants.Colors.app_color
+    fontSize: DimensionHelper.wp(4), marginLeft: DimensionHelper.wp(2), color: Constants.Colors.app_color
   },
   eventContainer: {
     flexDirection: 'row', justifyContent: 'center', alignItems: 'center'

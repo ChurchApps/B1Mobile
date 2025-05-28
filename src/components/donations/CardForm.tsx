@@ -1,10 +1,11 @@
-import { ApiHelper, Constants, UserHelper, globalStyles } from "@/src/helpers";
+import { ApiHelper, Constants, StripeHelper, UserHelper, globalStyles } from "@/src/helpers";
 import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "@/src/interfaces";
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
 import React, { useState } from "react";
 import { Alert, Image, Text, TextInput, View } from "react-native";
 import { InputBox } from "../InputBox";
+import DropDownPicker from "react-native-dropdown-picker";
 
 interface Props {
   setMode: any;
@@ -21,6 +22,17 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   const [year, setYear] = React.useState<string>(card.exp_year?.toString().slice(-2) || "");
   const { createPaymentMethod } = useStripe();
   const person = UserHelper.currentUserChurch?.person;
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState(card.type || "card");
+  const cardTypes = [
+    { label: "Visa", value: "visa" },
+    { label: "Mastercard", value: "mastercard" },
+    { label: "American Express", value: "amex" },
+    { label: "Discover", value: "discover" },
+    { label: "JCB", value: "jcb" },
+    { label: "Diners Club", value: "dinersclub" },
+    { label: "UnionPay", value: "unionpay" }
+  ];
 
   const handleSave = () => {
     setIsSubmitting(true);
@@ -83,6 +95,14 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
     setIsSubmitting(false);
   };
 
+  const informationalText = !card.id && (
+    <View style={{ marginTop: DimensionHelper.wp(5), flex: 1, alignItems: "center" }}>
+      <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>
+        Credit cards will be charged immediately for one-time donations. For recurring donations, your card will be charged on the date you select.
+      </Text>
+    </View>
+  );
+
   return (
     <InputBox
       title="Add New Card"
@@ -93,21 +113,52 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
       deleteFunction={card.id ? handleDelete : undefined}
     >
       {!card.id ? (
-        <View>
+        <View style={{ marginBottom: DimensionHelper.wp(5) }}>
+          <Text style={globalStyles.semiTitleText}>Card Holder Name</Text>
+          <TextInput
+            style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
+            keyboardType="default"
+            value={person?.name?.display}
+            onChangeText={(text) => {
+              // setName(text);
+            }}
+          />
+          <Text style={globalStyles.semiTitleText}>Card Number</Text>
           <CardField
             postalCodeEnabled={true}
-            placeholders={{ number: "4242 4242 4242 4242" }}
+            placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }}
             cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000", placeholderColor: "#808080" }}
-            style={{ width: "100%", height: 50, marginTop: DimensionHelper.wp("2%"), backgroundColor: "white" }}
+            style={{ width: DimensionHelper.wp(90), height: DimensionHelper.wp(12), backgroundColor: "white" }}
             onCardChange={(cardDetails) => {
               setCardDetails(cardDetails);
             }}
           />
+          <View style={{ width: DimensionHelper.wp(100), marginBottom: DimensionHelper.wp(12) }}>
+            <DropDownPicker
+              listMode="SCROLLVIEW"
+              open={isDropdownOpen}
+              items={cardTypes}
+              value={selectedType}
+              setOpen={setIsDropdownOpen}
+              setValue={setSelectedType}
+              containerStyle={{
+                ...globalStyles.containerStyle,
+                width: DimensionHelper.wp(90),
+                height: isDropdownOpen ? cardTypes.length * DimensionHelper.wp(12) : DimensionHelper.wp(0),
+              }}
+              style={{ ...globalStyles.dropDownMainStyle, height: DimensionHelper.wp(12) }}
+              labelStyle={globalStyles.labelStyle}
+              listItemContainerStyle={globalStyles.itemStyle}
+              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: DimensionHelper.wp(90) }}
+              scrollViewProps={{ nestedScrollEnabled: true }}
+              dropDownDirection="BOTTOM"
+            />
+          </View>
         </View>
       ) : (
         <View style={globalStyles.cardDatesView}>
           <View>
-            <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp("4%") }}>Expiration Month</Text>
+            <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp(4) }}>Expiration Month</Text>
             <TextInput
               style={globalStyles.cardDates}
               keyboardType="number-pad"
@@ -118,7 +169,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
             />
           </View>
           <View>
-            <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp("4%") }}>Expiration Year</Text>
+            <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp(4) }}>Expiration Year</Text>
             <TextInput
               style={globalStyles.cardDates}
               keyboardType="number-pad"
