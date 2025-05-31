@@ -15,12 +15,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "church.b1.mobile",
-      "versionCode": 30,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
-        "NOTIFICATIONS"
+        "NOTIFICATIONS",
+        "com.google.android.gms.permission.AD_ID"
       ],
       "playStoreUrl": "https://play.google.com/store/apps/details?id=church.b1.mobile"
     },
@@ -78,9 +78,7 @@
       "websiteUrl": "https://b1.church",
       "appStoreId": "1610587256"
     },
-    "runtimeVersion": {
-      "policy": "sdkVersion"
-    },
+    "runtimeVersion": "1.30.0",
     "updates": {
       "url": "https://u.expo.dev/f72e5911-b8d5-467c-ad9e-423c180e9938",
       "enabled": true,
