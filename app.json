@@ -44,7 +44,9 @@
         {
           "icon": "./assets/images/notification-icon.png",
           "color": "#ffffff",
-          "sounds": ["./assets/sounds/notification.mp3"]
+          "sounds": [
+            "./assets/sounds/notification.mp3"
+          ]
         }
       ]
     ],
@@ -61,7 +63,15 @@
         "NSMicrophoneUsageDescription": "B1 Church needs microphone access to allow you to record audio messages and participate in church communications.",
         "NSLocationWhenInUseUsageDescription": "B1 Church uses your location to help you find nearby church events and connect with local church members.",
         "NSUserNotificationsUsageDescription": "B1 Church sends notifications to keep you updated about church events, messages, and important announcements.",
-        "LSApplicationQueriesSchemes": ["mailto", "tel", "sms"]
+        "LSApplicationQueriesSchemes": [
+          "mailto",
+          "tel",
+          "sms",
+          "mailto",
+          "tel",
+          "sms"
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       },
       "appStoreUrl": "https://apps.apple.com/us/app/b1-church/id1610587256",
       "marketingUrl": "https://b1.church",
