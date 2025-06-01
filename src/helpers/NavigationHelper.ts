@@ -126,7 +126,7 @@ export class NavigationHelper {
     //   })*/
     // } else navigate('DonationScreen')
     if (Platform.OS === "ios") {
-      let url = "https://" + CacheHelper.church!.subDomain + ".b1.church/login/?returnUrl=%2Fdonation-landing";
+      let url = "https://" + CacheHelper.church!.subDomain + ".b1.church/login/?returnUrl=%2Fdonate";
       const jwt = UserHelper.currentUserChurch?.jwt;
       if (jwt) {
         url += "&jwt=" + jwt;
