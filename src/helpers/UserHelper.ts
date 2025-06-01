@@ -52,7 +52,6 @@ export class UserHelper {
 
 
   static handleLogin = async (data: LoginResponseInterface) => {
-    console.log("data", data.userChurches[0].apis)
     var currentChurch: LoginUserChurchInterface = data.userChurches[0];
 
     let church = CacheHelper.church;

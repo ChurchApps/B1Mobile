@@ -23,7 +23,6 @@ const MembersSearch = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("LOADED MEMBERS")
     // Utilities.trackEvent("Member Search Screen");
     loadMembers()
     UserHelper.addOpenScreenEvent('MembersSearch');

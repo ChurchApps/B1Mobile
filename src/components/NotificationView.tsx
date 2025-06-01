@@ -29,7 +29,6 @@ export function NotificationTab(props: any) {
   const getNotifications = () => {
     setLoading(true)
     ApiHelper.get("/notifications/my", "MessagingApi").then((data) => {
-      console.log(data)
       if (data && data.length != 0) setNotificationData(data);
     })
   }
@@ -50,7 +49,6 @@ export function NotificationTab(props: any) {
           });
         }
       });
-      console.log("itemin list ", merged)
       setMergedData(merged);
       setLoading(false)
     }

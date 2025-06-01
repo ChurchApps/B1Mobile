@@ -25,10 +25,8 @@ const UserConversations = ({
   const [editMessageId, setEditMessageId] = React.useState('')
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
 
-  console.log("conversation data from group screen is =====>", conversation)
 
   const loadConversations = useCallback(async () => {
-    console.log("conversation.id is", conversation.id)
     let conversations: ConversationInterface[] = [];
     const userMessages: MessageInterface[] = conversation.id
       ? await ApiHelper.get("/messages/conversation/" + conversation.id, "MessagingApi")
@@ -40,10 +38,7 @@ const UserConversations = ({
           peopleIds.push(message?.personId);
         }
       });
-      const people = await ApiHelper.get(
-        "/people/basic?ids=" + peopleIds.join(","),
-        "MembershipApi"
-      );
+      const people = await ApiHelper.get("/people/basic?ids=" + peopleIds.join(","), "MembershipApi");
       people.reverse();
       const groupedMessages: { [key: string]: MessageInterface[] } = {};
       userMessages.forEach((message: any) => {
@@ -64,13 +59,11 @@ const UserConversations = ({
     setEditMessageId('');
   }, [conversation]);
 
-  console.log("conversation data is ------>", conversations)
   useEffect(() => {
     loadConversations();
   }, [conversation]);
 
   const renderConversations = (item: any, index: number) => {
-    console.log("item in render item is---->", item)
     return (
       <View >
         <RenderContent item={item} message={item.messages[0]} idx={index} />

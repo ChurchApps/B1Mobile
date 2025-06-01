@@ -27,7 +27,7 @@ EnvironmentHelper.init();
 
 
 const SplashScreen = (props: Props) => {
-  console.log("*****SPLASH******")
+  //console.log("*****SPLASH******")
 
   const init = async () => {
     //   setTimeout(() => {
@@ -36,7 +36,6 @@ const SplashScreen = (props: Props) => {
     //   }, 1000);
 
     // Utilities.trackEvent("Splash Screen");
-    console.log("hello")
     await CacheHelper.loadFromStorage();
     await UpdateHelper.initializeUpdates();
     PushNotificationHelper.requestUserPermission();
@@ -86,31 +85,22 @@ const SplashScreen = (props: Props) => {
   //   if (data.user != null) await UserHelper.handleLogin(data);
   // }
   const setUserDataNew = async () => {
-    console.log("user")
     const user = UserHelper.user;
-    console.log("user", user)
     const data = await ApiHelper.postAnonymous("/users/login", { jwt: user.jwt }, "MembershipApi");
-    console.log("data", data)
     if (data.user != null) await UserHelper.handleLogin(data);
   }
 
 
   const checkUser = async () => {
-    console.log("here")
     try {
-      console.log(UserHelper.user?.jwt)
       if (UserHelper.user?.jwt) await setUserDataNew();
     } catch (e: any) {
       console.log(e)
-      console.log("here")
-
       ErrorHelper.logError("splash-screen-error", e);
     }
 
 
     if (!CacheHelper.church) {
-      console.log(CacheHelper.church)
-      console.log("chach")
       router.navigate('/(drawer)/churchSearch')
       // router.navigate('/churchSearch')
     } else {

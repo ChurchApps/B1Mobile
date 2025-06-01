@@ -27,10 +27,7 @@ export class PushNotificationHelper {
     const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
     const currentData: LoginUserChurchInterface | undefined = tst.find((value, index) => value.church.id == currentChurch!.id);
     if (currentData != null || currentData != undefined) {
-      console.log("registerrrrr", fcmToken)
-      ApiHelper.post("/devices/register", { "personId": currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi").then(async (data) => {
-        console.log("register device api response ====>", data)
-      });
+      ApiHelper.post("/devices/register", { "personId": currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi");
     }
   }
 
@@ -60,7 +57,6 @@ export class PushNotificationHelper {
       }
 
       if (finalStatus === 'granted') {
-        console.log('Notification permission granted');
         await PushNotificationHelper.GetFCMToken();
       } else {
         console.log('Notification permission denied');

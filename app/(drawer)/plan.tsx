@@ -34,7 +34,6 @@ const Plan = (props: Props) => {
     setLoading(true)
     try {
       const tempAssignments: AssignmentInterface[] = await ApiHelper.get("/assignments/my", "DoingApi");
-      console.log("my assignment data is ------>", tempAssignments)
       if (tempAssignments.length > 0) {
         setAssignments(tempAssignments);
         const positionIds = ArrayHelper.getUniqueValues(tempAssignments, "positionId");

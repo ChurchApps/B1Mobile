@@ -40,10 +40,8 @@ const Login = () => {
     let params = { "email": email, "password": password }
     setLoading(true);
     ApiHelper.postAnonymous("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
-      console.log(data)
       setLoading(false);
       if (data.user != null) {
-        console.log("here")
         await UserHelper.handleLogin(data as any);
 
         // router.replace('(drawer)/dashboard');

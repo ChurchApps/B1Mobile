@@ -54,7 +54,6 @@ const SearchMessageUser = (props: Props) => {
   const searchUserApiCall = (text: String) => {
     setLoading(true);
     ApiHelper.get("/people/search/?term=" + text, "MembershipApi").then(data => {
-      console.log("data", data)
       setLoading(false);
       setSearchList(data);
       if (data.length === 0) Alert.alert("Alert", "No matches found");

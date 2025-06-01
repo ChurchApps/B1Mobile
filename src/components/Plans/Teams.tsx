@@ -39,7 +39,6 @@ export const Teams = ({ positions, assignments, people, name }: Props) => {
   }, [positions, assignments, people, name])
 
   const renderItem = (item: any) => {
-    console.log("item is ------>", item?.item?.category)
     return (
       <View key={item.id}>
         <View style={{ flexDirection: 'row', alignItems: 'center', padding: 10 }}>

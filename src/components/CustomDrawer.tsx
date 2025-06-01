@@ -78,7 +78,6 @@ export function CustomDrawer(props: any) {
     setDrawerList(data);
     UserHelper.links = data;
     setLoading(false);
-    console.log("NAVIGATING", data[0].linkType);
     if (data.length > 0) {
       if (data[0].linkType === "groups") router.navigate('/(drawer)/myGroups');
       else router.navigate('/(drawer)/dashboard')
@@ -112,7 +111,6 @@ export function CustomDrawer(props: any) {
       } catch { }
       try {
         const campuses = await ApiHelper.get("/campuses", "AttendanceApi");
-        console.log("CAMPUSES", campuses);
         showCheckin = campuses.length > 0;
       } catch { }
       showChums = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
@@ -156,8 +154,7 @@ export function CustomDrawer(props: any) {
       return (
         <View style={[globalStyles.BorderSeparatorView, { width: '100%', borderColor: '#175ec1' }]} />
       )
-    } else
-      console.log("item", item)
+    }
     return (
       <TouchableOpacity style={globalStyles.headerView} onPress={() => { NavigationHelper.navigateToScreen(item, router.navigate), props.navigation.closeDrawer() }}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :

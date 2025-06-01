@@ -17,8 +17,9 @@ export class EnvironmentHelper {
 
   static init = () => {
     const extra = Constants.expoConfig?.extra || {};
-    // let stage = extra.STAGE;
-    let stage = "prod";
+    let stage = extra.STAGE;
+    console.log("STAGE IS: " + stage);
+    //let stage = "prod";
     //stage = "staging";
     switch (stage) {
       case "prod": EnvironmentHelper.initProd(); break;
@@ -34,8 +35,6 @@ export class EnvironmentHelper {
       { keyName: "DoingApi", url: EnvironmentHelper.DoingApi, jwt: "", permisssions: [] },
       { keyName: "LessonsApi", url: EnvironmentHelper.LessonsApi, jwt: "", permisssions: [] }
     ]
-
-    console.log(JSON.stringify(ApiHelper.apiConfigs[1].url));
   }
 
   static initDev = () => {

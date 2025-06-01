@@ -44,7 +44,6 @@ const PlanDetails = (props: Props) => {
     setLoading(true);
     try {
       const tempPlan = await ApiHelper.get("/plans/" + planId, "DoingApi");
-      console.log("temp plan", tempPlan)
       ApiHelper.get("/times/plan/" + planId, "DoingApi").then((data) => setTimes(data));
       setPlan(tempPlan);
       const tempPositions = await ApiHelper.get("/positions/plan/" + planId, "DoingApi");

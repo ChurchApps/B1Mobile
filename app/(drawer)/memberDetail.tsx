@@ -27,7 +27,6 @@ const MemberDetail = (props: Props) => {
   const { member } = useLocalSearchParams<{ member: any }>();
 
   const parsedMember = JSON.parse(member);
-  console.log("memeberrr", parsedMember)
   const memberinfo = parsedMember?.contactInfo;
   const [isLoading, setLoading] = useState(false);
   const [householdList, setHouseholdList] = useState([]);

@@ -10,8 +10,6 @@ export class NavigationHelper {
 
   static navigateToScreen = (item: LinkInterface, navigate: any) => {
     const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
-    console.log(item)
-    console.log(navigate)
     if (item.linkType == "stream") {
       UserHelper.addOpenScreenEvent('StreamScreen');
       navigate({
@@ -24,10 +22,8 @@ export class NavigationHelper {
       // navigate('StreamScreen', { url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", CacheHelper.church!.subDomain || ""), title: item.text })
     }
     if (item.linkType == "lessons") {
-      console.log("hello")
       // UserHelper.addOpenScreenEvent('LessonsScreen');
       const jwt = UserHelper.currentUserChurch?.jwt;
-      console.log("***** " + EnvironmentHelper.LessonsRoot + "/login?jwt=" + jwt + "&returnUrl=/b1/person&churchId=" + CacheHelper.church!.id);
       // navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/login?jwt=" + jwt + "&returnUrl=/b1/person&churchId=" + CacheHelper.church!.id, title: item.text })
       navigate({
         pathname: '/(drawer)/lessons',
@@ -68,7 +64,6 @@ export class NavigationHelper {
     }
     if (item.linkType == "url") {
       UserHelper.addOpenScreenEvent('WebsiteScreen');
-      console.log("WEBSITE******* ", item.url);
       // navigate('WebsiteScreen', { url: item.url, title: item.text })
       navigate({
         pathname: '/(drawer)/websiteUrl',

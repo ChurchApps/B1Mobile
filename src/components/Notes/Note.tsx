@@ -13,7 +13,6 @@ interface NotesInterface {
 }
 
 const Note = ({ message, showEditNote }: NotesInterface) => {
-  console.log("message props is ----->", message)
   const displayDuration = moment(message?.timeSent).fromNow();
 
   return (

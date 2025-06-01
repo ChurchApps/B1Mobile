@@ -17,8 +17,6 @@ export const BlockoutDates = () => {
   }
   useEffect(() => { loadData(); }, []);
 
-  console.log("blockout date api response---->", blockoutDates)
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };

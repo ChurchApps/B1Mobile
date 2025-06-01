@@ -19,7 +19,6 @@ export function AddNote({ ...props }: Props) {
   const [errors, setErrors] = React.useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const headerText = props.messageId ? "Edit note" : "Add a note"
-  console.log("props from screen is ------>", props.conversationId, props.type)
   useEffect(() => {
     if (props.messageId) ApiHelper.get(`/messages/${props.messageId}`, "MessagingApi").then(n => { console.log("message api response", n), setMessage(n) });
     else setMessage({ conversationId: props.conversationId, content: "" });
@@ -48,20 +47,15 @@ export function AddNote({ ...props }: Props) {
         setIsSubmitting(true);
         let cId = props.conversationId;
         if (!cId) cId = await props.createConversation();
-        console.log("conversation api response is ------->", cId)
         const m = { ...message };
         m.conversationId = cId;
-        ApiHelper.post("/messages", [m], "MessagingApi")
-          .then((data) => {
-            console.log("message api response is ------>", data)
-            props.onUpdate();
-            const m = { ...message } as MessageInterface;
-            m.content = "";
-            setMessage(m);
-          })
-          .catch((error) => {
-            console.error("Error calling message API:", error);
-          })
+        ApiHelper.post("/messages", [m], "MessagingApi").then((data) => {
+          props.onUpdate();
+          const m = { ...message } as MessageInterface;
+          m.content = "";
+          setMessage(m);
+        })
+          .catch((error) => { console.error("Error calling message API:", error); })
           .finally(() => { setIsSubmitting(false); setMessage(null) })
       }
     } catch (err) {

@@ -27,7 +27,6 @@ export const ServingTimes = ({ plans, positions, assignments, navigation }: Prop
     assignments.forEach((assignment) => {
       const position = positions.find(p => p.id === assignment.positionId);
       const plan = plans.find(p => p?.id === position?.planId);
-      console.log("plan id is ------->", plan)
       if (position && plan) data.push({ assignmentId: assignment?.id, planId: plan?.id, planName: plan?.name, serviceDate: plan.serviceDate, position: position?.name, status: assignment.status || "Unconfirmed" });
     });
     ArrayHelper.sortBy(data, "serviceDate", true);
@@ -42,7 +41,6 @@ export const ServingTimes = ({ plans, positions, assignments, navigation }: Prop
   }, [assignments, positions, plans])
 
   const renderItems = (item: any) => {
-    console.log("item", item?.item)
     const formattedDate = moment(item?.item?.serviceDate).format("MMM D, YYYY")
     return (
       <TouchableOpacity style={[globalStyles.classesView, { width: '95%' }]} onPress={() => navigation.navigate('PlanDetails', { id: item?.item?.planId })}>

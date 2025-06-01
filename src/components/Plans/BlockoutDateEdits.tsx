@@ -17,7 +17,6 @@ interface Props {
 }
 
 export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: Props) => {
-  console.log("props from previous screen ----->", blockoutDate)
   const [BlockoutDate, setBlockoutDate] = useState<BlockoutDateInterface>(blockoutDate);
   const blockOutEndDate = BlockoutDate.endDate;
   const blockOutStartDate = BlockoutDate.startDate;
@@ -34,23 +33,12 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
     return result.length === 0;
   }
 
-  console.log("error data is----->", errors)
   const onPressSaveButton = () => {
-    console.log("block out date is ----->", BlockoutDate)
-    if (validate()) {
-      ApiHelper.post("/blockoutDates", [BlockoutDate], "DoingApi").then(() => {
-        onClose();
-        onUpdate();
-      });
-    } else {
-      return;
-    }
+    if (validate()) ApiHelper.post("/blockoutDates", [BlockoutDate], "DoingApi").then(() => { onClose(); onUpdate(); });
+    else return;
   }
   const onPressDeleteButton = (id: number) => {
-    ApiHelper.delete("/blockoutDates/" + id, "DoingApi").then(() => {
-      onClose();
-      onUpdate();
-    });
+    ApiHelper.delete("/blockoutDates/" + id, "DoingApi").then(() => { onClose(); onUpdate(); });
   }
 
   return (

@@ -56,7 +56,7 @@ const MyGroups = (props: any) => {
       setMergedData(combined);
     }
   }, [UserPost, UserGroups])
-  console.log("user post is -------->", mergeData)
+
   const showGroups = (topItem: boolean, item: any) => {
     return (
       <View style={{ marginHorizontal: 10 }}>

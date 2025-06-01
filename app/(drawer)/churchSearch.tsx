@@ -51,13 +51,10 @@ const ChurchSearch = () => {
   }
 
   const searchApiCall = async (text: String) => {
-    console.log("text", text)
     setLoading(true);
     try {
       const data = await ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=favicon_400x400", "MembershipApi")
-
       setSearchList(data)
-      console.log(data)
     } catch (error) {
       setLoading(false)
       console.log(error)

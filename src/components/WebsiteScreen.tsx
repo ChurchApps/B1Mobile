@@ -16,10 +16,6 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   // const navigation = useNavigation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
 
-
-  console.log("can back", navigation.canGoBack())
-
-
   const [isLoading, setLoading] = useState(false);
   const [currentUrl, setCurrentUrl] = useState('');
   const webviewRef = useRef<any>();
