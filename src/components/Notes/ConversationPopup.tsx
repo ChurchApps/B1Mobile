@@ -1,8 +1,8 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import React, { useState } from "react";
 import { FlatList, Keyboard, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { ApiHelper, Constants, ConversationInterface, MessageInterface, UserHelper, globalStyles } from "../../helpers";
+import { ApiHelper, Constants, ConversationInterface, MessageInterface, UserHelper, globalStyles } from "@/src/helpers";
 import Notes from "./Notes";
 
 interface NewConversation {
@@ -24,7 +24,7 @@ const ConversationPopup = ({
   const onUpdate = () => loadConversations();
 
   const validate = (message: MessageInterface) => {
-    const result:string[] = [];
+    const result: string[] = [];
     if (!message?.content.trim()) result.push("Please enter a note.");
     return result.length === 0;
   };
@@ -33,19 +33,19 @@ const ConversationPopup = ({
     try {
       let m = { ...newMessage } as MessageInterface;
       m.content = textRef.current;
-      
+
       if (m && validate(m)) {
         let cId = message && message.conversationId;
         if (!cId) cId = m && (await createConversation(m));
         const nM = { ...m };
         nM.conversationId = cId;
-        await ApiHelper.post("/messages", [nM], "MessagingApi").then((data)=>{
-         if(data){
-          onUpdate();
-          textRef.current = "";
-          setShowReplyBox(null);
-         }
-        }) 
+        await ApiHelper.post("/messages", [nM], "MessagingApi").then((data) => {
+          if (data) {
+            onUpdate();
+            textRef.current = "";
+            setShowReplyBox(null);
+          }
+        })
       }
     } catch (err) {
       console.log("err", err);
@@ -122,40 +122,40 @@ const ConversationPopup = ({
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
-          width: '100%', 
+          width: '100%',
           marginTop: type === "new" ? 16 : 0,
           marginBottom: type === "new" ? 0 : 16,
         }}
-      > 
+      >
         <TextInput
-          onChangeText={text => textRef.current = text }
+          onChangeText={text => textRef.current = text}
           placeholderTextColor={'gray'}
           style={[{
             ...globalStyles.fundInput,
-            fontSize:DimensionHelper.wp('4.2%'),
-            borderBottomWidth:1 ,  
-            borderWidth:1, 
-            borderColor:'lightgray', 
-            borderRadius:DimensionHelper.wp('6%'),
+            fontSize: DimensionHelper.wp(4.2),
+            borderBottomWidth: 1,
+            borderWidth: 1,
+            borderColor: 'lightgray',
+            borderRadius: DimensionHelper.wp(6),
             marginLeft: type === "new" ? 8 : 64,
-            width: type === "new" ? DimensionHelper.wp("80%") : DimensionHelper.wp("66%"),
-            paddingTop: DimensionHelper.hp('1.8%'),
+            width: type === "new" ? DimensionHelper.wp(80) : DimensionHelper.wp(66),
+            paddingTop: DimensionHelper.hp(1.8),
           }]}
           multiline
           blurOnSubmit={true}
-          onSubmitEditing={()=>Keyboard.dismiss()}
+          onSubmitEditing={() => Keyboard.dismiss()}
           numberOfLines={4}
           placeholder={placeholder}
           value={newMessage?.content}
         />
         <TouchableOpacity
-          style={{ marginHorizontal: DimensionHelper.wp('2.5%')}}
+          style={{ marginHorizontal: DimensionHelper.wp(2.5) }}
           onPress={() => handleSave(message)}
         >
           <Icon
             name={"send"}
             color={Constants.Colors.app_color}
-            size={DimensionHelper.wp("5%")}
+            size={DimensionHelper.wp(5)}
           />
         </TouchableOpacity>
       </View>
@@ -164,7 +164,7 @@ const ConversationPopup = ({
 
   return (
     <View>
-      <View style={{height: 'auto', maxHeight: DimensionHelper.hp('60%')}}>
+      <View style={{ height: 'auto', maxHeight: DimensionHelper.hp(60) }}>
         <FlatList
           data={conversations}
           showsVerticalScrollIndicator={false}

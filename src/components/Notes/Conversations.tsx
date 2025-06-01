@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { ApiHelper, ArrayHelper, ConversationInterface } from "../../helpers";
+import { ApiHelper, ArrayHelper, ConversationInterface } from "@/src/helpers";
 import ConversationPopup from "./ConversationPopup";
 
 interface CustomConversationInterface {

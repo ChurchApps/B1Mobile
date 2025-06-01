@@ -1,6 +1,6 @@
-import * as React from 'react';
+import { Constants, globalStyles } from '@/src/helpers';
+import React from 'react';
 import { Image, NativeModules, Text, TouchableOpacity } from 'react-native';
-import { Constants, globalStyles } from '../helpers';
 import { MainHeader } from './wrapper/MainHeader';
 const { StatusBarManager } = NativeModules;
 
@@ -16,5 +16,5 @@ export function SimpleHeader(props: Props) {
 
   const mainComponent = (<Text style={globalStyles.headerText}>{props.title}</Text>);
 
-  return <MainHeader title={props.title} hideBell={true} /> 
+  return <MainHeader title={props.title} hideBell={true} />
 };

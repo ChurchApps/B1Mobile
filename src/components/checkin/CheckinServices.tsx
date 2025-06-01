@@ -1,7 +1,7 @@
+import { ApiHelper, CheckinHelper, PersonInterface, UserHelper, globalStyles } from '@/src/helpers';
 import { ArrayHelper, DimensionHelper, ErrorHelper } from '@churchapps/mobilehelper';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import { ApiHelper, CheckinHelper, PersonInterface, UserHelper, globalStyles } from '../../helpers';
 import { Loader } from '../Loader';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 export const CheckinServices = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [serviceList, setServiceList] = useState([]);
- 
+
   useEffect(() => {
     getServiceData();
     UserHelper.addOpenScreenEvent('ServiceScreen');
@@ -27,7 +27,7 @@ export const CheckinServices = (props: Props) => {
     getMemberData(item.id);
   }
 
-  const getMemberData = async (serviceId: any) => {    
+  const getMemberData = async (serviceId: any) => {
     const personId = UserHelper.currentUserChurch?.person?.id;
     if (personId) {
       const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
@@ -39,10 +39,10 @@ export const CheckinServices = (props: Props) => {
   }
 
   const createHouseholdTree = async (serviceId: any) => {
-    CheckinHelper.householdMembers?.forEach((member:any) => { member.serviceTimes = CheckinHelper.serviceTimes; });
+    CheckinHelper.householdMembers?.forEach((member: any) => { member.serviceTimes = CheckinHelper.serviceTimes; });
     try {
       await getGroupListData(serviceId)
-    } catch (error : any) {
+    } catch (error: any) {
       console.log('SET MEMBER LIST ERROR', error)
       ErrorHelper.logError("create-household", error);
     }
@@ -81,12 +81,12 @@ export const CheckinServices = (props: Props) => {
       CheckinHelper.serviceId = serviceId;
       CheckinHelper.peopleIds = ArrayHelper.getIds(CheckinHelper.householdMembers, "id");
       props.onDone();
-    } catch (error : any) {
+    } catch (error: any) {
       console.log('SET MEMBER LIST ERROR', error)
       ErrorHelper.logError("get-group-list", error);
     }
   }
-  
+
   const renderGroupItem = (item: any) => {
     return (
       <View>

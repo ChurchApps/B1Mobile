@@ -1,6 +1,5 @@
-import * as React from 'react';
+import { Constants, globalStyles } from '@/src/helpers';
 import { Image, NativeModules, View } from 'react-native';
-import { Constants, globalStyles } from '../helpers';
 import { MainHeader } from './wrapper/MainHeader';
 const { StatusBarManager } = NativeModules;
 
@@ -22,4 +21,4 @@ export function WhiteHeader(props: Props) {
       </View>
     </View>
   );
-};
+}

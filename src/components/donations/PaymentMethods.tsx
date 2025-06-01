@@ -1,16 +1,17 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { ApiHelper, Constants, UserHelper, globalStyles } from "@/src/helpers";
+import { ErrorHelper } from "@/src/helpers/ErrorHelper";
+import { Permissions, StripePaymentMethod } from "@/src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { BankForm, CardForm } from ".";
-import { DisplayBox } from "../";
-import { ApiHelper, Constants, UserHelper, globalStyles } from "../../helpers";
-import { ErrorHelper } from "../../helpers/ErrorHelper";
-import { Permissions, StripePaymentMethod } from "../../interfaces";
+import { DisplayBox } from "../DisplayBox";
 import { PaymentMethodModal } from "../modals/PaymentMethodModal";
+import { BankForm } from "./BankForm";
+import { CardForm } from "./CardForm";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 
 interface Props {
   customerId: string;
@@ -29,7 +30,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
 
   const rightHeaderContent = (
     <TouchableOpacity onPress={() => setShowModal(true)}>
-      <Icon name={"plus"} style={{ color: Constants.Colors.button_green }} size={DimensionHelper.wp("6%")} />
+      <Icon name={"plus"} style={{ color: Constants.Colors.button_green }} size={DimensionHelper.wp(6)} />
     </TouchableOpacity>
   );
 
@@ -37,7 +38,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     if (isFocused) {
       setMode("display");
       setEditPaymentMethod(new StripePaymentMethod());
-    } 
+    }
   }, [isFocused]);
 
   const handleEdit = (paymentMethod: StripePaymentMethod, verifyAccount?: boolean) => {
@@ -60,7 +61,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
             await ApiHelper.delete("/paymentmethods/" + editPaymentMethod.id + "/" + customerId, "GivingApi");
             setMode("display");
             await updatedFunction();
-          } catch (err : any) {
+          } catch (err: any) {
             Alert.alert("Error in deleting the method");
             ErrorHelper.logError("payment-method-delete", err);
           }
@@ -69,7 +70,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     ]);
   };
 
-  let editModeContent:any = null;
+  let editModeContent: any = null;
   switch (editPaymentMethod.type) {
     case "card":
       editModeContent = (
@@ -101,7 +102,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     if (!UserHelper.checkAccess(Permissions.givingApi.settings.edit)) return null;
     return (
       <TouchableOpacity onPress={() => handleEdit(item)}>
-        <FontAwesome5 name={"pencil-alt"} style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp("5.5%")} />
+        <FontAwesome5 name={"pencil-alt"} style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp(5.5)} />
       </TouchableOpacity>
     );
   };
@@ -115,7 +116,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
             <Text style={globalStyles.cardListText}> {item.name + " ****" + item.last4}</Text>
             {item?.status === "new" && (
               <TouchableOpacity onPress={() => handleEdit(item, true)}>
-                <Text style={{ color: Constants.Colors.app_color, width: DimensionHelper.wp("10%") }}>Verify</Text>
+                <Text style={{ color: Constants.Colors.app_color, width: DimensionHelper.wp(10) }}>Verify</Text>
               </TouchableOpacity>
             )}
             {getEditButton(item)}
@@ -133,10 +134,10 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       <DisplayBox
         title="Payment Methods"
         rightHeaderComponent={rightHeaderContent}
-        headerIcon={<Icon name={"credit-card-alt"} style={{ color: "gray" }} size={DimensionHelper.wp("5.5%")} />}
+        headerIcon={<Icon name={"credit-card-alt"} style={{ color: "gray" }} size={DimensionHelper.wp(5.5)} />}
       >
         {isLoading ? (
-          <ActivityIndicator size="large" style={{ margin: DimensionHelper.wp("2%") }} color="gray" animating={isLoading} />
+          <ActivityIndicator size="large" style={{ margin: DimensionHelper.wp(2) }} color="gray" animating={isLoading} />
         ) : (
           paymentTable
         )}

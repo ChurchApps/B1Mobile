@@ -1,7 +1,8 @@
-import { DimensionHelper, MessageInterface } from "@churchapps/mobilehelper";
+import { MessageInterface } from "@churchapps/mobilehelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
-import { ApiHelper, ArrayHelper, ConversationInterface } from "../../helpers";
+import { ApiHelper, ArrayHelper, ConversationInterface } from "@/src/helpers";
 import { AddNote } from "./AddNote";
 import Note from "./Note";
 import Notes from "./Notes";
@@ -11,13 +12,13 @@ interface CustomConversationInterface {
   conversation: ConversationInterface;
   conversationId: string;
   createConversation: () => Promise<string>;
-  onUpdate : ()=>void;
+  onUpdate: () => void;
 }
 
 const UserConversations = ({
   conversation,
   conversationId,
-  createConversation, 
+  createConversation,
   onUpdate
 }: CustomConversationInterface) => {
   const [conversations, setConversations] = useState<ConversationInterface[]>([]);
@@ -112,7 +113,7 @@ const UserConversations = ({
 
   return (
     <View>
-      <View style={{ height: 'auto', maxHeight: DimensionHelper.hp('100%') }}>
+      <View style={{ height: 'auto', maxHeight: DimensionHelper.hp(100) }}>
         <FlatList
           data={conversations}
           renderItem={({ item, index }) => renderConversations(item, index)}
@@ -120,9 +121,9 @@ const UserConversations = ({
         />
       </View>
       {conversation && conversation?.messages?.length > 0 ?
-        <AddNote type="reply"  conversationId={conversation.id} onUpdate={loadConversations} createConversation={async () => (conversation.id)} messageId={editMessageId} />
+        <AddNote type="reply" conversationId={conversation.id} onUpdate={loadConversations} createConversation={async () => (conversation.id)} messageId={editMessageId} />
         :
-        <AddNote type="new"  conversationId={conversationId} onUpdate={loadConversations} createConversation={createConversation} messageId={editMessageId} />}
+        <AddNote type="new" conversationId={conversationId} onUpdate={loadConversations} createConversation={createConversation} messageId={editMessageId} />}
     </View>
   )
 }

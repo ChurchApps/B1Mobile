@@ -1,10 +1,10 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import React, { useEffect } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Constants, CurrencyHelper, DateHelper, globalStyles } from "../../helpers";
-import { StripeDonationInterface } from "../../interfaces";
+import { Constants, CurrencyHelper, DateHelper, globalStyles } from "@/src/helpers";
+import { StripeDonationInterface } from "@/src/interfaces";
 import { CustomModal } from "./CustomModal";
 
 interface Props {
@@ -52,7 +52,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
             }}
             style={globalStyles.donationCloseBtn}
           >
-            <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp("6%")} />
+            <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
           </TouchableOpacity>
         </View>
         <ScrollView>

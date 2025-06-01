@@ -1,20 +1,33 @@
 import { ApiHelper, UserHelper } from '@churchapps/mobilehelper';
-import messaging from '@react-native-firebase/messaging';
+import * as Notifications from 'expo-notifications';
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { CacheHelper } from './CacheHelper';
 import { LoginUserChurchInterface } from './Interfaces';
 
+// Configure notification behavior
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
 export class PushNotificationHelper {
 
   static async registerUserDevice() {
     const fcmToken = CacheHelper.fcmToken;
+
     const deviceName = await DeviceInfo.getDeviceName();
     const deviceInfo = await PushNotificationHelper.getDeviceInfo();
     const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
     const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
     const currentData: LoginUserChurchInterface | undefined = tst.find((value, index) => value.church.id == currentChurch!.id);
     if (currentData != null || currentData != undefined) {
+      console.log("registerrrrr", fcmToken)
       ApiHelper.post("/devices/register", { "personId": currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi").then(async (data) => {
         console.log("register device api response ====>", data)
       });
@@ -37,16 +50,25 @@ export class PushNotificationHelper {
   }
 
   static async requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-    if (enabled) {
-      console.log('Authorization status:', authStatus);
-      PushNotificationHelper.GetFCMToken();
+    try {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      if (finalStatus === 'granted') {
+        console.log('Notification permission granted');
+        await PushNotificationHelper.GetFCMToken();
+      } else {
+        console.log('Notification permission denied');
+      }
+    } catch (error) {
+      console.log('Error requesting notification permission:', error);
     }
   }
-
 
   static async NotificationPermissionAndroid() {
     if (Platform.OS === 'android') {
@@ -58,43 +80,61 @@ export class PushNotificationHelper {
       }
     }
   };
+
   static async GetFCMToken() {
     let fcmToken = CacheHelper.fcmToken;
     if (!fcmToken) {
       try {
-        let fcmToken = await messaging().getToken();
-        if (fcmToken) CacheHelper.setValue("fcmToken", fcmToken);
+        // Get the Expo push token
+        const token = await Notifications.getExpoPushTokenAsync({
+          projectId: 'f72e5911-b8d5-467c-ad9e-423c180e9938', // Your EAS project ID
+        });
+
+        if (token.data) {
+          fcmToken = token.data;
+          await CacheHelper.setValue("fcmToken", fcmToken);
+          console.log('Expo push token generated:', fcmToken);
+        }
       } catch (error) {
-        console.log(error, "fcm token not created")
+        console.log(error, "Expo push token not created")
       }
     }
-
   }
 
   static async NotificationListener() {
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log(
-        'Notification caused app to open from background state:',
-        JSON.stringify(remoteMessage.notification),
-      );
-    });
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          console.log(
-            'Notification caused app to open from quit state:',
-            JSON.stringify(remoteMessage.notification),
-          );
-        }
+    try {
+      // Listen for notifications received while app is foregrounded
+      const foregroundSubscription = Notifications.addNotificationReceivedListener(notification => {
+        console.log('Notification received in foreground:', notification);
+        const badge = JSON.stringify(notification);
+        eventBus.emit("badge", badge);
       });
-    messaging().onMessage(async remoteMessage => {
-      console.log("notification on forground state.......", JSON.stringify(remoteMessage))
-      const badge = JSON.stringify(remoteMessage);
-      eventBus.emit("badge", badge)
-    })
+
+      // Listen for user interactions with notifications
+      const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
+        console.log('Notification response received:', response);
+        // Handle notification tap
+      });
+
+      // Get notification that opened the app
+      const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
+      if (lastNotificationResponse) {
+        console.log('App opened from notification:', lastNotificationResponse);
+      }
+
+      console.log('Expo notification listeners set up');
+
+      // Return cleanup function
+      return () => {
+        foregroundSubscription.remove();
+        responseSubscription.remove();
+      };
+    } catch (error) {
+      console.log('Error setting up notification listeners:', error);
+    }
   }
 }
+
 export const eventBus = {
   emit(eventName: string, data?: any) {
     DeviceEventEmitter.emit(eventName, data);

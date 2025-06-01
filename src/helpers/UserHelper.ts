@@ -1,8 +1,8 @@
-import { ApiHelper, LoginResponseInterface, PushNotificationHelper } from "@churchapps/mobilehelper";
-import analytics from '@react-native-firebase/analytics';
+import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
 import { Platform } from "react-native";
-import { CacheHelper, IPermission, UserInterface } from ".";
-import { AppearanceInterface, ChurchInterface, LoginUserChurchInterface } from "./Interfaces";
+// import { logAnalyticsEvent } from "../config/firebase";
+import { CacheHelper } from "./CacheHelper";
+import { AppearanceInterface, ChurchInterface, IPermission, LoginUserChurchInterface, UserInterface } from "./Interfaces";
 
 export class UserHelper {
   static churches: ChurchInterface[];
@@ -21,7 +21,7 @@ export class UserHelper {
       const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       UserHelper.currentUserChurch.person = data;
     }
-    PushNotificationHelper.registerUserDevice("B1Mobile");
+    // PushNotificationHelper.registerUserDevice("B1Mobile");
   }
 
   static checkAccess({ api, contentType, action }: IPermission): boolean {
@@ -36,20 +36,23 @@ export class UserHelper {
     return result;
   }
 
-  static async addAnalyticsEvent(eventName : string, dataBody : any) {
-    await analytics().logEvent(eventName, dataBody);
+  static async addAnalyticsEvent(eventName: string, dataBody: any) {
+    // logAnalyticsEvent(eventName, dataBody);
+    console.log('Analytics event (disabled):', eventName, dataBody);
   }
 
-  static async addOpenScreenEvent(screenName: string){
-    await analytics().logEvent("page_view", {
-      id: Date.now(),
-      device : Platform.OS,
-      page: screenName,
-    });
+  static async addOpenScreenEvent(screenName: string) {
+    // await analytics().logEvent("page_view", {
+    //   id: Date.now(),
+    //   device: Platform.OS,
+    //   page: screenName,
+    // });
+    console.log('Screen view:', screenName);
   }
 
 
-  static handleLogin = async (data:LoginResponseInterface) => {
+  static handleLogin = async (data: LoginResponseInterface) => {
+    console.log("data", data.userChurches[0].apis)
     var currentChurch: LoginUserChurchInterface = data.userChurches[0];
 
     let church = CacheHelper.church;
@@ -68,7 +71,7 @@ export class UserHelper {
 
     UserHelper.addAnalyticsEvent('login', {
       id: Date.now(),
-      device : Platform.OS,
+      device: Platform.OS,
       church: userChurch.church.name,
     });
 
@@ -81,7 +84,7 @@ export class UserHelper {
 
     if (userChurch && !church) await CacheHelper.setValue("church", userChurch.church);
 
-    
+
   }
 
 

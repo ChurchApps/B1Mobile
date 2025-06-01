@@ -2,8 +2,9 @@ import * as React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Constants, globalStyles } from "../../helpers";
-import { StripePaymentMethod } from "../../interfaces";
+import { Constants, globalStyles } from "@/src/helpers";
+import { StripePaymentMethod } from "@/src/interfaces";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 
 interface Props {
   show: boolean;
@@ -19,7 +20,7 @@ export function SelectPaymentMethod({ show, close, onSelect }: Props) {
       <DialogContent>
         <FlatList
           data={methods}
-          style={{ marginTop: DimensionHelper.wp("1%"), marginBottom: DimensionHelper.wp("-5%") }}
+          style={{ marginTop: DimensionHelper.wp(1), marginBottom: DimensionHelper.wp(-5) }}
           renderItem={({ item, index }) => (
             <TouchableOpacity
               onPress={() => {
@@ -30,15 +31,15 @@ export function SelectPaymentMethod({ show, close, onSelect }: Props) {
             >
               <Icon
                 name={index == 0 ? "credit-card-alt" : "bank"}
-                style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp("4%") }}
-                size={DimensionHelper.wp("6%")}
+                style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp(4) }}
+                size={DimensionHelper.wp(6)}
               />
               <Text
                 style={{
-                  fontSize: DimensionHelper.wp("4.8%"),
+                  fontSize: DimensionHelper.wp(4.8),
                   fontFamily: Constants.Fonts.RobotoRegular,
                   textAlign: "center",
-                  paddingVertical: DimensionHelper.wp("2%"),
+                  paddingVertical: DimensionHelper.wp(2),
                 }}
               >
                 Add {item[0].toUpperCase() + item.slice(1).toLowerCase()}

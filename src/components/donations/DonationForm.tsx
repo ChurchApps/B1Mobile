@@ -1,4 +1,6 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { ApiHelper, CacheHelper, Constants, CurrencyHelper, UserHelper, UserInterface, globalStyles } from "@/src/helpers";
+import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod, } from "@/src/interfaces";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -7,10 +9,9 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import IconP from 'react-native-vector-icons/Fontisto';
-import { FundDonations, } from ".";
-import { InputBox, PreviewModal } from "../";
-import { ApiHelper, CacheHelper, Constants, CurrencyHelper, UserHelper, UserInterface, globalStyles } from "../../helpers";
-import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod, } from "../../interfaces";
+import { InputBox } from "../InputBox";
+import { PreviewModal } from "../modals/PreviewModal";
+import { FundDonations } from "./FundDonations";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -338,24 +339,24 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
           {donationType ? (
             <View>
               {!UserHelper.currentUserChurch?.person?.id ? (
-                <View style={{ width: DimensionHelper.wp("100%") }}>
-                  <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%'), }]}>
-                    <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
-                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%'), color: 'black' }]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
+                <View style={{ width: DimensionHelper.wp(100) }}>
+                  <View style={globalStyles.donationInputFieldContainer}>
+                    <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90), color: 'black' }]} placeholder={'First name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={firstName} onChangeText={(text) => { setFirstName(text) }} />
                   </View>
-                  <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%') }]}>
-                    <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
-                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%'), color: 'black' }]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
+                  <View style={globalStyles.donationInputFieldContainer}>
+                    <IconP name={'person'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90), color: 'black' }]} placeholder={'Last name'} autoCorrect={false} placeholderTextColor={'lightgray'} value={lastName} onChangeText={(text) => { setLastName(text) }} />
                   </View>
-                  <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%') }]}>
-                    <IconP name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp('4.5%')} />
-                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%'), color: 'black' }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+                  <View style={globalStyles.donationInputFieldContainer}>
+                    <IconP name={'email'} color={Constants.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
+                    <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90), color: 'black' }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
                   </View>
                 </View>
               ) : null}
-              <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp("5.5%") }}>{UserHelper.currentUserChurch?.person?.id ? "Payment Method" : "Add Card"}</Text>
+              <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp(5.5) }}>{UserHelper.currentUserChurch?.person?.id ? "Payment Method" : "Add Card"}</Text>
               {UserHelper.currentUserChurch?.person?.id ?
-                <View style={{ width: DimensionHelper.wp("100%"), marginBottom: DimensionHelper.wp("12%") }}>
+                <View style={{ width: DimensionHelper.wp(100), marginBottom: DimensionHelper.wp(12) }}>
                   <DropDownPicker
                     listMode="SCROLLVIEW"
                     open={isMethodsDropdownOpen}
@@ -366,7 +367,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     setItems={setPaymentMethods}
                     containerStyle={{
                       ...globalStyles.containerStyle,
-                      height: isMethodsDropdownOpen ? paymentMethods.length * DimensionHelper.wp("12%") : 0,
+                      height: isMethodsDropdownOpen ? paymentMethods.length * DimensionHelper.wp(12) : DimensionHelper.wp(0),
                     }}
                     style={globalStyles.dropDownMainStyle}
                     labelStyle={globalStyles.labelStyle}
@@ -389,7 +390,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                 </View>}
               {donationType === "once" ? null :
                 <View>
-                  <Text style={[globalStyles.searchMainText, { marginTop: DimensionHelper.wp("5.5%") }]}>
+                  <Text style={[globalStyles.searchMainText, { marginTop: DimensionHelper.wp(5.5) }]}>
                     {donationType === "once" ? "Donation Date" : "Recurring Donation Start Date"}
                   </Text>
                   <View style={globalStyles.dateInput}>
@@ -397,7 +398,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       {moment(date).format("YYYY-MM-DD")}
                     </Text>
                     <ModalDatePicker
-                      button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp("6%")} />}
+                      button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
                       locale="en"
                       onSelect={(date: any) => {
                         setDate(date);
@@ -412,15 +413,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                 </View>}
               {donationType === "recurring" && (
                 <View style={globalStyles.intervalView}>
-                  {/* <View>
-                    <Text style={globalStyles.semiTitleText}>Interval Number</Text>
-                    <TextInput
-                      style={globalStyles.intervalInput}
-                      keyboardType="number-pad"
-                      onChangeText={(text) => handleIntervalChange("number", text)}
-                    />
-                   
-                  </View> */}
                   <View>
                     <Text style={globalStyles.semiTitleText}>Interval</Text>
                     <DropDownPicker
@@ -431,14 +423,13 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       setOpen={setIsIntervalDropdownOpen}
                       setValue={(value) => {
                         setSelectedInterval(value)
-                        // handleIntervalChange("type", value)
                       }}
                       onChangeValue={(value) => {
                         handleIntervalChange("type", value)
                       }}
                       containerStyle={{
                         ...globalStyles.containerStyle,
-                        height: isIntervalDropdownOpen ? intervalTypes.length * DimensionHelper.wp("12.5%") : DimensionHelper.wp('12%'),
+                        height: isIntervalDropdownOpen ? intervalTypes.length * DimensionHelper.wp(12.5) : DimensionHelper.wp(12),
                       }}
                       style={globalStyles.dropDownMainStyle}
                       labelStyle={globalStyles.labelStyle}
@@ -461,7 +452,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                   </Text>
                 </View>
               )}
-              {/* {fundDonations.length > 1 && <Text style={globalStyles.totalText}>Total Donation Amount: {CurrencyHelper.formatCurrency(total)}</Text>} */}
               {total >= 1 && <Text style={globalStyles.totalText}>Total Donation Amount: {CurrencyHelper.formatCurrency(total)}</Text>}
               <Text style={globalStyles.semiTitleText}>Notes</Text>
               <TextInput

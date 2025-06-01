@@ -1,8 +1,8 @@
+import { Constants } from "@/src/helpers";
 import { DimensionHelper } from "@churchapps/mobilehelper";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Constants } from "../helpers";
 
 interface Props {
   isChecked: boolean;

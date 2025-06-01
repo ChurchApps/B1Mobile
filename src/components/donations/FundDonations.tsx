@@ -1,8 +1,8 @@
+import { globalStyles } from "@/src/helpers";
+import { FundDonationInterface, FundInterface } from "@/src/interfaces";
 import React from "react";
-import { TouchableOpacity, Text } from "react-native";
-import { FundDonationInterface, FundInterface } from "../../interfaces";
-import { globalStyles } from "../../helpers";
-import { FundDonation } from ".";
+import { Text, TouchableOpacity } from "react-native";
+import { FundDonation } from "./FundDonation";
 
 interface Props {
   funds: FundInterface[];

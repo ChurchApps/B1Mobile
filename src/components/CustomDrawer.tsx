@@ -1,16 +1,18 @@
-import { ApiHelper, DimensionHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
+import { CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
+import { ErrorHelper } from '@/src/helpers/ErrorHelper';
+import { NavigationHelper } from '@/src/helpers/NavigationHelper';
+import { ApiHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
+import MessageIcon from '@expo/vector-icons/MaterialCommunityIcons';
+import Icon from '@expo/vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
 import RNRestart from 'react-native-restart';
-import MessageIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '../helpers';
-import { ErrorHelper } from '../helpers/ErrorHelper';
-import { NavigationHelper } from '../helpers/NavigationHelper';
+import { DimensionHelper } from '../helpers/DimensionHelper';
 
 export function CustomDrawer(props: any) {
-  const { navigate, goBack, openDrawer } = props.navigation;
+  const { goBack, openDrawer } = props.navigation;
   const [churchName, setChurchName] = useState('');
   const [churchEmpty, setChurchEmpty] = useState(true);
   const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
@@ -68,7 +70,7 @@ export function CustomDrawer(props: any) {
     }
 
 
-    
+
     let specialTabs = await getSpecialTabs();
     const data = tabs.concat(specialTabs)
 
@@ -78,59 +80,58 @@ export function CustomDrawer(props: any) {
     setLoading(false);
     console.log("NAVIGATING", data[0].linkType);
     if (data.length > 0) {
-      if (data[0].linkType === "groups") navigate('MyGroups');
-      else navigate('Dashboard')
+      if (data[0].linkType === "groups") router.navigate('/(drawer)/myGroups');
+      else router.navigate('/(drawer)/dashboard')
     }
-    
+
     //if (data.length > 0) navigate(data[0].linkType);
     //if (data.length > 0) navigateToScreen(data[0]);
-          //navigate('Dashboard')
+    //router.navigate('/(drawer)/dashboard')
 
-    
+
   }
 
 
   const getSpecialTabs = async () => {
-    let specialTabs:LinkInterface[] = [];
+    let specialTabs: LinkInterface[] = [];
     let showWebsite = false, showDonations = false, showMyGroups = false, showPlans = false, showDirectory = false, showLessons = false, showChums = false, showCheckin;
     const uc = UserHelper.currentUserChurch;
 
-    if (CacheHelper.church)
-    {
+    if (CacheHelper.church) {
       const page = await ApiHelper.getAnonymous("/pages/" + CacheHelper.church.id + "/tree?url=/", "ContentApi")
       if (page.url) showWebsite = true;
       const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + CacheHelper.church.id, "GivingApi");
       if (gateways.length > 0) showDonations = true;
-      
+
     }
-    
+
     if (uc?.person) {
       try {
         const classrooms = await ApiHelper.get("/classrooms/person", "LessonsApi");
-        showLessons = classrooms.length>0;
-      } catch {}
+        showLessons = classrooms.length > 0;
+      } catch { }
       try {
         const campuses = await ApiHelper.get("/campuses", "AttendanceApi");
         console.log("CAMPUSES", campuses);
-        showCheckin = campuses.length>0;
-      } catch {}
+        showCheckin = campuses.length > 0;
+      } catch { }
       showChums = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
       const memberStatus = uc.person?.membershipStatus?.toLowerCase();
-      showDirectory = memberStatus === "member" || memberStatus==="staff";
+      showDirectory = memberStatus === "member" || memberStatus === "staff";
       uc.groups.forEach(group => {
-        if (group.tags.indexOf("team")>-1) showPlans = true;
+        if (group.tags.indexOf("team") > -1) showPlans = true;
       });
       showMyGroups = uc?.groups?.length > 0;
-    }   
-    specialTabs.push({ linkType: 'separator', linkData:"", category:"", text: '', icon: '', url: "" });
-    if (showWebsite) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
-    if (showMyGroups) specialTabs.push({ linkType: "groups", linkData:"", category:"", text: 'My Groups', icon: 'group', url: "" });
-    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData:"", category:"", text: 'Check In', icon: 'check_box', url: "" });
-    if (showDonations) specialTabs.push({ linkType: "donation", linkData:"", category:"", text: 'Donate', icon: 'volunteer_activism', url: "" });
-    if (showDirectory) specialTabs.push({ linkType: "directory", linkData:"", category:"", text: 'Member Directory', icon: 'groups', url: "" });
-    if (showPlans) specialTabs.push({ linkType: "plans", linkData:"", category:"", text: 'Plans', icon: 'event', url: "" });
-    if (showLessons) specialTabs.push({ linkType: "lessons", linkData:"", category:"", text: 'Lessons', icon: 'school', url: "" });
-    if (showChums) specialTabs.push({ linkType: "url", linkData:"", category:"", text: 'Chums', icon: 'account_circle', url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id }); 
+    }
+    specialTabs.push({ linkType: 'separator', linkData: "", category: "", text: '', icon: '', url: "" });
+    if (showWebsite) specialTabs.push({ linkType: "url", linkData: "", category: "", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
+    if (showMyGroups) specialTabs.push({ linkType: "groups", linkData: "", category: "", text: 'My Groups', icon: 'group', url: "" });
+    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData: "", category: "", text: 'Check In', icon: 'check_box', url: "" });
+    if (showDonations) specialTabs.push({ linkType: "donation", linkData: "", category: "", text: 'Donate', icon: 'volunteer_activism', url: "" });
+    if (showDirectory) specialTabs.push({ linkType: "directory", linkData: "", category: "", text: 'Member Directory', icon: 'groups', url: "" });
+    if (showPlans) specialTabs.push({ linkType: "plans", linkData: "", category: "", text: 'Plans', icon: 'event', url: "" });
+    if (showLessons) specialTabs.push({ linkType: "lessons", linkData: "", category: "", text: 'Lessons', icon: 'school', url: "" });
+    if (showChums) specialTabs.push({ linkType: "url", linkData: "", category: "", text: 'Chums', icon: 'account_circle', url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id });
     return specialTabs;
   }
 
@@ -146,20 +147,21 @@ export function CustomDrawer(props: any) {
 
   const listItem = (topItem: boolean, item: any) => {
     var tab_icon = item.icon != undefined ? item.icon.split("_").join("-") : '';
-    if (tab_icon === "calendar-month"){
+    if (tab_icon === "calendar-month") {
       tab_icon = "calendar-today";
-    } else if(tab_icon === "local-library-outlined"){
+    } else if (tab_icon === "local-library-outlined") {
       tab_icon = "local-library";
     }
-    if(item.linkType == 'separator'){
-      return(
-        <View style={[globalStyles.BorderSeparatorView,{width:'100%', borderColor : '#175ec1'}]} />
+    if (item.linkType == 'separator') {
+      return (
+        <View style={[globalStyles.BorderSeparatorView, { width: '100%', borderColor: '#175ec1' }]} />
       )
-    }else
+    } else
+      console.log("item", item)
     return (
-      <TouchableOpacity style={globalStyles.headerView} onPress={() => {NavigationHelper.navigateToScreen(item, navigate), props.navigation.closeDrawer()}}>
+      <TouchableOpacity style={globalStyles.headerView} onPress={() => { NavigationHelper.navigateToScreen(item, router.navigate), props.navigation.closeDrawer() }}>
         {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />}
+          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp(5)} />}
         <Text style={globalStyles.tabTitle}>{item.text}</Text>
       </TouchableOpacity>
     );
@@ -169,7 +171,7 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {getUserInfo()}
-        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? DimensionHelper.wp('12%') : user != null ? DimensionHelper.wp('6%') : DimensionHelper.wp('12%') }]} onPress={() => navigate('ChurchSearch', {})}>
+        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? DimensionHelper.wp(12) : user != null ? DimensionHelper.wp(6) : DimensionHelper.wp(12) }]} onPress={() => router.navigate('/(drawer)/churchSearch')}>
           {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
           <Text style={{ ...globalStyles.churchText }}>
             {churchEmpty ? 'Find your church...' : churchName}
@@ -184,7 +186,7 @@ export function CustomDrawer(props: any) {
     return (
       <View>
         {loginOutToggle()}
-        <Text style={{ fontSize: DimensionHelper.wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: '#a0d3fc', marginTop: DimensionHelper.wp('5%'), textAlign: 'center' }}>{'Version ' + pkg.version}</Text>
+        <Text style={{ fontSize: DimensionHelper.wp(3.5), fontFamily: Constants.Fonts.RobotoRegular, color: '#a0d3fc', marginTop: DimensionHelper.wp(5), textAlign: 'center' }}>{'Version ' + pkg.version}</Text>
       </View>
     );
   }
@@ -192,7 +194,7 @@ export function CustomDrawer(props: any) {
   const getUserInfo = () => {
     if (UserHelper.currentUserChurch?.person && user != null) {
       return (<View>
-        <View style={[globalStyles.headerView, { marginTop: DimensionHelper.wp('15%') }]}>
+        <View style={[globalStyles.headerView, { marginTop: DimensionHelper.wp(15) }]}>
           {(UserHelper.currentUserChurch.person.photo == null || UserHelper.currentUserChurch.person.photo == undefined)
             ? null
             : <Image
@@ -203,7 +205,7 @@ export function CustomDrawer(props: any) {
           {UserHelper.user ? messagesView() : null}
         </View>
         <TouchableOpacity style={globalStyles.headerView} onPress={() => editProfileAction()}>
-          <Text style={{ fontSize: DimensionHelper.wp('3.5%'), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' }}>{'Edit profile'}</Text>
+          <Text style={{ fontSize: DimensionHelper.wp(3.5), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' }}>{'Edit profile'}</Text>
         </TouchableOpacity>
       </View>)
     }
@@ -222,7 +224,7 @@ export function CustomDrawer(props: any) {
         <Text style={globalStyles.tabTitle}>Log out</Text>
       </TouchableOpacity>);
     } else {
-      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => navigate('AuthStack')}>
+      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => router.navigate('/auth/login')}>
         <Text style={globalStyles.tabTitle}>Login</Text>
       </TouchableOpacity>);
     }
@@ -230,9 +232,9 @@ export function CustomDrawer(props: any) {
 
   const messagesView = () => {
     return (
-      <TouchableOpacity onPress={() => navigate('SearchMessageUser', {})}>
+      <TouchableOpacity onPress={() => router.navigate('/(drawer)/searchMessageUser')}>
         <View style={globalStyles.messageRootView}>
-          <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp('5%')} />
+          <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp(5)} />
         </View>
       </TouchableOpacity>
     );

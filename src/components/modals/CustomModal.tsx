@@ -1,4 +1,4 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import React from "react";
 import { View } from "react-native";
 import Modal from "react-native-modal";
@@ -28,7 +28,7 @@ export function CustomModal({ isVisible, close, children, width, height }: Props
           flex: 1,
         }}
       >
-        <View style={{ backgroundColor: "#fff", padding: DimensionHelper.wp("3%"), borderRadius: 8, height, width }}>{children}</View>
+        <View style={{ backgroundColor: "#fff", padding: DimensionHelper.wp(3), borderRadius: 8, height, width }}>{children}</View>
       </View>
     </Modal>
   );

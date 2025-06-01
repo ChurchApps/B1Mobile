@@ -1,5 +1,6 @@
 import { EventHelper } from '@churchapps/helpers/src/EventHelper'
-import { DateHelper, DimensionHelper } from '@churchapps/mobilehelper'
+import { DateHelper } from '@churchapps/mobilehelper'
+import { DimensionHelper } from '@/src/helpers/DimensionHelper'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
@@ -7,7 +8,7 @@ import DatePicker from 'react-native-date-picker'
 import DropDownPicker from 'react-native-dropdown-picker'
 import Icon from "react-native-vector-icons/FontAwesome"
 import { RRule, Weekday, rrulestr } from "rrule"
-import { globalStyles } from '../../helpers'
+import { globalStyles } from '@/src/helpers'
 
 interface Props {
   start: Date;
@@ -205,7 +206,7 @@ export default function RRuleEditor(props: Props) {
             <Icon
               name={"calendar-o"}
               style={globalStyles.selectionIcon}
-              size={DimensionHelper.wp("6%")}
+              size={DimensionHelper.wp(6)}
               onPress={() => setonEndPicker(true)}
             />
             <DatePicker
@@ -230,8 +231,8 @@ export default function RRuleEditor(props: Props) {
           <Text style={styles.labelText}>Occurances</Text>
           <TextInput
             style={[globalStyles.textInputStyle, {
-              width: DimensionHelper.wp('88%'), borderWidth: 1, padding: 10, borderRadius: 10, borderColor: 'lightgray',
-              marginTop: DimensionHelper.wp('1%'),
+              width: DimensionHelper.wp(88), borderWidth: 1, padding: 10, borderRadius: 10, borderColor: 'lightgray',
+              marginTop: DimensionHelper.wp(1),
             }]}
             placeholder={'Occurances'}
             autoCapitalize="none"
@@ -257,8 +258,8 @@ export default function RRuleEditor(props: Props) {
       <Text style={styles.labelText}>Interval</Text>
       <TextInput
         style={[globalStyles.textInputStyle, {
-          width: DimensionHelper.wp('88%'), borderWidth: 1, padding: 10, borderRadius: 10, borderColor: 'lightgray',
-          marginTop: DimensionHelper.wp('1%'),
+          width: DimensionHelper.wp(88), borderWidth: 1, padding: 10, borderRadius: 10, borderColor: 'lightgray',
+          marginTop: DimensionHelper.wp(1),
         }]}
         placeholder={'Interval'}
         autoCapitalize="none"
@@ -281,9 +282,9 @@ export default function RRuleEditor(props: Props) {
         }}
         setItems={setFrequencyItems}
         containerStyle={{
-          height: DimensionHelper.wp('10%'),
-          width: DimensionHelper.wp('88%'),
-          marginTop: DimensionHelper.wp('1%'),
+          height: DimensionHelper.wp(10),
+          width: DimensionHelper.wp(88),
+          marginTop: DimensionHelper.wp(1),
         }}
         style={globalStyles.dropDownMainStyle}
         labelStyle={globalStyles.labelStyle}
@@ -305,9 +306,9 @@ export default function RRuleEditor(props: Props) {
           handleEndsChange(e)
         }}
         containerStyle={{
-          height: DimensionHelper.wp('10%'),
-          width: DimensionHelper.wp('88%'),
-          marginTop: DimensionHelper.wp('1%'),
+          height: DimensionHelper.wp(10),
+          width: DimensionHelper.wp(88),
+          marginTop: DimensionHelper.wp(1),
         }}
         style={globalStyles.dropDownMainStyle}
         labelStyle={globalStyles.labelStyle}
@@ -325,14 +326,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     // marginVertical: 10,
-    marginTop: DimensionHelper.wp('3.5%'),
+    marginTop: DimensionHelper.wp(3.5),
     // marginBottom: 0
   },
   label: {
-    fontSize: DimensionHelper.wp('4%'),
-    marginBottom: DimensionHelper.wp('1%'),
+    fontSize: DimensionHelper.wp(4),
+    marginBottom: DimensionHelper.wp(1),
     color: '#333',
-    marginTop: DimensionHelper.wp('3.5%'),
+    marginTop: DimensionHelper.wp(3.5),
     fontWeight: '600'
   },
   dayButton: {
@@ -353,20 +354,20 @@ const styles = StyleSheet.create({
   },
   dateConatiner: {
     borderWidth: 1,
-    paddingHorizontal: DimensionHelper.wp('2%'),
+    paddingHorizontal: DimensionHelper.wp(2),
     borderColor: 'lightgray',
-    borderRadius: DimensionHelper.wp('2%'),
-    height: DimensionHelper.wp('12%'),
-    marginTop: DimensionHelper.wp('2%'),
+    borderRadius: DimensionHelper.wp(2),
+    height: DimensionHelper.wp(12),
+    marginTop: DimensionHelper.wp(2),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   dateText: {
-    width: DimensionHelper.wp('25%'),
-    fontSize: DimensionHelper.wp('3.8%')
+    width: DimensionHelper.wp(25),
+    fontSize: DimensionHelper.wp(3.8)
   },
   labelText: {
-    marginTop: DimensionHelper.wp('3.5%'), fontSize: DimensionHelper.wp('4%'), fontWeight: '600'
+    marginTop: DimensionHelper.wp(3.5), fontSize: DimensionHelper.wp(4), fontWeight: '600'
   }
 })

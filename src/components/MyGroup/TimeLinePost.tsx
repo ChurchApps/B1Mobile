@@ -2,7 +2,7 @@ import { ConversationInterface } from '@churchapps/mobilehelper';
 import moment from 'moment';
 import React from 'react';
 import { Image, Text, View } from 'react-native';
-import { ApiHelper, UserHelper, globalStyles } from '../../helpers';
+import { ApiHelper, UserHelper, globalStyles } from '@/src/helpers';
 import UserConversations from '../Notes/UserConversation';
 
 interface Props {

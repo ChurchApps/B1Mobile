@@ -1,10 +1,10 @@
-import { DimensionHelper } from "@churchapps/mobilehelper";
-import React, { useState } from "react";
+import { ApiHelper, Constants, StripeHelper, UserHelper, globalStyles } from "@/src/helpers";
+import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "@/src/interfaces";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { useState } from "react";
 import { Alert, Image, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { InputBox } from "..";
-import { ApiHelper, Constants, StripeHelper, UserHelper, globalStyles } from "../../helpers";
-import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../interfaces";
+import { InputBox } from "../InputBox";
 
 interface Props {
   setMode: any;
@@ -152,8 +152,8 @@ export function BankForm({
   };
 
   const informationalText = !bank.id && (
-    <View style={{ marginTop: DimensionHelper.wp("5%"), flex: 1, alignItems: "center" }}>
-      <Text style={{ width: DimensionHelper.wp("90%"), fontSize: DimensionHelper.wp("4.5%") }}>
+    <View style={{ marginTop: DimensionHelper.wp(5), flex: 1, alignItems: "center" }}>
+      <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>
         Bank accounts will need to be verified before making any donations. Your account will receive two small deposits
         in approximately 1-3 business days. You will need to enter those deposit amounts to finish verifying your
         account by selecting the verify account link next to your bank account under the payment methods section.
@@ -171,17 +171,17 @@ export function BankForm({
     >
       {informationalText}
       {showVerifyForm ? (
-        <View style={{ marginTop: DimensionHelper.wp("5%"), marginBottom: DimensionHelper.wp("5%") }}>
+        <View style={{ marginTop: DimensionHelper.wp(5), marginBottom: DimensionHelper.wp(5) }}>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <Text style={{ width: DimensionHelper.wp("90%"), fontSize: DimensionHelper.wp("4.5%") }}>
+            <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>
               Enter the two deposits you received in your account to finish verifying your bank account.
             </Text>
           </View>
-          <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: DimensionHelper.wp("95%") }}>
+          <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: DimensionHelper.wp(95) }}>
             <View>
               <Text style={globalStyles.semiTitleText}>First Deposit</Text>
               <TextInput
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp("40%") }}
+                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(40) }}
                 keyboardType="number-pad"
                 value={firstDeposit}
                 onChangeText={(text) => setFirstDeposit(text)}
@@ -190,7 +190,7 @@ export function BankForm({
             <View>
               <Text style={globalStyles.semiTitleText}>Second Deposit</Text>
               <TextInput
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp("40%") }}
+                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(40) }}
                 keyboardType="number-pad"
                 value={secondDeposit}
                 onChangeText={(text) => setSecondDeposit(text)}
@@ -199,16 +199,16 @@ export function BankForm({
           </View>
         </View>
       ) : (
-        <View style={{ marginBottom: DimensionHelper.wp("5%") }}>
+        <View style={{ marginBottom: DimensionHelper.wp(5) }}>
           <Text style={globalStyles.semiTitleText}>Amount Holder Name</Text>
           <TextInput
-            style={{ ...globalStyles.fundInput, width: DimensionHelper.wp("90%") }}
+            style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
             keyboardType="default"
             value={name}
             onChangeText={(text) => setName(text)}
           />
           <Text style={globalStyles.semiTitleText}>Account Holder Type</Text>
-          <View style={{ width: DimensionHelper.wp("100%"), marginBottom: DimensionHelper.wp("12%") }}>
+          <View style={{ width: DimensionHelper.wp(100), marginBottom: DimensionHelper.wp(12) }}>
             <DropDownPicker
               listMode="SCROLLVIEW"
               items={accountTypes}
@@ -218,13 +218,13 @@ export function BankForm({
               setValue={setSelectedType}
               containerStyle={{
                 ...globalStyles.containerStyle,
-                width: DimensionHelper.wp("90%"),
-                height: isDropdownOpen ? accountTypes.length * DimensionHelper.wp("12%") : 0,
+                width: DimensionHelper.wp(90),
+                height: isDropdownOpen ? accountTypes.length * DimensionHelper.wp(12) : 0,
               }}
-              style={{ ...globalStyles.dropDownMainStyle, height: DimensionHelper.wp("12%") }}
+              style={{ ...globalStyles.dropDownMainStyle, height: DimensionHelper.wp(12) }}
               labelStyle={globalStyles.labelStyle}
               listItemContainerStyle={globalStyles.itemStyle}
-              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: DimensionHelper.wp("90%") }}
+              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: DimensionHelper.wp(90) }}
               scrollViewProps={{ nestedScrollEnabled: true }}
               dropDownDirection="BOTTOM"
             />
@@ -233,14 +233,14 @@ export function BankForm({
             <>
               <Text style={globalStyles.semiTitleText}>Account Number</Text>
               <TextInput
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp("90%") }}
+                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
                 keyboardType="number-pad"
                 value={accountNumber}
                 onChangeText={(text) => setAccountNumber(text)}
               />
               <Text style={globalStyles.semiTitleText}>Routing Number</Text>
               <TextInput
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp("90%") }}
+                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
                 keyboardType="number-pad"
                 value={routingNumber}
                 onChangeText={(text) => setRoutingNumber(text)}

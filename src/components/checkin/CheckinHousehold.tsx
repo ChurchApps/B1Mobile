@@ -1,20 +1,20 @@
+import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface, globalStyles } from '@/src/helpers';
 import { DimensionHelper, ErrorHelper } from '@churchapps/mobilehelper';
 import React, { useState } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface, globalStyles } from '../../helpers';
 import { BottomButton } from '../BottomButton';
 import { Loader } from '../Loader';
 
 interface Props {
   onDone: () => void
-  showGroups: (member:PersonInterface, time:ServiceTimeInterface) => void
+  showGroups: (member: PersonInterface, time: ServiceTimeInterface) => void
 }
 
 export const CheckinHousehold = (props: Props) => {
   const [selected, setSelected] = useState(null);
   const [isLoading, setLoading] = useState(false);
- 
+
   const submitAttendance = async () => {
     setLoading(true);
 
@@ -37,7 +37,7 @@ export const CheckinHousehold = (props: Props) => {
       CheckinHelper.householdMembers = [];
       CheckinHelper.groupTree = null;
       props.onDone();
-    } catch (error : any) {
+    } catch (error: any) {
       console.log('CLEAR MEMBER LIST ERROR', error)
       ErrorHelper.logError("submit-attendance", error);
     }
@@ -63,7 +63,7 @@ export const CheckinHousehold = (props: Props) => {
         </View>
       </TouchableOpacity>
       {selected == item.id && item.serviceTimes && item.serviceTimes.map((item_time: any, index: any) => (
-        <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTimes.length - 1) ? 0 : 1,width:DimensionHelper.wp('90%') }} key={item_time.id}>
+        <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTimes.length - 1) ? 0 : 1, width: DimensionHelper.wp('90%') }} key={item_time.id}>
           <View style={globalStyles.classesTimeView}>
             <Icon name={'clock-o'} style={globalStyles.timeIcon} size={DimensionHelper.wp('5%')} />
             <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
