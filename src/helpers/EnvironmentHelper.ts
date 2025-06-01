@@ -1,5 +1,5 @@
 import { ApiHelper } from "@churchapps/mobilehelper";
-// import { ATTENDANCE_API, B1_WEB_ROOT, CONTENT_API, CONTENT_ROOT, DOING_API, GIVING_API, LESSONS_API, LESSONS_ROOT, MEMBERSHIP_API, MESSAGING_API, STAGE, STREAMING_LIVE_ROOT } from "@env";
+import Constants from 'expo-constants';
 
 export class EnvironmentHelper {
   public static MembershipApi = "";
@@ -16,12 +16,13 @@ export class EnvironmentHelper {
   static ContentRoot = "";
 
   static init = () => {
-    // let stage = STAGE;
+    const extra = Constants.expoConfig?.extra || {};
+    // let stage = extra.STAGE;
     let stage = "prod";
     //stage = "staging";
     switch (stage) {
       case "prod": EnvironmentHelper.initProd(); break;
-      // default: EnvironmentHelper.initDev(); break;
+      default: EnvironmentHelper.initDev(); break;
     }
 
     ApiHelper.apiConfigs = [
@@ -34,38 +35,37 @@ export class EnvironmentHelper {
       { keyName: "LessonsApi", url: EnvironmentHelper.LessonsApi, jwt: "", permisssions: [] }
     ]
 
-
-    //leaving for now as a hack.  For some reason outputting the value makes the difference of whether it's actually populated or not.
     console.log(JSON.stringify(ApiHelper.apiConfigs[1].url));
   }
 
-  // static initDev = () => {
-  //   EnvironmentHelper.MembershipApi = MEMBERSHIP_API || "https://membershipapi.staging.churchapps.org";
-  //   EnvironmentHelper.MessagingApi = MESSAGING_API || "https://messagingapi.staging.churchapps.org";
-  //   EnvironmentHelper.AttendanceApi = ATTENDANCE_API || "https://attendanceapi.staging.churchapps.org";
-  //   EnvironmentHelper.GivingApi = GIVING_API || "https://givingapi.staging.churchapps.org";
-  //   EnvironmentHelper.LessonsApi = LESSONS_API || "https://api.staging.lessons.church";
-  //   EnvironmentHelper.DoingApi = DOING_API || "https://doingapi.staging.churchapps.org";
-  //   EnvironmentHelper.ContentApi = CONTENT_API || "https://contentapi.staging.churchapps.org";
-  //   EnvironmentHelper.ContentRoot = CONTENT_ROOT || "https://content.staging.churchapps.org";
-  //   EnvironmentHelper.LessonsRoot = LESSONS_ROOT || "https://staging.lessons.church";
-  //   EnvironmentHelper.StreamingLiveRoot = STREAMING_LIVE_ROOT || "https://{subdomain}.staging.streaminglive.church";
-  //   EnvironmentHelper.B1WebRoot = B1_WEB_ROOT || "https://{subdomain}.staging.b1.church";
-  // }
+  static initDev = () => {
+    const extra = Constants.expoConfig?.extra || {};
+    EnvironmentHelper.MembershipApi = extra.MEMBERSHIP_API || "https://membershipapi.staging.churchapps.org";
+    EnvironmentHelper.MessagingApi = extra.MESSAGING_API || "https://messagingapi.staging.churchapps.org";
+    EnvironmentHelper.AttendanceApi = extra.ATTENDANCE_API || "https://attendanceapi.staging.churchapps.org";
+    EnvironmentHelper.GivingApi = extra.GIVING_API || "https://givingapi.staging.churchapps.org";
+    EnvironmentHelper.LessonsApi = extra.LESSONS_API || "https://api.staging.lessons.church";
+    EnvironmentHelper.DoingApi = extra.DOING_API || "https://doingapi.staging.churchapps.org";
+    EnvironmentHelper.ContentApi = extra.CONTENT_API || "https://contentapi.staging.churchapps.org";
+    EnvironmentHelper.ContentRoot = extra.CONTENT_ROOT || "https://content.staging.churchapps.org";
+    EnvironmentHelper.LessonsRoot = extra.LESSONS_ROOT || "https://staging.lessons.church";
+    EnvironmentHelper.StreamingLiveRoot = extra.STREAMING_LIVE_ROOT || "https://{subdomain}.staging.streaminglive.church";
+    EnvironmentHelper.B1WebRoot = extra.B1_WEB_ROOT || "https://{subdomain}.staging.b1.church";
+  }
 
   // NOTE - None of these values are secret
   static initProd = () => {
-    EnvironmentHelper.MembershipApi = "https://membershipapi.churchapps.org";
-    EnvironmentHelper.MessagingApi = "https://messagingapi.churchapps.org";
-    EnvironmentHelper.AttendanceApi = "https://attendanceapi.churchapps.org";
-    EnvironmentHelper.GivingApi = "https://givingapi.churchapps.org";
-    EnvironmentHelper.LessonsApi = "https://api.lessons.church";
-    EnvironmentHelper.DoingApi = "https://doingapi.churchapps.org";
-    EnvironmentHelper.ContentApi = "https://contentapi.churchapps.org";
-    EnvironmentHelper.ContentRoot = "https://content.churchapps.org";
-    EnvironmentHelper.LessonsRoot = "https://lessons.church";
-    EnvironmentHelper.StreamingLiveRoot = "https://{subdomain}.streaminglive.church";
-    EnvironmentHelper.B1WebRoot = "https://{subdomain}.b1.church";
+    const extra = Constants.expoConfig?.extra || {};
+    EnvironmentHelper.MembershipApi = extra.MEMBERSHIP_API || "https://membershipapi.churchapps.org";
+    EnvironmentHelper.MessagingApi = extra.MESSAGING_API || "https://messagingapi.churchapps.org";
+    EnvironmentHelper.AttendanceApi = extra.ATTENDANCE_API || "https://attendanceapi.churchapps.org";
+    EnvironmentHelper.GivingApi = extra.GIVING_API || "https://givingapi.churchapps.org";
+    EnvironmentHelper.LessonsApi = extra.LESSONS_API || "https://api.lessons.church";
+    EnvironmentHelper.DoingApi = extra.DOING_API || "https://doingapi.churchapps.org";
+    EnvironmentHelper.ContentApi = extra.CONTENT_API || "https://contentapi.churchapps.org";
+    EnvironmentHelper.ContentRoot = extra.CONTENT_ROOT || "https://content.churchapps.org";
+    EnvironmentHelper.LessonsRoot = extra.LESSONS_ROOT || "https://lessons.church";
+    EnvironmentHelper.StreamingLiveRoot = extra.STREAMING_LIVE_ROOT || "https://{subdomain}.streaminglive.church";
+    EnvironmentHelper.B1WebRoot = extra.B1_WEB_ROOT || "https://{subdomain}.b1.church";
   }
-
 }
