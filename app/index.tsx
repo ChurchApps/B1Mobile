@@ -97,16 +97,32 @@ const SplashScreen = (props: Props) => {
   if (DimensionHelper.wp(100) > DimensionHelper.hp(100)) {
     return (
       <View style={[globalStyles.safeAreaContainer, { flex: 1, backgroundColor: Constants.Colors.app_color }]}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Image source={require('@/assets/images/logo.png')} style={{ width: DimensionHelper.wp(80), height: DimensionHelper.wp(80) }} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+          <Image
+            source={require('@/assets/images/logo.png')}
+            style={{
+              width: DimensionHelper.wp(70),
+              height: undefined,
+              aspectRatio: 1,
+              resizeMode: 'contain'
+            }}
+          />
         </View>
       </View>
     );
   } else {
     return (
       <View style={[globalStyles.safeAreaContainer, { flex: 1 }]}>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Image source={require('@/assets/images/logo.png')} style={{ width: DimensionHelper.wp(80), height: DimensionHelper.wp(80) }} />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+          <Image
+            source={require('@/assets/images/logo.png')}
+            style={{
+              width: DimensionHelper.wp(70),
+              height: undefined,
+              aspectRatio: 1,
+              resizeMode: 'contain'
+            }}
+          />
         </View>
       </View>
     );

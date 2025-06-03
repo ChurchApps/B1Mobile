@@ -47,7 +47,7 @@ export const globalStyles = StyleSheet.create({
   //Home
   homeContainer: { flex: 1, backgroundColor: 'white', position: 'relative' },
   menuIcon: { width: DimensionHelper.wp(6), height: DimensionHelper.wp(6), margin: DimensionHelper.wp(5), tintColor: 'white' },
-  headerText: { color: 'white', textAlign: 'center', fontSize: DimensionHelper.wp(4.5), fontWeight: 'bold' },
+  headerText: { color: 'white', textAlign: 'center', fontSize: DimensionHelper.hp(3.5), fontWeight: 'bold' },
   TabIndicatorStyle: { backgroundColor: Constants.Colors.white_color, shadowOffset: { height: 0, width: 0 }, shadowColor: 'transparent', shadowOpacity: 0, elevation: 0 },
   text: { color: 'white', fontSize: 20 },
   tabBar: { height: '100%', top: 0 },
@@ -113,7 +113,7 @@ export const globalStyles = StyleSheet.create({
   TitleTextStyle: { fontSize: DimensionHelper.wp(2), color: Constants.Colors.white_color, fontFamily: Constants.Fonts.RobotoMedium },
   eventTextStyle: { fontSize: DimensionHelper.wp(1.6), color: 'black', fontFamily: Constants.Fonts.RobotoMedium },
   DateTextColor: { fontFamily: Constants.Fonts.RobotoRegular },
-  planTextStyle: { fontSize: DimensionHelper.wp(1.5), color: 'black', fontFamily: Constants.Fonts.RobotoRegular },
+  planTextStyle: { fontSize: DimensionHelper.wp(4), color: 'black', fontFamily: Constants.Fonts.RobotoRegular },
   ErrorMessageView: { flex: 1, justifyContent: "center", alignItems: "center" },
   TaskCreatorColor: { color: Constants.Colors.app_color, fontFamily: Constants.Fonts.RobotoMedium },
   //Complete
@@ -228,7 +228,7 @@ export const globalStyles = StyleSheet.create({
   paymentTitleHeaderLine: { height: DimensionHelper.wp(1.5), backgroundColor: Constants.Colors.app_color, alignSelf: 'center' },
   paymentTitleView: { flexDirection: 'row', height: DimensionHelper.wp(12), justifyContent: 'space-between', borderBottomColor: 'gray', borderBottomWidth: 1, alignItems: 'center' },
   paymentTitleText: { fontSize: DimensionHelper.wp(4.5), textAlign: 'left', fontFamily: Constants.Fonts.RobotoMedium },
-  LatestUpdateTextStyle: { color: 'black', fontSize: DimensionHelper.wp(2), fontFamily: Constants.Fonts.RobotoMedium },
+  LatestUpdateTextStyle: { color: 'black', fontSize: DimensionHelper.wp(4.5), fontFamily: Constants.Fonts.RobotoMedium },
   donationIcon: { width: DimensionHelper.wp(7), height: DimensionHelper.wp(7) },
 
   donationRowContainer: { width: DimensionHelper.wp(90), display: "flex", flexDirection: "row" },
@@ -308,7 +308,7 @@ export const globalStyles = StyleSheet.create({
   CancelAddbuttonView: { alignItems: 'center', marginVertical: DimensionHelper.wp(2), flexDirection: 'row', alignSelf: 'flex-end', },
   SaveButtonStyle: { marginLeft: DimensionHelper.wp(3), backgroundColor: Constants.Colors.app_color, borderRadius: DimensionHelper.wp(1.5), paddingVertical: DimensionHelper.wp(1), paddingHorizontal: DimensionHelper.wp(2) },
   DeleteButtonStyle: { marginLeft: DimensionHelper.wp(3), borderWidth: DimensionHelper.wp(0.5), borderColor: Constants.Colors.button_red, borderRadius: DimensionHelper.wp(1.5), padding: DimensionHelper.wp(1.5) },
-  ButtonTextStyle: { color: 'black', fontFamily: Constants.Fonts.RobotoMedium, fontSize: DimensionHelper.wp(3), },
+  ButtonTextStyle: { color: 'black', fontFamily: Constants.Fonts.RobotoMedium, fontSize: DimensionHelper.wp(4) },
   planTitleView: { marginLeft: DimensionHelper.wp(2), marginVertical: DimensionHelper.wp(2), flexDirection: 'row', alignItems: 'center', },
   statusView: { marginHorizontal: DimensionHelper.wp(2), flexDirection: 'row', alignItems: 'center', padding: DimensionHelper.wp(1.5) },
   BorderSeparatorView: { width: '98%', flexDirection: 'row', alignSelf: 'center', justifyContent: 'space-between', alignItems: 'center', marginTop: DimensionHelper.wp(0.5), borderBottomWidth: 1, borderBottomColor: 'lightgray' },

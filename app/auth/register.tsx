@@ -1,5 +1,6 @@
 import React from 'react';
 import { BlueHeader } from '@/src/components/BlueHeader';
+import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
 import { Constants } from '@/src/helpers/Constants';
 import { globalStyles } from '@/src/helpers/GlobalStyles';
@@ -107,12 +108,11 @@ const Register = () => {
 
   //<BlueHeader navigation={navigation} showBack={true} />
   return (
-    <SafeAreaView style={globalStyles.appContainer}>
-
-      <View style={globalStyles.grayContainer}>
+    <LoadingWrapper loading={loading}>
+      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
         {getContent()}
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LoadingWrapper>
   )
 }
 

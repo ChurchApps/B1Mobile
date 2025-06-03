@@ -10,8 +10,10 @@ import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/n
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
-const Dashboard = () => {
+const Dashboard = (props: any) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const nav = useNavigation<NavigationProp<any>>();
   const focused = useIsFocused()
@@ -45,50 +47,68 @@ const Dashboard = () => {
     }
   }
 
+  const brandColor = '#175ec1';
   const getButton = (topItem: boolean, item: LinkInterface) => {
     if (item.linkType === "separator") return (<></>);
-    let img = require("@/src/assets/images/dash_worship.png"); //https://www.pexels.com/photo/man-raising-his-left-hand-2351722/
-    if (item.photo) {
-      img = { uri: item.photo }
-    } else {
-      switch (item.linkType) {
-        case "url":
-
-          img = require('@/src/assets/images/dash_url.png'); //https://www.pexels.com/photo/selective-focus-photography-of-macbook-pro-with-turned-on-screen-on-brown-wooden-table-68763/
-          break;
-        case "directory":
-          img = require('@/src/assets/images/dash_directory.png'); //https://www.pexels.com/photo/smiling-women-and-men-sitting-on-green-grass-1231230/
-          break;
-        case "checkin":
-          img = require("@/src/assets/images/dash_checkin.png"); //https://www.pexels.com/photo/silver-imac-apple-magic-keyboard-and-magic-mouse-on-wooden-table-38568/
-          break;
-        case "donation":
-          img = require("@/src/assets/images/dash_donation.png"); //https://www.pexels.com/photo/person-s-holds-brown-gift-box-842876/
-          break;
-        case "lessons":
-          img = require("@/src/assets/images/dash_lessons.png"); //https://www.pexels.com/photo/children-sitting-on-brown-wooden-chairs-8088103/
-          break;
-        case "bible":
-          img = require("@/src/assets/images/dash_bible.png"); //https://www.pexels.com/photo/pink-pencil-on-open-bible-page-and-pink-272337/
-          break;
-        case "votd":
-          img = require("@/src/assets/images/dash_votd.png"); //https://www.pexels.com/photo/empty-gray-road-under-white-clouds-3041347/
-          break;
-        case "Plans":
-          img = require("@/src/assets/images/dash_votd.png"); //https://www.pexels.com/photo/empty-gray-road-under-white-clouds-3041347/
-          break;
-      }
+    let icon = null;
+    let backgroundImage = undefined;
+    switch (item.linkType.toLowerCase()) {
+      case "groups":
+        icon = <MaterialCommunityIcons name="account-group" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_worship.png');
+        break;
+      case "checkin":
+        icon = <MaterialCommunityIcons name="checkbox-marked-circle-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_checkin.png');
+        break;
+      case "donation":
+        icon = <MaterialCommunityIcons name="gift-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_donation.png');
+        break;
+      case "directory":
+        icon = <MaterialCommunityIcons name="card-account-details-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_directory.png');
+        break;
+      case "plans":
+        icon = <MaterialCommunityIcons name="calendar-month-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_votd.png');
+        break;
+      case "chums":
+        icon = <MaterialCommunityIcons name="laptop" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_url.png');
+        break;
+      default:
+        icon = <MaterialCommunityIcons name="link-variant" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_url.png');
+        break;
     }
     return (
-      <ImageButton key={item.id} image={img} text={item.text} onPress={() => {
+      <ImageButton key={item.id} icon={icon} text={item.text} onPress={() => {
         NavigationHelper.navigateToScreen(item, router.navigate)
-      }
-      }
-      />);
+      }} color={brandColor} backgroundImage={backgroundImage} />
+    );
   }
 
   const getButtons = () => {
-    return <FlatList data={UserHelper.links} renderItem={({ item }) => getButton(false, item)} keyExtractor={(item: any, index: number) => index.toString()} />
+    if (!Array.isArray(UserHelper.links)) return null;
+    const items = UserHelper.links.filter(item => item.linkType !== 'separator');
+    const rows = [];
+    for (let i = 0; i < items.length; i += 2) {
+      rows.push(items.slice(i, i + 2));
+    }
+    return (
+      <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+        {rows.map((row, rowIndex) => (
+          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 16 }}>
+            {row.map((item, colIndex) => (
+              <View key={item.id || colIndex} style={{ flex: 1, alignItems: "center" }}>
+                {getButton(false, item)}
+              </View>
+            ))}
+          </View>
+        ))}
+      </View>
+    );
   }
 
   const getBrand = () => {
@@ -96,16 +116,17 @@ const Dashboard = () => {
     else return <Text style={{ fontSize: 20, width: "100%", textAlign: "center", marginTop: 0 }}>{CacheHelper.church?.name || ""}</Text>
   }
   return (
-    <SafeAreaView style={globalStyles.homeContainer} >
-      <MainHeader title="Home" openDrawer={() => {
-        navigation.openDrawer()
-      }} />
-      <View style={globalStyles.webViewContainer}>
-        {getBrand()}
-        {getButtons()}
-      </View>
-      {isLoading && <Loader isLoading={isLoading} />}
-    </SafeAreaView>
+    <LoadingWrapper loading={isLoading}>
+      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
+        <MainHeader title="Home" openDrawer={() => {
+          navigation.openDrawer()
+        }} />
+        <View style={globalStyles.webViewContainer}>
+          {getBrand()}
+          {getButtons()}
+        </View>
+      </SafeAreaView>
+    </LoadingWrapper>
   )
 }
 

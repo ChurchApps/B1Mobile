@@ -55,9 +55,9 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
       const formattedStartDate = formatDate(startDate);
       const formattedEndDate = formatTime(endDate);
       return (
-        <View key={time.id} style={{ marginTop: DimensionHelper.hp(1), flexDirection: 'row' }} >
-          <Text style={[globalStyles.planTextStyle, { fontFamily: Constants.Fonts.RobotoBold }]}>{`\u2022  ${time.displayName}:`}</Text>
-          <Text style={globalStyles.planTextStyle} > {formattedStartDate} - {formattedEndDate} </Text>
+        <View key={time.id} style={{ marginTop: DimensionHelper.hp(1) }}>
+          <Text style={[globalStyles.planTextStyle, { fontFamily: Constants.Fonts.RobotoBold }]}>{`• ${time.displayName}`}</Text>
+          <Text style={[globalStyles.planTextStyle, { marginLeft: DimensionHelper.wp(4), color: '#555' }]}>{formattedStartDate} - {formattedEndDate}</Text>
         </View>
       )
     });
@@ -103,9 +103,9 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
         </View>
 
         {canRespond ?
-          <View style={[globalStyles.CancelAddbuttonView, { marginHorizontal: DimensionHelper.wp(2), marginBottom: 0 }]}>
-            <TouchableOpacity onPress={() => { handleDecline() }} style={globalStyles.DeleteButtonStyle} >
-              <Text style={[globalStyles.ButtonTextStyle, { color: Constants.Colors.button_red }]}>Decline</Text>
+          <View style={[globalStyles.CancelAddbuttonView, { marginHorizontal: DimensionHelper.wp(2), marginBottom: 0, justifyContent: 'flex-end' }]}>
+            <TouchableOpacity onPress={() => { handleDecline() }}>
+              <Text style={{ color: Constants.Colors.button_red, fontSize: DimensionHelper.wp(3.8), marginRight: DimensionHelper.wp(2), textDecorationLine: 'underline' }}>Decline</Text>
             </TouchableOpacity>
             <TouchableOpacity style={globalStyles.SaveButtonStyle} onPress={() => { handleAccept() }}>
               <Text style={[globalStyles.ButtonTextStyle, { color: Constants.Colors.white_color }]}>Accept</Text>
