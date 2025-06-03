@@ -47,48 +47,53 @@ const Dashboard = () => {
 
   const getButton = (topItem: boolean, item: LinkInterface) => {
     if (item.linkType === "separator") return (<></>);
-    let img = require("@/src/assets/images/dash_worship.png"); //https://www.pexels.com/photo/man-raising-his-left-hand-2351722/
-    if (item.photo) {
-      img = { uri: item.photo }
-    } else {
-      switch (item.linkType) {
-        case "url":
-
-          img = require('@/src/assets/images/dash_url.png'); //https://www.pexels.com/photo/selective-focus-photography-of-macbook-pro-with-turned-on-screen-on-brown-wooden-table-68763/
-          break;
-        case "directory":
-          img = require('@/src/assets/images/dash_directory.png'); //https://www.pexels.com/photo/smiling-women-and-men-sitting-on-green-grass-1231230/
-          break;
-        case "checkin":
-          img = require("@/src/assets/images/dash_checkin.png"); //https://www.pexels.com/photo/silver-imac-apple-magic-keyboard-and-magic-mouse-on-wooden-table-38568/
-          break;
-        case "donation":
-          img = require("@/src/assets/images/dash_donation.png"); //https://www.pexels.com/photo/person-s-holds-brown-gift-box-842876/
-          break;
-        case "lessons":
-          img = require("@/src/assets/images/dash_lessons.png"); //https://www.pexels.com/photo/children-sitting-on-brown-wooden-chairs-8088103/
-          break;
-        case "bible":
-          img = require("@/src/assets/images/dash_bible.png"); //https://www.pexels.com/photo/pink-pencil-on-open-bible-page-and-pink-272337/
-          break;
-        case "votd":
-          img = require("@/src/assets/images/dash_votd.png"); //https://www.pexels.com/photo/empty-gray-road-under-white-clouds-3041347/
-          break;
-        case "Plans":
-          img = require("@/src/assets/images/dash_votd.png"); //https://www.pexels.com/photo/empty-gray-road-under-white-clouds-3041347/
-          break;
-      }
+    let icon = null;
+    switch (item.linkType.toLowerCase()) {
+      case "groups":
+        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>👥</Text>;
+        break;
+      case "checkin":
+        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>✅</Text>;
+        break;
+      case "donation":
+        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>💝</Text>;
+        break;
+      case "directory":
+        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>📇</Text>;
+        break;
+      case "plans":
+        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>🗓️</Text>;
+        break;
+      case "chums":
+        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>💻</Text>;
+        break;
+      default:
+        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>🔗</Text>;
+        break;
     }
     return (
-      <ImageButton key={item.id} image={img} text={item.text} onPress={() => {
+      <ImageButton key={item.id} icon={icon} text={item.text} onPress={() => {
         NavigationHelper.navigateToScreen(item, router.navigate)
-      }
-      }
-      />);
+      }} />
+    );
   }
 
   const getButtons = () => {
-    return <FlatList data={UserHelper.links} renderItem={({ item }) => getButton(false, item)} keyExtractor={(item: any, index: number) => index.toString()} />
+    if (!Array.isArray(UserHelper.links)) return null;
+    const items = UserHelper.links.filter(item => item.linkType !== 'separator');
+    const rows = [];
+    for (let i = 0; i < items.length; i += 2) {
+      rows.push(items.slice(i, i + 2));
+    }
+    return (
+      <View style={{ marginTop: 24 }}>
+        {rows.map((row, rowIndex) => (
+          <View key={rowIndex} style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 16 }}>
+            {row.map((item, colIndex) => getButton(false, item))}
+          </View>
+        ))}
+      </View>
+    );
   }
 
   const getBrand = () => {
