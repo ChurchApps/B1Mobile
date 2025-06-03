@@ -12,7 +12,7 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused } from '@react-navigation/native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, Text, View, StyleSheet } from 'react-native';
 
 interface Props {
   navigation: NavigationProps
@@ -106,17 +106,20 @@ const PlanDetails = (props: Props) => {
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
       <MainHeader title={'Plan Details'} openDrawer={navigation.openDrawer} back={navigation.goBack} />
+      {plan && (
+        <View style={[styles.headerGradient, { backgroundColor: Constants.Colors.app_color }]}>
+          <View style={styles.headerContent}>
+            <Icons name='assignment' size={DimensionHelper.wp(6)} color="white" />
+            <Text style={styles.headerTitle}>{plan?.name}</Text>
+          </View>
+        </View>
+      )}
       {isLoading ? <Loader isLoading={isLoading} /> :
         errorMessage ? <View style={globalStyles.ErrorMessageView} >
           <Text style={globalStyles.searchMainText}>{errorMessage}</Text>
         </View> :
           <>
             <ScrollView scrollEnabled={true} showsVerticalScrollIndicator={false} style={globalStyles.ScrollViewStyles} >
-              {plan ?
-                <View style={globalStyles.planTitleView}>
-                  <Icons name='assignment' size={DimensionHelper.wp(5.5)} />
-                  <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3) }]}>{plan?.name}</Text>
-                </View> : null}
               <View>
                 {getPositionDetails()}
                 {getNotes()}
@@ -130,10 +133,36 @@ const PlanDetails = (props: Props) => {
             </ScrollView>
           </>
       }
-
     </SafeAreaView>
   );
 }
 
+const styles = StyleSheet.create({
+  headerGradient: {
+    paddingVertical: DimensionHelper.hp(2),
+    marginBottom: DimensionHelper.hp(2),
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: DimensionHelper.wp(5),
+  },
+  headerTitle: {
+    fontSize: DimensionHelper.wp(5),
+    fontWeight: '600',
+    color: 'white',
+    marginLeft: DimensionHelper.wp(3),
+  },
+});
 
 export default PlanDetails
