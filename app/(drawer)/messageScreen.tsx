@@ -14,6 +14,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { FlatList, Image, KeyboardAvoidingView, Text, TouchableWithoutFeedback, View } from "react-native";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
 interface Props {
   navigation: NavigationProps,
@@ -30,6 +31,7 @@ const MessageScreen = (props: Props) => {
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
   const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
   const [UserProfilePic, setUserProfilePic] = useState<string>('')
+  const [loading, setLoading] = useState(false);
 
   const { showActionSheetWithOptions } = useActionSheet();
 
@@ -187,12 +189,14 @@ const MessageScreen = (props: Props) => {
   };
 
   return (
-    <SafeAreaView style={globalStyles.homeContainer}>
-      {/* <MainHeader title={'Messages'} openDrawer={props.navigation.openDrawer} ></MainHeader> */}
-      <MessageHeader />
-      {messagesView()}
-      <KeyboardAvoidingView behavior="padding">{messageInputView()}</KeyboardAvoidingView>
-    </SafeAreaView>
+    <LoadingWrapper loading={loading}>
+      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
+        {/* <MainHeader title={'Messages'} openDrawer={props.navigation.openDrawer} ></MainHeader> */}
+        <MessageHeader />
+        {messagesView()}
+        <KeyboardAvoidingView behavior="padding">{messageInputView()}</KeyboardAvoidingView>
+      </SafeAreaView>
+    </LoadingWrapper>
   );
 }
 

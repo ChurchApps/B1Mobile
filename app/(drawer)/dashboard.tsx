@@ -11,8 +11,9 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
-const Dashboard = () => {
+const Dashboard = (props: any) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const nav = useNavigation<NavigationProp<any>>();
   const focused = useIsFocused()
@@ -115,16 +116,17 @@ const Dashboard = () => {
     else return <Text style={{ fontSize: 20, width: "100%", textAlign: "center", marginTop: 0 }}>{CacheHelper.church?.name || ""}</Text>
   }
   return (
-    <SafeAreaView style={globalStyles.homeContainer} >
-      <MainHeader title="Home" openDrawer={() => {
-        navigation.openDrawer()
-      }} />
-      <View style={globalStyles.webViewContainer}>
-        {getBrand()}
-        {getButtons()}
-      </View>
-      {isLoading && <Loader isLoading={isLoading} />}
-    </SafeAreaView>
+    <LoadingWrapper loading={isLoading}>
+      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
+        <MainHeader title="Home" openDrawer={() => {
+          navigation.openDrawer()
+        }} />
+        <View style={globalStyles.webViewContainer}>
+          {getBrand()}
+          {getButtons()}
+        </View>
+      </SafeAreaView>
+    </LoadingWrapper>
   )
 }
 

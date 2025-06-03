@@ -3,6 +3,7 @@ import { ImageButton, } from "@/src/components/ImageButton";
 import { Loader } from "@/src/components/Loader";
 import TimeLinePost from "@/src/components/MyGroup/TimeLinePost";
 import { MainHeader } from "@/src/components/wrapper/MainHeader";
+import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 import { ApiHelper, ArrayHelper, PersonInterface, TimelinePostInterface, UserPostInterface, globalStyles } from "@/src/helpers";
 import { TimelineHelper } from "@/src/helpers/Timelinehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -109,11 +110,11 @@ const MyGroups = (props: any) => {
   };
 
   return (
-    <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
-      <MainHeader title="My Groups" openDrawer={navigation.openDrawer} back={navigation.goBack} />
-
-      {loading ? <Loader isLoading={loading} /> :
-        <FlatList data={mergeData}
+    <LoadingWrapper loading={loading}>
+      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
+        <MainHeader title="My Groups" openDrawer={navigation.openDrawer} back={navigation.goBack} />
+        <FlatList
+          data={mergeData}
           contentContainerStyle={globalStyles.FlatListStyle}
           showsVerticalScrollIndicator={false}
           scrollEnabled={true}
@@ -122,10 +123,10 @@ const MyGroups = (props: any) => {
           )}
           renderItem={item => renderItems(item)}
           keyExtractor={(item: any, index: number) => `key-${index}`}
-
         />
-      }
-    </SafeAreaView>
+      </SafeAreaView>
+    </LoadingWrapper>
   );
 };
+
 export default MyGroups;

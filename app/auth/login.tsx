@@ -7,8 +7,9 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Linking, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import RNRestart from 'react-native-restart';
+import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
-const Login = () => {
+const Login = (props: any) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,49 +70,51 @@ const Login = () => {
   const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
-    <View style={{ flex: 1, backgroundColor: ConstantsHelper.Colors.gray_bg }}>
-      <ScrollView>
-        <SafeAreaView style={globalStyles.appContainer}>
-          <BlueHeader />
-          <View style={globalStyles.grayContainer}>
-            <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
-            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
-              <Fontisto name={'email'} color={ConstantsHelper.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
-              <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
-            </View>
-            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
-              <Fontisto name={'key'} color={ConstantsHelper.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
-              <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
-            </View>
-            <View style={{ ...globalStyles.privacyPolicyView, width: DimensionHelper.wp(90) }}>
-              <Text style={{ ...globalStyles.privacyText, width: DimensionHelper.wp(90) }}>By clicking on Login, I confirm that I have read the <Text style={{ color: ConstantsHelper.Colors.app_color }} onPress={() => {
-                router.navigate('/auth/privacy')
-              }}    >privacy policy.</Text>
-              </Text>
-            </View>
+    <LoadingWrapper loading={loading}>
+      <View style={{ flex: 1, backgroundColor: ConstantsHelper.Colors.gray_bg }}>
+        <ScrollView>
+          <SafeAreaView style={globalStyles.appContainer}>
+            <BlueHeader />
+            <View style={globalStyles.grayContainer}>
+              <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
+              <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
+                <Fontisto name={'email'} color={ConstantsHelper.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
+                <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
+              </View>
+              <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
+                <Fontisto name={'key'} color={ConstantsHelper.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
+                <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
+              </View>
+              <View style={{ ...globalStyles.privacyPolicyView, width: DimensionHelper.wp(90) }}>
+                <Text style={{ ...globalStyles.privacyText, width: DimensionHelper.wp(90) }}>By clicking on Login, I confirm that I have read the <Text style={{ color: ConstantsHelper.Colors.app_color }} onPress={() => {
+                  router.navigate('/auth/privacy')
+                }}    >privacy policy.</Text>
+                </Text>
+              </View>
 
-            <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(90) }]} onPress={() => { validateDetails() && loginApiCall() }}>
-              {loading ?
-                <ActivityIndicator size='small' color='white' animating={loading} /> :
-                <Text style={globalStyles.roundBlueButtonText}>LOGIN</Text>
-              }
-            </TouchableOpacity>
-
-            <View style={globalStyles.loginLinks}>
-              <TouchableOpacity onPress={() => { Linking.openURL(forgotLink); }}>
-                <Text style={globalStyles.simpleLink}>Forgot Password</Text>
+              <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(90) }]} onPress={() => { validateDetails() && loginApiCall() }}>
+                {loading ?
+                  <ActivityIndicator size='small' color='white' animating={loading} /> :
+                  <Text style={globalStyles.roundBlueButtonText}>LOGIN</Text>
+                }
               </TouchableOpacity>
-              <Text> | </Text>
-              <TouchableOpacity onPress={() => { router.navigate("/auth/register") }}>
-                <Text style={globalStyles.simpleLink}>Register</Text>
-              </TouchableOpacity>
+
+              <View style={globalStyles.loginLinks}>
+                <TouchableOpacity onPress={() => { Linking.openURL(forgotLink); }}>
+                  <Text style={globalStyles.simpleLink}>Forgot Password</Text>
+                </TouchableOpacity>
+                <Text> | </Text>
+                <TouchableOpacity onPress={() => { router.navigate("/auth/register") }}>
+                  <Text style={globalStyles.simpleLink}>Register</Text>
+                </TouchableOpacity>
+              </View>
+
             </View>
+          </SafeAreaView>
+        </ScrollView>
 
-          </View>
-        </SafeAreaView>
-      </ScrollView>
-
-    </View>
+      </View>
+    </LoadingWrapper>
   )
 }
 

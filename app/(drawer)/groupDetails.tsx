@@ -23,6 +23,7 @@ import { FlatList, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleShe
 import { Calendar, DateData } from "react-native-calendars";
 import Icon from "react-native-vector-icons/FontAwesome";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -248,116 +249,117 @@ const GroupDetails = (props: any) => {
   }
 
   return (
-    <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: "100%", backgroundColor: "white" }]} >
-      <MainHeader title={name} openDrawer={navigation.openDrawer} back={navigation.goBack} />
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
-        <View style={{ margin: 16 }}>
-          {photoUrl ? (
-            <Image source={{ uri: photoUrl }} style={globalStyles.groupImage} />
-          ) : (
-            <View
-              style={[
-                globalStyles.groupImage,
-                { justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0' },
-              ]}
-            >
-              <Text style={styles.noImageText}>No image available</Text>
-            </View>
-          )}
-          <Markdown>{about}</Markdown>
-        </View>
-
-        <View style={styles.tabContainer}>
-          {TABS.map((tab, idx) => (
-            <TouchableOpacity
-              key={tab.toLowerCase().replace(/\s+/g, '-')}
-              style={[styles.tab, activeTab === idx && styles.activeTab]}
-              onPress={() => setActiveTab(idx)}
-            >
-              <Text style={[activeTab === idx && styles.activeTabText]}>
-                {tab}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        {/* RENDER CONVERSATION */}
-
-        {activeTab === 0 && (<Conversations contentType="group" contentId={groupId} groupId={groupId} from="GroupDetails" />)}
-        {activeTab === 1 && (<View style={{ height: DimensionHelper.hp(55), paddingBottom: DimensionHelper.wp(2) }}>{getGroupMembers()}</View>)}
-        {activeTab === 2 && (<View>
-          {isLeader &&
-            <TouchableOpacity style={styles.addButtonContainer}
-              onPress={() => { setShowAddEventModal(true), handleAddEvent({ start: new Date(), end: new Date() }) }}
-            >
-              <MaterialIcons name={'event-note'} size={DimensionHelper.wp(6)} color={Constants.Colors.app_color} />
-              <Text style={styles.addButtonText}>ADD EVENT</Text>
-            </TouchableOpacity>
-          }
-          <Calendar
-            current={selected}
-            markingType='multi-dot'
-            markedDates={markedDates}
-            onDayPress={onDayPress}
-            theme={{
-              textInactiveColor: '#a68a9f',
-              textSectionTitleDisabledColor: 'grey',
-              textSectionTitleColor: '#1C75BC',
-              arrowColor: '#1C75BC',
-              todayTextColor: 'red',
-              selectedDayBackgroundColor: '#5E60CE',
-              selectedDayTextColor: 'white',
-            }}
-          />
-        </View>)}
-        {showEventModal &&
-          <CustomModal width={DimensionHelper.wp(85)} isVisible={showEventModal} close={() => setShowEventModal(false)}>
-            <View style={styles.modalConatiner}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalText}>Event Details</Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowEventModal(false);
-                  }}
-                  style={styles.modalIcon}
-                >
-                  <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
-                </TouchableOpacity>
+    <LoadingWrapper loading={loading}>
+      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: "100%", backgroundColor: "white" }]} >
+        <MainHeader title={name} openDrawer={navigation.openDrawer} back={navigation.goBack} />
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
+          <View style={{ margin: 16 }}>
+            {photoUrl ? (
+              <Image source={{ uri: photoUrl }} style={globalStyles.groupImage} />
+            ) : (
+              <View
+                style={[
+                  globalStyles.groupImage,
+                  { justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0' },
+                ]}
+              >
+                <Text style={styles.noImageText}>No image available</Text>
               </View>
-              {selectedEvents?.map((data: any) => (
-                <View style={styles.eventContainer} key={`event-${data.id || data.start.getTime()}`}>
-                  <View style={{ paddingVertical: DimensionHelper.wp(1), flex: 1 }}>
-                    <Text style={styles.eventText}>Event Name: {data.title}</Text>
-                    <Text style={styles.eventTime}>Date and Time: {getDisplayTime(data)}</Text>
-                  </View>
-                  <Icon name={"edit"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)}
-                    onPress={() => { setShowEventModal(false); setEditEvent(data); setShowAddEventModal(true); }}
-                  />
+            )}
+            <Markdown>{about}</Markdown>
+          </View>
+
+          <View style={styles.tabContainer}>
+            {TABS.map((tab, idx) => (
+              <TouchableOpacity
+                key={tab.toLowerCase().replace(/\s+/g, '-')}
+                style={[styles.tab, activeTab === idx && styles.activeTab]}
+                onPress={() => setActiveTab(idx)}
+              >
+                <Text style={[activeTab === idx && styles.activeTabText]}>
+                  {tab}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          {/* RENDER CONVERSATION */}
+
+          {activeTab === 0 && (<Conversations contentType="group" contentId={groupId} groupId={groupId} from="GroupDetails" />)}
+          {activeTab === 1 && (<View style={{ height: DimensionHelper.hp(55), paddingBottom: DimensionHelper.wp(2) }}>{getGroupMembers()}</View>)}
+          {activeTab === 2 && (<View>
+            {isLeader &&
+              <TouchableOpacity style={styles.addButtonContainer}
+                onPress={() => { setShowAddEventModal(true), handleAddEvent({ start: new Date(), end: new Date() }) }}
+              >
+                <MaterialIcons name={'event-note'} size={DimensionHelper.wp(6)} color={Constants.Colors.app_color} />
+                <Text style={styles.addButtonText}>ADD EVENT</Text>
+              </TouchableOpacity>
+            }
+            <Calendar
+              current={selected}
+              markingType='multi-dot'
+              markedDates={markedDates}
+              onDayPress={onDayPress}
+              theme={{
+                textInactiveColor: '#a68a9f',
+                textSectionTitleDisabledColor: 'grey',
+                textSectionTitleColor: '#1C75BC',
+                arrowColor: '#1C75BC',
+                todayTextColor: 'red',
+                selectedDayBackgroundColor: '#5E60CE',
+                selectedDayTextColor: 'white',
+              }}
+            />
+          </View>)}
+          {showEventModal &&
+            <CustomModal width={DimensionHelper.wp(85)} isVisible={showEventModal} close={() => setShowEventModal(false)}>
+              <View style={styles.modalConatiner}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalText}>Event Details</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowEventModal(false);
+                    }}
+                    style={styles.modalIcon}
+                  >
+                    <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
+                  </TouchableOpacity>
                 </View>
-              ))}
-            </View>
-          </CustomModal>}
-        {showAddEventModal &&
-          <EventModal width={DimensionHelper.wp(95)} height={DimensionHelper.hp(80)} isVisible={showAddEventModal} close={() => setShowAddEventModal(false)}>
-            <View style={styles.modalConatiner}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalText}>{!editEvent?.id ? "Add" : "Edit"} Event</Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowAddEventModal(false);
-                  }}
-                  style={styles.modalIcon}
-                >
-                  <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
-                </TouchableOpacity>
+                {selectedEvents?.map((data: any) => (
+                  <View style={styles.eventContainer} key={`event-${data.id || data.start.getTime()}`}>
+                    <View style={{ paddingVertical: DimensionHelper.wp(1), flex: 1 }}>
+                      <Text style={styles.eventText}>Event Name: {data.title}</Text>
+                      <Text style={styles.eventTime}>Date and Time: {getDisplayTime(data)}</Text>
+                    </View>
+                    <Icon name={"edit"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)}
+                      onPress={() => { setShowEventModal(false); setEditEvent(data); setShowAddEventModal(true); }}
+                    />
+                  </View>
+                ))}
               </View>
-              <View style={{}}>
-                {editEvent && isLeader && <CreateEvent event={editEvent} onDone={handleDone} />}
+            </CustomModal>}
+          {showAddEventModal &&
+            <EventModal width={DimensionHelper.wp(95)} height={DimensionHelper.hp(80)} isVisible={showAddEventModal} close={() => setShowAddEventModal(false)}>
+              <View style={styles.modalConatiner}>
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalText}>{!editEvent?.id ? "Add" : "Edit"} Event</Text>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowAddEventModal(false);
+                    }}
+                    style={styles.modalIcon}
+                  >
+                    <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
+                  </TouchableOpacity>
+                </View>
+                <View style={{}}>
+                  {editEvent && isLeader && <CreateEvent event={editEvent} onDone={handleDone} />}
+                </View>
               </View>
-            </View>
-          </EventModal>}
-      </KeyboardAvoidingView>
-      {loading && <Loader isLoading={loading} />}
-    </SafeAreaView>
+            </EventModal>}
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </LoadingWrapper>
   );
 };
 
