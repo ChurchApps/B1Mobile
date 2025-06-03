@@ -2,13 +2,29 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-// import { initializeFirebase } from '../src/config/firebase';
+import { initializeApp } from 'firebase/app';
 
 export default function RootLayout() {
   useEffect(() => {
-    // initializeFirebase();
-    console.log('Firebase initialization disabled temporarily');
+
+    console.log('Initializing Firebase...');
+    initializeFirebase();
+    //console.log('Firebase initialization disabled temporarily');
+
   }, []);
+
+  const initializeFirebase = () => {
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBP-v-oGjbwxiWZ2MH_cgcZXTQxxJfkDbA",
+      projectId: "b1mobile",
+      messagingSenderId: "873379055173",
+      appId: "1:873379055173:android:8dce00e5e50b588be1452c"
+    };
+
+    initializeApp(firebaseConfig);
+    console.log('Firebase initialized successfully');
+  }
 
   return (
     <SafeAreaProvider>

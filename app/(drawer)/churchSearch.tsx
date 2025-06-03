@@ -2,12 +2,13 @@ import React from 'react';
 import { BlueHeader } from '@/src/components/BlueHeader';
 import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
-import { ApiHelper, DimensionHelper } from '@churchapps/mobilehelper';
+import { ApiHelper } from '@churchapps/mobilehelper';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import RNRestart from 'react-native-restart';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 
 const ChurchSearch = () => {
 

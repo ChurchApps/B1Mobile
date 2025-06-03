@@ -78,13 +78,17 @@ export class PushNotificationHelper {
   };
 
   static async GetFCMToken() {
+    console.log("GET TOKEN");
     let fcmToken = CacheHelper.fcmToken;
+    console.log("fcmToken", fcmToken);
     if (!fcmToken) {
       try {
         // Get the Expo push token
         const token = await Notifications.getExpoPushTokenAsync({
           projectId: 'f72e5911-b8d5-467c-ad9e-423c180e9938', // Your EAS project ID
         });
+
+        console.log('Expo push token:', token);
 
         if (token.data) {
           fcmToken = token.data;

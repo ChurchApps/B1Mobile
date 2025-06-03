@@ -10,6 +10,9 @@ import { useEffect } from 'react';
 import { Image, Platform, View } from 'react-native';
 
 
+
+
+
 interface Props {
   navigation: NavigationProps;
 }
@@ -23,7 +26,6 @@ if (Platform.OS === "android") {
 }
 
 EnvironmentHelper.init();
-
 
 
 const SplashScreen = (props: Props) => {
