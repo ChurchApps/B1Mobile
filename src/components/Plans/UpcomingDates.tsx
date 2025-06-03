@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View, StyleSheet, Animated } from 'react-native';
 import Icons from 'react-native-vector-icons/FontAwesome5';
 import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface, TimeInterface, globalStyles } from "@/src/helpers";
+import { router } from 'expo-router';
 
 interface Props {
   navigation: any,
@@ -72,7 +73,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
       <Animated.View style={{ opacity: fadeAnim }}>
         <TouchableOpacity
           style={styles.card}
-          onPress={() => navigation.navigate('PlanDetails', { id: item?.item?.planId })}
+          onPress={() => router.push('/(drawer)/planDetails/' + item?.item?.planId)}
           activeOpacity={0.7}
         >
           <View style={styles.cardContent}>
@@ -111,7 +112,12 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
       ) : (
         <View>
           {upcomingDates.map((item, idx) => (
-            <View key={idx} style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: 'relative' }]}>
+            <TouchableOpacity
+              key={idx}
+              style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: 'relative' }]}
+              activeOpacity={0.8}
+              onPress={() => router.push('/(drawer)/planDetails/' + item.planId)}
+            >
               <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: '#1976d2' }]}>
                 <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
               </View>
@@ -128,7 +134,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
                   <Text style={{ fontSize: 16, color: '#222' }}>{item.position}</Text>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </View>
       )}

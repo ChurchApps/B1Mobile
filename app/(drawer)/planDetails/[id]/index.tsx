@@ -14,16 +14,13 @@ import { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 
 interface Props {
-  navigation: NavigationProps,
-  route: {
-    params: { id: string }
-  }
+  navigation: NavigationProps
 }
 
 const PlanDetails = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const { id } = useLocalSearchParams<{ id: any }>();
-  const planId = JSON.parse(id)
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const planId = id;  // No need to JSON.parse since it's a URL parameter
 
   // console.log("props from planscreen------>", props?.route?.params?.id)
   const [plan, setPlan] = useState<PlanInterface | null>();
@@ -35,6 +32,7 @@ const PlanDetails = (props: Props) => {
   const [errorMessage, setErrorMessage] = useState('');
   const isFocused = useIsFocused();
 
+
   useEffect(() => {
     setErrorMessage('')
   }, [isFocused])
@@ -44,7 +42,7 @@ const PlanDetails = (props: Props) => {
     setLoading(true);
     try {
       const tempPlan = await ApiHelper.get("/plans/" + planId, "DoingApi");
-      ApiHelper.get("/times/plan/" + planId, "DoingApi").then((data) => setTimes(data));
+      ApiHelper.get("/times/plan/" + planId, "DoingApi").then((data) => { setTimes(data); });
       setPlan(tempPlan);
       const tempPositions = await ApiHelper.get("/positions/plan/" + planId, "DoingApi");
       const tempAssignments = await ApiHelper.get("/assignments/plan/" + planId, "DoingApi");
