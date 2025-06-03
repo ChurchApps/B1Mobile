@@ -111,23 +111,21 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
       ) : (
         <View>
           {upcomingDates.map((item, idx) => (
-            <View key={idx} style={styles.card}>
-              <View style={styles.cardContent}>
-                <View style={styles.planInfo}>
-                  <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#222' }} numberOfLines={1}>{item.planName}</Text>
-                  <View style={styles.dateTimeContainer}>
-                    <Icons name="calendar-day" size={14} color="#666" style={styles.icon} />
-                    <Text style={{ fontSize: 16, color: '#222' }}>{item.serviceDate}</Text>
-                    <Icons name="clock" size={14} color="#666" style={[styles.icon, styles.timeIcon]} />
-                    <Text style={{ fontSize: 16, color: '#222' }}>{item.time}</Text>
-                  </View>
+            <View key={idx} style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: 'relative' }]}>
+              <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: '#1976d2' }]}>
+                <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
+              </View>
+              <View style={styles.cardContentColumn}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#222', marginBottom: 2 }} numberOfLines={1}>{item.planName}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                  <Icons name="calendar-day" size={14} color="#666" style={{ marginRight: 4 }} />
+                  <Text style={{ fontSize: 16, color: '#222', marginRight: 12 }}>{moment(item.serviceDate).format('YYYY-MM-DD')}</Text>
+                  <Icons name="clock" size={14} color="#666" style={{ marginRight: 4 }} />
+                  <Text style={{ fontSize: 16, color: '#222' }}>{item.time}</Text>
                 </View>
-                <View style={styles.roleInfo}>
-                  <Icons name="user-tie" size={14} color={Constants.Colors.app_color} style={styles.roleIcon} />
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Icons name="user-tie" size={14} color={Constants.Colors.app_color} style={{ marginRight: 6 }} />
                   <Text style={{ fontSize: 16, color: '#222' }}>{item.position}</Text>
-                </View>
-                <View style={[styles.statusBadge, { backgroundColor: '#1976d2' }]}> {/* Use blue for now */}
-                  <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
                 </View>
               </View>
             </View>
@@ -250,5 +248,16 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: DimensionHelper.hp(2),
     marginBottom: DimensionHelper.hp(1),
+  },
+  cardContentColumn: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'center',
+  },
+  statusBadgeTopRight: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 2,
   },
 });

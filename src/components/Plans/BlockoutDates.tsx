@@ -4,6 +4,7 @@ import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { Constants } from '@/src/helpers';
 import Icons from 'react-native-vector-icons/FontAwesome5';
 import { ApiHelper } from '@/src/helpers';
+import moment from 'moment';
 
 export const BlockoutDates = () => {
   const [blockoutDates, setBlockoutDates] = useState([]);
@@ -56,11 +57,11 @@ export const BlockoutDates = () => {
               <View style={styles.cardContent}>
                 <View style={styles.dateInfo}>
                   <Icons name="calendar-day" size={16} color="#1976d2" style={styles.icon} />
-                  <Text style={{ fontSize: 16, color: '#222', fontWeight: 'bold' }}>{date.startDate}</Text>
+                  <Text style={{ fontSize: 16, color: '#222', fontWeight: 'bold' }}>{moment(date.startDate).format('YYYY-MM-DD')}</Text>
                   {date.endDate && date.endDate !== date.startDate && (
                     <>
                       <Text style={styles.dateSeparator}>to</Text>
-                      <Text style={{ fontSize: 16, color: '#222', fontWeight: 'bold' }}>{date.endDate}</Text>
+                      <Text style={{ fontSize: 16, color: '#222', fontWeight: 'bold' }}>{moment(date.endDate).format('YYYY-MM-DD')}</Text>
                     </>
                   )}
                 </View>

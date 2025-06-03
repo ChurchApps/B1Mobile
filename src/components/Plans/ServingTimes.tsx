@@ -92,18 +92,18 @@ export const ServingTimes = ({ plans, positions, assignments, navigation }: Prop
       ) : (
         <View>
           {servingTimes.map((item, idx) => (
-            <View key={idx} style={styles.card}>
+            <View key={idx} style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: 'relative' }]}>
+              <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: '#1976d2' }]}>
+                <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
+              </View>
+              <View style={styles.roleBottomRight}>
+                <Icons name="user-tie" size={14} color={Constants.Colors.app_color} style={{ marginRight: 6 }} />
+                <Text style={{ fontSize: 16, color: '#222' }}>{item.position}</Text>
+              </View>
               <View style={styles.cardContent}>
                 <View style={styles.planInfo}>
                   <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#222' }} numberOfLines={1}>{item.planName}</Text>
-                  <Text style={{ fontSize: 16, color: '#222' }}>{item.serviceDate}</Text>
-                </View>
-                <View style={styles.roleInfo}>
-                  <Icons name="user-tie" size={14} color={Constants.Colors.app_color} style={styles.roleIcon} />
-                  <Text style={{ fontSize: 16, color: '#222' }}>{item.position}</Text>
-                </View>
-                <View style={[styles.statusBadge, { backgroundColor: '#1976d2' }]}> {/* Use blue for now */}
-                  <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
+                  <Text style={{ fontSize: 16, color: '#222' }}>{moment(item.serviceDate).format('YYYY-MM-DD')}</Text>
                 </View>
               </View>
             </View>
@@ -212,5 +212,19 @@ const styles = StyleSheet.create({
     color: '#666',
     marginTop: DimensionHelper.hp(2),
     marginBottom: DimensionHelper.hp(1),
+  },
+  statusBadgeTopRight: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 2,
+  },
+  roleBottomRight: {
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    zIndex: 2,
   },
 });
