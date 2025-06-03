@@ -12,7 +12,7 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused } from '@react-navigation/native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, Text, View, StyleSheet } from 'react-native';
+import { SafeAreaView, ScrollView, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface Props {
   navigation: NavigationProps
@@ -32,7 +32,7 @@ const PlanDetails = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const isFocused = useIsFocused();
-
+  const [selectedTab, setSelectedTab] = useState<'serviceOrder' | 'teams'>('serviceOrder');
 
   useEffect(() => {
     setErrorMessage('')
@@ -114,6 +114,21 @@ const PlanDetails = (props: Props) => {
           </View>
         </View>
       )}
+      {/* Tabs */}
+      <View style={styles.tabBar}>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'serviceOrder' && styles.activeTab]}
+          onPress={() => setSelectedTab('serviceOrder')}
+        >
+          <Text style={[styles.tabText, selectedTab === 'serviceOrder' && styles.activeTabText]}>Service Order</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'teams' && styles.activeTab]}
+          onPress={() => setSelectedTab('teams')}
+        >
+          <Text style={[styles.tabText, selectedTab === 'teams' && styles.activeTabText]}>Teams</Text>
+        </TouchableOpacity>
+      </View>
       {isLoading ? <Loader isLoading={isLoading} /> :
         errorMessage ? <View style={globalStyles.ErrorMessageView} >
           <Text style={globalStyles.searchMainText}>{errorMessage}</Text>
@@ -123,13 +138,15 @@ const PlanDetails = (props: Props) => {
               <View>
                 {getPositionDetails()}
                 {getNotes()}
-                {plan && <ServiceOrder plan={plan} />}
+                {selectedTab === 'serviceOrder' && plan && <ServiceOrder plan={plan} />}
+                {selectedTab === 'teams' && (
+                  <ScrollView nestedScrollEnabled={true} style={globalStyles.ScrollViewStyles}>
+                    <View style={globalStyles.ErrorMessageView}>
+                      {getTeams()}
+                    </View>
+                  </ScrollView>
+                )}
               </View>
-              <ScrollView nestedScrollEnabled={true} style={globalStyles.ScrollViewStyles}>
-                <View style={globalStyles.ErrorMessageView}>
-                  {getTeams()}
-                </View>
-              </ScrollView>
             </ScrollView>
           </>
       }
@@ -162,6 +179,35 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'white',
     marginLeft: DimensionHelper.wp(3),
+  },
+  tabBar: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+    marginHorizontal: DimensionHelper.wp(4),
+    marginBottom: DimensionHelper.hp(1),
+    marginTop: -DimensionHelper.hp(1),
+    overflow: 'hidden',
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: DimensionHelper.hp(1.2),
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  activeTab: {
+    backgroundColor: Constants.Colors.app_color,
+  },
+  tabText: {
+    color: Constants.Colors.Dark_Gray,
+    fontSize: DimensionHelper.wp(4),
+    fontWeight: '500',
+  },
+  activeTabText: {
+    color: 'white',
+    fontWeight: '700',
   },
 });
 
