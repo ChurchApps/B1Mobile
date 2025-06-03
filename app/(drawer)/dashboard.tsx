@@ -10,6 +10,7 @@ import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/n
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Dashboard = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -45,36 +46,37 @@ const Dashboard = () => {
     }
   }
 
+  const brandColor = '#175ec1';
   const getButton = (topItem: boolean, item: LinkInterface) => {
     if (item.linkType === "separator") return (<></>);
     let icon = null;
     switch (item.linkType.toLowerCase()) {
       case "groups":
-        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>👥</Text>;
+        icon = <MaterialCommunityIcons name="account-group" size={DimensionHelper.wp(10)} color={brandColor} />;
         break;
       case "checkin":
-        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>✅</Text>;
+        icon = <MaterialCommunityIcons name="checkbox-marked-circle-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
         break;
       case "donation":
-        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>💝</Text>;
+        icon = <MaterialCommunityIcons name="gift-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
         break;
       case "directory":
-        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>📇</Text>;
+        icon = <MaterialCommunityIcons name="card-account-details-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
         break;
       case "plans":
-        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>🗓️</Text>;
+        icon = <MaterialCommunityIcons name="calendar-month-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
         break;
       case "chums":
-        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>💻</Text>;
+        icon = <MaterialCommunityIcons name="laptop" size={DimensionHelper.wp(10)} color={brandColor} />;
         break;
       default:
-        icon = <Text style={{ fontSize: DimensionHelper.wp(10) }}>🔗</Text>;
+        icon = <MaterialCommunityIcons name="link-variant" size={DimensionHelper.wp(10)} color={brandColor} />;
         break;
     }
     return (
       <ImageButton key={item.id} icon={icon} text={item.text} onPress={() => {
         NavigationHelper.navigateToScreen(item, router.navigate)
-      }} />
+      }} color={brandColor} />
     );
   }
 
