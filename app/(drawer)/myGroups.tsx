@@ -117,11 +117,6 @@ const MyGroups = (props: any) => {
           contentContainerStyle={globalStyles.FlatListStyle}
           showsVerticalScrollIndicator={false}
           scrollEnabled={true}
-          ListHeaderComponent={() => (
-            <View style={globalStyles.TimeLineTitleView}>
-              <Text style={[globalStyles.eventTextStyle, globalStyles.LatestUpdateTextStyle]}>{mergeData && mergeData.length > 0 ? 'Latest Updates' : 'My Group'}</Text>
-            </View>
-          )}
           ListFooterComponent={() => (
             <View style={globalStyles.webViewContainer}>{getGroups()}</View>
           )}
