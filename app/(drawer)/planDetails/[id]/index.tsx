@@ -2,6 +2,7 @@ import React from 'react';
 import { Loader } from "@/src/components/Loader";
 import { PositionDetails } from "@/src/components/Plans/PositionDetails";
 import { Teams } from "@/src/components/Plans/Teams";
+import { ServiceOrder } from "@/src/components/Plans/ServiceOrder";
 import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "@/src/helpers";
 import { NavigationProps } from '@/src/interfaces';
@@ -119,6 +120,7 @@ const PlanDetails = (props: Props) => {
               <View>
                 {getPositionDetails()}
                 {getNotes()}
+                {plan && <ServiceOrder plan={plan} />}
               </View>
               <ScrollView nestedScrollEnabled={true} style={globalStyles.ScrollViewStyles}>
                 <View style={globalStyles.ErrorMessageView}>
