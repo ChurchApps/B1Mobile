@@ -9,6 +9,7 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, Text, View } from "react-native";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const MyGroups = (props: any) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -57,19 +58,22 @@ const MyGroups = (props: any) => {
     }
   }, [UserPost, UserGroups])
 
+  const brandColor = '#175ec1';
+
   const showGroups = (topItem: boolean, item: any) => {
     return (
-      <View style={{ marginHorizontal: 10 }}>
-        <ImageButton image={{ uri: item.photoUrl }} text={item.name} onPress={() => {
-          // props.navigation.navigate('GroupDetails', { group: item })
+      <ImageButton
+        icon={null}
+        text={item.name}
+        onPress={() => {
           router.navigate({
             pathname: '/groupDetails',
-            params: {
-              group: JSON.stringify(item)
-            }
+            params: { group: JSON.stringify(item) }
           })
-        }} />
-      </View>
+        }}
+        backgroundImage={item.photoUrl ? { uri: item.photoUrl } : require('@/src/assets/images/dash_worship.png')}
+        color="#fff"
+      />
     );
   };
 
@@ -79,8 +83,25 @@ const MyGroups = (props: any) => {
     )
   }
 
+  const getGroupsGrid = () => {
+    if (!Array.isArray(groups)) return null;
+    const rows = [];
+    for (let i = 0; i < groups.length; i += 2) {
+      rows.push(groups.slice(i, i + 2));
+    }
+    return (
+      <View style={{ marginTop: 15 }}>
+        {rows.map((row, rowIndex) => (
+          <View key={rowIndex} style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 16 }}>
+            {row.map((item, colIndex) => showGroups(false, item))}
+          </View>
+        ))}
+      </View>
+    );
+  };
+
   const getGroups = () => {
-    return (<FlatList data={groups} contentContainerStyle={{ marginTop: 15 }} renderItem={({ item }) => showGroups(false, item)} keyExtractor={(item: any) => item.id} />);
+    return getGroupsGrid();
   };
 
   return (
