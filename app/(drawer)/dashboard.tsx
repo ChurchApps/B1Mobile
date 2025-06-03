@@ -9,7 +9,7 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, SafeAreaView, Text, View } from 'react-native';
+import { Dimensions, FlatList, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
@@ -121,10 +121,10 @@ const Dashboard = (props: any) => {
         <MainHeader title="Home" openDrawer={() => {
           navigation.openDrawer()
         }} />
-        <View style={globalStyles.webViewContainer}>
+        <ScrollView style={globalStyles.webViewContainer} contentContainerStyle={{ flexGrow: 1 }}>
           {getBrand()}
           {getButtons()}
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </LoadingWrapper>
   )

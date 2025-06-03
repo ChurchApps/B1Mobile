@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { Constants } from '@/src/helpers/Constants';
 import { globalStyles } from '@/src/helpers/GlobalStyles';
+import { SongDialog } from './SongDialog';
 
 export interface PlanItemInterface {
   id: string;
@@ -65,6 +66,9 @@ export const PlanItem = (props: Props) => {
         </TouchableOpacity>
         <Text style={styles.descriptionText}>{props.planItem.description || ' '}</Text>
       </View>
+      {showSongDetails && (
+        <SongDialog arrangementKeyId={props.planItem.relatedId} onClose={() => setShowSongDetails(false)} />
+      )}
     </View>
   );
 
@@ -85,12 +89,6 @@ export const PlanItem = (props: Props) => {
   return (
     <>
       {getPlanItem()}
-      {/* TODO: Implement SongDialog component for mobile */}
-      {showSongDetails && (
-        <View style={styles.modalContainer}>
-          {/* Add song details modal here */}
-        </View>
-      )}
     </>
   );
 };
