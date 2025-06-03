@@ -46,7 +46,21 @@ export interface UserSearchInterface { toPersonId?: string, anniversary?: Date, 
 
 // Messaging interfaces
 export interface ConversationCheckInterface { id: string, churchId: string, conversationId: string, fromPersonId: string, toPersonId: string, notifyPersonId: string, conversation: ConversationInterface }
-export interface ConversationInterface { id: string, churchId: string, contentType: string, contentId: string, title: string, dateCreated: Date, groupId: string, visibility: string, firstPostId: string, lastPostId: string, allowAnonymousPosts: boolean, postCount: number, messages: MessageInterface[], conversationId: string }
+export interface ConversationInterface {
+  id?: string,
+  churchId?: string,
+  contentType?: string,
+  contentId?: string,
+  title?: string,
+  dateCreated?: Date,
+  groupId?: string,
+  visibility?: string,
+  firstPostId?: string,
+  lastPostId?: string,
+  allowAnonymousPosts?: boolean,
+  postCount?: number,
+  messages?: MessageInterface[]
+}
 
 export interface ConversationCreateInterface { allowAnonymousPosts: boolean, contentType: string, contentId: string, title: string, visibility: string, churchId: string, id: string }
 export interface PrivateMessagesCreate { fromPersonId: string, toPersonId: string, conversationId: string, churchId: string, id: string }

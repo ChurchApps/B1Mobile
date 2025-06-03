@@ -7,7 +7,7 @@ interface CustomConversationInterface {
   contentType: string;
   contentId: string;
   groupId: string;
-  from : string;
+  from: string;
 }
 
 const Conversations = ({
@@ -20,17 +20,20 @@ const Conversations = ({
     try {
       const conversations: ConversationInterface[] = contentId
         ? await ApiHelper.get(
-            "/conversations/" + contentType + "/" + contentId,
-            "MessagingApi"
-          )
+          "/conversations/" + contentType + "/" + contentId,
+          "MessagingApi"
+        )
         : [];
-  
+
       if (conversations.length > 0) {
         const peopleIds: string[] = [];
         const filteredConversations = conversations.filter((conversation) => {
+          if (!conversation.messages) return false;
+
           conversation.messages = conversation.messages.filter(
             (message) => message !== null
           );
+
           if (conversation.messages.length > 0) {
             conversation.messages.forEach((message: any) => {
               if (
@@ -40,7 +43,7 @@ const Conversations = ({
                 peopleIds.push(message.personId);
               }
             });
-            return true; 
+            return true;
           }
           return false;
         });
@@ -50,18 +53,20 @@ const Conversations = ({
         );
         people.reverse();
         filteredConversations.forEach((conversation) => {
-          conversation.messages.forEach((message: any) => {
-            if (message.personId) {
-              message.person = ArrayHelper.getOne(people, "id", message.personId);
-            }
-          });
+          if (conversation.messages) {
+            conversation.messages.forEach((message: any) => {
+              if (message.personId) {
+                message.person = ArrayHelper.getOne(people, "id", message.personId);
+              }
+            });
+          }
         });
         setConversations(filteredConversations);
       }
     } catch (error) {
       console.error("Error loading conversations:", error);
     }
-  }; 
+  };
   useEffect(() => {
     loadConversations();
   }, []);

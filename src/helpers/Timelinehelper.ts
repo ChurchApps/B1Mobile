@@ -61,7 +61,29 @@ export class TimelineHelper {
         existingPost.conversation = conv;
         if (conv.groupId) existingPost.groupId = conv.groupId;
       }
-      else allPosts.push({ postId: conv.contentId, postType: conv.contentType, groupId: conv.groupId, conversation: { ...conv, id: conv.id ?? '', churchId: conv.churchId ?? '', contentType: conv.contentType ?? '', contentId: conv.contentId ?? '', title: conv.title ?? '', dateCreated: conv.dateCreated ?? new Date(), groupId: conv.groupId ?? '', visibility: conv.visibility ?? '', firstPostId: conv.firstPostId ?? '', lastPostId: conv.lastPostId ?? '', allowAnonymousPosts: conv.allowAnonymousPosts ?? false, postCount: conv.postCount ?? 0, messages: conv.messages ?? [], conversationId: conv.conversationId ?? conv.id ?? '' } });
+      else {
+        const conversation: ConversationInterface = {
+          id: conv.id ?? '',
+          churchId: conv.churchId ?? '',
+          contentType: conv.contentType ?? '',
+          contentId: conv.contentId ?? '',
+          title: conv.title ?? '',
+          dateCreated: conv.dateCreated ?? new Date(),
+          groupId: conv.groupId ?? '',
+          visibility: conv.visibility ?? '',
+          firstPostId: conv.firstPostId ?? '',
+          lastPostId: conv.lastPostId ?? '',
+          allowAnonymousPosts: conv.allowAnonymousPosts ?? false,
+          postCount: conv.postCount ?? 0,
+          messages: conv.messages ?? []
+        };
+        allPosts.push({
+          postId: conv.contentId,
+          postType: conv.contentType,
+          groupId: conv.groupId,
+          conversation
+        });
+      }
     });
   }
 

@@ -26,7 +26,7 @@ const ConversationPopup = ({
 
   const validate = (message: MessageInterface) => {
     const result: string[] = [];
-    if (!message?.content.trim()) result.push("Please enter a note.");
+    if (!message?.content || !message.content.trim()) result.push("Please enter a note.");
     return result.length === 0;
   };
 

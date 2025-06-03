@@ -31,3 +31,18 @@ export const logAnalyticsEvent = async (eventName: string, parameters?: any) => 
     console.log('Analytics event logging error:', error);
   }
 };
+
+export const testFirebaseFeatures = async (): Promise<boolean> => {
+  try {
+    const app = getApp();
+    const analytics = getAnalytics(app);
+
+    // Test analytics
+    await logEvent(analytics, 'test_event', { test: true });
+
+    return true;
+  } catch (error) {
+    console.error('Firebase features test failed:', error);
+    return false;
+  }
+};
