@@ -90,10 +90,14 @@ const MyGroups = (props: any) => {
       rows.push(groups.slice(i, i + 2));
     }
     return (
-      <View style={{ marginTop: 15 }}>
+      <View style={{ marginTop: 15, paddingHorizontal: 16 }}>
         {rows.map((row, rowIndex) => (
-          <View key={rowIndex} style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 16 }}>
-            {row.map((item, colIndex) => showGroups(false, item))}
+          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 16 }}>
+            {row.map((item, colIndex) => (
+              <View key={colIndex} style={{ flex: 1, alignItems: "center" }}>
+                {showGroups(false, item)}
+              </View>
+            ))}
           </View>
         ))}
       </View>

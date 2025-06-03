@@ -39,11 +39,11 @@ export function ImageButton(props: Props) {
       alignItems: 'center',
       justifyContent: 'center',
       marginVertical: DimensionHelper.wp(2),
-      marginHorizontal: DimensionHelper.wp(2),
+      marginHorizontal: 0,
       backgroundColor: pressed ? '#f0f4fa' : 'white',
       width: DimensionHelper.wp(38),
       height: DimensionHelper.wp(32),
-      borderRadius: DimensionHelper.wp(3),
+      borderRadius: DimensionHelper.wp(4.5),
       overflow: 'hidden',
       elevation: 3,
       shadowColor: '#000',
@@ -67,10 +67,11 @@ export function ImageButton(props: Props) {
     },
     text: {
       color: props.backgroundImage ? '#fff' : (props.color || '#175ec1'),
-      fontSize: DimensionHelper.wp(4.5),
-      fontWeight: '700',
+      fontSize: DimensionHelper.wp(5.5),
+      fontWeight: 'bold',
       textAlign: 'center',
-      marginTop: DimensionHelper.wp(1),
+      marginTop: props.icon ? DimensionHelper.wp(1) : 0,
+      marginBottom: props.icon ? 0 : DimensionHelper.wp(1),
       fontFamily: 'System',
       zIndex: 2,
       textShadowColor: props.backgroundImage ? 'rgba(0,0,0,0.7)' : 'transparent',
@@ -79,7 +80,7 @@ export function ImageButton(props: Props) {
     },
     content: {
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: props.icon ? 'center' : 'center',
       width: '100%',
       height: '100%',
       zIndex: 2,
@@ -99,11 +100,12 @@ export function ImageButton(props: Props) {
         )}
         {props.backgroundImage && <View style={styles.overlay} />}
         <View style={styles.content}>
-          <View style={styles.icon}>{
-            props.backgroundImage && React.isValidElement(props.icon)
+          <View style={styles.icon}>
+            {props.backgroundImage && React.isValidElement(props.icon)
               ? React.cloneElement(props.icon as React.ReactElement<any>, { color: '#fff' })
               : props.icon
-          }</View>
+            }
+          </View>
           <Text style={styles.text}>{props.text}</Text>
         </View>
       </Pressable>
