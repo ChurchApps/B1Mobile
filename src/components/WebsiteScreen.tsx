@@ -6,6 +6,7 @@ import WebView from 'react-native-webview';
 import { CacheHelper, globalStyles } from '../../src/helpers';
 import { Loader } from './Loader';
 import { MainHeader } from './wrapper/MainHeader';
+import { UserHelper } from "../helpers/UserHelper";
 
 interface WebsiteScreenProps {
   url: any;
@@ -23,6 +24,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });
     if (!CacheHelper.church) router.navigate('/(drawer)/churchSearch');
+    UserHelper.addOpenScreenEvent("Website Screen", { url });
 
   }, []);
 

@@ -1,6 +1,6 @@
 import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
 import { Platform } from "react-native";
-// import { logAnalyticsEvent } from "../config/firebase";
+import { logAnalyticsEvent } from "../config/firebase";
 import { CacheHelper } from "./CacheHelper";
 import { AppearanceInterface, ChurchInterface, IPermission, LoginUserChurchInterface, UserInterface } from "./Interfaces";
 import { PushNotificationHelper } from "./PushNotificationHelper";
@@ -41,17 +41,16 @@ export class UserHelper {
   }
 
   static async addAnalyticsEvent(eventName: string, dataBody: any) {
-    // logAnalyticsEvent(eventName, dataBody);
-    console.log('Analytics event (disabled):', eventName, dataBody);
+    await logAnalyticsEvent(eventName, dataBody);
   }
 
-  static async addOpenScreenEvent(screenName: string) {
-    // await analytics().logEvent("page_view", {
-    //   id: Date.now(),
-    //   device: Platform.OS,
-    //   page: screenName,
-    // });
-    console.log('Screen view:', screenName);
+  static async addOpenScreenEvent(screenName: string, parameters?: any) {
+    await logAnalyticsEvent("page_view", {
+      id: Date.now(),
+      device: Platform.OS,
+      page: screenName,
+      ...parameters
+    });
   }
 
 

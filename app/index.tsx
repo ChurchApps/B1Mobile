@@ -51,6 +51,7 @@ const SplashScreen = (props: Props) => {
     ErrorHelper.init();
     //ApiHelper.onRequest = (url:string, requestOptions:any) => { console.log("Request: ", url, requestOptions); }
     ApiHelper.onError = (url: string, requestOptions: any, error: any) => { console.log("***API Error: ", url, requestOptions, error); }
+    UserHelper.addOpenScreenEvent("Splash Screen");
   }, []);
 
 

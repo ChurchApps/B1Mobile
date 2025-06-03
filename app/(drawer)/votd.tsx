@@ -7,6 +7,7 @@ import { globalStyles } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useNavigation } from 'expo-router';
+import { UserHelper } from "../../src/helpers/UserHelper";
 
 interface Props {
   navigation: NavigationProps;
@@ -40,7 +41,7 @@ const Votd = (props: Props) => {
   }
 
   React.useEffect(() => {
-    // Utilities.trackEvent("VOTD Screen");
+    UserHelper.addOpenScreenEvent("VOTD Screen");
     getShape();
     Dimensions.addEventListener("change", getShape);
   }, []);

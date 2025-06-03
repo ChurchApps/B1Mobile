@@ -31,6 +31,12 @@ const Donation = (props: Props) => {
 
   useEffect(() => { if (isFocused) loadData() }, [isFocused])
 
+  useEffect(() => {
+    // ... existing code ...
+    UserHelper.addOpenScreenEvent("Donation Screen");
+    // ... rest of the code ...
+  }, []);
+
   // initialise stripe
   const loadData = async () => {
     // Utilities.trackEvent("Donation Screen");

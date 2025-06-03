@@ -25,7 +25,7 @@ const MembersSearch = (props: Props) => {
   useEffect(() => {
     // Utilities.trackEvent("Member Search Screen");
     loadMembers()
-    UserHelper.addOpenScreenEvent('MembersSearch');
+    UserHelper.addOpenScreenEvent("Member Search Screen");
   }, [])
 
   const loadMembers = () => {

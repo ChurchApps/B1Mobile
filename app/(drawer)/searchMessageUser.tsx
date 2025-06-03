@@ -26,7 +26,7 @@ const SearchMessageUser = (props: Props) => {
     // Utilities.trackEvent("User search Screen");
     // GetRecentList();
     getPreviousConversations();
-    UserHelper.addOpenScreenEvent('SearchMessageUser');
+    UserHelper.addOpenScreenEvent("User Search Screen");
   }, [])
 
   const getPreviousConversations = () => {

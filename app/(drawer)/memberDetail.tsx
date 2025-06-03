@@ -36,7 +36,7 @@ const MemberDetail = (props: Props) => {
   useEffect(() => {
     // Utilities.trackEvent("Member Detail Screen");
     getHouseholdMembersList();
-    UserHelper.addOpenScreenEvent('MemberDetailScreen');
+    UserHelper.addOpenScreenEvent("Member Detail Screen");
   }, [])
 
   const onEmailClick = (email: string) => {

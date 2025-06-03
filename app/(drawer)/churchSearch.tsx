@@ -22,7 +22,7 @@ const ChurchSearch = () => {
   useEffect(() => {
     // Utilities.trackEvent("Church Search Screen");
     GetRecentList();
-    UserHelper.addOpenScreenEvent('ChurchSearch');
+    UserHelper.addOpenScreenEvent("Church Search Screen");
   }, [])
 
   const churchSelection = async (churchData: ChurchInterface) => {
