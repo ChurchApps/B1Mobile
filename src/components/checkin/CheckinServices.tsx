@@ -1,5 +1,6 @@
 import { ApiHelper, CheckinHelper, PersonInterface, UserHelper, globalStyles } from '@/src/helpers';
-import { ArrayHelper, DimensionHelper, ErrorHelper } from '@churchapps/mobilehelper';
+import { ArrayHelper, ErrorHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { Loader } from '../Loader';
@@ -90,7 +91,7 @@ export const CheckinServices = (props: Props) => {
   const renderGroupItem = (item: any) => {
     return (
       <View>
-        <TouchableOpacity style={[globalStyles.listMainView, globalStyles.groupListView, { width: DimensionHelper.wp('90%') }]} onPress={() => ServiceSelection(item)}>
+        <TouchableOpacity style={[globalStyles.listMainView, globalStyles.groupListView, { width: DimensionHelper.wp(90) }]} onPress={() => ServiceSelection(item)}>
           <Text style={globalStyles.groupListTitle} numberOfLines={1}>{item.campus.name} - {item.name}</Text>
         </TouchableOpacity>
       </View>

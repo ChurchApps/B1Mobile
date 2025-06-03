@@ -1,5 +1,6 @@
 import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface, globalStyles } from '@/src/helpers';
-import { DimensionHelper, ErrorHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
+import { ErrorHelper } from '@churchapps/mobilehelper';
 import React, { useState } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -46,8 +47,8 @@ export const CheckinHousehold = (props: Props) => {
 
   const renderMemberItem = (item: any) => (
     <View>
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp('90%') }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
-        <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={DimensionHelper.wp('6%')} />
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
+        <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />
         <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={globalStyles.memberListIcon} />
         <View style={globalStyles.memberListTextView}>
           <Text style={[globalStyles.listTitleText, globalStyles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
@@ -63,9 +64,9 @@ export const CheckinHousehold = (props: Props) => {
         </View>
       </TouchableOpacity>
       {selected == item.id && item.serviceTimes && item.serviceTimes.map((item_time: any) => (
-        <View style={{ ...globalStyles.classesView, borderBottomWidth: (item_time.id == item.serviceTimes[item.serviceTimes.length - 1]?.id) ? 0 : 1, width: DimensionHelper.wp('90%') }} key={`service-time-${item_time.id}`}>
+        <View style={{ ...globalStyles.classesView, borderBottomWidth: (item_time.id == item.serviceTimes[item.serviceTimes.length - 1]?.id) ? 0 : 1, width: DimensionHelper.wp(90) }} key={`service-time-${item_time.id}`}>
           <View style={globalStyles.classesTimeView}>
-            <Icon name={'clock-o'} style={globalStyles.timeIcon} size={DimensionHelper.wp('5%')} />
+            <Icon name={'clock-o'} style={globalStyles.timeIcon} size={DimensionHelper.wp(5)} />
             <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
           </View>
           <TouchableOpacity style={{ ...globalStyles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
@@ -83,7 +84,7 @@ export const CheckinHousehold = (props: Props) => {
   else return (
     <>
       <FlatList data={CheckinHelper.householdMembers} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
-      <BottomButton title="CHECKIN" onPress={() => submitAttendance()} style={DimensionHelper.wp('100%')} />
+      <BottomButton title="CHECKIN" onPress={() => submitAttendance()} style={DimensionHelper.wp(100)} />
     </>
   );
 };

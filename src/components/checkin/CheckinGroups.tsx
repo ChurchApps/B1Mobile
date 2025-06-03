@@ -1,5 +1,6 @@
 import { CheckinHelper, PersonInterface, ServiceTimeInterface, UserHelper, globalStyles } from '@/src/helpers';
-import { ArrayHelper, DimensionHelper } from '@churchapps/mobilehelper';
+import { ArrayHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -31,14 +32,14 @@ export const CheckinGroups = (props: Props) => {
 
   const renderGroupItem = (item: any) => (
     <View>
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp('90%') }]} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
-        <Icon name={selected == item.key ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={DimensionHelper.wp('6%')} />
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => { setSelected(selected != item.key ? item.key : null) }}>
+        <Icon name={selected == item.key ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />
         <View style={globalStyles.listTextView}>
           <Text style={[globalStyles.groupListTitle, globalStyles.groupMainTitle]} numberOfLines={1}>{item.name}</Text>
         </View>
       </TouchableOpacity>
       {selected == item.key && item.items.map((item_group: any) => (
-        <View style={{ ...globalStyles.groupView, borderBottomWidth: (item_group.id == item.items[item.items.length - 1]?.id) ? 0 : 1, width: DimensionHelper.wp('80%') }} key={`group-item-${item_group.id}`}>
+        <View style={{ ...globalStyles.groupView, borderBottomWidth: (item_group.id == item.items[item.items.length - 1]?.id) ? 0 : 1, width: DimensionHelper.wp(80) }} key={`group-item-${item_group.id}`}>
           <TouchableOpacity style={globalStyles.groupBtn} onPress={() => selectGroup(item_group)}>
             <Text style={globalStyles.groupText}> {item_group.name} </Text>
           </TouchableOpacity>
@@ -50,7 +51,7 @@ export const CheckinGroups = (props: Props) => {
   return (
     <>
       <FlatList data={CheckinHelper.groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
-      <BottomButton title="NONE" onPress={() => selectGroup(null)} style={DimensionHelper.wp('100%')} />
+      <BottomButton title="NONE" onPress={() => selectGroup(null)} style={DimensionHelper.wp(100)} />
     </>
   );
 };

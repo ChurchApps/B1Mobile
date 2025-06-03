@@ -1,5 +1,5 @@
 import { Constants } from "@/src/helpers";
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -16,7 +16,7 @@ const CheckBox = (props: Props) => {
   return (
     <View style={styles.container}>
       <Pressable onPress={props.onPress}>
-        <MaterialCommunityIcons name={iconName} size={DimensionHelper.wp('8%')} color={Constants.Colors.app_color} />
+        <MaterialCommunityIcons name={iconName} size={DimensionHelper.wp(8)} color={Constants.Colors.app_color} />
       </Pressable>
       <Text style={styles.title}>{props.title}</Text>
     </View>

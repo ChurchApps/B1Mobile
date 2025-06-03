@@ -376,7 +376,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 backgroundColor: Constants.Colors.button_bg,
                 borderTopLeftRadius: 0,
                 borderBottomLeftRadius: 0,
-                width: DimensionHelper.wp("26%"),
+                width: DimensionHelper.wp(26),
               }}
               onPress={() => handleSave()}
               disabled={isSaving || isDeleting}

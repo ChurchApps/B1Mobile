@@ -77,7 +77,6 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
             <ModalDatePicker
               button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
               locale="en"
-
               onSelect={(date: Date) => {
                 const selectedDate = new Date(date);
                 selectedDate.setHours(23, 59, 59, 999);

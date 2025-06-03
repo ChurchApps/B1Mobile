@@ -6,7 +6,7 @@ import { CheckinServices } from "@/src/components/checkin/CheckinServices";
 import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper, globalStyles } from "@/src/helpers";
 import { NavigationProps } from "@/src/interfaces";
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";

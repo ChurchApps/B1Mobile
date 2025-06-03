@@ -5,7 +5,7 @@ import { Teams } from "@/src/components/Plans/Teams";
 import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "@/src/helpers";
 import { NavigationProps } from '@/src/interfaces';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import Icons from '@expo/vector-icons/MaterialIcons';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused } from '@react-navigation/native';
@@ -95,10 +95,10 @@ const PlanDetails = (props: Props) => {
   const getNotes = () => {
     if (!plan?.notes) return null;
     return (
-      <View style={[globalStyles.FlatlistViewStyle, { paddingTop: DimensionHelper.hp('2%') }]} key={plan.id} >
-        <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp('3%'), color: Constants.Colors.app_color }]}>Notes</Text>
-        <View style={{ paddingTop: DimensionHelper.hp('1.5%') }}>
-          <Text style={[globalStyles.planTextStyle, { paddingLeft: DimensionHelper.wp('3%') }]}>{plan.notes.replace("\n", "<br />")}</Text>
+      <View style={[globalStyles.FlatlistViewStyle, { paddingTop: DimensionHelper.hp(2) }]} key={plan.id} >
+        <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3), color: Constants.Colors.app_color }]}>Notes</Text>
+        <View style={{ paddingTop: DimensionHelper.hp(1.5) }}>
+          <Text style={[globalStyles.planTextStyle, { paddingLeft: DimensionHelper.wp(3) }]}>{plan.notes.replace("\n", "<br />")}</Text>
         </View>
       </View>
     )
@@ -115,8 +115,8 @@ const PlanDetails = (props: Props) => {
             <ScrollView scrollEnabled={true} showsVerticalScrollIndicator={false} style={globalStyles.ScrollViewStyles} >
               {plan ?
                 <View style={globalStyles.planTitleView}>
-                  <Icons name='assignment' size={DimensionHelper.wp('5.5%')} />
-                  <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp('3%') }]}>{plan?.name}</Text>
+                  <Icons name='assignment' size={DimensionHelper.wp(5.5)} />
+                  <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3) }]}>{plan?.name}</Text>
                 </View> : null}
               <View>
                 {getPositionDetails()}

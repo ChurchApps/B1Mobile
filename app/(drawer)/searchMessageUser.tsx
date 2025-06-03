@@ -3,7 +3,7 @@ import { BlueHeader } from '@/src/components/BlueHeader';
 import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { NavigationProps } from '@/src/interfaces';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { router, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -63,10 +63,10 @@ const SearchMessageUser = (props: Props) => {
   const renderUserItem = (item: UserSearchInterface) => {
     const userImage = item.photo
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: DimensionHelper.wp('90%') }]} onPress={() => userSelection(item)}>
+      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: DimensionHelper.wp(90) }]} onPress={() => userSelection(item)}>
         {
           userImage ? <Image source={{ uri: userImage }} style={globalStyles.churchListIcon} /> :
-            <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%') }]} />
+            <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9) }]} />
         }
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText}>{item.name.display}</Text>
@@ -97,10 +97,10 @@ const SearchMessageUser = (props: Props) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <View style={globalStyles.grayContainer}>
             <Text style={globalStyles.searchMainText}>Search for a person</Text>
-            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
               <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
               <TextInput
-                style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]}
+                style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]}
                 placeholder={'Name'}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -110,7 +110,7 @@ const SearchMessageUser = (props: Props) => {
                 onChangeText={(text) => { setSearchText(text) }}
               />
             </View>
-            <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: DimensionHelper.wp('6%'), width: DimensionHelper.wp('90%') }} onPress={() => searchUserApiCall(searchText)}>
+            <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: DimensionHelper.wp(6), width: DimensionHelper.wp(90) }} onPress={() => searchUserApiCall(searchText)}>
               {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
             </TouchableOpacity>
           </View>

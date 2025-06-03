@@ -7,7 +7,7 @@ import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, ArrayHelper, globalStyles } from "@/src/helpers";
 import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface, UserSearchInterface } from "@/src/helpers/Interfaces";
 import { NavigationProps } from "@/src/interfaces";
-import { DimensionHelper } from "@churchapps/mobilehelper";
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import Icons from '@expo/vector-icons/MaterialIcons';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useNavigation } from 'expo-router';
@@ -61,8 +61,8 @@ const Plan = (props: Props) => {
         <>
           <ScrollView showsVerticalScrollIndicator={false} style={globalStyles.ScrollViewStyles}>
             <View style={globalStyles.planTitleView}>
-              <Icons name='assignment' size={DimensionHelper.wp('5.5%')} />
-              <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp('3%') }]}>Plans</Text>
+              <Icons name='assignment' size={DimensionHelper.wp(5.5)} />
+              <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3) }]}>Plans</Text>
             </View>
             <ServingTimes assignments={assignments} positions={positions} plans={plans} navigation={navigation} />
             <UpcomingDates assignments={assignments} positions={positions} plans={plans} times={times} />
