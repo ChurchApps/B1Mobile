@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Text, Pressable, View, Animated } from "react-native";
+import { StyleSheet, Text, Pressable, View, Animated, Image, ImageSourcePropType } from "react-native";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 
 interface Props {
@@ -7,6 +7,7 @@ interface Props {
   text: string,
   onPress: () => void,
   color?: string,
+  backgroundImage?: ImageSourcePropType,
 }
 
 export function ImageButton(props: Props) {
@@ -43,22 +44,45 @@ export function ImageButton(props: Props) {
       width: DimensionHelper.wp(38),
       height: DimensionHelper.wp(32),
       borderRadius: DimensionHelper.wp(3),
+      overflow: 'hidden',
       elevation: 3,
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.08,
       shadowRadius: 4,
     },
+    backgroundImage: {
+      ...StyleSheet.absoluteFillObject,
+      width: '100%',
+      height: '100%',
+      resizeMode: 'cover',
+    },
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0,0,0,0.45)',
+    },
     icon: {
       marginBottom: DimensionHelper.wp(2),
+      zIndex: 2,
     },
     text: {
-      color: props.color || '#175ec1',
+      color: props.backgroundImage ? '#fff' : (props.color || '#175ec1'),
       fontSize: DimensionHelper.wp(4.5),
       fontWeight: '700',
       textAlign: 'center',
       marginTop: DimensionHelper.wp(1),
       fontFamily: 'System',
+      zIndex: 2,
+      textShadowColor: props.backgroundImage ? 'rgba(0,0,0,0.7)' : 'transparent',
+      textShadowOffset: props.backgroundImage ? { width: 0, height: 1 } : undefined,
+      textShadowRadius: props.backgroundImage ? 2 : undefined,
+    },
+    content: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      height: '100%',
+      zIndex: 2,
     },
   });
 
@@ -70,8 +94,18 @@ export function ImageButton(props: Props) {
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
       >
-        <View style={styles.icon}>{props.icon}</View>
-        <Text style={styles.text}>{props.text}</Text>
+        {props.backgroundImage && (
+          <Image source={props.backgroundImage} style={styles.backgroundImage} />
+        )}
+        {props.backgroundImage && <View style={styles.overlay} />}
+        <View style={styles.content}>
+          <View style={styles.icon}>{
+            props.backgroundImage && React.isValidElement(props.icon)
+              ? React.cloneElement(props.icon as React.ReactElement<any>, { color: '#fff' })
+              : props.icon
+          }</View>
+          <Text style={styles.text}>{props.text}</Text>
+        </View>
       </Pressable>
     </Animated.View>
   );

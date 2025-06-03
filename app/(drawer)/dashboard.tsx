@@ -50,33 +50,41 @@ const Dashboard = () => {
   const getButton = (topItem: boolean, item: LinkInterface) => {
     if (item.linkType === "separator") return (<></>);
     let icon = null;
+    let backgroundImage = undefined;
     switch (item.linkType.toLowerCase()) {
       case "groups":
         icon = <MaterialCommunityIcons name="account-group" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_worship.png');
         break;
       case "checkin":
         icon = <MaterialCommunityIcons name="checkbox-marked-circle-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_checkin.png');
         break;
       case "donation":
         icon = <MaterialCommunityIcons name="gift-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_donation.png');
         break;
       case "directory":
         icon = <MaterialCommunityIcons name="card-account-details-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_directory.png');
         break;
       case "plans":
         icon = <MaterialCommunityIcons name="calendar-month-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_votd.png');
         break;
       case "chums":
         icon = <MaterialCommunityIcons name="laptop" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_url.png');
         break;
       default:
         icon = <MaterialCommunityIcons name="link-variant" size={DimensionHelper.wp(10)} color={brandColor} />;
+        backgroundImage = require('@/src/assets/images/dash_url.png');
         break;
     }
     return (
       <ImageButton key={item.id} icon={icon} text={item.text} onPress={() => {
         NavigationHelper.navigateToScreen(item, router.navigate)
-      }} color={brandColor} />
+      }} color={brandColor} backgroundImage={backgroundImage} />
     );
   }
 
