@@ -43,7 +43,6 @@ const Dashboard = () => {
       router.navigate('/(drawer)/churchSearch')
       // router.navigate('/churchSearch')
     }
-    else console.log("else");
   }
 
   const getButton = (topItem: boolean, item: LinkInterface) => {

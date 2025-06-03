@@ -55,35 +55,6 @@ const SplashScreen = (props: Props) => {
   useEffect(() => { init(); }, [])
 
 
-
-
-  /*
-  const setUserDataOld = async (user: any, churchString:string, churchesString:string) => {
-    UserHelper.user = JSON.parse(user);
-    ApiHelper.setDefaultPermissions((UserHelper.user as any).jwt || "");
-
-    let church: ChurchInterface | null = null
-    let userChurch: LoginUserChurchInterface | null = null;
-    if (churchString) church = JSON.parse(churchString);
-    if (church?.id) {
-      userChurch = await ApiHelper.post("/churches/select", { churchId: church.id }, "MembershipApi");
-      //I think this is what's causing the splash screen to hang sometimes.
-      if (userChurch?.church?.id) await UserHelper.setCurrentUserChurch(userChurch);
-      else await AsyncStorage.setItem('USER_DATA', "")
-    }
-    UserHelper.churches = (churchesString) ? JSON.parse(churchesString) : [];
-    userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
-    ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
-    await UserHelper.setPersonRecord()
-    if (ApiHelper.isAuthenticated) PushNotificationHelper.registerUserDevice();
-  }
-  */
-
-  // const setUserDataNew = async () => {
-  //   const user = UserHelper.user;
-  //   const data = await ApiHelper.postAnonymous("/users/login", {jwt: user.jwt}, "MembershipApi");
-  //   if (data.user != null) await UserHelper.handleLogin(data);
-  // }
   const setUserDataNew = async () => {
     const user = UserHelper.user;
     const data = await ApiHelper.postAnonymous("/users/login", { jwt: user.jwt }, "MembershipApi");

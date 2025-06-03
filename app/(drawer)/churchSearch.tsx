@@ -41,6 +41,7 @@ const ChurchSearch = () => {
         church: churchData.name,
       });
       //await UserHelper.setCurrentUserChurch(userChurch);
+      console.log("SET PERSON RECORD");
       if (UserHelper.user) UserHelper.setPersonRecord();
       router.navigate('/(drawer)/dashboard')
       //DevSettings.reload()
