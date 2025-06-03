@@ -2,7 +2,8 @@ import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import React, { useState } from "react";
 import { FlatList, Keyboard, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { ApiHelper, Constants, ConversationInterface, MessageInterface, UserHelper, globalStyles } from "@/src/helpers";
+import { ApiHelper, Constants, ConversationInterface, UserHelper, globalStyles } from "@/src/helpers";
+import { MessageInterface } from "@churchapps/helpers";
 import Notes from "./Notes";
 
 interface NewConversation {

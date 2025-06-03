@@ -54,14 +54,14 @@ export class TimelineHelper {
   }
 
   static mergeConversations(allPosts: TimelinePostInterface[], initialConversations: ConversationInterface[]) {
-    allPosts.forEach(p => { p.conversation = {} })
+    allPosts.forEach(p => { p.conversation = undefined })
     initialConversations.forEach((conv) => {
       let existingPost = ArrayHelper.getOne(allPosts, "postId", conv.contentId);
       if (existingPost) {
         existingPost.conversation = conv;
         if (conv.groupId) existingPost.groupId = conv.groupId;
       }
-      else allPosts.push({ postId: conv.contentId, postType: conv.contentType, groupId: conv.groupId, conversation: conv });
+      else allPosts.push({ postId: conv.contentId, postType: conv.contentType, groupId: conv.groupId, conversation: { ...conv, id: conv.id ?? '', churchId: conv.churchId ?? '', contentType: conv.contentType ?? '', contentId: conv.contentId ?? '', title: conv.title ?? '', dateCreated: conv.dateCreated ?? new Date(), groupId: conv.groupId ?? '', visibility: conv.visibility ?? '', firstPostId: conv.firstPostId ?? '', lastPostId: conv.lastPostId ?? '', allowAnonymousPosts: conv.allowAnonymousPosts ?? false, postCount: conv.postCount ?? 0, messages: conv.messages ?? [], conversationId: conv.conversationId ?? conv.id ?? '' } });
     });
   }
 
@@ -119,10 +119,10 @@ export class TimelineHelper {
 
       if (p.timeSent) p.timeSent = new Date(p.timeSent);
       if (!p.timeSent) {
-        if (p?.conversation?.messages?.length > 0) p.timeSent = p.conversation?.messages[0].timeSent || defaultDate;
+        if (p?.conversation?.messages && p.conversation.messages.length > 0) p.timeSent = p.conversation.messages[0].timeSent || defaultDate;
         else p.timeSent = defaultDate;
       }
-      if (p?.conversation?.messages?.length > 0) p.timeUpdated = p.conversation?.messages[p.conversation.messages.length - 1].timeSent
+      if (p?.conversation?.messages && p.conversation.messages.length > 0) p.timeUpdated = p.conversation.messages[p.conversation.messages.length - 1].timeSent
       else p.timeUpdated = p.timeSent;
 
 

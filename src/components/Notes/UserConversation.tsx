@@ -1,8 +1,8 @@
-import { MessageInterface } from "@churchapps/mobilehelper";
+import { MessageInterface, ConversationInterface } from "@churchapps/helpers";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
-import { ApiHelper, ArrayHelper, ConversationInterface } from "@/src/helpers";
+import { ApiHelper, ArrayHelper } from "@/src/helpers";
 import { AddNote } from "./AddNote";
 import Note from "./Note";
 import Notes from "./Notes";
@@ -21,7 +21,7 @@ const UserConversations = ({
   createConversation,
   onUpdate
 }: CustomConversationInterface) => {
-  const [conversations, setConversations] = useState<ConversationInterface[]>([]);
+  const [conversations, setConversations] = useState<{ messages?: MessageInterface[] }[]>([]);
   const [editMessageId, setEditMessageId] = React.useState('')
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
 
@@ -48,7 +48,7 @@ const UserConversations = ({
         groupedMessages[message.conversationId].push(message);
       });
       conversations = Object.values(groupedMessages).map((messages) => ({
-        messages: messages.map((msg) => ({
+        messages: (messages ?? []).map((msg) => ({
           ...msg,
           postCount: conversation.postCount,
           person: ArrayHelper.getOne(people, "id", msg.personId)
@@ -110,13 +110,13 @@ const UserConversations = ({
         <FlatList
           data={conversations}
           renderItem={({ item, index }) => renderConversations(item, index)}
-          keyExtractor={(item, index) => item.id}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
-      {conversation && conversation?.messages?.length > 0 ?
-        <AddNote type="reply" conversationId={conversation.id} onUpdate={loadConversations} createConversation={async () => (conversation.id)} messageId={editMessageId} />
+      {conversation && Array.isArray(conversation?.messages) && conversation.messages.length > 0 ?
+        <AddNote type="reply" conversationId={conversation.id} onUpdate={loadConversations} createConversation={async () => (conversation.id ?? "")} messageId={editMessageId} />
         :
-        <AddNote type="new" conversationId={conversationId} onUpdate={loadConversations} createConversation={createConversation} messageId={editMessageId} />}
+        <AddNote type="new" conversationId={conversationId} onUpdate={loadConversations} createConversation={async () => (await createConversation()) ?? ""} messageId={editMessageId} />}
     </View>
   )
 }

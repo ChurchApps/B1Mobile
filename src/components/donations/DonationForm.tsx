@@ -297,7 +297,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       />
       <InputBox
         title="Donate"
-        headerIcon={<Image source={Constants.Images.ic_give} style={[globalStyles.donationIcon, { marginLeft: DimensionHelper.wp('4%') }]} />}
+        headerIcon={<Image source={Constants.Images.ic_give} style={[globalStyles.donationIcon, { marginLeft: DimensionHelper.wp(4) }]} />}
         saveFunction={donationType ? handleSave : undefined}
         cancelFunction={donationType ? handleCancel : undefined}
       >
@@ -377,7 +377,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     dropDownDirection="BOTTOM"
                   />
                 </View>
-                : <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp('90%'), height: DimensionHelper.wp('14%'), padding: 10, marginTop: DimensionHelper.wp('3%') }]}>
+                : <View style={[globalStyles.donationInputFieldContainer, { width: DimensionHelper.wp(90), height: DimensionHelper.wp(14), padding: 10, marginTop: DimensionHelper.wp(3) }]}>
                   <CardField
                     postalCodeEnabled={true}
                     placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }}
@@ -446,7 +446,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
               <FundDonations funds={funds} fundDonations={fundDonations} updatedFunction={handleFundDonationsChange} />
               {total >= 1 && (
                 <View style={globalStyles.feesContainer}>
-                  <IconP name={toggleIcon} color={Constants.Colors.app_color} style={globalStyles.checkBox} size={DimensionHelper.wp('4.5%')} onPress={handleCheckboxPress} />
+                  <IconP name={toggleIcon} color={Constants.Colors.app_color} style={globalStyles.checkBox} size={DimensionHelper.wp(4.5)} onPress={handleCheckboxPress} />
                   <Text style={globalStyles.feesText}>
                     I'll generously add {CurrencyHelper.formatCurrency(transactionFee)} to cover the transaction fees so you can keep 100% of my donation.
                   </Text>

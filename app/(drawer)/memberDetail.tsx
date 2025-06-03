@@ -30,7 +30,7 @@ const MemberDetail = (props: Props) => {
   const memberinfo = parsedMember?.contactInfo;
   const [isLoading, setLoading] = useState(false);
   const [householdList, setHouseholdList] = useState([]);
-  const scrollViewRef = useRef<any>();
+  const scrollViewRef = useRef<any>(null);
 
 
   useEffect(() => {

@@ -19,7 +19,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
 
   const [isLoading, setLoading] = useState(false);
   const [currentUrl, setCurrentUrl] = useState('');
-  const webviewRef = useRef<any>();
+  const webviewRef = useRef<any>(null);
 
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });

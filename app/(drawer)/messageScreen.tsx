@@ -3,7 +3,9 @@ import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useEffect, useState } from 'react';
 
-import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, EnvironmentHelper, MessageInterface, PrivateMessagesCreate, UserHelper, UserSearchInterface, globalStyles } from "@/src/helpers";
+import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, EnvironmentHelper, UserHelper, UserSearchInterface, globalStyles } from "@/src/helpers";
+import { MessageInterface } from "@churchapps/helpers";
+import { PrivateMessagesCreate } from "@/src/helpers/Interfaces";
 import { eventBus } from '@/src/helpers/PushNotificationHelper';
 import { NavigationProps } from '@/src/interfaces';
 import MessageIcon from '@expo/vector-icons/Feather';
@@ -84,7 +86,17 @@ const MessageScreen = (props: Props) => {
   const sendMessage = (conversationId: string) => {
     var params = {};
     if (editedMessage == null) params = [{ "conversationId": conversationId, "content": messageText }]
-    else params = [{ "id": editedMessage.id, "churchId": editedMessage.churchId, "conversationId": conversationId, "userId": editedMessage.userId, "displayName": editedMessage.displayName, "timeSent": editedMessage.timeSent, "messageType": "message", "content": messageText, "personId": editedMessage.personId, "timeUpdated": null }]
+    else params = [{
+      "id": editedMessage.id,
+      "churchId": editedMessage.churchId,
+      "conversationId": conversationId,
+      "displayName": editedMessage.displayName,
+      "timeSent": editedMessage.timeSent,
+      "messageType": "message",
+      "content": messageText,
+      "personId": editedMessage.personId,
+      "timeUpdated": null
+    }]
 
     ApiHelper.post("/messages", params, "MessagingApi").then(async (data: any) => {
       setMessageText('');
@@ -133,18 +145,31 @@ const MessageScreen = (props: Props) => {
     <FlatList inverted data={messageList} style={{ paddingVertical: DimensionHelper.wp(2) }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} />
   </View>);
 
-  const singleMessageItem = (item: MessageInterface) => (<TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
-    <View style={[globalStyles.messageContainer, { alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>
-      {item.personId == details.id ? <Image source={details?.photo ? { uri: EnvironmentHelper.ContentRoot + details?.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: details.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} /> : null}
-      <View>
-        <Text style={[globalStyles.senderNameText, { alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>{item.displayName}</Text>
-        <View style={[globalStyles.messageView, { width: item.content.length > 15 ? DimensionHelper.wp(65) : DimensionHelper.wp(item.content.length + 14), alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>
-          <Text>{item.content}</Text>
+  const singleMessageItem = (item: MessageInterface) => (
+    <TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
+      <View style={[globalStyles.messageContainer, { alignSelf: item.personId !== details.id ? 'flex-end' : 'flex-start' }]}>
+        {item.personId === details.id ?
+          <Image source={details?.photo ? { uri: EnvironmentHelper.ContentRoot + details?.photo } : Constants.Images.ic_user}
+            style={[globalStyles.churchListIcon, { tintColor: details.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} />
+          : null}
+        <View>
+          <Text style={[globalStyles.senderNameText, { alignSelf: item.personId !== details.id ? 'flex-end' : 'flex-start' }]}>
+            {item.displayName || item.person?.name?.display || 'Unknown'}
+          </Text>
+          <View style={[globalStyles.messageView, {
+            width: (item.content?.length || 0) > 15 ? DimensionHelper.wp(65) : DimensionHelper.wp(((item.content?.length || 0) + 14)),
+            alignSelf: item.personId !== details.id ? 'flex-end' : 'flex-start'
+          }]}>
+            <Text>{item.content || ''}</Text>
+          </View>
         </View>
+        {item.personId !== details.id ?
+          <Image source={UserProfilePic ? { uri: EnvironmentHelper.ContentRoot + UserProfilePic } : Constants.Images.ic_user}
+            style={[globalStyles.churchListIcon, { tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} />
+          : null}
       </View>
-      {item.personId != details.id ? <Image source={UserProfilePic ? { uri: EnvironmentHelper.ContentRoot + UserProfilePic } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} /> : null}
-    </View>
-  </TouchableWithoutFeedback>);
+    </TouchableWithoutFeedback>
+  );
 
   const openContextMenu = (item: MessageInterface) => {
     const options = ['Edit', 'Delete', 'Cancel'];
@@ -152,10 +177,12 @@ const MessageScreen = (props: Props) => {
     const cancelButtonIndex = 2;
     showActionSheetWithOptions({ options, cancelButtonIndex, destructiveButtonIndex },
       (selectedIndex?: number) => {
-        if (selectedIndex == 0) {
-          setMessageText(item.content)
-          setEditingMessage(item)
-        } else if (selectedIndex == 1) deleteMessage(item.id)
+        if (selectedIndex === 0 && item.content) {
+          setMessageText(item.content);
+          setEditingMessage(item);
+        } else if (selectedIndex === 1 && item.id) {
+          deleteMessage(item.id);
+        }
       });
   };
 

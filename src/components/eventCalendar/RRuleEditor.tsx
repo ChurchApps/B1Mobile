@@ -1,8 +1,9 @@
+import * as React from 'react'
 import { EventHelper } from '@churchapps/helpers/src/EventHelper'
 import { DateHelper } from '@churchapps/mobilehelper'
 import { DimensionHelper } from '@/src/helpers/DimensionHelper'
 import moment from 'moment'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import DatePicker from 'react-native-date-picker'
 import DropDownPicker from 'react-native-dropdown-picker'
@@ -194,7 +195,7 @@ export default function RRuleEditor(props: Props) {
   }
 
   const getEndsFollowUp = () => {
-    let result: JSX.Element = <></>;
+    let result: React.ReactElement = <></>;
     switch (selectEnds) {
       case "until":
         result = (<>
