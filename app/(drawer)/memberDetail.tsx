@@ -3,7 +3,7 @@ import { Loader } from '@/src/components/Loader';
 import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome';
 import Icon from '@expo/vector-icons/Zocial';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
@@ -79,7 +79,7 @@ const MemberDetail = (props: Props) => {
 
   const renderMemberItem = (item: any) => {
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp('90%') }]} onPress={() => onMembersClick(item)}>
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => onMembersClick(item)}>
         <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText} numberOfLines={1}>{item.name.display}</Text>
@@ -114,25 +114,25 @@ const MemberDetail = (props: Props) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onEmailClick(memberinfo.email)}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp(90) }]} onPress={() => onEmailClick(memberinfo.email)}>
           <View style={globalStyles.detailIconContainer}>
-            <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp('4.8%')} />
+            <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp(4.8)} />
             <Text style={globalStyles.detailHeader}>Email :</Text>
           </View>
           <Text style={globalStyles.detailValue}>{memberinfo.email ? memberinfo.email : '-'}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp(90) }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
           <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'phone'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp('4.8%')} />
+            <FontAwesome5 name={'phone'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp(4.8)} />
             <Text style={globalStyles.detailHeader}>Phone :</Text>
           </View>
           <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp('90%') }]} onPress={() => onAddressClick()}>
+        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp(90) }]} onPress={() => onAddressClick()}>
           <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'location-arrow'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp('4.8%')} />
+            <FontAwesome5 name={'location-arrow'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp(4.8)} />
             <Text style={globalStyles.detailHeader}>Address :</Text>
           </View>
           {memberinfo.address1 ? <Text style={globalStyles.detailValue}>{memberinfo.address1}</Text> : null}

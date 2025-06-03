@@ -3,7 +3,7 @@ import { Loader } from '@/src/components/Loader';
 import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { router, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -47,7 +47,7 @@ const MembersSearch = (props: Props) => {
 
   const renderMemberItem = (item: any) => {
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp('90%') }]} onPress={() => {
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => {
 
 
         router.navigate({
@@ -79,13 +79,13 @@ const MembersSearch = (props: Props) => {
       <MainHeader title="Directory" openDrawer={navigation.openDrawer} back={navigation.goBack} />
       <View style={{ width: DimensionHelper.wp(100), flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 
-        <Text style={[globalStyles.searchMainText, { marginHorizontal: DimensionHelper.wp('5%') }]}>Find Members</Text>
-        <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+        <Text style={[globalStyles.searchMainText, { marginHorizontal: DimensionHelper.wp(5) }]}>Find Members</Text>
+        <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
           <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
-          <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]} placeholder={'Member Name'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} value={searchText} onChangeText={(text) => { setSearchText(text) }} />
+          <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Member Name'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} value={searchText} onChangeText={(text) => { setSearchText(text) }} />
 
         </View>
-        <TouchableOpacity style={[globalStyles.roundBlueButton, { marginTop: DimensionHelper.wp('6%'), width: DimensionHelper.wp('90%') }]} onPress={() => filterMember(searchText)}>
+        <TouchableOpacity style={[globalStyles.roundBlueButton, { marginTop: DimensionHelper.wp(6), width: DimensionHelper.wp(90) }]} onPress={() => filterMember(searchText)}>
           <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>
         </TouchableOpacity>
 
