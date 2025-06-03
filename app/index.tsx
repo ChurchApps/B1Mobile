@@ -37,7 +37,7 @@ const SplashScreen = (props: Props) => {
 
     //   }, 1000);
 
-    // Utilities.trackEvent("Splash Screen");
+    Utilities.trackEvent("Splash Screen");
     await CacheHelper.loadFromStorage();
     await UpdateHelper.initializeUpdates();
     PushNotificationHelper.requestUserPermission();

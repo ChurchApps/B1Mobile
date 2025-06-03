@@ -20,7 +20,7 @@ const ChurchSearch = () => {
 
 
   useEffect(() => {
-    // Utilities.trackEvent("Church Search Screen");
+    Utilities.trackEvent("Church Search Screen");
     GetRecentList();
     UserHelper.addOpenScreenEvent('ChurchSearch');
   }, [])

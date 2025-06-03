@@ -34,7 +34,7 @@ const MemberDetail = (props: Props) => {
 
 
   useEffect(() => {
-    // Utilities.trackEvent("Member Detail Screen");
+    Utilities.trackEvent("Member Detail Screen");
     getHouseholdMembersList();
     UserHelper.addOpenScreenEvent('MemberDetailScreen');
   }, [])

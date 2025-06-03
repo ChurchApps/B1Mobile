@@ -1,4 +1,4 @@
-
+import { logAnalyticsEvent } from '../config/firebase';
 import { CacheHelper } from './CacheHelper';
 import { UserHelper } from './UserHelper';
 
@@ -12,7 +12,7 @@ export class Utilities {
     props.church = CacheHelper.church?.name || "";
     props.church = UserHelper.user?.displayName;
     props.appVersion = pkg.version;
-    // Analytics.trackEvent(name, props);
+    logAnalyticsEvent(name, props);
   }
 
 }

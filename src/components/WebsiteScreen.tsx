@@ -21,7 +21,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   const webviewRef = useRef<any>();
 
   useEffect(() => {
-    // Utilities.trackEvent('Website Screen', { url });
+    Utilities.trackEvent('Website Screen', { url });
     if (!CacheHelper.church) router.navigate('/(drawer)/churchSearch');
 
   }, []);

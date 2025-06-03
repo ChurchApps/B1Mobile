@@ -40,7 +40,7 @@ const Votd = (props: Props) => {
   }
 
   React.useEffect(() => {
-    // Utilities.trackEvent("VOTD Screen");
+    Utilities.trackEvent("VOTD Screen");
     getShape();
     Dimensions.addEventListener("change", getShape);
   }, []);

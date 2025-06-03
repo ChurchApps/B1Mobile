@@ -23,7 +23,7 @@ const SearchMessageUser = (props: Props) => {
   const [recentListEmpty, setRecentListEmpty] = useState(false);
 
   useEffect(() => {
-    // Utilities.trackEvent("User search Screen");
+    Utilities.trackEvent("User search Screen");
     // GetRecentList();
     getPreviousConversations();
     UserHelper.addOpenScreenEvent('SearchMessageUser');

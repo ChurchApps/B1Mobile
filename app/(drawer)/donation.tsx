@@ -33,7 +33,7 @@ const Donation = (props: Props) => {
 
   // initialise stripe
   const loadData = async () => {
-    // Utilities.trackEvent("Donation Screen");
+    Utilities.trackEvent("Donation Screen");
     try {
       setAreMethodsLoading(true)
       const data = await ApiHelper.get("/gateways/churchId/" + CacheHelper.church!.id, "GivingApi")
