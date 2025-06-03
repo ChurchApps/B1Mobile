@@ -47,7 +47,7 @@ export const globalStyles = StyleSheet.create({
   //Home
   homeContainer: { flex: 1, backgroundColor: 'white', position: 'relative' },
   menuIcon: { width: DimensionHelper.wp(6), height: DimensionHelper.wp(6), margin: DimensionHelper.wp(5), tintColor: 'white' },
-  headerText: { color: 'white', textAlign: 'center', fontSize: DimensionHelper.hp(4.5), fontWeight: 'bold' },
+  headerText: { color: 'white', textAlign: 'center', fontSize: DimensionHelper.hp(3.5), fontWeight: 'bold' },
   TabIndicatorStyle: { backgroundColor: Constants.Colors.white_color, shadowOffset: { height: 0, width: 0 }, shadowColor: 'transparent', shadowOpacity: 0, elevation: 0 },
   text: { color: 'white', fontSize: 20 },
   tabBar: { height: '100%', top: 0 },
