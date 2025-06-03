@@ -7,7 +7,7 @@ import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import { ApiHelper, CacheHelper, UserHelper, globalStyles } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { NavigationProps, StripePaymentMethod } from '@/src/interfaces';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused } from '@react-navigation/native';
 import { initStripe } from "@stripe/stripe-react-native";
@@ -74,7 +74,7 @@ const Donation = (props: Props) => {
         }
         <DonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />
         {!UserHelper.currentUserChurch?.person?.id
-          ? <Text style={[globalStyles.paymentDetailText, { marginVertical: DimensionHelper.wp('2%'), }]}>Please login to view existing donations</Text>
+          ? <Text style={[globalStyles.paymentDetailText, { marginVertical: DimensionHelper.wp(2), }]}>Please login to view existing donations</Text>
           : <View>
             <RecurringDonations customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} />
             <Donations />

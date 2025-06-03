@@ -1,5 +1,5 @@
 import React from 'react';
-import { DimensionHelper } from '@churchapps/mobilehelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useEffect, useState } from 'react';
 
@@ -104,7 +104,7 @@ const MessageScreen = (props: Props) => {
   }
 
   const backIconComponent = (<TouchableOpacity onPress={() => router.navigate('/(drawer)/dashboard')}>
-    <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={DimensionHelper.wp('5%')} />
+    <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={DimensionHelper.wp(5)} />
   </TouchableOpacity>);
 
   //const mainComponent = (<Text style={globalStyles.headerText}>{props?.route?.params?.userDetails?.name?.display ? props?.route?.params?.userDetails?.name?.display : props?.route?.params?.userDetails?.DisplayName }</Text>);
@@ -124,25 +124,25 @@ const MessageScreen = (props: Props) => {
       }}
     />
     <TouchableOpacity style={globalStyles.sendIcon} onPress={() => sendMessageInitiate()}>
-      <MessageIcon name={"send"} color={"white"} size={DimensionHelper.wp('5%')} />
+      <MessageIcon name={"send"} color={"white"} size={DimensionHelper.wp(5)} />
     </TouchableOpacity>
   </View>);
 
 
   const messagesView = () => (<View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
-    <FlatList inverted data={messageList} style={{ paddingVertical: DimensionHelper.wp('2%') }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} />
+    <FlatList inverted data={messageList} style={{ paddingVertical: DimensionHelper.wp(2) }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} />
   </View>);
 
   const singleMessageItem = (item: MessageInterface) => (<TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
     <View style={[globalStyles.messageContainer, { alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>
-      {item.personId == details.id ? <Image source={details?.photo ? { uri: EnvironmentHelper.ContentRoot + details?.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: details.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} /> : null}
+      {item.personId == details.id ? <Image source={details?.photo ? { uri: EnvironmentHelper.ContentRoot + details?.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: details.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} /> : null}
       <View>
         <Text style={[globalStyles.senderNameText, { alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>{item.displayName}</Text>
-        <View style={[globalStyles.messageView, { width: item.content.length > 15 ? DimensionHelper.wp('65%') : DimensionHelper.wp((item.content.length + 14).toString() + "%"), alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>
+        <View style={[globalStyles.messageView, { width: item.content.length > 15 ? DimensionHelper.wp(65) : DimensionHelper.wp(item.content.length + 14), alignSelf: item.personId != details.id ? 'flex-end' : 'flex-start' }]}>
           <Text>{item.content}</Text>
         </View>
       </View>
-      {item.personId != details.id ? <Image source={UserProfilePic ? { uri: EnvironmentHelper.ContentRoot + UserProfilePic } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: DimensionHelper.wp('9%'), width: DimensionHelper.wp('9%'), borderRadius: DimensionHelper.wp('9%') }]} /> : null}
+      {item.personId != details.id ? <Image source={UserProfilePic ? { uri: EnvironmentHelper.ContentRoot + UserProfilePic } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} /> : null}
     </View>
   </TouchableWithoutFeedback>);
 
