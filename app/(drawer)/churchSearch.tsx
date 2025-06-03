@@ -101,7 +101,7 @@ const ChurchSearch = () => {
       churchImage = { uri: setting.value };
     }
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: DimensionHelper.wp('90%') }]} onPress={() => churchSelection(item)}>
+      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: DimensionHelper.wp(90) }]} onPress={() => churchSelection(item)}>
         <Image source={churchImage} style={globalStyles.churchListIcon} />
         <View style={globalStyles.listTextView}>
           <Text style={globalStyles.listTitleText}>{item.name}</Text>
@@ -119,10 +119,10 @@ const ChurchSearch = () => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
           <View style={globalStyles.grayContainer}>
             <Text style={globalStyles.searchMainText}>Find Your Church</Text>
-            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp('90%') }]}>
+            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
               <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
               <TextInput
-                style={[globalStyles.textInputStyle, { width: DimensionHelper.wp('90%') }]}
+                style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]}
                 placeholder={'Church name'}
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -132,7 +132,7 @@ const ChurchSearch = () => {
                 onChangeText={(text) => { setSearchText(text) }}
               />
             </View>
-            <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: DimensionHelper.wp('6%'), width: DimensionHelper.wp('90%') }} onPress={() => searchApiCall(searchText)}>
+            <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: DimensionHelper.wp(6), width: DimensionHelper.wp(90) }} onPress={() => searchApiCall(searchText)}>
               {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
             </TouchableOpacity>
             {searchText == '' && <Text style={globalStyles.recentText}>

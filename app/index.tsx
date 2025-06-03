@@ -65,6 +65,7 @@ const SplashScreen = (props: Props) => {
 
 
   const checkUser = async () => {
+    console.log("CHECK USER");
     try {
       if (UserHelper.user?.jwt) await setUserDataNew();
     } catch (e: any) {
@@ -74,9 +75,11 @@ const SplashScreen = (props: Props) => {
 
 
     if (!CacheHelper.church) {
+      console.log("NO CHURCH");
       router.navigate('/(drawer)/churchSearch')
       // router.navigate('/churchSearch')
     } else {
+      console.log("CHURCH");
       router.replace('/(drawer)/dashboard')
     }
 
