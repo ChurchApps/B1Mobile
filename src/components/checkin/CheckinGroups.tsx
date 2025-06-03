@@ -37,8 +37,8 @@ export const CheckinGroups = (props: Props) => {
           <Text style={[globalStyles.groupListTitle, globalStyles.groupMainTitle]} numberOfLines={1}>{item.name}</Text>
         </View>
       </TouchableOpacity>
-      {selected == item.key && item.items.map((item_group: any, index: any) => (
-        <View style={{ ...globalStyles.groupView, borderBottomWidth: (index == item.items.length - 1) ? 0 : 1, width: DimensionHelper.wp('80%') }} key={item_group.id}>
+      {selected == item.key && item.items.map((item_group: any) => (
+        <View style={{ ...globalStyles.groupView, borderBottomWidth: (item_group.id == item.items[item.items.length - 1]?.id) ? 0 : 1, width: DimensionHelper.wp('80%') }} key={`group-item-${item_group.id}`}>
           <TouchableOpacity style={globalStyles.groupBtn} onPress={() => selectGroup(item_group)}>
             <Text style={globalStyles.groupText}> {item_group.name} </Text>
           </TouchableOpacity>

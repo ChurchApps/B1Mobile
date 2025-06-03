@@ -39,7 +39,7 @@ export function RadioButtonGroup({
     <View>
       {options.map((option, index) => (
         <RadioButton
-          key={values[index]}
+          key={`radio-${option.toLowerCase().replace(/\s+/g, '-')}-${values[index]}`}
           label={option}
           value={values[index]}
           selectedValue={selectedValue}

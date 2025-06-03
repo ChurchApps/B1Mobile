@@ -51,8 +51,8 @@ export const CheckinHousehold = (props: Props) => {
         <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={globalStyles.memberListIcon} />
         <View style={globalStyles.memberListTextView}>
           <Text style={[globalStyles.listTitleText, globalStyles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
-          {selected != item.id && item.serviceTimes.map((item_time: any, index: any) => (
-            <View key={item_time.id}>
+          {selected != item.id && item.serviceTimes.map((item_time: any) => (
+            <View key={`service-time-${item_time.id}`}>
               {item_time.selectedGroup
                 ? <Text style={globalStyles.selectedText} numberOfLines={1}>
                   {item_time.name}{" - "}{item_time.selectedGroup.name}
@@ -62,8 +62,8 @@ export const CheckinHousehold = (props: Props) => {
           ))}
         </View>
       </TouchableOpacity>
-      {selected == item.id && item.serviceTimes && item.serviceTimes.map((item_time: any, index: any) => (
-        <View style={{ ...globalStyles.classesView, borderBottomWidth: (index == item.serviceTimes.length - 1) ? 0 : 1, width: DimensionHelper.wp('90%') }} key={item_time.id}>
+      {selected == item.id && item.serviceTimes && item.serviceTimes.map((item_time: any) => (
+        <View style={{ ...globalStyles.classesView, borderBottomWidth: (item_time.id == item.serviceTimes[item.serviceTimes.length - 1]?.id) ? 0 : 1, width: DimensionHelper.wp('90%') }} key={`service-time-${item_time.id}`}>
           <View style={globalStyles.classesTimeView}>
             <Icon name={'clock-o'} style={globalStyles.timeIcon} size={DimensionHelper.wp('5%')} />
             <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>

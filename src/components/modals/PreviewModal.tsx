@@ -97,9 +97,9 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
           <View style={globalStyles.previewView}>
             <Text style={globalStyles.previewTitleText}>Funds:</Text>
             <View style={{ display: "flex" }}>
-              {donation.funds?.map((fund, index) => (
-                <Text key={index} style={{ ...globalStyles.previewDetailText }}>
-                  {CurrencyHelper.formatCurrency(fund.amount)} - {fund.name}
+              {donation.funds?.map((fund) => (
+                <Text key={`fund-${fund.id || (fund.name?.toLowerCase().replace(/\s+/g, '-') || 'unnamed')}`} style={{ ...globalStyles.previewDetailText }}>
+                  {CurrencyHelper.formatCurrency(fund.amount)} - {fund.name || 'Unnamed Fund'}
                 </Text>
               ))}
             </View>

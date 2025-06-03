@@ -65,24 +65,31 @@ const PlanDetails = (props: Props) => {
   useEffect(() => { loadData() }, [planId]);
 
   const getTeams = () => {
-    const rows: JSX.Element[] = [];
-    ArrayHelper.getUniqueValues(positions, "categoryName").forEach((category) => {
+    return ArrayHelper.getUniqueValues(positions, "categoryName").map((category) => {
       const pos = ArrayHelper.getAll(positions, "categoryName", category);
-      rows.push(<Teams positions={pos} assignments={assignments} people={people} name={category} />)
+      return <Teams
+        key={`team-${category.toLowerCase().replace(/\s+/g, '-')}`}
+        positions={pos}
+        assignments={assignments}
+        people={people}
+        name={category}
+      />;
     });
-    return rows;
   }
 
   const getPositionDetails = () => {
-    const rows: JSX.Element[] = [];
     const myAssignments = ArrayHelper.getAll(assignments, "personId", UserHelper.currentUserChurch.person.id);
-    myAssignments.forEach((assignment) => {
+    return myAssignments.map((assignment) => {
       const position = ArrayHelper.getOne(positions, "id", assignment.positionId);
-      const posTimes: TimeInterface[] = [];
-      times?.forEach((time: any) => { if (time?.teams?.indexOf(position?.categoryName) > -1) posTimes.push(time); });
-      rows.push(<PositionDetails position={position} assignment={assignment} times={posTimes} onUpdate={loadData} />);
+      const posTimes = times?.filter((time: any) => time?.teams?.indexOf(position?.categoryName) > -1) || [];
+      return <PositionDetails
+        key={`position-${assignment.id}`}
+        position={position}
+        assignment={assignment}
+        times={posTimes}
+        onUpdate={loadData}
+      />;
     });
-    return rows;
   }
 
   const getNotes = () => {

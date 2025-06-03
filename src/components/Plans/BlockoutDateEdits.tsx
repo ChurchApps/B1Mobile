@@ -105,8 +105,8 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
           </View>
           {errors.length > 0 && (
             <View>
-              {errors.map((error, index) => (
-                <Text key={index} style={{ color: Constants.Colors.button_red }}>
+              {errors.map((error: string) => (
+                <Text key={`error-${error.toLowerCase().replace(/\s+/g, '-')}`} style={{ color: Constants.Colors.button_red }}>
                   {error}
                 </Text>
               ))}

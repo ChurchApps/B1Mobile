@@ -270,7 +270,7 @@ const GroupDetails = (props: any) => {
         <View style={styles.tabContainer}>
           {TABS.map((tab, idx) => (
             <TouchableOpacity
-              key={`tab-${idx}`}
+              key={tab.toLowerCase().replace(/\s+/g, '-')}
               style={[styles.tab, activeTab === idx && styles.activeTab]}
               onPress={() => setActiveTab(idx)}
             >
@@ -323,8 +323,8 @@ const GroupDetails = (props: any) => {
                   <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
                 </TouchableOpacity>
               </View>
-              {selectedEvents?.map((data: any, index: number) => (
-                <View style={styles.eventContainer} key={index}>
+              {selectedEvents?.map((data: any) => (
+                <View style={styles.eventContainer} key={`event-${data.id || data.start.getTime()}`}>
                   <View style={{ paddingVertical: DimensionHelper.wp(1), flex: 1 }}>
                     <Text style={styles.eventText}>Event Name: {data.title}</Text>
                     <Text style={styles.eventTime}>Date and Time: {getDisplayTime(data)}</Text>
