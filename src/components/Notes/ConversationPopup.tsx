@@ -127,27 +127,32 @@ const ConversationPopup = ({
           justifyContent: "space-between",
           alignItems: "center",
           width: '100%',
-          marginTop: type === "new" ? spacing.md : 0,
-          marginBottom: type === "new" ? 0 : spacing.md,
-          paddingHorizontal: spacing.sm,
-          paddingVertical: spacing.xs,
+          marginTop: type === "new" ? spacing.lg : 0,
+          marginBottom: type === "new" ? spacing.lg : spacing.md,
+          paddingHorizontal: spacing.md,
+          paddingVertical: spacing.sm,
+          borderRadius: theme.roundness * 2,
+          elevation: 4,
+          backgroundColor: theme.colors.background,
         }}
       >
         <TextInput
           mode="outlined"
           onChangeText={text => textRef.current = text}
           placeholder={placeholder}
-          multiline
-          numberOfLines={4}
+          multiline={false}
+          numberOfLines={1}
           style={{
             flex: 1,
             marginLeft: type === "new" ? 0 : spacing.xl,
             marginRight: spacing.sm,
-            backgroundColor: theme.colors.surface
+            backgroundColor: theme.colors.surface,
+            borderRadius: theme.roundness,
+            minHeight: 40
           }}
           contentStyle={{
             fontSize: DimensionHelper.wp(4.2),
-            paddingTop: DimensionHelper.hp(1.8),
+            paddingTop: DimensionHelper.hp(1.2),
           }}
           blurOnSubmit={true}
           onSubmitEditing={() => Keyboard.dismiss()}
@@ -156,9 +161,10 @@ const ConversationPopup = ({
         <IconButton
           icon="send"
           mode="contained"
-          size={20}
+          size={24}
           onPress={() => handleSave(message)}
-          style={{ margin: 0 }}
+          style={{ margin: 0, backgroundColor: theme.colors.primary, borderRadius: theme.roundness }}
+          iconColor={theme.colors.onPrimary}
         />
       </Surface>
     );

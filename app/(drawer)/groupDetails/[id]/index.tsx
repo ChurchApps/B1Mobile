@@ -1,30 +1,26 @@
 import React from 'react';
-import { Provider as PaperProvider, MD3LightTheme, adaptNavigationTheme } from 'react-native-paper';
-import { NavigationContainer, DarkTheme as NavigationDarkTheme, DefaultTheme as NavigationDefaultTheme } from '@react-navigation/native';
-import CreateEvent from "@/src/components/eventCalendar/CreateEvent";
-import { EventModal } from "@/src/components/eventCalendar/EventModal";
-import { Loader } from "@/src/components/Loader";
-import { CustomModal } from "@/src/components/modals/CustomModal";
-import Conversations from "@/src/components/Notes/Conversations";
-import { MainHeader } from "@/src/components/wrapper/MainHeader";
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "@/src/helpers";
-import { GroupMemberInterface } from "@/src/interfaces/Membership";
-import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { EventInterface } from "@churchapps/mobilehelper";
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
-import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { FlatList, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import { Text, TouchableRipple, Button, Surface, Avatar, useTheme } from 'react-native-paper';
 import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { router, useLocalSearchParams } from "expo-router";
+import { Calendar, DateData } from "react-native-calendars";
 import Markdown from "@ronradtke/react-native-markdown-display";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { router, useLocalSearchParams } from "expo-router";
-import moment from "moment";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View } from "react-native";
-import { Calendar, DateData } from "react-native-calendars";
-import { Text, TouchableRipple, IconButton, Button, Surface, Divider, Avatar, useTheme } from 'react-native-paper';
+import { EventHelper } from "@churchapps/helpers/src/EventHelper";
+import { EventInterface } from "@churchapps/mobilehelper";
+import { GroupMemberInterface } from "@/src/interfaces/Membership";
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "@/src/helpers";
+import { DimensionHelper } from '@/src/helpers/DimensionHelper';
+import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
+import Conversations from "@/src/components/Notes/Conversations";
+import { EventModal } from "@/src/components/eventCalendar/EventModal";
+import CreateEvent from "@/src/components/eventCalendar/CreateEvent";
+import { useAppTheme } from '@/src/theme';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -32,16 +28,16 @@ dayjs.extend(timezone);
 const TABS = ["Conversations", "Group Members", "Group Calendar"];
 
 const GroupDetails = () => {
-  const theme = useTheme();
+  const { theme, spacing } = useAppTheme();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [groupDetails, setGroupDetails] = useState<any>(null);
   const [groupMembers, setGroupMembers] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [events, setEvents] = useState<EventInterface[]>([]);
-  const [selected, setSelected] = useState(moment(new Date()).format('YYYY-MM-DD'));
+  const [selected, setSelected] = useState(dayjs().format('YYYY-MM-DD'));
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
-  const [selectedEvents, setSelectedEvents] = useState<any>(null)
+  const [selectedEvents, setSelectedEvents] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
   const [editEvent, setEditEvent] = useState<EventInterface | null>(null);
@@ -242,95 +238,106 @@ const GroupDetails = () => {
 
   return (
     <LoadingWrapper loading={loading}>
-      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: "100%", backgroundColor: theme.colors.background }]}>
-        <MainHeader title={name} openDrawer={navigation.openDrawer} back={navigation.goBack} />
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
-          <Surface style={{ margin: 16, padding: 16, borderRadius: 8 }}>
-            {photoUrl ? (
-              <Image
-                source={{ uri: photoUrl }}
-                style={{
-                  width: '100%',
-                  height: 200,
-                  borderRadius: 8,
-                  marginBottom: 16
-                }}
-                resizeMode="cover"
-              />
-            ) : (
-              <Surface
-                style={{
-                  height: 200,
-                  width: '100%',
-                  borderRadius: 8,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: theme.colors.surfaceVariant,
-                  marginBottom: 16
-                }}
-              >
-                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>No image available</Text>
-              </Surface>
-            )}
-            <Markdown>{about}</Markdown>
-          </Surface>
-
-          <Surface style={styles.tabContainer}>
-            {TABS.map((tab, idx) => (
-              <TouchableRipple
-                key={tab.toLowerCase().replace(/\s+/g, '-')}
-                style={[styles.tab, activeTab === idx && { borderBottomWidth: 1, borderBottomColor: theme.colors.primary }]}
-                onPress={() => setActiveTab(idx)}
-              >
-                <Text variant="labelLarge" style={{ color: activeTab === idx ? theme.colors.primary : theme.colors.onSurface }}>
-                  {tab}
-                </Text>
-              </TouchableRipple>
-            ))}
-          </Surface>
-
-          {activeTab === 0 && (<Conversations contentType="group" contentId={id} groupId={id} from="GroupDetails" />)}
-          {activeTab === 1 && (
-            <Surface style={{ height: DimensionHelper.hp(55), paddingBottom: DimensionHelper.wp(2) }}>
-              <FlatList
-                data={groupMembers}
-                renderItem={({ item }) => showGroupMembers(false, item)}
-                keyExtractor={(item: any) => item?.id}
-                ListEmptyComponent={() => <Text variant="bodyMedium" style={styles.noMemberText}>No group members found.</Text>}
-              />
-            </Surface>
-          )}
-          {activeTab === 2 && (
-            <Surface>
-              {isLeader && (
-                <Button
-                  mode="outlined"
-                  icon="calendar-plus"
-                  onPress={() => { setShowAddEventModal(true), handleAddEvent({ start: new Date(), end: new Date() }) }}
-                  style={{ margin: 16, alignSelf: 'flex-end' }}
-                >
-                  ADD EVENT
-                </Button>
+      <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <MainHeader title={name} openDrawer={navigation.openDrawer} back={navigation.goBack} />
+          <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
+            <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
+              {photoUrl ? (
+                <Image source={{ uri: photoUrl }} style={{ width: '100%', height: 200, borderRadius: theme.roundness, marginBottom: spacing.md }} resizeMode="cover" />
+              ) : (
+                <Surface style={{ height: 200, width: '100%', borderRadius: theme.roundness, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.surfaceVariant, marginBottom: spacing.md }}>
+                  <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>No image available</Text>
+                </Surface>
               )}
-              <Calendar
-                current={selected}
-                markingType='multi-dot'
-                markedDates={markedDates}
-                onDayPress={onDayPress}
-                theme={{
-                  textInactiveColor: theme.colors.onSurfaceDisabled,
-                  textSectionTitleDisabledColor: theme.colors.onSurfaceDisabled,
-                  textSectionTitleColor: theme.colors.primary,
-                  arrowColor: theme.colors.primary,
-                  todayTextColor: theme.colors.error,
-                  selectedDayBackgroundColor: theme.colors.primary,
-                  selectedDayTextColor: theme.colors.onPrimary,
-                }}
-              />
+              <Markdown>{about}</Markdown>
             </Surface>
-          )}
-        </KeyboardAvoidingView>
-      </SafeAreaView>
+
+            <Surface style={{ margin: spacing.md, padding: spacing.md, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
+              <View style={styles.tabContainer}>
+                {TABS.map((tab, idx) => (
+                  <TouchableRipple
+                    key={tab.toLowerCase().replace(/\s+/g, '-')}
+                    style={[
+                      styles.tab,
+                      activeTab === idx && {
+                        borderBottomWidth: 2,
+                        borderBottomColor: theme.colors.primary
+                      }
+                    ]}
+                    onPress={() => setActiveTab(idx)}
+                  >
+                    <Text
+                      variant="labelLarge"
+                      style={{
+                        color: activeTab === idx ? theme.colors.primary : theme.colors.onSurface,
+                        textAlign: 'center'
+                      }}
+                      numberOfLines={1}
+                    >
+                      {tab}
+                    </Text>
+                  </TouchableRipple>
+                ))}
+              </View>
+
+              {activeTab === 0 && (
+                <ScrollView>
+                  <Conversations contentType="group" contentId={id} groupId={id} from="GroupDetails" />
+                </ScrollView>
+              )}
+              {activeTab === 1 && (
+                <View style={{ backgroundColor: theme.colors.background, borderRadius: theme.roundness, paddingVertical: spacing.sm }}>
+                  <FlatList
+                    data={groupMembers}
+                    renderItem={({ item }) => (
+                      <Surface style={styles.memberCard}>
+                        <Avatar.Image
+                          size={48}
+                          source={item?.person?.photo ? { uri: EnvironmentHelper.ContentRoot + item.person.photo } : Constants.Images.ic_member}
+                        />
+                        <Text variant="titleMedium" style={{ marginLeft: 16, flex: 1 }}>{item?.person?.name?.display}</Text>
+                      </Surface>
+                    )}
+                    keyExtractor={(item: any) => item?.id}
+                    ListEmptyComponent={() => <Text variant="bodyMedium" style={styles.noMemberText}>No group members found.</Text>}
+                    contentContainerStyle={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}
+                  />
+                </View>
+              )}
+              {activeTab === 2 && (
+                <ScrollView>
+                  <Surface style={{ padding: spacing.md }}>
+                    {isLeader && (
+                      <Button mode="outlined" icon="calendar-plus" onPress={() => { setShowAddEventModal(true); handleAddEvent({ start: new Date(), end: new Date() }); }}
+                        style={{ marginBottom: spacing.md, alignSelf: 'flex-end' }}>ADD EVENT</Button>
+                    )}
+                    <Calendar current={selected} markingType='multi-dot' markedDates={markedDates} onDayPress={onDayPress}
+                      theme={{
+                        textInactiveColor: theme.colors.onSurfaceDisabled, textSectionTitleDisabledColor: theme.colors.onSurfaceDisabled,
+                        textSectionTitleColor: theme.colors.primary, arrowColor: theme.colors.primary, todayTextColor: theme.colors.error,
+                        selectedDayBackgroundColor: theme.colors.primary, selectedDayTextColor: theme.colors.onPrimary
+                      }} />
+                  </Surface>
+                </ScrollView>
+              )}
+            </Surface>
+          </KeyboardAvoidingView>
+        </SafeAreaView>
+      </View>
+      {showEventModal && (
+        <EventModal isVisible={showEventModal} close={() => setShowEventModal(false)}>
+          {selectedEvents && selectedEvents.map((event: EventInterface) => (
+            <View key={event.id}>
+              <Text variant="titleMedium">{event.title}</Text>
+              <Text variant="bodyMedium">{event.description}</Text>
+            </View>
+          ))}
+        </EventModal>
+      )}
+      {showAddEventModal && editEvent && (
+        <CreateEvent event={editEvent} onDone={() => { setShowAddEventModal(false); loadEvents(); }} />
+      )}
     </LoadingWrapper>
   );
 };
@@ -338,16 +345,28 @@ const GroupDetails = () => {
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
-    justifyContent: "flex-start",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginHorizontal: 16,
-    marginBottom: 8,
     borderRadius: 8,
-    elevation: 1
+    width: '100%'
   },
   tab: {
-    paddingHorizontal: 16,
-    paddingVertical: 12
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center'
+  },
+  memberCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   noMemberText: {
     textAlign: 'center',
