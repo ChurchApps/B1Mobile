@@ -4,22 +4,13 @@ import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { initializeApp } from 'firebase/app';
 import { initializeFirebase } from '../src/config/firebase';
-import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
-import { Colors } from '@/constants/Colors';
-
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: Colors.light.tint,
-    background: Colors.light.background,
-    // surface: Colors.light.background,
-    // text: Colors.light.text,
-    // placeholder: Colors.light.icon,
-  },
-};
+import { PaperProvider } from 'react-native-paper';
+import { useColorScheme } from 'react-native'; // Import useColorScheme
+import { AppLightTheme, AppDarkTheme } from '../theme/AppThemes'; // Import custom themes
 
 export default function RootLayout() {
+  const colorScheme = useColorScheme(); // Get the current color scheme
+
   useEffect(() => {
     const setupFirebase = async () => {
       console.log('Initializing Firebase...');
@@ -29,9 +20,11 @@ export default function RootLayout() {
     setupFirebase();
   }, []);
 
+  const currentTheme = colorScheme === 'dark' ? AppDarkTheme : AppLightTheme; // Determine the theme
+
   return (
     <SafeAreaProvider>
-      <PaperProvider theme={theme}>
+      <PaperProvider theme={currentTheme}>
         <Stack screenOptions={{ headerShown: false }} initialRouteName='auth'>
           <Stack.Screen name="auth" />
           <Stack.Screen name="index" />

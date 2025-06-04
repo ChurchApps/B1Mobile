@@ -1,20 +1,29 @@
-import { Constants, globalStyles } from '@/src/helpers';
 import React from 'react';
-import { Image, NativeModules, Text, TouchableOpacity } from 'react-native';
-import { MainHeader } from './wrapper/MainHeader';
-const { StatusBarManager } = NativeModules;
+import { Appbar, useTheme } from 'react-native-paper';
+import { NativeModules } from 'react-native'; // Keep for StatusBarManager if still needed, otherwise remove
+
+const { StatusBarManager } = NativeModules; // May not be needed if Appbar handles status bar padding
 
 interface Props {
-  onPress: () => void;
+  onPress?: () => void; // Assuming this is for a menu/drawer icon
   title: string;
+  // Add other props like goBack if a back action is sometimes needed
+  // showBackButton?: boolean;
+  // onGoBack?: () => void;
 }
 
 export function SimpleHeader(props: Props) {
-  const leftComponent = (<TouchableOpacity onPress={() => props.onPress()}>
-    <Image source={Constants.Images.ic_menu} style={globalStyles.menuIcon} />
-  </TouchableOpacity>);
+  const theme = useTheme();
 
-  const mainComponent = (<Text style={globalStyles.headerText}>{props.title}</Text>);
-
-  return <MainHeader title={props.title} hideBell={true} />
+  return (
+    <Appbar.Header
+      style={{ backgroundColor: theme.colors.primary }}
+      // statusBarHeight={StatusBarManager.HEIGHT} // Appbar.Header usually handles this
+    >
+      {props.onPress && (
+        <Appbar.Action icon="menu" onPress={props.onPress} color={theme.colors.onPrimary} />
+      )}
+      <Appbar.Content title={props.title} titleStyle={{ color: theme.colors.onPrimary }} />
+    </Appbar.Header>
+  );
 };

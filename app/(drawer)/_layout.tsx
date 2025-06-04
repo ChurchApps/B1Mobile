@@ -1,14 +1,15 @@
 import React from 'react';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { Drawer } from 'expo-router/drawer';
-import { useEffect, useState } from 'react';
-
+// useEffect and useState removed as dimensions state was unused in this file's logic
 import { CustomDrawer } from '@/src/components/CustomDrawer';
-import { Constants } from '@/src/helpers';
+// Constants removed
+import { useTheme } from 'react-native-paper';
 
 
 export default function DrawerLayout() {
-  const [dimensions, setDimensions] = useState('1,1');
+  const theme = useTheme();
+  // const [dimensions, setDimensions] = useState('1,1'); // Unused
 
   /*
   useEffect(() => {
@@ -24,15 +25,15 @@ export default function DrawerLayout() {
       screenOptions={{
         headerShown: false,
         drawerStyle: {
-          width: DimensionHelper.wp(60),
-          height: DimensionHelper.hp(100),
-          backgroundColor: Constants.Colors.app_color,
+          width: DimensionHelper.wp(60), // Consider making this responsive or fixed based on design
+          // height: DimensionHelper.hp(100), // Drawer usually takes full height by default
+          backgroundColor: theme.colors.surface, // Use themed background
         },
-        drawerType: 'slide',
+        drawerType: 'slide', // 'front', 'back', 'slide', 'permanent'
       }}
       drawerContent={(props) => <CustomDrawer {...props} />}
     >
-
+      {/* Drawer screens are defined by files in this directory */}
     </Drawer>
   );
 }

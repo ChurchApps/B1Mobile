@@ -1,7 +1,7 @@
 import React from 'react';
 import { ImageButton, } from "@/src/components/ImageButton";
-import { Loader } from "@/src/components/Loader";
-import TimeLinePost from "@/src/components/MyGroup/TimeLinePost";
+// Loader is used by LoadingWrapper
+import TimeLinePost from "@/src/components/MyGroup/TimeLinePost"; // Custom component
 import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 import { ApiHelper, ArrayHelper, PersonInterface, TimelinePostInterface, UserPostInterface, globalStyles } from "@/src/helpers";
@@ -9,125 +9,146 @@ import { TimelineHelper } from "@/src/helpers/Timelinehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, Text, View, StyleSheet } from "react-native";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { FlatList, SafeAreaView, View, StyleSheet } from "react-native"; // Text removed
+// MaterialCommunityIcons import seems unused
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from 'react-native-paper';
 
 const MyGroups = (props: any) => {
+  const theme = useTheme();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const [groups, setGroups] = useState([]);
-  const [UserPost, setUserPost] = useState<TimelinePostInterface[]>([])
+  const [groups, setGroups] = useState<any[]>([]); // Typed groups
+  const [userPosts, setUserPosts] = useState<TimelinePostInterface[]>([]); // Renamed UserPost
   const [loading, setLoading] = useState(false);
-  const [people, setPeople] = useState<PersonInterface[]>([]);
-  const [UserGroups, setUserGroups] = useState<any[]>([]);
-  const [mergeData, setMergedData] = useState<UserPostInterface[]>([])
+  // people state seems unused, remove if confirmed
+  // const [people, setPeople] = useState<PersonInterface[]>([]);
+  const [userGroups, setUserGroups] = useState<any[]>([]); // Renamed UserGroups
+  const [mergedData, setMergedData] = useState<UserPostInterface[]>([]); // Renamed mergeData
 
-  const LoadUserData = async () => {
+  const loadUserData = async () => { // Renamed LoadUserData
     setLoading(true);
     try {
-      const { posts, people, groups } = await TimelineHelper.loadForUser();
-      setUserPost(posts)
-      setUserGroups(groups)
-      setPeople(people)
-      if (posts.length == 0) {
-        console.log("no data found")
+      const { posts, people, groups: fetchedGroups } = await TimelineHelper.loadForUser(); // Destructured groups to fetchedGroups
+      setUserPosts(posts);
+      setUserGroups(fetchedGroups); // Use fetchedGroups
+      // setPeople(people); // If people is indeed unused
+      if (posts.length === 0) {
+        console.log("no timeline data found");
       }
     } catch (error) {
       console.error("Error loading user data:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  const loadData = async () => {
-    const data = await ApiHelper.get("/groups/my", "MembershipApi");
-    setGroups(data);
-    LoadUserData();
+  const loadGroupsData = async () => { // Renamed loadData to be more specific
+    try {
+      const data = await ApiHelper.get("/groups/my", "MembershipApi");
+      setGroups(data || []); // Ensure groups is an array
+    } catch (error) {
+      console.error("Error loading groups data:", error);
+      setGroups([]); // Set to empty array on error
+    }
+    loadUserData(); // Load user timeline data after groups
   };
 
   useEffect(() => {
-    loadData();
-  }, [ApiHelper.isAuthenticated]);
+    if (ApiHelper.isAuthenticated) { // Check if authenticated before loading
+      loadGroupsData();
+    }
+  }, [ApiHelper.isAuthenticated]); // Rerun if auth state changes
 
   useEffect(() => {
-    if (UserPost.length > 0 && UserGroups.length > 0) {
-      const combined = UserPost.map((item1, index) => ({
+    if (userPosts.length > 0 && userGroups.length > 0) {
+      const combined = userPosts.map((item1) => ({ // item1 had no index prop used
         ...item1,
-        ...ArrayHelper.getOne(UserGroups, "id", item1.groupId),
-      })
-      );
+        ...ArrayHelper.getOne(userGroups, "id", item1.groupId),
+      }));
       setMergedData(combined);
+    } else if (userPosts.length > 0 && userGroups.length === 0) {
+      // If there are posts but no group info (e.g. groups call failed or returned empty)
+      // Still show posts, group name will be undefined from the spread
+      setMergedData(userPosts.map(p => ({...p})));
+    } else {
+      setMergedData([]); // Clear if no posts or groups
     }
-  }, [UserPost, UserGroups])
+  }, [userPosts, userGroups]);
 
-  const brandColor = '#175ec1';
+  // const brandColor = '#175ec1'; // Unused, ImageButton color is hardcoded to #fff
 
-  const showGroups = (topItem: boolean, item: any) => {
+  const showGroups = (item: any) => { // topItem unused
     return (
       <ImageButton
-        icon={null}
+        icon={null} // icon prop was null
         text={item.name}
         onPress={() => {
           router.navigate({
             pathname: '/groupDetails',
             params: { group: JSON.stringify(item) }
-          })
+          });
         }}
         backgroundImage={item.photoUrl ? { uri: item.photoUrl } : require('@/src/assets/images/dash_worship.png')}
-        color="#fff"
+        color={theme.colors.surface} // Use a theme color that contrasts with dark image/overlay.
+                                     // If ImageButton's text is always on a dark overlay, this should be a light color.
+                                     // Assuming ImageButton refactor handles text color based on its background.
       />
     );
   };
 
-  const renderItems = (item: any) => {
+  const renderTimelineItem = ({ item }: { item: UserPostInterface }) => { // Typed item for renderItem
     return (
-      <TimeLinePost item={item} onUpdate={loadData} />
-    )
-  }
+      <TimeLinePost item={item} onUpdate={loadGroupsData} /> // Pass loadGroupsData to onUpdate
+    );
+  };
 
   const getGroupsGrid = () => {
-    if (!Array.isArray(groups)) return null;
+    if (!Array.isArray(groups) || groups.length === 0) return null;
     const rows = [];
     for (let i = 0; i < groups.length; i += 2) {
       rows.push(groups.slice(i, i + 2));
     }
     return (
-      <View style={{ marginTop: 16, paddingHorizontal: 12 }}>
+      <View style={localStyles.groupsGridContainer}>
         {rows.map((row, rowIndex) => (
-          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 12, justifyContent: 'space-between' }}>
+          <View key={rowIndex} style={localStyles.row}>
             {row.map((item, colIndex) => (
-              <View key={colIndex} style={{ flex: 0, width: '48%' }}>
-                {showGroups(false, item)}
+              <View key={item.id || colIndex} style={localStyles.buttonWrapper}> {/* Use item.id for key */}
+                {showGroups(item)}
               </View>
             ))}
+            {/* Add a spacer view if there's only one item in the last row */}
+            {row.length === 1 && <View style={localStyles.buttonWrapper} />}
           </View>
         ))}
       </View>
     );
   };
 
-  const getGroups = () => {
-    return getGroupsGrid();
-  };
+  // const getGroups = () => { // This function is just a wrapper, can inline getGroupsGrid
+  //   return getGroupsGrid();
+  // };
 
   return (
     <LoadingWrapper loading={loading}>
       <LinearGradient
-        colors={['#F8F9FA', '#F0F2F5']}
-        style={styles.gradientContainer}
+        colors={['#F8F9FA', '#F0F2F5']} // Consider theming these
+        style={localStyles.gradientContainer}
       >
-        <SafeAreaView style={[styles.container, { alignSelf: "center", width: '100%' }]}>
-          <MainHeader title="My Groups" openDrawer={navigation.openDrawer} back={navigation.goBack} />
+        <SafeAreaView style={[localStyles.container, { backgroundColor: theme.colors.background }]}>
+          <MainHeader title="My Groups" openDrawer={navigation.openDrawer} />
           <FlatList
-            data={mergeData}
-            contentContainerStyle={globalStyles.FlatListStyle}
+            data={mergedData}
+            contentContainerStyle={globalStyles.FlatListStyle} // Review this globalStyle
             showsVerticalScrollIndicator={false}
-            scrollEnabled={true}
+            // scrollEnabled={true} // Default true, not needed unless explicitly set false elsewhere
             ListFooterComponent={() => (
-              <View style={globalStyles.webViewContainer}>{getGroups()}</View>
+              // Review globalStyles.webViewContainer for background etc.
+              <View style={[globalStyles.webViewContainer, {backgroundColor: 'transparent'}]}>{getGroupsGrid()}</View>
             )}
-            renderItem={item => renderItems(item)}
-            keyExtractor={(item: any, index: number) => `key-${index}`}
+            renderItem={renderTimelineItem}
+            keyExtractor={(item: UserPostInterface, index: number) => item.postId || `key-${index}`} // Use postId or fallback
+            ListEmptyComponent={!loading ? <View><PaperText style={{textAlign:'center', padding:20}}>No timeline posts available.</PaperText></View> : null}
           />
         </SafeAreaView>
       </LinearGradient>
@@ -135,12 +156,27 @@ const MyGroups = (props: any) => {
   );
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   gradientContainer: {
     flex: 1,
   },
   container: {
     flex: 1,
+    alignSelf: "center", // Kept from original
+    width: '100%' // Kept from original
+  },
+  groupsGridContainer: {
+    marginTop: 16,
+    paddingHorizontal: 12,
+  },
+  row: {
+    flexDirection: 'row',
+    marginBottom: 12,
+    justifyContent: 'space-between',
+  },
+  buttonWrapper: {
+    flex: 0, // Not needed if width is set
+    width: '48%',
   }
 });
 

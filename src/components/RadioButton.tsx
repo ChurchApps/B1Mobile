@@ -1,75 +1,56 @@
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native'; // View might still be used for overall layout if needed
+import { RadioButton, Text, useTheme } from 'react-native-paper'; // Text might be used if labels need custom styling outside RadioButton.Item
 
-interface RadioButtonProps {
-  label: string;
-  value: string;
-  selectedValue: string;
-  onSelect: (value: string) => void;
-}
+// The individual RadioButton function is effectively replaced by RadioButton.Item
 
-function RadioButton({ label, value, selectedValue, onSelect }: RadioButtonProps) {
-  return (
-    <TouchableOpacity
-      style={styles.singleOptionContainer}
-      onPress={() => onSelect(value)}>
-      <View style={styles.outerCircle}>
-        {selectedValue === value ? <View style={styles.innerCircle} /> : null}
-      </View>
-      <Text style={{ fontSize: DimensionHelper.wp(3.5) }}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
-interface RadioButtonGroupProps {
-  options: string[]; // Display labels
-  values: string[]; // Actual values
+interface PaperRadioButtonGroupProps {
+  options: Array<{ label: string; value: string }>; // Combine options and values
   selectedValue: string;
   onValueChange: (value: string) => void;
+  disabled?: boolean; // Optional disabled state for the whole group
+  // style?: object; // Optional styles for the group container
 }
 
-export function RadioButtonGroup({
-  options,
-  values,
-  selectedValue,
-  onValueChange,
-}: RadioButtonGroupProps) {
+export function RadioButtonGroup(props: PaperRadioButtonGroupProps) {
+  const theme = useTheme();
+  const { options, selectedValue, onValueChange, disabled } = props;
+
   return (
-    <View>
-      {options.map((option, index) => (
-        <RadioButton
-          key={`radio-${option.toLowerCase().replace(/\s+/g, '-')}-${values[index]}`}
-          label={option}
-          value={values[index]}
-          selectedValue={selectedValue}
-          onSelect={onValueChange}
+    <RadioButton.Group onValueChange={onValueChange} value={selectedValue}>
+      {options.map((option) => (
+        <RadioButton.Item
+          key={option.value}
+          label={option.label}
+          value={option.value}
+          disabled={disabled} // Apply disabled state to each item
+          // status={selectedValue === option.value ? 'checked' : 'unchecked'} // Handled by RadioButton.Group
+          // onPress={() => onValueChange(option.value)} // Handled by RadioButton.Group
+          // color={theme.colors.primary} // Color of the radio button when selected
+          // uncheckedColor={theme.colors.onSurfaceDisabled} // Color when unchecked
+          // labelStyle={{ color: theme.colors.onSurface }} // Custom label style
+          // style={{ marginVertical: 2 }} // Custom style for each RadioButton.Item container
         />
       ))}
-    </View>
+    </RadioButton.Group>
   );
 }
 
-const styles = StyleSheet.create({
-  singleOptionContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    columnGap: 10,
-    margin: 5,
-  },
-  outerCircle: {
-    width: 25,
-    height: 25,
-    borderRadius: 25 / 2,
-    borderWidth: 2,
-    borderColor: 'rgb(25, 118, 210)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  innerCircle: {
-    width: 14,
-    height: 14,
-    borderRadius: 14 / 2,
-    backgroundColor: 'rgb(25, 118, 210)]',
-  },
-});
+// Original styles are mostly replaced by RadioButton.Item and RadioButton.Group defaults.
+// If specific layout like `singleOptionContainer` or circle styles are strictly needed
+// beyond what Paper components offer, deeper customization or different components might be required.
+// For this refactor, we assume Paper's defaults are acceptable.
+// const styles = StyleSheet.create({
+//   singleOptionContainer: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     columnGap: 10,
+//     margin: 5,
+//   },
+//   outerCircle: {
+//     // ...
+//   },
+//   innerCircle: {
+//     // ...
+//   },
+// });

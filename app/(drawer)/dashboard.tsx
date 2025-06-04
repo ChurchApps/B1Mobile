@@ -1,6 +1,6 @@
 import React from 'react';
 import { ImageButton } from '@/src/components/ImageButton';
-import { Loader } from '@/src/components/Loader';
+// Loader is used by LoadingWrapper internally
 import { MainHeader } from '@/src/components/wrapper/MainHeader';
 import { CacheHelper, LinkInterface, UserHelper, globalStyles } from '@/src/helpers';
 import { NavigationHelper } from '@/src/helpers/NavigationHelper';
@@ -9,83 +9,66 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, SafeAreaView, ScrollView, Text, View, StyleSheet } from 'react-native';
+import { Dimensions, Image, SafeAreaView, ScrollView, View, StyleSheet } from 'react-native'; // Text removed
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 import { LinearGradient } from 'expo-linear-gradient';
+import { Text as PaperText, useTheme } from 'react-native-paper';
 
 const Dashboard = (props: any) => {
+  const theme = useTheme(); // Added useTheme
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const nav = useNavigation<NavigationProp<any>>();
-  const focused = useIsFocused()
+  const focused = useIsFocused();
 
   const [isLoading, setLoading] = useState(false);
+  // dimension state seems unused in render, keeping logic for now
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
 
   useEffect(() => {
-    Dimensions.addEventListener('change', () => {
-      const dim = Dimensions.get('screen')
-      setDimension(dim);
-    })
+    const subscription = Dimensions.addEventListener('change', ({ screen }) => {
+      setDimension(screen);
+    });
     UserHelper.addOpenScreenEvent('Dashboard');
-  }, [])
+    return () => subscription?.remove();
+  }, []);
 
-  useEffect(() => {
-  }, [dimension])
-
-
-
+  // useEffect for dimension is empty, can be removed if not used
+  // useEffect(() => {
+  // }, [dimension])
 
   useEffect(() => {
     checkRedirect();
-  },
-    [focused])
+  }, [focused]);
 
   const checkRedirect = () => {
     if (!CacheHelper.church) {
-      router.navigate('/(drawer)/churchSearch')
-      // router.navigate('/churchSearch')
+      router.navigate('/(drawer)/churchSearch');
     }
-  }
+  };
 
-  const brandColor = '#175ec1';
+  // const brandColor = '#175ec1'; // Replaced by theme.colors.primary
   const getButton = (topItem: boolean, item: LinkInterface) => {
     if (item.linkType === "separator") return (<></>);
     let backgroundImage = undefined;
 
-    // Use the link's photo if available
     if (item.photo) {
       backgroundImage = { uri: item.photo };
     } else {
-      // Fall back to default images based on link type
       switch (item.linkType.toLowerCase()) {
-        case "groups":
-          backgroundImage = require('@/src/assets/images/dash_worship.png');
-          break;
-        case "checkin":
-          backgroundImage = require('@/src/assets/images/dash_checkin.png');
-          break;
-        case "donation":
-          backgroundImage = require('@/src/assets/images/dash_donation.png');
-          break;
-        case "directory":
-          backgroundImage = require('@/src/assets/images/dash_directory.png');
-          break;
-        case "plans":
-          backgroundImage = require('@/src/assets/images/dash_votd.png');
-          break;
-        case "chums":
-          backgroundImage = require('@/src/assets/images/dash_url.png');
-          break;
-        default:
-          backgroundImage = require('@/src/assets/images/dash_url.png');
-          break;
+        case "groups": backgroundImage = require('@/src/assets/images/dash_worship.png'); break;
+        case "checkin": backgroundImage = require('@/src/assets/images/dash_checkin.png'); break;
+        case "donation": backgroundImage = require('@/src/assets/images/dash_donation.png'); break;
+        case "directory": backgroundImage = require('@/src/assets/images/dash_directory.png'); break;
+        case "plans": backgroundImage = require('@/src/assets/images/dash_votd.png'); break;
+        case "chums": backgroundImage = require('@/src/assets/images/dash_url.png'); break;
+        default: backgroundImage = require('@/src/assets/images/dash_url.png'); break;
       }
     }
 
     return (
       <ImageButton key={item.id} text={item.text} onPress={() => {
         NavigationHelper.navigateToScreen(item, router.navigate)
-      }} color={brandColor} backgroundImage={backgroundImage} />
+      }} color={theme.colors.primary} backgroundImage={backgroundImage} /> // Use theme color
     );
   }
 
@@ -99,12 +82,14 @@ const Dashboard = (props: any) => {
     return (
       <View style={{ marginTop: 16, paddingHorizontal: 12 }}>
         {rows.map((row, rowIndex) => (
-          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 12, justifyContent: 'space-between' }}>
+          <View key={rowIndex} style={localStyles.row}>
             {row.map((item, colIndex) => (
-              <View key={item.id || colIndex} style={{ flex: 0, width: '48%' }}>
+              <View key={item.id || colIndex} style={localStyles.buttonWrapper}>
                 {getButton(false, item)}
               </View>
             ))}
+            {/* Add a spacer view if there's only one item in the last row to maintain layout */}
+            {row.length === 1 && <View style={localStyles.buttonWrapper} />}
           </View>
         ))}
       </View>
@@ -112,21 +97,27 @@ const Dashboard = (props: any) => {
   }
 
   const getBrand = () => {
-    if (UserHelper.churchAppearance?.logoLight) return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} />
-    else return <Text style={{ fontSize: 20, width: "100%", textAlign: "center", marginTop: 0 }}>{CacheHelper.church?.name || ""}</Text>
+    if (UserHelper.churchAppearance?.logoLight) {
+      return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={localStyles.brandImage} resizeMode="contain" />
+    } else {
+      return <PaperText variant="headlineSmall" style={localStyles.brandText}>{CacheHelper.church?.name || ""}</PaperText>
+    }
   }
+
   return (
     <LoadingWrapper loading={isLoading}>
       <LinearGradient
-        colors={['#F8F9FA', '#F0F2F5']}
-        style={styles.gradientContainer}
+        colors={['#F8F9FA', '#F0F2F5']} // These colors can be themed if desired
+        style={localStyles.gradientContainer}
       >
-        <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
-          <MainHeader title="Home" openDrawer={() => {
-            navigation.openDrawer()
-          }} />
-          <ScrollView style={globalStyles.webViewContainer} contentContainerStyle={{ flexGrow: 1 }}>
-            {getBrand()}
+        {/* globalStyles.grayContainer might set a background color, ensure it's compatible or uses theme.colors.background */}
+        <SafeAreaView style={[globalStyles.grayContainer, localStyles.safeArea, { backgroundColor: theme.colors.background }]}>
+          <MainHeader title="Home" openDrawer={() => navigation.openDrawer()} />
+          {/* globalStyles.webViewContainer might also have styles to review */}
+          <ScrollView style={[globalStyles.webViewContainer, {backgroundColor: 'transparent'}]} contentContainerStyle={localStyles.scrollContent}>
+            <View style={localStyles.brandContainer}>
+              {getBrand()}
+            </View>
             {getButtons()}
           </ScrollView>
         </SafeAreaView>
@@ -135,14 +126,41 @@ const Dashboard = (props: any) => {
   )
 }
 
-
-const styles = StyleSheet.create({
+// Renamed styles to localStyles to avoid confusion with globalStyles
+const localStyles = StyleSheet.create({
   gradientContainer: {
     flex: 1,
   },
-  container: {
-    flex: 1,
+  safeArea: {
+    alignSelf: "center",
+    width: '100%',
+    flex: 1, // Ensure SafeAreaView takes full height of gradient
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  brandContainer: { // Added a container for brand to control alignment/padding
+    alignItems: 'center', // Center logo/text
+    paddingVertical: 20, // Add some padding
+  },
+  brandImage: {
+    width: "80%", // Adjust as needed
+    height: DimensionHelper.wp(25), // Keep original height for now
+  },
+  brandText: {
+    // fontSize: 20, // Handled by PaperText variant="headlineSmall"
+    width: "100%",
+    textAlign: "center",
+    // marginTop: 0, // Handled by brandContainer padding
+  },
+  row: {
+    flexDirection: 'row',
+    marginBottom: 12,
+    justifyContent: 'space-between',
+  },
+  buttonWrapper: {
+    width: '48%', // Ensure this creates the two-column layout
   }
 });
 
-export default Dashboard
+export default Dashboard;

@@ -1,65 +1,77 @@
-import { Constants, globalStyles } from '@/src/helpers';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
+import { DimensionHelper } from '@/src/helpers/DimensionHelper'; // Kept for custom sizing if necessary
 import React from 'react';
-import { Platform } from 'react-native'; // Platform is still needed
+import { Platform, StyleSheet } from 'react-native';
 import { Appbar, useTheme } from 'react-native-paper';
-// NotificationTab and HeaderBell are removed as per subtask instructions.
-// Their functionality (displaying notifications and the bell icon itself) will be handled differently.
+// Constants and globalStyles are aimed to be removed or replaced by theme.
 
 interface Props {
   title: string;
   back?: () => void;
   openDrawer?: () => void;
   hideBell?: boolean;
-  onToggleNotifications?: () => void; // New prop for handling bell press
+  onToggleNotifications?: () => void;
 }
 
 export function MainHeader(props: Props) {
   const theme = useTheme();
-  // Appbar.Header handles safe area insets by default.
 
-  // Define a base style for the title, ensuring white color from constants
-  // and allowing textAlign to be overridden if Appbar.Content centers it well by default.
-  const titleStyle = {
-    ...globalStyles.headerText, // fontSize, fontWeight
-    color: Constants.Colors.white_color,
-    // textAlign: 'center', // Appbar.Content might center by default or require specific alignment props.
-    // flex: 1, // Let Appbar.Content manage its own flex properties.
-  };
+  const styles = StyleSheet.create({
+    header: {
+      backgroundColor: theme.colors.primary,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    title: {
+      // Example: using theme fonts. Adjust specific font (e.g., titleLarge, titleMedium) as needed.
+      // fontSize: theme.fonts.titleLarge.fontSize,
+      // fontWeight: theme.fonts.titleLarge.fontWeight as any, // Type assertion if needed
+      fontFamily: theme.fonts.titleLarge.fontFamily, // Ensure this font is loaded
+      color: theme.colors.onPrimary,
+    },
+    appbarContent: {
+      // Default behavior of Appbar.Content is to take up flexible space.
+      // To truly center the title when actions are present on one or both sides,
+      // you might need to ensure it has enough flexGrow and actions have fixed/min width.
+      // The `alignItems: 'center'` here might not globally center the text if flex distribution is uneven.
+      // It centers the title *within* the Appbar.Content allocated space.
+      // For more robust centering, one might pass a custom styled Text component to the title prop.
+      alignItems: 'center', // Keep if this visual centering is acceptable
+    },
+    actionSpacer: {
+      width: DimensionHelper.wp(6), // Retain specific spacer width for layout consistency
+      opacity: 0,
+    }
+  });
+
+  // Define icon sizes - consider using default Paper sizes or making these theme-configurable
+  const backIconSize = Platform.OS === 'ios' ? DimensionHelper.hp(3.5) : DimensionHelper.wp(6); // Example
+  const menuIconSize = DimensionHelper.wp(6);
+  const bellIconSize = DimensionHelper.wp(6);
+
 
   return (
-    <Appbar.Header
-      style={{
-        backgroundColor: Constants.Colors.app_color, // from globalStyles.headerViewStyle
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}
-    >
+    <Appbar.Header style={styles.header}>
       {/* Left Actions */}
       {Platform.OS === 'ios' && props.back ? (
-        <Appbar.BackAction onPress={props.back} color={Constants.Colors.white_color} size={DimensionHelper.hp(3.5)} />
+        <Appbar.BackAction onPress={props.back} color={theme.colors.onPrimary} size={backIconSize} />
       ) : props.openDrawer ? (
-        <Appbar.Action icon="menu" onPress={props.openDrawer} color={Constants.Colors.white_color} size={DimensionHelper.wp(6)} />
+        <Appbar.Action icon="menu" onPress={props.openDrawer} color={theme.colors.onPrimary} size={menuIconSize} />
       ) : (
-        // Spacer if no left actions, to help center title if Appbar.Content doesn't fill
-        // Or if there's only a right action.
-        // Adjust width as needed, typically same as an Appbar.Action
-        <Appbar.Action icon="" style={{width: DimensionHelper.wp(6), opacity:0}} disabled />
+        <Appbar.Action icon="menu" style={styles.actionSpacer} disabled /> // Use a visible icon for spacer to maintain width if icon name matters for layout
       )}
 
       {/* Title */}
       <Appbar.Content
         title={props.title}
-        titleStyle={titleStyle}
-        style={{ alignItems: 'center' }} // Attempt to center title; might need adjustment
+        titleStyle={styles.title}
+        style={styles.appbarContent}
       />
 
       {/* Right Actions */}
       {!props.hideBell && props.onToggleNotifications ? (
-        <Appbar.Action icon="bell-outline" onPress={props.onToggleNotifications} color={Constants.Colors.white_color} size={DimensionHelper.wp(6)} />
+        <Appbar.Action icon="bell-outline" onPress={props.onToggleNotifications} color={theme.colors.onPrimary} size={bellIconSize} />
       ) : (
-        // Spacer if no right actions, to help center title
-         <Appbar.Action icon="" style={{width: DimensionHelper.wp(6), opacity:0}} disabled />
+        <Appbar.Action icon="bell-outline" style={styles.actionSpacer} disabled /> // Use a visible icon for spacer
       )}
     </Appbar.Header>
   );
