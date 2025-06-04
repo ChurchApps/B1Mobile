@@ -1,9 +1,8 @@
-import { globalStyles } from "@/src/helpers"; // Keep for now, but aim to reduce usage
 // Constants import removed as it's no longer used after color refactoring
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper"; // Kept for widthClass
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Card, Button, Text as PaperText, useTheme } from 'react-native-paper';
+import { Card, Button, useTheme } from 'react-native-paper'; // PaperText not used
 
 interface Props {
   title: string;
@@ -30,87 +29,50 @@ export function InputBox({
   // Define styles locally using StyleSheet.create and theme
   const styles = StyleSheet.create({
     card: {
-      // from globalStyles.paymentTitleContainer
-      // Example: margin: theme.spacing(1), if theme.spacing is defined
-      // For now, retain global style if it's complex or defined elsewhere for consistency
-      ...globalStyles.paymentTitleContainer,
+      margin: theme.spacing.medium,
+      borderRadius: theme.roundness,
+      // elevation: 1, // Default Card elevation
     },
     cardTitle: {
-      // from globalStyles.paymentTitleText
-      // fontWeight: 'bold', // Example, adjust as per globalStyles
-      color: theme.colors.onSurface, // Already using theme color
-      // fontSize: theme.fonts.titleMedium.fontSize, // Example
-      ...globalStyles.paymentTitleText, // Spread to keep other properties
-      color: theme.colors.onSurface, // Ensure theme color overrides global
+      // Rely on default Card.Title typography.
+      // If specific color needed: color: theme.colors.onSurface
+      // Default should be appropriate.
     },
     cardTitleView: {
-      // from globalStyles.paymentTitleView
-      // borderBottomWidth: 1,
-      // borderBottomColor: theme.colors.outline, // Example
-      ...globalStyles.paymentTitleView, // Spread to keep other properties
+      // If a bottom border was intended by globalStyles.paymentTitleView
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: theme.colors.outline,
     },
     cardActions: {
-      // from globalStyles.previewBtnView
-      flexDirection: 'row',
-      justifyContent: 'space-around', // or 'flex-end', 'center' based on original
-      padding: theme.spacing?.small || 8, // Example padding using theme
-      ...globalStyles.previewBtnView, // Spread to keep other properties like alignItems
+      // Card.Actions default styling is usually sufficient.
+      // It provides padding and space-between for items.
+      // If specific justification like 'space-around' is needed:
+      // justifyContent: 'space-around',
     },
     button: {
-      // from globalStyles.actionButtons
-      // height: DimensionHelper.wp(12), // Keep if necessary via DimensionHelper
-      // alignItems: 'center', // Default for Button
-      // justifyContent: 'center', // Default for Button
-      ...commonButtonStyles, // Apply common button styles defined below
+      // height is removed, let button have default height.
+      // width: widthClass is applied directly in the component.
+      // No commonButtonStyles needed anymore.
     },
     labelStyle: {
-      // from globalStyles.previewBtnText
-      // color: theme.colors.onPrimary, // This will be set per button based on its color
+      // color is removed, Paper's Button in contained mode handles text color.
       fontSize: theme.fonts.labelLarge.fontSize,
       fontFamily: theme.fonts.labelLarge.fontFamily,
       textAlign: 'center',
     },
   });
 
-  // Common button styles that might still use DimensionHelper or fixed values
-  const commonButtonStyles = {
-    height: DimensionHelper.wp(12), // Retaining from original globalStyles.actionButtons.height
-    // alignItems: 'center', // Button default
-    // justifyContent: 'center', // Button default
-  };
-
-
-  // Helper to get label color based on button background
-  // This is a simplified approach. For full correctness, this might need to check theme.dark
-  // and specific onTertiary, onWarning colors if defined in AppThemes.ts
-  const getLabelColor = (buttonBackgroundColor: string) => {
-    if (buttonBackgroundColor === theme.colors.primary ||
-        buttonBackgroundColor === theme.colors.error ||
-        buttonBackgroundColor === theme.colors.secondary) { // Assuming secondary might be used
-      // Standard behavior for primary/error buttons often uses a light text color
-      return theme.colors.surface; // Or a specific 'onPrimary', 'onError' if they guarantee contrast
-    }
-    // For other colors like tertiary (yellowish), a dark text might be better
-    // This is a guess; ideally, theme would provide onTertiary.
-    if (buttonBackgroundColor === theme.colors.tertiary) {
-        return theme.colors.onTertiaryContainer; // if available, else fallback
-    }
-    return theme.colors.onSurface; // Fallback
-  };
-
-
-  const cancelLabelColor = getLabelColor(theme.colors.tertiary); // Assuming yellow maps to tertiary
-  const deleteLabelColor = getLabelColor(theme.colors.error);
-  const saveLabelColor = getLabelColor(theme.colors.primary);
-
+  // getLabelColor function removed.
+  // commonButtonStyles removed.
+  // cancelLabelColor, deleteLabelColor, saveLabelColor removed.
 
   return (
-    <Card style={styles.card}>
+    <Card style={styles.card} elevation={2}> {/* Added elevation explicitly for visibility */}
       <Card.Title
         title={title}
-        titleStyle={styles.cardTitle}
+        titleStyle={styles.cardTitle} // Should rely on defaults mostly
         left={(props) => React.cloneElement(headerIcon as React.ReactElement, { size: props.size })}
-        style={styles.cardTitleView}
+        style={styles.cardTitleView} // For bottom border
       />
       <Card.Content>
         {children}
@@ -121,9 +83,9 @@ export function InputBox({
             <Button
               onPress={cancelFunction}
               disabled={isSubmitting}
-              buttonColor={theme.colors.tertiary} // Replaced Constants.Colors.button_yellow
-              style={[{ width: widthClass }, styles.button]}
-              labelStyle={[styles.labelStyle, { color: cancelLabelColor }]}
+              buttonColor={theme.colors.tertiary}
+              style={[{ width: widthClass }, styles.button]} // Applying widthClass here
+              labelStyle={styles.labelStyle} // Removed dynamic color
               mode="contained"
               key="cancel"
             >
@@ -134,9 +96,9 @@ export function InputBox({
             <Button
               onPress={deleteFunction}
               disabled={isSubmitting}
-              buttonColor={theme.colors.error} // Replaced Constants.Colors.button_red
-              style={[{ width: widthClass }, styles.button]}
-              labelStyle={[styles.labelStyle, { color: deleteLabelColor }]}
+              buttonColor={theme.colors.error}
+              style={[{ width: widthClass }, styles.button]} // Applying widthClass here
+              labelStyle={styles.labelStyle} // Removed dynamic color
               mode="contained"
               key="delete"
             >
@@ -148,9 +110,9 @@ export function InputBox({
               onPress={saveFunction}
               disabled={isSubmitting}
               loading={isSubmitting}
-              buttonColor={theme.colors.primary} // Replaced Constants.Colors.button_dark_green
-              style={[{ width: widthClass }, styles.button]}
-              labelStyle={[styles.labelStyle, { color: saveLabelColor }]}
+              buttonColor={theme.colors.primary}
+              style={[{ width: widthClass }, styles.button]} // Applying widthClass here
+              labelStyle={styles.labelStyle} // Removed dynamic color
               mode="contained"
               key="save"
             >

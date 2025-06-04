@@ -24,18 +24,13 @@ export function ImageButton(props: Props) {
     card: {
       height: DimensionHelper.wp(38), // Retain responsive height for now, can be reviewed
       width: '100%',
-      // borderRadius: theme.roundness, // Use theme roundness
+      borderRadius: theme.roundness, // Use theme roundness
       // elevation: 3, // Card has its own elevation prop
       overflow: 'hidden', // Important for ImageBackground within Card
       justifyContent: 'center',
       alignItems: 'center',
     },
-    touchableRipple: {
-      width: '100%',
-      height: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
+    // touchableRipple style removed as TouchableRipple component is removed
     imageBackground: {
       ...StyleSheet.absoluteFillObject,
       justifyContent: 'center',
@@ -58,8 +53,8 @@ export function ImageButton(props: Props) {
       color: textColor, // Applied dynamically
     },
     iconImageStyle: {
-      width: DimensionHelper.wp(10), // Consider theme-based sizing or fixed DP values
-      height: DimensionHelper.wp(10),
+      width: 40, // Fixed DP value
+      height: 40, // Fixed DP value
       marginBottom: theme.spacing.small, // Use theme spacing
       resizeMode: 'contain',
     },
@@ -67,22 +62,18 @@ export function ImageButton(props: Props) {
 
   return (
     <Card style={[styles.card, props.style]} onPress={props.onPress} elevation={3}>
-      <TouchableRipple onPress={props.onPress} style={styles.touchableRipple} rippleColor={`rgba(0, 0, 0, .32)`}>
-        <>
-          {props.backgroundImage ? (
-            <ImageBackground source={props.backgroundImage} style={styles.imageBackground} resizeMode="cover">
-              {/* Optional: Add an overlay View here if needed for text readability */}
-              {props.source && <Image source={props.source} style={styles.iconImageStyle} />}
-              <PaperText variant="labelLarge" style={[styles.textStyle, { color: textColor }]}>{props.text}</PaperText>
-            </ImageBackground>
-          ) : (
-            <View style={styles.contentContainer}>
-              {props.source && <Image source={props.source} style={styles.iconImageStyle} />}
-              <PaperText variant="labelLarge" style={[styles.textStyle, { color: textColor }]}>{props.text}</PaperText>
-            </View>
-          )}
-        </>
-      </TouchableRipple>
+      {props.backgroundImage ? (
+        <ImageBackground source={props.backgroundImage} style={styles.imageBackground} resizeMode="cover">
+          {/* Optional: Add an overlay View here if needed for text readability */}
+          {props.source && <Image source={props.source} style={styles.iconImageStyle} />}
+          <PaperText variant="labelLarge" style={[styles.textStyle, { color: textColor }]}>{props.text}</PaperText>
+        </ImageBackground>
+      ) : (
+        <View style={styles.contentContainer}>
+          {props.source && <Image source={props.source} style={styles.iconImageStyle} />}
+          <PaperText variant="labelLarge" style={[styles.textStyle, { color: textColor }]}>{props.text}</PaperText>
+        </View>
+      )}
     </Card>
   );
 }
