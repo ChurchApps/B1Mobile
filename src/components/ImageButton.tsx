@@ -1,6 +1,7 @@
 import * as React from "react";
 import { StyleSheet, Text, Pressable, View, Animated, Image, ImageSourcePropType } from "react-native";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface Props {
   icon?: React.ReactNode,
@@ -45,11 +46,13 @@ export function ImageButton(props: Props) {
       height: DimensionHelper.wp(46 * (9 / 16)),
       borderRadius: DimensionHelper.wp(4.5),
       overflow: 'hidden',
-      elevation: 3,
+      elevation: 4,
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
-      shadowRadius: 4,
+      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: 0.15,
+      shadowRadius: 6,
+      borderWidth: 1,
+      borderColor: 'rgba(0,0,0,0.05)',
     },
     backgroundImage: {
       ...StyleSheet.absoluteFillObject,
@@ -59,7 +62,11 @@ export function ImageButton(props: Props) {
     },
     overlay: {
       ...StyleSheet.absoluteFillObject,
-      backgroundColor: 'rgba(0,0,0,0.45)',
+      backgroundColor: 'rgba(0,0,0,0.35)',
+    },
+    gradient: {
+      ...StyleSheet.absoluteFillObject,
+      opacity: 0.7,
     },
     icon: {
       marginBottom: DimensionHelper.wp(2),
@@ -96,9 +103,17 @@ export function ImageButton(props: Props) {
         onPressOut={handlePressOut}
       >
         {props.backgroundImage && (
-          <Image source={props.backgroundImage} style={styles.backgroundImage} />
+          <>
+            <Image source={props.backgroundImage} style={styles.backgroundImage} />
+            <LinearGradient
+              colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.6)']}
+              style={styles.gradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+            <View style={styles.overlay} />
+          </>
         )}
-        {props.backgroundImage && <View style={styles.overlay} />}
         <View style={styles.content}>
           {props.icon && (
             <View style={styles.icon}>
