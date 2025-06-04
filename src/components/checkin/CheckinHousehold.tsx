@@ -4,7 +4,7 @@ import { ErrorHelper } from '@churchapps/mobilehelper';
 import React, { useState } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { BottomButton } from '../BottomButton';
+import { Button } from 'react-native-paper';
 import { Loader } from '../Loader';
 
 interface Props {
@@ -84,7 +84,25 @@ export const CheckinHousehold = (props: Props) => {
   else return (
     <>
       <FlatList data={CheckinHelper.householdMembers} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
-      <BottomButton title="CHECKIN" onPress={() => submitAttendance()} style={DimensionHelper.wp(100)} />
+      <Button
+        mode="contained"
+        onPress={() => submitAttendance()}
+        buttonColor={Constants.Colors.button_bg}
+        style={{
+          width: DimensionHelper.wp(100),
+          height: DimensionHelper.wp(15),
+          justifyContent: 'center'
+        }}
+        labelStyle={{
+          color: 'white',
+          fontSize: DimensionHelper.wp(4.2),
+          fontFamily: Constants.Fonts.RobotoMedium,
+          marginHorizontal: DimensionHelper.wp(2.5),
+          textAlign: 'center'
+        }}
+      >
+        CHECKIN
+      </Button>
     </>
   );
 };

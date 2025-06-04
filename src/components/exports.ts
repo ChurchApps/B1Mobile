@@ -1,5 +1,4 @@
 export { BlueHeader } from "./BlueHeader"
-export { BottomButton } from "./BottomButton"
 export { CustomDrawer } from "./CustomDrawer"
 export { DisplayBox } from "./DisplayBox"
 export { InputBox } from "./InputBox"

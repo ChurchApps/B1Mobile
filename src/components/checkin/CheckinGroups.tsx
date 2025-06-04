@@ -1,10 +1,10 @@
-import { CheckinHelper, PersonInterface, ServiceTimeInterface, UserHelper, globalStyles } from '@/src/helpers';
+import { CheckinHelper, PersonInterface, ServiceTimeInterface, UserHelper, globalStyles, Constants } from '@/src/helpers';
 import { ArrayHelper } from '@churchapps/mobilehelper';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { BottomButton } from '../BottomButton';
+import { Button } from 'react-native-paper';
 
 interface Props {
   member: PersonInterface;
@@ -51,7 +51,25 @@ export const CheckinGroups = (props: Props) => {
   return (
     <>
       <FlatList data={CheckinHelper.groupTree} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.key} style={globalStyles.listContainerStyle} />
-      <BottomButton title="NONE" onPress={() => selectGroup(null)} style={DimensionHelper.wp(100)} />
+      <Button
+        mode="contained"
+        onPress={() => selectGroup(null)}
+        buttonColor={Constants.Colors.button_red}
+        style={{
+          width: DimensionHelper.wp(100),
+          height: DimensionHelper.wp(15),
+          justifyContent: 'center'
+        }}
+        labelStyle={{
+          color: 'white',
+          fontSize: DimensionHelper.wp(4.2),
+          fontFamily: Constants.Fonts.RobotoRegular,
+          marginHorizontal: DimensionHelper.wp(2.5),
+          textAlign: 'center'
+        }}
+      >
+        NONE
+      </Button>
     </>
   );
 };
