@@ -23,6 +23,16 @@ const theme = {
     ...MD3LightTheme.colors,
     primary: '#175ec1',
     secondary: '#f0f2f5',
+    surface: '#ffffff',
+    background: '#f8f9fa',
+    elevation: {
+      level0: 'transparent',
+      level1: '#ffffff',
+      level2: '#f8f9fa',
+      level3: '#f0f2f5',
+      level4: '#e9ecef',
+      level5: '#e2e6ea',
+    }
   },
 };
 
@@ -96,30 +106,30 @@ const Dashboard = () => {
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
         <LoadingWrapper loading={isLoading}>
-          <LinearGradient colors={['#F8F9FA', '#F0F2F5']} style={styles.gradientContainer}>
-            <SafeAreaView style={styles.container} edges={['top']}>
-              <Appbar.Header>
-                <Appbar.Action icon="menu" onPress={() => navigation.openDrawer()} />
-                <Appbar.Content title="Home" />
-                <View style={styles.bellContainer}>
-                  <View style={styles.bellWrapper}>
-                    <HeaderBell toggleNotifications={() => setShowNotifications(true)} />
-                  </View>
+          <View style={styles.container}>
+            <Appbar.Header style={styles.header} mode="center-aligned">
+              <Appbar.Action icon="menu" onPress={() => navigation.openDrawer()} color="white" />
+              <Appbar.Content title="Home" titleStyle={styles.headerTitle} />
+              <View style={styles.bellContainer}>
+                <View style={styles.bellWrapper}>
+                  <HeaderBell toggleNotifications={() => setShowNotifications(true)} />
                 </View>
-              </Appbar.Header>
+              </View>
+            </Appbar.Header>
+            <View style={styles.contentContainer}>
               <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                <Surface style={styles.brandContainer} elevation={0}>
+                <Surface style={styles.brandContainer} elevation={1}>
                   {getBrand()}
                 </Surface>
                 {getButtons()}
               </ScrollView>
-              <Portal>
-                <Modal visible={showNotifications} onDismiss={() => setShowNotifications(false)} contentContainerStyle={styles.modalContainer}>
-                  <NotificationTab />
-                </Modal>
-              </Portal>
-            </SafeAreaView>
-          </LinearGradient>
+            </View>
+            <Portal>
+              <Modal visible={showNotifications} onDismiss={() => setShowNotifications(false)} contentContainerStyle={styles.modalContainer}>
+                <NotificationTab />
+              </Modal>
+            </Portal>
+          </View>
         </LoadingWrapper>
       </SafeAreaProvider>
     </PaperProvider>
@@ -127,19 +137,94 @@ const Dashboard = () => {
 };
 
 const styles = StyleSheet.create({
-  gradientContainer: { flex: 1 },
-  container: { flex: 1 },
-  scrollView: { flex: 1 },
-  scrollContent: { flexGrow: 1, paddingBottom: 20 },
-  brandContainer: { padding: 16, alignItems: 'center', backgroundColor: 'transparent' },
-  logo: { width: '100%', height: DimensionHelper.wp(25), resizeMode: 'contain' },
-  churchName: { textAlign: 'center', marginTop: 8, color: theme.colors.primary },
-  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', padding: 8, justifyContent: 'space-between' },
-  gridItem: { width: '48%', marginBottom: 16 },
-  card: { height: 160, overflow: 'hidden' },
-  cardImage: { height: 120 },
-  cardContent: { padding: 8, alignItems: 'center' },
-  cardText: { textAlign: 'center', color: theme.colors.primary },
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.primary
+  },
+  header: {
+    backgroundColor: theme.colors.primary,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '600'
+  },
+  contentContainer: {
+    flex: 1,
+    backgroundColor: '#f8f9fa'
+  },
+  scrollView: {
+    flex: 1
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20
+  },
+  brandContainer: {
+    margin: 16,
+    padding: 16,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2
+  },
+  logo: {
+    width: '100%',
+    height: DimensionHelper.wp(25),
+    resizeMode: 'contain'
+  },
+  churchName: {
+    textAlign: 'center',
+    marginTop: 8,
+    color: theme.colors.primary,
+    fontSize: 24,
+    fontWeight: '600'
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    padding: 12,
+    justifyContent: 'space-between'
+  },
+  gridItem: {
+    width: '48%',
+    marginBottom: 16
+  },
+  card: {
+    height: 160,
+    overflow: 'hidden',
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  cardImage: {
+    height: 120,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12
+  },
+  cardContent: {
+    padding: 12,
+    alignItems: 'center',
+    backgroundColor: 'white'
+  },
+  cardText: {
+    textAlign: 'center',
+    color: theme.colors.primary,
+    fontSize: 16,
+    fontWeight: '500'
+  },
   bellContainer: {
     marginRight: 8,
     width: 40,
@@ -149,14 +234,19 @@ const styles = StyleSheet.create({
   },
   bellWrapper: {
     transform: [{ scale: 1.2 }],
-    opacity: 0.87
+    opacity: 0.9
   },
   modalContainer: {
     backgroundColor: 'white',
     margin: 20,
-    borderRadius: 8,
+    borderRadius: 12,
     height: '80%',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   }
 });
 

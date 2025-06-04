@@ -27,12 +27,12 @@ export const HeaderBell = (props: Props) => {
 
   const iconStyle = {
     ...globalStyles.menuIcon,
-    tintColor: theme.colors.primary
+    tintColor: 'white'
   };
 
   const badgeIconStyle = {
     ...globalStyles.BadgemenuIcon,
-    tintColor: theme.colors.primary
+    tintColor: 'white'
   };
 
   return (
@@ -40,7 +40,7 @@ export const HeaderBell = (props: Props) => {
       {badgeCount > 0 ? (
         <View style={{ flexDirection: 'row' }}>
           <Image source={Constants.Images.dash_bell} style={badgeIconStyle} />
-          <View style={[globalStyles.BadgeDot, { backgroundColor: theme.colors.primary }]} />
+          <View style={[globalStyles.BadgeDot, { backgroundColor: 'white' }]} />
         </View>
       ) : (
         <View>
