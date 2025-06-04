@@ -96,11 +96,11 @@ const Dashboard = (props: any) => {
       rows.push(items.slice(i, i + 2));
     }
     return (
-      <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+      <View style={{ marginTop: 16, paddingHorizontal: 12 }}>
         {rows.map((row, rowIndex) => (
-          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 16 }}>
+          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 12, justifyContent: 'space-between' }}>
             {row.map((item, colIndex) => (
-              <View key={item.id || colIndex} style={{ flex: 1, alignItems: "center" }}>
+              <View key={item.id || colIndex} style={{ flex: 0, width: '48%' }}>
                 {getButton(false, item)}
               </View>
             ))}
