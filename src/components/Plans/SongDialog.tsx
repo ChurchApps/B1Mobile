@@ -4,6 +4,7 @@ import { ApiHelper } from '@/src/helpers';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { Constants } from '@/src/helpers/Constants';
 import Icons from '@expo/vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface Props {
   arrangementKeyId?: string;
@@ -16,6 +17,7 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
   const [arrangement, setArrangement] = useState<any>(null);
   const [arrangementKey, setArrangementKey] = useState<any>(null);
   const [links, setLinks] = useState<any[]>([]);
+  const [externalLinks, setExternalLinks] = useState<any[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -29,8 +31,15 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
         setSongDetail(sd);
         const linkData = await ApiHelper.get(`/links?category=arrangementKey_${ak.id}`, 'ContentApi');
         setLinks(linkData);
+        if (sd?.id) {
+          const extLinks = await ApiHelper.get(`/songDetailLinks/songDetail/${sd.id}`, 'ContentApi');
+          setExternalLinks(extLinks);
+        } else {
+          setExternalLinks([]);
+        }
       } catch (e) {
         setSongDetail(null);
+        setExternalLinks([]);
       }
       setLoading(false);
     };
@@ -64,6 +73,27 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
                 {songDetail.meter && <Text style={styles.detailRow}><Text style={styles.detailLabel}>Meter: </Text>{songDetail.meter}</Text>}
                 {songDetail.seconds && <Text style={styles.detailRow}><Text style={styles.detailLabel}>Length: </Text>{Math.floor(songDetail.seconds / 60)}:{(songDetail.seconds % 60).toString().padStart(2, '0')}</Text>}
               </View>
+              {externalLinks.length > 0 && (
+                <View style={styles.linksSection}>
+                  <Text style={styles.linksTitle}>External Links</Text>
+                  {externalLinks.map((l, i) => (
+                    <TouchableOpacity key={l.id || i} onPress={() => Linking.openURL(l.url)} style={styles.linkRow}>
+                      {getServiceIcon(l.service)}
+                      <Text style={styles.link}>{l.service || l.text || l.url}</Text>
+                    </TouchableOpacity>
+                  ))}
+                  {songDetail?.praiseChartsId && (
+                    <TouchableOpacity
+                      key="praisecharts"
+                      onPress={() => Linking.openURL(`https://www.praisecharts.com/songs/details/${songDetail.praiseChartsId}?XID=churchapps`)}
+                      style={styles.linkRow}
+                    >
+                      {getServiceIcon('PraiseCharts')}
+                      <Text style={styles.link}>PraiseCharts</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
               {arrangement?.lyrics ? (
                 <View style={styles.lyricsSection}>
                   <Text style={styles.lyricsTitle}>Lyrics</Text>
@@ -179,4 +209,33 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 40,
   },
-}); 
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+});
+
+function getServiceIcon(service: string) {
+  switch ((service || '').toLowerCase()) {
+    case 'youtube':
+      return <MaterialCommunityIcons name="youtube" size={24} color="#FF0000" style={{ marginRight: 8 }} />;
+    case 'ccli':
+      return <MaterialCommunityIcons name="music-circle" size={24} color="#222" style={{ marginRight: 8 }} />;
+    case 'praisecharts':
+      return <MaterialCommunityIcons name="music-box-multiple" size={24} color="#2e7d32" style={{ marginRight: 8 }} />;
+    case 'spotify':
+      return <MaterialCommunityIcons name="spotify" size={24} color="#1DB954" style={{ marginRight: 8 }} />;
+    case 'apple':
+    case 'apple music':
+      return <MaterialCommunityIcons name="apple" size={24} color="#000" style={{ marginRight: 8 }} />;
+    case 'genius':
+      return <MaterialCommunityIcons name="lightbulb-on-outline" size={24} color="#f5e342" style={{ marginRight: 8 }} />;
+    case 'hymnary':
+      return <MaterialCommunityIcons name="book-music" size={24} color="#1976d2" style={{ marginRight: 8 }} />;
+    case 'musicbrainz':
+      return <MaterialCommunityIcons name="brain" size={24} color="#ff8800" style={{ marginRight: 8 }} />;
+    default:
+      return null;
+  }
+} 
