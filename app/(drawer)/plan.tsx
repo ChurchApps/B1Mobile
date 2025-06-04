@@ -40,7 +40,6 @@ const Plan = (props: Props) => {
         setAssignments(tempAssignments);
         const positionIds = ArrayHelper.getUniqueValues(tempAssignments, "positionId");
         const tempPositions = await ApiHelper.get("/positions/ids?ids=" + positionIds, "DoingApi");
-        console.log("POSITIONS LOADED", tempPositions.length, tempPositions);
         if (tempPositions.length > 0) {
           setPositions(tempPositions);
           const planIds = ArrayHelper.getUniqueValues(tempPositions, "planId");
@@ -48,8 +47,6 @@ const Plan = (props: Props) => {
             ApiHelper.get("/plans/ids?ids=" + planIds, "DoingApi"),
             ApiHelper.get("/times/plans?planIds=" + planIds, "DoingApi")
           ]);
-          console.log("PLANS LOADED", tempPlans.length, tempPlans);
-          console.log("TIMES LOADED", tempTimes.length, tempTimes);
           setPlans(tempPlans);
           setTimes(tempTimes);
         }

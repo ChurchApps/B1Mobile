@@ -2,6 +2,7 @@ import React from 'react';
 import { Loader } from "@/src/components/Loader";
 import { PositionDetails } from "@/src/components/Plans/PositionDetails";
 import { Teams } from "@/src/components/Plans/Teams";
+import { ServiceOrder } from "@/src/components/Plans/ServiceOrder";
 import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "@/src/helpers";
 import { NavigationProps } from '@/src/interfaces';
@@ -11,7 +12,7 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { useIsFocused } from '@react-navigation/native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface Props {
   navigation: NavigationProps
@@ -31,7 +32,7 @@ const PlanDetails = (props: Props) => {
   const [isLoading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const isFocused = useIsFocused();
-
+  const [selectedTab, setSelectedTab] = useState<'serviceOrder' | 'teams'>('serviceOrder');
 
   useEffect(() => {
     setErrorMessage('')
@@ -105,33 +106,109 @@ const PlanDetails = (props: Props) => {
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
       <MainHeader title={'Plan Details'} openDrawer={navigation.openDrawer} back={navigation.goBack} />
+      {plan && (
+        <View style={[styles.headerGradient, { backgroundColor: Constants.Colors.app_color }]}>
+          <View style={styles.headerContent}>
+            <Icons name='assignment' size={DimensionHelper.wp(6)} color="white" />
+            <Text style={styles.headerTitle}>{plan?.name}</Text>
+          </View>
+        </View>
+      )}
+      {/* Tabs */}
+      <View style={styles.tabBar}>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'serviceOrder' && styles.activeTab]}
+          onPress={() => setSelectedTab('serviceOrder')}
+        >
+          <Text style={[styles.tabText, selectedTab === 'serviceOrder' && styles.activeTabText]}>Service Order</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tab, selectedTab === 'teams' && styles.activeTab]}
+          onPress={() => setSelectedTab('teams')}
+        >
+          <Text style={[styles.tabText, selectedTab === 'teams' && styles.activeTabText]}>Teams</Text>
+        </TouchableOpacity>
+      </View>
       {isLoading ? <Loader isLoading={isLoading} /> :
         errorMessage ? <View style={globalStyles.ErrorMessageView} >
           <Text style={globalStyles.searchMainText}>{errorMessage}</Text>
         </View> :
           <>
             <ScrollView scrollEnabled={true} showsVerticalScrollIndicator={false} style={globalStyles.ScrollViewStyles} >
-              {plan ?
-                <View style={globalStyles.planTitleView}>
-                  <Icons name='assignment' size={DimensionHelper.wp(5.5)} />
-                  <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3) }]}>{plan?.name}</Text>
-                </View> : null}
               <View>
                 {getPositionDetails()}
                 {getNotes()}
+                {selectedTab === 'serviceOrder' && plan && <ServiceOrder plan={plan} />}
+                {selectedTab === 'teams' && (
+                  <ScrollView nestedScrollEnabled={true} style={globalStyles.ScrollViewStyles}>
+                    <View style={globalStyles.ErrorMessageView}>
+                      {getTeams()}
+                    </View>
+                  </ScrollView>
+                )}
               </View>
-              <ScrollView nestedScrollEnabled={true} style={globalStyles.ScrollViewStyles}>
-                <View style={globalStyles.ErrorMessageView}>
-                  {getTeams()}
-                </View>
-              </ScrollView>
             </ScrollView>
           </>
       }
-
     </SafeAreaView>
   );
 }
 
+const styles = StyleSheet.create({
+  headerGradient: {
+    paddingVertical: DimensionHelper.hp(2),
+    marginBottom: DimensionHelper.hp(2),
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: DimensionHelper.wp(5),
+  },
+  headerTitle: {
+    fontSize: DimensionHelper.wp(5),
+    fontWeight: '600',
+    color: 'white',
+    marginLeft: DimensionHelper.wp(3),
+  },
+  tabBar: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+    marginHorizontal: DimensionHelper.wp(4),
+    marginBottom: DimensionHelper.hp(1),
+    marginTop: -DimensionHelper.hp(1),
+    overflow: 'hidden',
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: DimensionHelper.hp(1.2),
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  activeTab: {
+    backgroundColor: Constants.Colors.app_color,
+  },
+  tabText: {
+    color: Constants.Colors.Dark_Gray,
+    fontSize: DimensionHelper.wp(4),
+    fontWeight: '500',
+  },
+  activeTabText: {
+    color: 'white',
+    fontWeight: '700',
+  },
+});
 
 export default PlanDetails
