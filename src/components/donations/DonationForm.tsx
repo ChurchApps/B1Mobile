@@ -401,8 +401,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             </View>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.lg }}>
-              <Button mode="outlined" onPress={handleCancel}>Cancel</Button>
-              <Button mode="contained" onPress={handleSave}>Continue</Button>
+              <Button mode="outlined" onPress={handleCancel} style={{ flex: 1, marginRight: spacing.sm }}>Cancel</Button>
+              <Button mode="contained" onPress={handleSave} style={{ flex: 1, marginLeft: spacing.sm }}>Continue</Button>
             </View>
           </>
         )}
