@@ -20,7 +20,6 @@ export function MainHeader(props: Props) {
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    title: {
     appbarContent: {
       // Default behavior of Appbar.Content is to take up flexible space.
       // To truly center the title when actions are present on one or both sides,
