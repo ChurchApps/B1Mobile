@@ -30,8 +30,8 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   const [mode, setMode] = useState<"display" | "edit">("display");
   const isFocused = useIsFocused();
 
-  const rightHeaderContent = (
-    <PaperIconButton icon="plus" iconColor={theme.colors.primary} size={DimensionHelper.wp(6)} onPress={() => setShowModal(true)} />
+  const rightHeaderContent = ({ size }: { size: number }) => (
+    <PaperIconButton icon="plus" iconColor={theme.colors.primary} size={size} onPress={() => setShowModal(true)} />
   );
 
   useEffect(() => {
@@ -148,7 +148,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       <DisplayBox
         title="Payment Methods"
         rightHeaderComponent={rightHeaderContent}
-        headerIcon={<Icon name={"credit-card-alt"} style={{ color: theme.colors.onSurfaceVariant }} size={DimensionHelper.wp(5.5)} />} // Themed color for icon
+        headerIcon={({ size }) => <Icon name={"credit-card-alt"} style={{ color: theme.colors.onSurfaceVariant }} size={size} />} // Themed color for icon
       >
         {isLoading ? (
           <PaperActivityIndicator size="large" style={styles.activityIndicator} color={theme.colors.primary} animating={isLoading} />

@@ -130,7 +130,7 @@ export function Donations() {
       </CustomModal>
       <DisplayBox
         title="Donations"
-        headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
+        headerIcon={({ size }) => <Image source={Constants.Images.ic_give} style={[globalStyles.donationIcon, { width: size, height: size }]} />}
       >
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: DimensionHelper.wp(2) }} color="gray" animating={isLoading} />
