@@ -1,11 +1,9 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import React, { useEffect } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { Constants, CurrencyHelper, DateHelper, globalStyles } from "@/src/helpers";
+import { ScrollView, View } from "react-native";
+import { ActivityIndicator, Button, Divider, IconButton, Modal, Portal, Surface, Text, useTheme } from "react-native-paper";
+import { useAppTheme } from "@/src/theme";
+import { CurrencyHelper, DateHelper } from "@/src/helpers";
 import { StripeDonationInterface } from "@/src/interfaces";
-import { CustomModal } from "./CustomModal";
 
 interface Props {
   show: boolean;
@@ -14,11 +12,13 @@ interface Props {
   paymentMethodName: string;
   donationType: string;
   handleDonate: (message: string) => void;
-  isChecked: boolean
+  isChecked: boolean;
   transactionFee: number;
 }
 
 export function PreviewModal({ show, close, donation, paymentMethodName, donationType: d, handleDonate, isChecked, transactionFee }: Props) {
+  const { theme: appTheme, spacing } = useAppTheme();
+  const theme = useTheme();
   const donationType: any = { once: "One-time Donation", recurring: "Recurring Donation" };
   const [isLoading, setLoading] = React.useState<boolean>(false);
 
@@ -42,101 +42,92 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
   }, []);
 
   return (
-    <CustomModal isVisible={show} close={close} width={DimensionHelper.wp(90)}>
-      <View style={{ paddingHorizontal: DimensionHelper.wp(1) }}>
-        <View style={globalStyles.donationPreviewView}>
-          <Text style={globalStyles.donationText}>Donation Preview</Text>
-          <TouchableOpacity
-            onPress={() => {
-              close();
-            }}
-            style={globalStyles.donationCloseBtn}
-          >
-            <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
-          </TouchableOpacity>
+    <Portal>
+      <Modal visible={show} onDismiss={close} contentContainerStyle={{ margin: spacing.lg, backgroundColor: theme.colors.surface, borderRadius: appTheme.roundness, padding: spacing.lg }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md }}>
+          <Text variant="titleLarge">Donation Preview</Text>
+          <IconButton icon="close" onPress={close} />
         </View>
-        <ScrollView>
-          <View style={globalStyles.previewView}>
-            <Text style={globalStyles.previewTitleText}>Name:</Text>
-            <Text style={{ ...globalStyles.previewDetailText }}>{donation?.person?.name}</Text>
-          </View>
-          <View style={globalStyles.previewView}>
-            <Text style={globalStyles.previewTitleText}>Payment Method:</Text>
-            <Text style={{ ...globalStyles.previewDetailText }}>{paymentMethodName == undefined || paymentMethodName == "" ? "Card" : paymentMethodName}</Text>
-          </View>
-          <View style={globalStyles.previewView}>
-            <Text style={globalStyles.previewTitleText}>Type:</Text>
-            <Text style={{ ...globalStyles.previewDetailText }}>{donationType[d]}</Text>
-          </View>
-          {d === "once" && (
-            <View style={globalStyles.previewView}>
-              <Text style={globalStyles.previewTitleText}>Donation Date:</Text>
-              <Text style={{ ...globalStyles.previewDetailText }}>
-                {DateHelper.formatHtml5Date(new Date(donation.billing_cycle_anchor || ""))}
-              </Text>
+        <ScrollView style={{ maxHeight: '70%' }}>
+          <Surface style={{ padding: spacing.md, borderRadius: appTheme.roundness, backgroundColor: theme.colors.surfaceVariant }}>
+            <View style={{ marginBottom: spacing.sm }}>
+              <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Name</Text>
+              <Text variant="bodyLarge">{donation?.person?.name}</Text>
             </View>
-          )}
-          <View style={globalStyles.previewView}>
-            <Text style={globalStyles.previewTitleText}>Notes:</Text>
-            <Text style={{ ...globalStyles.previewDetailText }}>{donation.notes}</Text>
-          </View>
-          {d === "recurring" && (
-            <>
-              <View style={globalStyles.previewView}>
-                <Text style={globalStyles.previewTitleText}>Starting On:</Text>
-                <Text style={{ ...globalStyles.previewDetailText }}>
-                  {DateHelper.formatHtml5Date(new Date(donation.billing_cycle_anchor || ""))}
-                </Text>
-              </View>
-              <View style={globalStyles.previewView}>
-                <Text style={globalStyles.previewTitleText}>Recurring Every:</Text>
-                <Text style={{ ...globalStyles.previewDetailText }}>{formatInterval()}</Text>
-              </View>
-            </>
-          )}
-          <View style={globalStyles.previewView}>
-            <Text style={globalStyles.previewTitleText}>Funds:</Text>
-            <View style={{ display: "flex" }}>
+            <Divider style={{ marginVertical: spacing.sm }} />
+            <View style={{ marginBottom: spacing.sm }}>
+              <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Payment Method</Text>
+              <Text variant="bodyLarge">{paymentMethodName || "Card"}</Text>
+            </View>
+            <Divider style={{ marginVertical: spacing.sm }} />
+            <View style={{ marginBottom: spacing.sm }}>
+              <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Type</Text>
+              <Text variant="bodyLarge">{donationType[d]}</Text>
+            </View>
+            <Divider style={{ marginVertical: spacing.sm }} />
+            {d === "once" && (
+              <>
+                <View style={{ marginBottom: spacing.sm }}>
+                  <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Donation Date</Text>
+                  <Text variant="bodyLarge">{DateHelper.formatHtml5Date(new Date(donation.billing_cycle_anchor || ""))}</Text>
+                </View>
+                <Divider style={{ marginVertical: spacing.sm }} />
+              </>
+            )}
+            {donation.notes && (
+              <>
+                <View style={{ marginBottom: spacing.sm }}>
+                  <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Notes</Text>
+                  <Text variant="bodyLarge">{donation.notes}</Text>
+                </View>
+                <Divider style={{ marginVertical: spacing.sm }} />
+              </>
+            )}
+            {d === "recurring" && (
+              <>
+                <View style={{ marginBottom: spacing.sm }}>
+                  <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Starting On</Text>
+                  <Text variant="bodyLarge">{DateHelper.formatHtml5Date(new Date(donation.billing_cycle_anchor || ""))}</Text>
+                </View>
+                <Divider style={{ marginVertical: spacing.sm }} />
+                <View style={{ marginBottom: spacing.sm }}>
+                  <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Recurring Every</Text>
+                  <Text variant="bodyLarge">{formatInterval()}</Text>
+                </View>
+                <Divider style={{ marginVertical: spacing.sm }} />
+              </>
+            )}
+            <View style={{ marginBottom: spacing.sm }}>
+              <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Funds</Text>
               {donation.funds?.map((fund) => (
-                <Text key={`fund-${fund.id || (fund.name?.toLowerCase().replace(/\s+/g, '-') || 'unnamed')}`} style={{ ...globalStyles.previewDetailText }}>
+                <Text key={`fund-${fund.id || (fund.name?.toLowerCase().replace(/\s+/g, '-') || 'unnamed')}`} variant="bodyLarge">
                   {CurrencyHelper.formatCurrency(fund.amount)} - {fund.name || 'Unnamed Fund'}
                 </Text>
               ))}
             </View>
-          </View>
-          {isChecked &&
-            <View style={globalStyles.previewView}>
-              <Text style={globalStyles.previewTitleText}>Transaction Fee:</Text>
-              <Text style={{ ...globalStyles.previewDetailText }}>
-                {CurrencyHelper.formatCurrency(transactionFee)}
+            <Divider style={{ marginVertical: spacing.sm }} />
+            {isChecked && (
+              <>
+                <View style={{ marginBottom: spacing.sm }}>
+                  <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Transaction Fee</Text>
+                  <Text variant="bodyLarge">{CurrencyHelper.formatCurrency(transactionFee)}</Text>
+                </View>
+                <Divider style={{ marginVertical: spacing.sm }} />
+              </>
+            )}
+            <View style={{ marginBottom: spacing.sm }}>
+              <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>Total</Text>
+              <Text variant="bodyLarge">
+                {isChecked ? CurrencyHelper.formatCurrency((donation.amount || 0) + transactionFee) : CurrencyHelper.formatCurrency(donation.amount || 0)}
               </Text>
             </View>
-          }
-          <View style={globalStyles.previewView}>
-            <Text style={globalStyles.previewTitleText}>Total:</Text>
-            <Text style={{ ...globalStyles.previewDetailText }}>
-              {/* {CurrencyHelper.formatCurrency(donation.amount || 0)} */}
-              {isChecked ? (CurrencyHelper.formatCurrency((donation.amount || 0) + transactionFee)) : (CurrencyHelper.formatCurrency(donation.amount || 0))}
-            </Text>
-          </View>
+          </Surface>
         </ScrollView>
-        <View style={globalStyles.popupBottomContainer}>
-          <TouchableOpacity style={{ ...globalStyles.popupButton, backgroundColor: "#6C757D" }} onPress={() => close()}>
-            <Text style={globalStyles.popupButonText}>Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ ...globalStyles.popupButton, backgroundColor: Constants.Colors.button_bg }}
-            onPress={() => handleClick()}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="small" color="white" animating={isLoading} />
-            ) : (
-              <Text style={globalStyles.popupButonText}>Donate</Text>
-            )}
-          </TouchableOpacity>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.md }}>
+          <Button mode="outlined" onPress={close} style={{ flex: 1, marginRight: spacing.sm }}>Cancel</Button>
+          <Button mode="contained" onPress={handleClick} loading={isLoading} style={{ flex: 1, marginLeft: spacing.sm }}>Donate</Button>
         </View>
-      </View>
-    </CustomModal>
+      </Modal>
+    </Portal>
   );
 }

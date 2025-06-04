@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Text, TextInput, View } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
-import { globalStyles } from "@/src/helpers";
+import { View } from "react-native";
+import { Menu, Text, TextInput, useTheme } from "react-native-paper";
+import { useAppTheme } from "@/src/theme";
 import { FundDonationInterface, FundInterface } from "@/src/interfaces";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { CurrencyHelper } from "@/src/helpers";
 
 interface Props {
   fundDonation: FundDonationInterface;
@@ -13,54 +13,66 @@ interface Props {
 }
 
 export function FundDonation({ fundDonation, funds, index, updatedFunction }: Props) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [fundList, setFundList] = useState<{ label: string; value: string }[]>(
-    funds.map((f) => ({ label: f.name, value: f.id }))
-  );
-  const [selectedFund, setSelectedFund] = useState<string>(fundList[0].value);
+  const { theme: appTheme, spacing } = useAppTheme();
+  const theme = useTheme();
+  const [showFundMenu, setShowFundMenu] = useState(false);
+  const [selectedFund, setSelectedFund] = useState<string>(funds[0]?.id || "");
 
   const handleAmountChange = (text: string) => {
-    let fd = { ...fundDonation }
-    fd.amount = parseFloat(text.replace("$", "").replace(",", ""))
-    updatedFunction(fd, index)
+    let fd = { ...fundDonation };
+    fd.amount = parseFloat(text.replace(/[^0-9.]/g, ""));
+    updatedFunction(fd, index);
   };
 
   useEffect(() => {
-    let fd = { ...fundDonation }
-    fd.fundId = selectedFund
-    updatedFunction(fd, index)
-  }, [selectedFund])
+    let fd = { ...fundDonation };
+    fd.fundId = selectedFund;
+    updatedFunction(fd, index);
+  }, [selectedFund]);
+
+  const getFundName = (fundId: string) => {
+    return funds.find(f => f.id === fundId)?.name || "Select Fund";
+  };
 
   return (
-    <View style={globalStyles.fundView} key={index}>
-      <View>
-        <Text style={globalStyles.semiTitleText}>Amount</Text>
-        <TextInput style={globalStyles.fundInput} keyboardType="number-pad" onChangeText={handleAmountChange} />
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }}>
+      <View style={{ flex: 1, marginRight: spacing.sm }}>
+        <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>Amount</Text>
+        <TextInput
+          mode="outlined"
+          keyboardType="numeric"
+          value={fundDonation.amount ? CurrencyHelper.formatCurrency(fundDonation.amount) : ""}
+          onChangeText={handleAmountChange}
+          style={{ backgroundColor: theme.colors.surface }}
+        />
       </View>
-      <View>
-        <Text style={globalStyles.semiTitleText}>Fund</Text>
-        <View>
-          <DropDownPicker
-            listMode="SCROLLVIEW"
-            open={isDropdownOpen}
-            items={fundList}
-            value={selectedFund}
-            setOpen={setIsDropdownOpen}
-            setValue={setSelectedFund}
-            setItems={setFundList}
-            containerStyle={{
-              ...globalStyles.containerStyle,
-              height: isDropdownOpen ? fundList.length * DimensionHelper.wp(18) : 0,
-              width: DimensionHelper.wp(45),
-            }}
-            style={globalStyles.dropDownMainStyle}
-            labelStyle={globalStyles.labelStyle}
-            listItemContainerStyle={globalStyles.itemStyle}
-            dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: DimensionHelper.wp(45) }}
-            scrollViewProps={{ scrollEnabled: true }}
-            dropDownDirection="BOTTOM"
-          />
-        </View>
+      <View style={{ flex: 1 }}>
+        <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>Fund</Text>
+        <Menu
+          visible={showFundMenu}
+          onDismiss={() => setShowFundMenu(false)}
+          anchor={
+            <TextInput
+              mode="outlined"
+              value={getFundName(selectedFund)}
+              onPressIn={() => setShowFundMenu(true)}
+              right={<TextInput.Icon icon="chevron-down" />}
+              style={{ backgroundColor: theme.colors.surface }}
+              editable={false}
+            />
+          }
+        >
+          {funds.map((fund) => (
+            <Menu.Item
+              key={fund.id}
+              onPress={() => {
+                setSelectedFund(fund.id);
+                setShowFundMenu(false);
+              }}
+              title={fund.name}
+            />
+          ))}
+        </Menu>
       </View>
     </View>
   );

@@ -1,7 +1,8 @@
-import { globalStyles } from "@/src/helpers";
 import { FundDonationInterface, FundInterface } from "@/src/interfaces";
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { View } from "react-native";
+import { Button, Text, useTheme } from "react-native-paper";
+import { useAppTheme } from "@/src/theme";
 import { FundDonation } from "./FundDonation";
 
 interface Props {
@@ -11,6 +12,9 @@ interface Props {
 }
 
 export function FundDonations({ funds, fundDonations, updatedFunction }: Props) {
+  const { theme: appTheme, spacing } = useAppTheme();
+  const theme = useTheme();
+
   const handleUpdated = (fundDonation: FundDonationInterface, index: number) => {
     let fdDonations = [...fundDonations];
     fdDonations[index] = fundDonation;
@@ -25,7 +29,8 @@ export function FundDonations({ funds, fundDonations, updatedFunction }: Props) 
   }
 
   return (
-    <>
+    <View style={{ marginBottom: spacing.md }}>
+      <Text variant="titleMedium" style={{ marginBottom: spacing.sm }}>Fund</Text>
       {fundDonations?.map((fd, index) => (
         <FundDonation
           key={`fund-donation-${fd.fundId || index}`}
@@ -35,9 +40,9 @@ export function FundDonations({ funds, fundDonations, updatedFunction }: Props) 
           index={index}
         />
       ))}
-      <TouchableOpacity onPress={() => addRow()}>
-        <Text style={globalStyles.addMoreText}>Add more</Text>
-      </TouchableOpacity>
-    </>
+      <Button mode="text" onPress={addRow} style={{ marginTop: spacing.xs }}>
+        Add more
+      </Button>
+    </View>
   );
 }

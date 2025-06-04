@@ -1,13 +1,11 @@
-import { ApiHelper, Constants, CurrencyHelper, DateHelper, UserHelper, globalStyles } from "@/src/helpers";
+import React, { useEffect, useState } from "react";
+import { ApiHelper, Constants, CurrencyHelper, DateHelper, UserHelper } from "@/src/helpers";
 import { DonationInterface } from "@/src/interfaces";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { useIsFocused } from "@react-navigation/native";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { DisplayBox } from "../DisplayBox";
-import { CustomModal } from "../modals/CustomModal";
+import { ActivityIndicator, Image, ScrollView, View } from "react-native";
+import { Card, IconButton, List, Portal, Modal, Text, useTheme } from "react-native-paper";
+import { useAppTheme } from "@/src/theme";
 
 export function Donations() {
   const [donations, setDonations] = useState<DonationInterface[]>([]);
@@ -16,6 +14,7 @@ export function Donations() {
   const [selectedDonation, setSelectedDonation] = useState<DonationInterface>({});
   const isFocused = useIsFocused();
   const person = UserHelper.currentUserChurch?.person;
+  const { spacing, theme } = useAppTheme();
 
   const loadDonations = () => {
     if (person) {
@@ -40,104 +39,102 @@ export function Donations() {
 
   useEffect(loadDonations, []);
 
-  const getRow = () => {
-    if (!donations) return <View></View>;
-    else {
-      return donations?.map((d) => (
-        <View>
-          <View style={globalStyles.cardListSeperator} />
-          <View style={{ ...globalStyles.donationRowContainer, ...globalStyles.donationListView }}>
-            <Text style={{ ...globalStyles.donationRowText }}>
-              {DateHelper.prettyDate(new Date(d.donationDate || ""))}
-            </Text>
-            <Text style={{ ...globalStyles.donationRowText }}>
-              {CurrencyHelper.formatCurrency(d.fund?.amount || 0)}
-            </Text>
-            <TouchableOpacity
-              onPress={() => {
-                setShowDonationModal(true);
-                setSelectedDonation(d);
-              }}
-              style={{ marginLeft: DimensionHelper.wp(6) }}
-            >
-              <FontAwesome5 name={"eye"} style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp(5.5)} />
-            </TouchableOpacity>
-          </View>
+  const renderDonationItem = (donation: DonationInterface) => (
+    <List.Item
+      key={donation.id}
+      title={DateHelper.prettyDate(new Date(donation.donationDate || ""))}
+      description={donation.fund?.name}
+      right={() => (
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text variant="bodyLarge" style={{ marginRight: spacing.md }}>
+            {CurrencyHelper.formatCurrency(donation.fund?.amount || 0)}
+          </Text>
+          <IconButton
+            icon="eye"
+            size={20}
+            onPress={() => {
+              setShowDonationModal(true);
+              setSelectedDonation(donation);
+            }}
+          />
         </View>
-      ));
-    }
-  };
-
-  const donationsTable = (
-    <ScrollView nestedScrollEnabled={true}>
-      <View style={{ ...globalStyles.donationContainer, marginVertical: DimensionHelper.wp(5) }}>
-        <View style={{ ...globalStyles.donationRowContainer, marginBottom: DimensionHelper.wp(5) }}>
-          <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Date</Text>
-          <Text style={{ ...globalStyles.donationRowText, fontWeight: "bold" }}>Amount</Text>
-        </View>
-        {getRow()}
-      </View>
-    </ScrollView>
+      )}
+    />
   );
 
-  const content =
-    donations?.length > 0 ? (
-      donationsTable
-    ) : (
-      <Text style={globalStyles.paymentDetailText}>Donations will appear once a donation has been entered.</Text>
-    );
+  const content = donations?.length > 0 ? (
+    <List.Section>
+      {donations.map(renderDonationItem)}
+    </List.Section>
+  ) : (
+    <Text variant="bodyLarge" style={{ padding: spacing.md, textAlign: 'center' }}>
+      Donations will appear once a donation has been entered.
+    </Text>
+  );
 
   return (
     <>
-      <CustomModal width={DimensionHelper.wp(85)} isVisible={showDonationModal} close={() => setShowDonationModal(false)}>
-        <View style={{ paddingHorizontal: DimensionHelper.wp(1) }}>
-          <View style={globalStyles.donationPreviewView}>
-            <Text style={globalStyles.donationText}>Donation Details</Text>
-            <TouchableOpacity
-              onPress={() => {
-                setShowDonationModal(false);
-              }}
-              style={globalStyles.donationCloseBtn}
-            >
-              <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
-            </TouchableOpacity>
+      <Portal>
+        <Modal
+          visible={showDonationModal}
+          onDismiss={() => setShowDonationModal(false)}
+          contentContainerStyle={{
+            backgroundColor: 'white',
+            padding: spacing.md,
+            margin: spacing.md,
+            borderRadius: 8,
+            maxHeight: '80%'
+          }}
+        >
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md }}>
+            <Text variant="titleLarge">Donation Details</Text>
+            <IconButton icon="close" size={24} onPress={() => setShowDonationModal(false)} />
           </View>
           <ScrollView>
-            <View style={globalStyles.previewView}>
-              <Text style={globalStyles.previewTitleText}>Date:</Text>
-              <Text style={{ ...globalStyles.previewDetailText }}>
-                {DateHelper.prettyDate(new Date(selectedDonation.donationDate || ""))}
-              </Text>
-            </View>
-            <View style={globalStyles.previewView}>
-              <Text style={globalStyles.previewTitleText}>Method:</Text>
-              <Text style={{ ...globalStyles.previewDetailText }}>
-                {selectedDonation.method} - {selectedDonation.methodDetails}
-              </Text>
-            </View>
-            <View style={globalStyles.previewView}>
-              <Text style={globalStyles.previewTitleText}>Fund:</Text>
-              <Text style={{ ...globalStyles.previewDetailText }}>{selectedDonation.fund?.name}</Text>
-            </View>
-            <View style={globalStyles.previewView}>
-              <Text style={globalStyles.previewTitleText}>Amount:</Text>
-              <Text style={{ ...globalStyles.previewDetailText }}>
-                {CurrencyHelper.formatCurrency(selectedDonation.fund?.amount || 0)}
-              </Text>
-            </View>
+            <List.Section>
+              <List.Item
+                title="Date"
+                description={DateHelper.prettyDate(new Date(selectedDonation.donationDate || ""))}
+              />
+              <List.Item
+                title="Method"
+                description={`${selectedDonation.method} - ${selectedDonation.methodDetails}`}
+              />
+              <List.Item
+                title="Fund"
+                description={selectedDonation.fund?.name}
+              />
+              <List.Item
+                title="Amount"
+                description={CurrencyHelper.formatCurrency(selectedDonation.fund?.amount || 0)}
+              />
+            </List.Section>
           </ScrollView>
-        </View>
-      </CustomModal>
-      <DisplayBox
-        title="Donations"
-        headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
-      >
-        {isLoading ? (
-          <ActivityIndicator size="large" style={{ margin: DimensionHelper.wp(2) }} color="gray" animating={isLoading} />
-        ) : (
-          content
-        )}
-      </DisplayBox>
+        </Modal>
+      </Portal>
+
+      <Card>
+        <Card.Title
+          title="Donations"
+          titleStyle={{ fontSize: 20, fontWeight: '600' }}
+          left={(props) => (
+            <IconButton
+              {...props}
+              icon="history"
+              size={24}
+              iconColor={theme.colors.primary}
+              style={{ margin: 0 }}
+            />
+          )}
+        />
+        <Card.Content>
+          {isLoading ? (
+            <ActivityIndicator size="large" style={{ margin: spacing.md }} />
+          ) : (
+            content
+          )}
+        </Card.Content>
+      </Card>
     </>
   );
 }
