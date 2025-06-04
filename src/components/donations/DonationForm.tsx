@@ -147,7 +147,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
   // Define styles using StyleSheet and theme
   const styles = StyleSheet.create({
-    methodContainer: { ...globalStyles.methodContainer, marginBottom: theme.spacing?.md },
+    methodContainer: { ...globalStyles.methodContainer, marginBottom: 16 },
     methodButton: (type: string) => ({
       ...globalStyles.methodButton,
       backgroundColor: donationType === type ? theme.colors.primary : theme.colors.surface,
@@ -158,13 +158,13 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       ...globalStyles.methodBtnText,
       color: donationType === type ? theme.colors.onPrimary : theme.colors.primary,
     }),
-    formSectionContainer: { width: DimensionHelper.wp(100), marginBottom: theme.spacing?.md },
+    formSectionContainer: { width: DimensionHelper.wp(100), marginBottom: 16 },
     inputFieldContainer: { ...globalStyles.donationInputFieldContainer, borderColor: theme.colors.outline, backgroundColor: theme.colors.surfaceVariant },
     textInputStyle: { ...globalStyles.textInputStyle, color: theme.colors.onSurface, flex:1 }, // Ensure flex for PaperTextInput
     inputLabel: { ...globalStyles.searchMainText, marginTop: DimensionHelper.wp(5.5), color: theme.colors.onSurfaceVariant },
     notesInput: { ...globalStyles.notesInput, backgroundColor: theme.colors.surfaceVariant, color: theme.colors.onSurface, borderColor: theme.colors.outline },
     feesContainer: { ...globalStyles.feesContainer, alignItems: 'center' }, // Align checkbox and text
-    feesText: { ...globalStyles.feesText, color: theme.colors.onSurfaceVariant, flexShrink: 1, marginLeft: theme.spacing?.sm},
+    feesText: { ...globalStyles.feesText, color: theme.colors.onSurfaceVariant, flexShrink: 1, marginLeft: 8},
     totalText: { ...globalStyles.totalText, color: theme.colors.onSurface },
     dateInputView: { ...globalStyles.dateInput, borderColor: theme.colors.outline, backgroundColor: theme.colors.surfaceVariant },
     dateText: { ...globalStyles.dateText, color: theme.colors.onSurface },

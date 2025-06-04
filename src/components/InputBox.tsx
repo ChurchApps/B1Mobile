@@ -29,7 +29,7 @@ export function InputBox({
   // Define styles locally using StyleSheet.create and theme
   const styles = StyleSheet.create({
     card: {
-      margin: theme.spacing.medium,
+      margin: 8,
       borderRadius: theme.roundness,
       // elevation: 1, // Default Card elevation
     },

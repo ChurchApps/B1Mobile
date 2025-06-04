@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import { FlatList, Image, Linking, View, StyleSheet } from 'react-native'; // Text, TouchableOpacity, ActivityIndicator removed
 import RNRestart from 'react-native-restart';
 import { DimensionHelper } from '../helpers/DimensionHelper';
-import { ActivityIndicator as PaperActivityIndicator, Avatar, Button as PaperButton, Text as PaperText, useTheme, Drawer, Divider } from 'react-native-paper';
+import { ActivityIndicator as PaperActivityIndicator, Avatar, Button as PaperButton, Text as PaperText, useTheme, Drawer, Divider, IconButton } from 'react-native-paper';
 
 export function CustomDrawer(props: any) {
   const theme = useTheme();
@@ -209,19 +209,19 @@ export function CustomDrawer(props: any) {
   };
 
   const messagesView = () => (
-    <PaperIconButton icon="email" iconColor={theme.colors.primary} size={DimensionHelper.wp(5)} onPress={() => router.navigate('/(drawer)/searchMessageUser')} />
+    <IconButton icon="email" iconColor={theme.colors.primary} size={DimensionHelper.wp(5)} onPress={() => router.navigate('/(drawer)/searchMessageUser')} />
   );
 
   const styles = StyleSheet.create({
     drawerItem: { marginVertical: 2 },
-    headerContainer: { padding: theme.spacing?.md, borderBottomWidth: 1, borderBottomColor: theme.colors.outlineVariant },
-    userInfoContainer: { alignItems: 'center', marginBottom: theme.spacing?.md },
-    userAvatar: { marginBottom: theme.spacing?.sm },
-    userNameText: { marginVertical: theme.spacing?.xs },
-    churchButton: { marginTop: theme.spacing?.md, borderColor: theme.colors.outline },
-    footerContainer: { padding: theme.spacing?.md, borderTopWidth: 1, borderTopColor: theme.colors.outlineVariant },
-    authButton: { marginTop: theme.spacing?.sm },
-    divider: { marginVertical: theme.spacing?.xs },
+    headerContainer: { padding: 16, borderBottomWidth: 1, borderBottomColor: theme.colors.outlineVariant },
+    userInfoContainer: { alignItems: 'center', marginBottom: 16 },
+    userAvatar: { marginBottom: 8 },
+    userNameText: { marginVertical: 4 },
+    churchButton: { marginTop: 16, borderColor: theme.colors.outline },
+    footerContainer: { padding: 16, borderTopWidth: 1, borderTopColor: theme.colors.outlineVariant },
+    authButton: { marginTop: 8 },
+    divider: { marginVertical: 4 },
     activityIndicator: { flex: 1, justifyContent: 'center', alignItems: 'center'},
     mainContainer: { flex: 1, backgroundColor: theme.colors.surface } // For root View
   });

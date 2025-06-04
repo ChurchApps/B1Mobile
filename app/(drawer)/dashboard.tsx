@@ -67,7 +67,7 @@ const Dashboard = (props: any) => {
         // For ImageButton, the internal logic now tries to set good default text color based on background.
         // If specific color from theme.colors.primary was for the border/accent, Card style prop can be used.
         backgroundImage={backgroundImageSource}
-        style={{ marginVertical: theme.spacing.small / 2 }} // Add some vertical spacing between buttons in a column
+        style={{ marginVertical: 4 / 2 }} // Add some vertical spacing between buttons in a column
       />
     );
   }
@@ -83,12 +83,12 @@ const Dashboard = (props: any) => {
     // Use StyleSheet for localStyles now defined within the component or passed theme
     const localStyles = StyleSheet.create({
       buttonContainer: {
-        marginTop: theme.spacing.medium, // Use theme spacing
-        paddingHorizontal: theme.spacing.medium, // Use theme spacing
+        marginTop: 8, // Use theme spacing
+        paddingHorizontal: 8, // Use theme spacing
       },
       row: {
         flexDirection: 'row',
-        marginBottom: theme.spacing.medium, // Use theme spacing
+        marginBottom: 8, // Use theme spacing
         justifyContent: 'space-between',
       },
       buttonWrapper: {
@@ -153,11 +153,11 @@ const Dashboard = (props: any) => {
     },
     scrollContent: {
       flexGrow: 1,
-      paddingBottom: theme.spacing.large, // Add padding at the bottom
+      paddingBottom: 16, // Add padding at the bottom
     },
     brandContainer: {
       alignItems: 'center',
-      paddingVertical: theme.spacing.large, // Use theme spacing
+      paddingVertical: 16, // Use theme spacing
     },
   });
 

@@ -132,7 +132,7 @@ const MyGroups = (props: any) => {
   return (
     <LoadingWrapper loading={loading}>
       <LinearGradient
-        colors={['#F8F9FA', '#F0F2F5']} // Consider theming these
+        colors={[theme.colors.surface, theme.colors.background]} // Themed gradient
         style={localStyles.gradientContainer}
       >
         <SafeAreaView style={[localStyles.container, { backgroundColor: theme.colors.background }]}>
