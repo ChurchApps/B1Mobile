@@ -9,8 +9,9 @@ import { TimelineHelper } from "@/src/helpers/Timelinehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, Text, View } from "react-native";
+import { FlatList, SafeAreaView, Text, View, StyleSheet } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const MyGroups = (props: any) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -91,11 +92,11 @@ const MyGroups = (props: any) => {
       rows.push(groups.slice(i, i + 2));
     }
     return (
-      <View style={{ marginTop: 15, paddingHorizontal: 16 }}>
+      <View style={{ marginTop: 16, paddingHorizontal: 12 }}>
         {rows.map((row, rowIndex) => (
-          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 16 }}>
+          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 12, justifyContent: 'space-between' }}>
             {row.map((item, colIndex) => (
-              <View key={colIndex} style={{ flex: 1, alignItems: "center" }}>
+              <View key={colIndex} style={{ flex: 0, width: '48%' }}>
                 {showGroups(false, item)}
               </View>
             ))}
@@ -111,22 +112,36 @@ const MyGroups = (props: any) => {
 
   return (
     <LoadingWrapper loading={loading}>
-      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
-        <MainHeader title="My Groups" openDrawer={navigation.openDrawer} back={navigation.goBack} />
-        <FlatList
-          data={mergeData}
-          contentContainerStyle={globalStyles.FlatListStyle}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={true}
-          ListFooterComponent={() => (
-            <View style={globalStyles.webViewContainer}>{getGroups()}</View>
-          )}
-          renderItem={item => renderItems(item)}
-          keyExtractor={(item: any, index: number) => `key-${index}`}
-        />
-      </SafeAreaView>
+      <LinearGradient
+        colors={['#F8F9FA', '#F0F2F5']}
+        style={styles.gradientContainer}
+      >
+        <SafeAreaView style={[styles.container, { alignSelf: "center", width: '100%' }]}>
+          <MainHeader title="My Groups" openDrawer={navigation.openDrawer} back={navigation.goBack} />
+          <FlatList
+            data={mergeData}
+            contentContainerStyle={globalStyles.FlatListStyle}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={true}
+            ListFooterComponent={() => (
+              <View style={globalStyles.webViewContainer}>{getGroups()}</View>
+            )}
+            renderItem={item => renderItems(item)}
+            keyExtractor={(item: any, index: number) => `key-${index}`}
+          />
+        </SafeAreaView>
+      </LinearGradient>
     </LoadingWrapper>
   );
 };
+
+const styles = StyleSheet.create({
+  gradientContainer: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+  }
+});
 
 export default MyGroups;

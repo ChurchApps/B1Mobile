@@ -9,8 +9,9 @@ import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Dimensions, FlatList, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { Dimensions, FlatList, Image, SafeAreaView, ScrollView, Text, View, StyleSheet } from 'react-native';
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Dashboard = (props: any) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -96,11 +97,11 @@ const Dashboard = (props: any) => {
       rows.push(items.slice(i, i + 2));
     }
     return (
-      <View style={{ marginTop: 24, paddingHorizontal: 16 }}>
+      <View style={{ marginTop: 16, paddingHorizontal: 12 }}>
         {rows.map((row, rowIndex) => (
-          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 16 }}>
+          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 12, justifyContent: 'space-between' }}>
             {row.map((item, colIndex) => (
-              <View key={item.id || colIndex} style={{ flex: 1, alignItems: "center" }}>
+              <View key={item.id || colIndex} style={{ flex: 0, width: '48%' }}>
                 {getButton(false, item)}
               </View>
             ))}
@@ -116,17 +117,32 @@ const Dashboard = (props: any) => {
   }
   return (
     <LoadingWrapper loading={isLoading}>
-      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
-        <MainHeader title="Home" openDrawer={() => {
-          navigation.openDrawer()
-        }} />
-        <ScrollView style={globalStyles.webViewContainer} contentContainerStyle={{ flexGrow: 1 }}>
-          {getBrand()}
-          {getButtons()}
-        </ScrollView>
-      </SafeAreaView>
+      <LinearGradient
+        colors={['#F8F9FA', '#F0F2F5']}
+        style={styles.gradientContainer}
+      >
+        <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
+          <MainHeader title="Home" openDrawer={() => {
+            navigation.openDrawer()
+          }} />
+          <ScrollView style={globalStyles.webViewContainer} contentContainerStyle={{ flexGrow: 1 }}>
+            {getBrand()}
+            {getButtons()}
+          </ScrollView>
+        </SafeAreaView>
+      </LinearGradient>
     </LoadingWrapper>
   )
 }
+
+
+const styles = StyleSheet.create({
+  gradientContainer: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+  }
+});
 
 export default Dashboard
