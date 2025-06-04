@@ -10,7 +10,6 @@ import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/n
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, Image, SafeAreaView, ScrollView, Text, View } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
 const Dashboard = (props: any) => {
@@ -50,40 +49,40 @@ const Dashboard = (props: any) => {
   const brandColor = '#175ec1';
   const getButton = (topItem: boolean, item: LinkInterface) => {
     if (item.linkType === "separator") return (<></>);
-    let icon = null;
     let backgroundImage = undefined;
-    switch (item.linkType.toLowerCase()) {
-      case "groups":
-        icon = <MaterialCommunityIcons name="account-group" size={DimensionHelper.wp(10)} color={brandColor} />;
-        backgroundImage = require('@/src/assets/images/dash_worship.png');
-        break;
-      case "checkin":
-        icon = <MaterialCommunityIcons name="checkbox-marked-circle-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
-        backgroundImage = require('@/src/assets/images/dash_checkin.png');
-        break;
-      case "donation":
-        icon = <MaterialCommunityIcons name="gift-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
-        backgroundImage = require('@/src/assets/images/dash_donation.png');
-        break;
-      case "directory":
-        icon = <MaterialCommunityIcons name="card-account-details-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
-        backgroundImage = require('@/src/assets/images/dash_directory.png');
-        break;
-      case "plans":
-        icon = <MaterialCommunityIcons name="calendar-month-outline" size={DimensionHelper.wp(10)} color={brandColor} />;
-        backgroundImage = require('@/src/assets/images/dash_votd.png');
-        break;
-      case "chums":
-        icon = <MaterialCommunityIcons name="laptop" size={DimensionHelper.wp(10)} color={brandColor} />;
-        backgroundImage = require('@/src/assets/images/dash_url.png');
-        break;
-      default:
-        icon = <MaterialCommunityIcons name="link-variant" size={DimensionHelper.wp(10)} color={brandColor} />;
-        backgroundImage = require('@/src/assets/images/dash_url.png');
-        break;
+
+    // Use the link's photo if available
+    if (item.photo) {
+      backgroundImage = { uri: item.photo };
+    } else {
+      // Fall back to default images based on link type
+      switch (item.linkType.toLowerCase()) {
+        case "groups":
+          backgroundImage = require('@/src/assets/images/dash_worship.png');
+          break;
+        case "checkin":
+          backgroundImage = require('@/src/assets/images/dash_checkin.png');
+          break;
+        case "donation":
+          backgroundImage = require('@/src/assets/images/dash_donation.png');
+          break;
+        case "directory":
+          backgroundImage = require('@/src/assets/images/dash_directory.png');
+          break;
+        case "plans":
+          backgroundImage = require('@/src/assets/images/dash_votd.png');
+          break;
+        case "chums":
+          backgroundImage = require('@/src/assets/images/dash_url.png');
+          break;
+        default:
+          backgroundImage = require('@/src/assets/images/dash_url.png');
+          break;
+      }
     }
+
     return (
-      <ImageButton key={item.id} icon={icon} text={item.text} onPress={() => {
+      <ImageButton key={item.id} text={item.text} onPress={() => {
         NavigationHelper.navigateToScreen(item, router.navigate)
       }} color={brandColor} backgroundImage={backgroundImage} />
     );

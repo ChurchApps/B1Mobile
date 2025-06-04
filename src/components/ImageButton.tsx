@@ -3,7 +3,7 @@ import { StyleSheet, Text, Pressable, View, Animated, Image, ImageSourcePropType
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 
 interface Props {
-  icon: React.ReactNode,
+  icon?: React.ReactNode,
   text: string,
   onPress: () => void,
   color?: string,
@@ -100,12 +100,14 @@ export function ImageButton(props: Props) {
         )}
         {props.backgroundImage && <View style={styles.overlay} />}
         <View style={styles.content}>
-          <View style={styles.icon}>
-            {props.backgroundImage && React.isValidElement(props.icon)
-              ? React.cloneElement(props.icon as React.ReactElement<any>, { color: '#fff' })
-              : props.icon
-            }
-          </View>
+          {props.icon && (
+            <View style={styles.icon}>
+              {props.backgroundImage && React.isValidElement(props.icon)
+                ? React.cloneElement(props.icon as React.ReactElement<any>, { color: '#fff' })
+                : props.icon
+              }
+            </View>
+          )}
           <Text style={styles.text}>{props.text}</Text>
         </View>
       </Pressable>
