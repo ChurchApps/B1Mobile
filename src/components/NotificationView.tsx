@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import React, { useEffect, useState, } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
-import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
+import { SceneMap, TabBar, TabView, Route } from 'react-native-tab-view';
 import { Loader } from './Loader';
 
 export function NotificationTab(props: any) {
@@ -92,23 +92,23 @@ export function NotificationTab(props: any) {
     }
     return (
       <TouchableOpacity onPress={() => navigation.navigate('MessagesScreen', { userDetails: userchatDetails })}>
-        <View style={[globalStyles.messageContainer, { alignSelf: 'flex-start' }]}>
-          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} tintColor={item.photo ? '#00000000' : Constants.Colors.app_color} />
-          <View>
-            <Text style={[globalStyles.senderNameText, { alignSelf: 'flex-start' }]}>
+        <View style={[globalStyles.messageContainer, { alignSelf: 'flex-start', backgroundColor: '#f8f9fa', padding: DimensionHelper.wp(3), borderRadius: DimensionHelper.wp(2), marginHorizontal: DimensionHelper.wp(3) }]}>
+          <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { height: DimensionHelper.wp(12), width: DimensionHelper.wp(12), borderRadius: DimensionHelper.wp(12) }]} tintColor={item.photo ? '#00000000' : Constants.Colors.app_color} />
+          <View style={{ marginLeft: DimensionHelper.wp(2), flex: 1 }}>
+            <Text style={[globalStyles.senderNameText, { fontSize: DimensionHelper.wp(4.2), color: '#2c3e50', marginBottom: DimensionHelper.wp(1) }]}>
               {item.displayName}
             </Text>
             <View style={[globalStyles.messageView, {
-              width: item.message.length > 15 ? DimensionHelper.wp(65) : DimensionHelper.wp((item.message.length + 14)),
-              alignSelf: 'flex-start'
+              width: '100%',
+              backgroundColor: '#ffffff',
+              borderColor: '#e9ecef',
+              padding: DimensionHelper.wp(2)
             }]}>
-              <Text>{item.message}</Text>
+              <Text style={{ fontSize: DimensionHelper.wp(3.8), color: '#495057' }}>{item.message}</Text>
             </View>
           </View>
-
         </View>
       </TouchableOpacity>
-
     )
   }
   const renderItems = (item: any, index: number) => {
@@ -117,11 +117,15 @@ export function NotificationTab(props: any) {
     const timeDifference = currentDate.diff(endDate, 'hours')
     const dayDiff = currentDate.diff(endDate, 'days');
     return (
-      <TouchableOpacity style={globalStyles.NotificationView} onPress={() => { navigation.navigate('PlanDetails', { id: item?.contentId }) }}>
-        <View style={globalStyles.bellIconView}><Image source={Constants.Images.dash_bell} style={globalStyles.bellIcon} tintColor={Constants.Colors.Black_color} /></View>
-        <View style={globalStyles.notimsgView}><Text style={globalStyles.NotificationText}>{item.message}</Text>
+      <TouchableOpacity style={[globalStyles.NotificationView, { backgroundColor: '#ffffff', marginHorizontal: DimensionHelper.wp(3), marginVertical: DimensionHelper.wp(1.5), padding: DimensionHelper.wp(3), borderRadius: DimensionHelper.wp(2), shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2, elevation: 2 }]} onPress={() => { navigation.navigate('PlanDetails', { id: item?.contentId }) }}>
+        <View style={[globalStyles.bellIconView, { backgroundColor: Constants.Colors.app_color_light, padding: DimensionHelper.wp(2), borderRadius: DimensionHelper.wp(2) }]}>
+          <Image source={Constants.Images.dash_bell} style={[globalStyles.bellIcon, { width: DimensionHelper.wp(6), height: DimensionHelper.wp(6) }]} tintColor={Constants.Colors.app_color} />
         </View>
-        <View style={globalStyles.timeSentView}><Text style={globalStyles.NotificationText}>{dayDiff === 0 ? `${timeDifference}h` : `${dayDiff}d`}</Text>
+        <View style={[globalStyles.notimsgView, { flex: 1, marginHorizontal: DimensionHelper.wp(2) }]}>
+          <Text style={{ fontSize: DimensionHelper.wp(3.8), color: '#2c3e50', fontFamily: Constants.Fonts.RobotoRegular }}>{item.message}</Text>
+        </View>
+        <View style={[globalStyles.timeSentView, { backgroundColor: '#f8f9fa', paddingHorizontal: DimensionHelper.wp(2), paddingVertical: DimensionHelper.wp(1), borderRadius: DimensionHelper.wp(2) }]}>
+          <Text style={{ fontSize: DimensionHelper.wp(3.5), color: '#6c757d', fontFamily: Constants.Fonts.RobotoMedium }}>{dayDiff === 0 ? `${timeDifference}h` : `${dayDiff}d`}</Text>
         </View>
       </TouchableOpacity>
     )
@@ -149,36 +153,35 @@ export function NotificationTab(props: any) {
 
       /></View>
   );
-  const renderLabel = ({ route, focused, color }: any) => {
-    return (
-      <View>
-        <Text style={[focused ? globalStyles.activeTabTextColor : globalStyles.tabTextColor]}>
-          {route.title}
-        </Text>
-      </View>
-    )
-  }
 
   const renderScene = SceneMap({
     first: MessagesRoute,
     second: NotificationRoute,
   });
-  return (
-    <View style={globalStyles.tabBar} >
 
+  const renderTabBar = (props: any) => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: Constants.Colors.Active_TabColor, height: DimensionHelper.wp(0.5) }}
+      style={[globalStyles.TabIndicatorStyle, { backgroundColor: '#ffffff', elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }]}
+      labelStyle={{ color: '#000000', fontSize: DimensionHelper.wp(4), fontFamily: Constants.Fonts.RobotoMedium }}
+      activeColor="#000000"
+      inactiveColor="#000000"
+      inactiveOpacity={0.7}
+    />
+  );
+
+  return (
+    <View style={[globalStyles.tabBar, { backgroundColor: '#f8f9fa' }]}>
       {isLoading && <Loader isLoading={isLoading} />}
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
         onIndexChange={setIndex}
         swipeEnabled={false}
-        renderTabBar={props => <TabBar {...props} indicatorStyle={{ backgroundColor: Constants.Colors.Active_TabColor }} style={globalStyles.TabIndicatorStyle} />}
+        renderTabBar={renderTabBar}
         initialLayout={{ width: DimensionHelper.wp(100), height: DimensionHelper.hp(200) }}
       />
-
     </View>
-
-
   )
-
 }
