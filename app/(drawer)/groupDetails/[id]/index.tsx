@@ -1,4 +1,6 @@
 import React from 'react';
+import { Provider as PaperProvider, MD3LightTheme, adaptNavigationTheme } from 'react-native-paper';
+import { NavigationContainer, DarkTheme as NavigationDarkTheme, DefaultTheme as NavigationDefaultTheme } from '@react-navigation/native';
 import CreateEvent from "@/src/components/eventCalendar/CreateEvent";
 import { EventModal } from "@/src/components/eventCalendar/EventModal";
 import { Loader } from "@/src/components/Loader";
@@ -19,10 +21,9 @@ import utc from "dayjs/plugin/utc";
 import { router, useLocalSearchParams } from "expo-router";
 import moment from "moment";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
-import Icon from "react-native-vector-icons/FontAwesome";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import { Text, TouchableRipple, IconButton, Button, Surface, Divider, Avatar, useTheme } from 'react-native-paper';
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
 dayjs.extend(utc);
@@ -31,6 +32,7 @@ dayjs.extend(timezone);
 const TABS = ["Conversations", "Group Members", "Group Calendar"];
 
 const GroupDetails = () => {
+  const theme = useTheme();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [groupDetails, setGroupDetails] = useState<any>(null);
@@ -112,25 +114,31 @@ const GroupDetails = () => {
 
   const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => {
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => {
-        router.navigate({
-          pathname: '/memberDetail',
-          params: {
-            member: JSON.stringify(item.person)
-          }
-        })
-      }} >
-        <Image style={globalStyles.memberListIcon} source={
-          item?.person?.photo
-            ? { uri: EnvironmentHelper.ContentRoot + item.person.photo }
-            : Constants.Images.ic_member
-        } />
-        <View style={globalStyles.listTextView}>
-          <Text style={globalStyles.listTitleText}>
+      <TouchableRipple
+        style={{ width: DimensionHelper.wp(90), marginHorizontal: 8, marginVertical: 4, borderRadius: 8 }}
+        onPress={() => {
+          router.navigate({
+            pathname: '/memberDetail',
+            params: {
+              member: JSON.stringify(item.person)
+            }
+          })
+        }}
+      >
+        <Surface style={{ flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 8 }}>
+          <Avatar.Image
+            size={48}
+            source={
+              item?.person?.photo
+                ? { uri: EnvironmentHelper.ContentRoot + item.person.photo }
+                : Constants.Images.ic_member
+            }
+          />
+          <Text variant="titleMedium" style={{ marginLeft: 16, flex: 1 }}>
             {item?.person?.name?.display}
           </Text>
-        </View>
-      </TouchableOpacity>
+        </Surface>
+      </TouchableRipple>
     );
   };
 
@@ -220,9 +228,10 @@ const GroupDetails = () => {
   const { name, photoUrl, about } = groupDetails;
 
   if (!UserHelper.currentUserChurch?.person?.id) {
-    return (<View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }} >
-      <Text style={globalStyles.searchMainText}>Please Login to view your groups</Text>
-    </View>
+    return (
+      <Surface style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text variant="titleMedium">Please Login to view your groups</Text>
+      </Surface>
     );
   }
 
@@ -233,66 +242,93 @@ const GroupDetails = () => {
 
   return (
     <LoadingWrapper loading={loading}>
-      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: "100%", backgroundColor: "white" }]} >
+      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: "100%", backgroundColor: theme.colors.background }]}>
         <MainHeader title={name} openDrawer={navigation.openDrawer} back={navigation.goBack} />
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
-          <View style={{ margin: 16 }}>
+          <Surface style={{ margin: 16, padding: 16, borderRadius: 8 }}>
             {photoUrl ? (
-              <Image source={{ uri: photoUrl }} style={globalStyles.groupImage} />
+              <Image
+                source={{ uri: photoUrl }}
+                style={{
+                  width: '100%',
+                  height: 200,
+                  borderRadius: 8,
+                  marginBottom: 16
+                }}
+                resizeMode="cover"
+              />
             ) : (
-              <View
-                style={[
-                  globalStyles.groupImage,
-                  { justifyContent: 'center', alignItems: 'center', backgroundColor: '#f0f0f0' },
-                ]}
+              <Surface
+                style={{
+                  height: 200,
+                  width: '100%',
+                  borderRadius: 8,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: theme.colors.surfaceVariant,
+                  marginBottom: 16
+                }}
               >
-                <Text style={styles.noImageText}>No image available</Text>
-              </View>
+                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>No image available</Text>
+              </Surface>
             )}
             <Markdown>{about}</Markdown>
-          </View>
+          </Surface>
 
-          <View style={styles.tabContainer}>
+          <Surface style={styles.tabContainer}>
             {TABS.map((tab, idx) => (
-              <TouchableOpacity
+              <TouchableRipple
                 key={tab.toLowerCase().replace(/\s+/g, '-')}
-                style={[styles.tab, activeTab === idx && styles.activeTab]}
+                style={[styles.tab, activeTab === idx && { borderBottomWidth: 1, borderBottomColor: theme.colors.primary }]}
                 onPress={() => setActiveTab(idx)}
               >
-                <Text style={[activeTab === idx && styles.activeTabText]}>
+                <Text variant="labelLarge" style={{ color: activeTab === idx ? theme.colors.primary : theme.colors.onSurface }}>
                   {tab}
                 </Text>
-              </TouchableOpacity>
+              </TouchableRipple>
             ))}
-          </View>
+          </Surface>
 
           {activeTab === 0 && (<Conversations contentType="group" contentId={id} groupId={id} from="GroupDetails" />)}
-          {activeTab === 1 && (<View style={{ height: DimensionHelper.hp(55), paddingBottom: DimensionHelper.wp(2) }}>{getGroupMembers()}</View>)}
-          {activeTab === 2 && (<View>
-            {isLeader &&
-              <TouchableOpacity style={styles.addButtonContainer}
-                onPress={() => { setShowAddEventModal(true), handleAddEvent({ start: new Date(), end: new Date() }) }}
-              >
-                <MaterialIcons name={'event-note'} size={DimensionHelper.wp(6)} color={Constants.Colors.app_color} />
-                <Text style={styles.addButtonText}>ADD EVENT</Text>
-              </TouchableOpacity>
-            }
-            <Calendar
-              current={selected}
-              markingType='multi-dot'
-              markedDates={markedDates}
-              onDayPress={onDayPress}
-              theme={{
-                textInactiveColor: '#a68a9f',
-                textSectionTitleDisabledColor: 'grey',
-                textSectionTitleColor: '#1C75BC',
-                arrowColor: '#1C75BC',
-                todayTextColor: 'red',
-                selectedDayBackgroundColor: '#5E60CE',
-                selectedDayTextColor: 'white',
-              }}
-            />
-          </View>)}
+          {activeTab === 1 && (
+            <Surface style={{ height: DimensionHelper.hp(55), paddingBottom: DimensionHelper.wp(2) }}>
+              <FlatList
+                data={groupMembers}
+                renderItem={({ item }) => showGroupMembers(false, item)}
+                keyExtractor={(item: any) => item?.id}
+                ListEmptyComponent={() => <Text variant="bodyMedium" style={styles.noMemberText}>No group members found.</Text>}
+              />
+            </Surface>
+          )}
+          {activeTab === 2 && (
+            <Surface>
+              {isLeader && (
+                <Button
+                  mode="outlined"
+                  icon="calendar-plus"
+                  onPress={() => { setShowAddEventModal(true), handleAddEvent({ start: new Date(), end: new Date() }) }}
+                  style={{ margin: 16, alignSelf: 'flex-end' }}
+                >
+                  ADD EVENT
+                </Button>
+              )}
+              <Calendar
+                current={selected}
+                markingType='multi-dot'
+                markedDates={markedDates}
+                onDayPress={onDayPress}
+                theme={{
+                  textInactiveColor: theme.colors.onSurfaceDisabled,
+                  textSectionTitleDisabledColor: theme.colors.onSurfaceDisabled,
+                  textSectionTitleColor: theme.colors.primary,
+                  arrowColor: theme.colors.primary,
+                  todayTextColor: theme.colors.error,
+                  selectedDayBackgroundColor: theme.colors.primary,
+                  selectedDayTextColor: theme.colors.onPrimary,
+                }}
+              />
+            </Surface>
+          )}
         </KeyboardAvoidingView>
       </SafeAreaView>
     </LoadingWrapper>
@@ -300,56 +336,22 @@ const GroupDetails = () => {
 };
 
 const styles = StyleSheet.create({
-  tabContainer: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginLeft: 16 },
-  tab: { paddingHorizontal: 16, paddingVertical: 12 },
-  activeTab: { borderBottomWidth: 1, borderBottomColor: Constants.Colors.app_color },
-  activeTabText: { color: Constants.Colors.app_color, fontWeight: "600" },
-  header: {
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-between',
-    marginTop: 10,
-    marginBottom: 10
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    marginHorizontal: 16,
+    marginBottom: 8,
+    borderRadius: 8,
+    elevation: 1
   },
-  month: {
-    marginLeft: 5
-  },
-  year: {
-    marginRight: 5
-  },
-  modalConatiner: {
-    paddingHorizontal: DimensionHelper.wp(1)
-  },
-  modalHeader: {
-    width: '100%', height: DimensionHelper.wp(9), marginBottom: DimensionHelper.wp(3), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomColor: 'lightgray', borderBottomWidth: 1
-  },
-  modalText: {
-    fontSize: DimensionHelper.wp(5.5), color: '#000'
-  },
-  modalIcon: {
-    height: DimensionHelper.wp(8), width: DimensionHelper.wp(5), justifyContent: 'center'
-  },
-  eventText: {
-    fontSize: DimensionHelper.wp(4), fontWeight: '800', color: '#000'
-  },
-  eventTime: {
-    fontSize: DimensionHelper.wp(4), color: '#000'
-  },
-  noImageText: {
-    color: '#888'
+  tab: {
+    paddingHorizontal: 16,
+    paddingVertical: 12
   },
   noMemberText: {
-    textAlign: 'center', marginTop: 10
-  },
-  addButtonContainer: {
-    borderWidth: 1, paddingVertical: DimensionHelper.wp(2), paddingHorizontal: DimensionHelper.wp(2.5), margin: DimensionHelper.wp(2), marginBottom: 0,
-    borderRadius: DimensionHelper.wp(1), alignItems: 'center', alignSelf: 'flex-end', borderColor: Constants.Colors.app_color, flexDirection: 'row'
-  },
-  addButtonText: {
-    fontSize: DimensionHelper.wp(4), marginLeft: DimensionHelper.wp(2), color: Constants.Colors.app_color
-  },
-  eventContainer: {
-    flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
+    textAlign: 'center',
+    marginTop: 10
   }
 });
 
