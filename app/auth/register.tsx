@@ -67,7 +67,7 @@ const Register = () => {
           value={firstName}
           onChangeText={setFirstName}
           autoCorrect={false}
-          style={{ marginBottom: spacing.md }}
+          style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
           left={<TextInput.Icon icon="account" />}
         />
 
@@ -77,7 +77,7 @@ const Register = () => {
           value={lastName}
           onChangeText={setLastName}
           autoCorrect={false}
-          style={{ marginBottom: spacing.md }}
+          style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
           left={<TextInput.Icon icon="account" />}
         />
 
@@ -89,7 +89,7 @@ const Register = () => {
           autoCapitalize="none"
           autoCorrect={false}
           keyboardType="email-address"
-          style={{ marginBottom: spacing.md }}
+          style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
           left={<TextInput.Icon icon="email" />}
         />
 
@@ -132,8 +132,8 @@ const Register = () => {
 
   return (
     <LoadingWrapper loading={loading}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-        <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
+        <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
           {getContent()}
         </Surface>
       </SafeAreaView>

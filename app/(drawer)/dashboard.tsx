@@ -41,7 +41,7 @@ const Dashboard = () => {
   const nav = useNavigation<NavigationProp<any>>();
   const focused = useIsFocused();
   const paperTheme = useTheme();
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [dimension, setDimension] = useState(Dimensions.get('screen'));
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -50,11 +50,29 @@ const Dashboard = () => {
       setDimension(Dimensions.get('screen'));
     });
     UserHelper.addOpenScreenEvent('Dashboard');
+    loadDashboardData();
     return () => subscription.remove();
   }, []);
 
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      // Wait for UserHelper.links to be available
+      if (!UserHelper.links) {
+        await new Promise(resolve => setTimeout(resolve, 500)); // Give time for links to load
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (focused) checkRedirect();
+    if (focused) {
+      checkRedirect();
+      loadDashboardData();
+    }
   }, [focused]);
 
   const checkRedirect = () => {
@@ -82,6 +100,7 @@ const Dashboard = () => {
   };
 
   const getButtons = () => {
+    if (isLoading) return null;
     if (!Array.isArray(UserHelper.links)) return null;
     const items = UserHelper.links.filter(item => item.linkType !== 'separator');
     return (

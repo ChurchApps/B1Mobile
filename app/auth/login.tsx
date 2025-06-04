@@ -67,11 +67,11 @@ const Login = () => {
 
   return (
     <LoadingWrapper loading={loading}>
-      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
         <ScrollView>
           <SafeAreaView style={{ flex: 1 }}>
             <BlueHeader />
-            <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness }}>
+            <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
               <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>Welcome, Please Login.</Text>
 
               <TextInput
@@ -82,7 +82,7 @@ const Login = () => {
                 autoCapitalize="none"
                 autoCorrect={false}
                 keyboardType="email-address"
-                style={{ marginBottom: spacing.md }}
+                style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
                 left={<TextInput.Icon icon="email" />}
               />
 
@@ -94,7 +94,7 @@ const Login = () => {
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
                 autoCorrect={false}
-                style={{ marginBottom: spacing.md }}
+                style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
                 left={<TextInput.Icon icon="lock" />}
                 right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />}
               />
