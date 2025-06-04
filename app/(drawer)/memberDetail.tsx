@@ -1,16 +1,18 @@
 import React from 'react';
 import { Loader } from '@/src/components/Loader';
 import { MainHeader } from '@/src/components/wrapper/MainHeader';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome';
-import Icon from '@expo/vector-icons/Zocial';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Image, Linking, SafeAreaView, Text, View } from 'react-native';
-import { FlatList, ScrollView, TouchableOpacity, } from 'react-native-gesture-handler';
+import { Alert, Image, Linking, ScrollView, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import { useAppTheme } from '@/src/theme';
+import { ActivityIndicator, Button, Card, Surface, Text } from 'react-native-paper';
 
 interface Props {
   navigation: NavigationProps;
@@ -23,18 +25,15 @@ interface Props {
 
 const MemberDetail = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-
+  const { theme, spacing } = useAppTheme();
   const { member } = useLocalSearchParams<{ member: any }>();
-
   const parsedMember = JSON.parse(member);
   const memberinfo = parsedMember?.contactInfo;
   const [isLoading, setLoading] = useState(false);
   const [householdList, setHouseholdList] = useState([]);
   const scrollViewRef = useRef<any>(null);
 
-
   useEffect(() => {
-    // Utilities.trackEvent("Member Detail Screen");
     getHouseholdMembersList();
     UserHelper.addOpenScreenEvent("Member Detail Screen");
   }, [])
@@ -64,89 +63,65 @@ const MemberDetail = (props: Props) => {
 
   const onMembersClick = (item: any) => {
     scrollViewRef.current.scrollTo({ y: 0, animated: false })
-
     router.navigate({
       pathname: '/(drawer)/memberDetail',
-      params: {
-        member: JSON.stringify(item),
-      }
+      params: { member: JSON.stringify(item) }
     })
-    // ✅ Correct - object becomes a string
   }
 
-  // props.navigation.navigate('MemberDetailScreen', { member: item })
-  // }
-
-  const renderMemberItem = (item: any) => {
-    return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => onMembersClick(item)}>
-        <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
-        <View style={globalStyles.listTextView}>
-          <Text style={globalStyles.listTitleText} numberOfLines={1}>{item.name.display}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-
+  const renderMemberItem = (item: any) => (
+    <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={() => onMembersClick(item)}>
+      <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
+        <Text variant="titleMedium" numberOfLines={1}>{item.name.display}</Text>
+      </Card.Content>
+    </Card>
+  );
 
   return (
-    <SafeAreaView style={globalStyles.grayContainer}>
+    <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
       <MainHeader title="Directory" openDrawer={navigation.openDrawer} back={navigation.goBack} />
-      <ScrollView style={globalStyles.grayContainer} ref={scrollViewRef}>
-        <Image source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member} style={globalStyles.memberIcon} />
-        {/* <Text style={globalStyles.memberName}>{member.name.display}</Text> */}
-        <View style={globalStyles.nameMsgContainer}>
-          <Text style={globalStyles.memberName}>{parsedMember?.name?.display}</Text>
-          <TouchableOpacity style={globalStyles.msgButtonContainer}
-            onPress={() => {
-              router.navigate({
-                pathname: '/(drawer)/messageScreen',
-                params: {
-                  userDetails: JSON.stringify(parsedMember), // ✅ Correct - object becomes a string
-                },
-
-              })
-
-              // props.navigation.navigate('MessagesScreen', { userDetails: parsedMember })
-            }}
-          >
-            <Text style={globalStyles.msgText}>MESSAGE</Text>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp(90) }]} onPress={() => onEmailClick(memberinfo.email)}>
-          <View style={globalStyles.detailIconContainer}>
-            <Icon name={'email'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp(4.8)} />
-            <Text style={globalStyles.detailHeader}>Email :</Text>
-          </View>
-          <Text style={globalStyles.detailValue}>{memberinfo.email ? memberinfo.email : '-'}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp(90) }]} onPress={() => onPhoneClick(memberinfo.homePhone)}>
-          <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'phone'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp(4.8)} />
-            <Text style={globalStyles.detailHeader}>Phone :</Text>
-          </View>
-          <Text style={globalStyles.detailValue}>{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[globalStyles.memberDetailContainer, { width: DimensionHelper.wp(90) }]} onPress={() => onAddressClick()}>
-          <View style={globalStyles.detailIconContainer}>
-            <FontAwesome5 name={'location-arrow'} color={Constants.Colors.app_color} style={globalStyles.detailIcon} size={DimensionHelper.wp(4.8)} />
-            <Text style={globalStyles.detailHeader}>Address :</Text>
-          </View>
-          {memberinfo.address1 ? <Text style={globalStyles.detailValue}>{memberinfo.address1}</Text> : null}
-          {memberinfo.address2 ? <Text style={globalStyles.detailValue}>{memberinfo.address2}</Text> : null}
-          <Text style={globalStyles.detailValue}>{memberinfo.city ? memberinfo.city + ',' : ''} {memberinfo.state ? memberinfo.state + '-' : ''} {memberinfo.zip}</Text>
-        </TouchableOpacity>
-
-        <Text style={[globalStyles.searchMainText, { alignSelf: 'center' }]}>- Household Members -</Text>
-        <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} scrollEnabled={false} />
+      <ScrollView style={{ flex: 1 }} ref={scrollViewRef} contentContainerStyle={{ padding: spacing.md }}>
+        <Image source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member} style={{ width: 96, height: 96, borderRadius: 48, alignSelf: 'center', marginBottom: spacing.md }} />
+        <Surface style={{ alignItems: 'center', marginBottom: spacing.md, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, elevation: 2, padding: spacing.md }}>
+          <Text variant="titleLarge" style={{ fontWeight: '600', marginBottom: spacing.sm }}>{parsedMember?.name?.display}</Text>
+          <Button mode="contained" icon="message" onPress={() => router.navigate({ pathname: '/(drawer)/messageScreen', params: { userDetails: JSON.stringify(parsedMember) } })} style={{ marginBottom: spacing.sm }}>Message</Button>
+        </Surface>
+        <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={() => onEmailClick(memberinfo.email)}>
+          <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Icon name={'email'} color={theme.colors.primary} size={24} style={{ marginRight: spacing.md }} />
+            <View style={{ flex: 1 }}>
+              <Text variant="bodyLarge" style={{ fontWeight: '500' }}>Email:</Text>
+              <Text variant="bodyMedium">{memberinfo.email ? memberinfo.email : '-'}</Text>
+            </View>
+          </Card.Content>
+        </Card>
+        <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={() => onPhoneClick(memberinfo.homePhone)}>
+          <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <FontAwesome5 name={'phone'} color={theme.colors.primary} size={24} style={{ marginRight: spacing.md }} />
+            <View style={{ flex: 1 }}>
+              <Text variant="bodyLarge" style={{ fontWeight: '500' }}>Phone:</Text>
+              <Text variant="bodyMedium">{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
+            </View>
+          </Card.Content>
+        </Card>
+        <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={onAddressClick}>
+          <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <FontAwesome5 name={'location-arrow'} color={theme.colors.primary} size={24} style={{ marginRight: spacing.md }} />
+            <View style={{ flex: 1 }}>
+              <Text variant="bodyLarge" style={{ fontWeight: '500' }}>Address:</Text>
+              {memberinfo.address1 ? <Text variant="bodyMedium">{memberinfo.address1}</Text> : null}
+              {memberinfo.address2 ? <Text variant="bodyMedium">{memberinfo.address2}</Text> : null}
+              <Text variant="bodyMedium">{memberinfo.city ? memberinfo.city + ',' : ''} {memberinfo.state ? memberinfo.state + '-' : ''} {memberinfo.zip}</Text>
+            </View>
+          </Card.Content>
+        </Card>
+        <Text variant="titleSmall" style={{ alignSelf: 'center', marginVertical: spacing.md }}>- Household Members -</Text>
+        <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} scrollEnabled={false} />
       </ScrollView>
-      {isLoading && <Loader isLoading={isLoading} />}
-    </SafeAreaView>
+      {isLoading && <ActivityIndicator animating={true} size="large" style={{ margin: spacing.md }} />}
+    </Surface>
   );
 };
-
 
 export default MemberDetail

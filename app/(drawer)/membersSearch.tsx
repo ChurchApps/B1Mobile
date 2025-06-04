@@ -1,14 +1,15 @@
 import React from 'react';
 import { Loader } from '@/src/components/Loader';
 import { MainHeader } from '@/src/components/wrapper/MainHeader';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from '@/src/helpers';
 import { NavigationProps } from '@/src/interfaces';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { router, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Image, SafeAreaView, Text, TextInput, View } from 'react-native';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { Image, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import { useAppTheme } from '@/src/theme';
+import { ActivityIndicator, Button, Card, Surface, Text, TextInput } from 'react-native-paper';
 
 interface Props {
   navigation: NavigationProps;
@@ -16,7 +17,7 @@ interface Props {
 
 const MembersSearch = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-
+  const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState([]);
   const [membersList, setMembersList] = useState([]);
@@ -29,6 +30,7 @@ const MembersSearch = (props: Props) => {
   }, [])
 
   const loadMembers = () => {
+    setLoading(true);
     ApiHelper.get("/people", "MembershipApi").then(data => {
       setLoading(false);
       setSearchList(data);
@@ -45,56 +47,48 @@ const MembersSearch = (props: Props) => {
     else setSearchList(membersList)
   }
 
-  const renderMemberItem = (item: any) => {
-    return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => {
-
-
-        router.navigate({
-          pathname: '/(drawer)/memberDetail',
-          params: {
-            member: JSON.stringify(item), // ✅ Correct - object becomes a string
-          },
-        });
-        // navigation.navigate('MemberDetailScreen', { member: item }) 
-
-      }}
-      >
-        <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={globalStyles.memberListIcon} />
-        <View style={globalStyles.listTextView}>
-          <Text style={globalStyles.listTitleText}>{item.name.display}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
+  const renderMemberItem = (item: any) => (
+    <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface, width: '100%', alignSelf: 'center', maxWidth: 700 }} onPress={() => {
+      router.navigate({
+        pathname: '/(drawer)/memberDetail',
+        params: { member: JSON.stringify(item) },
+      });
+    }}>
+      <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
+        <Text variant="titleMedium">{item.name.display}</Text>
+      </Card.Content>
+    </Card>
+  );
 
   const getResults = () => {
-    if (isLoading) return <></>
-    else if (searchList.length == 0) return <Text style={globalStyles.recentText}>No results found</Text>
-    else return <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.churchListStyle} />
+    if (isLoading) return <ActivityIndicator animating={true} size="large" style={{ margin: spacing.md }} />
+    else if (searchList.length == 0) return <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, margin: spacing.md }}>No results found</Text>
+    else return <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ width: '100%', maxWidth: 700, alignSelf: 'center' }} />
   }
 
   return (
-    <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: 'center' }]}>
+    <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
       <MainHeader title="Directory" openDrawer={navigation.openDrawer} back={navigation.goBack} />
-      <View style={{ width: DimensionHelper.wp(100), flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-
-        <Text style={[globalStyles.searchMainText, { marginHorizontal: DimensionHelper.wp(5) }]}>Find Members</Text>
-        <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
-          <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
-          <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Member Name'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} value={searchText} onChangeText={(text) => { setSearchText(text) }} />
-
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.md }}>
+        <View style={{ width: '100%', maxWidth: 500, alignSelf: 'center' }}>
+          <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>Find Members</Text>
+          <TextInput
+            mode="outlined"
+            label="Member Name"
+            placeholder="Member Name"
+            value={searchText}
+            onChangeText={setSearchText}
+            style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface, width: '100%' }}
+            left={<TextInput.Icon icon="account" />}
+          />
+          <Button mode="contained" onPress={() => filterMember(searchText)} style={{ marginBottom: spacing.md, width: '100%' }}>
+            Search
+          </Button>
         </View>
-        <TouchableOpacity style={[globalStyles.roundBlueButton, { marginTop: DimensionHelper.wp(6), width: DimensionHelper.wp(90) }]} onPress={() => filterMember(searchText)}>
-          <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>
-        </TouchableOpacity>
-
         {getResults()}
-
-        {isLoading && <Loader isLoading={isLoading} />}
-
       </View>
-    </SafeAreaView>
+    </Surface>
   );
 };
 export default MembersSearch
