@@ -1,20 +1,19 @@
 import React from 'react';
 import { BlueHeader } from '@/src/components/BlueHeader';
-import { ApiHelper, Constants as ConstantsHelper, EnvironmentHelper, LoginResponseInterface, UserHelper, globalStyles } from '@/src/helpers';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
-import Fontisto from '@expo/vector-icons/Fontisto';
+import { ApiHelper, Constants as ConstantsHelper, EnvironmentHelper, LoginResponseInterface, UserHelper } from '@/src/helpers';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Linking, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import RNRestart from 'react-native-restart';
+import { Alert, Linking, SafeAreaView, ScrollView, View } from 'react-native';
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
+import { TextInput, Button, Text, Surface } from 'react-native-paper';
+import { useAppTheme } from '@/src/theme';
 
-const Login = (props: any) => {
+const Login = () => {
+  const { theme, spacing, dimensions } = useAppTheme();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateDetails = () => {
     if (email != '') {
@@ -35,7 +34,6 @@ const Login = (props: any) => {
       return false;
     }
   }
-
 
   const loginApiCall = () => {
     let params = { "email": email, "password": password }
@@ -64,58 +62,70 @@ const Login = (props: any) => {
     });
   }
 
-
-
   const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
   const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
     <LoadingWrapper loading={loading}>
-      <View style={{ flex: 1, backgroundColor: ConstantsHelper.Colors.gray_bg }}>
+      <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
         <ScrollView>
-          <SafeAreaView style={globalStyles.appContainer}>
+          <SafeAreaView style={{ flex: 1 }}>
             <BlueHeader />
-            <View style={globalStyles.grayContainer}>
-              <Text style={globalStyles.mainText}>Welcome, Please Login.</Text>
-              <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
-                <Fontisto name={'email'} color={ConstantsHelper.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
-                <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Email'} autoCapitalize="none" autoCorrect={false} keyboardType='email-address' placeholderTextColor={'lightgray'} value={email} onChangeText={(text) => { setEmail(text) }} />
-              </View>
-              <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
-                <Fontisto name={'key'} color={ConstantsHelper.Colors.app_color} style={globalStyles.inputIcon} size={DimensionHelper.wp(4.5)} />
-                <TextInput style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]} placeholder={'Password'} autoCapitalize="none" autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} secureTextEntry={true} value={password} onChangeText={(text) => { setPassword(text) }} />
-              </View>
-              <View style={{ ...globalStyles.privacyPolicyView, width: DimensionHelper.wp(90) }}>
-                <Text style={{ ...globalStyles.privacyText, width: DimensionHelper.wp(90) }}>By clicking on Login, I confirm that I have read the <Text style={{ color: ConstantsHelper.Colors.app_color }} onPress={() => {
-                  router.navigate('/auth/privacy')
-                }}    >privacy policy.</Text>
+            <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
+              <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>Welcome, Please Login.</Text>
+
+              <TextInput
+                mode="outlined"
+                label="Email"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
+                style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
+                left={<TextInput.Icon icon="email" />}
+              />
+
+              <TextInput
+                mode="outlined"
+                label="Password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                autoCorrect={false}
+                style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
+                left={<TextInput.Icon icon="lock" />}
+                right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />}
+              />
+
+              <Text variant="bodySmall" style={{ marginBottom: spacing.md }}>
+                By clicking on Login, I confirm that I have read the{' '}
+                <Text variant="bodySmall" style={{ color: theme.colors.primary }} onPress={() => router.navigate('/auth/privacy')}>
+                  privacy policy.
                 </Text>
-              </View>
+              </Text>
 
-              <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(90) }]} onPress={() => { validateDetails() && loginApiCall() }}>
-                {loading ?
-                  <ActivityIndicator size='small' color='white' animating={loading} /> :
-                  <Text style={globalStyles.roundBlueButtonText}>LOGIN</Text>
-                }
-              </TouchableOpacity>
+              <Button
+                mode="contained"
+                onPress={() => validateDetails() && loginApiCall()}
+                loading={loading}
+                style={{ marginBottom: spacing.md }}
+              >
+                Login
+              </Button>
 
-              <View style={globalStyles.loginLinks}>
-                <TouchableOpacity onPress={() => { Linking.openURL(forgotLink); }}>
-                  <Text style={globalStyles.simpleLink}>Forgot Password</Text>
-                </TouchableOpacity>
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <Button mode="text" onPress={() => Linking.openURL(forgotLink)}>Forgot Password</Button>
                 <Text> | </Text>
-                <TouchableOpacity onPress={() => { router.navigate("/auth/register") }}>
-                  <Text style={globalStyles.simpleLink}>Register</Text>
-                </TouchableOpacity>
+                <Button mode="text" onPress={() => router.navigate("/auth/register")}>Register</Button>
               </View>
-
-            </View>
+            </Surface>
           </SafeAreaView>
         </ScrollView>
-
       </View>
     </LoadingWrapper>
-  )
+  );
 }
 
-export default Login
+export default Login;

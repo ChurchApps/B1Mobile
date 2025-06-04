@@ -1,11 +1,11 @@
-import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface, globalStyles } from '@/src/helpers';
+import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface } from '@/src/helpers';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { ErrorHelper } from '@churchapps/mobilehelper';
 import React, { useState } from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { BottomButton } from '../BottomButton';
-import { Loader } from '../Loader';
+import { FlatList, Image, View } from 'react-native';
+import { LoadingWrapper } from '@/src/components/wrapper/LoadingWrapper';
+import { useAppTheme } from '@/src/theme';
+import { Button, Divider, List, Text } from 'react-native-paper';
 
 interface Props {
   onDone: () => void
@@ -13,12 +13,12 @@ interface Props {
 }
 
 export const CheckinHousehold = (props: Props) => {
+  const { theme, spacing } = useAppTheme();
   const [selected, setSelected] = useState(null);
-  const [isLoading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const submitAttendance = async () => {
     setLoading(true);
-
     let pendingVisits: any[] = [];
     CheckinHelper.householdMembers?.forEach((member: any) => {
       let visitSessionList: any[] = [];
@@ -42,49 +42,65 @@ export const CheckinHousehold = (props: Props) => {
       console.log('CLEAR MEMBER LIST ERROR', error)
       ErrorHelper.logError("submit-attendance", error);
     }
-
   }
 
   const renderMemberItem = (item: any) => (
-    <View>
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => { setSelected(selected != item.id ? item.id : null) }}>
-        <Icon name={selected == item.id ? 'angle-down' : 'angle-right'} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />
-        <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={globalStyles.memberListIcon} />
-        <View style={globalStyles.memberListTextView}>
-          <Text style={[globalStyles.listTitleText, globalStyles.memberListTitle]} numberOfLines={1}>{item.name.display}</Text>
-          {selected != item.id && item.serviceTimes.map((item_time: any) => (
-            <View key={`service-time-${item_time.id}`}>
-              {item_time.selectedGroup
-                ? <Text style={globalStyles.selectedText} numberOfLines={1}>
-                  {item_time.name}{" - "}{item_time.selectedGroup.name}
-                </Text>
-                : null}
-            </View>
-          ))}
-        </View>
-      </TouchableOpacity>
-      {selected == item.id && item.serviceTimes && item.serviceTimes.map((item_time: any) => (
-        <View style={{ ...globalStyles.classesView, borderBottomWidth: (item_time.id == item.serviceTimes[item.serviceTimes.length - 1]?.id) ? 0 : 1, width: DimensionHelper.wp(90) }} key={`service-time-${item_time.id}`}>
-          <View style={globalStyles.classesTimeView}>
-            <Icon name={'clock-o'} style={globalStyles.timeIcon} size={DimensionHelper.wp(5)} />
-            <Text style={globalStyles.classesTimeText}>{item_time.name}</Text>
+    <View style={{ marginBottom: spacing.sm, backgroundColor: theme.colors.surfaceVariant, borderRadius: 8, borderWidth: 1, borderColor: theme.colors.outlineVariant, overflow: 'hidden' }}>
+      <List.Item
+        title={item.name.display}
+        description={selected != item.id && item.serviceTimes.map((item_time: any) => (
+          item_time.selectedGroup ? `${item_time.name} - ${item_time.selectedGroup.name}` : null
+        )).filter(Boolean).join('\n')}
+        left={props => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <List.Icon {...props} icon={selected == item.id ? 'chevron-down' : 'chevron-right'} />
+            <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={{ width: 40, height: 40, borderRadius: 20 }} />
           </View>
-          <TouchableOpacity style={{ ...globalStyles.classesNoneBtn, backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
-            onPress={() => item_time.selection ? null : props.showGroups(item, item_time)}>
-            <Text style={globalStyles.classesNoneText} numberOfLines={3}>
-              {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
-            </Text>
-          </TouchableOpacity>
+        )}
+        onPress={() => setSelected(selected != item.id ? item.id : null)}
+        style={{ backgroundColor: 'transparent' }}
+      />
+      {selected == item.id && item.serviceTimes && item.serviceTimes.map((item_time: any) => (
+        <View key={`service-time-${item_time.id}`} style={{ backgroundColor: theme.colors.background }}>
+          <Divider />
+          <List.Item
+            title={item_time.name}
+            description={item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
+            left={props => <List.Icon {...props} icon="clock-outline" />}
+            right={() => (
+              <Button
+                mode="contained"
+                onPress={() => item_time.selection ? null : props.showGroups(item, item_time)}
+                style={{ backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
+                disabled={item_time.selection}
+              >
+                {item_time.selectedGroup ? item_time.selectedGroup.name : 'NONE'}
+              </Button>
+            )}
+          />
         </View>
       ))}
     </View>
   )
 
-  if (isLoading) return <Loader isLoading={isLoading} />
-  else return (
-    <>
-      <FlatList data={CheckinHelper.householdMembers} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={globalStyles.listContainerStyle} />
-      <BottomButton title="CHECKIN" onPress={() => submitAttendance()} style={DimensionHelper.wp(100)} />
-    </>
+  return (
+    <LoadingWrapper loading={loading}>
+      <View>
+        <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>Select Household Members</Text>
+        <FlatList
+          data={CheckinHelper.householdMembers}
+          renderItem={({ item }) => renderMemberItem(item)}
+          keyExtractor={(item: any) => item.id}
+          style={{ width: "100%" }}
+        />
+        <Button
+          mode="contained"
+          onPress={submitAttendance}
+          style={{ marginTop: spacing.md }}
+        >
+          CHECKIN
+        </Button>
+      </View>
+    </LoadingWrapper>
   );
 };

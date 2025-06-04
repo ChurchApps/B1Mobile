@@ -1,28 +1,27 @@
-import { Constants, UserHelper, globalStyles } from '@/src/helpers';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
+import { Constants, UserHelper } from '@/src/helpers';
 import React, { useEffect } from 'react';
-import { Text, View } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { View } from 'react-native';
+import { useAppTheme } from '@/src/theme';
+import { IconButton, Surface, Text } from 'react-native-paper';
 
 interface Props {
   onDone: () => void
 }
 
 export const CheckinComplete = (props: Props) => {
+  const { theme, spacing } = useAppTheme();
 
   useEffect(() => {
     UserHelper.addOpenScreenEvent('CheckinCompleteScreen');
     setTimeout(() => { props.onDone() }, 1500);
   }, []);
 
-
   return (
-    <View style={[globalStyles.safeAreaContainer, { flex: 1, backgroundColor: Constants.Colors.app_color }]}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Icon name="check-circle" size={DimensionHelper.wp(20)} color="green" />
-        <Text style={{ fontSize: DimensionHelper.wp(5), marginTop: DimensionHelper.wp(2), color: 'white' }}>Check-in Complete!</Text>
+    <Surface style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', elevation: 2 }}>
+      <View style={{ alignItems: 'center' }}>
+        <IconButton icon="check-circle" size={80} iconColor="green" />
+        <Text variant="headlineMedium" style={{ marginTop: spacing.md, color: theme.colors.onSurface }}>Check-in Complete!</Text>
       </View>
-    </View>
+    </Surface>
   );
 };

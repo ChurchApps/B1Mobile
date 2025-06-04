@@ -1,17 +1,14 @@
-import { ApiHelper, Constants, UserHelper, globalStyles } from "@/src/helpers";
+import React, { useEffect, useState } from "react";
+import { ApiHelper, Constants, UserHelper } from "@/src/helpers";
 import { ErrorHelper } from "@/src/helpers/ErrorHelper";
 import { Permissions, StripePaymentMethod } from "@/src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import Icon from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { DisplayBox } from "../DisplayBox";
+import { Alert, View, Image } from "react-native";
+import { ActivityIndicator, Button, Card, Divider, IconButton, List, Text, useTheme } from "react-native-paper";
+import { useAppTheme } from "@/src/theme";
 import { PaymentMethodModal } from "../modals/PaymentMethodModal";
 import { BankForm } from "./BankForm";
 import { CardForm } from "./CardForm";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 
 interface Props {
   customerId: string;
@@ -22,17 +19,13 @@ interface Props {
 }
 
 export function PaymentMethods({ customerId, paymentMethods, updatedFunction, isLoading, publishKey }: Props) {
+  const { theme: appTheme, spacing } = useAppTheme();
+  const theme = useTheme();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editPaymentMethod, setEditPaymentMethod] = useState<StripePaymentMethod>(new StripePaymentMethod());
   const [verify, setVerify] = useState<boolean>(false);
   const [mode, setMode] = useState<"display" | "edit">("display");
   const isFocused = useIsFocused();
-
-  const rightHeaderContent = (
-    <TouchableOpacity onPress={() => setShowModal(true)}>
-      <Icon name={"plus"} style={{ color: Constants.Colors.button_green }} size={DimensionHelper.wp(6)} />
-    </TouchableOpacity>
-  );
 
   useEffect(() => {
     if (isFocused) {
@@ -48,7 +41,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   };
 
   const handleDelete = () => {
-    Alert.alert("Are you sure?", "This will permantly delete this payment method", [
+    Alert.alert("Are you sure?", "This will permanently delete this payment method", [
       {
         text: "Cancel",
         onPress: () => { },
@@ -98,53 +91,77 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       break;
   }
 
-  const getEditButton = (item: StripePaymentMethod) => {
-    if (!UserHelper.checkAccess(Permissions.givingApi.settings.edit)) return null;
-    return (
-      <TouchableOpacity onPress={() => handleEdit(item)}>
-        <FontAwesome5 name={"pencil-alt"} style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp(5.5)} />
-      </TouchableOpacity>
-    );
+  const getMethodIcon = (type: string) => {
+    return type === "card" ? "credit-card" : "bank";
   };
 
-  const paymentTable =
-    paymentMethods.length > 0 ? (
-      <FlatList
-        data={paymentMethods}
-        renderItem={({ item }) => (
-          <View style={globalStyles.cardListView} key={item.id}>
-            <Text style={globalStyles.cardListText}> {item.name + " ****" + item.last4}</Text>
-            {item?.status === "new" && (
-              <TouchableOpacity onPress={() => handleEdit(item, true)}>
-                <Text style={{ color: Constants.Colors.app_color, width: DimensionHelper.wp(10) }}>Verify</Text>
-              </TouchableOpacity>
-            )}
-            {getEditButton(item)}
-          </View>
-        )}
-        keyExtractor={(item: any) => item.id}
-        ItemSeparatorComponent={({ item }) => <View style={globalStyles.cardListSeperator} />}
-      />
-    ) : (
-      <Text style={globalStyles.paymentDetailText}>No payment methods.</Text>
-    );
+  const getMethodTitle = (method: StripePaymentMethod) => {
+    return `${method.name} ending in ${method.last4}`;
+  };
 
-  const content =
-    mode === "display" ? (
-      <DisplayBox
+  const getMethodDescription = (method: StripePaymentMethod) => {
+    if (method.status === "new") return "Verification required";
+    return method.type === "card" ? "Credit Card" : "Bank Account";
+  };
+
+  const renderPaymentMethod = ({ item }: { item: StripePaymentMethod }) => (
+    <List.Item
+      title={getMethodTitle(item)}
+      description={getMethodDescription(item)}
+      left={props => <List.Icon {...props} icon={getMethodIcon(item.type)} />}
+      right={props => (
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {item?.status === "new" && (
+            <Button mode="text" onPress={() => handleEdit(item, true)} style={{ marginRight: spacing.xs }}>
+              Verify
+            </Button>
+          )}
+          {UserHelper.checkAccess(Permissions.givingApi.settings.edit) && (
+            <IconButton icon="pencil" size={20} onPress={() => handleEdit(item)} />
+          )}
+        </View>
+      )}
+    />
+  );
+
+  const content = mode === "display" ? (
+    <Card style={{ marginBottom: spacing.md }}>
+      <Card.Title
         title="Payment Methods"
-        rightHeaderComponent={rightHeaderContent}
-        headerIcon={<Icon name={"credit-card-alt"} style={{ color: "gray" }} size={DimensionHelper.wp(5.5)} />}
-      >
-        {isLoading ? (
-          <ActivityIndicator size="large" style={{ margin: DimensionHelper.wp(2) }} color="gray" animating={isLoading} />
-        ) : (
-          paymentTable
+        titleStyle={{ fontSize: 20, fontWeight: '600' }}
+        left={(props) => (
+          <IconButton
+            {...props}
+            icon="credit-card"
+            size={24}
+            iconColor={theme.colors.primary}
+            style={{ margin: 0 }}
+          />
         )}
-      </DisplayBox>
-    ) : (
-      editModeContent
-    );
+      />
+      <Card.Content>
+        {isLoading ? (
+          <ActivityIndicator size="large" style={{ margin: spacing.md }} color={theme.colors.primary} />
+        ) : paymentMethods.length > 0 ? (
+          <>
+            {paymentMethods.map((item, index) => (
+              <React.Fragment key={item.id}>
+                {renderPaymentMethod({ item })}
+                {index < paymentMethods.length - 1 && <Divider />}
+              </React.Fragment>
+            ))}
+          </>
+        ) : (
+          <Text variant="bodyMedium" style={{ textAlign: 'center', marginVertical: spacing.md }}>
+            No payment methods.
+          </Text>
+        )}
+      </Card.Content>
+    </Card>
+  ) : (
+    editModeContent
+  );
+
   return (
     <>
       <PaymentMethodModal show={showModal} close={() => setShowModal(false)} onSelect={handleEdit} />

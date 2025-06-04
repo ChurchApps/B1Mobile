@@ -1,16 +1,19 @@
-import { ApiHelper, CheckinHelper, PersonInterface, UserHelper, globalStyles } from '@/src/helpers';
+import { ApiHelper, CheckinHelper, PersonInterface, UserHelper } from '@/src/helpers';
 import { ArrayHelper, ErrorHelper } from '@churchapps/mobilehelper';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
-import { Loader } from '../Loader';
+import { FlatList, View } from 'react-native';
+import { LoadingWrapper } from '@/src/components/wrapper/LoadingWrapper';
+import { useAppTheme } from '@/src/theme';
+import { Card, List, Text } from 'react-native-paper';
 
 interface Props {
   onDone: () => void
 }
 
 export const CheckinServices = (props: Props) => {
-  const [isLoading, setLoading] = useState(false);
+  const { theme, spacing } = useAppTheme();
+  const [loading, setLoading] = useState(false);
   const [serviceList, setServiceList] = useState([]);
 
   useEffect(() => {
@@ -52,7 +55,6 @@ export const CheckinServices = (props: Props) => {
   const loadExistingAttendance = async (serviceId: string) => {
     setLoading(true);
     const data = await ApiHelper.get("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + CheckinHelper.peopleIds + "&include=visitSessions", "AttendanceApi");
-
     setLoading(false);
     CheckinHelper.setExistingAttendance(data)
   }
@@ -90,20 +92,27 @@ export const CheckinServices = (props: Props) => {
 
   const renderGroupItem = (item: any) => {
     return (
-      <View>
-        <TouchableOpacity style={[globalStyles.listMainView, globalStyles.groupListView, { width: DimensionHelper.wp(90) }]} onPress={() => ServiceSelection(item)}>
-          <Text style={globalStyles.groupListTitle} numberOfLines={1}>{item.campus.name} - {item.name}</Text>
-        </TouchableOpacity>
-      </View>
+      <List.Item
+        title={`${item.campus.name} - ${item.name}`}
+        onPress={() => ServiceSelection(item)}
+        style={{ backgroundColor: theme.colors.surface, marginBottom: spacing.xs }}
+        titleStyle={{ color: theme.colors.onSurface }}
+        left={props => <List.Icon {...props} icon="church" />}
+      />
     );
   }
 
-
-  if (isLoading) return <Loader isLoading={isLoading} />
-  else return (<><FlatList
-    data={serviceList}
-    renderItem={({ item }) => renderGroupItem(item)}
-    keyExtractor={(item: any) => item.id}
-    style={globalStyles.listContainerStyle}
-  /></>);
+  return (
+    <LoadingWrapper loading={loading}>
+      <View>
+        <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>Select a Service</Text>
+        <FlatList
+          data={serviceList}
+          renderItem={({ item }) => renderGroupItem(item)}
+          keyExtractor={(item: any) => item.id}
+          style={{ width: "100%" }}
+        />
+      </View>
+    </LoadingWrapper>
+  );
 };

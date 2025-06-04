@@ -1,11 +1,10 @@
-import { ApiHelper, Constants, StripeHelper, UserHelper, globalStyles } from "@/src/helpers";
+import { ApiHelper, Constants, StripeHelper, UserHelper } from "@/src/helpers";
 import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "@/src/interfaces";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
 import React, { useState } from "react";
-import { Alert, Image, Text, TextInput, View } from "react-native";
-import { InputBox } from "../InputBox";
-import DropDownPicker from "react-native-dropdown-picker";
+import { Alert, View } from "react-native";
+import { Button, Card, IconButton, Menu, Text, TextInput, useTheme } from "react-native-paper";
+import { useAppTheme } from "@/src/theme";
 
 interface Props {
   setMode: any;
@@ -16,13 +15,14 @@ interface Props {
 }
 
 export function CardForm({ setMode, card, customerId, updatedFunction, handleDelete }: Props) {
+  const { theme, spacing } = useAppTheme();
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [month, setMonth] = React.useState<string>(card.exp_month?.toString() || "");
   const [year, setYear] = React.useState<string>(card.exp_year?.toString().slice(-2) || "");
   const { createPaymentMethod } = useStripe();
   const person = UserHelper.currentUserChurch?.person;
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [selectedType, setSelectedType] = useState(card.type || "card");
   const cardTypes = [
     { label: "Visa", value: "visa" },
@@ -96,91 +96,103 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   };
 
   const informationalText = !card.id && (
-    <View style={{ marginTop: DimensionHelper.wp(5), flex: 1, alignItems: "center" }}>
-      <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>
-        Credit cards will be charged immediately for one-time donations. For recurring donations, your card will be charged on the date you select.
-      </Text>
-    </View>
+    <Text variant="bodySmall" style={{ marginVertical: spacing.md, textAlign: 'center' }}>
+      Credit cards will be charged immediately for one-time donations. For recurring donations, your card will be charged on the date you select.
+    </Text>
   );
 
   return (
-    <InputBox
-      title="Add New Card"
-      headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
-      saveFunction={handleSave}
-      cancelFunction={() => setMode("display")}
-      isSubmitting={isSubmitting}
-      deleteFunction={card.id ? handleDelete : undefined}
-    >
-      {!card.id ? (
-        <View style={{ marginBottom: DimensionHelper.wp(5) }}>
-          <Text style={globalStyles.semiTitleText}>Card Holder Name</Text>
-          <TextInput
-            style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
-            keyboardType="default"
-            value={person?.name?.display}
-            onChangeText={(text) => {
-              // setName(text);
-            }}
+    <Card style={{ marginBottom: spacing.md }}>
+      <Card.Title
+        title={card.id ? "Edit Card" : "Add New Card"}
+        titleStyle={{ fontSize: 20, fontWeight: '600' }}
+        left={(props) => (
+          <IconButton
+            {...props}
+            icon="credit-card"
+            size={24}
+            iconColor={theme.colors.primary}
+            style={{ margin: 0 }}
           />
-          <Text style={globalStyles.semiTitleText}>Card Number</Text>
-          <CardField
-            postalCodeEnabled={true}
-            placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }}
-            cardStyle={{ backgroundColor: "#FFFFFF", textColor: "#000000", placeholderColor: "#808080" }}
-            style={{ width: DimensionHelper.wp(90), height: DimensionHelper.wp(12), backgroundColor: "white" }}
-            onCardChange={(cardDetails) => {
-              setCardDetails(cardDetails);
-            }}
-          />
-          <View style={{ width: DimensionHelper.wp(100), marginBottom: DimensionHelper.wp(12) }}>
-            <DropDownPicker
-              listMode="SCROLLVIEW"
-              open={isDropdownOpen}
-              items={cardTypes}
-              value={selectedType}
-              setOpen={setIsDropdownOpen}
-              setValue={setSelectedType}
-              containerStyle={{
-                ...globalStyles.containerStyle,
-                width: DimensionHelper.wp(90),
-                height: isDropdownOpen ? cardTypes.length * DimensionHelper.wp(12) : DimensionHelper.wp(0),
-              }}
-              style={{ ...globalStyles.dropDownMainStyle, height: DimensionHelper.wp(12) }}
-              labelStyle={globalStyles.labelStyle}
-              listItemContainerStyle={globalStyles.itemStyle}
-              dropDownContainerStyle={{ ...globalStyles.dropDownStyle, width: DimensionHelper.wp(90) }}
-              scrollViewProps={{ nestedScrollEnabled: true }}
-              dropDownDirection="BOTTOM"
-            />
-          </View>
-        </View>
-      ) : (
-        <View style={globalStyles.cardDatesView}>
-          <View>
-            <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp(4) }}>Expiration Month</Text>
+        )}
+      />
+      <Card.Content>
+        {!card.id ? (
+          <View style={{ marginBottom: spacing.md }}>
             <TextInput
-              style={globalStyles.cardDates}
-              keyboardType="number-pad"
+              mode="outlined"
+              label="Card Holder Name"
+              value={person?.name?.display}
+              disabled
+              style={{ marginBottom: spacing.sm }}
+            />
+            <CardField
+              postalCodeEnabled={true}
+              placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }}
+              cardStyle={{ backgroundColor: theme.colors.surface, textColor: theme.colors.onSurface }}
+              style={{ height: 50, marginBottom: spacing.sm }}
+              onCardChange={setCardDetails}
+            />
+            <Menu
+              visible={showTypeMenu}
+              onDismiss={() => setShowTypeMenu(false)}
+              anchor={
+                <Button mode="outlined" onPress={() => setShowTypeMenu(true)} style={{ marginBottom: spacing.sm }}>
+                  {cardTypes.find(t => t.value === selectedType)?.label || "Select Card Type"}
+                </Button>
+              }
+            >
+              {cardTypes.map((type) => (
+                <Menu.Item
+                  key={type.value}
+                  onPress={() => {
+                    setSelectedType(type.value);
+                    setShowTypeMenu(false);
+                  }}
+                  title={type.label}
+                />
+              ))}
+            </Menu>
+          </View>
+        ) : (
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.md }}>
+            <TextInput
+              mode="outlined"
+              label="Expiration Month"
               value={month}
-              onChangeText={(text) => setMonth(text)}
-              placeholder="MM"
-              maxLength={2}
-            />
-          </View>
-          <View>
-            <Text style={{ ...globalStyles.searchMainText, marginTop: DimensionHelper.wp(4) }}>Expiration Year</Text>
-            <TextInput
-              style={globalStyles.cardDates}
+              onChangeText={setMonth}
               keyboardType="number-pad"
-              value={year}
-              onChangeText={(text) => setYear(text)}
-              placeholder="YY"
               maxLength={2}
+              style={{ flex: 1, marginRight: spacing.sm }}
+            />
+            <TextInput
+              mode="outlined"
+              label="Expiration Year"
+              value={year}
+              onChangeText={setYear}
+              keyboardType="number-pad"
+              maxLength={2}
+              style={{ flex: 1, marginLeft: spacing.sm }}
             />
           </View>
+        )}
+
+        {informationalText}
+
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.md }}>
+          {card.id && (
+            <Button mode="outlined" onPress={handleDelete} style={{ flex: 1, marginRight: spacing.sm }}>
+              Delete
+            </Button>
+          )}
+          <Button mode="outlined" onPress={() => setMode("display")} style={{ flex: card.id ? 1 : 1, marginRight: card.id ? spacing.sm : 0 }}>
+            Cancel
+          </Button>
+          <Button mode="contained" onPress={handleSave} loading={isSubmitting} style={{ flex: 1, marginLeft: card.id ? spacing.sm : spacing.sm }}>
+            Save
+          </Button>
         </View>
-      )}
-    </InputBox>
+      </Card.Content>
+    </Card>
   );
 }

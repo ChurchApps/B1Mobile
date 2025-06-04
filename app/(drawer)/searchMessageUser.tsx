@@ -1,14 +1,15 @@
 import React from 'react';
 import { BlueHeader } from '@/src/components/BlueHeader';
-import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface, globalStyles } from '@/src/helpers';
+import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { NavigationProps } from '@/src/interfaces';
 import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { router, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Image, Keyboard, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { Keyboard, TouchableWithoutFeedback, View, Image } from 'react-native';
+import { useAppTheme } from '@/src/theme';
+import { ActivityIndicator, Button, Card, List, Surface, Text, TextInput } from 'react-native-paper';
 
 interface Props {
   navigation: NavigationProps;
@@ -16,6 +17,7 @@ interface Props {
 
 const SearchMessageUser = (props: Props) => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState<UserSearchInterface[]>([]);
   const [loading, setLoading] = useState(false);
@@ -23,8 +25,6 @@ const SearchMessageUser = (props: Props) => {
   const [recentListEmpty, setRecentListEmpty] = useState(false);
 
   useEffect(() => {
-    // Utilities.trackEvent("User search Screen");
-    // GetRecentList();
     getPreviousConversations();
     UserHelper.addOpenScreenEvent("User Search Screen");
   }, [])
@@ -56,22 +56,23 @@ const SearchMessageUser = (props: Props) => {
     ApiHelper.get("/people/search/?term=" + text, "MembershipApi").then(data => {
       setLoading(false);
       setSearchList(data);
-      if (data.length === 0) Alert.alert("Alert", "No matches found");
+      if (data.length === 0) alert("No matches found");
     })
   }
 
   const renderUserItem = (item: UserSearchInterface) => {
     const userImage = item.photo
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: DimensionHelper.wp(90) }]} onPress={() => userSelection(item)}>
-        {
-          userImage ? <Image source={{ uri: userImage }} style={globalStyles.churchListIcon} /> :
-            <Image source={Constants.Images.ic_user} style={[globalStyles.churchListIcon, { tintColor: Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9) }]} />
-        }
-        <View style={globalStyles.listTextView}>
-          <Text style={globalStyles.listTitleText}>{item.name.display}</Text>
-        </View>
-      </TouchableOpacity>
+      <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness }} onPress={() => userSelection(item)}>
+        <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {userImage ? (
+            <Image source={{ uri: userImage }} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
+          ) : (
+            <Image source={Constants.Images.ic_user} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md, tintColor: theme.colors.primary }} />
+          )}
+          <Text variant="titleMedium">{item.name.display}</Text>
+        </Card.Content>
+      </Card>
     );
   }
 
@@ -83,9 +84,7 @@ const SearchMessageUser = (props: Props) => {
           userDetails: JSON.stringify(userData)
         }
       })
-      // props.navigation.navigate('MessagesScreen', { userDetails: userData })
     } catch (err: any) {
-      console.log(err)
       ErrorHelper.logError("user-selection", err);
     }
   }
@@ -95,38 +94,46 @@ const SearchMessageUser = (props: Props) => {
       <View>
         <BlueHeader navigation={navigation} showMenu={true} />
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <View style={globalStyles.grayContainer}>
-            <Text style={globalStyles.searchMainText}>Search for a person</Text>
-            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
-              <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
-              <TextInput
-                style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]}
-                placeholder={'Name'}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType='default'
-                placeholderTextColor={'lightgray'}
-                value={searchText}
-                onChangeText={(text) => { setSearchText(text) }}
-              />
-            </View>
-            <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: DimensionHelper.wp(6), width: DimensionHelper.wp(90) }} onPress={() => searchUserApiCall(searchText)}>
-              {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
-            </TouchableOpacity>
-          </View>
+          <Surface style={{ padding: spacing.md, backgroundColor: theme.colors.background, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
+            <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>Search for a person</Text>
+            <TextInput
+              mode="outlined"
+              label="Name"
+              placeholder="Name"
+              value={searchText}
+              onChangeText={setSearchText}
+              style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
+              left={<TextInput.Icon icon="account" />}
+            />
+            <Button mode="contained" onPress={() => searchUserApiCall(searchText)} loading={loading} style={{ marginBottom: spacing.md }}>
+              Search
+            </Button>
+          </Surface>
         </TouchableWithoutFeedback>
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
-      <FlatList
-        data={searchText == '' ? searchList.length != 0 ? searchList : recentList : searchList}
-        renderItem={({ item }) => renderUserItem(item)}
-        keyExtractor={(item: any) => item.id}
-        ListHeaderComponent={getHeaderView()}
-      />
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
+      <List.Section>
+        {getHeaderView()}
+        {(searchText === '' ? searchList.length !== 0 ? searchList : recentList : searchList).map((item: UserSearchInterface) => (
+          <List.Item
+            key={item.id}
+            title={item.name.display}
+            left={() => item.photo ? (
+              <Image source={{ uri: item.photo }} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} />
+            ) : (
+              <Image source={Constants.Images.ic_user} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md, tintColor: theme.colors.primary }} />
+            )}
+            onPress={() => userSelection(item)}
+            style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }}
+            titleStyle={{ fontWeight: '500' }}
+          />
+        ))}
+      </List.Section>
     </View>
   );
 }
