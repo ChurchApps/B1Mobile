@@ -1,23 +1,23 @@
 import React from 'react';
 import { BlueHeader } from '@/src/components/BlueHeader';
-import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper, globalStyles } from '@/src/helpers';
+import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { ApiHelper } from '@churchapps/mobilehelper';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
-import { FlatList, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { Keyboard, TouchableWithoutFeedback, View, Image } from 'react-native';
+import { useAppTheme } from '@/src/theme';
+import { ActivityIndicator, Button, Card, List, Surface, Text, TextInput } from 'react-native-paper';
 import RNRestart from 'react-native-restart';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
+import { Platform } from 'react-native';
 
 const ChurchSearch = () => {
-
+  const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState('');
   const [searchList, setSearchList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [recentList, setRecentList] = useState<ChurchInterface[]>([]);
   const [recentListEmpty, setRecentListEmpty] = useState(false);
-
 
   useEffect(() => {
     // Utilities.trackEvent("Church Search Screen");
@@ -61,10 +61,8 @@ const ChurchSearch = () => {
       setLoading(false)
       console.log(error)
     }
-
+    setLoading(false);
   }
-
-
 
   const GetRecentList = async () => {
     try {
@@ -92,7 +90,6 @@ const ChurchSearch = () => {
     }
   }
 
-
   const renderChurchItem = (item: any) => {
     let churchImage = Constants.Images.ic_church;
     if (item.settings && item.settings.length > 0) {
@@ -101,57 +98,71 @@ const ChurchSearch = () => {
       churchImage = { uri: setting.value };
     }
     return (
-      <TouchableOpacity style={[globalStyles.listMainView, globalStyles.churchListView, { width: DimensionHelper.wp(90) }]} onPress={() => churchSelection(item)}>
-        <Image source={churchImage} style={globalStyles.churchListIcon} />
-        <View style={globalStyles.listTextView}>
-          <Text style={globalStyles.listTitleText}>{item.name}</Text>
-        </View>
-      </TouchableOpacity>
+      <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness }} onPress={() => churchSelection(item)}>
+        <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Image source={churchImage} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
+          <Text variant="titleMedium">{item.name}</Text>
+        </Card.Content>
+      </Card>
     );
   }
-
-
 
   const getHeaderView = () => {
     return (
       <View>
         <BlueHeader />
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <View style={globalStyles.grayContainer}>
-            <Text style={globalStyles.searchMainText}>Find Your Church</Text>
-            <View style={[globalStyles.textInputView, { width: DimensionHelper.wp(90) }]}>
-              <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />
-              <TextInput
-                style={[globalStyles.textInputStyle, { width: DimensionHelper.wp(90) }]}
-                placeholder={'Church name'}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType='default'
-                placeholderTextColor={'lightgray'}
-                value={searchText}
-                onChangeText={(text) => { setSearchText(text) }}
-              />
-            </View>
-            <TouchableOpacity style={{ ...globalStyles.roundBlueButton, marginTop: DimensionHelper.wp(6), width: DimensionHelper.wp(90) }} onPress={() => searchApiCall(searchText)}>
-              {loading ? <ActivityIndicator size='small' color='white' animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>SEARCH</Text>}
-            </TouchableOpacity>
-            {searchText == '' && <Text style={globalStyles.recentText}>
-              {recentListEmpty ? 'Recent Churches' : 'No recent churches available.'}
-            </Text>}
-          </View>
+          <Surface style={{ padding: spacing.md, backgroundColor: theme.colors.background, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
+            <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>Find Your Church</Text>
+            <TextInput
+              mode="outlined"
+              label="Church name"
+              placeholder="Church name"
+              value={searchText}
+              onChangeText={setSearchText}
+              style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
+              left={<TextInput.Icon icon="church" />}
+            />
+            <Button mode="contained" onPress={() => searchApiCall(searchText)} loading={loading} style={{ marginBottom: spacing.md }}>
+              Search
+            </Button>
+            {searchText === '' && (
+              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginTop: spacing.sm }}>
+                {recentListEmpty ? 'No recent churches available.' : 'Recent Churches'}
+              </Text>
+            )}
+          </Surface>
         </TouchableWithoutFeedback>
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
-      <FlatList
-        data={searchText == '' ? recentList : searchList}
-        renderItem={({ item }) => renderChurchItem(item)}
-        keyExtractor={(item: any, index: any) => index.toString()}
-        ListHeaderComponent={getHeaderView()}
-      />
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
+      <List.Section>
+        {getHeaderView()}
+        {(searchText === '' ? recentList : searchList).map((item: any, index: any) => (
+          <List.Item
+            key={item.id || index}
+            title={item.name}
+            left={() => (
+              <Image source={(() => {
+                let churchImage = Constants.Images.ic_church;
+                if (item.settings && item.settings.length > 0) {
+                  let setting = ArrayHelper.getOne(item.settings, "keyName", "favicon_400x400");
+                  if (!setting) setting = item.settings[0];
+                  churchImage = { uri: setting.value };
+                }
+                return churchImage;
+              })()} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} />
+            )}
+            onPress={() => churchSelection(item)}
+            style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }}
+            titleStyle={{ fontWeight: '500' }}
+          />
+        ))}
+      </List.Section>
     </View>
   );
 }

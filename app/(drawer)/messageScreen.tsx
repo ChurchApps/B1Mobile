@@ -1,18 +1,15 @@
 import React from 'react';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useEffect, useState } from 'react';
-
-import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, EnvironmentHelper, UserHelper, UserSearchInterface, globalStyles } from "@/src/helpers";
+import { ApiHelper, Constants, ConversationCheckInterface, ConversationCreateInterface, EnvironmentHelper, UserHelper, UserSearchInterface } from "@/src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "@/src/helpers/Interfaces";
 import { eventBus } from '@/src/helpers/PushNotificationHelper';
 import { NavigationProps } from '@/src/interfaces';
-import MessageIcon from '@expo/vector-icons/Feather';
-import Icon from '@expo/vector-icons/MaterialCommunityIcons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { FlatList, Image, KeyboardAvoidingView, Text, TouchableWithoutFeedback, View } from "react-native";
-import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
+import { FlatList, Image, KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform } from "react-native";
+import { useAppTheme } from '@/src/theme';
+import { ActivityIndicator, Card, IconButton, Surface, Text, TextInput } from 'react-native-paper';
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
@@ -26,13 +23,13 @@ interface Props {
 const MessageScreen = (props: Props) => {
   const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
   const details = JSON.parse(userDetails)
+  const { theme, spacing } = useAppTheme();
   const [messageText, setMessageText] = useState('');
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
   const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
   const [UserProfilePic, setUserProfilePic] = useState<string>('')
   const [loading, setLoading] = useState(false);
-
   const { showActionSheetWithOptions } = useActionSheet();
 
   const loadData = () => {
@@ -45,7 +42,6 @@ const MessageScreen = (props: Props) => {
     eventBus.addListener("badge", loadData);
     return () => { eventBus.removeListener("badge"); };
   }, []);
-
 
   const getConversations = () => {
     ApiHelper.get("/privateMessages/existing/" + details.id, "MessagingApi").then((data) => {
@@ -117,61 +113,63 @@ const MessageScreen = (props: Props) => {
     });
   }
 
-  const backIconComponent = (<TouchableOpacity onPress={() => router.navigate('/(drawer)/dashboard')}>
-    <Icon name={"keyboard-backspace"} style={globalStyles.menuIcon} color={"white"} size={DimensionHelper.wp(5)} />
-  </TouchableOpacity>);
+  const MessageHeader = () => (
+    <Surface style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: theme.colors.primary, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, elevation: 4 }}>
+      <IconButton icon="arrow-left" size={28} iconColor="white" onPress={() => router.navigate('/(drawer)/dashboard')} />
+      <Text variant="titleLarge" style={{ color: 'white', fontWeight: '600', flex: 1 }}>Messages</Text>
+    </Surface>
+  );
 
-  //const mainComponent = (<Text style={globalStyles.headerText}>{props?.route?.params?.userDetails?.name?.display ? props?.route?.params?.userDetails?.name?.display : props?.route?.params?.userDetails?.DisplayName }</Text>);
+  const messageInputView = () => (
+    <Surface style={{ flexDirection: 'row', alignItems: 'center', padding: spacing.sm, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
+      <TextInput
+        style={{ flex: 1, backgroundColor: theme.colors.surface }}
+        mode="outlined"
+        placeholder={'Enter message'}
+        value={messageText}
+        onChangeText={text => {
+          if (text == "") setEditingMessage(null)
+          setMessageText(text)
+        }}
+        left={<TextInput.Icon icon="message" />}
+      />
+      <IconButton icon="send" size={28} iconColor={theme.colors.primary} onPress={sendMessageInitiate} style={{ marginLeft: spacing.sm }} />
+    </Surface>
+  );
 
-  const MessageHeader = () => (<View style={globalStyles.headerViewStyle}>
-    <View style={[globalStyles.componentStyle, { flex: 2 }]}>{backIconComponent}</View>
-    <View style={[globalStyles.componentStyle, { flex: 6.3 }]}><Text style={globalStyles.headerText}>Messages</Text></View>
-    <View style={[globalStyles.componentStyle, { flex: 1.7, justifyContent: 'flex-end' }]}></View>
-  </View>);
-
-  const messageInputView = () => (<View style={globalStyles.messageInputContainer}>
-    <TextInput style={globalStyles.messageInputStyle} placeholder={'Enter'} autoCapitalize="none"
-      autoCorrect={false} keyboardType='default' placeholderTextColor={'lightgray'} value={messageText}
-      onChangeText={(text) => {
-        if (text == "") setEditingMessage(null)
-        setMessageText(text)
-      }}
+  const messagesView = () => (
+    <FlatList
+      inverted
+      data={messageList}
+      style={{ paddingVertical: spacing.md }}
+      renderItem={({ item }) => singleMessageItem(item)}
+      keyExtractor={(item: any) => item.id}
+      contentContainerStyle={{ paddingBottom: spacing.lg }}
     />
-    <TouchableOpacity style={globalStyles.sendIcon} onPress={() => sendMessageInitiate()}>
-      <MessageIcon name={"send"} color={"white"} size={DimensionHelper.wp(5)} />
-    </TouchableOpacity>
-  </View>);
+  );
 
-
-  const messagesView = () => (<View style={{ flex: 1, backgroundColor: Constants.Colors.gray_bg }}>
-    <FlatList inverted data={messageList} style={{ paddingVertical: DimensionHelper.wp(2) }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} />
-  </View>);
-
-  const singleMessageItem = (item: MessageInterface) => (
-    <TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
-      <View style={[globalStyles.messageContainer, { alignSelf: item.personId !== details.id ? 'flex-end' : 'flex-start' }]}>
-        {item.personId === details.id ?
-          <Image source={details?.photo ? { uri: EnvironmentHelper.ContentRoot + details?.photo } : Constants.Images.ic_user}
-            style={[globalStyles.churchListIcon, { tintColor: details.photo ? '' : Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} />
-          : null}
-        <View>
-          <Text style={[globalStyles.senderNameText, { alignSelf: item.personId !== details.id ? 'flex-end' : 'flex-start' }]}>
+  const singleMessageItem = (item: MessageInterface) => {
+    const isMine = item.personId !== details.id;
+    return (
+      <TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
+        <Surface style={{
+          alignSelf: isMine ? 'flex-end' : 'flex-start',
+          backgroundColor: isMine ? theme.colors.primary : theme.colors.surface,
+          borderRadius: theme.roundness,
+          marginVertical: 4,
+          marginHorizontal: spacing.md,
+          padding: spacing.sm,
+          maxWidth: '75%',
+          elevation: 2
+        }}>
+          <Text variant="labelSmall" style={{ color: isMine ? 'white' : theme.colors.primary, fontWeight: '600', marginBottom: 2 }}>
             {item.displayName || item.person?.name?.display || 'Unknown'}
           </Text>
-          <View style={[globalStyles.messageView, {
-            width: (item.content?.length || 0) > 15 ? DimensionHelper.wp(65) : DimensionHelper.wp(((item.content?.length || 0) + 14)),
-            alignSelf: item.personId !== details.id ? 'flex-end' : 'flex-start'
-          }]}>
-            <Text>{item.content || ''}</Text>
-          </View>
-        </View>
-        {item.personId !== details.id ?
-          <Image source={UserProfilePic ? { uri: EnvironmentHelper.ContentRoot + UserProfilePic } : Constants.Images.ic_user}
-            style={[globalStyles.churchListIcon, { tintColor: UserProfilePic ? '' : Constants.Colors.app_color, height: DimensionHelper.wp(9), width: DimensionHelper.wp(9), borderRadius: DimensionHelper.wp(9) }]} />
-          : null}
-      </View>
-    </TouchableWithoutFeedback>
-  );
+          <Text style={{ color: isMine ? 'white' : theme.colors.onSurface }}>{item.content || ''}</Text>
+        </Surface>
+      </TouchableWithoutFeedback>
+    );
+  };
 
   const openContextMenu = (item: MessageInterface) => {
     const options = ['Edit', 'Delete', 'Cancel'];
@@ -190,11 +188,10 @@ const MessageScreen = (props: Props) => {
 
   return (
     <LoadingWrapper loading={loading}>
-      <SafeAreaView style={[globalStyles.grayContainer, { alignSelf: "center", width: '100%' }]}>
-        {/* <MainHeader title={'Messages'} openDrawer={props.navigation.openDrawer} ></MainHeader> */}
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <MessageHeader />
-        {messagesView()}
-        <KeyboardAvoidingView behavior="padding">{messageInputView()}</KeyboardAvoidingView>
+        <View style={{ flex: 1 }}>{messagesView()}</View>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>{messageInputView()}</KeyboardAvoidingView>
       </SafeAreaView>
     </LoadingWrapper>
   );
