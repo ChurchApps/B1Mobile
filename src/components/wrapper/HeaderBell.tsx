@@ -1,16 +1,17 @@
 import { Constants, globalStyles } from "@/src/helpers";
 import { eventBus } from "@/src/helpers/PushNotificationHelper";
 import React, { useEffect, useState } from "react";
-import { Image, TouchableOpacity, View, StyleSheet } from "react-native";
-import { useTheme } from 'react-native-paper';
+import { StyleSheet } from "react-native";
+import { IconButton } from 'react-native-paper';
+import { useAppTheme } from '@/src/theme';
 
 interface Props {
   toggleNotifications: () => void;
 }
 
 export const HeaderBell = (props: Props) => {
+  const { theme, componentStyles } = useAppTheme();
   const [badgeCount, setBadgeCount] = useState(0);
-  const theme = useTheme();
   const [routes] = React.useState([
     { key: 'first', title: 'MESSAGES' },
     { key: 'second', title: 'NOTIFICATIONS' },
@@ -25,28 +26,13 @@ export const HeaderBell = (props: Props) => {
     return () => { eventBus.removeListener("badge"); };
   });
 
-  const iconStyle = {
-    ...globalStyles.menuIcon,
-    tintColor: 'white'
-  };
-
-  const badgeIconStyle = {
-    ...globalStyles.BadgemenuIcon,
-    tintColor: 'white'
-  };
-
   return (
-    <TouchableOpacity onPress={() => { setBadgeCount(0); props.toggleNotifications() }}>
-      {badgeCount > 0 ? (
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={Constants.Images.dash_bell} style={badgeIconStyle} />
-          <View style={[globalStyles.BadgeDot, { backgroundColor: 'white' }]} />
-        </View>
-      ) : (
-        <View>
-          <Image source={Constants.Images.dash_bell} style={iconStyle} />
-        </View>
-      )}
-    </TouchableOpacity>
+    <IconButton
+      icon={badgeCount > 0 ? "bell-badge" : "bell"}
+      iconColor={theme.colors.onPrimary}
+      size={24}
+      onPress={() => { setBadgeCount(0); props.toggleNotifications() }}
+      style={componentStyles.button}
+    />
   );
 };

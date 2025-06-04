@@ -4,7 +4,8 @@ import { FlatList, Keyboard, View } from "react-native";
 import { ApiHelper, Constants, ConversationInterface, UserHelper, globalStyles } from "@/src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import Notes from "./Notes";
-import { TextInput, IconButton, Surface, useTheme } from 'react-native-paper';
+import { TextInput, IconButton, Surface } from 'react-native-paper';
+import { useAppTheme } from '@/src/theme';
 
 interface NewConversation {
   placeholder: string;
@@ -17,7 +18,7 @@ const ConversationPopup = ({
   loadConversations,
   groupId,
 }: any) => {
-  const theme = useTheme();
+  const { theme, componentStyles, spacing } = useAppTheme();
   const [newMessage] = useState<MessageInterface>();
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
   const textRef = React.useRef('')
@@ -121,16 +122,15 @@ const ConversationPopup = ({
     return (
       <Surface
         style={{
+          ...componentStyles.surface,
           flexDirection: "row",
           justifyContent: "space-between",
           alignItems: "center",
           width: '100%',
-          marginTop: type === "new" ? 16 : 0,
-          marginBottom: type === "new" ? 0 : 16,
-          paddingHorizontal: 8,
-          paddingVertical: 4,
-          borderRadius: 8,
-          elevation: 1
+          marginTop: type === "new" ? spacing.md : 0,
+          marginBottom: type === "new" ? 0 : spacing.md,
+          paddingHorizontal: spacing.sm,
+          paddingVertical: spacing.xs,
         }}
       >
         <TextInput
@@ -141,8 +141,8 @@ const ConversationPopup = ({
           numberOfLines={4}
           style={{
             flex: 1,
-            marginLeft: type === "new" ? 0 : 64,
-            marginRight: 8,
+            marginLeft: type === "new" ? 0 : spacing.xl,
+            marginRight: spacing.sm,
             backgroundColor: theme.colors.surface
           }}
           contentStyle={{
@@ -172,6 +172,7 @@ const ConversationPopup = ({
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }) => renderConversations(item, index)}
           keyExtractor={(item, index) => item.id.toString()}
+          contentContainerStyle={{ padding: spacing.sm }}
         />
       </View>
       <RenderNewConversation placeholder={"Start Conversation"} type="new" />
