@@ -1,26 +1,49 @@
 import React from 'react';
-import { ImageButton, } from "@/src/components/ImageButton";
-import { Loader } from "@/src/components/Loader";
-import TimeLinePost from "@/src/components/MyGroup/TimeLinePost";
-import { MainHeader } from "@/src/components/wrapper/MainHeader";
-import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
-import { ApiHelper, ArrayHelper, PersonInterface, TimelinePostInterface, UserPostInterface, globalStyles } from "@/src/helpers";
-import { TimelineHelper } from "@/src/helpers/Timelinehelper";
+import { FlatList, Image, SafeAreaView, StyleSheet, View } from "react-native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, SafeAreaView, Text, View, StyleSheet } from "react-native";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Provider as PaperProvider, Appbar, Card, Text, useTheme, Surface, ActivityIndicator, MD3LightTheme, Portal, Modal } from 'react-native-paper';
+import { ApiHelper, ArrayHelper, PersonInterface, TimelinePostInterface, UserPostInterface, Constants } from "@/src/helpers";
+import { TimelineHelper } from "@/src/helpers/Timelinehelper";
+import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
+import TimeLinePost from "@/src/components/MyGroup/TimeLinePost";
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-const MyGroups = (props: any) => {
+const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: '#175ec1',
+    secondary: '#f0f2f5',
+    surface: '#ffffff',
+    background: '#f8f9fa',
+    elevation: {
+      level0: 'transparent',
+      level1: '#ffffff',
+      level2: '#f8f9fa',
+      level3: '#f0f2f5',
+      level4: '#e9ecef',
+      level5: '#e2e6ea',
+    }
+  },
+};
+
+interface Group {
+  id: string;
+  name: string;
+  photoUrl?: string;
+  description?: string;
+}
+
+const MyGroups = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const [groups, setGroups] = useState([]);
-  const [UserPost, setUserPost] = useState<TimelinePostInterface[]>([])
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [UserPost, setUserPost] = useState<TimelinePostInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [people, setPeople] = useState<PersonInterface[]>([]);
   const [UserGroups, setUserGroups] = useState<any[]>([]);
-  const [mergeData, setMergedData] = useState<UserPostInterface[]>([])
+  const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
 
   const LoadUserData = async () => {
     setLoading(true);
@@ -60,87 +83,138 @@ const MyGroups = (props: any) => {
     }
   }, [UserPost, UserGroups])
 
-  const brandColor = '#175ec1';
-
-  const showGroups = (topItem: boolean, item: any) => {
+  const showGroups = (item: any) => {
     return (
-      <ImageButton
-        icon={null}
-        text={item.name}
+      <Card
+        style={styles.groupCard}
         onPress={() => {
           router.navigate({
-            pathname: '/groupDetails',
-            params: { group: JSON.stringify(item) }
-          })
+            pathname: `/groupDetails/${item.id}`,
+          });
         }}
-        backgroundImage={item.photoUrl ? { uri: item.photoUrl } : require('@/src/assets/images/dash_worship.png')}
-        color="#fff"
-      />
+      >
+        <Card.Cover
+          source={item.photoUrl ? { uri: item.photoUrl } : require('@/src/assets/images/dash_worship.png')}
+          style={styles.groupImage}
+        />
+        <Card.Content style={styles.groupContent}>
+          <Text variant="titleMedium" style={styles.groupName}>{item.name}</Text>
+        </Card.Content>
+      </Card>
     );
   };
 
   const renderItems = (item: any) => {
-    return (
-      <TimeLinePost item={item} onUpdate={loadData} />
-    )
-  }
+    return <TimeLinePost item={item} onUpdate={loadData} />;
+  };
 
   const getGroupsGrid = () => {
     if (!Array.isArray(groups)) return null;
-    const rows = [];
-    for (let i = 0; i < groups.length; i += 2) {
-      rows.push(groups.slice(i, i + 2));
-    }
     return (
-      <View style={{ marginTop: 16, paddingHorizontal: 12 }}>
-        {rows.map((row, rowIndex) => (
-          <View key={rowIndex} style={{ flexDirection: 'row', marginBottom: 12, justifyContent: 'space-between' }}>
-            {row.map((item, colIndex) => (
-              <View key={colIndex} style={{ flex: 0, width: '48%' }}>
-                {showGroups(false, item)}
-              </View>
-            ))}
+      <View style={styles.gridContainer}>
+        {groups.map((item, index) => (
+          <View key={item.id || index} style={styles.gridItem}>
+            {showGroups(item)}
           </View>
         ))}
       </View>
     );
   };
 
-  const getGroups = () => {
-    return getGroupsGrid();
-  };
-
   return (
-    <LoadingWrapper loading={loading}>
-      <LinearGradient
-        colors={['#F8F9FA', '#F0F2F5']}
-        style={styles.gradientContainer}
-      >
-        <SafeAreaView style={[styles.container, { alignSelf: "center", width: '100%' }]}>
-          <MainHeader title="My Groups" openDrawer={navigation.openDrawer} back={navigation.goBack} />
-          <FlatList
-            data={mergeData}
-            contentContainerStyle={globalStyles.FlatListStyle}
-            showsVerticalScrollIndicator={false}
-            scrollEnabled={true}
-            ListFooterComponent={() => (
-              <View style={globalStyles.webViewContainer}>{getGroups()}</View>
-            )}
-            renderItem={item => renderItems(item)}
-            keyExtractor={(item: any, index: number) => `key-${index}`}
-          />
-        </SafeAreaView>
-      </LinearGradient>
-    </LoadingWrapper>
+    <PaperProvider theme={theme}>
+      <SafeAreaProvider>
+        <LoadingWrapper loading={loading}>
+          <View style={styles.container}>
+            <Appbar.Header style={styles.header} mode="center-aligned">
+              <Appbar.Action icon="menu" onPress={() => navigation.openDrawer()} color="white" />
+              <Appbar.Content title="My Groups" titleStyle={styles.headerTitle} />
+            </Appbar.Header>
+            <View style={styles.contentContainer}>
+              <FlatList
+                data={mergeData}
+                contentContainerStyle={styles.listContent}
+                showsVerticalScrollIndicator={false}
+                scrollEnabled={true}
+                ListFooterComponent={() => (
+                  <View style={styles.groupsContainer}>
+                    {getGroupsGrid()}
+                  </View>
+                )}
+                renderItem={({ item }) => renderItems(item)}
+                keyExtractor={(item: any, index: number) => `key-${index}`}
+              />
+            </View>
+          </View>
+        </LoadingWrapper>
+      </SafeAreaProvider>
+    </PaperProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  gradientContainer: {
-    flex: 1,
-  },
   container: {
     flex: 1,
+    backgroundColor: theme.colors.primary
+  },
+  header: {
+    backgroundColor: theme.colors.primary,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: '600'
+  },
+  contentContainer: {
+    flex: 1,
+    backgroundColor: '#f8f9fa'
+  },
+  listContent: {
+    paddingBottom: 20
+  },
+  groupsContainer: {
+    padding: 16
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: 8
+  },
+  gridItem: {
+    width: '48%',
+    marginBottom: 16
+  },
+  groupCard: {
+    height: 160,
+    overflow: 'hidden',
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  groupImage: {
+    height: 120,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12
+  },
+  groupContent: {
+    padding: 12,
+    alignItems: 'center',
+    backgroundColor: 'white'
+  },
+  groupName: {
+    color: theme.colors.primary,
+    fontSize: 16,
+    fontWeight: '500',
+    textAlign: 'center'
   }
 });
 

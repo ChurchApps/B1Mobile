@@ -30,34 +30,43 @@ dayjs.extend(timezone);
 
 const TABS = ["Conversations", "Group Members", "Group Calendar"];
 
-const GroupDetails = (props: any) => {
+const GroupDetails = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const { group } = useLocalSearchParams<{ group: any }>();
-  const groupDetails = JSON.parse(group);
-  const { id: groupId, name, photoUrl, about } = groupDetails;
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const [groupDetails, setGroupDetails] = useState<any>(null);
   const [groupMembers, setGroupMembers] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [events, setEvents] = useState<EventInterface[]>([]);
   const [selected, setSelected] = useState(moment(new Date()).format('YYYY-MM-DD'));
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<any>(null)
-
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
   const [editEvent, setEditEvent] = useState<EventInterface | null>(null);
   const [showAddEventModal, setShowAddEventModal] = useState<boolean>(false);
 
+  const loadGroupDetails = async () => {
+    setLoading(true);
+    try {
+      const data = await ApiHelper.get(`/groups/${id}`, "MembershipApi");
+      setGroupDetails(data);
+    } catch (error) {
+      console.error("Error loading group details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadData = async () => {
     setLoading(true);
-    ApiHelper.get(`/groupmembers?groupId=${groupId}`, "MembershipApi").then(
+    ApiHelper.get(`/groupmembers?groupId=${id}`, "MembershipApi").then(
       (data) => { setGroupMembers(data), setLoading(false); }
     );
   };
 
   const loadEvents = async () => {
     setLoading(true);
-    await ApiHelper.get(`/events/group/${groupId}`, "ContentApi").then(
+    await ApiHelper.get(`/events/group/${id}`, "ContentApi").then(
       (data) => {
         const result = updateTime(data);
         setEvents(result);
@@ -79,12 +88,51 @@ const GroupDetails = (props: any) => {
     return result;
   }
 
-  useEffect(() => {
-    if (isFocused) {
-      loadData();
-      loadEvents();
-    }
-  }, [groupId, isFocused])
+  const handleAddEvent = (slotInfo: any) => {
+    const startTime = new Date(slotInfo.start);
+    startTime.setHours(12);
+    startTime.setMinutes(0);
+    startTime.setSeconds(0);
+    const endTime = new Date(slotInfo.start);
+    endTime.setHours(13);
+    endTime.setMinutes(0);
+    endTime.setSeconds(0);
+    setEditEvent({ start: startTime, end: endTime, allDay: false, groupId: id, visibility: "public" })
+  }
+
+  const getGroupMembers = () => {
+    return (
+      <FlatList data={groupMembers}
+        renderItem={({ item }) => showGroupMembers(false, item)}
+        keyExtractor={(item: any) => item?.id}
+        ListEmptyComponent={() => <Text style={styles.noMemberText}>No group members found.</Text>}
+      />
+    );
+  };
+
+  const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => {
+    return (
+      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => {
+        router.navigate({
+          pathname: '/memberDetail',
+          params: {
+            member: JSON.stringify(item.person)
+          }
+        })
+      }} >
+        <Image style={globalStyles.memberListIcon} source={
+          item?.person?.photo
+            ? { uri: EnvironmentHelper.ContentRoot + item.person.photo }
+            : Constants.Images.ic_member
+        } />
+        <View style={globalStyles.listTextView}>
+          <Text style={globalStyles.listTitleText}>
+            {item?.person?.name?.display}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   const expandEvents = (allEvents: EventInterface[]) => {
     const expandedEvents: EventInterface[] = [];
@@ -157,66 +205,19 @@ const GroupDetails = (props: any) => {
     [markedDates]
   );
 
-  const getDisplayTime = (data: EventInterface) => {
-    if (!data || !data.start || !data.end) {
-      return "Invalid event data";
+  useEffect(() => {
+    if (isFocused) {
+      loadGroupDetails();
+      loadData();
+      loadEvents();
     }
+  }, [id, isFocused])
 
-    const start = dayjs(data.start);
-    const end = dayjs(data.end);
+  if (!groupDetails) {
+    return <LoadingWrapper loading={true}><View /></LoadingWrapper>;
+  }
 
-    if (data.allDay) {
-      const formattedStart = start.format('MMMM D, YYYY');
-      const formattedEnd = end.format('MMMM D, YYYY');
-
-      return formattedStart === formattedEnd
-        ? formattedStart
-        : `${formattedStart} - ${formattedEnd}`;
-    } else {
-      const formattedStart = start.format('MMMM D, YYYY h:mm A');
-      const formattedEndTime = end.format('h:mm A');
-      const formattedEndDate = end.format('MMMM D, YYYY');
-
-      return start.isSame(end, 'day')
-        ? `${formattedStart} - ${formattedEndTime}`
-        : `${formattedStart} - ${formattedEndDate} ${formattedEndTime}`;
-    }
-  };
-
-  const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => {
-    return (
-      <TouchableOpacity style={[globalStyles.listMainView, { width: DimensionHelper.wp(90) }]} onPress={() => {
-        // navigate("MemberDetailScreen", { member: item.person });
-        router.navigate({
-          pathname: '/memberDetail',
-          params: {
-            member: JSON.stringify(item.person)
-          }
-        })
-      }} >
-        <Image style={globalStyles.memberListIcon} source={
-          item?.person?.photo
-            ? { uri: EnvironmentHelper.ContentRoot + item.person.photo }
-            : Constants.Images.ic_member
-        } />
-        <View style={globalStyles.listTextView}>
-          <Text style={globalStyles.listTitleText}>
-            {item?.person?.name?.display}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  const getGroupMembers = () => {
-    return (
-      <FlatList data={groupMembers}
-        renderItem={({ item }) => showGroupMembers(false, item)}
-        keyExtractor={(item: any) => item?.id}
-        ListEmptyComponent={() => <Text style={styles.noMemberText}>No group members found.</Text>}
-      />
-    );
-  };
+  const { name, photoUrl, about } = groupDetails;
 
   if (!UserHelper.currentUserChurch?.person?.id) {
     return (<View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }} >
@@ -227,26 +228,8 @@ const GroupDetails = (props: any) => {
 
   let isLeader = false;
   UserHelper.currentUserChurch.groups?.forEach((g: any) => {
-    if (g.id === groupId && g.leader) isLeader = true;
+    if (g.id === id && g.leader) isLeader = true;
   });
-
-  const handleAddEvent = (slotInfo: any) => {
-    const startTime = new Date(slotInfo.start);
-    startTime.setHours(12);
-    startTime.setMinutes(0);
-    startTime.setSeconds(0);
-    const endTime = new Date(slotInfo.start);
-    endTime.setHours(13);
-    endTime.setMinutes(0);
-    endTime.setSeconds(0);
-    setEditEvent({ start: startTime, end: endTime, allDay: false, groupId: groupId, visibility: "public" })
-  }
-
-  const handleDone = () => {
-    setShowAddEventModal(false)
-    setEditEvent(null);
-    loadEvents();
-  }
 
   return (
     <LoadingWrapper loading={loading}>
@@ -282,9 +265,8 @@ const GroupDetails = (props: any) => {
               </TouchableOpacity>
             ))}
           </View>
-          {/* RENDER CONVERSATION */}
 
-          {activeTab === 0 && (<Conversations contentType="group" contentId={groupId} groupId={groupId} from="GroupDetails" />)}
+          {activeTab === 0 && (<Conversations contentType="group" contentId={id} groupId={id} from="GroupDetails" />)}
           {activeTab === 1 && (<View style={{ height: DimensionHelper.hp(55), paddingBottom: DimensionHelper.wp(2) }}>{getGroupMembers()}</View>)}
           {activeTab === 2 && (<View>
             {isLeader &&
@@ -311,59 +293,11 @@ const GroupDetails = (props: any) => {
               }}
             />
           </View>)}
-          {showEventModal &&
-            <CustomModal width={DimensionHelper.wp(85)} isVisible={showEventModal} close={() => setShowEventModal(false)}>
-              <View style={styles.modalConatiner}>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalText}>Event Details</Text>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setShowEventModal(false);
-                    }}
-                    style={styles.modalIcon}
-                  >
-                    <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
-                  </TouchableOpacity>
-                </View>
-                {selectedEvents?.map((data: any) => (
-                  <View style={styles.eventContainer} key={`event-${data.id || data.start.getTime()}`}>
-                    <View style={{ paddingVertical: DimensionHelper.wp(1), flex: 1 }}>
-                      <Text style={styles.eventText}>Event Name: {data.title}</Text>
-                      <Text style={styles.eventTime}>Date and Time: {getDisplayTime(data)}</Text>
-                    </View>
-                    <Icon name={"edit"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)}
-                      onPress={() => { setShowEventModal(false); setEditEvent(data); setShowAddEventModal(true); }}
-                    />
-                  </View>
-                ))}
-              </View>
-            </CustomModal>}
-          {showAddEventModal &&
-            <EventModal width={DimensionHelper.wp(95)} height={DimensionHelper.hp(80)} isVisible={showAddEventModal} close={() => setShowAddEventModal(false)}>
-              <View style={styles.modalConatiner}>
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalText}>{!editEvent?.id ? "Add" : "Edit"} Event</Text>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setShowAddEventModal(false);
-                    }}
-                    style={styles.modalIcon}
-                  >
-                    <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
-                  </TouchableOpacity>
-                </View>
-                <View style={{}}>
-                  {editEvent && isLeader && <CreateEvent event={editEvent} onDone={handleDone} />}
-                </View>
-              </View>
-            </EventModal>}
         </KeyboardAvoidingView>
       </SafeAreaView>
     </LoadingWrapper>
   );
 };
-
-export default GroupDetails;
 
 const styles = StyleSheet.create({
   tabContainer: { flexDirection: "row", justifyContent: "flex-start", alignItems: "center", marginLeft: 16 },
@@ -418,3 +352,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'center', alignItems: 'center'
   }
 });
+
+export default GroupDetails; 
