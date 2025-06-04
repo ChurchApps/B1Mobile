@@ -1,18 +1,21 @@
-import { CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from '@/src/helpers';
+import { CacheHelper, Constants, EnvironmentHelper, UserHelper } from '@/src/helpers';
 import { ErrorHelper } from '@/src/helpers/ErrorHelper';
 import { NavigationHelper } from '@/src/helpers/NavigationHelper';
 import { ApiHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
-import MessageIcon from '@expo/vector-icons/MaterialCommunityIcons';
-import Icon from '@expo/vector-icons/MaterialIcons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, Linking, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Linking, ScrollView, StyleSheet, View } from 'react-native';
 import RNRestart from 'react-native-restart';
 import { DimensionHelper } from '../helpers/DimensionHelper';
+import { useAppTheme } from '@/src/theme';
+import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 export function CustomDrawer(props: any) {
   const { goBack, openDrawer } = props.navigation;
+  const { theme, spacing } = useAppTheme();
+  const paperTheme = useTheme();
   const [churchName, setChurchName] = useState('');
   const [churchEmpty, setChurchEmpty] = useState(true);
   const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
@@ -144,69 +147,88 @@ export function CustomDrawer(props: any) {
   }
 
   const listItem = (topItem: boolean, item: any) => {
-    var tab_icon = item.icon != undefined ? item.icon.split("_").join("-") : '';
-    if (tab_icon === "calendar-month") {
-      tab_icon = "calendar-today";
-    } else if (tab_icon === "local-library-outlined") {
-      tab_icon = "local-library";
+    if (item.linkType === 'separator') {
+      return <Divider style={{ marginVertical: spacing.sm }} />;
     }
-    if (item.linkType == 'separator') {
-      return (
-        <View style={[globalStyles.BorderSeparatorView, { width: '100%', borderColor: '#175ec1' }]} />
-      )
-    }
-    return (
-      <TouchableOpacity style={globalStyles.headerView} onPress={() => { NavigationHelper.navigateToScreen(item, router.navigate), props.navigation.closeDrawer() }}>
-        {topItem ? <Image source={item.image} style={globalStyles.tabIcon} /> :
-          <Icon name={tab_icon} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp(5)} />}
-        <Text style={globalStyles.tabTitle}>{item.text}</Text>
-      </TouchableOpacity>
-    );
-  }
 
-  const drawerHeaderComponent = () => {
-    return (
-      <View>
-        {getUserInfo()}
-        <TouchableOpacity style={[globalStyles.churchBtn, { marginTop: churchEmpty ? DimensionHelper.wp(12) : user != null ? DimensionHelper.wp(6) : DimensionHelper.wp(12) }]} onPress={() => router.navigate('/(drawer)/churchSearch')}>
-          {churchEmpty && <Image source={Constants.Images.ic_search} style={globalStyles.searchIcon} />}
-          <Text style={{ ...globalStyles.churchText }}>
-            {churchEmpty ? 'Find your church...' : churchName}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
+    const icon = item.icon ? item.icon.split("_").join("-") : '';
+    const iconName = icon === "calendar-month" ? "calendar-today" :
+      icon === "local-library-outlined" ? "local-library" :
+        icon;
 
-  const drawerFooterComponent = () => {
-    let pkg = require('../../package.json');
     return (
-      <View>
-        {loginOutToggle()}
-        <Text style={{ fontSize: DimensionHelper.wp(3.5), fontFamily: Constants.Fonts.RobotoRegular, color: '#a0d3fc', marginTop: DimensionHelper.wp(5), textAlign: 'center' }}>{'Version ' + pkg.version}</Text>
-      </View>
+      <List.Item
+        title={item.text}
+        left={props => topItem ?
+          <Image source={item.image} style={styles.tabIcon} /> :
+          <MaterialIcons name={iconName} size={24} color={paperTheme.colors.primary} style={styles.drawerIcon} />
+        }
+        onPress={() => {
+          NavigationHelper.navigateToScreen(item, router.navigate);
+          props.navigation.closeDrawer();
+        }}
+        style={[styles.listItem, { paddingLeft: 20 }]}
+        titleStyle={styles.listItemText}
+      />
     );
-  }
+  };
+
+  const drawerHeaderComponent = () => (
+    <Surface style={styles.headerContainer} elevation={1}>
+      {getUserInfo()}
+      <Button
+        mode="outlined"
+        onPress={() => router.navigate('/(drawer)/churchSearch')}
+        style={styles.churchButton}
+        icon={() => <MaterialIcons name={churchEmpty ? "search" : "church"} size={24} color={paperTheme.colors.primary} />}
+      >
+        {churchEmpty ? 'Find your church...' : churchName}
+      </Button>
+    </Surface>
+  );
 
   const getUserInfo = () => {
-    if (UserHelper.currentUserChurch?.person && user != null) {
-      return (<View>
-        <View style={[globalStyles.headerView, { marginTop: DimensionHelper.wp(15) }]}>
-          {(UserHelper.currentUserChurch.person.photo == null || UserHelper.currentUserChurch.person.photo == undefined)
-            ? null
-            : <Image
-              source={{ uri: (EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo) || "" }}
-              style={globalStyles.userIcon}
-            />}
-          <Text style={globalStyles.userNameText}>{user != null ? `${user.firstName} ${user.lastName}` : ''}</Text>
-          {UserHelper.user ? messagesView() : null}
-        </View>
-        <TouchableOpacity style={globalStyles.headerView} onPress={() => editProfileAction()}>
-          <Text style={{ fontSize: DimensionHelper.wp(3.5), fontFamily: Constants.Fonts.RobotoRegular, color: 'white' }}>{'Edit profile'}</Text>
-        </TouchableOpacity>
-      </View>)
-    }
-  }
+    if (!UserHelper.currentUserChurch?.person || !user) return null;
+
+    return (
+      <Card style={styles.userCard}>
+        <Card.Content style={styles.userCardContent}>
+          <View style={styles.userInfoContainer}>
+            {UserHelper.currentUserChurch.person.photo ? (
+              <Avatar.Image
+                size={DimensionHelper.wp(12)}
+                source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo }}
+              />
+            ) : (
+              <Avatar.Text
+                size={DimensionHelper.wp(12)}
+                label={`${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`}
+              />
+            )}
+            <View style={styles.userTextContainer}>
+              <Text variant="titleMedium" style={styles.userName}>
+                {`${user.firstName} ${user.lastName}`}
+              </Text>
+              <Button
+                mode="text"
+                onPress={editProfileAction}
+                style={styles.editProfileButton}
+                textColor={paperTheme.colors.primary}
+                icon={() => <MaterialIcons name="edit" size={24} color={paperTheme.colors.primary} />}
+              >
+                Edit profile
+              </Button>
+            </View>
+            {UserHelper.user && (
+              <TouchableRipple onPress={() => router.navigate('/(drawer)/searchMessageUser')}>
+                <MaterialCommunityIcons name="email-outline" size={24} color={paperTheme.colors.onSurface} />
+              </TouchableRipple>
+            )}
+          </View>
+        </Card.Content>
+      </Card>
+    );
+  };
 
   const editProfileAction = () => {
     let url = "https://app.chums.org/login?returnUrl=/profile";
@@ -215,40 +237,102 @@ export function CustomDrawer(props: any) {
     logoutAction();
   }
 
-  const loginOutToggle = () => {
-    if (UserHelper.user) {
-      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => logoutAction()}>
-        <Text style={globalStyles.tabTitle}>Log out</Text>
-      </TouchableOpacity>);
-    } else {
-      return (<TouchableOpacity style={globalStyles.logoutBtn} onPress={() => router.navigate('/auth/login')}>
-        <Text style={globalStyles.tabTitle}>Login</Text>
-      </TouchableOpacity>);
-    }
-  }
-
-  const messagesView = () => {
+  const drawerFooterComponent = () => {
+    const pkg = require('../../package.json');
     return (
-      <TouchableOpacity onPress={() => router.navigate('/(drawer)/searchMessageUser')}>
-        <View style={globalStyles.messageRootView}>
-          <MessageIcon name={"email"} color={'black'} style={globalStyles.tabIcon} size={DimensionHelper.wp(5)} />
-        </View>
-      </TouchableOpacity>
+      <Surface style={styles.footerContainer} elevation={1}>
+        <Button
+          mode="outlined"
+          onPress={UserHelper.user ? logoutAction : () => router.navigate('/auth/login')}
+          style={styles.logoutButton}
+          icon={() => <MaterialIcons name={UserHelper.user ? "logout" : "login"} size={24} color={paperTheme.colors.primary} />}
+        >
+          {UserHelper.user ? 'Log out' : 'Login'}
+        </Button>
+        <Text variant="bodySmall" style={styles.versionText}>
+          Version {pkg.version}
+        </Text>
+      </Surface>
     );
-  }
+  };
 
   return (
-    <View>
-      {
-        loading ? <ActivityIndicator size='small' color='gray' animating={loading} /> :
-          <FlatList
-            data={drawerList}
-            renderItem={({ item }) => listItem(false, item)}
-            keyExtractor={(item: any) => item.id}
-            ListHeaderComponent={drawerHeaderComponent()}
-            ListFooterComponent={drawerFooterComponent()}
-          />
-      }
+    <View style={styles.container}>
+      <ScrollView>
+        {drawerHeaderComponent()}
+        {drawerList.map((item, index) => (
+          <View key={item.id || index}>
+            {listItem(false, item)}
+          </View>
+        ))}
+        {drawerFooterComponent()}
+      </ScrollView>
     </View>
   );
-};
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f8f9fa'
+  },
+  headerContainer: {
+    padding: 16,
+    backgroundColor: 'white',
+    marginBottom: 8
+  },
+  userCard: {
+    marginBottom: 16,
+    backgroundColor: 'white'
+  },
+  userCardContent: {
+    padding: 0
+  },
+  userInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  userTextContainer: {
+    flex: 1,
+    marginLeft: 12
+  },
+  userName: {
+    fontWeight: '600'
+  },
+  editProfileButton: {
+    marginTop: 4,
+    alignSelf: 'flex-start'
+  },
+  churchButton: {
+    marginTop: 8
+  },
+  listItem: {
+    paddingVertical: 8
+  },
+  tabIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 8
+  },
+  footerContainer: {
+    padding: 16,
+    marginTop: 8,
+    backgroundColor: 'white'
+  },
+  logoutButton: {
+    marginBottom: 8
+  },
+  versionText: {
+    textAlign: 'center',
+    color: '#a0d3fc'
+  },
+  drawerIcon: {
+    marginRight: 8,
+    alignSelf: 'center',
+  },
+  listItemText: {
+    fontSize: 16,
+    fontWeight: '500',
+  }
+});
