@@ -13,17 +13,7 @@ interface Props {
   isSubmitting?: boolean;
 }
 
-export function InputBox({
-  title,
-  headerIcon,
-  children,
-  cancelFunction,
-  deleteFunction,
-  saveFunction,
-  isSubmitting = false,
-}: Props) {
-
-
+export function InputBox({ title, headerIcon, children, cancelFunction, deleteFunction, saveFunction, isSubmitting = false }: Props) {
   let buttons: React.ReactElement[] = [];
 
   const widthClass = deleteFunction ? DimensionHelper.wp(33.33) : DimensionHelper.wp(50);
@@ -35,8 +25,7 @@ export function InputBox({
           cancelFunction();
         }}
         disabled={isSubmitting}
-        key="cancel"
-      >
+        key="cancel">
         <Text style={globalStyles.previewBtnText}>Cancel</Text>
       </TouchableOpacity>
     );
@@ -48,24 +37,15 @@ export function InputBox({
         onPress={() => {
           deleteFunction();
         }}
-        disabled={isSubmitting}
-      >
+        disabled={isSubmitting}>
         <Text style={globalStyles.previewBtnText}>Delete</Text>
       </TouchableOpacity>
     );
   }
   if (saveFunction) {
     buttons.push(
-      <TouchableOpacity
-        style={{ ...globalStyles.actionButtons, backgroundColor: Constants.Colors.button_dark_green, width: widthClass }}
-        onPress={() => saveFunction()}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator size="small" color="gray" animating={isSubmitting} />
-        ) : (
-          <Text style={globalStyles.previewBtnText}>Save</Text>
-        )}
+      <TouchableOpacity style={{ ...globalStyles.actionButtons, backgroundColor: Constants.Colors.button_dark_green, width: widthClass }} onPress={() => saveFunction()} disabled={isSubmitting}>
+        {isSubmitting ? <ActivityIndicator size="small" color="gray" animating={isSubmitting} /> : <Text style={globalStyles.previewBtnText}>Save</Text>}
       </TouchableOpacity>
     );
   }

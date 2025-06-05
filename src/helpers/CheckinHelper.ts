@@ -14,8 +14,8 @@ export class CheckinHelper {
     this.peopleIds = [];
     this.householdMembers = [];
     this.serviceTimes = [];
-  }
-  
+  };
+
   static setExistingAttendance = async (existingAttendance: any) => {
     existingAttendance?.forEach((item: any) => {
       item.visitSessions?.forEach(async (visitSession: any) => {
@@ -26,12 +26,11 @@ export class CheckinHelper {
             this.groupTree.forEach((group_item: any) => {
               group_item.items.forEach((itemG: any) => {
                 if (visitSession.session.groupId == itemG.id) time.selectedGroup = itemG;
-              })
-            })
+              });
+            });
           }
         }
-      })
-    })
-  }
-  
+      });
+    });
+  };
 }

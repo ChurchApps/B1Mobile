@@ -1,69 +1,69 @@
-import React from 'react';
-import { BlueHeader } from '@/src/components/BlueHeader';
-import { ApiHelper, Constants as ConstantsHelper, EnvironmentHelper, LoginResponseInterface, UserHelper } from '@/src/helpers';
-import { router } from 'expo-router';
-import { useState } from 'react';
-import { Alert, Linking, SafeAreaView, ScrollView, View } from 'react-native';
+import React from "react";
+import { BlueHeader } from "@/src/components/BlueHeader";
+import { ApiHelper, EnvironmentHelper, LoginResponseInterface, UserHelper } from "@/src/helpers";
+import { router } from "expo-router";
+import { useState } from "react";
+import { Alert, Linking, SafeAreaView, ScrollView, View } from "react-native";
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
-import { TextInput, Button, Text, Surface } from 'react-native-paper';
-import { useAppTheme } from '@/src/theme';
+import { TextInput, Button, Text, Surface } from "react-native-paper";
+import { useAppTheme } from "@/src/theme";
 
 const Login = () => {
-  const { theme, spacing, dimensions } = useAppTheme();
+  const { theme, spacing } = useAppTheme();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const validateDetails = () => {
-    if (email != '') {
-      let emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
+    if (email != "") {
+      let emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
-        Alert.alert("Alert", 'Please enter valid email.');
+        Alert.alert("Alert", "Please enter valid email.");
         return false;
       } else {
-        if (password != '') {
+        if (password != "") {
           return true;
         } else {
-          Alert.alert("Alert", 'Please enter password.');
+          Alert.alert("Alert", "Please enter password.");
           return false;
         }
       }
     } else {
-      Alert.alert("Alert", 'Please enter email.');
+      Alert.alert("Alert", "Please enter email.");
       return false;
     }
-  }
+  };
 
   const loginApiCall = () => {
-    let params = { "email": email, "password": password }
+    let params = { email: email, password: password };
     setLoading(true);
-    ApiHelper.postAnonymous("/users/login", params, "MembershipApi").then(async (data: LoginResponseInterface) => {
-      setLoading(false);
-      console.log("Called login")
-      if (data.user != null) {
-        console.log("Login successful", data);
-        await UserHelper.handleLogin(data as any);
-        console.log("handled Login.  Restarting")
+    ApiHelper.postAnonymous("/users/login", params, "MembershipApi")
+      .then(async (data: LoginResponseInterface) => {
+        setLoading(false);
+        console.log("Called login");
+        if (data.user != null) {
+          console.log("Login successful", data);
+          await UserHelper.handleLogin(data as any);
+          console.log("handled Login.  Restarting");
 
-        // router.replace('(drawer)/dashboard');
-        // props.navigation.reset({
-        //   index: 0,
-        //   routes: [{ name: 'MainStack' }]
-        // }, 500)
-        //DevSettings.reload();
-        router.navigate('/');  //Expo seems to remember the page you were on.
-        //RNRestart.Restart();
-      }
-      else Alert.alert("Alert", "Invalid login");
-    }).catch(() => {
-      setLoading(false);
-      Alert.alert("Alert", "Invalid login");
-    });
-  }
+          // router.replace('(drawer)/dashboard');
+          // props.navigation.reset({
+          //   index: 0,
+          //   routes: [{ name: 'MainStack' }]
+          // }, 500)
+          //DevSettings.reload();
+          router.navigate("/"); //Expo seems to remember the page you were on.
+          //RNRestart.Restart();
+        } else Alert.alert("Alert", "Invalid login");
+      })
+      .catch(() => {
+        setLoading(false);
+        Alert.alert("Alert", "Invalid login");
+      });
+  };
 
   const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
-  const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
     <LoadingWrapper loading={loading}>
@@ -72,7 +72,9 @@ const Login = () => {
           <SafeAreaView style={{ flex: 1 }}>
             <BlueHeader />
             <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
-              <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>Welcome, Please Login.</Text>
+              <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>
+                Welcome, Please Login.
+              </Text>
 
               <TextInput
                 mode="outlined"
@@ -100,25 +102,20 @@ const Login = () => {
               />
 
               <Text variant="bodySmall" style={{ marginBottom: spacing.md }}>
-                By clicking on Login, I confirm that I have read the{' '}
-                <Text variant="bodySmall" style={{ color: theme.colors.primary }} onPress={() => router.navigate('/auth/privacy')}>
+                By clicking on Login, I confirm that I have read the{" "}
+                <Text variant="bodySmall" style={{ color: theme.colors.primary }} onPress={() => router.navigate("/auth/privacy")}>
                   privacy policy.
                 </Text>
               </Text>
 
-              <Button
-                mode="contained"
-                onPress={() => validateDetails() && loginApiCall()}
-                loading={loading}
-                style={{ marginBottom: spacing.md }}
-              >
+              <Button mode="contained" onPress={() => validateDetails() && loginApiCall()} loading={loading} style={{ marginBottom: spacing.md }}>
                 Login
               </Button>
 
-              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                <Button mode="text" onPress={() => Linking.openURL(forgotLink)}>Forgot Password</Button>
-                <Text> | </Text>
-                <Button mode="text" onPress={() => router.navigate("/auth/register")}>Register</Button>
+              <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                <Button mode="text" onPress={() => Linking.openURL(forgotLink)}>
+                  Forgot Password
+                </Button>
               </View>
             </Surface>
           </SafeAreaView>
@@ -126,6 +123,6 @@ const Login = () => {
       </View>
     </LoadingWrapper>
   );
-}
+};
 
 export default Login;

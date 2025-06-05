@@ -10,36 +10,22 @@ interface CustomConversationInterface {
   from: string;
 }
 
-const Conversations = ({
-  contentType,
-  contentId,
-  groupId,
-}: CustomConversationInterface) => {
+const Conversations = ({ contentType, contentId, groupId }: CustomConversationInterface) => {
   const [conversations, setConversations] = useState<ConversationInterface[]>([]);
   const loadConversations = async () => {
     try {
-      const conversations: ConversationInterface[] = contentId
-        ? await ApiHelper.get(
-          "/conversations/" + contentType + "/" + contentId,
-          "MessagingApi"
-        )
-        : [];
+      const conversations: ConversationInterface[] = contentId ? await ApiHelper.get("/conversations/" + contentType + "/" + contentId, "MessagingApi") : [];
 
       if (conversations.length > 0) {
         const peopleIds: string[] = [];
-        const filteredConversations = conversations.filter((conversation) => {
+        const filteredConversations = conversations.filter(conversation => {
           if (!conversation.messages) return false;
 
-          conversation.messages = conversation.messages.filter(
-            (message) => message !== null
-          );
+          conversation.messages = conversation.messages.filter(message => message !== null);
 
           if (conversation.messages.length > 0) {
             conversation.messages.forEach((message: any) => {
-              if (
-                message.personId &&
-                peopleIds.indexOf(message.personId) === -1
-              ) {
+              if (message.personId && peopleIds.indexOf(message.personId) === -1) {
                 peopleIds.push(message.personId);
               }
             });
@@ -47,12 +33,9 @@ const Conversations = ({
           }
           return false;
         });
-        const people = await ApiHelper.get(
-          "/people/basic?ids=" + peopleIds.join(","),
-          "MembershipApi"
-        );
+        const people = await ApiHelper.get("/people/basic?ids=" + peopleIds.join(","), "MembershipApi");
         people.reverse();
-        filteredConversations.forEach((conversation) => {
+        filteredConversations.forEach(conversation => {
           if (conversation.messages) {
             conversation.messages.forEach((message: any) => {
               if (message.personId) {
@@ -71,18 +54,11 @@ const Conversations = ({
     loadConversations();
   }, []);
 
-
-  const ShowConversationModal = () => {
-    return (
-      <View style={{ marginHorizontal: 8 }}>
-        <ConversationPopup
-          conversations={conversations}
-          loadConversations={loadConversations}
-          groupId={groupId}
-        />
-      </View>
-    );
-  };
+  const ShowConversationModal = () => (
+    <View style={{ marginHorizontal: 8 }}>
+      <ConversationPopup conversations={conversations} loadConversations={loadConversations} groupId={groupId} />
+    </View>
+  );
 
   return <View>{ShowConversationModal()}</View>;
 };

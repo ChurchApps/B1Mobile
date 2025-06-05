@@ -1,11 +1,9 @@
-import { ApiHelper, CacheHelper, Constants, CurrencyHelper, UserHelper, UserInterface } from "@/src/helpers";
+import { ApiHelper, CacheHelper, CurrencyHelper, UserHelper, UserInterface } from "@/src/helpers";
 import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod } from "@/src/interfaces";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
-import moment from "moment";
 import React, { useEffect, useState } from "react";
-import { Alert, ScrollView, View, Image } from "react-native";
-import { Button, Card, Checkbox, Divider, IconButton, Menu, Portal, RadioButton, Text, TextInput, useTheme } from "react-native-paper";
+import { Alert, View } from "react-native";
+import { Button, Card, Checkbox, IconButton, Menu, RadioButton, Text, TextInput, useTheme } from "react-native-paper";
 import { useAppTheme } from "@/src/theme";
 import { PreviewModal } from "../modals/PreviewModal";
 import { FundDonations } from "./FundDonations";
@@ -16,30 +14,14 @@ interface Props {
   updatedFunction: () => void;
 }
 
-interface PreviewModalProps {
-  visible: boolean;
-  onDismiss: () => void;
-  onConfirm: (message: string) => Promise<void>;
-  donation: StripeDonationInterface;
-  total: number;
-  transactionFee: number;
-  isRecurring: boolean;
-}
-
-interface FundDonationsProps {
-  funds: FundInterface[];
-  fundDonations: FundDonationInterface[];
-  onChange: (fd: FundDonationInterface[]) => void;
-}
-
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
-  const { theme: appTheme, spacing } = useAppTheme();
+  const { spacing } = useAppTheme();
   const theme = useTheme();
   const person = UserHelper.currentUserChurch?.person;
   const user = UserHelper.user;
   const [donationType, setDonationType] = useState<string>("");
   const [selectedMethod, setSelectedMethod] = useState<string>("");
-  const [date, setDate] = useState(new Date());
+  const [date] = useState(new Date());
   const [funds, setFunds] = useState<FundInterface[]>([]);
   const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([]);
   const [total, setTotal] = React.useState<number>(0);
@@ -59,7 +41,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     { label: "Bi-Weekly", value: "two_week" },
     { label: "Monthly", value: "one_month" },
     { label: "Quarterly", value: "three_month" },
-    { label: "Annually", value: "one_year" },
+    { label: "Annually", value: "one_year" }
   ];
 
   const initDonation: StripeDonationInterface = {
@@ -69,15 +51,15 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     person: {
       id: person?.id || "",
       email: user?.email || "",
-      name: user?.firstName + " " + user?.lastName,
+      name: user?.firstName + " " + user?.lastName
     },
     amount: 0,
     billing_cycle_anchor: +new Date(),
     interval: {
       interval_count: 1,
-      interval: "month",
+      interval: "month"
     },
-    funds: [],
+    funds: []
   };
   const [donation, setDonation] = React.useState<StripeDonationInterface>(initDonation);
 
@@ -89,7 +71,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         donation.person = {
           id: "",
           email: email,
-          name: firstName + " " + lastName,
+          name: firstName + " " + lastName
         };
       }
       setShowPreviewModal(true);
@@ -101,7 +83,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   };
 
   const loadData = async () => {
-    var churchId: string = "";
+    let churchId: string = "";
     // if (!UserHelper.currentUserChurch?.person?.id) churchId = UserHelper.currentUserChurch.church.id ?? "";
     // else churchId = CacheHelper.church?.id || "";
     if (!UserHelper.currentUserChurch) {
@@ -112,7 +94,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       churchId = CacheHelper.church?.id || "";
     }
 
-    ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then((data) => {
+    ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then(data => {
       setFunds(data);
       if (data.length) setFundDonations([{ fundId: data[0].id }]);
     });
@@ -136,8 +118,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setTransactionFee(getTransactionFee(totalAmount));
   };
 
-  const makeDonation = async (message: string) => {
-    const method = pm.find((pm) => pm.id === selectedMethod);
+  const makeDonation = async () => {
+    const method = pm.find(pm => pm.id === selectedMethod);
     if (!UserHelper.currentUserChurch?.person?.id) {
       ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi")
         .catch(ex => {
@@ -146,8 +128,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         })
         .then(async userData => {
           const personData = { churchId: CacheHelper.church!.id, firstName, lastName, email };
-          const person = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi")
-          saveCard(userData, person)
+          const person = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
+          saveCard(userData, person);
         });
     } else {
       const payload: StripeDonationInterface = {
@@ -161,30 +143,30 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
           subDomain: CacheHelper.church?.subDomain
         }
       };
-      saveDonation(payload, '');
+      saveDonation(payload, "");
     }
   };
 
   const saveCard = async (user: UserInterface, person: PersonInterface) => {
     const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType: 'Card',
-      ...cardDetails,
+      paymentMethodType: "Card",
+      ...cardDetails
     });
 
     if (stripePaymentMethod.error) {
       Alert.alert("Failed", stripePaymentMethod.error.message);
       return;
     } else {
-      const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId: CacheHelper.church!.id }
+      const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId: CacheHelper.church!.id };
       await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi").then(result => {
         if (result?.raw?.message) {
           Alert.alert("Failed", result.raw.message);
         } else {
-          const d: { paymentMethod: StripePaymentMethod, customerId: string } = result;
+          const d: { paymentMethod: StripePaymentMethod; customerId: string } = result;
           donation.person = {
             name: firstName + " " + lastName,
             id: person.id!,
-            email: email,
+            email: email
           };
           const payload: StripeDonationInterface = {
             id: d.paymentMethod.id,
@@ -205,9 +187,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         }
       });
     }
-  }
+  };
 
-  const saveDonation = async (payload: StripeDonationInterface, message: string) => {
+  const saveDonation = async (payload: StripeDonationInterface, _message: string) => {
     let results;
     if (donationType === "once") results = await ApiHelper.post("/donate/charge/", payload, "GivingApi");
     if (donationType === "recurring") results = await ApiHelper.post("/donate/subscribe/", payload, "GivingApi");
@@ -218,17 +200,17 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       setTotal(0);
       setFundDonations([{ fundId: funds[0]?.id }]);
       setDonation(initDonation);
-      setEmail('');
-      setFirstName('');
-      setLastName('')
+      setEmail("");
+      setFirstName("");
+      setLastName("");
       setIsChecked(false);
-      Alert.alert("Thank you for your donation.", message, [{ text: "OK", onPress: () => updatedFunction() }]);
+      Alert.alert("Thank you for your donation.", _message, [{ text: "OK", onPress: () => updatedFunction() }]);
     }
     if (results?.raw?.message) {
       setShowPreviewModal(false);
       Alert.alert("Failed to make a donation", results?.raw?.message);
     }
-  }
+  };
 
   const handleIntervalChange = (key: string, value: any) => {
     const donationsCopy = { ...donation };
@@ -260,7 +242,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
               donationsCopy.interval.interval = "year";
               break;
           }
-        };
+        }
         break;
     }
     setDonation(donationsCopy);
@@ -272,10 +254,10 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   };
 
   const getTransactionFee = (amount: number) => {
-    const fixedFee = 0.30;
+    const fixedFee = 0.3;
     const fixedPercent = 0.029;
     return Math.round(((amount + fixedFee) / (1 - fixedPercent) - amount) * 100) / 100;
-  }
+  };
 
   const getMethodLabel = (method: StripePaymentMethod) => {
     if (!method) return "";
@@ -290,20 +272,12 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     <Card style={{ marginBottom: spacing.md }}>
       <Card.Title
         title="Make a Donation"
-        titleStyle={{ fontSize: 20, fontWeight: '600' }}
-        left={(props) => (
-          <IconButton
-            {...props}
-            icon="gift"
-            size={24}
-            iconColor={theme.colors.primary}
-            style={{ margin: 0 }}
-          />
-        )}
+        titleStyle={{ fontSize: 20, fontWeight: "600" }}
+        left={props => <IconButton {...props} icon="gift" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
       />
       <Card.Content>
         <RadioButton.Group onValueChange={value => setDonationType(value)} value={donationType}>
-          <View style={{ flexDirection: 'row', marginBottom: spacing.md }}>
+          <View style={{ flexDirection: "row", marginBottom: spacing.md }}>
             <RadioButton.Item label="One Time" value="once" />
             <RadioButton.Item label="Recurring" value="recurring" />
           </View>
@@ -328,9 +302,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     <Button mode="outlined" onPress={() => setShowMethodMenu(true)} style={{ marginBottom: spacing.sm }}>
                       {selectedMethod ? getMethodLabel(pm.find(m => m.id === selectedMethod)!) : "Select Payment Method"}
                     </Button>
-                  }
-                >
-                  {pm.map((method) => (
+                  }>
+                  {pm.map(method => (
                     <Menu.Item
                       key={method.id}
                       onPress={() => {
@@ -361,9 +334,8 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                     <Button mode="outlined" onPress={() => setShowIntervalMenu(true)} style={{ marginBottom: spacing.sm }}>
                       {intervalTypes.find(i => i.value === selectedInterval)?.label || "Select Interval"}
                     </Button>
-                  }
-                >
-                  {intervalTypes.map((interval) => (
+                  }>
+                  {intervalTypes.map(interval => (
                     <Menu.Item
                       key={interval.value}
                       onPress={() => {
@@ -400,9 +372,13 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
               <Text variant="titleMedium">Total: {CurrencyHelper.formatCurrency(total)}</Text>
             </View>
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.lg }}>
-              <Button mode="outlined" onPress={handleCancel} style={{ flex: 1, marginRight: spacing.sm }}>Cancel</Button>
-              <Button mode="contained" onPress={handleSave} style={{ flex: 1, marginLeft: spacing.sm }}>Continue</Button>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: spacing.lg }}>
+              <Button mode="outlined" onPress={handleCancel} style={{ flex: 1, marginRight: spacing.sm }}>
+                Cancel
+              </Button>
+              <Button mode="contained" onPress={handleSave} style={{ flex: 1, marginLeft: spacing.sm }}>
+                Continue
+              </Button>
             </View>
           </>
         )}

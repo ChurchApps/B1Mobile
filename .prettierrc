@@ -1,6 +1,6 @@
 {
-  "printWidth": 120,
-  "singleQuote": true,
+  "printWidth": 200,
+  "singleQuote": false,
   "trailingComma": "none",
   "bracketSpacing": true,
   "arrowParens": "avoid",
@@ -9,5 +9,18 @@
   "tabWidth": 2,
   "semi": true,
   "jsxSingleQuote": false,
-  "jsxBracketSameLine": false
+  "jsxBracketSameLine": false,
+  "parenSpacing": false,
+  "jsxParens": "avoid",
+  "overrides": [
+    {
+      "files": ["*.tsx", "*.jsx"],
+      "options": {
+        "parser": "typescript",
+        "bracketSameLine": true,
+        "parenSpacing": false,
+        "jsxParens": "avoid"
+      }
+    }
+  ]
 } 

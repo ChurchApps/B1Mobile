@@ -1,12 +1,12 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { ApiHelper, PlanInterface } from '@/src/helpers';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
-import { Constants } from '@/src/helpers/Constants';
-import { globalStyles } from '@/src/helpers/GlobalStyles';
-import Icons from '@expo/vector-icons/MaterialIcons';
-import { PlanItem } from '.';
-import type { PlanItemInterface } from '.';
+import React from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { ApiHelper, PlanInterface } from "@/src/helpers";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { Constants } from "@/src/helpers/Constants";
+import { globalStyles } from "@/src/helpers/GlobalStyles";
+import Icons from "@expo/vector-icons/MaterialIcons";
+import { PlanItem } from ".";
+import type { PlanItemInterface } from ".";
 
 interface Props {
   plan: PlanInterface;
@@ -22,21 +22,22 @@ export const ServiceOrder = (props: Props) => {
     }
   };
 
-  React.useEffect(() => { loadData(); }, [props.plan?.id]);
+  React.useEffect(() => {
+    loadData();
+  }, [props.plan?.id]);
 
   return (
     <View style={[globalStyles.FlatlistViewStyle, { paddingTop: DimensionHelper.hp(2) }]}>
       <View style={styles.headerContainer}>
         <View style={styles.titleContainer}>
           <Icons name="album" size={DimensionHelper.wp(5.5)} color={Constants.Colors.app_color} />
-          <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3), color: Constants.Colors.app_color }]}>
-            Order of Service
-          </Text>
+          <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3), color: Constants.Colors.app_color }]}>Order of Service</Text>
         </View>
         <TouchableOpacity
-          onPress={() => {/* TODO: Implement print functionality */ }}
-          style={styles.printButton}
-        >
+          onPress={() => {
+            /* TODO: Implement print functionality */
+          }}
+          style={styles.printButton}>
           <Icons name="print" size={DimensionHelper.wp(5)} color={Constants.Colors.app_color} />
         </TouchableOpacity>
       </View>
@@ -51,20 +52,20 @@ export const ServiceOrder = (props: Props) => {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: DimensionHelper.wp(3),
-    paddingBottom: DimensionHelper.hp(1),
+    paddingBottom: DimensionHelper.hp(1)
   },
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center"
   },
   printButton: {
-    padding: DimensionHelper.wp(2),
+    padding: DimensionHelper.wp(2)
   },
   contentContainer: {
-    paddingTop: DimensionHelper.hp(1),
-  },
-}); 
+    paddingTop: DimensionHelper.hp(1)
+  }
+});

@@ -12,25 +12,16 @@ interface CustomConversationInterface {
   conversation: ConversationInterface;
   conversationId: string;
   createConversation: () => Promise<string>;
-  onUpdate: () => void;
 }
 
-const UserConversations = ({
-  conversation,
-  conversationId,
-  createConversation,
-  onUpdate
-}: CustomConversationInterface) => {
+const UserConversations = ({ conversation, conversationId, createConversation }: CustomConversationInterface) => {
   const [conversations, setConversations] = useState<{ messages?: MessageInterface[] }[]>([]);
-  const [editMessageId, setEditMessageId] = React.useState('')
+  const [editMessageId, setEditMessageId] = React.useState("");
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
-
 
   const loadConversations = useCallback(async () => {
     let conversations: ConversationInterface[] = [];
-    const userMessages: MessageInterface[] = conversation.id
-      ? await ApiHelper.get("/messages/conversation/" + conversation.id, "MessagingApi")
-      : [];
+    const userMessages: MessageInterface[] = conversation.id ? await ApiHelper.get("/messages/conversation/" + conversation.id, "MessagingApi") : [];
     if (userMessages.length > 0) {
       const peopleIds: string[] = [];
       userMessages.forEach((message: any) => {
@@ -47,8 +38,8 @@ const UserConversations = ({
         }
         groupedMessages[message.conversationId].push(message);
       });
-      conversations = Object.values(groupedMessages).map((messages) => ({
-        messages: (messages ?? []).map((msg) => ({
+      conversations = Object.values(groupedMessages).map(messages => ({
+        messages: (messages ?? []).map(msg => ({
           ...msg,
           postCount: conversation.postCount,
           person: ArrayHelper.getOne(people, "id", msg.personId)
@@ -56,68 +47,45 @@ const UserConversations = ({
       }));
     }
     setConversations(conversations);
-    setEditMessageId('');
+    setEditMessageId("");
   }, [conversation]);
 
   useEffect(() => {
     loadConversations();
   }, [conversation]);
 
-  const renderConversations = (item: any, index: number) => {
-    return (
-      <View >
-        <RenderContent item={item} message={item.messages[0]} idx={index} />
-      </View>
-    );
-  };
+  const renderConversations = (item: any, index: number) => (
+    <View>
+      <RenderContent item={item} message={item.messages[0]} idx={index} />
+    </View>
+  );
 
   const getNotes = (item: any) => {
     let noteArray: React.ReactNode[] = [];
-    for (let i = 1; i < item?.messages?.length; i++)
-      noteArray.push(
-        <Note
-          key={item.messages[i].id}
-          message={item.messages[i]}
-          showEditNote={setEditMessageId}
-        />
-      );
+    for (let i = 1; i < item?.messages?.length; i++) noteArray.push(<Note key={item.messages[i].id} message={item.messages[i]} showEditNote={setEditMessageId} />);
     return noteArray;
   };
 
   const handleReply = (value: number) => setShowReplyBox(value);
 
-  const RenderContent = ({ item, message, idx }: any) => {
-    return (
-      <View style={{ borderBottomWidth: 1, borderBottomColor: "#EFEFEF" }}>
-        <Notes
-          item={item}
-          message={message}
-          idx={idx}
-          showReplyBox={showReplyBox}
-          handleReply={handleReply}
-        />
-        <View style={{ marginLeft: 50 }}>
-          {getNotes(item)}
-
-        </View>
-      </View>
-    );
-  };
+  const RenderContent = ({ item, message, idx }: any) => (
+    <View style={{ borderBottomWidth: 1, borderBottomColor: "#EFEFEF" }}>
+      <Notes item={item} message={message} idx={idx} showReplyBox={showReplyBox} handleReply={handleReply} />
+      <View style={{ marginLeft: 50 }}>{getNotes(item)}</View>
+    </View>
+  );
 
   return (
     <View>
-      <View style={{ height: 'auto', maxHeight: DimensionHelper.hp(100) }}>
-        <FlatList
-          data={conversations}
-          renderItem={({ item, index }) => renderConversations(item, index)}
-          keyExtractor={(item, index) => index.toString()}
-        />
+      <View style={{ height: "auto", maxHeight: DimensionHelper.hp(100) }}>
+        <FlatList data={conversations} renderItem={({ item, index }) => renderConversations(item, index)} keyExtractor={(item, index) => index.toString()} />
       </View>
-      {conversation && Array.isArray(conversation?.messages) && conversation.messages.length > 0 ?
-        <AddNote type="reply" conversationId={conversation.id} onUpdate={loadConversations} createConversation={async () => (conversation.id ?? "")} messageId={editMessageId} />
-        :
-        <AddNote type="new" conversationId={conversationId} onUpdate={loadConversations} createConversation={async () => (await createConversation()) ?? ""} messageId={editMessageId} />}
+      {conversation && Array.isArray(conversation?.messages) && conversation.messages.length > 0 ? (
+        <AddNote type="reply" conversationId={conversation.id} onUpdate={loadConversations} createConversation={async () => conversation.id ?? ""} messageId={editMessageId} />
+      ) : (
+        <AddNote type="new" conversationId={conversationId} onUpdate={loadConversations} createConversation={async () => (await createConversation()) ?? ""} messageId={editMessageId} />
+      )}
     </View>
-  )
-}
+  );
+};
 export default UserConversations;

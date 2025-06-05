@@ -20,7 +20,7 @@ export class UserHelper {
 
   static async setPersonRecord() {
     if (UserHelper.currentUserChurch && !UserHelper.currentUserChurch.person) {
-      console.log(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi")
+      console.log(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       UserHelper.currentUserChurch.person = data;
     }
@@ -53,16 +53,15 @@ export class UserHelper {
     });
   }
 
-
   static handleLogin = async (data: LoginResponseInterface) => {
-    var currentChurch: LoginUserChurchInterface = data.userChurches[0];
+    let currentChurch: LoginUserChurchInterface = data.userChurches[0];
 
     let church = CacheHelper.church;
     if (church != null && church?.id != null && church.id != "") {
-      currentChurch = data.userChurches.find((churches) => churches.church.id == church?.id) ?? data.userChurches[0]
+      currentChurch = data.userChurches.find(churches => churches.church.id == church?.id) ?? data.userChurches[0];
     }
 
-    const userChurch: LoginUserChurchInterface = currentChurch
+    const userChurch: LoginUserChurchInterface = currentChurch;
 
     UserHelper.user = data.user;
     UserHelper.userChurches = data.userChurches;
@@ -73,23 +72,18 @@ export class UserHelper {
     if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
     //console.log("USER CHURCH IS", userChurch);
 
-    UserHelper.addAnalyticsEvent('login', {
+    UserHelper.addAnalyticsEvent("login", {
       id: Date.now(),
       device: Platform.OS,
-      church: userChurch.church.name,
+      church: userChurch.church.name
     });
 
     ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
-    userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions))
-    ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", [])
-    await UserHelper.setPersonRecord()  // to fetch person record, ApiHelper must be properly initialzed
+    userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
+    ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", []);
+    await UserHelper.setPersonRecord(); // to fetch person record, ApiHelper must be properly initialzed
     await CacheHelper.setValue("user", data.user);
 
-
     if (userChurch && !church) await CacheHelper.setValue("church", userChurch.church);
-
-
-  }
-
-
+  };
 }

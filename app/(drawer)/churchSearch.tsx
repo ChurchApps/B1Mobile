@@ -1,19 +1,19 @@
-import React from 'react';
-import { BlueHeader } from '@/src/components/BlueHeader';
-import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper } from '@/src/helpers';
-import { ErrorHelper } from '@/src/helpers/ErrorHelper';
-import { ApiHelper } from '@churchapps/mobilehelper';
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Keyboard, TouchableWithoutFeedback, View, Image } from 'react-native';
-import { useAppTheme } from '@/src/theme';
-import { ActivityIndicator, Button, Card, List, Surface, Text, TextInput } from 'react-native-paper';
-import RNRestart from 'react-native-restart';
-import { Platform } from 'react-native';
+import React from "react";
+import { BlueHeader } from "@/src/components/BlueHeader";
+import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper } from "@/src/helpers";
+import { ErrorHelper } from "@/src/helpers/ErrorHelper";
+import { ApiHelper } from "@churchapps/mobilehelper";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { Keyboard, TouchableWithoutFeedback, View, Image } from "react-native";
+import { useAppTheme } from "@/src/theme";
+import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
+import RNRestart from "react-native-restart";
+import { Platform } from "react-native";
 
 const ChurchSearch = () => {
   const { theme, spacing } = useAppTheme();
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [searchList, setSearchList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [recentList, setRecentList] = useState<ChurchInterface[]>([]);
@@ -23,7 +23,7 @@ const ChurchSearch = () => {
     // Utilities.trackEvent("Church Search Screen");
     GetRecentList();
     UserHelper.addOpenScreenEvent("Church Search Screen");
-  }, [])
+  }, []);
 
   const churchSelection = async (churchData: ChurchInterface) => {
     StoreToRecent(churchData);
@@ -36,136 +36,121 @@ const ChurchSearch = () => {
       }
       if (existing) churchData = existing.church;
       await CacheHelper.setValue("church", churchData);
-      UserHelper.addAnalyticsEvent('church_selected', {
+      UserHelper.addAnalyticsEvent("church_selected", {
         id: Date.now(),
         device: Platform.OS,
-        church: churchData.name,
+        church: churchData.name
       });
       //await UserHelper.setCurrentUserChurch(userChurch);
       console.log("SET PERSON RECORD");
       if (UserHelper.user) UserHelper.setPersonRecord();
-      router.navigate('/(drawer)/dashboard')
+      router.navigate("/(drawer)/dashboard");
       //DevSettings.reload()
       RNRestart.Restart();
     } catch (err: any) {
       ErrorHelper.logError("church-search", err);
     }
-  }
+  };
 
   const searchApiCall = async (text: String) => {
     setLoading(true);
     try {
-      const data = await ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=favicon_400x400", "MembershipApi")
-      setSearchList(data)
+      const data = await ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=favicon_400x400", "MembershipApi");
+      setSearchList(data);
     } catch (error) {
-      setLoading(false)
-      console.log(error)
+      setLoading(false);
+      console.log(error);
     }
     setLoading(false);
-  }
+  };
 
   const GetRecentList = async () => {
     try {
       const list = CacheHelper.recentChurches;
       if (list.length === 0) setRecentListEmpty(true);
       else {
-        let reverseList = list.reverse()
+        let reverseList = list.reverse();
         setRecentList(reverseList);
       }
     } catch (err: any) {
-      console.log('GET RECENT CHURCHES ERROR', err)
+      console.log("GET RECENT CHURCHES ERROR", err);
       ErrorHelper.logError("get-recent-church", err);
     }
-  }
+  };
 
   const StoreToRecent = async (churchData: any) => {
-    var filteredItems: any[] = [];
+    let filteredItems: any[] = [];
     filteredItems = recentList.filter((item: any) => item.id !== churchData.id);
     filteredItems.push(churchData);
     try {
       await CacheHelper.setValue("recentChurches", filteredItems);
     } catch (err: any) {
-      console.log('SET RECENT CHURCHES ERROR', err)
+      console.log("SET RECENT CHURCHES ERROR", err);
       ErrorHelper.logError("store-recent-church", err);
     }
-  }
+  };
 
-  const renderChurchItem = (item: any) => {
-    let churchImage = Constants.Images.ic_church;
-    if (item.settings && item.settings.length > 0) {
-      let setting = ArrayHelper.getOne(item.settings, "keyName", "favicon_400x400");
-      if (!setting) setting = item.settings[0];
-      churchImage = { uri: setting.value };
-    }
-    return (
-      <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness }} onPress={() => churchSelection(item)}>
-        <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={churchImage} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
-          <Text variant="titleMedium">{item.name}</Text>
-        </Card.Content>
-      </Card>
-    );
-  }
-
-  const getHeaderView = () => {
-    return (
-      <View>
-        <BlueHeader />
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <Surface style={{ padding: spacing.md, backgroundColor: theme.colors.background, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
-            <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>Find Your Church</Text>
-            <TextInput
-              mode="outlined"
-              label="Church name"
-              placeholder="Church name"
-              value={searchText}
-              onChangeText={setSearchText}
-              style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-              left={<TextInput.Icon icon="church" />}
-            />
-            <Button mode="contained" onPress={() => searchApiCall(searchText)} loading={loading} style={{ marginBottom: spacing.md }}>
-              Search
-            </Button>
-            {searchText === '' && (
-              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginTop: spacing.sm }}>
-                {recentListEmpty ? 'No recent churches available.' : 'Recent Churches'}
-              </Text>
-            )}
-          </Surface>
-        </TouchableWithoutFeedback>
-      </View>
-    );
-  }
+  const getHeaderView = () => (
+    <View>
+      <BlueHeader />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <Surface style={{ padding: spacing.md, backgroundColor: theme.colors.background, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
+          <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
+            Find Your Church
+          </Text>
+          <TextInput
+            mode="outlined"
+            label="Church name"
+            placeholder="Church name"
+            value={searchText}
+            onChangeText={setSearchText}
+            style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
+            left={<TextInput.Icon icon="church" />}
+          />
+          <Button mode="contained" onPress={() => searchApiCall(searchText)} loading={loading} style={{ marginBottom: spacing.md }}>
+            Search
+          </Button>
+          {searchText === "" && (
+            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginTop: spacing.sm }}>
+              {recentListEmpty ? "No recent churches available." : "Recent Churches"}
+            </Text>
+          )}
+        </Surface>
+      </TouchableWithoutFeedback>
+    </View>
+  );
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
       <List.Section>
         {getHeaderView()}
-        {(searchText === '' ? recentList : searchList).map((item: any, index: any) => (
+        {(searchText === "" ? recentList : searchList).map((item: any, index: any) => (
           <List.Item
             key={item.id || index}
             title={item.name}
             left={() => (
-              <Image source={(() => {
-                let churchImage = Constants.Images.ic_church;
-                if (item.settings && item.settings.length > 0) {
-                  let setting = ArrayHelper.getOne(item.settings, "keyName", "favicon_400x400");
-                  if (!setting) setting = item.settings[0];
-                  churchImage = { uri: setting.value };
-                }
-                return churchImage;
-              })()} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} />
+              <Image
+                source={(() => {
+                  let churchImage = Constants.Images.ic_church;
+                  if (item.settings && item.settings.length > 0) {
+                    let setting = ArrayHelper.getOne(item.settings, "keyName", "favicon_400x400");
+                    if (!setting) setting = item.settings[0];
+                    churchImage = { uri: setting.value };
+                  }
+                  return churchImage;
+                })()}
+                style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }}
+              />
             )}
             onPress={() => churchSelection(item)}
             style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }}
-            titleStyle={{ fontWeight: '500' }}
+            titleStyle={{ fontWeight: "500" }}
           />
         ))}
       </List.Section>
     </View>
   );
-}
+};
 
-export default ChurchSearch
-
+export default ChurchSearch;

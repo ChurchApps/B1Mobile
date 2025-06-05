@@ -13,21 +13,13 @@ interface Props {
 
 export function CustomModal({ isVisible, close, children, width, height }: Props) {
   return (
-    <Modal
-      isVisible={isVisible}
-      onBackdropPress={() => close()}
-      backdropOpacity={0.5}
-      useNativeDriverForBackdrop={true}
-      animationIn="zoomIn"
-      animationOut="zoomOut"
-    >
+    <Modal isVisible={isVisible} onBackdropPress={() => close()} backdropOpacity={0.5} useNativeDriverForBackdrop={true} animationIn="zoomIn" animationOut="zoomOut">
       <View
         style={{
           justifyContent: "center",
           alignItems: "center",
-          flex: 1,
-        }}
-      >
+          flex: 1
+        }}>
         <View style={{ backgroundColor: "#fff", padding: DimensionHelper.wp(3), borderRadius: 8, height, width }}>{children}</View>
       </View>
     </Modal>

@@ -1,9 +1,9 @@
 export class StripeHelper {
   static async createToken(key: string, cardDetails: any) {
     let formBody: any = [];
-    for (var property in cardDetails) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(cardDetails[property]);
+    for (let property in cardDetails) {
+      let encodedKey = encodeURIComponent(property);
+      let encodedValue = encodeURIComponent(cardDetails[property]);
       formBody.push(encodedKey + "=" + encodedValue);
     }
     formBody = formBody.join("&");
@@ -13,11 +13,11 @@ export class StripeHelper {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: "Bearer " + key,
+        Authorization: "Bearer " + key
       },
-      body: formBody,
+      body: formBody
     });
 
-    return res.json()
+    return res.json();
   }
 }

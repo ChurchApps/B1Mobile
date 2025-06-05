@@ -1,5 +1,5 @@
 import { ApiHelper } from "@churchapps/mobilehelper";
-import Constants from 'expo-constants';
+import Constants from "expo-constants";
 
 export class EnvironmentHelper {
   public static MembershipApi = "";
@@ -18,12 +18,17 @@ export class EnvironmentHelper {
   static init = () => {
     const extra = Constants.expoConfig?.extra || {};
     let stage = extra.STAGE;
-    console.log("STAGE IS: " + stage);
-    //let stage = "prod";
+
+    stage = "prod";
     //stage = "staging";
+    console.log("STAGE IS: " + stage);
     switch (stage) {
-      case "prod": EnvironmentHelper.initProd(); break;
-      default: EnvironmentHelper.initDev(); break;
+      case "prod":
+        EnvironmentHelper.initProd();
+        break;
+      default:
+        EnvironmentHelper.initDev();
+        break;
     }
 
     ApiHelper.apiConfigs = [
@@ -34,8 +39,8 @@ export class EnvironmentHelper {
       { keyName: "ContentApi", url: EnvironmentHelper.ContentApi, jwt: "", permisssions: [] },
       { keyName: "DoingApi", url: EnvironmentHelper.DoingApi, jwt: "", permisssions: [] },
       { keyName: "LessonsApi", url: EnvironmentHelper.LessonsApi, jwt: "", permisssions: [] }
-    ]
-  }
+    ];
+  };
 
   static initDev = () => {
     const extra = Constants.expoConfig?.extra || {};
@@ -50,21 +55,20 @@ export class EnvironmentHelper {
     EnvironmentHelper.LessonsRoot = extra.LESSONS_ROOT || "https://staging.lessons.church";
     EnvironmentHelper.StreamingLiveRoot = extra.STREAMING_LIVE_ROOT || "https://{subdomain}.staging.streaminglive.church";
     EnvironmentHelper.B1WebRoot = extra.B1_WEB_ROOT || "https://{subdomain}.staging.b1.church";
-  }
+  };
 
   // NOTE - None of these values are secret
   static initProd = () => {
-    const extra = Constants.expoConfig?.extra || {};
-    EnvironmentHelper.MembershipApi = extra.MEMBERSHIP_API || "https://membershipapi.churchapps.org";
-    EnvironmentHelper.MessagingApi = extra.MESSAGING_API || "https://messagingapi.churchapps.org";
-    EnvironmentHelper.AttendanceApi = extra.ATTENDANCE_API || "https://attendanceapi.churchapps.org";
-    EnvironmentHelper.GivingApi = extra.GIVING_API || "https://givingapi.churchapps.org";
-    EnvironmentHelper.LessonsApi = extra.LESSONS_API || "https://api.lessons.church";
-    EnvironmentHelper.DoingApi = extra.DOING_API || "https://doingapi.churchapps.org";
-    EnvironmentHelper.ContentApi = extra.CONTENT_API || "https://contentapi.churchapps.org";
-    EnvironmentHelper.ContentRoot = extra.CONTENT_ROOT || "https://content.churchapps.org";
-    EnvironmentHelper.LessonsRoot = extra.LESSONS_ROOT || "https://lessons.church";
-    EnvironmentHelper.StreamingLiveRoot = extra.STREAMING_LIVE_ROOT || "https://{subdomain}.streaminglive.church";
-    EnvironmentHelper.B1WebRoot = extra.B1_WEB_ROOT || "https://{subdomain}.b1.church";
-  }
+    EnvironmentHelper.MembershipApi = "https://membershipapi.churchapps.org";
+    EnvironmentHelper.MessagingApi = "https://messagingapi.churchapps.org";
+    EnvironmentHelper.AttendanceApi = "https://attendanceapi.churchapps.org";
+    EnvironmentHelper.GivingApi = "https://givingapi.churchapps.org";
+    EnvironmentHelper.LessonsApi = "https://api.lessons.church";
+    EnvironmentHelper.DoingApi = "https://doingapi.churchapps.org";
+    EnvironmentHelper.ContentApi = "https://contentapi.churchapps.org";
+    EnvironmentHelper.ContentRoot = "https://content.churchapps.org";
+    EnvironmentHelper.LessonsRoot = "https://lessons.church";
+    EnvironmentHelper.StreamingLiveRoot = "https://{subdomain}.streaminglive.church";
+    EnvironmentHelper.B1WebRoot = "https://{subdomain}.b1.church";
+  };
 }

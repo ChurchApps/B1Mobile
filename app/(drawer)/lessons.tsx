@@ -1,13 +1,11 @@
-import React from 'react';
-import { WebsiteScreen } from '@/src/components/WebsiteScreen';
-import { useLocalSearchParams } from 'expo-router';
+import React from "react";
+import { WebsiteScreen } from "@/src/components/WebsiteScreen";
+import { useLocalSearchParams } from "expo-router";
 
 const Lessons = () => {
   const { url, title } = useLocalSearchParams<{ url: any; title: any }>();
 
-  return (
-    <WebsiteScreen url={url} title={title} />
-  )
-}
+  return <WebsiteScreen url={url} title={title} />;
+};
 
-export default Lessons
+export default Lessons;

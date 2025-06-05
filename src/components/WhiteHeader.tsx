@@ -1,7 +1,6 @@
-import { Constants, globalStyles } from '@/src/helpers';
-import { Image, NativeModules, View } from 'react-native';
-import { MainHeader } from './wrapper/MainHeader';
-const { StatusBarManager } = NativeModules;
+import { Constants, globalStyles } from "@/src/helpers";
+import { Image, View } from "react-native";
+import { MainHeader } from "./wrapper/MainHeader";
 
 interface Props {
   onPress: () => void;
@@ -9,7 +8,6 @@ interface Props {
 }
 
 export function WhiteHeader(props: Props) {
-
   //TODO: Pull in churches logo
   const logoSrc = Constants.Images.logoBlue;
 

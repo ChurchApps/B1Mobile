@@ -1,6 +1,6 @@
 import { Constants } from "@/src/helpers";
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -32,12 +32,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: 150,
     marginTop: 5,
-    marginHorizontal: 5,
+    marginHorizontal: 5
   },
   title: {
     fontSize: 16,
     color: "#000",
-    marginLeft: 5,
+    marginLeft: 5
     // fontWeight: "600",
-  },
+  }
 });
