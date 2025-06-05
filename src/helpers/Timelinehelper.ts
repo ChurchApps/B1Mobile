@@ -2,7 +2,6 @@ import { ApiHelper, ArrayHelper, ConversationInterface, GroupInterface, PersonIn
 import { TimelinePostInterface } from "./Interfaces";
 
 export class TimelineHelper {
-
   static async loadForUser() {
     const initialConversations: ConversationInterface[] = await ApiHelper.get("/conversations/posts", "MessagingApi");
     const allPosts = await TimelineHelper.loadRelatedData(initialConversations, null);
@@ -24,7 +23,7 @@ export class TimelineHelper {
     const eventIds: string[] = [];
     const venueIds: string[] = [];
     const sermonIds: string[] = [];
-    initialConversations.forEach((conv) => {
+    initialConversations.forEach(conv => {
       if (conv.contentType === "task" && taskIds.indexOf(conv.contentId as string) === -1) taskIds.push(conv.contentId as string);
       if (conv.contentType === "event" && eventIds.indexOf(conv.contentId as string) === -1) eventIds.push(conv.contentId as string);
       if (conv.contentType === "venue" && venueIds.indexOf(conv.contentId as string) === -1) venueIds.push(conv.contentId as string);
@@ -40,39 +39,39 @@ export class TimelineHelper {
       await promises.push(ApiHelper.get("/venues/timeline?venueIds=" + venueIds.join(","), "LessonsApi"));
     }
     if (sermonIds.length > 0) {
-
     }
     await promises.push(ApiHelper.getAnonymous("/sermons/timeline?sermonIds=" + sermonIds.join(","), "ContentApi"));
     const results = await Promise.all(promises);
     let allPosts: TimelinePostInterface[] = [];
     results.forEach((result: any[]) => {
-      result.forEach((r) => {
-        allPosts.push({ postId: r.postId, postType: r.postType, groupId: r.groupId, data: r })
+      result.forEach(r => {
+        allPosts.push({ postId: r.postId, postType: r.postType, groupId: r.groupId, data: r });
       });
     });
     return allPosts;
   }
 
   static mergeConversations(allPosts: TimelinePostInterface[], initialConversations: ConversationInterface[]) {
-    allPosts.forEach(p => { p.conversation = undefined })
-    initialConversations.forEach((conv) => {
+    allPosts.forEach(p => {
+      p.conversation = undefined;
+    });
+    initialConversations.forEach(conv => {
       let existingPost = ArrayHelper.getOne(allPosts, "postId", conv.contentId);
       if (existingPost) {
         existingPost.conversation = conv;
         if (conv.groupId) existingPost.groupId = conv.groupId;
-      }
-      else {
+      } else {
         const conversation: ConversationInterface = {
-          id: conv.id ?? '',
-          churchId: conv.churchId ?? '',
-          contentType: conv.contentType ?? '',
-          contentId: conv.contentId ?? '',
-          title: conv.title ?? '',
+          id: conv.id ?? "",
+          churchId: conv.churchId ?? "",
+          contentType: conv.contentType ?? "",
+          contentId: conv.contentId ?? "",
+          title: conv.title ?? "",
           dateCreated: conv.dateCreated ?? new Date(),
-          groupId: conv.groupId ?? '',
-          visibility: conv.visibility ?? '',
-          firstPostId: conv.firstPostId ?? '',
-          lastPostId: conv.lastPostId ?? '',
+          groupId: conv.groupId ?? "",
+          visibility: conv.visibility ?? "",
+          firstPostId: conv.firstPostId ?? "",
+          lastPostId: conv.lastPostId ?? "",
           allowAnonymousPosts: conv.allowAnonymousPosts ?? false,
           postCount: conv.postCount ?? 0,
           messages: conv.messages ?? []
@@ -106,8 +105,8 @@ export class TimelineHelper {
       }
     });
 
-    let people: PersonInterface[] = []
-    let groups: GroupInterface[] = []
+    let people: PersonInterface[] = [];
+    let groups: GroupInterface[] = [];
 
     if (peopleIds.length > 0 || groupIds.length > 0) {
       const data = await ApiHelper.get("/people/timeline?personIds=" + peopleIds.join(",") + "&groupIds=" + groupIds.join(","), "MembershipApi");
@@ -144,13 +143,10 @@ export class TimelineHelper {
         if (p?.conversation?.messages && p.conversation.messages.length > 0) p.timeSent = p.conversation.messages[0].timeSent || defaultDate;
         else p.timeSent = defaultDate;
       }
-      if (p?.conversation?.messages && p.conversation.messages.length > 0) p.timeUpdated = p.conversation.messages[p.conversation.messages.length - 1].timeSent
+      if (p?.conversation?.messages && p.conversation.messages.length > 0) p.timeUpdated = p.conversation.messages[p.conversation.messages.length - 1].timeSent;
       else p.timeUpdated = p.timeSent;
-
-
     });
 
     ArrayHelper.sortBy(allPosts, "timeUpdated", true);
   }
-
 }

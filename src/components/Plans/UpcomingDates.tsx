@@ -1,13 +1,13 @@
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
-import moment from 'moment';
-import React, { useEffect, useState } from 'react';
-import { FlatList, Text, TouchableOpacity, View, StyleSheet, Animated } from 'react-native';
-import Icons from 'react-native-vector-icons/FontAwesome5';
-import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface, TimeInterface, globalStyles } from "@/src/helpers";
-import { router } from 'expo-router';
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
+import Icons from "react-native-vector-icons/FontAwesome5";
+import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface, TimeInterface } from "@/src/helpers";
+import { router } from "expo-router";
 
 interface Props {
-  navigation: any,
+  navigation: any;
   plans: PlanInterface[];
   positions: PositionInterface[];
   assignments: AssignmentInterface[];
@@ -22,13 +22,13 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 500,
-      useNativeDriver: true,
+      useNativeDriver: true
     }).start();
   }, []);
 
   const getUpcomingDates = () => {
     const data: any = [];
-    assignments.forEach((assignment) => {
+    assignments.forEach(assignment => {
       const position = positions.find(p => p.id === assignment.positionId);
       const plan = plans.find(p => p?.id === position?.planId);
       const time = times.find(t => t.planId === plan?.id);
@@ -71,14 +71,12 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
     const formattedDate = moment(item?.item?.serviceDate).format("MMM D, YYYY");
     return (
       <Animated.View style={{ opacity: fadeAnim }}>
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push('/(drawer)/planDetails/' + item?.item?.planId)}
-          activeOpacity={0.7}
-        >
+        <TouchableOpacity style={styles.card} onPress={() => router.push("/(drawer)/planDetails/" + item?.item?.planId)} activeOpacity={0.7}>
           <View style={styles.cardContent}>
             <View style={styles.planInfo}>
-              <Text style={styles.planNameVisible} numberOfLines={1}>{item?.item?.planName}</Text>
+              <Text style={styles.planNameVisible} numberOfLines={1}>
+                {item?.item?.planName}
+              </Text>
               <View style={styles.dateTimeContainer}>
                 <Icons name="calendar-day" size={14} color="#666" style={styles.icon} />
                 <Text style={styles.dateTextVisible}>{formattedDate}</Text>
@@ -100,7 +98,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icons name='calendar-week' style={styles.headerIcon} size={DimensionHelper.wp(5.5)} />
+        <Icons name="calendar-week" style={styles.headerIcon} size={DimensionHelper.wp(5.5)} />
         <Text style={styles.headerTitle}>Upcoming Dates</Text>
       </View>
 
@@ -114,24 +112,25 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
           {upcomingDates.map((item, idx) => (
             <TouchableOpacity
               key={idx}
-              style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: 'relative' }]}
+              style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]}
               activeOpacity={0.8}
-              onPress={() => router.push('/(drawer)/planDetails/' + item.planId)}
-            >
-              <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: '#1976d2' }]}>
-                <Text style={{ color: 'white', fontSize: 14, fontWeight: '500' }}>{item.status}</Text>
+              onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
+              <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: "#1976d2" }]}>
+                <Text style={{ color: "white", fontSize: 14, fontWeight: "500" }}>{item.status}</Text>
               </View>
               <View style={styles.cardContentColumn}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#222', marginBottom: 2 }} numberOfLines={1}>{item.planName}</Text>
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 2 }}>
+                <Text style={{ fontSize: 18, fontWeight: "bold", color: "#222", marginBottom: 2 }} numberOfLines={1}>
+                  {item.planName}
+                </Text>
+                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 2 }}>
                   <Icons name="calendar-day" size={14} color="#666" style={{ marginRight: 4 }} />
-                  <Text style={{ fontSize: 16, color: '#222', marginRight: 12 }}>{moment(item.serviceDate).format('YYYY-MM-DD')}</Text>
+                  <Text style={{ fontSize: 16, color: "#222", marginRight: 12 }}>{moment(item.serviceDate).format("YYYY-MM-DD")}</Text>
                   <Icons name="clock" size={14} color="#666" style={{ marginRight: 4 }} />
-                  <Text style={{ fontSize: 16, color: '#222' }}>{item.time}</Text>
+                  <Text style={{ fontSize: 16, color: "#222" }}>{item.time}</Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Icons name="user-tie" size={14} color={Constants.Colors.app_color} style={{ marginRight: 6 }} />
-                  <Text style={{ fontSize: 16, color: '#222' }}>{item.position}</Text>
+                  <Text style={{ fontSize: 16, color: "#222" }}>{item.position}</Text>
                 </View>
               </View>
             </TouchableOpacity>
@@ -144,126 +143,126 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: DimensionHelper.hp(3),
+    marginBottom: DimensionHelper.hp(3)
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: DimensionHelper.hp(2),
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: DimensionHelper.hp(2)
   },
   headerIcon: {
     color: Constants.Colors.app_color,
-    marginRight: DimensionHelper.wp(2),
+    marginRight: DimensionHelper.wp(2)
   },
   headerTitle: {
     fontSize: DimensionHelper.wp(4.5),
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333"
   },
   listContent: {
-    gap: DimensionHelper.hp(1.5),
+    gap: DimensionHelper.hp(1.5)
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
     padding: DimensionHelper.wp(4),
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 2
     },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
-    elevation: 5,
+    elevation: 5
   },
   cardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   planInfo: {
     flex: 1,
-    marginRight: DimensionHelper.wp(2),
+    marginRight: DimensionHelper.wp(2)
   },
   planNameVisible: {
     fontSize: DimensionHelper.wp(3.8),
-    fontWeight: '600',
-    color: '#222',
-    marginBottom: 4,
+    fontWeight: "600",
+    color: "#222",
+    marginBottom: 4
   },
   dateTimeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center"
   },
   icon: {
-    marginRight: 4,
+    marginRight: 4
   },
   timeIcon: {
-    marginLeft: DimensionHelper.wp(3),
+    marginLeft: DimensionHelper.wp(3)
   },
   dateTextVisible: {
     fontSize: DimensionHelper.wp(3.2),
-    color: '#333',
+    color: "#333"
   },
   timeTextVisible: {
     fontSize: DimensionHelper.wp(3.2),
-    color: '#333',
+    color: "#333"
   },
   roleInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: DimensionHelper.wp(3),
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: DimensionHelper.wp(3)
   },
   roleIcon: {
-    marginRight: 6,
+    marginRight: 6
   },
   roleTextVisible: {
     fontSize: DimensionHelper.wp(3.2),
-    color: '#333',
+    color: "#333"
   },
   statusBadge: {
     paddingHorizontal: DimensionHelper.wp(3),
     paddingVertical: DimensionHelper.hp(0.5),
     borderRadius: 12,
     minWidth: DimensionHelper.wp(20),
-    alignItems: 'center',
+    alignItems: "center"
   },
   statusText: {
-    color: 'white',
+    color: "white",
     fontSize: DimensionHelper.wp(3),
-    fontWeight: '500',
+    fontWeight: "500"
   },
   emptyState: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
     padding: DimensionHelper.wp(6),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 2
     },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
-    marginBottom: DimensionHelper.hp(2),
+    marginBottom: DimensionHelper.hp(2)
   },
   emptyStateText: {
     fontSize: DimensionHelper.wp(3.5),
-    color: '#666',
+    color: "#666",
     marginTop: DimensionHelper.hp(2),
-    marginBottom: DimensionHelper.hp(1),
+    marginBottom: DimensionHelper.hp(1)
   },
   cardContentColumn: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'center',
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "center"
   },
   statusBadgeTopRight: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     right: 10,
-    zIndex: 2,
-  },
+    zIndex: 2
+  }
 });

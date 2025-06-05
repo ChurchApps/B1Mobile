@@ -30,14 +30,14 @@ export function FundDonation({ fundDonation, funds, index, updatedFunction }: Pr
     updatedFunction(fd, index);
   }, [selectedFund]);
 
-  const getFundName = (fundId: string) => {
-    return funds.find(f => f.id === fundId)?.name || "Select Fund";
-  };
+  const getFundName = (fundId: string) => funds.find(f => f.id === fundId)?.name || "Select Fund";
 
   return (
-    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }}>
+    <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.sm }}>
       <View style={{ flex: 1, marginRight: spacing.sm }}>
-        <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>Amount</Text>
+        <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>
+          Amount
+        </Text>
         <TextInput
           mode="outlined"
           keyboardType="numeric"
@@ -47,7 +47,9 @@ export function FundDonation({ fundDonation, funds, index, updatedFunction }: Pr
         />
       </View>
       <View style={{ flex: 1 }}>
-        <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>Fund</Text>
+        <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>
+          Fund
+        </Text>
         <Menu
           visible={showFundMenu}
           onDismiss={() => setShowFundMenu(false)}
@@ -60,9 +62,8 @@ export function FundDonation({ fundDonation, funds, index, updatedFunction }: Pr
               style={{ backgroundColor: theme.colors.surface }}
               editable={false}
             />
-          }
-        >
-          {funds.map((fund) => (
+          }>
+          {funds.map(fund => (
             <Menu.Item
               key={fund.id}
               onPress={() => {

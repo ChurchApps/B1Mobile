@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Loader } from '../Loader';
-import { globalStyles } from '@/src/helpers';
+import React, { useEffect, useState, useRef } from "react";
+import { View, StyleSheet } from "react-native";
+import { Loader } from "../Loader";
 
 interface Props {
   children: React.ReactNode;
@@ -99,13 +98,13 @@ export const LoadingWrapper: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   loaderContainer: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 999,
-  },
-}); 
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 999
+  }
+});

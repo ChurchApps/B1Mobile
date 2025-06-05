@@ -19,23 +19,15 @@ interface Props {
 const accountTypes = [
   {
     label: "Individual",
-    value: "individual",
+    value: "individual"
   },
   {
     label: "Company",
-    value: "company",
-  },
+    value: "company"
+  }
 ];
 
-export function BankForm({
-  bank,
-  customerId,
-  setMode,
-  updatedFunction,
-  handleDelete,
-  showVerifyForm,
-  publishKey,
-}: Props) {
+export function BankForm({ bank, customerId, setMode, updatedFunction, handleDelete, showVerifyForm, publishKey }: Props) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [selectedType, setSelectedType] = useState(bank.account_holder_type || accountTypes[0].value);
@@ -61,7 +53,7 @@ export function BankForm({
 
   const updateBank = async () => {
     if (!name) {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
       Alert.alert("Required", "Please enter account holder name");
       return;
     }
@@ -74,9 +66,9 @@ export function BankForm({
         account_holder_name: name,
         account_holder_type: selectedType
       }
-    }
+    };
 
-    const response = await ApiHelper.post("/paymentmethods/updatebank", payload, "GivingApi")
+    const response = await ApiHelper.post("/paymentmethods/updatebank", payload, "GivingApi");
     if (response?.raw?.message) {
       Alert.alert("Error", response.raw.message);
     } else {
@@ -100,7 +92,7 @@ export function BankForm({
       "bank_account[account_holder_name]": name,
       "bank_account[account_holder_type]": selectedType,
       "bank_account[routing_number]": routingNumber,
-      "bank_account[account_number]": accountNumber,
+      "bank_account[account_number]": accountNumber
     });
 
     if (response?.error?.message) {
@@ -112,7 +104,7 @@ export function BankForm({
         customerId,
         personId: person.id,
         email: person.contactInfo.email,
-        name: person.name.display,
+        name: person.name.display
       };
 
       const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi");
@@ -137,7 +129,7 @@ export function BankForm({
     const verifyPayload: StripeBankAccountVerifyInterface = {
       paymentMethodId: bank.id,
       customerId,
-      amountData: { amounts: [firstDeposit, secondDeposit] },
+      amountData: { amounts: [firstDeposit, secondDeposit] }
     };
 
     const response = await ApiHelper.post("/paymentmethods/verifyBank", verifyPayload, "GivingApi");
@@ -154,9 +146,8 @@ export function BankForm({
   const informationalText = !bank.id && (
     <View style={{ marginTop: DimensionHelper.wp(5), flex: 1, alignItems: "center" }}>
       <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>
-        Bank accounts will need to be verified before making any donations. Your account will receive two small deposits
-        in approximately 1-3 business days. You will need to enter those deposit amounts to finish verifying your
-        account by selecting the verify account link next to your bank account under the payment methods section.
+        Bank accounts will need to be verified before making any donations. Your account will receive two small deposits in approximately 1-3 business days. You will need to enter those deposit
+        amounts to finish verifying your account by selecting the verify account link next to your bank account under the payment methods section.
       </Text>
     </View>
   );
@@ -167,46 +158,28 @@ export function BankForm({
       saveFunction={handleSave}
       cancelFunction={() => setMode("display")}
       deleteFunction={bank.id && !showVerifyForm ? handleDelete : undefined}
-      isSubmitting={isSubmitting}
-    >
+      isSubmitting={isSubmitting}>
       {informationalText}
       {showVerifyForm ? (
         <View style={{ marginTop: DimensionHelper.wp(5), marginBottom: DimensionHelper.wp(5) }}>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>
-              Enter the two deposits you received in your account to finish verifying your bank account.
-            </Text>
+            <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>Enter the two deposits you received in your account to finish verifying your bank account.</Text>
           </View>
           <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: DimensionHelper.wp(95) }}>
             <View>
               <Text style={globalStyles.semiTitleText}>First Deposit</Text>
-              <TextInput
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(40) }}
-                keyboardType="number-pad"
-                value={firstDeposit}
-                onChangeText={(text) => setFirstDeposit(text)}
-              />
+              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(40) }} keyboardType="number-pad" value={firstDeposit} onChangeText={text => setFirstDeposit(text)} />
             </View>
             <View>
               <Text style={globalStyles.semiTitleText}>Second Deposit</Text>
-              <TextInput
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(40) }}
-                keyboardType="number-pad"
-                value={secondDeposit}
-                onChangeText={(text) => setSecondDeposit(text)}
-              />
+              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(40) }} keyboardType="number-pad" value={secondDeposit} onChangeText={text => setSecondDeposit(text)} />
             </View>
           </View>
         </View>
       ) : (
         <View style={{ marginBottom: DimensionHelper.wp(5) }}>
           <Text style={globalStyles.semiTitleText}>Amount Holder Name</Text>
-          <TextInput
-            style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
-            keyboardType="default"
-            value={name}
-            onChangeText={(text) => setName(text)}
-          />
+          <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} keyboardType="default" value={name} onChangeText={text => setName(text)} />
           <Text style={globalStyles.semiTitleText}>Account Holder Type</Text>
           <View style={{ width: DimensionHelper.wp(100), marginBottom: DimensionHelper.wp(12) }}>
             <DropDownPicker
@@ -219,7 +192,7 @@ export function BankForm({
               containerStyle={{
                 ...globalStyles.containerStyle,
                 width: DimensionHelper.wp(90),
-                height: isDropdownOpen ? accountTypes.length * DimensionHelper.wp(12) : 0,
+                height: isDropdownOpen ? accountTypes.length * DimensionHelper.wp(12) : 0
               }}
               style={{ ...globalStyles.dropDownMainStyle, height: DimensionHelper.wp(12) }}
               labelStyle={globalStyles.labelStyle}
@@ -232,19 +205,9 @@ export function BankForm({
           {!bank.id && (
             <>
               <Text style={globalStyles.semiTitleText}>Account Number</Text>
-              <TextInput
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
-                keyboardType="number-pad"
-                value={accountNumber}
-                onChangeText={(text) => setAccountNumber(text)}
-              />
+              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} keyboardType="number-pad" value={accountNumber} onChangeText={text => setAccountNumber(text)} />
               <Text style={globalStyles.semiTitleText}>Routing Number</Text>
-              <TextInput
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
-                keyboardType="number-pad"
-                value={routingNumber}
-                onChangeText={(text) => setRoutingNumber(text)}
-              />
+              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} keyboardType="number-pad" value={routingNumber} onChangeText={text => setRoutingNumber(text)} />
             </>
           )}
         </View>

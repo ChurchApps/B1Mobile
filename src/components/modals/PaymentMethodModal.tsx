@@ -26,21 +26,15 @@ export function PaymentMethodModal({ show, close, onSelect }: Props) {
               onSelect(new StripePaymentMethod({ type: item }));
               close();
             }}
-            style={{ flexDirection: "row", alignItems: "center" }}
-          >
-            <Icon
-              name={index == 0 ? "credit-card-alt" : "bank"}
-              style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp(4) }}
-              size={DimensionHelper.wp(6)}
-            />
+            style={{ flexDirection: "row", alignItems: "center" }}>
+            <Icon name={index == 0 ? "credit-card-alt" : "bank"} style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp(4) }} size={DimensionHelper.wp(6)} />
             <Text
               style={{
                 fontSize: DimensionHelper.wp(4.8),
                 fontFamily: Constants.Fonts.RobotoRegular,
                 textAlign: "center",
-                paddingVertical: DimensionHelper.wp(2),
-              }}
-            >
+                paddingVertical: DimensionHelper.wp(2)
+              }}>
               Add {item[0].toUpperCase() + item.slice(1).toLowerCase()}
             </Text>
           </TouchableOpacity>

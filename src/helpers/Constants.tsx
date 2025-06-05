@@ -1,30 +1,29 @@
 export class Constants {
-
   static Colors = {
-    app_color: '#1C75BC',
-    app_color_light: 'rgba(28, 116, 188,0.3)',
-    gray_bg: '#F6F6F8',
-    button_bg: '#24B8FE',
-    button_green: '#70DC87',
-    button_red: '#B0120C',
-    button_dark_green: '#77CC01',
-    button_yellow: '#FAC108',
-    white_color: '#FFFFFF',
-    Dark_Gray : '#808080',
-    Light_Green : '#AFE1AF',    
-    Dark_Green : '#2e7d32',
-    Light_Red : '#ffdddd',
-    Black_color : '#000000',
-    Orange_color : '#ed6c02',
-    Active_TabColor : 'rgb(25, 118, 210);'
+    app_color: "#1C75BC",
+    app_color_light: "rgba(28, 116, 188,0.3)",
+    gray_bg: "#F6F6F8",
+    button_bg: "#24B8FE",
+    button_green: "#70DC87",
+    button_red: "#B0120C",
+    button_dark_green: "#77CC01",
+    button_yellow: "#FAC108",
+    white_color: "#FFFFFF",
+    Dark_Gray: "#808080",
+    Light_Green: "#AFE1AF",
+    Dark_Green: "#2e7d32",
+    Light_Red: "#ffdddd",
+    Black_color: "#000000",
+    Orange_color: "#ed6c02",
+    Active_TabColor: "rgb(25, 118, 210);"
   };
 
   static Fonts = {
-    RobotoLight: 'Roboto-Light',
-    RobotoBold: 'Roboto-Bold',
-    RobotoBlack: 'Roboto-Black',
-    RobotoMedium: 'Roboto-Medium',
-    RobotoRegular: 'Roboto-Regular',
+    RobotoLight: "Roboto-Light",
+    RobotoBold: "Roboto-Bold",
+    RobotoBlack: "Roboto-Black",
+    RobotoMedium: "Roboto-Medium",
+    RobotoRegular: "Roboto-Regular"
   };
 
   static Images = {
@@ -46,5 +45,4 @@ export class Constants {
     ic_member: require("../assets/images/ic_member.png"),
     dash_bell: require("../assets/images/dash_bell.png")
   };
-
 }

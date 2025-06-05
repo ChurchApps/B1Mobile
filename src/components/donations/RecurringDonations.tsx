@@ -1,9 +1,9 @@
-import { ApiHelper, Constants, CurrencyHelper, DateHelper, UserHelper } from "@/src/helpers";
+import { ApiHelper, CurrencyHelper, DateHelper, UserHelper } from "@/src/helpers";
 import { ErrorHelper } from "@/src/helpers/ErrorHelper";
 import { StripePaymentMethod, SubscriptionInterface } from "@/src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Alert, View, Image } from "react-native";
+import { Alert, View } from "react-native";
 import { ActivityIndicator, Button, Card, Divider, IconButton, List, Menu, Portal, Text, useTheme } from "react-native-paper";
 import { useAppTheme } from "@/src/theme";
 import { CustomModal } from "../modals/CustomModal";
@@ -31,7 +31,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     { label: "Day(s)", value: "day" },
     { label: "Week(s)", value: "week" },
     { label: "Month(s)", value: "month" },
-    { label: "Year(s)", value: "year" },
+    { label: "Year(s)", value: "year" }
   ]);
   const [selectedInterval, setSelectedInterval] = useState<string>("");
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -42,10 +42,10 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   const loadDonations = () => {
     if (customerId) {
       setIsLoading(true);
-      ApiHelper.get("/customers/" + customerId + "/subscriptions", "GivingApi").then((subResult) => {
+      ApiHelper.get("/customers/" + customerId + "/subscriptions", "GivingApi").then(subResult => {
         const subs: SubscriptionInterface[] = [];
         const requests = subResult.data?.map((s: any) =>
-          ApiHelper.get("/subscriptionfunds?subscriptionId=" + s.id, "GivingApi").then((subFunds) => {
+          ApiHelper.get("/subscriptionfunds?subscriptionId=" + s.id, "GivingApi").then(subFunds => {
             s.funds = subFunds;
             subs.push(s);
           })
@@ -77,7 +77,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   useEffect(loadDonations, [customerId]);
 
   useEffect(() => {
-    setPaymentMethods(pm.map((p) => ({ label: `${p.name} ****${p.last4}`, value: p.id })));
+    setPaymentMethods(pm.map(p => ({ label: `${p.name} ****${p.last4}`, value: p.id })));
   }, [pm]);
 
   const getMethodLabel = (methodId: string) => {
@@ -85,9 +85,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     return method ? `${method.name} ending in ${method.last4}` : "Select Payment Method";
   };
 
-  const getIntervalLabel = (interval: string) => {
-    return intervalTypes.find(i => i.value === interval)?.label || "Select Interval";
-  };
+  const getIntervalLabel = (interval: string) => intervalTypes.find(i => i.value === interval)?.label || "Select Interval";
 
   const renderSubscription = (sub: SubscriptionInterface) => {
     const total = CurrencyHelper.formatCurrency(sub.plan.amount / 100);
@@ -120,8 +118,8 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     Alert.alert("Are you sure?", "This will permanently delete and stop the recurring payments", [
       {
         text: "Cancel",
-        onPress: () => { },
-        style: "cancel",
+        onPress: () => {},
+        style: "cancel"
       },
       {
         text: "OK",
@@ -141,43 +139,35 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
             Alert.alert("Error in deleting the method");
             ErrorHelper.logError("Delete-recurring-payment", err);
           }
-        },
-      },
+        }
+      }
     ]);
   };
 
-  const getFunds = (subscription: SubscriptionInterface) => {
-    return (
-      <View style={{ marginVertical: spacing.sm }}>
-        {subscription?.funds?.map((fund: any) => (
-          <View key={subscription.id + fund.id} style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.xs }}>
-            <Text variant="bodyMedium" style={{ flex: 1, marginRight: spacing.sm }}>{fund.name}</Text>
-            <Text variant="bodyMedium">{CurrencyHelper.formatCurrency(fund.amount)}</Text>
-          </View>
-        ))}
-        <Divider style={{ marginVertical: spacing.xs }} />
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text variant="titleMedium">Total</Text>
-          <Text variant="titleMedium">{CurrencyHelper.formatCurrency(subscription?.plan?.amount / 100)}</Text>
+  const getFunds = (subscription: SubscriptionInterface) => (
+    <View style={{ marginVertical: spacing.sm }}>
+      {subscription?.funds?.map((fund: any) => (
+        <View key={subscription.id + fund.id} style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.xs }}>
+          <Text variant="bodyMedium" style={{ flex: 1, marginRight: spacing.sm }}>
+            {fund.name}
+          </Text>
+          <Text variant="bodyMedium">{CurrencyHelper.formatCurrency(fund.amount)}</Text>
         </View>
+      ))}
+      <Divider style={{ marginVertical: spacing.xs }} />
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <Text variant="titleMedium">Total</Text>
+        <Text variant="titleMedium">{CurrencyHelper.formatCurrency(subscription?.plan?.amount / 100)}</Text>
       </View>
-    );
-  };
+    </View>
+  );
 
   const content = (
     <Card style={{ marginBottom: spacing.md }}>
       <Card.Title
         title="Recurring Donations"
-        titleStyle={{ fontSize: 20, fontWeight: '600' }}
-        left={(props) => (
-          <IconButton
-            {...props}
-            icon="repeat"
-            size={24}
-            iconColor={theme.colors.primary}
-            style={{ margin: 0 }}
-          />
-        )}
+        titleStyle={{ fontSize: 20, fontWeight: "600" }}
+        left={props => <IconButton {...props} icon="repeat" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
       />
       <Card.Content>
         {isLoading ? (
@@ -192,20 +182,18 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
             ))}
           </>
         ) : (
-          <Text variant="bodyMedium" style={{ textAlign: 'center', marginVertical: spacing.md }}>
+          <Text variant="bodyMedium" style={{ textAlign: "center", marginVertical: spacing.md }}>
             No recurring donations.
           </Text>
         )}
       </Card.Content>
 
       <Portal>
-        <CustomModal
-          isVisible={showModal}
-          close={() => setShowModal(false)}
-          width={DimensionHelper.wp(85)}
-        >
+        <CustomModal isVisible={showModal} close={() => setShowModal(false)} width={DimensionHelper.wp(85)}>
           <View style={{ padding: spacing.md }}>
-            <Text variant="titleLarge" style={{ marginBottom: spacing.md }}>Edit Recurring Donation</Text>
+            <Text variant="titleLarge" style={{ marginBottom: spacing.md }}>
+              Edit Recurring Donation
+            </Text>
             <Menu
               visible={showMethodMenu}
               onDismiss={() => setShowMethodMenu(false)}
@@ -213,9 +201,8 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 <Button mode="outlined" onPress={() => setShowMethodMenu(true)} style={{ marginBottom: spacing.md }}>
                   {getMethodLabel(selectedMethod)}
                 </Button>
-              }
-            >
-              {pm.map((method) => (
+              }>
+              {pm.map(method => (
                 <Menu.Item
                   key={method.id}
                   onPress={() => {
@@ -234,9 +221,8 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                 <Button mode="outlined" onPress={() => setShowIntervalMenu(true)} style={{ marginBottom: spacing.md }}>
                   {getIntervalLabel(selectedInterval)}
                 </Button>
-              }
-            >
-              {intervalTypes.map((interval) => (
+              }>
+              {intervalTypes.map(interval => (
                 <Menu.Item
                   key={interval.value}
                   onPress={() => {
@@ -250,7 +236,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
 
             {selectedSubscription && getFunds(selectedSubscription)}
 
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.md }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: spacing.md }}>
               <Button mode="outlined" onPress={handleDelete} loading={isDeleting} style={{ flex: 1, marginRight: spacing.sm }}>
                 Delete
               </Button>

@@ -1,8 +1,7 @@
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter } from "react-native";
 import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
 export class ErrorHelper {
-
   static logEvent(eventType: string, source: string, message: string) {
     //console.log("***************Adding new event to analytics : ",{source, message});
     // Analytics.trackEvent(eventType, { source, message })
@@ -17,11 +16,11 @@ export class ErrorHelper {
 
   static onJavaError(event: any) {
     ErrorHelper.logError(event.source, event.message);
-  };
+  }
 
   static onJavaEvent(event: any) {
     ErrorHelper.logEvent(event.eventType, event.source, event.message);
-  };
+  }
 
   static init() {
     ErrorHelper.initJava();
@@ -29,8 +28,8 @@ export class ErrorHelper {
   }
 
   static initJava() {
-    DeviceEventEmitter.addListener('onError', ErrorHelper.onJavaError);
-    DeviceEventEmitter.addListener('onEvent', ErrorHelper.onJavaEvent);
+    DeviceEventEmitter.addListener("onError", ErrorHelper.onJavaError);
+    DeviceEventEmitter.addListener("onEvent", ErrorHelper.onJavaEvent);
   }
 
   static initUnhandled() {
@@ -38,9 +37,12 @@ export class ErrorHelper {
       ErrorHelper.logError("Unhandled Javascript", error.toString());
     });
 
-    setNativeExceptionHandler((exceptionString: string) => {
-      ErrorHelper.logError("Unhandled Native", exceptionString);
-    }, false, true);
-
+    setNativeExceptionHandler(
+      (exceptionString: string) => {
+        ErrorHelper.logError("Unhandled Native", exceptionString);
+      },
+      false,
+      true
+    );
   }
 }

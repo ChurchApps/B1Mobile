@@ -46,11 +46,14 @@ export default [
       quotes: 'off',
       'no-trailing-spaces': 'warn',
       'no-var': 'error',
-      'operator-linebreak': ['warn', 'before'],
+      'operator-linebreak': 'off',
       'multiline-ternary': 'off',
       '@typescript-eslint/type-annotation-spacing': 'off',
       '@typescript-eslint/object-curly-spacing': 'off',
       '@typescript-eslint/brace-style': 'off',
+      'react/jsx-wrap-multilines': 'off',
+      'react/jsx-curly-spacing': 'off',
+      'react/jsx-parens': 'off',
       indent: ['warn', 2, { SwitchCase: 1 }],
       'arrow-body-style': ['warn', 'as-needed'],
       'react/jsx-tag-spacing': ['warn', { beforeSelfClosing: 'always', beforeClosing: 'never' }],
@@ -70,7 +73,9 @@ export default [
           bracketSpacing: true,
           arrowParens: 'avoid',
           endOfLine: 'auto',
-          functionCallArguments: 'single-line'
+          functionCallArguments: 'single-line',
+          parenSpacing: false,
+          jsxParens: 'avoid'
         }
       ]
     }

@@ -1,5 +1,5 @@
 import { ApiHelper } from "@churchapps/mobilehelper";
-import Constants from 'expo-constants';
+import Constants from "expo-constants";
 
 export class EnvironmentHelper {
   public static MembershipApi = "";
@@ -22,8 +22,12 @@ export class EnvironmentHelper {
     //let stage = "prod";
     //stage = "staging";
     switch (stage) {
-      case "prod": EnvironmentHelper.initProd(); break;
-      default: EnvironmentHelper.initDev(); break;
+      case "prod":
+        EnvironmentHelper.initProd();
+        break;
+      default:
+        EnvironmentHelper.initDev();
+        break;
     }
 
     ApiHelper.apiConfigs = [
@@ -34,8 +38,8 @@ export class EnvironmentHelper {
       { keyName: "ContentApi", url: EnvironmentHelper.ContentApi, jwt: "", permisssions: [] },
       { keyName: "DoingApi", url: EnvironmentHelper.DoingApi, jwt: "", permisssions: [] },
       { keyName: "LessonsApi", url: EnvironmentHelper.LessonsApi, jwt: "", permisssions: [] }
-    ]
-  }
+    ];
+  };
 
   static initDev = () => {
     const extra = Constants.expoConfig?.extra || {};
@@ -50,7 +54,7 @@ export class EnvironmentHelper {
     EnvironmentHelper.LessonsRoot = extra.LESSONS_ROOT || "https://staging.lessons.church";
     EnvironmentHelper.StreamingLiveRoot = extra.STREAMING_LIVE_ROOT || "https://{subdomain}.staging.streaminglive.church";
     EnvironmentHelper.B1WebRoot = extra.B1_WEB_ROOT || "https://{subdomain}.staging.b1.church";
-  }
+  };
 
   // NOTE - None of these values are secret
   static initProd = () => {
@@ -66,5 +70,5 @@ export class EnvironmentHelper {
     EnvironmentHelper.LessonsRoot = extra.LESSONS_ROOT || "https://lessons.church";
     EnvironmentHelper.StreamingLiveRoot = extra.STREAMING_LIVE_ROOT || "https://{subdomain}.streaminglive.church";
     EnvironmentHelper.B1WebRoot = extra.B1_WEB_ROOT || "https://{subdomain}.b1.church";
-  }
+  };
 }

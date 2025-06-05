@@ -26,20 +26,14 @@ export function FundDonations({ funds, fundDonations, updatedFunction }: Props) 
     let fd = { fundId: funds[0].id } as FundDonationInterface;
     fDonations.push(fd);
     updatedFunction(fDonations);
-  }
+  };
 
   return (
     <View style={{ marginBottom: spacing.md }}>
-      <Text variant="titleMedium" style={{ marginBottom: spacing.sm }}>Fund</Text>
-      {fundDonations?.map((fd, index) => (
-        <FundDonation
-          key={`fund-donation-${fd.fundId || index}`}
-          fundDonation={fd}
-          funds={funds}
-          updatedFunction={handleUpdated}
-          index={index}
-        />
-      ))}
+      <Text variant="titleMedium" style={{ marginBottom: spacing.sm }}>
+        Fund
+      </Text>
+      {fundDonations?.map((fd, index) => <FundDonation key={`fund-donation-${fd.fundId || index}`} fundDonation={fd} funds={funds} updatedFunction={handleUpdated} index={index} />)}
       <Button mode="text" onPress={addRow} style={{ marginTop: spacing.xs }}>
         Add more
       </Button>

@@ -10,12 +10,16 @@
   "semi": true,
   "jsxSingleQuote": false,
   "jsxBracketSameLine": false,
+  "parenSpacing": false,
+  "jsxParens": "avoid",
   "overrides": [
     {
-      "files": "*.ts",
+      "files": ["*.tsx", "*.jsx"],
       "options": {
         "parser": "typescript",
-        "bracketSameLine": true
+        "bracketSameLine": true,
+        "parenSpacing": false,
+        "jsxParens": "avoid"
       }
     }
   ]

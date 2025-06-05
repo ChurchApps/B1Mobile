@@ -1,55 +1,53 @@
-import { CacheHelper, Constants, EnvironmentHelper, UserHelper } from '@/src/helpers';
-import { ErrorHelper } from '@/src/helpers/ErrorHelper';
-import { NavigationHelper } from '@/src/helpers/NavigationHelper';
+import { CacheHelper, EnvironmentHelper, UserHelper } from "@/src/helpers";
+import { ErrorHelper } from "@/src/helpers/ErrorHelper";
+import { NavigationHelper } from "@/src/helpers/NavigationHelper";
 import { ApiHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Image, Linking, ScrollView, StyleSheet, View } from 'react-native';
-import RNRestart from 'react-native-restart';
-import { DimensionHelper } from '../helpers/DimensionHelper';
-import { useAppTheme } from '@/src/theme';
-import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
+import RNRestart from "react-native-restart";
+import { DimensionHelper } from "../helpers/DimensionHelper";
+import { useAppTheme } from "@/src/theme";
+import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from "react-native-paper";
 
 export function CustomDrawer(props: any) {
   const { goBack, openDrawer } = props.navigation;
   const { theme, spacing } = useAppTheme();
   const paperTheme = useTheme();
-  const [churchName, setChurchName] = useState('');
+  const [churchName, setChurchName] = useState("");
   const [churchEmpty, setChurchEmpty] = useState(true);
   const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [userProfile, setUserProfile] = useState('');
+  const [userProfile, setUserProfile] = useState("");
 
   const menuList: any[] = [];
 
   useEffect(() => {
     getChurch();
     updateDrawerList();
-  }, [props.navigation])
+  }, [props.navigation]);
 
   const getChurch = async () => {
     try {
       if (UserHelper.user) setUser(UserHelper.user);
 
       if (CacheHelper.church !== null) {
-        setChurchName(CacheHelper.church.name ?? "")
-        setChurchEmpty(false)
+        setChurchName(CacheHelper.church.name ?? "");
+        setChurchEmpty(false);
         //updateDrawerList();
         getMemberData(UserHelper.currentUserChurch?.person?.id);
         if (CacheHelper.church.id) {
           //userChurch = await ApiHelper.post("/churches/select", { churchId: CacheHelper.church.id }, "MembershipApi");
-
           //if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
         }
       }
-
     } catch (e: any) {
       ErrorHelper.logError("custom-drawer", e);
     }
-  }
+  };
 
   const updateDrawerList = async () => {
     let tabs: LinkInterface[] = [];
@@ -72,50 +70,51 @@ export function CustomDrawer(props: any) {
       });
     }
 
-
-
     let specialTabs = await getSpecialTabs();
-    const data = tabs.concat(specialTabs)
+    const data = tabs.concat(specialTabs);
 
     //setLoading(false);
     setDrawerList(data);
     UserHelper.links = data;
     setLoading(false);
     if (data.length > 0) {
-      if (data[0].linkType === "groups") router.navigate('/(drawer)/myGroups');
-      else router.navigate('/(drawer)/dashboard')
+      if (data[0].linkType === "groups") router.navigate("/(drawer)/myGroups");
+      else router.navigate("/(drawer)/dashboard");
     }
 
     //if (data.length > 0) navigate(data[0].linkType);
     //if (data.length > 0) navigateToScreen(data[0]);
     //router.navigate('/(drawer)/dashboard')
-
-
-  }
-
+  };
 
   const getSpecialTabs = async () => {
     let specialTabs: LinkInterface[] = [];
-    let showWebsite = false, showDonations = false, showMyGroups = false, showPlans = false, showDirectory = false, showLessons = false, showChums = false, showCheckin;
+    let showWebsite = false,
+      showDonations = false,
+      showMyGroups = false,
+      showPlans = false,
+      showDirectory = false,
+      showLessons = false,
+      showChums = false,
+      showCheckin;
     const uc = UserHelper.currentUserChurch;
 
     if (CacheHelper.church) {
-      const page = await ApiHelper.getAnonymous("/pages/" + CacheHelper.church.id + "/tree?url=/", "ContentApi")
+      const page = await ApiHelper.getAnonymous("/pages/" + CacheHelper.church.id + "/tree?url=/", "ContentApi");
       if (page.url) showWebsite = true;
       const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + CacheHelper.church.id, "GivingApi");
       if (gateways.length > 0) showDonations = true;
-
     }
 
     if (uc?.person) {
       try {
         const classrooms = await ApiHelper.get("/classrooms/person", "LessonsApi");
         showLessons = classrooms.length > 0;
-      } catch { }
+      } catch {}
       try {
         const campuses = await ApiHelper.get("/campuses", "AttendanceApi");
         showCheckin = campuses.length > 0;
-      } catch { }
+      } catch {}
       showChums = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
       const memberStatus = uc.person?.membershipStatus?.toLowerCase();
       showDirectory = memberStatus === "member" || memberStatus === "staff";
@@ -124,45 +123,45 @@ export function CustomDrawer(props: any) {
       });
       showMyGroups = uc?.groups?.length > 0;
     }
-    specialTabs.push({ linkType: 'separator', linkData: "", category: "", text: '', icon: '', url: "" });
-    if (showWebsite) specialTabs.push({ linkType: "url", linkData: "", category: "", text: 'Website', icon: 'home', url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
-    if (showMyGroups) specialTabs.push({ linkType: "groups", linkData: "", category: "", text: 'My Groups', icon: 'group', url: "" });
-    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData: "", category: "", text: 'Check In', icon: 'check_box', url: "" });
-    if (showDonations) specialTabs.push({ linkType: "donation", linkData: "", category: "", text: 'Donate', icon: 'volunteer_activism', url: "" });
-    if (showDirectory) specialTabs.push({ linkType: "directory", linkData: "", category: "", text: 'Member Directory', icon: 'groups', url: "" });
-    if (showPlans) specialTabs.push({ linkType: "plans", linkData: "", category: "", text: 'Plans', icon: 'event', url: "" });
-    if (showLessons) specialTabs.push({ linkType: "lessons", linkData: "", category: "", text: 'Lessons', icon: 'school', url: "" });
-    if (showChums) specialTabs.push({ linkType: "url", linkData: "", category: "", text: 'Chums', icon: 'account_circle', url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id });
+    specialTabs.push({ linkType: "separator", linkData: "", category: "", text: "", icon: "", url: "" });
+    if (showWebsite)
+      specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Website", icon: "home", url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
+    if (showMyGroups) specialTabs.push({ linkType: "groups", linkData: "", category: "", text: "My Groups", icon: "group", url: "" });
+    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData: "", category: "", text: "Check In", icon: "check_box", url: "" });
+    if (showDonations) specialTabs.push({ linkType: "donation", linkData: "", category: "", text: "Donate", icon: "volunteer_activism", url: "" });
+    if (showDirectory) specialTabs.push({ linkType: "directory", linkData: "", category: "", text: "Member Directory", icon: "groups", url: "" });
+    if (showPlans) specialTabs.push({ linkType: "plans", linkData: "", category: "", text: "Plans", icon: "event", url: "" });
+    if (showLessons) specialTabs.push({ linkType: "lessons", linkData: "", category: "", text: "Lessons", icon: "school", url: "" });
+    if (showChums)
+      specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Chums", icon: "account_circle", url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id });
     return specialTabs;
-  }
+  };
 
   const getMemberData = async (personId: any) => {
-    if (personId) ApiHelper.get("/people/" + personId, "MembershipApi").then(data => { setUserProfile(data.photo); });
-  }
+    if (personId)
+      ApiHelper.get("/people/" + personId, "MembershipApi").then(data => {
+        setUserProfile(data.photo);
+      });
+  };
 
   const logoutAction = async () => {
     await AsyncStorage.getAllKeys()
-      .then((keys) => AsyncStorage.multiRemove(keys.filter((key) => key != "CHURCH_DATA")))
+      .then(keys => AsyncStorage.multiRemove(keys.filter(key => key != "CHURCH_DATA")))
       .then(() => RNRestart.Restart());
-  }
+  };
 
   const listItem = (topItem: boolean, item: any) => {
-    if (item.linkType === 'separator') {
+    if (item.linkType === "separator") {
       return <Divider style={{ marginVertical: spacing.sm }} />;
     }
 
-    const icon = item.icon ? item.icon.split("_").join("-") : '';
-    const iconName = icon === "calendar-month" ? "calendar-today" :
-      icon === "local-library-outlined" ? "local-library" :
-        icon;
+    const icon = item.icon ? item.icon.split("_").join("-") : "";
+    const iconName = icon === "calendar-month" ? "calendar-today" : icon === "local-library-outlined" ? "local-library" : icon;
 
     return (
       <List.Item
         title={item.text}
-        left={props => topItem ?
-          <Image source={item.image} style={styles.tabIcon} /> :
-          <MaterialIcons name={iconName} size={24} color={paperTheme.colors.primary} style={styles.drawerIcon} />
-        }
+        left={props => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={paperTheme.colors.primary} style={styles.drawerIcon} />)}
         onPress={() => {
           NavigationHelper.navigateToScreen(item, router.navigate);
           props.navigation.closeDrawer();
@@ -178,11 +177,10 @@ export function CustomDrawer(props: any) {
       {getUserInfo()}
       <Button
         mode="outlined"
-        onPress={() => router.navigate('/(drawer)/churchSearch')}
+        onPress={() => router.navigate("/(drawer)/churchSearch")}
         style={styles.churchButton}
-        icon={() => <MaterialIcons name={churchEmpty ? "search" : "church"} size={24} color={paperTheme.colors.primary} />}
-      >
-        {churchEmpty ? 'Find your church...' : churchName}
+        icon={() => <MaterialIcons name={churchEmpty ? "search" : "church"} size={24} color={paperTheme.colors.primary} />}>
+        {churchEmpty ? "Find your church..." : churchName}
       </Button>
     </Surface>
   );
@@ -195,15 +193,9 @@ export function CustomDrawer(props: any) {
         <Card.Content style={styles.userCardContent}>
           <View style={styles.userInfoContainer}>
             {UserHelper.currentUserChurch.person.photo ? (
-              <Avatar.Image
-                size={DimensionHelper.wp(12)}
-                source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo }}
-              />
+              <Avatar.Image size={DimensionHelper.wp(12)} source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo }} />
             ) : (
-              <Avatar.Text
-                size={DimensionHelper.wp(12)}
-                label={`${user.firstName?.[0] || ''}${user.lastName?.[0] || ''}`}
-              />
+              <Avatar.Text size={DimensionHelper.wp(12)} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />
             )}
             <View style={styles.userTextContainer}>
               <Text variant="titleMedium" style={styles.userName}>
@@ -214,13 +206,12 @@ export function CustomDrawer(props: any) {
                 onPress={editProfileAction}
                 style={styles.editProfileButton}
                 textColor={paperTheme.colors.primary}
-                icon={() => <MaterialIcons name="edit" size={24} color={paperTheme.colors.primary} />}
-              >
+                icon={() => <MaterialIcons name="edit" size={24} color={paperTheme.colors.primary} />}>
                 Edit profile
               </Button>
             </View>
             {UserHelper.user && (
-              <TouchableRipple onPress={() => router.navigate('/(drawer)/searchMessageUser')}>
+              <TouchableRipple onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
                 <MaterialCommunityIcons name="email-outline" size={24} color={paperTheme.colors.onSurface} />
               </TouchableRipple>
             )}
@@ -235,19 +226,18 @@ export function CustomDrawer(props: any) {
     if (UserHelper.currentUserChurch.jwt) url += "&jwt=" + UserHelper.currentUserChurch.jwt;
     Linking.openURL(url);
     logoutAction();
-  }
+  };
 
   const drawerFooterComponent = () => {
-    const pkg = require('../../package.json');
+    const pkg = require("../../package.json");
     return (
       <Surface style={styles.footerContainer} elevation={1}>
         <Button
           mode="outlined"
-          onPress={UserHelper.user ? logoutAction : () => router.navigate('/auth/login')}
+          onPress={UserHelper.user ? logoutAction : () => router.navigate("/auth/login")}
           style={styles.logoutButton}
-          icon={() => <MaterialIcons name={UserHelper.user ? "logout" : "login"} size={24} color={paperTheme.colors.primary} />}
-        >
-          {UserHelper.user ? 'Log out' : 'Login'}
+          icon={() => <MaterialIcons name={UserHelper.user ? "logout" : "login"} size={24} color={paperTheme.colors.primary} />}>
+          {UserHelper.user ? "Log out" : "Login"}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>
           Version {pkg.version}
@@ -261,9 +251,7 @@ export function CustomDrawer(props: any) {
       <ScrollView>
         {drawerHeaderComponent()}
         {drawerList.map((item, index) => (
-          <View key={item.id || index}>
-            {listItem(false, item)}
-          </View>
+          <View key={item.id || index}>{listItem(false, item)}</View>
         ))}
         {drawerFooterComponent()}
       </ScrollView>
@@ -274,35 +262,35 @@ export function CustomDrawer(props: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa'
+    backgroundColor: "#f8f9fa"
   },
   headerContainer: {
     padding: 16,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     marginBottom: 8
   },
   userCard: {
     marginBottom: 16,
-    backgroundColor: 'white'
+    backgroundColor: "white"
   },
   userCardContent: {
     padding: 0
   },
   userInfoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
   },
   userTextContainer: {
     flex: 1,
     marginLeft: 12
   },
   userName: {
-    fontWeight: '600'
+    fontWeight: "600"
   },
   editProfileButton: {
     marginTop: 4,
-    alignSelf: 'flex-start'
+    alignSelf: "flex-start"
   },
   churchButton: {
     marginTop: 8
@@ -318,21 +306,21 @@ const styles = StyleSheet.create({
   footerContainer: {
     padding: 16,
     marginTop: 8,
-    backgroundColor: 'white'
+    backgroundColor: "white"
   },
   logoutButton: {
     marginBottom: 8
   },
   versionText: {
-    textAlign: 'center',
-    color: '#a0d3fc'
+    textAlign: "center",
+    color: "#a0d3fc"
   },
   drawerIcon: {
     marginRight: 8,
-    alignSelf: 'center',
+    alignSelf: "center"
   },
   listItemText: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: "500"
   }
 });

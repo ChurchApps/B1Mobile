@@ -4,9 +4,6 @@ import { PersonInterface } from "./Interfaces";
 export class PersonHelper {
   static getPhotoUrl(person: PersonInterface) {
     if (!person?.photo) return null;
-    else
-      return person?.photo?.startsWith("data:image/png;base64,")
-        ? person.photo
-        : EnvironmentHelper.ContentRoot + person.photo;
+    else return person?.photo?.startsWith("data:image/png;base64,") ? person.photo : EnvironmentHelper.ContentRoot + person.photo;
   }
 }

@@ -1,6 +1,6 @@
 import { globalStyles } from "@/src/helpers";
-import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import React from "react";
+import { ActivityIndicator } from "react-native";
 
 interface Props {
   isLoading: any;

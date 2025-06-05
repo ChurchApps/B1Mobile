@@ -1,11 +1,11 @@
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import React, { useState } from "react";
 import { FlatList, Keyboard, View } from "react-native";
-import { ApiHelper, Constants, ConversationInterface, UserHelper, globalStyles } from "@/src/helpers";
+import { ApiHelper, ConversationInterface, UserHelper } from "@/src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import Notes from "./Notes";
-import { TextInput, IconButton, Surface } from 'react-native-paper';
-import { useAppTheme } from '@/src/theme';
+import { TextInput, IconButton, Surface } from "react-native-paper";
+import { useAppTheme } from "@/src/theme";
 
 interface NewConversation {
   placeholder: string;
@@ -13,15 +13,11 @@ interface NewConversation {
   message?: MessageInterface;
 }
 
-const ConversationPopup = ({
-  conversations,
-  loadConversations,
-  groupId,
-}: any) => {
+const ConversationPopup = ({ conversations, loadConversations, groupId }: any) => {
   const { theme, componentStyles, spacing } = useAppTheme();
   const [newMessage] = useState<MessageInterface>();
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
-  const textRef = React.useRef('')
+  const textRef = React.useRef("");
 
   const handleReply = (value: number) => setShowReplyBox(value);
   const onUpdate = () => loadConversations();
@@ -42,13 +38,13 @@ const ConversationPopup = ({
         if (!cId) cId = m && (await createConversation(m));
         const nM = { ...m };
         nM.conversationId = cId;
-        await ApiHelper.post("/messages", [nM], "MessagingApi").then((data) => {
+        await ApiHelper.post("/messages", [nM], "MessagingApi").then(data => {
           if (data) {
             onUpdate();
             textRef.current = "";
             setShowReplyBox(null);
           }
-        })
+        });
       }
     } catch (err) {
       console.log("err", err);
@@ -61,18 +57,10 @@ const ConversationPopup = ({
       allowAnonymousPosts: false,
       contentType: "group",
       contentId: groupId,
-      title:
-        UserHelper.user.firstName +
-        " " +
-        UserHelper.user.lastName +
-        +" Conversation",
-      visibility: "hidden",
+      title: UserHelper.user.firstName + " " + UserHelper.user.lastName + +" Conversation",
+      visibility: "hidden"
     };
-    const result: ConversationInterface[] = await ApiHelper.post(
-      "/conversations",
-      [conv],
-      "MessagingApi"
-    );
+    const result: ConversationInterface[] = await ApiHelper.post("/conversations", [conv], "MessagingApi");
 
     const cId = result[0].id;
     return cId;
@@ -80,99 +68,75 @@ const ConversationPopup = ({
 
   const getNotes = (item: any) => {
     let noteArray: React.ReactNode[] = [];
-    for (let i = 1; i < item?.messages?.length; i++)
-      noteArray.push(
-        <Notes
-          key={item.messages[i].id}
-          item={[]}
-          message={item.messages[i]}
-          showReplyBox={showReplyBox}
-          handleReply={handleReply}
-        />
-      );
+    for (let i = 1; i < item?.messages?.length; i++) noteArray.push(<Notes key={item.messages[i].id} item={[]} message={item.messages[i]} showReplyBox={showReplyBox} handleReply={handleReply} />);
     return noteArray;
   };
-  const renderConversations = (item: any, index: number) => {
-    return (
-      <View>
-        <RenderContent item={item} message={item.messages[0]} idx={index} />
-      </View>
-    );
-  };
+  const renderConversations = (item: any, index: number) => (
+    <View>
+      <RenderContent item={item} message={item.messages[0]} idx={index} />
+    </View>
+  );
 
-  const RenderContent = ({ item, message, idx }: any) => {
-    return (
-      <View style={{ borderBottomWidth: 1, borderBottomColor: "#EFEFEF" }}>
-        <Notes
-          item={item}
-          message={message}
-          idx={idx}
-          showReplyBox={showReplyBox}
-          handleReply={handleReply}
-        />
-        {idx === showReplyBox && (
-          <RenderNewConversation placeholder={"Reply ..."} type="reply" message={message} />
-        )}
-        <View style={{ marginLeft: 64 }}>{getNotes(item)}</View>
-      </View>
-    );
-  };
+  const RenderContent = ({ item, message, idx }: any) => (
+    <View style={{ borderBottomWidth: 1, borderBottomColor: "#EFEFEF" }}>
+      <Notes item={item} message={message} idx={idx} showReplyBox={showReplyBox} handleReply={handleReply} />
+      {idx === showReplyBox && <RenderNewConversation placeholder={"Reply ..."} type="reply" message={message} />}
+      <View style={{ marginLeft: 64 }}>{getNotes(item)}</View>
+    </View>
+  );
 
-  const RenderNewConversation = ({ placeholder, type, message }: NewConversation) => {
-    return (
-      <Surface
+  const RenderNewConversation = ({ placeholder, type, message }: NewConversation) => (
+    <Surface
+      style={{
+        ...componentStyles.surface,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginTop: type === "new" ? spacing.lg : 0,
+        marginBottom: type === "new" ? spacing.lg : spacing.md,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.sm,
+        borderRadius: theme.roundness * 2,
+        elevation: 4,
+        backgroundColor: theme.colors.background
+      }}>
+      <TextInput
+        mode="outlined"
+        onChangeText={text => (textRef.current = text)}
+        placeholder={placeholder}
+        multiline={false}
+        numberOfLines={1}
         style={{
-          ...componentStyles.surface,
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: '100%',
-          marginTop: type === "new" ? spacing.lg : 0,
-          marginBottom: type === "new" ? spacing.lg : spacing.md,
-          paddingHorizontal: spacing.md,
-          paddingVertical: spacing.sm,
-          borderRadius: theme.roundness * 2,
-          elevation: 4,
-          backgroundColor: theme.colors.background,
+          flex: 1,
+          marginLeft: type === "new" ? 0 : spacing.xl,
+          marginRight: spacing.sm,
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.roundness,
+          minHeight: 40
         }}
-      >
-        <TextInput
-          mode="outlined"
-          onChangeText={text => textRef.current = text}
-          placeholder={placeholder}
-          multiline={false}
-          numberOfLines={1}
-          style={{
-            flex: 1,
-            marginLeft: type === "new" ? 0 : spacing.xl,
-            marginRight: spacing.sm,
-            backgroundColor: theme.colors.surface,
-            borderRadius: theme.roundness,
-            minHeight: 40
-          }}
-          contentStyle={{
-            fontSize: DimensionHelper.wp(4.2),
-            paddingTop: DimensionHelper.hp(1.2),
-          }}
-          blurOnSubmit={true}
-          onSubmitEditing={() => Keyboard.dismiss()}
-          value={newMessage?.content}
-        />
-        <IconButton
-          icon="send"
-          mode="contained"
-          size={24}
-          onPress={() => handleSave(message)}
-          style={{ margin: 0, backgroundColor: theme.colors.primary, borderRadius: theme.roundness }}
-          iconColor={theme.colors.onPrimary}
-        />
-      </Surface>
-    );
-  };
+        contentStyle={{
+          fontSize: DimensionHelper.wp(4.2),
+          paddingTop: DimensionHelper.hp(1.2)
+        }}
+        blurOnSubmit={true}
+        onSubmitEditing={() => Keyboard.dismiss()}
+        value={newMessage?.content}
+      />
+      <IconButton
+        icon="send"
+        mode="contained"
+        size={24}
+        onPress={() => handleSave(message)}
+        style={{ margin: 0, backgroundColor: theme.colors.primary, borderRadius: theme.roundness }}
+        iconColor={theme.colors.onPrimary}
+      />
+    </Surface>
+  );
 
   return (
     <View>
-      <View style={{ height: 'auto', maxHeight: DimensionHelper.hp(60) }}>
+      <View style={{ height: "auto", maxHeight: DimensionHelper.hp(60) }}>
         <FlatList
           data={conversations}
           showsVerticalScrollIndicator={false}
@@ -187,5 +151,3 @@ const ConversationPopup = ({
 };
 
 export default ConversationPopup;
-
-

@@ -1,25 +1,25 @@
-import * as Updates from 'expo-updates';
-import { Alert, Platform } from 'react-native';
+import * as Updates from "expo-updates";
+import { Alert } from "react-native";
 
 export class UpdateHelper {
   static async checkForUpdates() {
     try {
       const update = await Updates.checkForUpdateAsync();
       if (update.isAvailable) {
-        Alert.alert("Update Available", "A new version of the app is available. Would you like to update now?",
-          [
-            { text: "Later", style: "cancel" },
-            {
-              text: "Update",
-              onPress: async () => {
-                try {
-                  await Updates.fetchUpdateAsync();
-                  await Updates.reloadAsync();
-                } catch (error) { Alert.alert("Error", "Failed to update the app. Please try again later."); }
+        Alert.alert("Update Available", "A new version of the app is available. Would you like to update now?", [
+          { text: "Later", style: "cancel" },
+          {
+            text: "Update",
+            onPress: async () => {
+              try {
+                await Updates.fetchUpdateAsync();
+                await Updates.reloadAsync();
+              } catch (error) {
+                Alert.alert("Error", "Failed to update the app. Please try again later.");
               }
             }
-          ]
-        );
+          }
+        ]);
       }
     } catch (error) {
       console.log("Error checking for updates:", error);
@@ -37,4 +37,4 @@ export class UpdateHelper {
       console.log("Error initializing updates:", error);
     }
   }
-} 
+}
