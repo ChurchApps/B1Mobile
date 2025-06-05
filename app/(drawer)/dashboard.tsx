@@ -41,7 +41,7 @@ const Dashboard = () => {
   const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
-    const subscription = Dimensions.addEventListener("change", () => {});
+    const subscription = Dimensions.addEventListener("change", () => { });
     UserHelper.addOpenScreenEvent("Dashboard");
     loadDashboardData();
     return () => subscription.remove();
@@ -78,18 +78,26 @@ const Dashboard = () => {
       ? { uri: item.photo }
       : item.linkType.toLowerCase() === "groups"
         ? require("@/src/assets/images/dash_worship.png")
-        : item.linkType.toLowerCase() === "checkin"
-          ? require("@/src/assets/images/dash_checkin.png")
-          : item.linkType.toLowerCase() === "donation"
-            ? require("@/src/assets/images/dash_donation.png")
-            : item.linkType.toLowerCase() === "directory"
-              ? require("@/src/assets/images/dash_directory.png")
-              : item.linkType.toLowerCase() === "plans"
-                ? require("@/src/assets/images/dash_votd.png")
-                : require("@/src/assets/images/dash_url.png");
+        : item.linkType.toLowerCase() === "bible"
+          ? require("@/src/assets/images/dash_bible.png")
+          : item.linkType.toLowerCase() === "votd"
+            ? require("@/src/assets/images/dash_votd.png")
+            : item.linkType.toLowerCase() === "lessons"
+              ? require("@/src/assets/images/dash_lessons.png")
+              : item.linkType.toLowerCase() === "checkin"
+                ? require("@/src/assets/images/dash_checkin.png")
+                : item.text.toLowerCase() === "chums"
+                  ? require("@/src/assets/images/dash_chums.png")
+                  : item.linkType.toLowerCase() === "donation"
+                    ? require("@/src/assets/images/dash_donation.png")
+                    : item.linkType.toLowerCase() === "directory"
+                      ? require("@/src/assets/images/dash_directory.png")
+                      : item.linkType.toLowerCase() === "plans"
+                        ? require("@/src/assets/images/dash_votd.png")
+                        : require("@/src/assets/images/dash_url.png");
 
     return (
-      <Card key={item.id} style={styles.card} mode="elevated" onPress={() => NavigationHelper.navigateToScreen(item, router.navigate)}>
+      <Card key={`card-${item.id || item.linkType + item.text}`} style={styles.card} mode="elevated" onPress={() => NavigationHelper.navigateToScreen(item, router.navigate)}>
         <Card.Cover source={backgroundImage} style={styles.cardImage} />
         <Card.Content style={styles.cardContent}>
           <Text variant="titleMedium" style={styles.cardText}>
@@ -107,7 +115,7 @@ const Dashboard = () => {
     return (
       <View style={styles.gridContainer}>
         {items.map(item => (
-          <View key={item.id} style={styles.gridItem}>
+          <View key={item.id || item.linkType + item.text} style={styles.gridItem}>
             {getButton(item)}
           </View>
         ))}
