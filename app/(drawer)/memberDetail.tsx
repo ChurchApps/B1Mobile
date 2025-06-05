@@ -1,25 +1,23 @@
-import React from 'react';
-import { Loader } from '@/src/components/Loader';
-import { MainHeader } from '@/src/components/wrapper/MainHeader';
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from '@/src/helpers';
-import { NavigationProps } from '@/src/interfaces';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import Icon from '@expo/vector-icons/MaterialCommunityIcons';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
-import { Alert, Image, Linking, ScrollView, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-import { useAppTheme } from '@/src/theme';
-import { ActivityIndicator, Button, Card, Surface, Text } from 'react-native-paper';
+import React from "react";
+import { MainHeader } from "@/src/components/wrapper/MainHeader";
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "@/src/helpers";
+import { NavigationProps } from "@/src/interfaces";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import { Alert, Image, Linking, ScrollView, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
+import { useAppTheme } from "@/src/theme";
+import { ActivityIndicator, Button, Card, Surface, Text } from "react-native-paper";
 
 interface Props {
   navigation: NavigationProps;
   route: {
     params: {
-      member: any,
-    }
+      member: any;
+    };
   };
 }
 
@@ -36,21 +34,21 @@ const MemberDetail = (props: Props) => {
   useEffect(() => {
     getHouseholdMembersList();
     UserHelper.addOpenScreenEvent("Member Detail Screen");
-  }, [])
+  }, []);
 
   const onEmailClick = (email: string) => {
-    if (email) Linking.openURL(`mailto:${email}`)
-    else Alert.alert("Sorry", 'Email of this user is not available.');
-  }
+    if (email) Linking.openURL(`mailto:${email}`);
+    else Alert.alert("Sorry", "Email of this user is not available.");
+  };
 
   const onPhoneClick = (phone: any) => {
-    if (phone) Linking.openURL(`tel:${phone}`)
-    else Alert.alert("Sorry", 'Phone number of this user is not available.');
-  }
+    if (phone) Linking.openURL(`tel:${phone}`);
+    else Alert.alert("Sorry", "Phone number of this user is not available.");
+  };
   const onAddressClick = () => {
     if (memberinfo.address1) Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${memberinfo.address1}`);
-    else Alert.alert("Sorry", 'Address of this user is not available.');
-  }
+    else Alert.alert("Sorry", "Address of this user is not available.");
+  };
 
   const getHouseholdMembersList = async () => {
     setLoading(true);
@@ -58,22 +56,24 @@ const MemberDetail = (props: Props) => {
     ApiHelper.get("/people/household/" + householdId, "MembershipApi").then(data => {
       setLoading(false);
       setHouseholdList(data);
-    })
-  }
+    });
+  };
 
   const onMembersClick = (item: any) => {
-    scrollViewRef.current.scrollTo({ y: 0, animated: false })
+    scrollViewRef.current.scrollTo({ y: 0, animated: false });
     router.navigate({
-      pathname: '/(drawer)/memberDetail',
+      pathname: "/(drawer)/memberDetail",
       params: { member: JSON.stringify(item) }
-    })
-  }
+    });
+  };
 
   const renderMemberItem = (item: any) => (
     <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={() => onMembersClick(item)}>
-      <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
         <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
-        <Text variant="titleMedium" numberOfLines={1}>{item.name.display}</Text>
+        <Text variant="titleMedium" numberOfLines={1}>
+          {item.name.display}
+        </Text>
       </Card.Content>
     </Card>
   );
@@ -82,41 +82,62 @@ const MemberDetail = (props: Props) => {
     <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
       <MainHeader title="Directory" openDrawer={navigation.openDrawer} back={navigation.goBack} />
       <ScrollView style={{ flex: 1 }} ref={scrollViewRef} contentContainerStyle={{ padding: spacing.md }}>
-        <Image source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member} style={{ width: 96, height: 96, borderRadius: 48, alignSelf: 'center', marginBottom: spacing.md }} />
-        <Surface style={{ alignItems: 'center', marginBottom: spacing.md, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, elevation: 2, padding: spacing.md }}>
-          <Text variant="titleLarge" style={{ fontWeight: '600', marginBottom: spacing.sm }}>{parsedMember?.name?.display}</Text>
-          <Button mode="contained" icon="message" onPress={() => router.navigate({ pathname: '/(drawer)/messageScreen', params: { userDetails: JSON.stringify(parsedMember) } })} style={{ marginBottom: spacing.sm }}>Message</Button>
+        <Image
+          source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member}
+          style={{ width: 96, height: 96, borderRadius: 48, alignSelf: "center", marginBottom: spacing.md }}
+        />
+        <Surface style={{ alignItems: "center", marginBottom: spacing.md, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, elevation: 2, padding: spacing.md }}>
+          <Text variant="titleLarge" style={{ fontWeight: "600", marginBottom: spacing.sm }}>
+            {parsedMember?.name?.display}
+          </Text>
+          <Button
+            mode="contained"
+            icon="message"
+            onPress={() => router.navigate({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(parsedMember) } })}
+            style={{ marginBottom: spacing.sm }}>
+            Message
+          </Button>
         </Surface>
         <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={() => onEmailClick(memberinfo.email)}>
-          <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Icon name={'email'} color={theme.colors.primary} size={24} style={{ marginRight: spacing.md }} />
+          <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
+            <Icon name={"email"} color={theme.colors.primary} size={24} style={{ marginRight: spacing.md }} />
             <View style={{ flex: 1 }}>
-              <Text variant="bodyLarge" style={{ fontWeight: '500' }}>Email:</Text>
-              <Text variant="bodyMedium">{memberinfo.email ? memberinfo.email : '-'}</Text>
+              <Text variant="bodyLarge" style={{ fontWeight: "500" }}>
+                Email:
+              </Text>
+              <Text variant="bodyMedium">{memberinfo.email ? memberinfo.email : "-"}</Text>
             </View>
           </Card.Content>
         </Card>
         <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={() => onPhoneClick(memberinfo.homePhone)}>
-          <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FontAwesome5 name={'phone'} color={theme.colors.primary} size={24} style={{ marginRight: spacing.md }} />
+          <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
+            <FontAwesome5 name={"phone"} color={theme.colors.primary} size={24} style={{ marginRight: spacing.md }} />
             <View style={{ flex: 1 }}>
-              <Text variant="bodyLarge" style={{ fontWeight: '500' }}>Phone:</Text>
-              <Text variant="bodyMedium">{memberinfo.homePhone ? memberinfo.homePhone : '-'}</Text>
+              <Text variant="bodyLarge" style={{ fontWeight: "500" }}>
+                Phone:
+              </Text>
+              <Text variant="bodyMedium">{memberinfo.homePhone ? memberinfo.homePhone : "-"}</Text>
             </View>
           </Card.Content>
         </Card>
         <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={onAddressClick}>
-          <Card.Content style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <FontAwesome5 name={'location-arrow'} color={theme.colors.primary} size={24} style={{ marginRight: spacing.md }} />
+          <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
+            <FontAwesome5 name={"location-arrow"} color={theme.colors.primary} size={24} style={{ marginRight: spacing.md }} />
             <View style={{ flex: 1 }}>
-              <Text variant="bodyLarge" style={{ fontWeight: '500' }}>Address:</Text>
+              <Text variant="bodyLarge" style={{ fontWeight: "500" }}>
+                Address:
+              </Text>
               {memberinfo.address1 ? <Text variant="bodyMedium">{memberinfo.address1}</Text> : null}
               {memberinfo.address2 ? <Text variant="bodyMedium">{memberinfo.address2}</Text> : null}
-              <Text variant="bodyMedium">{memberinfo.city ? memberinfo.city + ',' : ''} {memberinfo.state ? memberinfo.state + '-' : ''} {memberinfo.zip}</Text>
+              <Text variant="bodyMedium">
+                {memberinfo.city ? memberinfo.city + "," : ""} {memberinfo.state ? memberinfo.state + "-" : ""} {memberinfo.zip}
+              </Text>
             </View>
           </Card.Content>
         </Card>
-        <Text variant="titleSmall" style={{ alignSelf: 'center', marginVertical: spacing.md }}>- Household Members -</Text>
+        <Text variant="titleSmall" style={{ alignSelf: "center", marginVertical: spacing.md }}>
+          - Household Members -
+        </Text>
         <FlatList data={householdList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} scrollEnabled={false} />
       </ScrollView>
       {isLoading && <ActivityIndicator animating={true} size="large" style={{ margin: spacing.md }} />}
@@ -124,4 +145,4 @@ const MemberDetail = (props: Props) => {
   );
 };
 
-export default MemberDetail
+export default MemberDetail;

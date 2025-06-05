@@ -1,39 +1,37 @@
-import React from 'react';
-import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { NavigationProp, useIsFocused } from '@react-navigation/native';
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Provider as PaperProvider, Appbar, Card, Text, useTheme, Surface, ActivityIndicator, MD3LightTheme, adaptNavigationTheme, Portal, Modal } from 'react-native-paper';
-import { MaterialIcons } from '@expo/vector-icons';
-import { CacheHelper, UserHelper, Constants } from '@/src/helpers';
-import { NavigationHelper } from '@/src/helpers/NavigationHelper';
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
-import { LinkInterface } from '@/src/helpers/Interfaces';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import React from "react";
+import { Dimensions, Image, ScrollView, StyleSheet, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { NavigationProp, useIsFocused } from "@react-navigation/native";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import { Provider as PaperProvider, Appbar, Card, Text, useTheme, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
+import { CacheHelper, UserHelper } from "@/src/helpers";
+import { NavigationHelper } from "@/src/helpers/NavigationHelper";
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { LinkInterface } from "@/src/helpers/Interfaces";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
-import { LinearGradient } from 'expo-linear-gradient';
-import { HeaderBell } from '@/src/components/wrapper/HeaderBell';
-import { NotificationTab } from '@/src/components/NotificationView';
+import { HeaderBell } from "@/src/components/wrapper/HeaderBell";
+import { NotificationTab } from "@/src/components/NotificationView";
 
 const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: '#175ec1',
-    secondary: '#f0f2f5',
-    surface: '#ffffff',
-    background: '#f8f9fa',
+    primary: "#175ec1",
+    secondary: "#f0f2f5",
+    surface: "#ffffff",
+    background: "#f8f9fa",
     elevation: {
-      level0: 'transparent',
-      level1: '#ffffff',
-      level2: '#f8f9fa',
-      level3: '#f0f2f5',
-      level4: '#e9ecef',
-      level5: '#e2e6ea',
+      level0: "transparent",
+      level1: "#ffffff",
+      level2: "#f8f9fa",
+      level3: "#f0f2f5",
+      level4: "#e9ecef",
+      level5: "#e2e6ea"
     }
-  },
+  }
 };
 
 const Dashboard = () => {
@@ -42,14 +40,14 @@ const Dashboard = () => {
   const focused = useIsFocused();
   const paperTheme = useTheme();
   const [isLoading, setLoading] = useState(true);
-  const [dimension, setDimension] = useState(Dimensions.get('screen'));
+  const [dimension, setDimension] = useState(Dimensions.get("screen"));
   const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
-    const subscription = Dimensions.addEventListener('change', () => {
-      setDimension(Dimensions.get('screen'));
+    const subscription = Dimensions.addEventListener("change", () => {
+      setDimension(Dimensions.get("screen"));
     });
-    UserHelper.addOpenScreenEvent('Dashboard');
+    UserHelper.addOpenScreenEvent("Dashboard");
     loadDashboardData();
     return () => subscription.remove();
   }, []);
@@ -63,7 +61,7 @@ const Dashboard = () => {
       }
       setLoading(false);
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      console.error("Error loading dashboard data:", error);
       setLoading(false);
     }
   };
@@ -76,24 +74,32 @@ const Dashboard = () => {
   }, [focused]);
 
   const checkRedirect = () => {
-    if (!CacheHelper.church) router.navigate('/(drawer)/churchSearch');
+    if (!CacheHelper.church) router.navigate("/(drawer)/churchSearch");
   };
 
   const getButton = (item: LinkInterface) => {
     if (item.linkType === "separator") return null;
-    let backgroundImage = item.photo ? { uri: item.photo } :
-      item.linkType.toLowerCase() === "groups" ? require('@/src/assets/images/dash_worship.png') :
-        item.linkType.toLowerCase() === "checkin" ? require('@/src/assets/images/dash_checkin.png') :
-          item.linkType.toLowerCase() === "donation" ? require('@/src/assets/images/dash_donation.png') :
-            item.linkType.toLowerCase() === "directory" ? require('@/src/assets/images/dash_directory.png') :
-              item.linkType.toLowerCase() === "plans" ? require('@/src/assets/images/dash_votd.png') :
-                require('@/src/assets/images/dash_url.png');
+    let backgroundImage = item.photo
+      ? { uri: item.photo }
+      : item.linkType.toLowerCase() === "groups"
+        ? require("@/src/assets/images/dash_worship.png")
+        : item.linkType.toLowerCase() === "checkin"
+          ? require("@/src/assets/images/dash_checkin.png")
+          : item.linkType.toLowerCase() === "donation"
+            ? require("@/src/assets/images/dash_donation.png")
+            : item.linkType.toLowerCase() === "directory"
+              ? require("@/src/assets/images/dash_directory.png")
+              : item.linkType.toLowerCase() === "plans"
+                ? require("@/src/assets/images/dash_votd.png")
+                : require("@/src/assets/images/dash_url.png");
 
     return (
       <Card key={item.id} style={styles.card} mode="elevated" onPress={() => NavigationHelper.navigateToScreen(item, router.navigate)}>
         <Card.Cover source={backgroundImage} style={styles.cardImage} />
         <Card.Content style={styles.cardContent}>
-          <Text variant="titleMedium" style={styles.cardText}>{item.text}</Text>
+          <Text variant="titleMedium" style={styles.cardText}>
+            {item.text}
+          </Text>
         </Card.Content>
       </Card>
     );
@@ -102,10 +108,10 @@ const Dashboard = () => {
   const getButtons = () => {
     if (isLoading) return null;
     if (!Array.isArray(UserHelper.links)) return null;
-    const items = UserHelper.links.filter(item => item.linkType !== 'separator');
+    const items = UserHelper.links.filter(item => item.linkType !== "separator");
     return (
       <View style={styles.gridContainer}>
-        {items.map((item) => (
+        {items.map(item => (
           <View key={item.id} style={styles.gridItem}>
             {getButton(item)}
           </View>
@@ -118,7 +124,11 @@ const Dashboard = () => {
     if (UserHelper.churchAppearance?.logoLight) {
       return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={styles.logo} />;
     }
-    return <Text variant="headlineMedium" style={styles.churchName}>{CacheHelper.church?.name || ""}</Text>;
+    return (
+      <Text variant="headlineMedium" style={styles.churchName}>
+        {CacheHelper.church?.name || ""}
+      </Text>
+    );
   };
 
   return (
@@ -163,19 +173,19 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: theme.colors.primary,
     elevation: 4,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
-    shadowRadius: 3,
+    shadowRadius: 3
   },
   headerTitle: {
-    color: 'white',
+    color: "white",
     fontSize: 20,
-    fontWeight: '600'
+    fontWeight: "600"
   },
   contentContainer: {
     flex: 1,
-    backgroundColor: '#f8f9fa'
+    backgroundColor: "#f8f9fa"
   },
   scrollView: {
     flex: 1
@@ -187,46 +197,46 @@ const styles = StyleSheet.create({
   brandContainer: {
     margin: 16,
     padding: 16,
-    alignItems: 'center',
-    backgroundColor: 'white',
+    alignItems: "center",
+    backgroundColor: "white",
     borderRadius: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2
   },
   logo: {
-    width: '100%',
+    width: "100%",
     height: DimensionHelper.wp(25),
-    resizeMode: 'contain'
+    resizeMode: "contain"
   },
   churchName: {
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 8,
     color: theme.colors.primary,
     fontSize: 24,
-    fontWeight: '600'
+    fontWeight: "600"
   },
   gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     padding: 12,
-    justifyContent: 'space-between'
+    justifyContent: "space-between"
   },
   gridItem: {
-    width: '48%',
+    width: "48%",
     marginBottom: 16
   },
   card: {
     height: 160,
-    overflow: 'hidden',
+    overflow: "hidden",
     borderRadius: 12,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 2,
+    shadowRadius: 2
   },
   cardImage: {
     height: 120,
@@ -235,37 +245,37 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     padding: 12,
-    alignItems: 'center',
-    backgroundColor: 'white'
+    alignItems: "center",
+    backgroundColor: "white"
   },
   cardText: {
-    textAlign: 'center',
+    textAlign: "center",
     color: theme.colors.primary,
     fontSize: 16,
-    fontWeight: '500'
+    fontWeight: "500"
   },
   bellContainer: {
     marginRight: 8,
     width: 40,
     height: 40,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center"
   },
   bellWrapper: {
     transform: [{ scale: 1.2 }],
     opacity: 0.9
   },
   modalContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     margin: 20,
     borderRadius: 12,
-    height: '80%',
-    overflow: 'hidden',
+    height: "80%",
+    overflow: "hidden",
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 3.84
   }
 });
 

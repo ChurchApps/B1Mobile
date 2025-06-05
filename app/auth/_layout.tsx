@@ -1,5 +1,5 @@
-import React from 'react';
-import { Stack } from 'expo-router';
+import React from "react";
+import { Stack } from "expo-router";
 
 export default function AuthLayout() {
   return (
@@ -10,8 +10,8 @@ export default function AuthLayout() {
         name="privacy"
         options={{
           headerShown: true,
-          headerTitle: 'Privacy Policy',
-          headerBackTitle: '',
+          headerTitle: "Privacy Policy",
+          headerBackTitle: ""
         }}
       />
     </Stack>

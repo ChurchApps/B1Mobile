@@ -1,18 +1,18 @@
-import React from 'react';
+import React from "react";
 import { CheckinComplete } from "@/src/components/checkin/CheckinComplete";
 import { CheckinGroups } from "@/src/components/checkin/CheckinGroups";
 import { CheckinHousehold } from "@/src/components/checkin/CheckinHousehold";
 import { CheckinServices } from "@/src/components/checkin/CheckinServices";
-import { ApiHelper, CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper } from "@/src/helpers";
+import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper } from "@/src/helpers";
 import { NavigationProps } from "@/src/interfaces";
-import { DimensionHelper } from '@/src/helpers/DimensionHelper';
+import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, SafeAreaView, ScrollView, View } from "react-native";
-import { useAppTheme } from '@/src/theme';
-import { Appbar, Surface } from 'react-native-paper';
+import { useAppTheme } from "@/src/theme";
+import { Appbar, Surface } from "react-native-paper";
 
 interface Props {
   navigation: NavigationProps;
@@ -29,20 +29,20 @@ const Service = (props: Props) => {
     setGroupMember(member);
     setGroupTime(time);
     setStep("Groups");
-  }
+  };
 
   const clearData = () => {
     CheckinHelper.clearData();
     setGroupMember(undefined);
     setGroupTime(undefined);
     setStep("Services");
-    router.navigate('/(drawer)/dashboard')
-  }
+    router.navigate("/(drawer)/dashboard");
+  };
 
   const getBrand = () => {
-    if (UserHelper.churchAppearance?.logoLight) return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} />
-    else return <Image source={Constants.Images.logoBlue} style={{ width: "100%", height: DimensionHelper.wp(25) }} />
-  }
+    if (UserHelper.churchAppearance?.logoLight) return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} />;
+    else return <Image source={Constants.Images.logoBlue} style={{ width: "100%", height: DimensionHelper.wp(25) }} />;
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
@@ -65,4 +65,4 @@ const Service = (props: Props) => {
     </View>
   );
 };
-export default Service
+export default Service;

@@ -1,15 +1,14 @@
-import React from 'react';
-import { Stack } from 'expo-router';
-import { useEffect } from 'react';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { initializeApp } from 'firebase/app';
-import { initializeFirebase } from '../src/config/firebase';
-import { ThemeProvider } from '@/src/theme/ThemeProvider';
+import React from "react";
+import { Stack } from "expo-router";
+import { useEffect } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { initializeFirebase } from "../src/config/firebase";
+import { ThemeProvider } from "@/src/theme/ThemeProvider";
 
 export default function RootLayout() {
   useEffect(() => {
     const setupFirebase = async () => {
-      console.log('Initializing Firebase...');
+      console.log("Initializing Firebase...");
       await initializeFirebase();
     };
 
@@ -19,7 +18,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <SafeAreaProvider>
-        <Stack screenOptions={{ headerShown: false }} initialRouteName='auth'>
+        <Stack screenOptions={{ headerShown: false }} initialRouteName="auth">
           <Stack.Screen name="auth" />
           <Stack.Screen name="index" />
           <Stack.Screen name="(drawer)" />

@@ -1,12 +1,12 @@
-import { MainHeader } from '@/src/components/wrapper/MainHeader';
-import React from 'react';
-import { Dimensions, Image, SafeAreaView, View } from 'react-native';
+import { MainHeader } from "@/src/components/wrapper/MainHeader";
+import React from "react";
+import { Dimensions, Image, SafeAreaView, View } from "react-native";
 // import { Utilities, globalStyles } from '../helpers';
 // import { NavigationProps } from '../interfaces';
-import { globalStyles } from '@/src/helpers';
-import { NavigationProps } from '@/src/interfaces';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
-import { useNavigation } from 'expo-router';
+import { globalStyles } from "@/src/helpers";
+import { NavigationProps } from "@/src/interfaces";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { useNavigation } from "expo-router";
 import { UserHelper } from "../../src/helpers/UserHelper";
 
 interface Props {
@@ -27,9 +27,9 @@ const Votd = (props: Props) => {
     const diff9x16 = Math.abs(ratio - 0.5625);
     let result = "1x1";
     if (diff16x9 < diff1x1) result = "16x9";
-    else if (diff9x16 < diff1x1) result = "9x16"
+    else if (diff9x16 < diff1x1) result = "9x16";
     setShape(result);
-  }
+  };
 
   const getDayOfYear = () => {
     let now = new Date();
@@ -38,7 +38,7 @@ const Votd = (props: Props) => {
     let oneDay = 1000 * 60 * 60 * 24;
     let day = Math.floor(diff / oneDay);
     return day;
-  }
+  };
 
   React.useEffect(() => {
     UserHelper.addOpenScreenEvent("VOTD Screen");
@@ -58,4 +58,4 @@ const Votd = (props: Props) => {
     </SafeAreaView>
   );
 };
-export default Votd
+export default Votd;
