@@ -56,9 +56,9 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
       </View>
 
       {(item?.item?.postType == "event" && item?.item?.photoUrl !== null) ||
-      item?.item?.postType == "sermon" ||
-      item?.item?.postType == "group" ||
-      (item?.item?.postType == "venue" && item?.item?.data?.image != null) ? (
+        item?.item?.postType == "sermon" ||
+        item?.item?.postType == "group" ||
+        (item?.item?.postType == "venue" && item?.item?.data?.image != null) ? (
         <View style={globalStyles.ImageMainView}>
           <View style={globalStyles.ImageView}>
             {item?.item?.postType == "venue" && item?.item?.data?.image != null ? (

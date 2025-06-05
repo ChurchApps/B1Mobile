@@ -330,17 +330,6 @@ export interface PrivateMessagesCreate {
   id: string;
 }
 
-// My Group Interface
-export interface GroupInterface {
-  id?: string;
-  name?: string;
-  categoryName?: string;
-  memberCount?: number;
-  trackAttendance?: boolean;
-  parentPickup?: boolean;
-  about?: string;
-  photoUrl?: string;
-}
 export interface TimelinePostInterface {
   UniqueId?: string;
   postType?: string;

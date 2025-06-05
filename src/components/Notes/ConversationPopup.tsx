@@ -35,7 +35,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
 
       if (m && validate(m)) {
         let cId = message && message.conversationId;
-        if (!cId) cId = m && (await createConversation(m));
+        if (!cId) cId = m && (await createConversation());
         const nM = { ...m };
         nM.conversationId = cId;
         await ApiHelper.post("/messages", [nM], "MessagingApi").then(data => {
@@ -51,7 +51,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
     }
   };
 
-  const createConversation = async (message: MessageInterface) => {
+  const createConversation = async () => {
     const conv: any = {
       groupId,
       allowAnonymousPosts: false,

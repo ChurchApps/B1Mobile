@@ -50,7 +50,7 @@ export function AddNote({ ...props }: Props) {
         const m = { ...message };
         m.conversationId = cId;
         ApiHelper.post("/messages", [m], "MessagingApi")
-          .then(data => {
+          .then(() => {
             props.onUpdate();
             const m = { ...message } as MessageInterface;
             m.content = "";

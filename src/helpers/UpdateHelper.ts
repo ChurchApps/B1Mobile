@@ -14,7 +14,7 @@ export class UpdateHelper {
               try {
                 await Updates.fetchUpdateAsync();
                 await Updates.reloadAsync();
-              } catch (_error) {
+              } catch {
                 Alert.alert("Error", "Failed to update the app. Please try again later.");
               }
             }

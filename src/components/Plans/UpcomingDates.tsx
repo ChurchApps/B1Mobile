@@ -54,18 +54,6 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
     }
   }, [assignments, positions, plans, times]);
 
-  const getStatusBadge = (status: string) => {
-    let backgroundColor = Constants.Colors.Orange_color;
-    if (status === "Accepted") backgroundColor = Constants.Colors.Dark_Green;
-    else if (status === "Declined") backgroundColor = Constants.Colors.button_red;
-
-    return (
-      <View style={[styles.statusBadge, { backgroundColor }]}>
-        <Text style={styles.statusText}>{status}</Text>
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>

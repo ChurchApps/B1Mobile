@@ -50,7 +50,7 @@ export default function CreateEvent(props: Props) {
 
       ev.recurrenceRule = rRule;
       setLoading(true);
-      ApiHelper.post("/events", [ev], "ContentApi").then(data => {
+      ApiHelper.post("/events", [ev], "ContentApi").then(() => {
         setLoading(false);
         if (props.onDone) props.onDone();
       });
@@ -105,14 +105,15 @@ export default function CreateEvent(props: Props) {
 
   const handleRecurringDelete = (editType: string) => {
     switch (editType) {
-      case "this":
+      case "this": {
         const exception: EventExceptionInterface = { eventId: event.id, exceptionDate: event.start };
         ApiHelper.post("/eventExceptions", [exception], "ContentApi").then(() => {
           if (props.onDone) props.onDone();
           setShowEventEditModal(false);
         });
         break;
-      case "future":
+      }
+      case "future": {
         const ev = { ...event };
         const rrule = EventHelper.getFullRRule(ev);
         rrule.options.until = ev.start ? new Date(ev.start) : new Date();
@@ -123,12 +124,14 @@ export default function CreateEvent(props: Props) {
           setShowEventEditModal(false);
         });
         break;
-      case "all":
+      }
+      case "all": {
         ApiHelper.delete("/events/" + event.id, "ContentApi").then(() => {
           if (props.onDone) props.onDone();
           setShowEventEditModal(false);
         });
         break;
+      }
     }
   };
 

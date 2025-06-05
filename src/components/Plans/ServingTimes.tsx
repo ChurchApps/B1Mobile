@@ -23,18 +23,6 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
     }).start();
   }, []);
 
-  const getStatusBadge = (status: string) => {
-    let backgroundColor = Constants.Colors.Orange_color;
-    if (status === "Accepted") backgroundColor = Constants.Colors.Dark_Green;
-    else if (status === "Declined") backgroundColor = Constants.Colors.button_red;
-
-    return (
-      <View style={[styles.statusBadge, { backgroundColor }]}>
-        <Text style={styles.statusText}>{status}</Text>
-      </View>
-    );
-  };
-
   const getServingTimes = () => {
     const data: any = [];
     assignments.forEach(assignment => {

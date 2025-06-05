@@ -35,7 +35,7 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
         } else {
           setExternalLinks([]);
         }
-      } catch (e) {
+      } catch {
         setSongDetail(null);
         setExternalLinks([]);
       }

@@ -18,7 +18,6 @@ export function CustomDrawer(props: any) {
   const [churchName, setChurchName] = useState("");
   const [churchEmpty, setChurchEmpty] = useState(true);
   const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
-  const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState("");
 
@@ -101,11 +100,15 @@ export function CustomDrawer(props: any) {
       try {
         const classrooms = await ApiHelper.get("/classrooms/person", "LessonsApi");
         showLessons = classrooms.length > 0;
-      } catch {}
+      } catch {
+        //do nothing
+      }
       try {
         const campuses = await ApiHelper.get("/campuses", "AttendanceApi");
         showCheckin = campuses.length > 0;
-      } catch {}
+      } catch {
+        //do nothing
+      }
       showChums = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
       const memberStatus = uc.person?.membershipStatus?.toLowerCase();
       showDirectory = memberStatus === "member" || memberStatus === "staff";
@@ -152,7 +155,7 @@ export function CustomDrawer(props: any) {
     return (
       <List.Item
         title={item.text}
-        left={props => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={paperTheme.colors.primary} style={styles.drawerIcon} />)}
+        left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={paperTheme.colors.primary} style={styles.drawerIcon} />)}
         onPress={() => {
           NavigationHelper.navigateToScreen(item, router.navigate);
           props.navigation.closeDrawer();
