@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface, UserHelper } from "@/src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "@/src/helpers/Interfaces";
-import { eventBus } from "@/src/helpers/PushNotificationHelper";
+import { eventBus, updateCurrentScreen } from "@/src/helpers/PushNotificationHelper";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform } from "react-native";
 import { useAppTheme } from "@/src/theme";
@@ -49,6 +49,12 @@ const MessageScreen = () => {
     conversationIdRef.current = currentConversation?.conversationId;
   }, [currentConversation?.conversationId]);
 
+  // Update screen tracking when component mounts/unmounts
+  useEffect(() => {
+    updateCurrentScreen("/(drawer)/messageScreen");
+    return () => updateCurrentScreen("");
+  }, []);
+
   const getMessagesList = useCallback((conversationId: string) => {
     if (!conversationId) return;
     ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi").then(data => {
@@ -85,8 +91,8 @@ const MessageScreen = () => {
     // Listen for new messages
     const handleNewMessage = (content: NotificationContent) => {
       console.log("New message received:", content);
-      // For any new message notification, refresh the conversation
-      if (conversationIdRef.current) {
+      // Only refresh if the notification is for this conversation
+      if (content.data?.conversationId && conversationIdRef.current && content.data.conversationId === conversationIdRef.current) {
         console.log("Refreshing messages for current conversation");
         getMessagesList(conversationIdRef.current);
       }
@@ -95,22 +101,31 @@ const MessageScreen = () => {
     // Listen for notification updates
     const handleNotification = (content: NotificationContent) => {
       console.log("Notification received:", content);
-      // For any notification, refresh the conversation
-      if (conversationIdRef.current) {
+      // Only refresh if the notification is for this conversation
+      if (content.data?.conversationId && conversationIdRef.current && content.data.conversationId === conversationIdRef.current) {
         console.log("Refreshing messages from notification");
         getMessagesList(conversationIdRef.current);
       }
     };
 
     // Listen for any conversation updates
-    const handleConversationUpdate = () => {
-      console.log("Conversation update received");
-      loadData();
+    const handleConversationUpdate = (data?: { conversationId?: string }) => {
+      console.log("Conversation update received", data);
+      // If we have a specific conversation ID, only refresh if it matches
+      if (data?.conversationId && conversationIdRef.current && data.conversationId === conversationIdRef.current) {
+        getMessagesList(conversationIdRef.current);
+      } else if (!data?.conversationId) {
+        // If no specific conversation ID, refresh everything
+        loadData();
+      }
     };
 
     eventBus.addListener("updateChatMessages", handleNewMessage);
     eventBus.addListener("notification", handleNotification);
     eventBus.addListener("conversationUpdate", handleConversationUpdate);
+
+    // Initial load
+    loadData();
 
     return () => {
       eventBus.removeListener("updateChatMessages");
@@ -118,6 +133,19 @@ const MessageScreen = () => {
       eventBus.removeListener("conversationUpdate");
     };
   }, [getMessagesList, loadData]);
+
+  // Add polling for new messages when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      const pollInterval = setInterval(() => {
+        if (conversationIdRef.current) {
+          getMessagesList(conversationIdRef.current);
+        }
+      }, 5000); // Poll every 5 seconds
+
+      return () => clearInterval(pollInterval);
+    }, [getMessagesList])
+  );
 
   const loadMembers = () => {
     ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi");
@@ -169,9 +197,10 @@ const MessageScreen = () => {
     ApiHelper.post("/messages", params, "MessagingApi").then(() => {
       setMessageText("");
       setEditingMessage(null);
-      // Emit event to notify about conversation update
-      eventBus.emit("conversationUpdate");
-      getConversations();
+      // Emit event with conversation ID for more targeted updates
+      eventBus.emit("conversationUpdate", { conversationId });
+      // Refresh messages immediately
+      getMessagesList(conversationId);
     });
   };
 

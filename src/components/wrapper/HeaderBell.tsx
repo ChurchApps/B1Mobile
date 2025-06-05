@@ -62,5 +62,5 @@ export const HeaderBell = (props: Props) => {
     props.toggleNotifications();
   };
 
-  return <IconButton icon={badgeCount > 0 ? "bell-badge" : "bell"} iconColor={theme.colors.onPrimary} size={24} onPress={handlePress} style={componentStyles.button} />;
+  return <IconButton icon={badgeCount > 0 ? "bell-badge" : "bell"} iconColor={badgeCount > 0 ? theme.colors.error : theme.colors.onPrimary} size={24} onPress={handlePress} style={componentStyles.button} />;
 };

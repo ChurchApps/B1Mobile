@@ -5,19 +5,30 @@ import { DeviceEventEmitter, PermissionsAndroid, Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
 import { CacheHelper } from "./CacheHelper";
 import { LoginUserChurchInterface } from "./Interfaces";
+import { usePathname } from "expo-router";
+
+// Track current screen
+let currentScreen = "";
+
+// Function to update current screen
+export const updateCurrentScreen = (screen: string) => {
+  currentScreen = screen;
+  console.log("Current screen updated:", currentScreen);
+};
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async notification => {
     const appState = await Notifications.getLastNotificationResponseAsync();
     const isAppInForeground = appState === null;
+    const isInMessageScreen = currentScreen === "/(drawer)/messageScreen";
 
     // If app is in foreground, we'll handle it internally
     if (isAppInForeground) {
       eventBus.emit("notification", notification.request.content);
       return {
         shouldShowAlert: false,
-        shouldPlaySound: true,
+        shouldPlaySound: !isInMessageScreen, // Don't play sound if in message screen
         shouldSetBadge: true,
         shouldShowBanner: false,
         shouldShowList: false
@@ -119,6 +130,13 @@ export class PushNotificationHelper {
 
   static async NotificationListener() {
     try {
+      // Track screen changes using pathname
+      const pathname = usePathname();
+      if (pathname) {
+        currentScreen = pathname;
+        console.log("Current screen:", currentScreen);
+      }
+
       // Listen for notifications received while app is foregrounded
       const foregroundSubscription = Notifications.addNotificationReceivedListener(notification => {
         const content = notification.request.content;
@@ -128,7 +146,7 @@ export class PushNotificationHelper {
         eventBus.emit("notification", content);
 
         // If it's a chat notification and we're in the chat, update the messages
-        if (content.data?.type === "chat" && content.data?.chatId) {
+        if (content.data?.type === "chat") {
           eventBus.emit("chatNotification", content.data);
         }
       });
