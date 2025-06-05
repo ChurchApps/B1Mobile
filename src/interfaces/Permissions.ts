@@ -75,7 +75,5 @@ export class Permissions {
       view: { api: "GivingApi", contentType: "Settings", action: "View" },
       edit: { api: "GivingApi", contentType: "Settings", action: "Edit" }
     }
-
-  }
-
+  };
 }
