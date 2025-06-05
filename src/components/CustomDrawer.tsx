@@ -186,29 +186,33 @@ export function CustomDrawer(props: any) {
       <Card style={styles.userCard}>
         <Card.Content style={styles.userCardContent}>
           <View style={styles.userInfoContainer}>
-            {UserHelper.currentUserChurch.person.photo ? (
-              <Avatar.Image size={DimensionHelper.wp(12)} source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo }} />
-            ) : (
-              <Avatar.Text size={DimensionHelper.wp(12)} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />
-            )}
+            <View style={styles.avatarContainer}>
+              {UserHelper.currentUserChurch.person.photo ? (
+                <Avatar.Image size={DimensionHelper.wp(12)} source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo }} />
+              ) : (
+                <Avatar.Text size={DimensionHelper.wp(12)} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />
+              )}
+            </View>
             <View style={styles.userTextContainer}>
-              <Text variant="titleMedium" style={styles.userName}>
+              <Text variant="titleMedium" numberOfLines={2} style={styles.userName}>
                 {`${user.firstName} ${user.lastName}`}
               </Text>
-              <Button
-                mode="text"
-                onPress={editProfileAction}
-                style={styles.editProfileButton}
-                textColor={paperTheme.colors.primary}
-                icon={() => <MaterialIcons name="edit" size={24} color={paperTheme.colors.primary} />}>
-                Edit profile
-              </Button>
+              <View style={styles.buttonContainer}>
+                <Button
+                  mode="text"
+                  onPress={editProfileAction}
+                  style={styles.editProfileButton}
+                  textColor={paperTheme.colors.primary}
+                  icon={() => <MaterialIcons name="edit" size={18} color={paperTheme.colors.primary} />}>
+                  Profile
+                </Button>
+                {UserHelper.user && (
+                  <TouchableRipple style={styles.messageButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
+                    <MaterialCommunityIcons name="email-outline" size={20} color={paperTheme.colors.onSurface} />
+                  </TouchableRipple>
+                )}
+              </View>
             </View>
-            {UserHelper.user && (
-              <TouchableRipple onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
-                <MaterialCommunityIcons name="email-outline" size={24} color={paperTheme.colors.onSurface} />
-              </TouchableRipple>
-            )}
           </View>
         </Card.Content>
       </Card>
@@ -268,23 +272,39 @@ const styles = StyleSheet.create({
     backgroundColor: "white"
   },
   userCardContent: {
-    padding: 0
+    padding: 12
   },
   userInfoContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
+    alignItems: "flex-start",
+    gap: 12
+  },
+  avatarContainer: {
+    marginTop: 4
   },
   userTextContainer: {
     flex: 1,
-    marginLeft: 12
+    minWidth: 0
   },
   userName: {
-    fontWeight: "600"
+    fontWeight: "600",
+    fontSize: 16,
+    lineHeight: 22,
+    marginBottom: 4
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8
   },
   editProfileButton: {
-    marginTop: 4,
-    alignSelf: "flex-start"
+    margin: 0,
+    padding: 0,
+    minWidth: 0,
+    height: 32
+  },
+  messageButton: {
+    padding: 4
   },
   churchButton: {
     marginTop: 8
