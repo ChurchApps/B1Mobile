@@ -14,11 +14,10 @@ const Register = () => {
   const [lastName, setLastName] = useState("");
 
   const registerApiCall = async () => {
-    const params = { email: email, firstName: firstName, lastName: lastName };
     setLoading(true);
     try {
       /*
-      const data = await ApiHelper.post("/users/register", params, "MembershipApi");
+      const data = await ApiHelper.post("/users/register", { email, firstName, lastName }, "MembershipApi");
       if (data.email != null) setRegistered(true);
       else Alert.alert("Alert", "User already exists.");
       */
@@ -36,7 +35,7 @@ const Register = () => {
   const validateDetails = () => {
     let result = true;
     if (email != "") {
-      let emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
+      let emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
         Alert.alert("Alert", "Please enter valid email.");
         result = false;

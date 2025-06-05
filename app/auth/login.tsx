@@ -17,7 +17,7 @@ const Login = () => {
 
   const validateDetails = () => {
     if (email != "") {
-      let emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$/;
+      let emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
         Alert.alert("Alert", "Please enter valid email.");
         return false;

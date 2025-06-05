@@ -13,8 +13,7 @@ import { useAppTheme } from "@/src/theme";
 import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from "react-native-paper";
 
 export function CustomDrawer(props: any) {
-  const { goBack, openDrawer } = props.navigation;
-  const { theme, spacing } = useAppTheme();
+  const { spacing } = useAppTheme();
   const paperTheme = useTheme();
   const [churchName, setChurchName] = useState("");
   const [churchEmpty, setChurchEmpty] = useState(true);
@@ -22,8 +21,6 @@ export function CustomDrawer(props: any) {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [userProfile, setUserProfile] = useState("");
-
-  const menuList: any[] = [];
 
   useEffect(() => {
     getChurch();
@@ -73,18 +70,12 @@ export function CustomDrawer(props: any) {
     let specialTabs = await getSpecialTabs();
     const data = tabs.concat(specialTabs);
 
-    //setLoading(false);
     setDrawerList(data);
     UserHelper.links = data;
-    setLoading(false);
     if (data.length > 0) {
       if (data[0].linkType === "groups") router.navigate("/(drawer)/myGroups");
       else router.navigate("/(drawer)/dashboard");
     }
-
-    //if (data.length > 0) navigate(data[0].linkType);
-    //if (data.length > 0) navigateToScreen(data[0]);
-    //router.navigate('/(drawer)/dashboard')
   };
 
   const getSpecialTabs = async () => {

@@ -18,7 +18,6 @@ export function AddNote({ ...props }: Props) {
   const [message, setMessage] = useState<MessageInterface | null>();
   const [errors, setErrors] = React.useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const headerText = props.messageId ? "Edit note" : "Add a note";
   useEffect(() => {
     if (props.messageId)
       ApiHelper.get(`/messages/${props.messageId}`, "MessagingApi").then(n => {

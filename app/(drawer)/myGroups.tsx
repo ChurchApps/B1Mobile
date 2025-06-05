@@ -47,7 +47,7 @@ const MyGroups = () => {
   const LoadUserData = async () => {
     setLoading(true);
     try {
-      const { posts, people, groups } = await TimelineHelper.loadForUser();
+      const { posts, groups } = await TimelineHelper.loadForUser();
       setUserPost(posts);
       setUserGroups(groups);
       if (posts.length == 0) {
@@ -129,7 +129,7 @@ const MyGroups = () => {
                 scrollEnabled={true}
                 ListFooterComponent={() => <View style={styles.groupsContainer}>{getGroupsGrid()}</View>}
                 renderItem={({ item }) => renderItems(item)}
-                keyExtractor={(item: any, index: number) => `key-${index}`}
+                keyExtractor={(item: any) => `key-${item.id || Math.random()}`}
               />
             </View>
           </View>
