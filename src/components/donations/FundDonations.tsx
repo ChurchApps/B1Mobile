@@ -12,8 +12,7 @@ interface Props {
 }
 
 export function FundDonations({ funds, fundDonations, updatedFunction }: Props) {
-  const { theme: appTheme, spacing } = useAppTheme();
-  const theme = useTheme();
+  const { spacing } = useAppTheme();
 
   const handleUpdated = (fundDonation: FundDonationInterface, index: number) => {
     let fdDonations = [...fundDonations];

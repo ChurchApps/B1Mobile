@@ -39,6 +39,7 @@ export class TimelineHelper {
       await promises.push(ApiHelper.get("/venues/timeline?venueIds=" + venueIds.join(","), "LessonsApi"));
     }
     if (sermonIds.length > 0) {
+      // No additional API call needed for sermons, handled by the anonymous call below
     }
     await promises.push(ApiHelper.getAnonymous("/sermons/timeline?sermonIds=" + sermonIds.join(","), "ContentApi"));
     const results = await Promise.all(promises);

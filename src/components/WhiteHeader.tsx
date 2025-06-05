@@ -1,7 +1,6 @@
 import { Constants, globalStyles } from "@/src/helpers";
-import { Image, NativeModules, View } from "react-native";
+import { Image, View } from "react-native";
 import { MainHeader } from "./wrapper/MainHeader";
-const { StatusBarManager } = NativeModules;
 
 interface Props {
   onPress: () => void;

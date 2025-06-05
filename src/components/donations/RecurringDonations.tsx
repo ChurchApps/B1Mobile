@@ -16,16 +16,14 @@ interface Props {
 }
 
 export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunction }: Props) {
-  const { theme: appTheme, spacing } = useAppTheme();
+  const { spacing } = useAppTheme();
   const theme = useTheme();
   const [subscriptions, setSubscriptions] = React.useState<SubscriptionInterface[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionInterface>({} as SubscriptionInterface);
-  const [paymentMethods, setPaymentMethods] = useState<{ label: string; value: string }[]>([]);
   const [showMethodMenu, setShowMethodMenu] = useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("");
-  const [intervalNumber, setIntervalNumber] = useState<any>("");
   const [showIntervalMenu, setShowIntervalMenu] = useState<boolean>(false);
   const [intervalTypes] = useState<{ label: string; value: string }[]>([
     { label: "Day(s)", value: "day" },
@@ -76,10 +74,6 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
 
   useEffect(loadDonations, [customerId]);
 
-  useEffect(() => {
-    setPaymentMethods(pm.map(p => ({ label: `${p.name} ****${p.last4}`, value: p.id })));
-  }, [pm]);
-
   const getMethodLabel = (methodId: string) => {
     const method = pm.find(m => m.id === methodId);
     return method ? `${method.name} ending in ${method.last4}` : "Select Payment Method";
@@ -105,7 +99,6 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
               setShowModal(true);
               setSelectedSubscription(sub);
               setSelectedMethod(sub.default_payment_method || sub.default_source);
-              setIntervalNumber(sub.plan.interval_count);
               setSelectedInterval(sub.plan.interval);
             }}
           />
@@ -118,7 +111,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     Alert.alert("Are you sure?", "This will permanently delete and stop the recurring payments", [
       {
         text: "Cancel",
-        onPress: () => {},
+        onPress: () => { },
         style: "cancel"
       },
       {

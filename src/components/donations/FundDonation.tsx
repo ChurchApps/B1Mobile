@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function FundDonation({ fundDonation, funds, index, updatedFunction }: Props) {
-  const { theme: appTheme, spacing } = useAppTheme();
+  const { spacing } = useAppTheme();
   const theme = useTheme();
   const [showFundMenu, setShowFundMenu] = useState(false);
   const [selectedFund, setSelectedFund] = useState<string>(funds[0]?.id || "");

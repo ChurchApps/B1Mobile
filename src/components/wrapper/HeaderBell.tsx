@@ -10,10 +10,6 @@ interface Props {
 export const HeaderBell = (props: Props) => {
   const { theme, componentStyles } = useAppTheme();
   const [badgeCount, setBadgeCount] = useState(0);
-  const [routes] = React.useState([
-    { key: "first", title: "MESSAGES" },
-    { key: "second", title: "NOTIFICATIONS" }
-  ]);
 
   const handleNewMessage = () => {
     setBadgeCount(prevCount => prevCount + 1);

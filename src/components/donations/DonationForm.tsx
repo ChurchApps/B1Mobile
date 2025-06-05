@@ -134,7 +134,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setTransactionFee(getTransactionFee(totalAmount));
   };
 
-  const makeDonation = async (message: string) => {
+  const makeDonation = async (_message: string) => {
     const method = pm.find(pm => pm.id === selectedMethod);
     if (!UserHelper.currentUserChurch?.person?.id) {
       ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi")
@@ -205,7 +205,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     }
   };
 
-  const saveDonation = async (payload: StripeDonationInterface, message: string) => {
+  const saveDonation = async (payload: StripeDonationInterface, _message: string) => {
     let results;
     if (donationType === "once") results = await ApiHelper.post("/donate/charge/", payload, "GivingApi");
     if (donationType === "recurring") results = await ApiHelper.post("/donate/subscribe/", payload, "GivingApi");
@@ -220,7 +220,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       setFirstName("");
       setLastName("");
       setIsChecked(false);
-      Alert.alert("Thank you for your donation.", message, [{ text: "OK", onPress: () => updatedFunction() }]);
+      Alert.alert("Thank you for your donation.", _message, [{ text: "OK", onPress: () => updatedFunction() }]);
     }
     if (results?.raw?.message) {
       setShowPreviewModal(false);

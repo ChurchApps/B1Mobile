@@ -14,15 +14,15 @@ export class UpdateHelper {
               try {
                 await Updates.fetchUpdateAsync();
                 await Updates.reloadAsync();
-              } catch (error) {
+              } catch (_error) {
                 Alert.alert("Error", "Failed to update the app. Please try again later.");
               }
             }
           }
         ]);
       }
-    } catch (error) {
-      console.log("Error checking for updates:", error);
+    } catch (_error) {
+      console.log("Error checking for updates:", _error);
     }
   }
 
@@ -33,8 +33,8 @@ export class UpdateHelper {
 
       // We'll handle update events through the Updates API directly
       // The addListener API has been deprecated in favor of direct API calls
-    } catch (error) {
-      console.log("Error initializing updates:", error);
+    } catch (_error) {
+      console.log("Error initializing updates:", _error);
     }
   }
 }

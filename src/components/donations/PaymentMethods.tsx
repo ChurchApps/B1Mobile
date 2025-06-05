@@ -19,7 +19,7 @@ interface Props {
 }
 
 export function PaymentMethods({ customerId, paymentMethods, updatedFunction, isLoading, publishKey }: Props) {
-  const { theme: appTheme, spacing } = useAppTheme();
+  const { spacing } = useAppTheme();
   const theme = useTheme();
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editPaymentMethod, setEditPaymentMethod] = useState<StripePaymentMethod>(new StripePaymentMethod());
@@ -44,7 +44,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     Alert.alert("Are you sure?", "This will permanently delete this payment method", [
       {
         text: "Cancel",
-        onPress: () => {},
+        onPress: () => { },
         style: "cancel"
       },
       {
@@ -88,7 +88,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     <List.Item
       title={getMethodTitle(item)}
       description={getMethodDescription(item)}
-      left={props => <List.Icon {...props} icon={getMethodIcon(item.type)} />}
+      left={_props => <List.Icon {..._props} icon={getMethodIcon(item.type)} />}
       right={props => (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {item?.status === "new" && (
