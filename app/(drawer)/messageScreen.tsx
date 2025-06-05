@@ -1,21 +1,35 @@
 import React from "react";
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface, UserHelper } from "@/src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "@/src/helpers/Interfaces";
 import { eventBus } from "@/src/helpers/PushNotificationHelper";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform } from "react-native";
 import { useAppTheme } from "@/src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
-interface NotificationData {
-  type: string;
-  chatId?: string;
-  [key: string]: any;
+interface NotificationContent {
+  autoDismiss?: boolean;
+  badge?: number | null;
+  body?: string;
+  data?: {
+    body?: string;
+    title?: string;
+    type?: string;
+    chatId?: string;
+    conversationId?: string;
+    [key: string]: any;
+  };
+  dataString?: string;
+  priority?: string;
+  sound?: string;
+  sticky?: boolean;
+  subtitle?: string | null;
+  title?: string;
 }
 
 const MessageScreen = () => {
@@ -28,57 +42,85 @@ const MessageScreen = () => {
   const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
   const [loading, setLoading] = useState(false);
   const { showActionSheetWithOptions } = useActionSheet();
+  const conversationIdRef = useRef<string | undefined>(undefined);
 
-  const loadData = () => {
-    getConversations();
-    loadMembers();
-  };
-
+  // Update ref when conversation changes
   useEffect(() => {
-    loadData();
-
-    // Listen for new messages
-    const handleNewMessage = (data: NotificationData) => {
-      if (data?.type === "chat" && data?.chatId && currentConversation?.conversationId && data.chatId === currentConversation.conversationId) {
-        getMessagesList(currentConversation.conversationId);
-      }
-    };
-
-    // Listen for notification updates
-    const handleNotification = (data: NotificationData) => {
-      if (data?.type === "chat" && data?.chatId && currentConversation?.conversationId && data.chatId === currentConversation.conversationId) {
-        getMessagesList(currentConversation.conversationId);
-      }
-    };
-
-    eventBus.addListener("updateChatMessages", handleNewMessage);
-    eventBus.addListener("notification", handleNotification);
-
-    return () => {
-      eventBus.removeListener("updateChatMessages");
-      eventBus.removeListener("notification");
-    };
+    conversationIdRef.current = currentConversation?.conversationId;
   }, [currentConversation?.conversationId]);
 
-  const getConversations = () => {
-    setLoading(true);
-    ApiHelper.get("/privateMessages/existing/" + details.id, "MessagingApi").then(data => {
-      setCurrentConversation(data);
-      if (Object.keys(data).length != 0 && data.conversationId != undefined) getMessagesList(data.conversationId);
-      setLoading(false);
-    });
-  };
-
-  const loadMembers = () => {
-    ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi");
-  };
-
-  const getMessagesList = (conversationId: string) => {
+  const getMessagesList = useCallback((conversationId: string) => {
+    if (!conversationId) return;
     ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi").then(data => {
       let conversation: MessageInterface[] = data;
       conversation.reverse();
       setMessageList(conversation);
     });
+  }, []);
+
+  const getConversations = useCallback(() => {
+    setLoading(true);
+    ApiHelper.get("/privateMessages/existing/" + details.id, "MessagingApi").then(data => {
+      setCurrentConversation(data);
+      if (Object.keys(data).length != 0 && data.conversationId != undefined) {
+        getMessagesList(data.conversationId);
+      }
+      setLoading(false);
+    });
+  }, [details.id, getMessagesList]);
+
+  const loadData = useCallback(() => {
+    getConversations();
+    loadMembers();
+  }, [getConversations]);
+
+  // Refresh data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
+
+  useEffect(() => {
+    // Listen for new messages
+    const handleNewMessage = (content: NotificationContent) => {
+      console.log("New message received:", content);
+      // For any new message notification, refresh the conversation
+      if (conversationIdRef.current) {
+        console.log("Refreshing messages for current conversation");
+        getMessagesList(conversationIdRef.current);
+      }
+    };
+
+    // Listen for notification updates
+    const handleNotification = (content: NotificationContent) => {
+      console.log("Notification received:", content);
+      // For any notification, refresh the conversation
+      if (conversationIdRef.current) {
+        console.log("Refreshing messages from notification");
+        getMessagesList(conversationIdRef.current);
+      }
+    };
+
+    // Listen for any conversation updates
+    const handleConversationUpdate = () => {
+      console.log("Conversation update received");
+      loadData();
+    };
+
+    eventBus.addListener("updateChatMessages", handleNewMessage);
+    eventBus.addListener("notification", handleNotification);
+    eventBus.addListener("conversationUpdate", handleConversationUpdate);
+
+    return () => {
+      eventBus.removeListener("updateChatMessages");
+      eventBus.removeListener("notification");
+      eventBus.removeListener("conversationUpdate");
+    };
+  }, [getMessagesList, loadData]);
+
+  const loadMembers = () => {
+    ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi");
   };
 
   const sendMessageInitiate = () => {
@@ -127,6 +169,8 @@ const MessageScreen = () => {
     ApiHelper.post("/messages", params, "MessagingApi").then(() => {
       setMessageText("");
       setEditingMessage(null);
+      // Emit event to notify about conversation update
+      eventBus.emit("conversationUpdate");
       getConversations();
     });
   };
