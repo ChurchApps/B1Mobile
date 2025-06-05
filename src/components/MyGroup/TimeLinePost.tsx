@@ -4,6 +4,7 @@ import React from "react";
 import { Image, Text, View } from "react-native";
 import { ApiHelper, UserHelper, globalStyles } from "@/src/helpers";
 import UserConversations from "../Notes/UserConversation";
+import { Menu, IconButton } from "react-native-paper";
 
 interface Props {
   item: any;
@@ -35,6 +36,17 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
     const cId = result[0].id;
     return cId;
   };
+
+  const [showMenu, setShowMenu] = React.useState(false);
+
+  const handleEdit = () => {
+    // Implement edit functionality
+  };
+
+  const handleDelete = () => {
+    // Implement delete functionality
+  };
+
   return (
     <View style={globalStyles.FlatlistViewStyle} key={item.index}>
       <View style={globalStyles.TitleStyle}>
@@ -131,6 +143,25 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
         createConversation={createConversation}
         onUpdate={onUpdate}
       />
+
+      {showMenu && (
+        <Menu visible={showMenu} onDismiss={() => setShowMenu(false)} anchor={<IconButton icon="dots-vertical" onPress={() => setShowMenu(true)} style={{ margin: 0 }} />}>
+          <Menu.Item
+            onPress={() => {
+              setShowMenu(false);
+              handleEdit();
+            }}
+            title="Edit"
+          />
+          <Menu.Item
+            onPress={() => {
+              setShowMenu(false);
+              handleDelete();
+            }}
+            title="Delete"
+          />
+        </Menu>
+      )}
     </View>
   );
 };

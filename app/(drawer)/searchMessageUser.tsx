@@ -2,26 +2,19 @@ import React from "react";
 import { BlueHeader } from "@/src/components/BlueHeader";
 import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface } from "@/src/helpers";
 import { ErrorHelper } from "@/src/helpers/ErrorHelper";
-import { NavigationProps } from "@/src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Keyboard, TouchableWithoutFeedback, View, Image } from "react-native";
 import { useAppTheme } from "@/src/theme";
-import { ActivityIndicator, Button, Card, List, Surface, Text, TextInput } from "react-native-paper";
+import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 
-interface Props {
-  navigation: NavigationProps;
-}
-
-const SearchMessageUser = (props: Props) => {
+const SearchMessageUser = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");
   const [searchList, setSearchList] = useState<UserSearchInterface[]>([]);
   const [loading, setLoading] = useState(false);
-  const [recentList, setRecentList] = useState([]);
-  const [recentListEmpty, setRecentListEmpty] = useState(false);
 
   useEffect(() => {
     getPreviousConversations();
@@ -57,22 +50,6 @@ const SearchMessageUser = (props: Props) => {
       setSearchList(data);
       if (data.length === 0) alert("No matches found");
     });
-  };
-
-  const renderUserItem = (item: UserSearchInterface) => {
-    const userImage = item.photo;
-    return (
-      <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness }} onPress={() => userSelection(item)}>
-        <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-          {userImage ? (
-            <Image source={{ uri: userImage }} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
-          ) : (
-            <Image source={Constants.Images.ic_user} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md, tintColor: theme.colors.primary }} />
-          )}
-          <Text variant="titleMedium">{item.name.display}</Text>
-        </Card.Content>
-      </Card>
-    );
   };
 
   const userSelection = async (userData: UserSearchInterface) => {
@@ -118,7 +95,7 @@ const SearchMessageUser = (props: Props) => {
       {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
       <List.Section>
         {getHeaderView()}
-        {(searchText === "" ? (searchList.length !== 0 ? searchList : recentList) : searchList).map((item: UserSearchInterface) => (
+        {(searchText === "" ? (searchList.length !== 0 ? searchList : []) : searchList).map((item: UserSearchInterface) => (
           <List.Item
             key={item.id}
             title={item.name.display}

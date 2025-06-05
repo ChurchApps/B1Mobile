@@ -4,7 +4,7 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, MD3LightTheme } from "react-native-paper";
-import { ApiHelper, ArrayHelper, PersonInterface, TimelinePostInterface, UserPostInterface } from "@/src/helpers";
+import { ApiHelper, ArrayHelper, TimelinePostInterface, UserPostInterface } from "@/src/helpers";
 import { TimelineHelper } from "@/src/helpers/Timelinehelper";
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "@/src/components/MyGroup/TimeLinePost";
@@ -41,7 +41,6 @@ const MyGroups = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [UserPost, setUserPost] = useState<TimelinePostInterface[]>([]);
   const [loading, setLoading] = useState(false);
-  const [people, setPeople] = useState<PersonInterface[]>([]);
   const [UserGroups, setUserGroups] = useState<any[]>([]);
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
 
@@ -51,7 +50,6 @@ const MyGroups = () => {
       const { posts, people, groups } = await TimelineHelper.loadForUser();
       setUserPost(posts);
       setUserGroups(groups);
-      setPeople(people);
       if (posts.length == 0) {
         console.log("no data found");
       }

@@ -1,7 +1,6 @@
 import React from "react";
 import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "@/src/helpers";
-import { NavigationProps } from "@/src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
@@ -10,11 +9,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { useAppTheme } from "@/src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text, TextInput } from "react-native-paper";
 
-interface Props {
-  navigation: NavigationProps;
-}
-
-const MembersSearch = (props: Props) => {
+const MembersSearch = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");

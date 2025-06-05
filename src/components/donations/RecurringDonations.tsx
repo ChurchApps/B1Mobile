@@ -111,7 +111,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
     Alert.alert("Are you sure?", "This will permanently delete and stop the recurring payments", [
       {
         text: "Cancel",
-        onPress: () => { },
+        onPress: () => {},
         style: "cancel"
       },
       {

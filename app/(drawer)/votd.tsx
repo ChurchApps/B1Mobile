@@ -4,16 +4,11 @@ import { Dimensions, Image, SafeAreaView, View } from "react-native";
 // import { Utilities, globalStyles } from '../helpers';
 // import { NavigationProps } from '../interfaces';
 import { globalStyles } from "@/src/helpers";
-import { NavigationProps } from "@/src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation } from "expo-router";
 import { UserHelper } from "../../src/helpers/UserHelper";
 
-interface Props {
-  navigation: NavigationProps;
-}
-
-const Votd = (props: Props) => {
+const Votd = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [shape, setShape] = React.useState("9x16");
 

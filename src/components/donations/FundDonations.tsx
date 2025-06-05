@@ -1,7 +1,7 @@
 import { FundDonationInterface, FundInterface } from "@/src/interfaces";
 import React from "react";
 import { View } from "react-native";
-import { Button, Text, useTheme } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import { useAppTheme } from "@/src/theme";
 import { FundDonation } from "./FundDonation";
 

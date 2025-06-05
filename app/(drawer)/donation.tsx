@@ -5,7 +5,7 @@ import { PaymentMethods } from "@/src/components/donations/PaymentMethods";
 import { RecurringDonations } from "@/src/components/donations/RecurringDonations";
 import { ApiHelper, CacheHelper, UserHelper } from "@/src/helpers";
 import { ErrorHelper } from "@/src/helpers/ErrorHelper";
-import { NavigationProps, StripePaymentMethod } from "@/src/interfaces";
+import { StripePaymentMethod } from "@/src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused } from "@react-navigation/native";
 import { initStripe } from "@stripe/stripe-react-native";
@@ -36,13 +36,9 @@ const theme = {
   }
 };
 
-interface Props {
-  navigation: NavigationProps;
-}
-
-const Donation = (props: Props) => {
+const Donation = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const { theme: appTheme, spacing } = useAppTheme();
+  const { spacing } = useAppTheme();
   const [customerId, setCustomerId] = useState<string>("");
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([]);
   const [areMethodsLoading, setAreMethodsLoading] = useState<boolean>(false);

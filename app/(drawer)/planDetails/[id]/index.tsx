@@ -5,7 +5,6 @@ import { Teams } from "@/src/components/Plans/Teams";
 import { ServiceOrder } from "@/src/components/Plans/ServiceOrder";
 import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "@/src/helpers";
-import { NavigationProps } from "@/src/interfaces";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -14,11 +13,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 
-interface Props {
-  navigation: NavigationProps;
-}
-
-const PlanDetails = (props: Props) => {
+const PlanDetails = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams<{ id: string }>();
   const planId = id; // No need to JSON.parse since it's a URL parameter

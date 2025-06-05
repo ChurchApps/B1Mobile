@@ -5,8 +5,7 @@ import { ServingTimes } from "@/src/components/Plans/ServingTimes";
 import { UpcomingDates } from "@/src/components/Plans/UpcomingDates";
 import { MainHeader } from "@/src/components/wrapper/MainHeader";
 import { ApiHelper, ArrayHelper, globalStyles, Constants } from "@/src/helpers";
-import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface, UserSearchInterface } from "@/src/helpers/Interfaces";
-import { NavigationProps } from "@/src/interfaces";
+import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "@/src/helpers/Interfaces";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -15,14 +14,7 @@ import { useEffect, useState } from "react";
 import { SafeAreaView, Text, View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
-interface Props {
-  navigation: NavigationProps;
-  route: {
-    params: { userDetails: UserSearchInterface };
-  };
-}
-
-const Plan = (props: Props) => {
+const Plan = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [assignments, setAssignments] = useState<AssignmentInterface[]>([]);
   const [positions, setPositions] = useState<PositionInterface[]>([]);

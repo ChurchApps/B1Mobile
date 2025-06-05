@@ -12,7 +12,6 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [registered, setRegistered] = useState(false);
 
   const registerApiCall = async () => {
     const params = { email: email, firstName: firstName, lastName: lastName };
@@ -106,20 +105,7 @@ const Register = () => {
     </>
   );
 
-  const getContent = () => {
-    if (registered)
-      return (
-        <>
-          <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>
-            Success: A temporary password has been sent to {email}.
-          </Text>
-          <Button mode="contained" onPress={() => router.back()} style={{ marginBottom: spacing.md }}>
-            Login
-          </Button>
-        </>
-      );
-    else return getForm();
-  };
+  const getContent = () => getForm();
 
   return (
     <LoadingWrapper loading={loading}>

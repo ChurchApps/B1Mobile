@@ -7,7 +7,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Keyboard, TouchableWithoutFeedback, View, Image } from "react-native";
 import { useAppTheme } from "@/src/theme";
-import { ActivityIndicator, Button, Card, List, Surface, Text, TextInput } from "react-native-paper";
+import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 import RNRestart from "react-native-restart";
 import { Platform } from "react-native";
 
@@ -88,23 +88,6 @@ const ChurchSearch = () => {
       console.log("SET RECENT CHURCHES ERROR", err);
       ErrorHelper.logError("store-recent-church", err);
     }
-  };
-
-  const renderChurchItem = (item: any) => {
-    let churchImage = Constants.Images.ic_church;
-    if (item.settings && item.settings.length > 0) {
-      let setting = ArrayHelper.getOne(item.settings, "keyName", "favicon_400x400");
-      if (!setting) setting = item.settings[0];
-      churchImage = { uri: setting.value };
-    }
-    return (
-      <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness }} onPress={() => churchSelection(item)}>
-        <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-          <Image source={churchImage} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
-          <Text variant="titleMedium">{item.name}</Text>
-        </Card.Content>
-      </Card>
-    );
   };
 
   const getHeaderView = () => (

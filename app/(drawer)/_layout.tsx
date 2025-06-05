@@ -1,14 +1,11 @@
 import React from "react";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { Drawer } from "expo-router/drawer";
-import { useState } from "react";
 
 import { CustomDrawer } from "@/src/components/CustomDrawer";
 import { Constants } from "@/src/helpers";
 
 export default function DrawerLayout() {
-  const [dimensions, setDimensions] = useState("1,1");
-
   /*
   useEffect(() => {
     DimensionHelper.listenOrientationChange(undefined, () => {

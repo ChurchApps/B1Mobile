@@ -97,15 +97,6 @@ const GroupDetails = () => {
     setEditEvent({ start: startTime, end: endTime, allDay: false, groupId: id, visibility: "public" });
   };
 
-  const getGroupMembers = () => (
-    <FlatList
-      data={groupMembers}
-      renderItem={({ item }) => showGroupMembers(false, item)}
-      keyExtractor={(item: any) => item?.id}
-      ListEmptyComponent={() => <Text style={styles.noMemberText}>No group members found.</Text>}
-    />
-  );
-
   const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => (
     <TouchableRipple
       style={{ width: DimensionHelper.wp(90), marginHorizontal: 8, marginVertical: 4, borderRadius: 8 }}

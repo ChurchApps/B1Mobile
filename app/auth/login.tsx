@@ -9,7 +9,7 @@ import { TextInput, Button, Text, Surface } from "react-native-paper";
 import { useAppTheme } from "@/src/theme";
 
 const Login = () => {
-  const { theme, spacing, dimensions } = useAppTheme();
+  const { theme, spacing } = useAppTheme();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -64,7 +64,6 @@ const Login = () => {
   };
 
   const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
-  const registerLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=register";
 
   return (
     <LoadingWrapper loading={loading}>
@@ -116,10 +115,6 @@ const Login = () => {
               <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                 <Button mode="text" onPress={() => Linking.openURL(forgotLink)}>
                   Forgot Password
-                </Button>
-                <Text> | </Text>
-                <Button mode="text" onPress={() => router.navigate("/auth/register")}>
-                  Register
                 </Button>
               </View>
             </Surface>

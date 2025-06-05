@@ -4,7 +4,6 @@ import { CheckinGroups } from "@/src/components/checkin/CheckinGroups";
 import { CheckinHousehold } from "@/src/components/checkin/CheckinHousehold";
 import { CheckinServices } from "@/src/components/checkin/CheckinServices";
 import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper } from "@/src/helpers";
-import { NavigationProps } from "@/src/interfaces";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
@@ -14,11 +13,7 @@ import { Image, SafeAreaView, ScrollView, View } from "react-native";
 import { useAppTheme } from "@/src/theme";
 import { Appbar, Surface } from "react-native-paper";
 
-interface Props {
-  navigation: NavigationProps;
-}
-
-const Service = (props: Props) => {
+const Service = () => {
   const { theme, spacing } = useAppTheme();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [step, setStep] = useState("Services");

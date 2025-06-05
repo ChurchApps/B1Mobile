@@ -1,11 +1,10 @@
 import React from "react";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useEffect, useState } from "react";
-import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface, UserHelper, UserSearchInterface } from "@/src/helpers";
+import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface, UserHelper } from "@/src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "@/src/helpers/Interfaces";
 import { eventBus } from "@/src/helpers/PushNotificationHelper";
-import { NavigationProps } from "@/src/interfaces";
 import { router, useLocalSearchParams } from "expo-router";
 import { FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform } from "react-native";
 import { useAppTheme } from "@/src/theme";
@@ -13,14 +12,7 @@ import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
-interface Props {
-  navigation: NavigationProps;
-  route: {
-    params: { userDetails: UserSearchInterface };
-  };
-}
-
-const MessageScreen = (props: Props) => {
+const MessageScreen = () => {
   const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
   const details = JSON.parse(userDetails);
   const { theme, spacing } = useAppTheme();
@@ -28,8 +20,6 @@ const MessageScreen = (props: Props) => {
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
   const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
-  const [UserProfilePic, setUserProfilePic] = useState<string>("");
-  const [loading, setLoading] = useState(false);
   const { showActionSheetWithOptions } = useActionSheet();
 
   const loadData = () => {

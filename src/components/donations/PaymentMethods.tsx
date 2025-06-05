@@ -44,7 +44,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     Alert.alert("Are you sure?", "This will permanently delete this payment method", [
       {
         text: "Cancel",
-        onPress: () => { },
+        onPress: () => {},
         style: "cancel"
       },
       {
@@ -88,8 +88,8 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
     <List.Item
       title={getMethodTitle(item)}
       description={getMethodDescription(item)}
-      left={_props => <List.Icon {..._props} icon={getMethodIcon(item.type)} />}
-      right={props => (
+      left={() => <List.Icon icon={getMethodIcon(item.type)} />}
+      right={() => (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {item?.status === "new" && (
             <Button mode="text" onPress={() => handleEdit(item, true)} style={{ marginRight: spacing.xs }}>

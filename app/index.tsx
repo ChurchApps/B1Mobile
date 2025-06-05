@@ -3,15 +3,10 @@ import { ApiHelper, CacheHelper, Constants, EnvironmentHelper, UserHelper, globa
 import { ErrorHelper } from "@/src/helpers/ErrorHelper";
 import { PushNotificationHelper } from "@/src/helpers/PushNotificationHelper";
 import { UpdateHelper } from "@/src/helpers/UpdateHelper";
-import { NavigationProps } from "@/src/interfaces";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Image, Platform, View } from "react-native";
-
-interface Props {
-  navigation: NavigationProps;
-}
 
 if (Platform.OS === "android") {
   // See https://github.com/expo/expo/issues/6536 for this issue.
@@ -22,7 +17,7 @@ if (Platform.OS === "android") {
 
 EnvironmentHelper.init();
 
-const SplashScreen = (props: Props) => {
+const SplashScreen = () => {
   //console.log("*****SPLASH******")
 
   const init = async () => {

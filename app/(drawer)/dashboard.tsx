@@ -2,10 +2,10 @@ import React from "react";
 import { Dimensions, Image, ScrollView, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { NavigationProp, useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Provider as PaperProvider, Appbar, Card, Text, useTheme, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
+import { Provider as PaperProvider, Appbar, Card, Text, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
 import { CacheHelper, UserHelper } from "@/src/helpers";
 import { NavigationHelper } from "@/src/helpers/NavigationHelper";
 import { DimensionHelper } from "@/src/helpers/DimensionHelper";
@@ -36,17 +36,12 @@ const theme = {
 
 const Dashboard = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const nav = useNavigation<NavigationProp<any>>();
   const focused = useIsFocused();
-  const paperTheme = useTheme();
   const [isLoading, setLoading] = useState(true);
-  const [dimension, setDimension] = useState(Dimensions.get("screen"));
   const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
-    const subscription = Dimensions.addEventListener("change", () => {
-      setDimension(Dimensions.get("screen"));
-    });
+    const subscription = Dimensions.addEventListener("change", () => {});
     UserHelper.addOpenScreenEvent("Dashboard");
     loadDashboardData();
     return () => subscription.remove();

@@ -31,13 +31,13 @@ interface FundDonationsProps {
 }
 
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
-  const { theme: appTheme, spacing } = useAppTheme();
+  const { spacing } = useAppTheme();
   const theme = useTheme();
   const person = UserHelper.currentUserChurch?.person;
   const user = UserHelper.user;
   const [donationType, setDonationType] = useState<string>("");
   const [selectedMethod, setSelectedMethod] = useState<string>("");
-  const [date, setDate] = useState(new Date());
+  const [date] = useState(new Date());
   const [funds, setFunds] = useState<FundInterface[]>([]);
   const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([]);
   const [total, setTotal] = React.useState<number>(0);
