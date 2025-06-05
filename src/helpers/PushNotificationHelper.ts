@@ -8,13 +8,31 @@ import { LoginUserChurchInterface } from "./Interfaces";
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true
-  })
+  handleNotification: async notification => {
+    const appState = await Notifications.getLastNotificationResponseAsync();
+    const isAppInForeground = appState === null;
+
+    // If app is in foreground, we'll handle it internally
+    if (isAppInForeground) {
+      eventBus.emit("notification", notification.request.content);
+      return {
+        shouldShowAlert: false,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+        shouldShowBanner: false,
+        shouldShowList: false
+      };
+    }
+
+    // If app is in background or closed, show system notification
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+      shouldShowBanner: true,
+      shouldShowList: true
+    };
+  }
 });
 
 export class PushNotificationHelper {
@@ -103,26 +121,48 @@ export class PushNotificationHelper {
     try {
       // Listen for notifications received while app is foregrounded
       const foregroundSubscription = Notifications.addNotificationReceivedListener(notification => {
-        console.log("Notification received in foreground:", notification);
-        const badge = JSON.stringify(notification);
-        eventBus.emit("badge", badge);
+        const content = notification.request.content;
+        console.log("Notification received in foreground:", content);
+
+        // Emit notification event for internal handling
+        eventBus.emit("notification", content);
+
+        // If it's a chat notification and we're in the chat, update the messages
+        if (content.data?.type === "chat" && content.data?.chatId) {
+          eventBus.emit("chatNotification", content.data);
+        }
       });
 
       // Listen for user interactions with notifications
       const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
-        console.log("Notification response received:", response);
-        // Handle notification tap
+        const content = response.notification.request.content;
+        console.log("Notification response received:", content);
+
+        // Handle navigation based on notification type
+        if (content.data?.type === "chat") {
+          eventBus.emit("navigateToChat", content.data);
+        } else if (content.data?.type === "message") {
+          eventBus.emit("navigateToMessage", content.data);
+        }
+        // Add more navigation types as needed
       });
 
       // Get notification that opened the app
       const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
       if (lastNotificationResponse) {
-        console.log("App opened from notification:", lastNotificationResponse);
+        const content = lastNotificationResponse.notification.request.content;
+        console.log("App opened from notification:", content);
+
+        // Handle navigation for app launch from notification
+        if (content.data?.type === "chat") {
+          eventBus.emit("navigateToChat", content.data);
+        } else if (content.data?.type === "message") {
+          eventBus.emit("navigateToMessage", content.data);
+        }
       }
 
       console.log("Expo notification listeners set up");
 
-      // Return cleanup function
       return () => {
         foregroundSubscription.remove();
         responseSubscription.remove();
@@ -130,6 +170,13 @@ export class PushNotificationHelper {
     } catch (error) {
       console.log("Error setting up notification listeners:", error);
     }
+  }
+
+  // Add method to check if we're in a specific chat
+  static isInChat(chatId: string): boolean {
+    // This should be implemented based on your navigation state
+    // You'll need to track the current chat ID in your navigation state
+    return false; // Placeholder
   }
 }
 

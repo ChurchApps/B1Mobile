@@ -12,6 +12,12 @@ import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
 
+interface NotificationData {
+  type: string;
+  chatId?: string;
+  [key: string]: any;
+}
+
 const MessageScreen = () => {
   const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
   const details = JSON.parse(userDetails);
@@ -30,11 +36,29 @@ const MessageScreen = () => {
 
   useEffect(() => {
     loadData();
-    eventBus.addListener("badge", loadData);
-    return () => {
-      eventBus.removeListener("badge");
+
+    // Listen for new messages
+    const handleNewMessage = (data: NotificationData) => {
+      if (data?.type === "chat" && data?.chatId && currentConversation?.conversationId && data.chatId === currentConversation.conversationId) {
+        getMessagesList(currentConversation.conversationId);
+      }
     };
-  }, []);
+
+    // Listen for notification updates
+    const handleNotification = (data: NotificationData) => {
+      if (data?.type === "chat" && data?.chatId && currentConversation?.conversationId && data.chatId === currentConversation.conversationId) {
+        getMessagesList(currentConversation.conversationId);
+      }
+    };
+
+    eventBus.addListener("updateChatMessages", handleNewMessage);
+    eventBus.addListener("notification", handleNotification);
+
+    return () => {
+      eventBus.removeListener("updateChatMessages");
+      eventBus.removeListener("notification");
+    };
+  }, [currentConversation?.conversationId]);
 
   const getConversations = () => {
     setLoading(true);
@@ -143,16 +167,7 @@ const MessageScreen = () => {
     </Surface>
   );
 
-  const messagesView = () => (
-    <FlatList
-      inverted
-      data={messageList}
-      style={{ paddingVertical: spacing.md }}
-      renderItem={({ item }) => singleMessageItem(item)}
-      keyExtractor={(item: any) => item.id}
-      contentContainerStyle={{ paddingBottom: spacing.lg }}
-    />
-  );
+  const messagesView = () => <FlatList inverted data={messageList} style={{ paddingVertical: spacing.md }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ paddingBottom: spacing.lg }} />;
 
   const singleMessageItem = (item: MessageInterface) => {
     const isMine = item.personId !== details.id;
