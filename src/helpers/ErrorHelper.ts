@@ -2,24 +2,22 @@ import { DeviceEventEmitter } from "react-native";
 import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
 export class ErrorHelper {
-  static logEvent(_eventType: string, _source: string, _message: string) {
+  static logEvent() {
     //console.log("***************Adding new event to analytics : ",{source, message});
     // Analytics.trackEvent(eventType, { source, message })
   }
 
-  static logError(source: string, error: any) {
-    const _message = error.message || error;
+  static logError() {
     //console.log("***************Adding new error to analytics : ",{source, message});
-
     // Analytics.trackEvent("Error", { source, message })
   }
 
-  static onJavaError(event: any) {
-    ErrorHelper.logError(event.source, event.message);
+  static onJavaError() {
+    // ErrorHelper.logError(event.source, event.message);
   }
 
-  static onJavaEvent(event: any) {
-    ErrorHelper.logEvent(event.eventType, event.source, event.message);
+  static onJavaEvent() {
+    ErrorHelper.logEvent();
   }
 
   static init() {
@@ -33,13 +31,13 @@ export class ErrorHelper {
   }
 
   static initUnhandled() {
-    setJSExceptionHandler((error, _isFatal) => {
-      ErrorHelper.logError("Unhandled Javascript", error.toString());
+    setJSExceptionHandler(() => {
+      ErrorHelper.logError();
     });
 
     setNativeExceptionHandler(
-      (exceptionString: string) => {
-        ErrorHelper.logError("Unhandled Native", exceptionString);
+      () => {
+        ErrorHelper.logError();
       },
       false,
       true

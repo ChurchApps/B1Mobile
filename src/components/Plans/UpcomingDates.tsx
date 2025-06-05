@@ -7,14 +7,13 @@ import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInt
 import { router } from "expo-router";
 
 interface Props {
-  navigation: any;
   plans: PlanInterface[];
   positions: PositionInterface[];
   assignments: AssignmentInterface[];
   times: TimeInterface[];
 }
 
-export const UpcomingDates = ({ plans, positions, assignments, times, navigation }: Props) => {
+export const UpcomingDates = ({ plans, positions, assignments, times }: Props) => {
   const [upcomingDates, setUpcomingDates] = useState<any[]>([]);
   const fadeAnim = new Animated.Value(0);
 
@@ -64,34 +63,6 @@ export const UpcomingDates = ({ plans, positions, assignments, times, navigation
       <View style={[styles.statusBadge, { backgroundColor }]}>
         <Text style={styles.statusText}>{status}</Text>
       </View>
-    );
-  };
-
-  const renderItems = (item: any) => {
-    const formattedDate = moment(item?.item?.serviceDate).format("MMM D, YYYY");
-    return (
-      <Animated.View style={{ opacity: fadeAnim }}>
-        <TouchableOpacity style={styles.card} onPress={() => router.push("/(drawer)/planDetails/" + item?.item?.planId)} activeOpacity={0.7}>
-          <View style={styles.cardContent}>
-            <View style={styles.planInfo}>
-              <Text style={styles.planNameVisible} numberOfLines={1}>
-                {item?.item?.planName}
-              </Text>
-              <View style={styles.dateTimeContainer}>
-                <Icons name="calendar-day" size={14} color="#666" style={styles.icon} />
-                <Text style={styles.dateTextVisible}>{formattedDate}</Text>
-                <Icons name="clock" size={14} color="#666" style={[styles.icon, styles.timeIcon]} />
-                <Text style={styles.timeTextVisible}>{item?.item?.time}</Text>
-              </View>
-            </View>
-            <View style={styles.roleInfo}>
-              <Icons name="user-tie" size={14} color={Constants.Colors.app_color} style={styles.roleIcon} />
-              <Text style={styles.roleTextVisible}>{item?.item?.position}</Text>
-            </View>
-            {getStatusBadge(item?.item?.status)}
-          </View>
-        </TouchableOpacity>
-      </Animated.View>
     );
   };
 

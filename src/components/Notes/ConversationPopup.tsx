@@ -71,16 +71,16 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
     for (let i = 1; i < item?.messages?.length; i++) noteArray.push(<Notes key={item.messages[i].id} item={[]} message={item.messages[i]} showReplyBox={showReplyBox} handleReply={handleReply} />);
     return noteArray;
   };
-  const renderConversations = (item: any, index: number) => (
+  const renderConversations = (item: any, idx: number) => (
     <View>
-      <RenderContent item={item} message={item.messages[0]} idx={index} />
+      <RenderContent item={item} idx={idx} />
     </View>
   );
 
-  const RenderContent = ({ item, message, idx }: any) => (
+  const RenderContent = ({ item, idx }: any) => (
     <View style={{ borderBottomWidth: 1, borderBottomColor: "#EFEFEF" }}>
-      <Notes item={item} message={message} idx={idx} showReplyBox={showReplyBox} handleReply={handleReply} />
-      {idx === showReplyBox && <RenderNewConversation placeholder={"Reply ..."} type="reply" message={message} />}
+      <Notes item={item} message={item.messages[0]} idx={idx} showReplyBox={showReplyBox} handleReply={handleReply} />
+      {idx === showReplyBox && <RenderNewConversation placeholder={"Reply ..."} type="reply" message={item.messages[0]} />}
       <View style={{ marginLeft: 64 }}>{getNotes(item)}</View>
     </View>
   );
@@ -141,7 +141,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
           data={conversations}
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }) => renderConversations(item, index)}
-          keyExtractor={(item, index) => item.id.toString()}
+          keyExtractor={item => item.id.toString()}
           contentContainerStyle={{ padding: spacing.sm }}
         />
       </View>

@@ -24,7 +24,7 @@ export class PushNotificationHelper {
     const deviceInfo = await PushNotificationHelper.getDeviceInfo();
     const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
     const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
-    const currentData: LoginUserChurchInterface | undefined = tst?.find((value, _index) => value.church.id == currentChurch!.id);
+    const currentData: LoginUserChurchInterface | undefined = tst?.find(value => value.church.id == currentChurch!.id);
     if (currentData != null || currentData != undefined) {
       ApiHelper.post("/devices/register", { personId: currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi");
     }
@@ -69,7 +69,7 @@ export class PushNotificationHelper {
     if (Platform.OS === "android") {
       try {
         await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-      } catch (_error) {
+      } catch {
         // Permission request failed, but we don't need to handle it
       }
     }

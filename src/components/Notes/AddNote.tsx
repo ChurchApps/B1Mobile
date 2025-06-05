@@ -17,7 +17,6 @@ type Props = {
 export function AddNote({ ...props }: Props) {
   const [message, setMessage] = useState<MessageInterface | null>();
   const [errors, setErrors] = React.useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
   useEffect(() => {
     if (props.messageId)
       ApiHelper.get(`/messages/${props.messageId}`, "MessagingApi").then(n => {
@@ -46,7 +45,6 @@ export function AddNote({ ...props }: Props) {
   async function handleSave() {
     try {
       if (validate()) {
-        setIsSubmitting(true);
         let cId = props.conversationId;
         if (!cId) cId = await props.createConversation();
         const m = { ...message };
@@ -62,7 +60,6 @@ export function AddNote({ ...props }: Props) {
             console.error("Error calling message API:", error);
           })
           .finally(() => {
-            setIsSubmitting(false);
             setMessage(null);
           });
       }

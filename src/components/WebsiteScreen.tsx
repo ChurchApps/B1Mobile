@@ -27,7 +27,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
     UserHelper.addOpenScreenEvent("Website Screen", { url });
   }, []);
 
-  const handleMessage = (event: any) => {
+  const handleMessage = () => {
     let newUrl = currentUrl + "&autoPrint=1";
     Linking.openURL(newUrl);
   };

@@ -8,11 +8,10 @@ import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { Loader } from "./Loader";
 
-export function NotificationTab(props: any) {
+export function NotificationTab() {
   const navigation: NavigationProps = useNavigation();
 
   const [isLoading, setLoading] = useState(false);
-  const [index, setIndex] = useState(0);
   const [NotificationData, setNotificationData] = useState([]);
   const [Chatlist, setChatList] = useState<any[]>([]);
   const [UserData, setUserData] = useState<any[]>([]);
@@ -83,7 +82,7 @@ export function NotificationTab(props: any) {
     });
   };
 
-  const renderChatListItems = (item: any, index: number) => {
+  const renderChatListItems = (item: any) => {
     let userchatDetails = {
       id: item.id,
       DisplayName: item.displayName,
@@ -120,7 +119,7 @@ export function NotificationTab(props: any) {
       </TouchableOpacity>
     );
   };
-  const renderItems = (item: any, index: number) => {
+  const renderItems = (item: any) => {
     const currentDate = moment();
     const endDate = moment(item?.timeSent);
     const timeDifference = currentDate.diff(endDate, "hours");
@@ -161,19 +160,13 @@ export function NotificationTab(props: any) {
 
   const MessagesRoute = () => (
     <View style={globalStyles.MessagetabView}>
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={mergeData}
-        renderItem={({ item, index }) => renderChatListItems(item, index)}
-        keyExtractor={(item, index) => String(index)}
-        ItemSeparatorComponent={({ item }) => <View style={globalStyles.cardListSeperator} />}
-      />
+      <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={item => String(item.id)} />
     </View>
   );
 
   const NotificationRoute = () => (
     <View style={globalStyles.NotificationtabView}>
-      <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item, index }) => renderItems(item, index)} keyExtractor={(item, index) => String(index)} />
+      <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={item => String(item.id)} />
     </View>
   );
 
@@ -198,9 +191,9 @@ export function NotificationTab(props: any) {
     <View style={[globalStyles.tabBar, { backgroundColor: "#f8f9fa" }]}>
       {isLoading && <Loader isLoading={isLoading} />}
       <TabView
-        navigationState={{ index, routes }}
+        navigationState={{ index: 0, routes }}
         renderScene={renderScene}
-        onIndexChange={setIndex}
+        onIndexChange={() => {}}
         swipeEnabled={false}
         renderTabBar={renderTabBar}
         initialLayout={{ width: DimensionHelper.wp(100), height: DimensionHelper.hp(200) }}

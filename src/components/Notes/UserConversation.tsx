@@ -12,10 +12,9 @@ interface CustomConversationInterface {
   conversation: ConversationInterface;
   conversationId: string;
   createConversation: () => Promise<string>;
-  onUpdate: () => void;
 }
 
-const UserConversations = ({ conversation, conversationId, createConversation, onUpdate }: CustomConversationInterface) => {
+const UserConversations = ({ conversation, conversationId, createConversation }: CustomConversationInterface) => {
   const [conversations, setConversations] = useState<{ messages?: MessageInterface[] }[]>([]);
   const [editMessageId, setEditMessageId] = React.useState("");
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);

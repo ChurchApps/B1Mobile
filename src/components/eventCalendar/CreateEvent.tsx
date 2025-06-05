@@ -60,39 +60,45 @@ export default function CreateEvent(props: Props) {
   const handleRecurringSave = async (editType: string) => {
     switch (editType) {
       case "this":
-        const exception: EventExceptionInterface = { eventId: event.id, exceptionDate: event.start };
-        ApiHelper.post("/eventExceptions", [exception], "ContentApi").then(data => {
-          const oneEv = { ...event };
-          oneEv.id = undefined;
-          oneEv.recurrenceRule = undefined;
-          ApiHelper.post("/events", [oneEv], "ContentApi").then(() => {
+        {
+          const exception: EventExceptionInterface = { eventId: event.id, exceptionDate: event.start };
+          ApiHelper.post("/eventExceptions", [exception], "ContentApi").then(() => {
+            const oneEv = { ...event };
+            oneEv.id = undefined;
+            oneEv.recurrenceRule = undefined;
+            ApiHelper.post("/events", [oneEv], "ContentApi").then(() => {
+              if (props.onDone) props.onDone();
+              setShowEventEditModal(false);
+            });
+          });
+        }
+        break;
+      case "future":
+        {
+          const newEvent = { ...event };
+          newEvent.id = undefined;
+          newEvent.recurrenceRule = rRule;
+
+          const originalEv = await ApiHelper.get("/events/" + props.event.id, "ContentApi");
+          const rrule = EventHelper.getFullRRule(originalEv);
+          rrule.options.until = newEvent.start ? new Date(newEvent.start) : new Date();
+          EventHelper.cleanRule(rrule.options);
+          originalEv.recurrenceRule = EventHelper.getPartialRRuleString(rrule.options);
+          ApiHelper.post("/events", [originalEv, newEvent], "ContentApi").then(() => {
             if (props.onDone) props.onDone();
             setShowEventEditModal(false);
           });
-        });
-        break;
-      case "future":
-        const newEvent = { ...event };
-        newEvent.id = undefined;
-        newEvent.recurrenceRule = rRule;
-
-        const originalEv = await ApiHelper.get("/events/" + props.event.id, "ContentApi");
-        const rrule = EventHelper.getFullRRule(originalEv);
-        rrule.options.until = newEvent.start ? new Date(newEvent.start) : new Date();
-        EventHelper.cleanRule(rrule.options);
-        originalEv.recurrenceRule = EventHelper.getPartialRRuleString(rrule.options);
-        ApiHelper.post("/events", [originalEv, newEvent], "ContentApi").then(() => {
-          if (props.onDone) props.onDone();
-          setShowEventEditModal(false);
-        });
+        }
         break;
       case "all":
-        const allEv = { ...event };
-        allEv.recurrenceRule = rRule;
-        ApiHelper.post("/events", [allEv], "ContentApi").then(() => {
-          if (props.onDone) props.onDone();
-          setShowEventEditModal(false);
-        });
+        {
+          const allEv = { ...event };
+          allEv.recurrenceRule = rRule;
+          ApiHelper.post("/events", [allEv], "ContentApi").then(() => {
+            if (props.onDone) props.onDone();
+            setShowEventEditModal(false);
+          });
+        }
         break;
     }
   };

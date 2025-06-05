@@ -7,12 +7,11 @@ import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInt
 import { router } from "expo-router";
 
 interface Props {
-  navigation: any;
   plans: PlanInterface[];
   positions: PositionInterface[];
   assignments: AssignmentInterface[];
 }
-export const ServingTimes = ({ plans, positions, assignments, navigation }: Props) => {
+export const ServingTimes = ({ plans, positions, assignments }: Props) => {
   const [servingTimes, setServingTimes] = useState<any[]>([]);
   const fadeAnim = new Animated.Value(0);
 
@@ -52,29 +51,6 @@ export const ServingTimes = ({ plans, positions, assignments, navigation }: Prop
       getServingTimes();
     }
   }, [assignments, positions, plans]);
-
-  const renderItems = (item: any) => {
-    const formattedDate = moment(item?.item?.serviceDate).format("MMM D, YYYY");
-    return (
-      <Animated.View style={{ opacity: fadeAnim }}>
-        <TouchableOpacity style={styles.card} onPress={() => router.push("/(drawer)/planDetails/" + item?.item?.planId)} activeOpacity={0.7}>
-          <View style={styles.cardContent}>
-            <View style={styles.planInfo}>
-              <Text style={styles.planNameVisible} numberOfLines={1}>
-                {item?.item?.planName}
-              </Text>
-              <Text style={styles.dateTextVisible}>{formattedDate}</Text>
-            </View>
-            <View style={styles.roleInfo}>
-              <Icons name="user-tie" size={14} color={Constants.Colors.app_color} style={styles.roleIcon} />
-              <Text style={styles.roleTextVisible}>{item?.item?.position}</Text>
-            </View>
-            {getStatusBadge(item?.item?.status)}
-          </View>
-        </TouchableOpacity>
-      </Animated.View>
-    );
-  };
 
   return (
     <View style={styles.container}>

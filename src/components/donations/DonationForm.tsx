@@ -14,22 +14,6 @@ interface Props {
   updatedFunction: () => void;
 }
 
-interface PreviewModalProps {
-  visible: boolean;
-  onDismiss: () => void;
-  onConfirm: (message: string) => Promise<void>;
-  donation: StripeDonationInterface;
-  total: number;
-  transactionFee: number;
-  isRecurring: boolean;
-}
-
-interface FundDonationsProps {
-  funds: FundInterface[];
-  fundDonations: FundDonationInterface[];
-  onChange: (fd: FundDonationInterface[]) => void;
-}
-
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
   const { spacing } = useAppTheme();
   const theme = useTheme();
@@ -134,7 +118,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setTransactionFee(getTransactionFee(totalAmount));
   };
 
-  const makeDonation = async (_message: string) => {
+  const makeDonation = async () => {
     const method = pm.find(pm => pm.id === selectedMethod);
     if (!UserHelper.currentUserChurch?.person?.id) {
       ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi")

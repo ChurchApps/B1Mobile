@@ -15,7 +15,6 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
   const [loading, setLoading] = useState(false);
   const [songDetail, setSongDetail] = useState<any>(null);
   const [arrangement, setArrangement] = useState<any>(null);
-  const [arrangementKey, setArrangementKey] = useState<any>(null);
   const [links, setLinks] = useState<any[]>([]);
   const [externalLinks, setExternalLinks] = useState<any[]>([]);
 
@@ -24,7 +23,6 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
       setLoading(true);
       try {
         const ak = await ApiHelper.get(`/arrangementKeys/${arrangementKeyId}`, "ContentApi");
-        setArrangementKey(ak);
         const arr = await ApiHelper.get(`/arrangements/${ak.arrangementId}`, "ContentApi");
         setArrangement(arr);
         const sd = await ApiHelper.get(`/songDetails/${arr.songDetailId}`, "ContentApi");
