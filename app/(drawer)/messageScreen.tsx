@@ -20,6 +20,7 @@ const MessageScreen = () => {
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
   const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
+  const [loading, setLoading] = useState(false);
   const { showActionSheetWithOptions } = useActionSheet();
 
   const loadData = () => {
@@ -36,16 +37,16 @@ const MessageScreen = () => {
   }, []);
 
   const getConversations = () => {
+    setLoading(true);
     ApiHelper.get("/privateMessages/existing/" + details.id, "MessagingApi").then(data => {
       setCurrentConversation(data);
       if (Object.keys(data).length != 0 && data.conversationId != undefined) getMessagesList(data.conversationId);
+      setLoading(false);
     });
   };
 
   const loadMembers = () => {
-    ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi").then(data => {
-      if (data != null && data.length > 0) setUserProfilePic(data[0].photo);
-    });
+    ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi");
   };
 
   const getMessagesList = (conversationId: string) => {
@@ -99,7 +100,7 @@ const MessageScreen = () => {
         }
       ];
 
-    ApiHelper.post("/messages", params, "MessagingApi").then(async (data: any) => {
+    ApiHelper.post("/messages", params, "MessagingApi").then(() => {
       setMessageText("");
       setEditingMessage(null);
       getConversations();

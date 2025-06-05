@@ -7,12 +7,13 @@ import React, { useEffect, useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { Loader } from "./Loader";
+import { router } from "expo-router";
 
 export function NotificationTab() {
   const navigation: NavigationProps = useNavigation();
 
   const [isLoading, setLoading] = useState(false);
-  const [NotificationData, setNotificationData] = useState([]);
+  const [NotificationData, setNotificationData] = useState<any[]>([]);
   const [Chatlist, setChatList] = useState<any[]>([]);
   const [UserData, setUserData] = useState<any[]>([]);
   const [mergeData, setMergedData] = useState<any[]>([]);
@@ -27,9 +28,16 @@ export function NotificationTab() {
   }, []);
   const getNotifications = () => {
     setLoading(true);
-    ApiHelper.get("/notifications/my", "MessagingApi").then(data => {
-      if (data && data.length != 0) setNotificationData(data);
-    });
+    ApiHelper.get("/notifications/my", "MessagingApi")
+      .then(data => {
+        if (data && Array.isArray(data)) setNotificationData(data);
+        else setNotificationData([]);
+      })
+      .catch(err => {
+        console.error("Error fetching notifications:", err);
+        setNotificationData([]);
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -89,7 +97,7 @@ export function NotificationTab() {
       photo: item.photo
     };
     return (
-      <TouchableOpacity onPress={() => navigation.navigate("MessagesScreen", { userDetails: userchatDetails })}>
+      <TouchableOpacity onPress={() => router.push({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(userchatDetails) } })}>
         <View
           style={[
             globalStyles.messageContainer,
@@ -165,8 +173,24 @@ export function NotificationTab() {
   );
 
   const NotificationRoute = () => (
-    <View style={globalStyles.NotificationtabView}>
-      <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={item => String(item.id)} />
+    <View style={[globalStyles.NotificationtabView, { flex: 1, justifyContent: "center", alignItems: "center" }]}>
+      {isLoading ? (
+        <Loader isLoading={true} />
+      ) : NotificationData.length > 0 ? (
+        <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={item => String(item.id)} />
+      ) : (
+        <View style={{ alignItems: "center", padding: DimensionHelper.wp(5) }}>
+          <Image
+            source={Constants.Images.dash_bell}
+            style={{ width: DimensionHelper.wp(15), height: DimensionHelper.wp(15), marginBottom: DimensionHelper.wp(3) }}
+            tintColor={Constants.Colors.app_color_light}
+          />
+          <Text style={{ fontSize: DimensionHelper.wp(4), color: "#6c757d", textAlign: "center", fontFamily: Constants.Fonts.RobotoMedium }}>No notifications yet</Text>
+          <Text style={{ fontSize: DimensionHelper.wp(3.5), color: "#adb5bd", textAlign: "center", marginTop: DimensionHelper.wp(1), fontFamily: Constants.Fonts.RobotoRegular }}>
+            We'll notify you when something new arrives
+          </Text>
+        </View>
+      )}
     </View>
   );
 
@@ -193,7 +217,7 @@ export function NotificationTab() {
       <TabView
         navigationState={{ index: 0, routes }}
         renderScene={renderScene}
-        onIndexChange={() => {}}
+        onIndexChange={() => { }}
         swipeEnabled={false}
         renderTabBar={renderTabBar}
         initialLayout={{ width: DimensionHelper.wp(100), height: DimensionHelper.hp(200) }}
