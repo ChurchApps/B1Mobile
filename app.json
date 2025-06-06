@@ -2,7 +2,7 @@
   "expo": {
     "name": "B1 Church",
     "slug": "B1Mobile",
-    "version": "1.30.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "b1mobile",
@@ -92,7 +92,7 @@
       "websiteUrl": "https://b1.church",
       "appStoreId": "1610587256"
     },
-    "runtimeVersion": "1.30.0",
+    "runtimeVersion": "2.0.0",
     "updates": {
       "url": "https://u.expo.dev/f72e5911-b8d5-467c-ad9e-423c180e9938",
       "enabled": true,
