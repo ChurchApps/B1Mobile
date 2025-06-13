@@ -1,4 +1,4 @@
-package  church.b1.mobile
+package com.b1mobile
 
 import android.app.Application
 import android.content.res.Configuration
@@ -24,8 +24,7 @@ class MainApplication : Application(), ReactApplication {
           override fun getPackages(): List<ReactPackage> {
             val packages = PackageList(this).packages
             // Packages that cannot be autolinked yet can be added manually here, for example:
-            // packages.add(new MyReactNativePackage());
-              packages.add(PrintHelperPackage())
+            // packages.add(MyReactNativePackage())
             return packages
           }
 

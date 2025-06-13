@@ -7,7 +7,11 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "channel": "development"
+      "channel": "development",
+      "ios": {
+        "simulator": true,
+        "buildConfiguration": "Debug"
+      }
     },
     "preview": {
       "distribution": "internal",
@@ -15,17 +19,25 @@
     },
     "production": {
       "autoIncrement": true,
-      "android": {
-        "env": {
-          "GOOGLE_SERVICES_JSON": "1"
-        }
+      "distribution": "store",
+      "channel": "production",
+      "ios": {
+        "simulator": false,
+        "buildConfiguration": "Release"
+      },
+      "env": {
+        "GOOGLE_SERVICES_JSON": "1",
+        "GOOGLE_SERVICE_INFO_PLIST": "1"
       }
     }
   },
   "submit": {
-    "GooglePlay": {
+    "production": {
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json"
+      },
+      "ios": {
+        "appleId": "church.b1.mobile"
       }
     }
   }
