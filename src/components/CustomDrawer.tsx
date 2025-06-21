@@ -1,6 +1,6 @@
-import { CacheHelper, EnvironmentHelper, UserHelper } from "@/src/helpers";
-import { ErrorHelper } from "@/src/helpers/ErrorHelper";
-import { NavigationHelper } from "@/src/helpers/NavigationHelper";
+import { CacheHelper, EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { ErrorHelper } from "../../src/helpers/ErrorHelper";
+import { NavigationHelper } from "../../src/helpers/NavigationHelper";
 import { ApiHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
 import RNRestart from "react-native-restart";
 import { DimensionHelper } from "../helpers/DimensionHelper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../src/theme";
 import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from "react-native-paper";
 
 export function CustomDrawer(props: any) {
@@ -117,14 +117,16 @@ export function CustomDrawer(props: any) {
       showMyGroups = uc?.groups?.length > 0;
     }
     specialTabs.push({ linkType: "separator", linkData: "", category: "", text: "", icon: "", url: "" });
-    if (showWebsite) specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Website", icon: "home", url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
+    if (showWebsite)
+      specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Website", icon: "home", url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
     if (showMyGroups) specialTabs.push({ linkType: "groups", linkData: "", category: "", text: "My Groups", icon: "group", url: "" });
     if (showCheckin) specialTabs.push({ linkType: "checkin", linkData: "", category: "", text: "Check In", icon: "check_box", url: "" });
     if (showDonations) specialTabs.push({ linkType: "donation", linkData: "", category: "", text: "Donate", icon: "volunteer_activism", url: "" });
     if (showDirectory) specialTabs.push({ linkType: "directory", linkData: "", category: "", text: "Member Directory", icon: "groups", url: "" });
     if (showPlans) specialTabs.push({ linkType: "plans", linkData: "", category: "", text: "Plans", icon: "event", url: "" });
     if (showLessons) specialTabs.push({ linkType: "lessons", linkData: "", category: "", text: "Lessons", icon: "school", url: "" });
-    if (showChums) specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Chums", icon: "account_circle", url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id });
+    if (showChums)
+      specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Chums", icon: "account_circle", url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id });
     return specialTabs;
   };
 
@@ -170,7 +172,11 @@ export function CustomDrawer(props: any) {
   const drawerHeaderComponent = () => (
     <Surface style={styles.headerContainer} elevation={1}>
       {getUserInfo()}
-      <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} icon={() => <MaterialIcons name={churchEmpty ? "search" : "church"} size={24} color={paperTheme.colors.primary} />}>
+      <Button
+        mode="outlined"
+        onPress={() => router.navigate("/(drawer)/churchSearch")}
+        style={styles.churchButton}
+        icon={() => <MaterialIcons name={churchEmpty ? "search" : "church"} size={24} color={paperTheme.colors.primary} />}>
         {churchEmpty ? "Find your church..." : churchName}
       </Button>
     </Surface>
@@ -184,13 +190,24 @@ export function CustomDrawer(props: any) {
       <Card style={styles.userCard}>
         <Card.Content style={styles.userCardContent}>
           <View style={styles.userInfoContainer}>
-            <View style={styles.avatarContainer}>{UserHelper.currentUserChurch.person.photo ? <Avatar.Image size={DimensionHelper.wp(12)} source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo }} /> : <Avatar.Text size={DimensionHelper.wp(12)} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />}</View>
+            <View style={styles.avatarContainer}>
+              {UserHelper.currentUserChurch.person.photo ? (
+                <Avatar.Image size={DimensionHelper.wp(12)} source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo }} />
+              ) : (
+                <Avatar.Text size={DimensionHelper.wp(12)} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />
+              )}
+            </View>
             <View style={styles.userTextContainer}>
               <Text variant="titleMedium" numberOfLines={2} style={styles.userName}>
                 {`${user.firstName} ${user.lastName}`}
               </Text>
               <View style={styles.buttonContainer}>
-                <Button mode="text" onPress={editProfileAction} style={styles.editProfileButton} textColor={paperTheme.colors.primary} icon={() => <MaterialIcons name="edit" size={18} color={paperTheme.colors.primary} />}>
+                <Button
+                  mode="text"
+                  onPress={editProfileAction}
+                  style={styles.editProfileButton}
+                  textColor={paperTheme.colors.primary}
+                  icon={() => <MaterialIcons name="edit" size={18} color={paperTheme.colors.primary} />}>
                   Profile
                 </Button>
                 {UserHelper.user && (
@@ -217,7 +234,11 @@ export function CustomDrawer(props: any) {
     const pkg = require("../../package.json");
     return (
       <Surface style={styles.footerContainer} elevation={1}>
-        <Button mode="outlined" onPress={UserHelper.user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={UserHelper.user ? "logout" : "login"} size={24} color={paperTheme.colors.primary} />}>
+        <Button
+          mode="outlined"
+          onPress={UserHelper.user ? logoutAction : () => router.navigate("/auth/login")}
+          style={styles.logoutButton}
+          icon={() => <MaterialIcons name={UserHelper.user ? "logout" : "login"} size={24} color={paperTheme.colors.primary} />}>
           {UserHelper.user ? "Log out" : "Login"}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>

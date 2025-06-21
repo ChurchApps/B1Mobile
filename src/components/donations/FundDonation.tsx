@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Menu, Text, TextInput, useTheme } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
-import { FundDonationInterface, FundInterface } from "@/src/interfaces";
-import { CurrencyHelper } from "@/src/helpers";
+import { useAppTheme } from "../../../src/theme";
+import { FundDonationInterface, FundInterface } from "../../../src/interfaces";
+import { CurrencyHelper } from "../../../src/helpers";
 
 interface Props {
   fundDonation: FundDonationInterface;

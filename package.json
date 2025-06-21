@@ -27,12 +27,14 @@
     "@react-navigation/drawer": "^7.3.9",
     "@react-navigation/native": "^7.1.6",
     "@ronradtke/react-native-markdown-display": "^8.1.0",
-    "@stripe/stripe-react-native": "0.45.0",
+    "@stripe/stripe-react-native": "^0.28.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "expo": "~53.0.9",
     "expo-blur": "~14.1.4",
+    "expo-build-properties": "~0.14.6",
     "expo-constants": "~17.1.6",
+    "expo-dev-client": "~5.2.0",
     "expo-font": "~13.3.1",
     "expo-haptics": "~14.1.4",
     "expo-linear-gradient": "~14.1.4",
@@ -52,7 +54,7 @@
     "react-error-boundary": "^6.0.0",
     "react-native": "0.79.2",
     "react-native-calendars": "^1.1312.0",
-    "react-native-date-picker": "^5.0.12",
+    "react-native-date-picker": "5.0.12",
     "react-native-device-info": "^14.0.4",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-exception-handler": "^2.10.10",
@@ -77,6 +79,7 @@
     "@babel/core": "^7.27.1",
     "@eslint/js": "^9.28.0",
     "@react-native-community/cli": "latest",
+    "@react-native/metro-config": "^0.80.0",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.0.10",
     "@types/react-native-material-ripple": "^0.9.6",
@@ -95,6 +98,15 @@
   },
   "private": true,
   "expo": {
+    "name": "B1Mobile",
+    "slug": "b1mobile",
+    "scheme": "b1mobile",
+    "android": {
+      "package": "church.b1.mobile"
+    },
+    "ios": {
+      "bundleIdentifier": "church.b1.mobile"
+    },
     "plugins": [
       [
         "expo-notifications",

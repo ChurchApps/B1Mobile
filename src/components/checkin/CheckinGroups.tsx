@@ -1,8 +1,8 @@
-import { CheckinHelper, PersonInterface, ServiceTimeInterface, UserHelper } from "@/src/helpers";
+import { CheckinHelper, PersonInterface, ServiceTimeInterface, UserHelper } from "../../../src/helpers";
 import { ArrayHelper } from "@churchapps/mobilehelper";
 import React, { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 import { Button, Divider, List, Text } from "react-native-paper";
 
 interface Props {

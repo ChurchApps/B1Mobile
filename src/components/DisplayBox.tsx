@@ -1,5 +1,5 @@
-import { globalStyles } from "@/src/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { globalStyles } from "../../src/helpers";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React from "react";
 import { Text, View } from "react-native";
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Linking, ActivityIndicator } from "react-native";
-import { ApiHelper } from "@/src/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
-import { Constants } from "@/src/helpers/Constants";
+import { ApiHelper } from "../../../src/helpers";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
+import { Constants } from "../../../src/helpers/Constants";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 

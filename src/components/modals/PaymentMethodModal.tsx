@@ -1,9 +1,9 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import * as React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Constants, globalStyles } from "@/src/helpers";
-import { StripePaymentMethod } from "@/src/interfaces";
+import { Constants, globalStyles } from "../../../src/helpers";
+import { StripePaymentMethod } from "../../../src/interfaces";
 import { CustomModal } from "./CustomModal";
 
 interface Props {

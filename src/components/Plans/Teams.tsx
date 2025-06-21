@@ -1,8 +1,8 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useEffect } from "react";
 import { FlatList, Image, Text, View } from "react-native";
 import Icons from "react-native-vector-icons/MaterialIcons";
-import { AssignmentInterface, Constants, EnvironmentHelper, PersonInterface, PositionInterface, globalStyles } from "@/src/helpers";
+import { AssignmentInterface, Constants, EnvironmentHelper, PersonInterface, PositionInterface, globalStyles } from "../../../src/helpers";
 
 interface Props {
   positions: PositionInterface[];

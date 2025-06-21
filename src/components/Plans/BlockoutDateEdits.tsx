@@ -1,12 +1,12 @@
 import { ApiHelper } from "@churchapps/mobilehelper";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import moment from "moment";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
 import Icons from "react-native-vector-icons/MaterialCommunityIcons";
-import { BlockoutDateInterface, Constants, globalStyles } from "@/src/helpers";
+import { BlockoutDateInterface, Constants, globalStyles } from "../../../src/helpers";
 import { CustomModal } from "../modals/CustomModal";
 
 interface Props {

@@ -2,7 +2,7 @@ import { ConversationInterface } from "@churchapps/mobilehelper";
 import moment from "moment";
 import React from "react";
 import { Image, Text, View } from "react-native";
-import { ApiHelper, UserHelper, globalStyles } from "@/src/helpers";
+import { ApiHelper, UserHelper, globalStyles } from "../../../src/helpers";
 import UserConversations from "../Notes/UserConversation";
 import { Menu, IconButton } from "react-native-paper";
 
@@ -56,9 +56,9 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
       </View>
 
       {(item?.item?.postType == "event" && item?.item?.photoUrl !== null) ||
-        item?.item?.postType == "sermon" ||
-        item?.item?.postType == "group" ||
-        (item?.item?.postType == "venue" && item?.item?.data?.image != null) ? (
+      item?.item?.postType == "sermon" ||
+      item?.item?.postType == "group" ||
+      (item?.item?.postType == "venue" && item?.item?.data?.image != null) ? (
         <View style={globalStyles.ImageMainView}>
           <View style={globalStyles.ImageView}>
             {item?.item?.postType == "venue" && item?.item?.data?.image != null ? (

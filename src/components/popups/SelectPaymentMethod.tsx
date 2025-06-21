@@ -2,9 +2,9 @@ import * as React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import Dialog, { DialogContent, ScaleAnimation } from "react-native-popup-dialog";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Constants, globalStyles } from "@/src/helpers";
-import { StripePaymentMethod } from "@/src/interfaces";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { Constants, globalStyles } from "../../../src/helpers";
+import { StripePaymentMethod } from "../../../src/interfaces";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 
 interface Props {
   show: boolean;

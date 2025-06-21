@@ -1,7 +1,7 @@
-import { UserHelper } from "@/src/helpers";
+import { UserHelper } from "../../../src/helpers";
 import React, { useEffect } from "react";
 import { View } from "react-native";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 import { IconButton, Surface, Text } from "react-native-paper";
 
 interface Props {

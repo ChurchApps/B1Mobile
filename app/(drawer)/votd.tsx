@@ -1,9 +1,9 @@
-import { MainHeader } from "@/src/components/wrapper/MainHeader";
+import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import React from "react";
 import { Dimensions, Image, SafeAreaView, View } from "react-native";
 // import { Utilities, globalStyles } from '../helpers';
 // import { NavigationProps } from '../interfaces';
-import { globalStyles } from "@/src/helpers";
+import { globalStyles } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation } from "expo-router";
 import { UserHelper } from "../../src/helpers/UserHelper";

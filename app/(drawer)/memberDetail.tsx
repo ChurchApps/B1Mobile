@@ -1,6 +1,6 @@
 import React from "react";
-import { MainHeader } from "@/src/components/wrapper/MainHeader";
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "@/src/helpers";
+import { MainHeader } from "../../src/components/wrapper/MainHeader";
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -8,7 +8,7 @@ import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Alert, Image, Linking, ScrollView, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text } from "react-native-paper";
 
 const MemberDetail = () => {

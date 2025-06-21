@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
-import { Constants } from "@/src/helpers";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
+import { Constants } from "../../../src/helpers";
 import Icons from "react-native-vector-icons/FontAwesome5";
-import { ApiHelper } from "@/src/helpers";
+import { ApiHelper } from "../../../src/helpers";
 import moment from "moment";
 
 export const BlockoutDates = () => {

@@ -1,5 +1,5 @@
-import { Constants } from "@/src/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { Constants } from "../../src/helpers";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";

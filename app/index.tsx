@@ -1,9 +1,9 @@
 import React from "react";
-import { ApiHelper, CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "@/src/helpers";
-import { ErrorHelper } from "@/src/helpers/ErrorHelper";
-import { PushNotificationHelper } from "@/src/helpers/PushNotificationHelper";
-import { UpdateHelper } from "@/src/helpers/UpdateHelper";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { ApiHelper, CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "../src/helpers";
+import { ErrorHelper } from "../src/helpers/ErrorHelper";
+import { PushNotificationHelper } from "../src/helpers/PushNotificationHelper";
+import { UpdateHelper } from "../src/helpers/UpdateHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Image, Platform, View } from "react-native";
@@ -36,6 +36,7 @@ const SplashScreen = () => {
   };
 
   useEffect(() => {
+    console.log("Working proper");
     ErrorHelper.init();
     //ApiHelper.onRequest = (url:string, requestOptions:any) => { console.log("Request: ", url, requestOptions); }
     ApiHelper.onError = (url: string, requestOptions: any, error: any) => {
@@ -85,7 +86,7 @@ const SplashScreen = () => {
       <View style={[globalStyles.safeAreaContainer, { flex: 1, backgroundColor: Constants.Colors.app_color }]}>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
           <Image
-            source={require("@/assets/images/logo.png")}
+            source={require("../assets/images/logo.png")}
             style={{
               width: DimensionHelper.wp(70),
               height: undefined,
@@ -101,7 +102,7 @@ const SplashScreen = () => {
       <View style={[globalStyles.safeAreaContainer, { flex: 1 }]}>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 20 }}>
           <Image
-            source={require("@/assets/images/logo.png")}
+            source={require("../assets/images/logo.png")}
             style={{
               width: DimensionHelper.wp(70),
               height: undefined,

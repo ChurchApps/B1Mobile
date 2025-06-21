@@ -1,12 +1,12 @@
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { ApiHelper, DateHelper, EventExceptionInterface, EventInterface } from "@churchapps/mobilehelper";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import moment from "moment";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { globalStyles } from "@/src/helpers";
+import { globalStyles } from "../../../src/helpers";
 import CheckBox from "../CheckBox";
 import { CustomModal } from "../modals/CustomModal";
 import EditRecurringModal from "./EditRecurringModal";

@@ -1,5 +1,5 @@
-import { Constants, globalStyles } from "@/src/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { Constants, globalStyles } from "../../src/helpers";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 

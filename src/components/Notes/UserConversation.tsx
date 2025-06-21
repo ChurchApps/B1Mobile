@@ -1,8 +1,8 @@
 import { MessageInterface, ConversationInterface } from "@churchapps/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
-import { ApiHelper, ArrayHelper } from "@/src/helpers";
+import { ApiHelper, ArrayHelper } from "../../../src/helpers";
 import { AddNote } from "./AddNote";
 import Note from "./Note";
 import Notes from "./Notes";

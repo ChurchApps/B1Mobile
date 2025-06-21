@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
-import { Constants } from "@/src/helpers/Constants";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
+import { Constants } from "../../../src/helpers/Constants";
 import { SongDialog } from "./SongDialog";
 
 export interface PlanItemInterface {

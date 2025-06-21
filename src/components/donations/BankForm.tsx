@@ -1,6 +1,6 @@
-import { ApiHelper, Constants, StripeHelper, UserHelper, globalStyles } from "@/src/helpers";
-import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "@/src/interfaces";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { ApiHelper, Constants, StripeHelper, UserHelper, globalStyles } from "../../../src/helpers";
+import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../../src/interfaces";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useState } from "react";
 import { Alert, Image, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";

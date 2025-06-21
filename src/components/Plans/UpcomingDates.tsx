@@ -1,9 +1,9 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import Icons from "react-native-vector-icons/FontAwesome5";
-import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface, TimeInterface } from "@/src/helpers";
+import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
 import { router } from "expo-router";
 
 interface Props {

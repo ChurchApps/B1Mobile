@@ -9,21 +9,45 @@
     "userInterfaceStyle": "automatic",
     "privacy": "https://churchapps.org/privacy",
     "owner": "churchapps",
+    "runtimeVersion": "2.0.0",
     "android": {
+      "package": "church.b1.mobile",
+      "googleServicesFile": "./google-services.json",
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=church.b1.mobile",
+      "jsEngine": "hermes",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "googleServicesFile": "./google-services.json",
-      "package": "church.b1.mobile",
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
         "NOTIFICATIONS",
         "com.google.android.gms.permission.AD_ID"
-      ],
-      "playStoreUrl": "https://play.google.com/store/apps/details?id=church.b1.mobile"
+      ]
+    },
+    "ios": {
+      "bundleIdentifier": "church.b1.mobile",
+      "buildNumber": "30",
+      "supportsTablet": true,
+      "requireFullScreen": true,
+      "jsEngine": "hermes",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "B1 Church needs access to your photos to allow you to upload profile pictures and share images with your church community.",
+        "NSCameraUsageDescription": "B1 Church needs camera access to allow you to take photos for your profile and share with your church community.",
+        "NSMicrophoneUsageDescription": "B1 Church needs microphone access to allow you to record audio messages and participate in church communications.",
+        "NSLocationWhenInUseUsageDescription": "B1 Church uses your location to help you find nearby church events and connect with local church members.",
+        "NSUserNotificationsUsageDescription": "B1 Church sends notifications to keep you updated about church events, messages, and important announcements.",
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationQueriesSchemes": [
+          "mailto",
+          "tel",
+          "sms"
+        ]
+      },
+      "appStoreUrl": "https://apps.apple.com/us/app/b1-church/id1610587256",
+      "marketingUrl": "https://b1.church"
     },
     "web": {
       "bundler": "metro",
@@ -52,34 +76,26 @@
             "./assets/sounds/notification.mp3"
           ]
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.0"
+          },
+          "android": {
+            "compileSdkVersion": 34,
+            "targetSdkVersion": 34,
+            "minSdkVersion": 24
+          }
+        }
       ]
     ],
-    "experiments": {
-      "typedRoutes": true
-    },
-    "ios": {
-      "bundleIdentifier": "church.b1.mobile",
-      "buildNumber": "30",
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "B1 Church needs access to your photos to allow you to upload profile pictures and share images with your church community.",
-        "NSCameraUsageDescription": "B1 Church needs camera access to allow you to take photos for your profile and share with your church community.",
-        "NSMicrophoneUsageDescription": "B1 Church needs microphone access to allow you to record audio messages and participate in church communications.",
-        "NSLocationWhenInUseUsageDescription": "B1 Church uses your location to help you find nearby church events and connect with local church members.",
-        "NSUserNotificationsUsageDescription": "B1 Church sends notifications to keep you updated about church events, messages, and important announcements.",
-        "LSApplicationQueriesSchemes": [
-          "mailto",
-          "tel",
-          "sms",
-          "mailto",
-          "tel",
-          "sms"
-        ],
-        "ITSAppUsesNonExemptEncryption": false
-      },
-      "appStoreUrl": "https://apps.apple.com/us/app/b1-church/id1610587256",
-      "marketingUrl": "https://b1.church",
-      "requireFullScreen": true
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/f72e5911-b8d5-467c-ad9e-423c180e9938"
     },
     "extra": {
       "router": {
@@ -92,12 +108,8 @@
       "websiteUrl": "https://b1.church",
       "appStoreId": "1610587256"
     },
-    "runtimeVersion": "2.0.0",
-    "updates": {
-      "url": "https://u.expo.dev/f72e5911-b8d5-467c-ad9e-423c180e9938",
-      "enabled": true,
-      "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 0
+    "experiments": {
+      "typedRoutes": true
     }
   }
 }

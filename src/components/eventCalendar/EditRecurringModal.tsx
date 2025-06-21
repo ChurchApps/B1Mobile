@@ -1,8 +1,8 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Constants, globalStyles } from "@/src/helpers";
+import { Constants, globalStyles } from "../../../src/helpers";
 import { RadioButtonGroup } from "../RadioButton";
 
 const options = ["Just this date", "This and all following dates", "All dates"];

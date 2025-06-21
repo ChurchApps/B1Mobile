@@ -1,11 +1,11 @@
 import React from "react";
-import { Loader } from "@/src/components/Loader";
-import { PositionDetails } from "@/src/components/Plans/PositionDetails";
-import { Teams } from "@/src/components/Plans/Teams";
-import { ServiceOrder } from "@/src/components/Plans/ServiceOrder";
-import { MainHeader } from "@/src/components/wrapper/MainHeader";
-import { ApiHelper, ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "@/src/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { Loader } from "../../../../src/components/Loader";
+import { PositionDetails } from "../../../../src/components/Plans/PositionDetails";
+import { Teams } from "../../../../src/components/Plans/Teams";
+import { ServiceOrder } from "../../../../src/components/Plans/ServiceOrder";
+import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
+import { ApiHelper, ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "../../../../src/helpers";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused } from "@react-navigation/native";

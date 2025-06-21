@@ -1,4 +1,4 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 

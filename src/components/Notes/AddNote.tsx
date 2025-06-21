@@ -1,10 +1,10 @@
 import { MessageInterface } from "@churchapps/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useEffect, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import DeleteIcon from "react-native-vector-icons/MaterialIcons";
-import { ApiHelper, Constants, globalStyles } from "@/src/helpers";
+import { ApiHelper, Constants, globalStyles } from "../../../src/helpers";
 
 type Props = {
   messageId?: any;

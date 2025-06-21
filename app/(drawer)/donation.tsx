@@ -1,11 +1,11 @@
 import React from "react";
-import { DonationForm } from "@/src/components/donations/DonationForm";
-import { Donations } from "@/src/components/donations/Donations";
-import { PaymentMethods } from "@/src/components/donations/PaymentMethods";
-import { RecurringDonations } from "@/src/components/donations/RecurringDonations";
-import { ApiHelper, CacheHelper, UserHelper } from "@/src/helpers";
-import { ErrorHelper } from "@/src/helpers/ErrorHelper";
-import { StripePaymentMethod } from "@/src/interfaces";
+import { DonationForm } from "../../src/components/donations/DonationForm";
+import { Donations } from "../../src/components/donations/Donations";
+import { PaymentMethods } from "../../src/components/donations/PaymentMethods";
+import { RecurringDonations } from "../../src/components/donations/RecurringDonations";
+import { ApiHelper, CacheHelper, UserHelper } from "../../src/helpers";
+import { ErrorHelper } from "../../src/helpers/ErrorHelper";
+import { StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused } from "@react-navigation/native";
 import { initStripe } from "@stripe/stripe-react-native";
@@ -14,8 +14,8 @@ import { useEffect, useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { Provider as PaperProvider, Appbar, Text, MD3LightTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAppTheme } from "@/src/theme";
-import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
+import { useAppTheme } from "../../src/theme";
+import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 
 const theme = {
   ...MD3LightTheme,

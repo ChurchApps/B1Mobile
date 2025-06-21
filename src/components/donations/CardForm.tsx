@@ -1,10 +1,10 @@
-import { ApiHelper, UserHelper } from "@/src/helpers";
-import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "@/src/interfaces";
+import { ApiHelper, UserHelper } from "../../../src/helpers";
+import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
 import React, { useState } from "react";
 import { Alert, View } from "react-native";
 import { Button, Card, IconButton, Menu, Text, TextInput } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 
 interface Props {
   setMode: any;

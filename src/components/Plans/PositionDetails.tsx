@@ -1,4 +1,4 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import moment from "moment";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -6,7 +6,7 @@ import Icon from "react-native-vector-icons/AntDesign";
 import CheckIcon from "react-native-vector-icons/Feather";
 import Icons from "react-native-vector-icons/MaterialCommunityIcons";
 import ErrorIcon from "react-native-vector-icons/MaterialIcons";
-import { ApiHelper, Constants, PositionInterface, TimeInterface, globalStyles } from "@/src/helpers";
+import { ApiHelper, Constants, PositionInterface, TimeInterface, globalStyles } from "../../../src/helpers";
 
 interface Props {
   position: PositionInterface;

@@ -4,10 +4,10 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, MD3LightTheme } from "react-native-paper";
-import { ApiHelper, ArrayHelper, TimelinePostInterface, UserPostInterface } from "@/src/helpers";
-import { TimelineHelper } from "@/src/helpers/Timelinehelper";
-import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
-import TimeLinePost from "@/src/components/MyGroup/TimeLinePost";
+import { ApiHelper, ArrayHelper, TimelinePostInterface, UserPostInterface } from "../../src/helpers";
+import { TimelineHelper } from "../../src/helpers/Timelinehelper";
+import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const theme = {
@@ -88,7 +88,7 @@ const MyGroups = () => {
           pathname: `/groupDetails/${item.id}`
         });
       }}>
-      <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("@/src/assets/images/dash_worship.png")} style={styles.groupImage} />
+      <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
       <Card.Content style={styles.groupContent}>
         <Text variant="titleMedium" style={styles.groupName}>
           {item.name}

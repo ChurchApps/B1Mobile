@@ -1,12 +1,12 @@
 import React from "react";
-import { MainHeader } from "@/src/components/wrapper/MainHeader";
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "@/src/helpers";
+import { MainHeader } from "../../src/components/wrapper/MainHeader";
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text, TextInput } from "react-native-paper";
 
 const MembersSearch = () => {

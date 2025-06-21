@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { Button, Divider, IconButton, Modal, Portal, Surface, Text, useTheme } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
-import { CurrencyHelper, DateHelper } from "@/src/helpers";
-import { StripeDonationInterface } from "@/src/interfaces";
+import { useAppTheme } from "../../../src/theme";
+import { CurrencyHelper, DateHelper } from "../../../src/helpers";
+import { StripeDonationInterface } from "../../../src/interfaces";
 
 interface Props {
   show: boolean;

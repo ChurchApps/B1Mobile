@@ -1,9 +1,9 @@
-import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface } from "@/src/helpers";
+import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface } from "../../../src/helpers";
 import { ErrorHelper } from "@churchapps/mobilehelper";
 import React, { useState } from "react";
 import { FlatList, Image, View } from "react-native";
-import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
-import { useAppTheme } from "@/src/theme";
+import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
+import { useAppTheme } from "../../../src/theme";
 import { Button, Divider, List, Text } from "react-native-paper";
 
 interface Props {
