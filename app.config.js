@@ -16,7 +16,17 @@ module.exports = {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
       infoPlist: {
-        ITSAppUsesNonExemptEncryption: false
+        ITSAppUsesNonExemptEncryption: false,
+        NSCameraUsageDescription: "B1 Church needs camera access to allow you to take photos for your profile and share with your church community.",
+        NSPhotoLibraryUsageDescription: "B1 Church needs access to your photos to allow you to upload profile pictures and share images with your church community.",
+        NSMicrophoneUsageDescription: "B1 Church needs microphone access to allow you to record audio messages and participate in church communications.",
+        NSLocationWhenInUseUsageDescription: "B1 Church uses your location to help you find nearby church events and connect with local church members.",
+        NSUserNotificationsUsageDescription: "B1 Church sends notifications to keep you updated about church events, messages, and important announcements.",
+        LSApplicationQueriesSchemes: [
+          "mailto",
+          "tel",
+          "sms"
+        ]
       }
     },
     android: {
