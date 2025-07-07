@@ -6,6 +6,7 @@ module.exports = {
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
+    scheme: "b1mobile", // For deep linking
     splash: {
       image: "./assets/splash.png",
       resizeMode: "contain",
@@ -31,9 +32,19 @@ module.exports = {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
-      }
+      },
+      // Uncomment this if you want to be explicit about permissions
+      /*
+      permissions: [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION"
+      ],
+      */
     },
     web: {
       favicon: "./assets/favicon.png"

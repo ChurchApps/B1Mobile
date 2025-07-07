@@ -28,8 +28,11 @@ target 'B1Mobile' do
   use_expo_modules!
 
   # Firebase Core manually added to fix module not found error
+  pod 'Firebase', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
+
+  $RNFirebaseAsStaticFramework = true
 
   config_command = if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
     ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"]
@@ -51,7 +54,7 @@ target 'B1Mobile' do
 
   use_react_native!(
     :path => config[:reactNativePath],
-    :hermes_enabled => false,
+    :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
     :app_path => "#{Pod::Config.instance.installation_root}/..",
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
