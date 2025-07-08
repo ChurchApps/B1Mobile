@@ -1,5 +1,5 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
+import dayjs from "dayjs";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Icon from "react-native-vector-icons/AntDesign";
@@ -53,8 +53,8 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
   const getTimes = () => {
     const timeData = times.sort((a: any, b: any) => (a.startTime > b.startTime ? 1 : -1));
     return timeData.map((time: any) => {
-      const startDate = moment(time.startTime);
-      const endDate = moment(time.endTime);
+      const startDate = dayjs(time.startTime);
+      const endDate = dayjs(time.endTime);
       const formattedStartDate = formatDate(startDate);
       const formattedEndDate = formatTime(endDate);
       return (

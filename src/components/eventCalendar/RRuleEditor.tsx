@@ -2,7 +2,7 @@ import * as React from "react";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { DateHelper } from "@churchapps/mobilehelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
@@ -212,7 +212,7 @@ export default function RRuleEditor(props: Props) {
             <Text style={styles.labelText}>End Date</Text>
             <View style={styles.dateConatiner}>
               <Text style={styles.dateText} numberOfLines={1}>
-                {moment(onEndDate).format("YYYY-MM-DD")}
+                {dayjs(onEndDate).format("YYYY-MM-DD")}
               </Text>
               <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setonEndPicker(true)} />
               <DatePicker

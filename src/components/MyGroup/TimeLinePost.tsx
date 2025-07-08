@@ -1,5 +1,5 @@
 import { ConversationInterface } from "@churchapps/mobilehelper";
-import moment from "moment";
+import dayjs from "dayjs";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { ApiHelper, UserHelper, globalStyles } from "../../../src/helpers";
@@ -15,13 +15,13 @@ interface Props {
 
 const TimeLinePost = ({ item, onUpdate }: Props) => {
   const date = item?.item?.data?.start;
-  const TodayDate = moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
-  const startDate = moment(item?.item?.timeSent);
-  const endDate = item?.item?.postType == "event" || item?.item?.postType == "group" ? moment(TodayDate) : moment(item?.item?.data?.end);
+  const TodayDate = dayjs().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+  const startDate = dayjs(item?.item?.timeSent);
+  const endDate = item?.item?.postType == "event" || item?.item?.postType == "group" ? dayjs(TodayDate) : dayjs(item?.item?.data?.end);
   const timeDifference = endDate.diff(startDate, "hours");
   const MinDifference = endDate.diff(startDate, "minute");
   const dayDiff = endDate.diff(startDate, "days");
-  const formattedDate = moment(date).format("MMM D, YYYY h:mm A");
+  const formattedDate = dayjs(date).format("MMM D, YYYY h:mm A");
 
   const createConversation = async () => {
     const conv: ConversationInterface = {

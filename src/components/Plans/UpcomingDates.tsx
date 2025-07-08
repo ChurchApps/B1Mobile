@@ -1,5 +1,5 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import Icons from "react-native-vector-icons/FontAwesome5";
@@ -83,7 +83,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
                 </Text>
                 <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 2 }}>
                   <Icons name="calendar-day" size={14} color="#666" style={{ marginRight: 4 }} />
-                  <Text style={{ fontSize: 16, color: "#222", marginRight: 12 }}>{moment(item.serviceDate).format("YYYY-MM-DD")}</Text>
+                  <Text style={{ fontSize: 16, color: "#222", marginRight: 12 }}>{dayjs(item.serviceDate).format("YYYY-MM-DD")}</Text>
                   <Icons name="clock" size={14} color="#666" style={{ marginRight: 4 }} />
                   <Text style={{ fontSize: 16, color: "#222" }}>{item.time}</Text>
                 </View>

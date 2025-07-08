@@ -1,5 +1,8 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -14,7 +17,7 @@ interface NotesInterface {
 }
 
 const Note = ({ message, showEditNote }: NotesInterface) => {
-  const displayDuration = moment(message?.timeSent).fromNow();
+  const displayDuration = dayjs(message?.timeSent).fromNow();
 
   return (
     <>

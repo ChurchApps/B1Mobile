@@ -1,5 +1,8 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { Constants, globalStyles } from "../../../src/helpers";
@@ -17,7 +20,7 @@ interface NotesInterface {
 const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface) => {
   //console.log("Message ==", message);
 
-  const displayDuration = moment(message?.timeSent).fromNow();
+  const displayDuration = dayjs(message?.timeSent).fromNow();
   const isEdited = message.timeUpdated && message.timeUpdated !== message.timeSent && <> • (edited)</>;
 
   return (

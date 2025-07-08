@@ -2,7 +2,7 @@ import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, Us
 import { NavigationProps } from "../../src/interfaces";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useNavigation } from "@react-navigation/native";
-import moment from "moment";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
@@ -128,8 +128,8 @@ export function NotificationTab() {
     );
   };
   const renderItems = (item: any) => {
-    const currentDate = moment();
-    const endDate = moment(item?.timeSent);
+    const currentDate = dayjs();
+    const endDate = dayjs(item?.timeSent);
     const timeDifference = currentDate.diff(endDate, "hours");
     const dayDiff = currentDate.diff(endDate, "days");
     return (

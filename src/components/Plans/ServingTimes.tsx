@@ -1,5 +1,5 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import Icons from "react-native-vector-icons/FontAwesome5";
@@ -72,7 +72,7 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
                   <Text style={{ fontSize: 18, fontWeight: "bold", color: "#222" }} numberOfLines={1}>
                     {item.planName}
                   </Text>
-                  <Text style={{ fontSize: 16, color: "#222" }}>{moment(item.serviceDate).format("YYYY-MM-DD")}</Text>
+                  <Text style={{ fontSize: 16, color: "#222" }}>{dayjs(item.serviceDate).format("YYYY-MM-DD")}</Text>
                 </View>
               </View>
             </TouchableOpacity>

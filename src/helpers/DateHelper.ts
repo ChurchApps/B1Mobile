@@ -1,4 +1,4 @@
-import { format as dateFormat } from "date-fns";
+import dayjs from "dayjs";
 import { ErrorHelper } from "./ErrorHelper";
 
 export class DateHelper {
@@ -8,7 +8,7 @@ export class DateHelper {
       try {
         result = new Date(date).toISOString().split("T")[0];
       } catch (e: unknown) {
-        ErrorHelper.logError("format-html-date", e);
+        ErrorHelper.logError();
       }
     }
     return result;
@@ -16,14 +16,14 @@ export class DateHelper {
 
   static prettyDate(date: Date) {
     if (date === undefined || date === null) return "";
-    return this.formatDateTime(date, "MMM d, yyyy");
+    return this.formatDateTime(date, "MMM D, YYYY");
   }
 
   private static formatDateTime(date: Date, format: string) {
     try {
-      return dateFormat(date, format);
+      return dayjs(date).format(format);
     } catch (e: unknown) {
-      ErrorHelper.logError("format-date", e);
+      ErrorHelper.logError();
       return "";
     }
   }
