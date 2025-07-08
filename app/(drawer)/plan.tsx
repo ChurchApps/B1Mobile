@@ -23,7 +23,6 @@ const Plan = () => {
   const [isLoading, setLoading] = useState(false);
 
   const loadData = async () => {
-    console.log("LOAD DATA");
     setLoading(true);
     try {
       const tempAssignments: AssignmentInterface[] = await ApiHelper.get("/assignments/my", "DoingApi");

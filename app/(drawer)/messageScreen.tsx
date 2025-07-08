@@ -90,27 +90,22 @@ const MessageScreen = () => {
   useEffect(() => {
     // Listen for new messages
     const handleNewMessage = (content: NotificationContent) => {
-      console.log("New message received:", content);
       // Only refresh if the notification is for this conversation
       if (content.data?.conversationId && conversationIdRef.current && content.data.conversationId === conversationIdRef.current) {
-        console.log("Refreshing messages for current conversation");
         getMessagesList(conversationIdRef.current);
       }
     };
 
     // Listen for notification updates
     const handleNotification = (content: NotificationContent) => {
-      console.log("Notification received:", content);
       // Only refresh if the notification is for this conversation
       if (content.data?.conversationId && conversationIdRef.current && content.data.conversationId === conversationIdRef.current) {
-        console.log("Refreshing messages from notification");
         getMessagesList(conversationIdRef.current);
       }
     };
 
     // Listen for any conversation updates
     const handleConversationUpdate = (data?: { conversationId?: string }) => {
-      console.log("Conversation update received", data);
       // If we have a specific conversation ID, only refresh if it matches
       if (data?.conversationId && conversationIdRef.current && data.conversationId === conversationIdRef.current) {
         getMessagesList(conversationIdRef.current);

@@ -10,10 +10,8 @@ import { UserHelper } from "../src/helpers/UserHelper";
 export default function RootLayout() {
   useEffect(() => {
     const setupApp = async () => {
-      console.log("Initializing Firebase...");
       await initializeFirebase();
       
-      console.log("Loading secure tokens...");
       await UserHelper.loadSecureTokens();
     };
 

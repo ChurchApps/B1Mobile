@@ -51,7 +51,6 @@ const MyGroups = () => {
       setUserPost(posts);
       setUserGroups(groups);
       if (posts.length == 0) {
-        console.log("no data found");
       }
     } catch (error) {
       console.error("Error loading user data:", error);

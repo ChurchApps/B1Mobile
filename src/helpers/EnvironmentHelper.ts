@@ -21,7 +21,6 @@ export class EnvironmentHelper {
 
     //stage = "prod";
     stage = "staging";
-    console.log("STAGE IS: " + stage);
     switch (stage) {
       case "prod":
         EnvironmentHelper.initProd();

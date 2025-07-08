@@ -19,7 +19,6 @@ interface NotesInterface {
 }
 
 const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface) => {
-  //console.log("Message ==", message);
 
   const displayDuration = dayjs(message?.timeSent).fromNow();
   const isEdited = message.timeUpdated && message.timeUpdated !== message.timeSent && <> • (edited)</>;

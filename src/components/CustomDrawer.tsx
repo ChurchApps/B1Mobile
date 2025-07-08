@@ -191,7 +191,6 @@ export function CustomDrawer(props: any) {
   const getUserInfo = () => {
     if (!UserHelper.currentUserChurch?.person || !user) return null;
 
-    console.log("Photo?", UserHelper.currentUserChurch.person);
     return (
       <Card style={styles.userCard}>
         <Card.Content style={styles.userCardContent}>

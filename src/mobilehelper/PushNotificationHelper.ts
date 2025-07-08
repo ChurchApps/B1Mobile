@@ -17,7 +17,6 @@ export class PushNotificationHelper {
 
   static async registerForPushNotificationsAsync() {
     if (!Device.isDevice) {
-      console.log("Must use a physical device for Push Notifications");
       return null;
     }
 
@@ -30,7 +29,6 @@ export class PushNotificationHelper {
     }
 
     if (finalStatus !== 'granted') {
-      console.log("Push notification permission not granted");
       return null;
     }
 
@@ -44,23 +42,19 @@ export class PushNotificationHelper {
   }
 
   static async NotificationListener() {
-    console.log('Setting up notification listeners...');
 
     // Foreground notification handler
     Notifications.addNotificationReceivedListener(notification => {
-      console.log("Notification received in foreground:", JSON.stringify(notification));
       pushEventBus.emit("badge", JSON.stringify(notification));
     });
 
     // Handle when the user taps on the notification from background state
     Notifications.addNotificationResponseReceivedListener(response => {
-      console.log("Notification opened from background:", JSON.stringify(response.notification));
     });
 
     // Handle notifications from quit state
     const lastNotification = await Notifications.getLastNotificationResponseAsync();
     if (lastNotification) {
-      console.log("Notification caused app to open from quit state:", JSON.stringify(lastNotification.notification));
     }
   }
 }

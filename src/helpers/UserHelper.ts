@@ -21,7 +21,6 @@ export class UserHelper {
 
   static async setPersonRecord() {
     if (UserHelper.currentUserChurch && !UserHelper.currentUserChurch.person) {
-      console.log(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       const data: { person: PersonInterface } = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       UserHelper.currentUserChurch.person = data.person;
     }

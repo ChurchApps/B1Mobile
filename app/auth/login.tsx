@@ -41,11 +41,8 @@ const Login = () => {
     ApiHelper.postAnonymous("/users/login", params, "MembershipApi")
       .then(async (data: LoginResponseInterface) => {
         setLoading(false);
-        console.log("Called login");
         if (data.user != null) {
-          console.log("Login successful", data);
           await UserHelper.handleLogin(data as any);
-          console.log("handled Login.  Restarting");
 
           // router.replace('(drawer)/dashboard');
           // props.navigation.reset({

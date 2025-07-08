@@ -20,7 +20,7 @@ export function AddNote({ ...props }: Props) {
   useEffect(() => {
     if (props.messageId)
       ApiHelper.get(`/messages/${props.messageId}`, "MessagingApi").then(n => {
-        console.log("message api response", n), setMessage(n);
+        setMessage(n);
       });
     else setMessage({ conversationId: props.conversationId, content: "" });
     return () => {

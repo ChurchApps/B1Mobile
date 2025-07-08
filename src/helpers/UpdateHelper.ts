@@ -22,7 +22,6 @@ export class UpdateHelper {
         ]);
       }
     } catch (_error) {
-      console.log("Error checking for updates:", _error);
     }
   }
 
@@ -34,7 +33,6 @@ export class UpdateHelper {
       // We'll handle update events through the Updates API directly
       // The addListener API has been deprecated in favor of direct API calls
     } catch (_error) {
-      console.log("Error initializing updates:", _error);
     }
   }
 }

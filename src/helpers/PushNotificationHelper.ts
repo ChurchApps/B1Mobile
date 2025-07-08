@@ -13,7 +13,6 @@ let currentScreen = "";
 // Function to update current screen
 export const updateCurrentScreen = (screen: string) => {
   currentScreen = screen;
-  console.log("Current screen updated:", currentScreen);
 };
 
 // Configure notification behavior
@@ -87,7 +86,6 @@ export class PushNotificationHelper {
       if (finalStatus === "granted") {
         await PushNotificationHelper.GetFCMToken();
       } else {
-        console.log("Notification permission denied");
       }
     } catch (error) {
       console.log("Error requesting notification permission:", error);
@@ -105,9 +103,7 @@ export class PushNotificationHelper {
   }
 
   static async GetFCMToken() {
-    console.log("GET TOKEN");
     let fcmToken = CacheHelper.fcmToken;
-    console.log("fcmToken", fcmToken);
     if (!fcmToken) {
       try {
         // Get the Expo push token
@@ -115,12 +111,10 @@ export class PushNotificationHelper {
           projectId: "f72e5911-b8d5-467c-ad9e-423c180e9938" // Your EAS project ID
         });
 
-        console.log("Expo push token:", token);
 
         if (token.data) {
           fcmToken = token.data;
           await CacheHelper.setValue("fcmToken", fcmToken);
-          console.log("Expo push token generated:", fcmToken);
         }
       } catch (error) {
         console.log(error, "Expo push token not created");
@@ -134,13 +128,11 @@ export class PushNotificationHelper {
       const pathname = usePathname();
       if (pathname) {
         currentScreen = pathname;
-        console.log("Current screen:", currentScreen);
       }
 
       // Listen for notifications received while app is foregrounded
       const foregroundSubscription = Notifications.addNotificationReceivedListener(notification => {
         const content = notification.request.content;
-        console.log("Notification received in foreground:", content);
 
         // Emit notification event for internal handling
         eventBus.emit("notification", content);
@@ -154,7 +146,6 @@ export class PushNotificationHelper {
       // Listen for user interactions with notifications
       const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
         const content = response.notification.request.content;
-        console.log("Notification response received:", content);
 
         // Handle navigation based on notification type
         if (content.data?.type === "chat") {
@@ -169,7 +160,6 @@ export class PushNotificationHelper {
       const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
       if (lastNotificationResponse) {
         const content = lastNotificationResponse.notification.request.content;
-        console.log("App opened from notification:", content);
 
         // Handle navigation for app launch from notification
         if (content.data?.type === "chat") {
@@ -179,7 +169,6 @@ export class PushNotificationHelper {
         }
       }
 
-      console.log("Expo notification listeners set up");
 
       return () => {
         foregroundSubscription.remove();

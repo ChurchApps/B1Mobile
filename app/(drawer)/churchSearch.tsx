@@ -43,7 +43,6 @@ const ChurchSearch = () => {
         church: churchData.name
       });
       //await UserHelper.setCurrentUserChurch(userChurch);
-      console.log("SET PERSON RECORD");
       if (UserHelper.user) UserHelper.setPersonRecord();
       router.navigate("/(drawer)/dashboard");
       // DevSettings.reload()
@@ -66,7 +65,6 @@ const ChurchSearch = () => {
       setSearchList(data);
     } catch (error) {
       setLoading(false);
-      console.log(error);
     }
     setLoading(false);
   };

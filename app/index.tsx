@@ -36,11 +36,9 @@ const SplashScreen = () => {
   };
 
   useEffect(() => {
-    console.log("Working proper");
     ErrorHelper.init();
     //ApiHelper.onRequest = (url:string, requestOptions:any) => { console.log("Request: ", url, requestOptions); }
     ApiHelper.onError = (url: string, requestOptions: any, error: any) => {
-      console.log("***API Error: ", url, requestOptions, error);
     };
     UserHelper.addOpenScreenEvent("Splash Screen");
   }, []);
@@ -56,7 +54,6 @@ const SplashScreen = () => {
   };
 
   const checkUser = async () => {
-    console.log("CHECK USER");
     try {
       if (UserHelper.user?.jwt) await setUserDataNew();
     } catch (e: any) {
@@ -65,11 +62,9 @@ const SplashScreen = () => {
     }
 
     if (!CacheHelper.church) {
-      console.log("NO CHURCH");
       router.navigate("/(drawer)/churchSearch");
       // router.navigate('/churchSearch')
     } else {
-      console.log("CHURCH");
       router.replace("/(drawer)/dashboard");
     }
 
