@@ -1,4 +1,4 @@
-import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
+import { ApiHelper, LoginResponseInterface } from "../mobilehelper";
 import { Platform } from "react-native";
 import { logAnalyticsEvent } from "../config/firebase";
 import { CacheHelper } from "./CacheHelper";
@@ -30,7 +30,7 @@ export class UserHelper {
   }
 
   static checkAccess({ api, contentType, action }: IPermission): boolean {
-    const permissions = ApiHelper.getConfig(api)?.permisssions;
+    const permissions = ApiHelper.getConfig(api)?.permissions;
 
     let result = false;
     if (permissions !== undefined) {

@@ -1,5 +1,5 @@
 import { ApiHelper, CheckinHelper, PersonInterface, UserHelper } from "../../../src/helpers";
-import { ArrayHelper, ErrorHelper } from "@churchapps/mobilehelper";
+import { ArrayHelper, ErrorHelper } from "../../mobilehelper";
 import React, { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";

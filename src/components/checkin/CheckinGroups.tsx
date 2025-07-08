@@ -1,5 +1,5 @@
 import { CheckinHelper, PersonInterface, ServiceTimeInterface, UserHelper } from "../../../src/helpers";
-import { ArrayHelper } from "@churchapps/mobilehelper";
+import { ArrayHelper } from "../../mobilehelper";
 import React, { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 import { useAppTheme } from "../../../src/theme";

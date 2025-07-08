@@ -1,4 +1,4 @@
-import { ApiHelper } from "@churchapps/mobilehelper";
+import { ApiHelper } from "../mobilehelper";
 import { UserHelper } from "./UserHelper";
 import * as Notifications from "expo-notifications";
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from "react-native";

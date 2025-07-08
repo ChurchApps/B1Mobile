@@ -1,4 +1,4 @@
-import { ConversationInterface } from "@churchapps/mobilehelper";
+import { ConversationInterface } from "../../mobilehelper";
 import dayjs from "dayjs";
 import React from "react";
 import { Image, Text, View } from "react-native";

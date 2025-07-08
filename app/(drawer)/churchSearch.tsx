@@ -2,7 +2,7 @@ import React from "react";
 import { BlueHeader } from "@/components/BlueHeader";
 import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/helpers/ErrorHelper";
-import { ApiHelper } from "@churchapps/mobilehelper";
+import { ApiHelper } from "../../src/mobilehelper";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Keyboard, TouchableWithoutFeedback, View, Image, Alert, BackHandler } from "react-native";

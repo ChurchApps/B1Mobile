@@ -1,5 +1,5 @@
 import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface } from "../../../src/helpers";
-import { ErrorHelper } from "@churchapps/mobilehelper";
+import { ErrorHelper } from "../../mobilehelper";
 import React, { useState } from "react";
 import { FlatList, Image, View } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";

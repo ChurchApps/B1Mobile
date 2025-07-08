@@ -1,5 +1,5 @@
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { ApiHelper, DateHelper, EventExceptionInterface, EventInterface } from "@churchapps/mobilehelper";
+import { ApiHelper, DateHelper, EventExceptionInterface, EventInterface } from "../../mobilehelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
 import React, { useState } from "react";

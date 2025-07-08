@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { EventInterface } from "@churchapps/mobilehelper";
+import { EventInterface } from "../../../../src/mobilehelper";
 import { GroupMemberInterface } from "../../../../src/interfaces/Membership";
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "../../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";

@@ -52,7 +52,7 @@ This app uses **Expo Router** with file-based routing:
 - **Local component state** with React hooks
 
 ### API Communication
-- Uses `@churchapps/mobilehelper` package for API abstraction
+- Uses `@churchapps/helpers` package and local `src/mobilehelper` for API abstraction
 - JWT-based authentication with permission-based access control
 - Multiple API endpoints: MembershipApi, MessagingApi, AttendanceApi, ContentApi, GivingApi
 - Helper classes: `UserHelper.ts`, `ApiHelper` (from mobilehelper package)

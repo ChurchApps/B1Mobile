@@ -1,4 +1,4 @@
-import { ApiHelper } from "@churchapps/mobilehelper";
+import { ApiHelper } from "../mobilehelper";
 import Constants from "expo-constants";
 
 export class EnvironmentHelper {

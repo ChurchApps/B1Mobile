@@ -2,7 +2,7 @@ import { CacheHelper, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { NavigationHelper } from "../../src/helpers/NavigationHelper";
 import { UserInterface } from "../../src/helpers/Interfaces";
-import { ApiHelper, LinkInterface, Permissions } from "@churchapps/mobilehelper";
+import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
