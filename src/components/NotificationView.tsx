@@ -4,10 +4,11 @@ import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { Loader } from "./Loader";
 import { router } from "expo-router";
+import { OptimizedImage } from "./OptimizedImage";
 
 export function NotificationTab() {
   const navigation: NavigationProps = useNavigation();
@@ -103,10 +104,11 @@ export function NotificationTab() {
             globalStyles.messageContainer,
             { alignSelf: "flex-start", backgroundColor: "#f8f9fa", padding: DimensionHelper.wp(3), borderRadius: DimensionHelper.wp(2), marginHorizontal: DimensionHelper.wp(3) }
           ]}>
-          <Image
+          <OptimizedImage
             source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user}
             style={[globalStyles.churchListIcon, { height: DimensionHelper.wp(12), width: DimensionHelper.wp(12), borderRadius: DimensionHelper.wp(12) }]}
-            tintColor={item.photo ? "#00000000" : Constants.Colors.app_color}
+            tintColor={item.photo ? undefined : Constants.Colors.app_color}
+            placeholder={Constants.Images.ic_user}
           />
           <View style={{ marginLeft: DimensionHelper.wp(2), flex: 1 }}>
             <Text style={[globalStyles.senderNameText, { fontSize: DimensionHelper.wp(4.2), color: "#2c3e50", marginBottom: DimensionHelper.wp(1) }]}>{item.displayName}</Text>

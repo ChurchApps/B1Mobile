@@ -7,11 +7,12 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
+import { Linking, ScrollView, StyleSheet, View } from "react-native";
 import RNRestart from "react-native-restart";
 import { DimensionHelper } from "../helpers/DimensionHelper";
 import { useAppTheme } from "../../src/theme";
 import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { OptimizedImage } from "./OptimizedImage";
 
 export function CustomDrawer(props: any) {
   const { spacing } = useAppTheme();

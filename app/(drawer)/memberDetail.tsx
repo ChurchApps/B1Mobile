@@ -6,10 +6,11 @@ import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Image, Linking, ScrollView, View } from "react-native";
+import { Alert, Linking, ScrollView, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text } from "react-native-paper";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
 
 const MemberDetail = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -60,7 +61,11 @@ const MemberDetail = () => {
   const renderMemberItem = (item: any) => (
     <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={() => onMembersClick(item)}>
       <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-        <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
+        <OptimizedImage 
+          source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} 
+          style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} 
+          placeholder={Constants.Images.ic_member}
+        />
         <Text variant="titleMedium" numberOfLines={1}>
           {item.name.display}
         </Text>
@@ -72,9 +77,11 @@ const MemberDetail = () => {
     <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
       <MainHeader title="Directory" openDrawer={navigation.openDrawer} back={navigation.goBack} />
       <ScrollView style={{ flex: 1 }} ref={scrollViewRef} contentContainerStyle={{ padding: spacing.md }}>
-        <Image
+        <OptimizedImage
           source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member}
           style={{ width: 96, height: 96, borderRadius: 48, alignSelf: "center", marginBottom: spacing.md }}
+          placeholder={Constants.Images.ic_member}
+          priority="high"
         />
         <Surface style={{ alignItems: "center", marginBottom: spacing.md, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, elevation: 2, padding: spacing.md }}>
           <Text variant="titleLarge" style={{ fontWeight: "600", marginBottom: spacing.sm }}>

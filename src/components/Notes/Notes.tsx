@@ -4,10 +4,11 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PersonHelper } from "../../../src/helpers/PersonHelper";
+import { OptimizedImage } from "../OptimizedImage";
 
 interface NotesInterface {
   item: any;
@@ -26,9 +27,10 @@ const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface
   return (
     <>
       <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70), marginLeft: DimensionHelper.wp(2) }]}>
-        <Image
+        <OptimizedImage
           source={message?.person?.photo ? { uri: PersonHelper.getPhotoUrl(message.person) } : Constants.Images.ic_member}
           style={[globalStyles.memberListIcon, { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 }]}
+          placeholder={Constants.Images.ic_member}
         />
 
         <View style={globalStyles.NoteTextInputView}>

@@ -5,11 +5,12 @@ import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { ApiHelper } from "../../src/mobilehelper";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Keyboard, TouchableWithoutFeedback, View, Image, Alert, BackHandler } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, View, Alert, BackHandler } from "react-native";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 import RNRestart from "react-native-restart";
 import { Platform } from "react-native";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
 
 const ChurchSearch = () => {
   const { theme, spacing } = useAppTheme();
@@ -136,7 +137,7 @@ const ChurchSearch = () => {
             key={item.id || index}
             title={item.name}
             left={() => (
-              <Image
+              <OptimizedImage
                 source={(() => {
                   let churchImage = Constants.Images.ic_church;
                   if (item.settings && item.settings.length > 0) {
@@ -147,6 +148,7 @@ const ChurchSearch = () => {
                   return churchImage;
                 })()}
                 style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }}
+                placeholder={Constants.Images.ic_church}
               />
             )}
             onPress={() => churchSelection(item)}

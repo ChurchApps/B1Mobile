@@ -1,6 +1,6 @@
 import React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FlatList, Image, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import { FlatList, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
 import { Text, TouchableRipple, Button, Surface, Avatar } from "react-native-paper";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -21,6 +21,7 @@ import Conversations from "../../../../src/components/Notes/Conversations";
 import { EventModal } from "../../../../src/components/eventCalendar/EventModal";
 import CreateEvent from "../../../../src/components/eventCalendar/CreateEvent";
 import { useAppTheme } from "../../../../src/theme";
+import { OptimizedImage } from "../../../../src/components/OptimizedImage";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -227,7 +228,12 @@ const GroupDetails = () => {
           <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
             <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
               {photoUrl ? (
-                <Image source={{ uri: photoUrl }} style={{ width: "100%", height: 200, borderRadius: theme.roundness, marginBottom: spacing.md }} resizeMode="cover" />
+                <OptimizedImage 
+                  source={{ uri: photoUrl }} 
+                  style={{ width: "100%", height: 200, borderRadius: theme.roundness, marginBottom: spacing.md }} 
+                  contentFit="cover"
+                  priority="high"
+                />
               ) : (
                 <Surface
                   style={{

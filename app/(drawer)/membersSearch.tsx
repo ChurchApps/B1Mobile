@@ -4,10 +4,11 @@ import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "../../src/h
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, View } from "react-native";
+import { Alert, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text, TextInput } from "react-native-paper";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
 
 const MembersSearch = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -53,7 +54,11 @@ const MembersSearch = () => {
         });
       }}>
       <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-        <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
+        <OptimizedImage 
+          source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} 
+          style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} 
+          contentFit="cover"
+        />
         <Text variant="titleMedium">{item.name.display}</Text>
       </Card.Content>
     </Card>

@@ -1,10 +1,11 @@
 import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface } from "../../../src/helpers";
 import { ErrorHelper } from "../../mobilehelper";
 import React, { useState } from "react";
-import { FlatList, Image, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { useAppTheme } from "../../../src/theme";
 import { Button, Divider, List, Text } from "react-native-paper";
+import { OptimizedImage } from "../OptimizedImage";
 
 interface Props {
   onDone: () => void;
@@ -57,7 +58,11 @@ export const CheckinHousehold = (props: Props) => {
         left={props => (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <List.Icon {...props} icon={selected == item.id ? "chevron-down" : "chevron-right"} />
-            <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={{ width: 40, height: 40, borderRadius: 20 }} />
+            <OptimizedImage 
+              source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} 
+              style={{ width: 40, height: 40, borderRadius: 20 }} 
+              placeholder={Constants.Images.ic_member}
+            />
           </View>
         )}
         onPress={() => setSelected(selected != item.id ? item.id : null)}

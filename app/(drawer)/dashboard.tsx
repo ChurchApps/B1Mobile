@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, Image, ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused } from "@react-navigation/native";
@@ -14,6 +14,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { HeaderBell } from "../../src/components/wrapper/HeaderBell";
 import { NotificationTab } from "../../src/components/NotificationView";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
 
 const theme = {
   ...MD3LightTheme,
@@ -98,7 +99,13 @@ const Dashboard = () => {
 
     return (
       <Card key={`card-${item.id || item.linkType + item.text}`} style={styles.card} mode="elevated" onPress={() => NavigationHelper.navigateToScreen(item, router.navigate)}>
-        <Card.Cover source={backgroundImage} style={styles.cardImage} />
+        <View style={styles.cardImage}>
+          <OptimizedImage 
+            source={backgroundImage} 
+            style={styles.cardImageInner}
+            contentFit="cover"
+          />
+        </View>
         <Card.Content style={styles.cardContent}>
           <Text variant="titleMedium" style={styles.cardText}>
             {item.text}
@@ -125,7 +132,14 @@ const Dashboard = () => {
 
   const getBrand = () => {
     if (UserHelper.churchAppearance?.logoLight) {
-      return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={styles.logo} />;
+      return (
+        <OptimizedImage 
+          source={{ uri: UserHelper.churchAppearance?.logoLight }} 
+          style={styles.logo}
+          contentFit="contain"
+          priority="high"
+        />
+      );
     }
     return (
       <Text variant="headlineMedium" style={styles.churchName}>
@@ -245,6 +259,10 @@ const styles = StyleSheet.create({
     height: 120,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12
+  },
+  cardImageInner: {
+    width: "100%",
+    height: "100%"
   },
   cardContent: {
     padding: 12,

@@ -1,11 +1,12 @@
 import { ConversationInterface } from "../../mobilehelper";
 import dayjs from "dayjs";
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { ApiHelper, UserHelper, globalStyles } from "../../../src/helpers";
 import { TimelinePostInterface } from "../../../src/helpers/Interfaces";
 import UserConversations from "../Notes/UserConversation";
 import { Menu, IconButton } from "react-native-paper";
+import { OptimizedImage } from "../OptimizedImage";
 
 interface Props {
   item: { item: TimelinePostInterface; index: number };
@@ -63,11 +64,23 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
         <View style={globalStyles.ImageMainView}>
           <View style={globalStyles.ImageView}>
             {item?.item?.postType == "venue" && item?.item?.data?.image != null ? (
-              <Image source={{ uri: item?.item?.data?.image }} style={globalStyles.groupImageStyle} resizeMode="cover" />
+              <OptimizedImage 
+                source={{ uri: item?.item?.data?.image }} 
+                style={globalStyles.groupImageStyle} 
+                contentFit="cover"
+              />
             ) : item?.item?.postType == "sermon" ? (
-              <Image source={{ uri: item?.item?.data?.thumbnail }} style={globalStyles.groupImageStyle} resizeMode="cover" />
+              <OptimizedImage 
+                source={{ uri: item?.item?.data?.thumbnail }} 
+                style={globalStyles.groupImageStyle} 
+                contentFit="cover"
+              />
             ) : (
-              <Image source={{ uri: item?.item?.photoUrl }} style={globalStyles.groupImageStyle} resizeMode="cover" />
+              <OptimizedImage 
+                source={{ uri: item?.item?.photoUrl }} 
+                style={globalStyles.groupImageStyle} 
+                contentFit="cover"
+              />
             )}
           </View>
         </View>
