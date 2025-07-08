@@ -1,12 +1,12 @@
 import React from "react";
-import { BlueHeader } from "@/src/components/BlueHeader";
-import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper } from "@/src/helpers";
-import { ErrorHelper } from "@/src/helpers/ErrorHelper";
+import { BlueHeader } from "@/components/BlueHeader";
+import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper } from "../../src/helpers";
+import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { ApiHelper } from "@churchapps/mobilehelper";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Keyboard, TouchableWithoutFeedback, View, Image } from "react-native";
-import { useAppTheme } from "@/src/theme";
+import { Keyboard, TouchableWithoutFeedback, View, Image, Alert, BackHandler } from "react-native";
+import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 import RNRestart from "react-native-restart";
 import { Platform } from "react-native";
@@ -45,8 +45,14 @@ const ChurchSearch = () => {
       console.log("SET PERSON RECORD");
       if (UserHelper.user) UserHelper.setPersonRecord();
       router.navigate("/(drawer)/dashboard");
-      //DevSettings.reload()
-      RNRestart.Restart();
+      // DevSettings.reload()
+      // RNRestart.Restart();
+
+      if (Platform.OS === "android") {
+        RNRestart.Restart();
+      } else {
+        // router.navigate("/(drawer)/dashboard");
+      }
     } catch (err: any) {
       ErrorHelper.logError("church-search", err);
     }

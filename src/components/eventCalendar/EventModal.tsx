@@ -1,4 +1,4 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React from "react";
 import { ScrollView, View } from "react-native";
 import Modal from "react-native-modal";

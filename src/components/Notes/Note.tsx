@@ -1,12 +1,12 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import moment from "moment";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { Constants, globalStyles } from "@/src/helpers";
+import { Constants, globalStyles } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
-import { PersonHelper } from "@/src/helpers/PersonHelper";
+import { PersonHelper } from "../../../src/helpers/PersonHelper";
 
 interface NotesInterface {
   message: MessageInterface;

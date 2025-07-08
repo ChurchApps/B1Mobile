@@ -1,10 +1,10 @@
-import { ApiHelper, CacheHelper, CurrencyHelper, UserHelper, UserInterface } from "@/src/helpers";
-import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod } from "@/src/interfaces";
+import { ApiHelper, CacheHelper, CurrencyHelper, UserHelper, UserInterface } from "../../../src/helpers";
+import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { Button, Card, Checkbox, IconButton, Menu, RadioButton, Text, TextInput, useTheme } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 import { PreviewModal } from "../modals/PreviewModal";
 import { FundDonations } from "./FundDonations";
 

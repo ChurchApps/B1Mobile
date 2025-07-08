@@ -1,7 +1,7 @@
-import { eventBus } from "@/src/helpers/PushNotificationHelper";
+import { eventBus } from "../../../src/helpers/PushNotificationHelper";
 import React, { useEffect, useState } from "react";
 import { IconButton } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 import { useNavigation } from "@react-navigation/native";
 
 interface Props {
@@ -62,5 +62,7 @@ export const HeaderBell = (props: Props) => {
     props.toggleNotifications();
   };
 
-  return <IconButton icon={badgeCount > 0 ? "bell-badge" : "bell"} iconColor={badgeCount > 0 ? theme.colors.error : theme.colors.onPrimary} size={24} onPress={handlePress} style={componentStyles.button} />;
+  return (
+    <IconButton icon={badgeCount > 0 ? "bell-badge" : "bell"} iconColor={badgeCount > 0 ? theme.colors.error : theme.colors.onPrimary} size={24} onPress={handlePress} style={componentStyles.button} />
+  );
 };

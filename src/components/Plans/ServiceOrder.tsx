@@ -1,9 +1,9 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { ApiHelper, PlanInterface } from "@/src/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
-import { Constants } from "@/src/helpers/Constants";
-import { globalStyles } from "@/src/helpers/GlobalStyles";
+import { ApiHelper, PlanInterface } from "../../../src/helpers";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
+import { Constants } from "../../../src/helpers/Constants";
+import { globalStyles } from "../../../src/helpers/GlobalStyles";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { PlanItem } from ".";
 import type { PlanItemInterface } from ".";

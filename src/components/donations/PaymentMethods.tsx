@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ApiHelper, UserHelper } from "@/src/helpers";
-import { ErrorHelper } from "@/src/helpers/ErrorHelper";
-import { Permissions, StripePaymentMethod } from "@/src/interfaces";
+import { ApiHelper, UserHelper } from "../../../src/helpers";
+import { ErrorHelper } from "../../../src/helpers/ErrorHelper";
+import { Permissions, StripePaymentMethod } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
 import { Alert, View } from "react-native";
 import { ActivityIndicator, Button, Card, Divider, IconButton, List, Text, useTheme } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 import { PaymentMethodModal } from "../modals/PaymentMethodModal";
 import { BankForm } from "./BankForm";
 import { CardForm } from "./CardForm";

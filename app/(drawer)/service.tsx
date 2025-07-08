@@ -1,16 +1,16 @@
 import React from "react";
-import { CheckinComplete } from "@/src/components/checkin/CheckinComplete";
-import { CheckinGroups } from "@/src/components/checkin/CheckinGroups";
-import { CheckinHousehold } from "@/src/components/checkin/CheckinHousehold";
-import { CheckinServices } from "@/src/components/checkin/CheckinServices";
-import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper } from "@/src/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { CheckinComplete } from "../../src/components/checkin/CheckinComplete";
+import { CheckinGroups } from "../../src/components/checkin/CheckinGroups";
+import { CheckinHousehold } from "../../src/components/checkin/CheckinHousehold";
+import { CheckinServices } from "../../src/components/checkin/CheckinServices";
+import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper } from "../../src/helpers";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, SafeAreaView, ScrollView, View } from "react-native";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../src/theme";
 import { Appbar, Surface } from "react-native-paper";
 
 const Service = () => {

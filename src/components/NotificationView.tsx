@@ -1,6 +1,6 @@
-import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface, globalStyles } from "@/src/helpers";
-import { NavigationProps } from "@/src/interfaces";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface, globalStyles } from "../../src/helpers";
+import { NavigationProps } from "../../src/interfaces";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -217,7 +217,7 @@ export function NotificationTab() {
       <TabView
         navigationState={{ index: 0, routes }}
         renderScene={renderScene}
-        onIndexChange={() => { }}
+        onIndexChange={() => {}}
         swipeEnabled={false}
         renderTabBar={renderTabBar}
         initialLayout={{ width: DimensionHelper.wp(100), height: DimensionHelper.hp(200) }}

@@ -1,5 +1,5 @@
-import { Constants, globalStyles } from "@/src/helpers";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { Constants, globalStyles } from "../../src/helpers";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import Icon from "@expo/vector-icons/Fontisto";
 import { router } from "expo-router";
 import { Image, View } from "react-native";

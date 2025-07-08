@@ -1,12 +1,12 @@
 import React from "react";
-import { BlueHeader } from "@/src/components/BlueHeader";
-import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface } from "@/src/helpers";
-import { ErrorHelper } from "@/src/helpers/ErrorHelper";
+import { BlueHeader } from "@/components/BlueHeader";
+import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface } from "../../src/helpers";
+import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Keyboard, TouchableWithoutFeedback, View, Image } from "react-native";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 
 const SearchMessageUser = () => {

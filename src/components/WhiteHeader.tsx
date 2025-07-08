@@ -1,4 +1,4 @@
-import { Constants, globalStyles } from "@/src/helpers";
+import { Constants, globalStyles } from "../../src/helpers";
 import { Image, View } from "react-native";
 import { MainHeader } from "./wrapper/MainHeader";
 

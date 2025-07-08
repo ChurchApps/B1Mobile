@@ -1,8 +1,8 @@
-import { FundDonationInterface, FundInterface } from "@/src/interfaces";
+import { FundDonationInterface, FundInterface } from "../../../src/interfaces";
 import React from "react";
 import { View } from "react-native";
 import { Button, Text } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 import { FundDonation } from "./FundDonation";
 
 interface Props {
@@ -32,7 +32,9 @@ export function FundDonations({ funds, fundDonations, updatedFunction }: Props) 
       <Text variant="titleMedium" style={{ marginBottom: spacing.sm }}>
         Fund
       </Text>
-      {fundDonations?.map((fd, index) => <FundDonation key={`fund-donation-${fd.fundId || index}`} fundDonation={fd} funds={funds} updatedFunction={handleUpdated} index={index} />)}
+      {fundDonations?.map((fd, index) => (
+        <FundDonation key={`fund-donation-${fd.fundId || index}`} fundDonation={fd} funds={funds} updatedFunction={handleUpdated} index={index} />
+      ))}
       <Button mode="text" onPress={addRow} style={{ marginTop: spacing.xs }}>
         Add more
       </Button>

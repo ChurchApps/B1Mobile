@@ -6,6 +6,7 @@ module.exports = {
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
+    scheme: "b1mobile", // For deep linking
     splash: {
       image: "./assets/splash.png",
       resizeMode: "contain",
@@ -16,14 +17,34 @@ module.exports = {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
       infoPlist: {
-        ITSAppUsesNonExemptEncryption: false
+        ITSAppUsesNonExemptEncryption: false,
+        NSCameraUsageDescription: "B1 Church needs camera access to allow you to take photos for your profile and share with your church community.",
+        NSPhotoLibraryUsageDescription: "B1 Church needs access to your photos to allow you to upload profile pictures and share images with your church community.",
+        NSMicrophoneUsageDescription: "B1 Church needs microphone access to allow you to record audio messages and participate in church communications.",
+        NSLocationWhenInUseUsageDescription: "B1 Church uses your location to help you find nearby church events and connect with local church members.",
+        NSUserNotificationsUsageDescription: "B1 Church sends notifications to keep you updated about church events, messages, and important announcements.",
+        LSApplicationQueriesSchemes: [
+          "mailto",
+          "tel",
+          "sms"
+        ]
       }
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
-      }
+      },
+      // Uncomment this if you want to be explicit about permissions
+      /*
+      permissions: [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION"
+      ],
+      */
     },
     web: {
       favicon: "./assets/favicon.png"

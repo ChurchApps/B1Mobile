@@ -1,7 +1,7 @@
 import React from "react";
 import WebView from "react-native-webview";
 import { Surface } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../src/theme";
 
 const Privacy = () => {
   const { theme, spacing } = useAppTheme();

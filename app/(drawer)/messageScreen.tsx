@@ -1,16 +1,16 @@
 import React from "react";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface, UserHelper } from "@/src/helpers";
+import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface, UserHelper } from "../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
-import { PrivateMessagesCreate } from "@/src/helpers/Interfaces";
-import { eventBus, updateCurrentScreen } from "@/src/helpers/PushNotificationHelper";
+import { PrivateMessagesCreate } from "../../src/helpers/Interfaces";
+import { eventBus, updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform } from "react-native";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
+import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 
 interface NotificationContent {
   autoDismiss?: boolean;
@@ -240,7 +240,16 @@ const MessageScreen = () => {
     </Surface>
   );
 
-  const messagesView = () => <FlatList inverted data={messageList} style={{ paddingVertical: spacing.md }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ paddingBottom: spacing.lg }} />;
+  const messagesView = () => (
+    <FlatList
+      inverted
+      data={messageList}
+      style={{ paddingVertical: spacing.md }}
+      renderItem={({ item }) => singleMessageItem(item)}
+      keyExtractor={(item: any) => item.id}
+      contentContainerStyle={{ paddingBottom: spacing.lg }}
+    />
+  );
 
   const singleMessageItem = (item: MessageInterface) => {
     const isMine = item.personId !== details.id;

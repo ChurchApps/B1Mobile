@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, Text, Pressable, View, Animated, Image, ImageSourcePropType } from "react-native";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { LinearGradient } from "expo-linear-gradient";
 
 interface Props {

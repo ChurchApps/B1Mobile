@@ -1,9 +1,10 @@
+// import "../src/config/firebase";
 import React from "react";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { initializeFirebase } from "../src/config/firebase";
-import { ThemeProvider } from "@/src/theme/ThemeProvider";
+import { ThemeProvider } from "../src/theme/ThemeProvider";
 
 export default function RootLayout() {
   useEffect(() => {

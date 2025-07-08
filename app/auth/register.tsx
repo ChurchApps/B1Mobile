@@ -1,10 +1,10 @@
 import React from "react";
-import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
+import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, SafeAreaView } from "react-native";
 import { Button, Text, TextInput, Surface } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../src/theme";
 
 const Register = () => {
   const { theme, spacing } = useAppTheme();

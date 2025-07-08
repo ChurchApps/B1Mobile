@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { ApiHelper, CurrencyHelper, DateHelper, UserHelper } from "@/src/helpers";
-import { DonationInterface } from "@/src/interfaces";
+import { ApiHelper, CurrencyHelper, DateHelper, UserHelper } from "../../../src/helpers";
+import { DonationInterface } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { Card, IconButton, List, Portal, Modal, Text } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 
 export function Donations() {
   const [donations, setDonations] = useState<DonationInterface[]>([]);

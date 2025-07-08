@@ -1,12 +1,12 @@
 import React from "react";
-import { BlueHeader } from "@/src/components/BlueHeader";
-import { ApiHelper, EnvironmentHelper, LoginResponseInterface, UserHelper } from "@/src/helpers";
+import { BlueHeader } from "@/components/BlueHeader";
+import { ApiHelper, EnvironmentHelper, LoginResponseInterface, UserHelper } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Linking, SafeAreaView, ScrollView, View } from "react-native";
-import { LoadingWrapper } from "@/src/components/wrapper/LoadingWrapper";
+import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { TextInput, Button, Text, Surface } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../src/theme";
 
 const Login = () => {
   const { theme, spacing } = useAppTheme();

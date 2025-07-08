@@ -1,11 +1,11 @@
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useState } from "react";
 import { FlatList, Keyboard, View } from "react-native";
-import { ApiHelper, ConversationInterface, UserHelper } from "@/src/helpers";
+import { ApiHelper, ConversationInterface, UserHelper } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import Notes from "./Notes";
 import { TextInput, IconButton, Surface } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 
 interface NewConversation {
   placeholder: string;

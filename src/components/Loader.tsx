@@ -1,4 +1,4 @@
-import { globalStyles } from "@/src/helpers";
+import { globalStyles } from "../../src/helpers";
 import React from "react";
 import { ActivityIndicator } from "react-native";
 

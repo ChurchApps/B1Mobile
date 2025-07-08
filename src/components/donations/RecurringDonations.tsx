@@ -1,13 +1,13 @@
-import { ApiHelper, CurrencyHelper, DateHelper, UserHelper } from "@/src/helpers";
-import { ErrorHelper } from "@/src/helpers/ErrorHelper";
-import { StripePaymentMethod, SubscriptionInterface } from "@/src/interfaces";
+import { ApiHelper, CurrencyHelper, DateHelper, UserHelper } from "../../../src/helpers";
+import { ErrorHelper } from "../../../src/helpers/ErrorHelper";
+import { StripePaymentMethod, SubscriptionInterface } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { ActivityIndicator, Button, Card, Divider, IconButton, List, Menu, Portal, Text, useTheme } from "react-native-paper";
-import { useAppTheme } from "@/src/theme";
+import { useAppTheme } from "../../../src/theme";
 import { CustomModal } from "../modals/CustomModal";
-import { DimensionHelper } from "@/src/helpers/DimensionHelper";
+import { DimensionHelper } from "../../../src/helpers/DimensionHelper";
 
 interface Props {
   customerId: string;
