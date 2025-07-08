@@ -142,6 +142,10 @@ export function CustomDrawer(props: any) {
   };
 
   const logoutAction = async () => {
+    // Clear secure tokens
+    await UserHelper.clearSecureTokens();
+    
+    // Clear AsyncStorage (except church data)
     await AsyncStorage.getAllKeys()
       .then(keys => AsyncStorage.multiRemove(keys.filter(key => key != "CHURCH_DATA")))
       .then(() => RNRestart.Restart());

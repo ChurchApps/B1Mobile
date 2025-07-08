@@ -51,6 +51,19 @@ module.exports = {
       favicon: "./assets/favicon.png"
     },
     runtimeVersion: "2.0.0",
+    plugins: [
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/notification-icon.png",
+          color: "#ffffff",
+          sounds: [
+            "./assets/notification-sound.wav"
+          ]
+        }
+      ]
+    ],
     extra: {
       ATTENDANCE_API: process.env.ATTENDANCE_API || "https://attendanceapi.churchapps.org",
       B1_WEB_ROOT: process.env.B1_WEB_ROOT || "https://{subdomain}.b1.church",

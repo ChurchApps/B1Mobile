@@ -5,15 +5,19 @@ import { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { initializeFirebase } from "../src/config/firebase";
 import { ThemeProvider } from "../src/theme/ThemeProvider";
+import { UserHelper } from "../src/helpers/UserHelper";
 
 export default function RootLayout() {
   useEffect(() => {
-    const setupFirebase = async () => {
+    const setupApp = async () => {
       console.log("Initializing Firebase...");
       await initializeFirebase();
+      
+      console.log("Loading secure tokens...");
+      await UserHelper.loadSecureTokens();
     };
 
-    setupFirebase();
+    setupApp();
   }, []);
 
   return (
