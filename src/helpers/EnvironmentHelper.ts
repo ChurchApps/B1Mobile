@@ -19,8 +19,8 @@ export class EnvironmentHelper {
     const extra = Constants.expoConfig?.extra || {};
     let stage = extra.STAGE;
 
-    stage = "prod";
-    //stage = "staging";
+    //stage = "prod";
+    stage = "staging";
     console.log("STAGE IS: " + stage);
     switch (stage) {
       case "prod":

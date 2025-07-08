@@ -109,6 +109,18 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
           title="Payment Methods"
           titleStyle={{ fontSize: 20, fontWeight: "600" }}
           left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
+          right={props => (
+            UserHelper.checkAccess(Permissions.givingApi.settings.edit) && (
+              <IconButton 
+                {...props} 
+                icon="plus" 
+                size={24} 
+                iconColor={theme.colors.primary} 
+                onPress={() => setShowModal(true)}
+                style={{ margin: 0 }}
+              />
+            )
+          )}
         />
         <Card.Content>
           {isLoading ? (
@@ -121,11 +133,35 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
                   {index < paymentMethods.length - 1 && <Divider />}
                 </React.Fragment>
               ))}
+              {UserHelper.checkAccess(Permissions.givingApi.settings.edit) && (
+                <>
+                  <Divider style={{ marginVertical: spacing.sm }} />
+                  <Button 
+                    mode="outlined" 
+                    onPress={() => setShowModal(true)}
+                    icon="plus"
+                    style={{ marginTop: spacing.sm }}
+                  >
+                    Add Payment Method
+                  </Button>
+                </>
+              )}
             </>
           ) : (
-            <Text variant="bodyMedium" style={{ textAlign: "center", marginVertical: spacing.md }}>
-              No payment methods.
-            </Text>
+            <View style={{ alignItems: "center", marginVertical: spacing.md }}>
+              <Text variant="bodyMedium" style={{ textAlign: "center", marginBottom: spacing.md }}>
+                No payment methods added yet.
+              </Text>
+              {UserHelper.checkAccess(Permissions.givingApi.settings.edit) && (
+                <Button 
+                  mode="contained" 
+                  onPress={() => setShowModal(true)}
+                  icon="plus"
+                >
+                  Add Your First Payment Method
+                </Button>
+              )}
+            </View>
           )}
         </Card.Content>
       </Card>

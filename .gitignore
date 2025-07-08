@@ -11,6 +11,7 @@ appcenter-config.json
 android/app/release
 android/app/.cxx
 .expo
+/.expo
 
 
 npm-debug.*
