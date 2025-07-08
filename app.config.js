@@ -31,6 +31,7 @@ module.exports = {
       }
     },
     android: {
+      package: "church.b1.mobile",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"

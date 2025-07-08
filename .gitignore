@@ -10,6 +10,7 @@ appcenter-config.json
 .DS_Store
 android/app/release
 android/app/.cxx
+.expo
 
 
 npm-debug.*
