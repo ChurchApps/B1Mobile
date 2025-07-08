@@ -1,6 +1,6 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
@@ -14,7 +14,6 @@ interface Props {
 }
 
 export const UpcomingDates = ({ plans, positions, assignments, times }: Props) => {
-  const [upcomingDates, setUpcomingDates] = useState<any[]>([]);
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -25,7 +24,9 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
     }).start();
   }, []);
 
-  const getUpcomingDates = () => {
+  const upcomingDates = useMemo(() => {
+    if (!assignments || !positions || !plans || !times) return [];
+    
     const data: any = [];
     assignments.forEach(assignment => {
       const position = positions.find(p => p.id === assignment.positionId);
@@ -45,13 +46,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
       }
     });
     ArrayHelper.sortBy(data, "serviceDate", true);
-    setUpcomingDates(data);
-  };
-
-  useEffect(() => {
-    if (assignments && positions && plans && times) {
-      getUpcomingDates();
-    }
+    return data;
   }, [assignments, positions, plans, times]);
 
   return (

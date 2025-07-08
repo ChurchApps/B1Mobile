@@ -72,19 +72,17 @@ const GroupDetails = () => {
     });
   };
 
-  const updateTime = (data: any) => {
-    const result: EventInterface[] = [];
-    data.forEach((d: EventInterface) => {
+  const updateTime = useCallback((data: any) => {
+    const tz = new Date().getTimezoneOffset();
+    return data.map((d: EventInterface) => {
       const ev = { ...d };
-      let tz = new Date().getTimezoneOffset();
       ev.start = ev.start ? new Date(ev.start) : new Date();
       ev.end = ev.end ? new Date(ev.end) : new Date();
       ev.start.setMinutes(ev.start.getMinutes() - tz);
       ev.end.setMinutes(ev.end.getMinutes() - tz);
-      result.push(ev);
+      return ev;
     });
-    return result;
-  };
+  }, []);
 
   const handleAddEvent = (slotInfo: any) => {
     const startTime = new Date(slotInfo.start);

@@ -1,6 +1,6 @@
 import { ConversationInterface } from "../../mobilehelper";
 import dayjs from "dayjs";
-import React from "react";
+import React, { useMemo } from "react";
 import { Text, View } from "react-native";
 import { ApiHelper, UserHelper, globalStyles } from "../../../src/helpers";
 import { TimelinePostInterface } from "../../../src/helpers/Interfaces";
@@ -15,14 +15,29 @@ interface Props {
 }
 
 const TimeLinePost = ({ item, onUpdate }: Props) => {
-  const date = item?.item?.data?.start;
-  const TodayDate = dayjs().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
-  const startDate = dayjs(item?.item?.timeSent);
-  const endDate = item?.item?.postType == "event" || item?.item?.postType == "group" ? dayjs(TodayDate) : dayjs(item?.item?.data?.end);
-  const timeDifference = endDate.diff(startDate, "hours");
-  const MinDifference = endDate.diff(startDate, "minute");
-  const dayDiff = endDate.diff(startDate, "days");
-  const formattedDate = dayjs(date).format("MMM D, YYYY h:mm A");
+  const dateCalculations = useMemo(() => {
+    const date = item?.item?.data?.start;
+    const TodayDate = dayjs().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+    const startDate = dayjs(item?.item?.timeSent);
+    const endDate = item?.item?.postType == "event" || item?.item?.postType == "group" ? dayjs(TodayDate) : dayjs(item?.item?.data?.end);
+    const timeDifference = endDate.diff(startDate, "hours");
+    const MinDifference = endDate.diff(startDate, "minute");
+    const dayDiff = endDate.diff(startDate, "days");
+    const formattedDate = dayjs(date).format("MMM D, YYYY h:mm A");
+    
+    return {
+      date,
+      TodayDate,
+      startDate,
+      endDate,
+      timeDifference,
+      MinDifference,
+      dayDiff,
+      formattedDate
+    };
+  }, [item?.item?.data?.start, item?.item?.timeSent, item?.item?.postType, item?.item?.data?.end]);
+
+  const { timeDifference, MinDifference, dayDiff, formattedDate } = dateCalculations;
 
   const createConversation = async () => {
     const conv: ConversationInterface = {

@@ -3,7 +3,7 @@ import { NavigationProps } from "../../src/interfaces";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { Loader } from "./Loader";
@@ -130,10 +130,15 @@ export function NotificationTab() {
     );
   };
   const renderItems = (item: any) => {
-    const currentDate = dayjs();
-    const endDate = dayjs(item?.timeSent);
-    const timeDifference = currentDate.diff(endDate, "hours");
-    const dayDiff = currentDate.diff(endDate, "days");
+    const timeInfo = useMemo(() => {
+      const currentDate = dayjs();
+      const endDate = dayjs(item?.timeSent);
+      const timeDifference = currentDate.diff(endDate, "hours");
+      const dayDiff = currentDate.diff(endDate, "days");
+      return { timeDifference, dayDiff };
+    }, [item?.timeSent]);
+    
+    const { timeDifference, dayDiff } = timeInfo;
     return (
       <TouchableOpacity
         style={[

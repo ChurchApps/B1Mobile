@@ -3,7 +3,7 @@ import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { DateHelper } from "../../mobilehelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -266,10 +266,13 @@ export default function RRuleEditor(props: Props) {
     return result;
   };
 
-  useEffect(() => {
-    const result = EventHelper.getPartialRRuleString(rRuleOptions);
-    props.onChange(result);
+  const rRuleString = useMemo(() => {
+    return EventHelper.getPartialRRuleString(rRuleOptions);
   }, [rRuleOptions]);
+
+  useEffect(() => {
+    props.onChange(rRuleString);
+  }, [rRuleString, props.onChange]);
 
   return (
     <View>

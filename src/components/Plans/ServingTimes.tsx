@@ -1,6 +1,6 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface } from "../../../src/helpers";
@@ -12,7 +12,6 @@ interface Props {
   assignments: AssignmentInterface[];
 }
 export const ServingTimes = ({ plans, positions, assignments }: Props) => {
-  const [servingTimes, setServingTimes] = useState<any[]>([]);
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -23,7 +22,9 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
     }).start();
   }, []);
 
-  const getServingTimes = () => {
+  const servingTimes = useMemo(() => {
+    if (!assignments?.length || !positions?.length || !plans?.length) return [];
+    
     const data: any = [];
     assignments.forEach(assignment => {
       const position = positions.find(p => p.id === assignment.positionId);
@@ -32,12 +33,7 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
         data.push({ assignmentId: assignment?.id, planId: plan?.id, planName: plan?.name, serviceDate: plan.serviceDate, position: position?.name, status: assignment.status || "Unconfirmed" });
     });
     ArrayHelper.sortBy(data, "serviceDate", true);
-    setServingTimes(data);
-  };
-  useEffect(() => {
-    if (assignments?.length > 0 && positions?.length > 0 && plans?.length > 0) {
-      getServingTimes();
-    }
+    return data;
   }, [assignments, positions, plans]);
 
   return (
