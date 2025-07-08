@@ -7,7 +7,7 @@ import { Button, Card, IconButton, Menu, Text, TextInput } from "react-native-pa
 import { useAppTheme } from "../../../src/theme";
 
 interface Props {
-  setMode: any;
+  setMode: (mode: "display" | "edit") => void;
   card: StripePaymentMethod;
   customerId: string;
   updatedFunction: () => void;

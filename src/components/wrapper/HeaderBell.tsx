@@ -11,7 +11,7 @@ interface Props {
 interface NotificationData {
   type: string;
   chatId?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface ChatParams {

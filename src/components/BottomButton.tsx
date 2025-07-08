@@ -1,6 +1,6 @@
 import { Constants, globalStyles } from "../../src/helpers";
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, ViewStyle } from "react-native";
 
 interface Props {
   title: string;

@@ -1,4 +1,5 @@
 import { ChurchInterface } from "@churchapps/mobilehelper";
+import { UserInterface } from "./Interfaces";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserHelper } from "./UserHelper";
 

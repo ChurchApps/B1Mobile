@@ -3,7 +3,7 @@ import React from "react";
 import { ActivityIndicator } from "react-native";
 
 interface Props {
-  isLoading: any;
+  isLoading: boolean;
 }
 
 export function Loader({ isLoading }: Props) {

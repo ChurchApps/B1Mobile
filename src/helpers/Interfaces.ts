@@ -282,8 +282,8 @@ export interface UserSearchInterface {
   name: NameInterface;
   photo?: string;
   photoUpdated?: Date;
-  conversation?: Object;
-  messages?: Object;
+  conversation?: ConversationInterface;
+  messages?: MessageInterface[];
   DisplayName?: string;
 }
 
@@ -339,7 +339,7 @@ export interface TimelinePostInterface {
   timeUpdated?: Date;
   conversationId?: string;
   conversation?: ConversationInterface;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export interface UserPostInterface {
@@ -351,7 +351,7 @@ export interface UserPostInterface {
   timeUpdated?: Date;
   conversationId?: string;
   conversation?: ConversationInterface;
-  data?: any;
+  data?: Record<string, unknown>;
   groupPhoto?: string;
   groupName: string;
 }

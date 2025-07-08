@@ -4,6 +4,14 @@ import { FlatList, Image, Text, View } from "react-native";
 import Icons from "react-native-vector-icons/MaterialIcons";
 import { AssignmentInterface, Constants, EnvironmentHelper, PersonInterface, PositionInterface, globalStyles } from "../../../src/helpers";
 
+interface TeamMemberInterface {
+  id?: string;
+  photo?: string;
+  name?: string;
+  position?: string;
+  personId?: string;
+}
+
 interface Props {
   positions: PositionInterface[];
   assignments: AssignmentInterface[];
@@ -13,7 +21,7 @@ interface Props {
 export const Teams = ({ positions, assignments, people, name }: Props) => {
   const getTeam = () => {
     if (!people) return;
-    const teamData: any[] = [];
+    const teamData: TeamMemberInterface[] = [];
     positions.forEach(position => {
       const posAssignments = assignments.filter(a => a.positionId === position.id);
       posAssignments.forEach(assignment => {

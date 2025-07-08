@@ -60,7 +60,7 @@ export class PushNotificationHelper {
   }
 
   static async getDeviceInfo() {
-    const details: any = {};
+    const details: Record<string, unknown> = {};
     details.appName = DeviceInfo.getApplicationName();
     details.buildId = await DeviceInfo.getBuildId();
     details.buildNumber = DeviceInfo.getBuildNumber();

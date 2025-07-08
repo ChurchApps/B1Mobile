@@ -3,11 +3,12 @@ import moment from "moment";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { ApiHelper, UserHelper, globalStyles } from "../../../src/helpers";
+import { TimelinePostInterface } from "../../../src/helpers/Interfaces";
 import UserConversations from "../Notes/UserConversation";
 import { Menu, IconButton } from "react-native-paper";
 
 interface Props {
-  item: any;
+  item: { item: TimelinePostInterface; index: number };
   index?: number;
   onUpdate: () => void;
 }

@@ -13,10 +13,10 @@ export function NotificationTab() {
   const navigation: NavigationProps = useNavigation();
 
   const [isLoading, setLoading] = useState(false);
-  const [NotificationData, setNotificationData] = useState<any[]>([]);
-  const [Chatlist, setChatList] = useState<any[]>([]);
-  const [UserData, setUserData] = useState<any[]>([]);
-  const [mergeData, setMergedData] = useState<any[]>([]);
+  const [NotificationData, setNotificationData] = useState<Array<Record<string, unknown>>>([]);
+  const [Chatlist, setChatList] = useState<ConversationCheckInterface[]>([]);
+  const [UserData, setUserData] = useState<UserSearchInterface[]>([]);
+  const [mergeData, setMergedData] = useState<Array<Record<string, unknown>>>([]);
 
   const [routes] = React.useState([
     { key: "first", title: "MESSAGES" },

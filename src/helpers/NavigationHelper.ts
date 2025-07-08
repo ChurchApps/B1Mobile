@@ -6,8 +6,10 @@ import { LinkInterface } from "./Interfaces";
 import { UserHelper } from "./UserHelper";
 //import SafariView from "react-native-safari-view";
 
+type NavigateFunction = (options: { pathname: string; params?: Record<string, any> }) => void;
+
 export class NavigationHelper {
-  static navigateToScreen = (item: LinkInterface, navigate: any) => {
+  static navigateToScreen = (item: LinkInterface, navigate: NavigateFunction) => {
     const bibleUrl =
       "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
     if (item.linkType == "stream") {
@@ -115,7 +117,7 @@ export class NavigationHelper {
     }
   };
 
-  static navDonations(navigate: any) {
+  static navDonations(navigate: NavigateFunction) {
     UserHelper.addOpenScreenEvent("DonationScreen");
     // if (Platform.OS === "ios") {
     //   let url = "https://" + CacheHelper.church!.subDomain + ".b1.church/login/?returnUrl=%2Fdonation-landing";

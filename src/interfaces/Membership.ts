@@ -95,7 +95,7 @@ export interface ReportInterface {
   reportType: string;
   columns?: ReportColumnInterface[];
   values?: ReportValueInterface[];
-  results?: any[];
+  results?: Array<Record<string, unknown>>;
 }
 export interface ReportColumnInterface {
   field?: string;
@@ -105,7 +105,7 @@ export interface ReportColumnInterface {
 }
 export interface ReportValueInterface {
   key?: string;
-  value?: any;
+  value?: unknown;
 }
 export interface PersonInterface {
   id?: string;

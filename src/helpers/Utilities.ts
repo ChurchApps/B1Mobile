@@ -2,7 +2,7 @@ import { CacheHelper } from "./CacheHelper";
 import { UserHelper } from "./UserHelper";
 
 export class Utilities {
-  static trackEvent(name: string, data?: any) {
+  static trackEvent(name: string, data?: Record<string, unknown>) {
     let pkg = require("../../package.json");
 
     const props = data ? data : {};

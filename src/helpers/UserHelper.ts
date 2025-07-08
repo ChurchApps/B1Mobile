@@ -3,7 +3,7 @@ import { Platform } from "react-native";
 import { logAnalyticsEvent } from "../config/firebase";
 import { CacheHelper } from "./CacheHelper";
 import { SecureStorageHelper } from "./SecureStorageHelper";
-import { AppearanceInterface, ChurchInterface, IPermission, LoginUserChurchInterface, UserInterface } from "./Interfaces";
+import { AppearanceInterface, ChurchInterface, IPermission, LoginUserChurchInterface, UserInterface, PersonInterface, RolePermissionInterface } from "./Interfaces";
 import { PushNotificationHelper } from "./PushNotificationHelper";
 
 export class UserHelper {
@@ -22,7 +22,7 @@ export class UserHelper {
   static async setPersonRecord() {
     if (UserHelper.currentUserChurch && !UserHelper.currentUserChurch.person) {
       console.log(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
-      const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
+      const data: { person: PersonInterface } = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
       UserHelper.currentUserChurch.person = data.person;
     }
 
@@ -89,7 +89,7 @@ export class UserHelper {
 
       // Store API-specific tokens
       if (userChurch?.apis && userChurch.apis.length > 0) {
-        const apiTokens: Record<string, any> = {};
+        const apiTokens: Record<string, { jwt: string; permissions: RolePermissionInterface[] }> = {};
         userChurch.apis.forEach(api => {
           if (api.keyName && api.jwt) {
             apiTokens[api.keyName] = {
