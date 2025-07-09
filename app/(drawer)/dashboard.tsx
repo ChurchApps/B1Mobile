@@ -5,7 +5,7 @@ import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { UserHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
@@ -134,7 +134,7 @@ const Dashboard = () => {
         <LoadingWrapper loading={isLoading}>
           <View style={styles.container}>
             <Appbar.Header style={styles.header} mode="center-aligned">
-              <Appbar.Action icon={() => <MaterialIcons name="dehaze" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
               <Appbar.Content title="Home" titleStyle={styles.headerTitle} />
               <View style={styles.bellContainer}>
                 <View style={styles.bellWrapper}>

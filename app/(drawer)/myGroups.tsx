@@ -132,7 +132,7 @@ const MyGroups = () => {
         <LoadingWrapper loading={loading}>
           <View style={styles.container}>
             <Appbar.Header style={styles.header} mode="center-aligned">
-              <Appbar.Action icon={() => <MaterialIcons name="dehaze" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
               <Appbar.Content title="My Groups" titleStyle={styles.headerTitle} />
             </Appbar.Header>
             <View style={styles.contentContainer}>

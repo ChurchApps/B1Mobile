@@ -117,7 +117,7 @@ const Donation = () => {
         <LoadingWrapper loading={areMethodsLoading}>
           <View style={{ flex: 1 }}>
             <Appbar.Header style={{ backgroundColor: theme.colors.primary, elevation: 4, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 3 }} mode="center-aligned">
-              <Appbar.Action icon={() => <MaterialIcons name="dehaze" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
               <Appbar.Content title="Donate" titleStyle={{ color: "white", fontSize: 20, fontWeight: "600" }} />
               <Appbar.Action icon="arrow-left" onPress={() => navigation.goBack()} color="white" />
             </Appbar.Header>
