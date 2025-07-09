@@ -15,6 +15,7 @@ import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { HeaderBell } from "../../src/components/wrapper/HeaderBell";
 import { NotificationTab } from "../../src/components/NotificationView";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 import { useUserStore, useCurrentChurch, useChurchAppearance } from "../../src/stores/useUserStore";
 
 const theme = {
@@ -51,8 +52,12 @@ const Dashboard = () => {
   useEffect(() => {
     const subscription = Dimensions.addEventListener("change", () => {});
     UserHelper.addOpenScreenEvent("Dashboard");
+    updateCurrentScreen("/(drawer)/dashboard");
     loadDashboardData();
-    return () => subscription.remove();
+    return () => {
+      subscription.remove();
+      updateCurrentScreen("");
+    };
   }, []);
 
   const loadDashboardData = async () => {

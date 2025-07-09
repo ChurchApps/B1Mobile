@@ -3,7 +3,6 @@ import { DeviceEventEmitter, PermissionsAndroid, Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
 import * as Device from "expo-device";
 import { CacheHelper } from "./CacheHelper";
-import { usePathname } from "expo-router";
 
 // Track current screen
 let currentScreen = "";
@@ -149,12 +148,6 @@ export class PushNotificationHelper {
 
   static async NotificationListener() {
     try {
-      // Track screen changes using pathname
-      const pathname = usePathname();
-      if (pathname) {
-        currentScreen = pathname;
-      }
-
       // Listen for notifications received while app is foregrounded
       const foregroundSubscription = Notifications.addNotificationReceivedListener(notification => {
         const content = notification.request.content;
