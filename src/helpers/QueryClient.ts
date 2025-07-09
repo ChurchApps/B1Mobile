@@ -117,6 +117,20 @@ export const invalidateAllQueries = () => {
   console.log("All queries invalidated after POST request");
 };
 
+// Function to completely clear all cached data (for logout/church switch)
+export const clearAllCachedData = async () => {
+  // Clear React Query cache
+  queryClient.clear();
+
+  // Clear persisted cache from AsyncStorage
+  try {
+    await AsyncStorage.removeItem(CACHE_KEY);
+    console.log("All cached data cleared (logout/church switch)");
+  } catch (error) {
+    console.warn("Failed to clear persisted cache:", error);
+  }
+};
+
 // Smart invalidation based on API endpoints
 const invalidateRelatedQueries = (endpoint: string) => {
   // Convert endpoint to lowercase for comparison

@@ -12,6 +12,7 @@ import RNRestart from "react-native-restart";
 import { Platform } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { clearAllCachedData } from "../../src/helpers/QueryClient";
 
 const ChurchSearch = () => {
   const { theme, spacing } = useAppTheme();
@@ -45,6 +46,10 @@ const ChurchSearch = () => {
         ErrorHelper.logError("store-recent-church", e);
       }
       if (existing) churchData = existing.church;
+
+      // Clear all cached data when switching churches
+      await clearAllCachedData();
+
       await CacheHelper.setValue("church", churchData);
       UserHelper.addAnalyticsEvent("church_selected", {
         id: Date.now(),
