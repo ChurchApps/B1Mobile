@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, MD3LightTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
@@ -84,36 +83,42 @@ const MyGroups = () => {
     await Promise.all([refetchGroups(), refetchTimeline()]);
   };
 
-  useEffect(() => {
-    if (timelineData?.posts?.length > 0 && timelineData?.groups?.length > 0) {
-      const combined = timelineData.posts.map(item1 => ({
+  const mergedTimelineData = useMemo(() => {
+    if (timelineData?.posts?.length && timelineData?.groups?.length && timelineData.posts.length > 0 && timelineData.groups.length > 0) {
+      return timelineData.posts.map(item1 => ({
         ...item1,
         ...ArrayHelper.getOne(timelineData.groups, "id", item1.groupId)
       }));
-      setMergedData(combined);
     }
+    return [];
   }, [timelineData]);
 
-  const showGroups = (item: any) => (
-    <Card
-      style={styles.groupCard}
-      onPress={() => {
-        router.navigate({
-          pathname: `/groupDetails/${item.id}`
-        });
-      }}>
-      <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
-      <Card.Content style={styles.groupContent}>
-        <Text variant="titleMedium" style={styles.groupName}>
-          {item.name}
-        </Text>
-      </Card.Content>
-    </Card>
-  );
+  useEffect(() => {
+    setMergedData(mergedTimelineData);
+  }, [mergedTimelineData]);
 
-  const renderItems = (item: any) => <TimeLinePost item={item} onUpdate={loadData} />;
+  const showGroups = useCallback((item: any) => {
+    const handlePress = () => {
+      router.navigate({
+        pathname: `/groupDetails/${item.id}`
+      });
+    };
 
-  const getGroupsGrid = () => {
+    return (
+      <Card style={styles.groupCard} onPress={handlePress}>
+        <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
+        <Card.Content style={styles.groupContent}>
+          <Text variant="titleMedium" style={styles.groupName}>
+            {item.name}
+          </Text>
+        </Card.Content>
+      </Card>
+    );
+  }, []);
+
+  const renderItems = useCallback((item: any) => <TimeLinePost item={item} onUpdate={loadData} />, [loadData]);
+
+  const groupsGrid = useMemo(() => {
     if (!Array.isArray(groups)) return null;
     return (
       <View style={styles.gridContainer}>
@@ -124,7 +129,7 @@ const MyGroups = () => {
         ))}
       </View>
     );
-  };
+  }, [groups, showGroups]);
 
   return (
     <PaperProvider theme={theme}>
@@ -136,7 +141,7 @@ const MyGroups = () => {
               <Appbar.Content title="My Groups" titleStyle={styles.headerTitle} />
             </Appbar.Header>
             <View style={styles.contentContainer}>
-              <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListFooterComponent={() => <View style={styles.groupsContainer}>{getGroupsGrid()}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={(item: any) => `key-${item.id || Math.random()}`} />
+              <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListFooterComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={(item: any) => `key-${item.id || Math.random()}`} />
             </View>
           </View>
         </LoadingWrapper>

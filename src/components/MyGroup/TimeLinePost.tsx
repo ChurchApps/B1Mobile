@@ -1,6 +1,6 @@
 import { ConversationInterface } from "../../mobilehelper";
 import dayjs from "dayjs";
-import React, { useMemo } from "react";
+import React, { useMemo, useCallback } from "react";
 import { Text, View } from "react-native";
 import { ApiHelper, globalStyles } from "../../../src/helpers";
 import { TimelinePostInterface } from "../../../src/helpers/Interfaces";
@@ -15,7 +15,7 @@ interface Props {
   onUpdate: () => void;
 }
 
-const TimeLinePost = ({ item, onUpdate }: Props) => {
+const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
   const currentUserChurch = useCurrentUserChurch();
 
   const dateCalculations = useMemo(() => {
@@ -42,7 +42,7 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
 
   const { timeDifference, MinDifference, dayDiff, formattedDate } = dateCalculations;
 
-  const createConversation = async () => {
+  const createConversation = useCallback(async () => {
     const conv: ConversationInterface = {
       groupId: item?.item?.data?.groupId,
       churchId: currentUserChurch?.church?.id,
@@ -55,17 +55,17 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
     item?.item?.conversation;
     const cId = result[0].id;
     return cId;
-  };
+  }, [item?.item?.data?.groupId, currentUserChurch?.church?.id, item?.item?.postType, item?.item?.postId]);
 
   const [showMenu, setShowMenu] = React.useState(false);
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     // Implement edit functionality
-  };
+  }, []);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     // Implement delete functionality
-  };
+  }, []);
 
   return (
     <View style={globalStyles.FlatlistViewStyle} key={item.index}>
@@ -162,5 +162,5 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
       )}
     </View>
   );
-};
+});
 export default TimeLinePost;

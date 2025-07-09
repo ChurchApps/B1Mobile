@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { View } from "react-native";
 import { Menu, Text, TextInput, useTheme } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
@@ -12,25 +12,43 @@ interface Props {
   updatedFunction: (fundDonation: FundDonationInterface, index: number) => void;
 }
 
-export function FundDonation({ fundDonation, funds, index, updatedFunction }: Props) {
+export const FundDonation = React.memo(({ fundDonation, funds, index, updatedFunction }: Props) => {
   const { spacing } = useAppTheme();
   const theme = useTheme();
   const [showFundMenu, setShowFundMenu] = useState(false);
   const [selectedFund, setSelectedFund] = useState<string>(funds[0]?.id || "");
 
-  const handleAmountChange = (text: string) => {
-    let fd = { ...fundDonation };
-    fd.amount = parseFloat(text.replace(/[^0-9.]/g, ""));
-    updatedFunction(fd, index);
-  };
+  const handleAmountChange = useCallback(
+    (text: string) => {
+      let fd = { ...fundDonation };
+      fd.amount = parseFloat(text.replace(/[^0-9.]/g, ""));
+      updatedFunction(fd, index);
+    },
+    [fundDonation, index, updatedFunction]
+  );
 
   useEffect(() => {
     let fd = { ...fundDonation };
     fd.fundId = selectedFund;
     updatedFunction(fd, index);
-  }, [selectedFund]);
+  }, [selectedFund, fundDonation, index, updatedFunction]);
 
-  const getFundName = (fundId: string) => funds.find(f => f.id === fundId)?.name || "Select Fund";
+  const getFundName = useMemo(() => (fundId: string) => funds.find(f => f.id === fundId)?.name || "Select Fund", [funds]);
+
+  const formattedAmount = useMemo(() => (fundDonation.amount ? CurrencyHelper.formatCurrency(fundDonation.amount) : ""), [fundDonation.amount]);
+
+  const handleFundMenuPress = useCallback(() => {
+    setShowFundMenu(true);
+  }, []);
+
+  const handleFundMenuDismiss = useCallback(() => {
+    setShowFundMenu(false);
+  }, []);
+
+  const handleFundSelect = useCallback((fundId: string) => {
+    setSelectedFund(fundId);
+    setShowFundMenu(false);
+  }, []);
 
   return (
     <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.sm }}>
@@ -38,25 +56,18 @@ export function FundDonation({ fundDonation, funds, index, updatedFunction }: Pr
         <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>
           Amount
         </Text>
-        <TextInput mode="outlined" keyboardType="numeric" value={fundDonation.amount ? CurrencyHelper.formatCurrency(fundDonation.amount) : ""} onChangeText={handleAmountChange} style={{ backgroundColor: theme.colors.surface }} />
+        <TextInput mode="outlined" keyboardType="numeric" value={formattedAmount} onChangeText={handleAmountChange} style={{ backgroundColor: theme.colors.surface }} />
       </View>
       <View style={{ flex: 1 }}>
         <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>
           Fund
         </Text>
-        <Menu visible={showFundMenu} onDismiss={() => setShowFundMenu(false)} anchor={<TextInput mode="outlined" value={getFundName(selectedFund)} onPressIn={() => setShowFundMenu(true)} right={<TextInput.Icon icon="chevron-down" />} style={{ backgroundColor: theme.colors.surface }} editable={false} />}>
+        <Menu visible={showFundMenu} onDismiss={handleFundMenuDismiss} anchor={<TextInput mode="outlined" value={getFundName(selectedFund)} onPressIn={handleFundMenuPress} right={<TextInput.Icon icon="chevron-down" />} style={{ backgroundColor: theme.colors.surface }} editable={false} />}>
           {funds.map(fund => (
-            <Menu.Item
-              key={fund.id}
-              onPress={() => {
-                setSelectedFund(fund.id);
-                setShowFundMenu(false);
-              }}
-              title={fund.name}
-            />
+            <Menu.Item key={fund.id} onPress={() => handleFundSelect(fund.id)} title={fund.name} />
           ))}
         </Menu>
       </View>
     </View>
   );
-}
+});

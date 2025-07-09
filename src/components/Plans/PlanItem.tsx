@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants } from "../../../src/helpers/Constants";
@@ -19,48 +19,62 @@ interface Props {
   isLast?: boolean;
 }
 
-export const PlanItem = (props: Props) => {
+export const PlanItem = React.memo((props: Props) => {
   const [showSongDetails, setShowSongDetails] = React.useState(false);
 
-  const itemContainerStyle = [styles.itemContainer, props.isLast && { borderBottomWidth: 0 }];
+  const itemContainerStyle = useMemo(() => [styles.itemContainer, props.isLast && { borderBottomWidth: 0 }], [props.isLast]);
 
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+  const formattedTime = useMemo(() => {
+    const minutes = Math.floor(props.planItem.seconds / 60);
+    const secs = props.planItem.seconds % 60;
     return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
-  };
+  }, [props.planItem.seconds]);
 
-  const getChildren = () => {
+  const renderedChildren = useMemo(() => {
     if (!props.planItem.children?.length) return null;
     return props.planItem.children.map(child => <PlanItem key={child.id} planItem={child} />);
-  };
+  }, [props.planItem.children]);
 
-  const getHeaderRow = () => <View style={styles.headerContainer}>{getChildren()}</View>;
+  const handleSongPress = useCallback(() => {
+    setShowSongDetails(true);
+  }, []);
 
-  const getItemRow = () => (
-    <View style={itemContainerStyle}>
-      <Text style={styles.timeText}>{formatTime(props.planItem.seconds)}</Text>
-      <View style={styles.contentContainer}>
-        <Text style={styles.labelText}>{props.planItem.label}</Text>
-        <Text style={styles.descriptionText}>{props.planItem.description || " "}</Text>
+  const handleSongClose = useCallback(() => {
+    setShowSongDetails(false);
+  }, []);
+
+  const getHeaderRow = useCallback(() => <View style={styles.headerContainer}>{renderedChildren}</View>, [renderedChildren]);
+
+  const getItemRow = useCallback(
+    () => (
+      <View style={itemContainerStyle}>
+        <Text style={styles.timeText}>{formattedTime}</Text>
+        <View style={styles.contentContainer}>
+          <Text style={styles.labelText}>{props.planItem.label}</Text>
+          <Text style={styles.descriptionText}>{props.planItem.description || " "}</Text>
+        </View>
       </View>
-    </View>
+    ),
+    [itemContainerStyle, formattedTime, props.planItem.label, props.planItem.description]
   );
 
-  const getSongRow = () => (
-    <View style={itemContainerStyle}>
-      <Text style={styles.timeText}>{formatTime(props.planItem.seconds)}</Text>
-      <View style={styles.contentContainer}>
-        <TouchableOpacity onPress={() => setShowSongDetails(true)}>
-          <Text style={[styles.labelText, styles.songLink]}>{props.planItem.label}</Text>
-        </TouchableOpacity>
-        <Text style={styles.descriptionText}>{props.planItem.description || " "}</Text>
+  const getSongRow = useCallback(
+    () => (
+      <View style={itemContainerStyle}>
+        <Text style={styles.timeText}>{formattedTime}</Text>
+        <View style={styles.contentContainer}>
+          <TouchableOpacity onPress={handleSongPress}>
+            <Text style={[styles.labelText, styles.songLink]}>{props.planItem.label}</Text>
+          </TouchableOpacity>
+          <Text style={styles.descriptionText}>{props.planItem.description || " "}</Text>
+        </View>
+        {showSongDetails && <SongDialog arrangementKeyId={props.planItem.relatedId} onClose={handleSongClose} />}
       </View>
-      {showSongDetails && <SongDialog arrangementKeyId={props.planItem.relatedId} onClose={() => setShowSongDetails(false)} />}
-    </View>
+    ),
+    [itemContainerStyle, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleSongPress, handleSongClose, showSongDetails]
   );
 
-  const getPlanItem = () => {
+  const planItemContent = useMemo(() => {
     switch (props.planItem.itemType) {
       case "header":
         return getHeaderRow();
@@ -72,10 +86,10 @@ export const PlanItem = (props: Props) => {
       default:
         return null;
     }
-  };
+  }, [props.planItem.itemType, getHeaderRow, getSongRow, getItemRow]);
 
-  return <>{getPlanItem()}</>;
-};
+  return <>{planItemContent}</>;
+});
 
 const styles = StyleSheet.create({
   headerContainer: {

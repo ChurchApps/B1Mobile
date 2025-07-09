@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
-import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { UserHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
@@ -80,44 +79,74 @@ const Dashboard = () => {
     }, [])
   );
 
-  const checkRedirect = () => {
+  const checkRedirect = useCallback(() => {
     if (!currentChurch) router.navigate("/(drawer)/churchSearch");
-  };
+  }, [currentChurch]);
 
-  const getButton = (item: LinkInterface) => {
-    if (item.linkType === "separator") return null;
-    let backgroundImage = item.photo ? { uri: item.photo } : item.linkType.toLowerCase() === "groups" ? require("../../src/assets/images/dash_worship.png") : item.linkType.toLowerCase() === "bible" ? require("../../src/assets/images/dash_bible.png") : item.linkType.toLowerCase() === "votd" ? require("../../src/assets/images/dash_votd.png") : item.linkType.toLowerCase() === "lessons" ? require("../../src/assets/images/dash_lessons.png") : item.linkType.toLowerCase() === "checkin" ? require("../../src/assets/images/dash_checkin.png") : item.text.toLowerCase() === "chums" ? require("../../src/assets/images/dash_chums.png") : item.linkType.toLowerCase() === "donation" ? require("../../src/assets/images/dash_donation.png") : item.linkType.toLowerCase() === "directory" ? require("../../src/assets/images/dash_directory.png") : item.linkType.toLowerCase() === "plans" ? require("../../src/assets/images/dash_votd.png") : require("../../src/assets/images/dash_url.png");
+  const getBackgroundImage = useCallback((item: LinkInterface) => {
+    if (item.photo) return { uri: item.photo };
 
-    return (
-      <Card key={`card-${item.id || item.linkType + item.text}`} style={styles.card} mode="elevated" onPress={() => NavigationUtils.navigateToScreen(item, currentChurch)}>
-        <View style={styles.cardImage}>
-          <OptimizedImage source={backgroundImage} style={styles.cardImageInner} contentFit="cover" />
-        </View>
-        <Card.Content style={styles.cardContent}>
-          <Text variant="titleMedium" style={styles.cardText}>
-            {item.text}
-          </Text>
-        </Card.Content>
-      </Card>
-    );
-  };
+    const imageMap: { [key: string]: any } = {
+      groups: require("../../src/assets/images/dash_worship.png"),
+      bible: require("../../src/assets/images/dash_bible.png"),
+      votd: require("../../src/assets/images/dash_votd.png"),
+      lessons: require("../../src/assets/images/dash_lessons.png"),
+      checkin: require("../../src/assets/images/dash_checkin.png"),
+      donation: require("../../src/assets/images/dash_donation.png"),
+      directory: require("../../src/assets/images/dash_directory.png"),
+      plans: require("../../src/assets/images/dash_votd.png")
+    };
 
-  const getButtons = () => {
-    if (isLoading) return null;
-    if (!Array.isArray(links)) return null;
-    const items = links.filter(item => item.linkType !== "separator");
+    if (item.text.toLowerCase() === "chums") {
+      return require("../../src/assets/images/dash_chums.png");
+    }
+
+    return imageMap[item.linkType.toLowerCase()] || require("../../src/assets/images/dash_url.png");
+  }, []);
+
+  const getButton = useCallback(
+    (item: LinkInterface) => {
+      if (item.linkType === "separator") return null;
+
+      const backgroundImage = getBackgroundImage(item);
+
+      const handlePress = () => NavigationUtils.navigateToScreen(item, currentChurch);
+
+      return (
+        <Card key={`card-${item.id || item.linkType + item.text}`} style={styles.card} mode="elevated" onPress={handlePress}>
+          <View style={styles.cardImage}>
+            <OptimizedImage source={backgroundImage} style={styles.cardImageInner} contentFit="cover" />
+          </View>
+          <Card.Content style={styles.cardContent}>
+            <Text variant="titleMedium" style={styles.cardText}>
+              {item.text}
+            </Text>
+          </Card.Content>
+        </Card>
+      );
+    },
+    [currentChurch, getBackgroundImage]
+  );
+
+  const filteredLinks = useMemo(() => {
+    if (!Array.isArray(links)) return [];
+    return links.filter(item => item.linkType !== "separator");
+  }, [links]);
+
+  const buttonsGrid = useMemo(() => {
+    if (isLoading || filteredLinks.length === 0) return null;
     return (
       <View style={styles.gridContainer}>
-        {items.map(item => (
+        {filteredLinks.map(item => (
           <View key={item.id || item.linkType + item.text} style={styles.gridItem}>
             {getButton(item)}
           </View>
         ))}
       </View>
     );
-  };
+  }, [isLoading, filteredLinks, getButton]);
 
-  const getBrand = () => {
+  const brandContent = useMemo(() => {
     if (churchAppearance?.logoLight) {
       return <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.logo} contentFit="contain" priority="high" />;
     }
@@ -126,7 +155,15 @@ const Dashboard = () => {
         {currentChurch?.name || ""}
       </Text>
     );
-  };
+  }, [churchAppearance?.logoLight, currentChurch?.name]);
+
+  const handleNotificationToggle = useCallback(() => {
+    setShowNotifications(true);
+  }, []);
+
+  const handleDrawerOpen = useCallback(() => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  }, [navigation]);
 
   return (
     <PaperProvider theme={theme}>
@@ -134,20 +171,20 @@ const Dashboard = () => {
         <LoadingWrapper loading={isLoading}>
           <View style={styles.container}>
             <Appbar.Header style={styles.header} mode="center-aligned">
-              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={handleDrawerOpen} />
               <Appbar.Content title="Home" titleStyle={styles.headerTitle} />
               <View style={styles.bellContainer}>
                 <View style={styles.bellWrapper}>
-                  <HeaderBell toggleNotifications={() => setShowNotifications(true)} />
+                  <HeaderBell toggleNotifications={handleNotificationToggle} />
                 </View>
               </View>
             </Appbar.Header>
             <View style={styles.contentContainer}>
               <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <Surface style={styles.brandContainer} elevation={1}>
-                  {getBrand()}
+                  {brandContent}
                 </Surface>
-                {getButtons()}
+                {buttonsGrid}
               </ScrollView>
             </View>
             <Portal>

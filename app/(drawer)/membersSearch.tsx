@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
 import { router, useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { useAppTheme } from "../../src/theme";
-import { ActivityIndicator, Button, Card, Surface, Text, TextInput } from "react-native-paper";
+import { ActivityIndicator, Card, Surface, Text, TextInput } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
@@ -34,48 +33,56 @@ const MembersSearch = () => {
     UserHelper.addOpenScreenEvent("Member Search Screen");
   }, []);
 
+  const filteredMembers = useMemo(() => {
+    if (!membersList.length) return [];
+    if (!searchText.trim()) return membersList;
+
+    const searchLower = searchText.toLowerCase();
+    return membersList.filter((item: any) => item.name.display.toLowerCase().includes(searchLower));
+  }, [membersList, searchText]);
+
   useEffect(() => {
-    if (membersList.length > 0) {
-      setSearchList(membersList);
-    }
-  }, [membersList]);
+    setSearchList(filteredMembers);
+  }, [filteredMembers]);
 
-  const filterMember = (searchText: string) => {
-    let filterList = membersList.filter((item: any) => {
-      if (item.name.display.toLowerCase().match(searchText.toLowerCase())) {
-        return item;
-      }
-    });
-    if (searchText != "") setSearchList(filterList);
-    else setSearchList(membersList);
-  };
+  const handleSearchChange = useCallback((text: string) => {
+    setSearchText(text);
+  }, []);
 
-  const renderMemberItem = (item: any) => (
-    <Card
-      style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface, width: "100%", alignSelf: "center", maxWidth: 700 }}
-      onPress={() => {
+  const renderMemberItem = useCallback(
+    (item: any) => {
+      const handlePress = () => {
         router.navigate({
           pathname: "/(drawer)/memberDetail",
           params: { member: JSON.stringify(item) }
         });
-      }}>
-      <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-        <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} contentFit="cover" />
-        <Text variant="titleMedium">{item.name.display}</Text>
-      </Card.Content>
-    </Card>
+      };
+
+      return (
+        <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface, width: "100%", alignSelf: "center", maxWidth: 700 }} onPress={handlePress}>
+          <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
+            <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} contentFit="cover" />
+            <Text variant="titleMedium">{item.name.display}</Text>
+          </Card.Content>
+        </Card>
+      );
+    },
+    [spacing.sm, spacing.md, theme.roundness, theme.colors.surface]
   );
 
-  const getResults = () => {
+  const searchResults = useMemo(() => {
     if (isLoading) return <ActivityIndicator animating={true} size="large" style={{ margin: spacing.md }} />;
-    else if (searchList.length == 0)
+
+    if (searchList.length === 0) {
       return (
         <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, margin: spacing.md }}>
           No results found
         </Text>
       );
-    else return <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ width: "100%", maxWidth: 700, alignSelf: "center" }} />;
-  };
+    }
+
+    return <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ width: "100%", maxWidth: 700, alignSelf: "center" }} />;
+  }, [isLoading, searchList, spacing.md, theme.colors.onSurfaceVariant, renderMemberItem]);
 
   return (
     <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
@@ -85,12 +92,9 @@ const MembersSearch = () => {
           <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
             Find Members
           </Text>
-          <TextInput mode="outlined" label="Member Name" placeholder="Member Name" value={searchText} onChangeText={setSearchText} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface, width: "100%" }} left={<TextInput.Icon icon="account" />} />
-          <Button mode="contained" onPress={() => filterMember(searchText)} style={{ marginBottom: spacing.md, width: "100%" }}>
-            Search
-          </Button>
+          <TextInput mode="outlined" label="Member Name" placeholder="Member Name" value={searchText} onChangeText={handleSearchChange} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface, width: "100%" }} left={<TextInput.Icon icon="account" />} />
         </View>
-        {getResults()}
+        {searchResults}
       </View>
     </Surface>
   );

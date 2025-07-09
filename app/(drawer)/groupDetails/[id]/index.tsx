@@ -42,119 +42,205 @@ const GroupDetails = () => {
   const currentUserChurch = useCurrentUserChurch();
 
   // Use react-query for group details
-  const { data: groupDetails, isLoading: groupDetailsLoading } = useQuery({
+  const {
+    data: groupDetails,
+    isLoading: groupDetailsLoading,
+    error: groupDetailsError,
+    isError: groupDetailsIsError
+  } = useQuery({
     queryKey: [`/groups/${id}`, "MembershipApi"],
     enabled: !!id && !!currentUserChurch?.jwt,
     placeholderData: null,
     staleTime: 10 * 60 * 1000, // 10 minutes - group details don't change frequently
-    gcTime: 30 * 60 * 1000 // 30 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    retry: 3,
+    retryDelay: 1000,
+    meta: {
+      errorMessage: "Failed to load group details"
+    }
   });
 
   // Use react-query for group members
-  const { data: groupMembers = [], isLoading: groupMembersLoading } = useQuery({
+  const {
+    data: groupMembers = [],
+    isLoading: groupMembersLoading,
+    error: groupMembersError,
+    isError: groupMembersIsError
+  } = useQuery({
     queryKey: [`/groupmembers?groupId=${id}`, "MembershipApi"],
-    enabled: !!id && !!currentUserChurch?.jwt,
+    enabled: !!id && !!currentUserChurch?.jwt && !!groupDetails, // Only load after group details
     placeholderData: [],
     staleTime: 5 * 60 * 1000, // 5 minutes - membership changes occasionally
-    gcTime: 15 * 60 * 1000 // 15 minutes
+    gcTime: 15 * 60 * 1000, // 15 minutes
+    retry: 3,
+    retryDelay: 1000
   });
 
   // Use react-query for group events
   const {
     data: eventsData = [],
     isLoading: eventsLoading,
+    error: eventsError,
+    isError: eventsIsError,
     refetch: refetchEvents
   } = useQuery({
     queryKey: [`/events/group/${id}`, "ContentApi"],
-    enabled: !!id && !!currentUserChurch?.jwt,
+    enabled: !!id && !!currentUserChurch?.jwt && !!groupDetails, // Only load after group details
     placeholderData: [],
     staleTime: 3 * 60 * 1000, // 3 minutes - events change more frequently
-    gcTime: 10 * 60 * 1000 // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: 3,
+    retryDelay: 1000
   });
 
   const loading = groupDetailsLoading || groupMembersLoading || eventsLoading;
+  const hasError = groupDetailsIsError || groupMembersIsError || eventsIsError;
+  const errors = [groupDetailsError, groupMembersError, eventsError].filter(Boolean);
 
   const updateTime = useCallback((data: any) => {
-    const tz = new Date().getTimezoneOffset();
-    return data.map((d: EventInterface) => {
-      const ev = { ...d };
-      ev.start = ev.start ? new Date(ev.start) : new Date();
-      ev.end = ev.end ? new Date(ev.end) : new Date();
-      ev.start.setMinutes(ev.start.getMinutes() - tz);
-      ev.end.setMinutes(ev.end.getMinutes() - tz);
-      return ev;
-    });
+    if (!data || !Array.isArray(data)) return [];
+
+    try {
+      const tz = new Date().getTimezoneOffset();
+      return data.map((d: EventInterface) => {
+        try {
+          const ev = { ...d };
+          ev.start = ev.start ? new Date(ev.start) : new Date();
+          ev.end = ev.end ? new Date(ev.end) : new Date();
+          ev.start.setMinutes(ev.start.getMinutes() - tz);
+          ev.end.setMinutes(ev.end.getMinutes() - tz);
+          return ev;
+        } catch (error) {
+          console.warn("Error updating time for event:", d.id, error);
+          return d; // Return original event if time update fails
+        }
+      });
+    } catch (error) {
+      console.error("Error updating event times:", error);
+      return [];
+    }
   }, []);
 
   const events = useMemo(() => updateTime(eventsData), [eventsData, updateTime]);
 
-  const handleAddEvent = (slotInfo: any) => {
-    const startTime = new Date(slotInfo.start);
-    startTime.setHours(12);
-    startTime.setMinutes(0);
-    startTime.setSeconds(0);
-    const endTime = new Date(slotInfo.start);
-    endTime.setHours(13);
-    endTime.setMinutes(0);
-    endTime.setSeconds(0);
-    setEditEvent({ start: startTime, end: endTime, allDay: false, groupId: id, visibility: "public" });
-  };
-
-  const expandEvents = (allEvents: EventInterface[]) => {
-    const expandedEvents: EventInterface[] = [];
-    const startRange = dayjs().subtract(1, "year");
-    const endRange = dayjs().add(1, "year");
-
-    allEvents.forEach((event: any) => {
-      const ev = { ...event };
-      ev.start = ev.start ? dayjs.utc(ev.start) : undefined;
-      ev.end = ev.end ? dayjs.utc(ev.end) : undefined;
-
-      if (ev.start && ev.end) {
-        if (event.recurrenceRule) {
-          const dates = EventHelper.getRange(event, startRange.toDate(), endRange.toDate());
-          dates.forEach(date => {
-            const evInstance = { ...event };
-            const diff = ev.end.diff(ev.start);
-            evInstance.start = dayjs(date);
-            evInstance.end = evInstance.start.add(diff, "ms");
-            expandedEvents.push(evInstance);
-          });
-          EventHelper.removeExcludeDates(expandedEvents);
-        } else {
-          expandedEvents.push(ev);
-        }
+  const handleAddEvent = useCallback(
+    (slotInfo: any) => {
+      try {
+        const startTime = new Date(slotInfo.start);
+        startTime.setHours(12);
+        startTime.setMinutes(0);
+        startTime.setSeconds(0);
+        const endTime = new Date(slotInfo.start);
+        endTime.setHours(13);
+        endTime.setMinutes(0);
+        endTime.setSeconds(0);
+        setEditEvent({ start: startTime, end: endTime, allDay: false, groupId: id, visibility: "public" });
+      } catch (error) {
+        console.error("Error creating new event:", error);
       }
-    });
-    return expandedEvents;
-  };
+    },
+    [id]
+  );
 
-  const expandedEvents = useMemo(() => expandEvents(events), [events]);
+  const expandEvents = useCallback((allEvents: EventInterface[]) => {
+    if (!allEvents || allEvents.length === 0) return [];
+
+    try {
+      const expandedEvents: EventInterface[] = [];
+      const startRange = dayjs().subtract(1, "year");
+      const endRange = dayjs().add(1, "year");
+
+      allEvents.forEach((event: any) => {
+        try {
+          const ev = { ...event };
+          ev.start = ev.start ? dayjs.utc(ev.start) : undefined;
+          ev.end = ev.end ? dayjs.utc(ev.end) : undefined;
+
+          if (ev.start && ev.end) {
+            if (event.recurrenceRule) {
+              try {
+                const dates = EventHelper.getRange(event, startRange.toDate(), endRange.toDate());
+                if (dates && dates.length > 0) {
+                  dates.forEach(date => {
+                    const evInstance = { ...event };
+                    const diff = ev.end.diff(ev.start);
+                    evInstance.start = dayjs(date);
+                    evInstance.end = evInstance.start.add(diff, "ms");
+                    expandedEvents.push(evInstance);
+                  });
+                  EventHelper.removeExcludeDates(expandedEvents);
+                }
+              } catch (recurrenceError) {
+                console.warn("Error processing recurrence rule for event:", event.id, recurrenceError);
+                // Fallback to single event
+                expandedEvents.push(ev);
+              }
+            } else {
+              expandedEvents.push(ev);
+            }
+          }
+        } catch (eventError) {
+          console.warn("Error processing event:", event.id, eventError);
+        }
+      });
+      return expandedEvents;
+    } catch (error) {
+      console.error("Error expanding events:", error);
+      return [];
+    }
+  }, []);
+
+  const expandedEvents = useMemo(() => {
+    // Limit processing for performance - only expand events if reasonable amount
+    if (events.length > 100) {
+      console.warn("Large number of events detected, limiting expansion for performance");
+      return events.slice(0, 50); // Limit to first 50 events
+    }
+    return expandEvents(events);
+  }, [events, expandEvents]);
 
   const markedDates = useMemo(() => {
     const marked: any = {};
 
-    expandedEvents.forEach(event => {
-      if (!event.start || !event.end) return;
-      let currentDate = dayjs(event.start);
-      const endDate = dayjs(event.end);
+    if (!expandedEvents || expandedEvents.length === 0) return marked;
 
-      while (currentDate.isBefore(endDate) || currentDate.isSame(endDate, "day")) {
-        const dateString = currentDate.format("YYYY-MM-DD");
-        const dotColor = "#fff";
+    try {
+      expandedEvents.forEach(event => {
+        if (!event.start || !event.end) return;
 
-        marked[dateString] = {
-          ...marked[dateString],
-          dots: [...(marked[dateString]?.dots || []), { color: dotColor }],
-          events: [...(marked[dateString]?.events || []), event],
-          marked: true,
-          textColor: "black",
-          selected: true
-        };
+        try {
+          let currentDate = dayjs(event.start);
+          const endDate = dayjs(event.end);
+          let iterations = 0;
+          const maxIterations = 365; // Prevent infinite loops
 
-        currentDate = currentDate.add(1, "day");
-      }
-    });
+          while ((currentDate.isBefore(endDate) || currentDate.isSame(endDate, "day")) && iterations < maxIterations) {
+            const dateString = currentDate.format("YYYY-MM-DD");
+            const dotColor = "#fff";
+
+            marked[dateString] = {
+              ...marked[dateString],
+              dots: [...(marked[dateString]?.dots || []), { color: dotColor }],
+              events: [...(marked[dateString]?.events || []), event],
+              marked: true,
+              textColor: "black",
+              selected: true
+            };
+
+            currentDate = currentDate.add(1, "day");
+            iterations++;
+          }
+
+          if (iterations >= maxIterations) {
+            console.warn("Event marking exceeded max iterations for event:", event.id);
+          }
+        } catch (dateError) {
+          console.warn("Error marking dates for event:", event.id, dateError);
+        }
+      });
+    } catch (error) {
+      console.error("Error creating marked dates:", error);
+    }
 
     return marked;
   }, [expandedEvents]);
@@ -171,7 +257,8 @@ const GroupDetails = () => {
     [markedDates]
   );
 
-  if (!groupDetails) {
+  // Handle loading and error states
+  if (groupDetailsLoading) {
     return (
       <LoadingWrapper loading={true}>
         <View />
@@ -179,12 +266,58 @@ const GroupDetails = () => {
     );
   }
 
+  if (hasError) {
+    return (
+      <Surface style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: spacing.lg }}>
+        <Text variant="titleMedium" style={{ marginBottom: spacing.md, textAlign: "center" }}>
+          Error Loading Group Details
+        </Text>
+        <Text variant="bodyMedium" style={{ marginBottom: spacing.lg, textAlign: "center", color: theme.colors.onSurfaceVariant }}>
+          {errors[0]?.message || "Unable to load group information. Please try again."}
+        </Text>
+        <Button
+          mode="contained"
+          onPress={() => {
+            // Refetch all queries
+            if (groupDetailsError) refetchEvents();
+            navigation.goBack();
+          }}>
+          Go Back
+        </Button>
+      </Surface>
+    );
+  }
+
+  if (!groupDetails) {
+    return (
+      <Surface style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: spacing.lg }}>
+        <Text variant="titleMedium" style={{ marginBottom: spacing.md, textAlign: "center" }}>
+          Group Not Found
+        </Text>
+        <Text variant="bodyMedium" style={{ marginBottom: spacing.lg, textAlign: "center", color: theme.colors.onSurfaceVariant }}>
+          The requested group could not be found or you don't have permission to view it.
+        </Text>
+        <Button mode="contained" onPress={() => navigation.goBack()}>
+          Go Back
+        </Button>
+      </Surface>
+    );
+  }
+
   const { name, photoUrl, about } = groupDetails;
 
   if (!currentUserChurch?.person?.id) {
     return (
-      <Surface style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text variant="titleMedium">Please Login to view your groups</Text>
+      <Surface style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: spacing.lg }}>
+        <Text variant="titleMedium" style={{ marginBottom: spacing.md, textAlign: "center" }}>
+          Authentication Required
+        </Text>
+        <Text variant="bodyMedium" style={{ marginBottom: spacing.lg, textAlign: "center", color: theme.colors.onSurfaceVariant }}>
+          Please login to view group details.
+        </Text>
+        <Button mode="contained" onPress={() => navigation.goBack()}>
+          Go Back
+        </Button>
       </Surface>
     );
   }
