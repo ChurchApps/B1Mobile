@@ -75,8 +75,6 @@ const restoreCache = async (queryClient: QueryClient) => {
         console.warn("Failed to restore query:", queryKey, error);
       }
     });
-
-    console.log(`Restored ${cacheData.queries.length} queries from cache`);
   } catch (error) {
     console.warn("Failed to restore React Query cache:", error);
     await AsyncStorage.removeItem(CACHE_KEY);
@@ -114,7 +112,6 @@ setInterval(() => {
 // Function to invalidate all queries after POST requests
 export const invalidateAllQueries = () => {
   queryClient.invalidateQueries();
-  console.log("All queries invalidated after POST request");
 };
 
 // Function to completely clear all cached data (for logout/church switch)
@@ -125,7 +122,6 @@ export const clearAllCachedData = async () => {
   // Clear persisted cache from AsyncStorage
   try {
     await AsyncStorage.removeItem(CACHE_KEY);
-    console.log("All cached data cleared (logout/church switch)");
   } catch (error) {
     console.warn("Failed to clear persisted cache:", error);
   }

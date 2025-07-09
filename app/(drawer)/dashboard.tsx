@@ -47,9 +47,6 @@ const Dashboard = () => {
   const { links } = useUserStore();
 
   // Debug logging
-  console.log("📱 Dashboard - currentChurch:", currentChurch);
-  console.log("📱 Dashboard - churchAppearance:", churchAppearance);
-  console.log("📱 Dashboard - links:", links);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener("change", () => {});

@@ -16,7 +16,7 @@ export const initializeFirebase = async () => {
     // Enable analytics
     await setAnalyticsCollectionEnabled(analytics, true);
   } catch (error) {
-    console.log("Firebase initialization error:", error);
+    console.error("Firebase initialization error:", error);
   }
 };
 
@@ -26,7 +26,7 @@ export const logAnalyticsEvent = async (eventName: string, parameters?: any) => 
     const analytics = getAnalytics(app);
     await logEvent(analytics, eventName, parameters);
   } catch (error) {
-    console.log("Analytics event logging error:", error);
+    console.error("Analytics event logging error:", error);
   }
 };
 

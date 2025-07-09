@@ -49,7 +49,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
         });
       }
     } catch (err) {
-      console.log("err", err);
+      console.error("Error saving conversation:", err);
     }
   };
 

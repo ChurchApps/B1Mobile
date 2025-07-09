@@ -173,8 +173,6 @@ export const useUserStore = create<UserState>()(
 
       // Set church for anonymous browsing (when user isn't logged in)
       setAnonymousChurch: async (church: ChurchInterface) => {
-        console.log("🏛️ Setting anonymous church:", church.name, "ID:", church.id);
-
         // Create a minimal LoginUserChurchInterface for anonymous browsing
         const anonymousUserChurch: LoginUserChurchInterface = {
           church: church,
@@ -185,36 +183,28 @@ export const useUserStore = create<UserState>()(
 
         // Set as current church
         set({ currentUserChurch: anonymousUserChurch });
-        console.log("✅ Anonymous church set in store");
 
         // Add to recent churches
         get().addRecentChurch(church);
-        console.log("✅ Added to recent churches");
 
         // Fetch church appearance and links
         try {
-          console.log("🎨 Fetching church appearance...");
           const appearance = await ApiHelper.getAnonymous(`/settings/public/${church.id}`, "MembershipApi");
-          console.log("🎨 Church appearance fetched:", appearance);
           set({ churchAppearance: appearance });
         } catch (error) {
           console.error("❌ Failed to fetch church appearance:", error);
         }
 
         // Load church links
-        console.log("🔗 Starting to load church links...");
         await get().loadChurchLinks(church.id);
-        console.log("✅ Anonymous church setup complete");
       },
 
       // Load church navigation links
       loadChurchLinks: async (churchId: string) => {
-        console.log("🔗 Loading church links for churchId:", churchId);
         try {
           // Get main navigation links
           let tabs: any[] = [];
           const tempTabs = await ApiHelper.getAnonymous(`/links/church/${churchId}?category=b1Tab`, "ContentApi");
-          console.log("📋 Fetched main tabs:", tempTabs);
 
           tempTabs.forEach((tab: any) => {
             switch (tab.linkType) {
@@ -231,18 +221,14 @@ export const useUserStore = create<UserState>()(
                 break;
             }
           });
-          console.log("📋 Filtered main tabs:", tabs);
 
           // Get special tabs (dynamic feature availability)
           const specialTabs = await get().getSpecialTabs(churchId);
-          console.log("⭐ Special tabs:", specialTabs);
 
           const allLinks = tabs.concat(specialTabs);
-          console.log("🔗 All links combined:", allLinks);
 
           // Update links in store
           set({ links: allLinks });
-          console.log("✅ Links updated in store");
         } catch (error) {
           console.error("❌ Failed to load church links:", error);
           set({ links: [] });
@@ -251,7 +237,6 @@ export const useUserStore = create<UserState>()(
 
       // Get special navigation tabs based on church features
       getSpecialTabs: async (churchId: string) => {
-        console.log("⭐ Getting special tabs for churchId:", churchId);
         const state = get();
         let specialTabs: any[] = [];
         let showWebsite = false,
@@ -264,17 +249,14 @@ export const useUserStore = create<UserState>()(
           showCheckin = false;
 
         const uc = state.currentUserChurch;
-        console.log("👤 Current user church:", uc);
 
         try {
           // Check for website
           const page = await ApiHelper.getAnonymous(`/pages/${churchId}/tree?url=/`, "ContentApi");
-          console.log("🌐 Website check result:", page);
           if (page.url) showWebsite = true;
 
           // Check for donations
           const gateways = await ApiHelper.getAnonymous(`/gateways/churchId/${churchId}`, "GivingApi");
-          console.log("💰 Donations check result:", gateways);
           if (gateways.length > 0) showDonations = true;
         } catch (error) {
           console.error("❌ Error checking church features:", error);
@@ -313,16 +295,6 @@ export const useUserStore = create<UserState>()(
         }
 
         // Build special tabs array
-        console.log("🔍 Feature flags:", {
-          showMyGroups,
-          showDonations,
-          showDirectory,
-          showPlans,
-          showLessons,
-          showWebsite,
-          showCheckin,
-          showChums
-        });
 
         if (showMyGroups) specialTabs.push({ linkType: "groups", text: "My Groups", icon: "groups" });
         if (showDonations) specialTabs.push({ linkType: "donation", text: "Giving", icon: "volunteer_activism" });
@@ -333,29 +305,21 @@ export const useUserStore = create<UserState>()(
         if (showCheckin) specialTabs.push({ linkType: "checkin", text: "Check-in", icon: "how_to_reg" });
         if (showChums) specialTabs.push({ linkType: "chums", text: "Member Search", icon: "person_search" });
 
-        console.log("⭐ Final special tabs:", specialTabs);
         return specialTabs;
       },
 
       // Initialize app from persisted data
       initializeFromPersistence: async () => {
-        console.log("🚀 Initializing app from persistence...");
         const state = get();
 
         if (state.currentUserChurch?.church) {
-          console.log("📱 Found persisted church:", state.currentUserChurch.church.name);
-          console.log("🔍 Persisted user church JWT:", state.currentUserChurch.jwt ? "Present" : "Missing");
-          console.log("👤 Persisted person data:", state.currentUserChurch.person ? "Present" : "Missing");
-
           const churchId = state.currentUserChurch.church.id;
 
           // Load church appearance if not already loaded
           if (!state.churchAppearance) {
-            console.log("🎨 Loading church appearance...");
             try {
               const appearance = await ApiHelper.getAnonymous(`/settings/public/${churchId}`, "MembershipApi");
               set({ churchAppearance: appearance });
-              console.log("✅ Church appearance loaded");
             } catch (error) {
               console.error("❌ Failed to load church appearance:", error);
             }
@@ -363,31 +327,21 @@ export const useUserStore = create<UserState>()(
 
           // Load church links if not already loaded
           if (!state.links || state.links.length === 0) {
-            console.log("🔗 Loading church links...");
             await get().loadChurchLinks(churchId);
-            console.log("✅ Church links loaded");
           }
 
           // Load person record if user is logged in and person not loaded
           if (state.currentUserChurch.jwt && !state.currentUserChurch.person) {
-            console.log("👤 Loading person record...");
             await get().loadPersonRecord();
-            console.log("✅ Person record loaded");
           }
 
           // Set API permissions if we have a JWT
           if (state.currentUserChurch.jwt) {
-            console.log("🔑 Setting API permissions from persisted JWT...");
             ApiHelper.setDefaultPermissions(state.currentUserChurch.jwt);
             state.currentUserChurch.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
             ApiHelper.setPermissions("MessagingApi", state.currentUserChurch.jwt, []);
-            console.log("✅ API permissions set");
           }
-        } else {
-          console.log("❌ No persisted church found");
         }
-
-        console.log("🚀 App initialization complete");
       },
 
       // Logout

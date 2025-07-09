@@ -38,15 +38,11 @@ const ChurchSearch = () => {
   }, []);
 
   const churchSelection = async (churchData: ChurchInterface) => {
-    console.log("🔍 Church selected:", churchData.name, "ID:", churchData.id);
     try {
       // Check if user is already a member of this church
       let existing = userChurches.find(uc => uc.church.id === churchData.id);
       if (existing) {
-        console.log("👤 User is a member of this church");
         churchData = existing.church;
-      } else {
-        console.log("👤 Anonymous selection - user not a member");
       }
 
       // Add to recent churches
@@ -56,9 +52,7 @@ const ChurchSearch = () => {
       await clearAllCachedData();
 
       // Use the store to select the church
-      console.log("🏛️ Calling selectChurch...");
       await selectChurch(churchData);
-      console.log("✅ selectChurch completed");
 
       UserHelper.addAnalyticsEvent("church_selected", {
         id: Date.now(),
@@ -66,11 +60,9 @@ const ChurchSearch = () => {
         church: churchData.name
       });
 
-      console.log("🧭 Navigating to dashboard...");
       router.navigate("/(drawer)/dashboard");
 
       if (Platform.OS === "android") {
-        console.log("🔄 Android restart...");
         RNRestart.Restart();
       }
     } catch (err: any) {

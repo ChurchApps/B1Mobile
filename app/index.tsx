@@ -19,8 +19,6 @@ if (Platform.OS === "android") {
 EnvironmentHelper.init();
 
 const SplashScreen = () => {
-  //console.log("*****SPLASH******")
-
   const init = async () => {
     // Load JWT tokens from secure storage if they exist
     await UserHelper.loadSecureTokens();
@@ -34,7 +32,6 @@ const SplashScreen = () => {
 
   useEffect(() => {
     ErrorHelper.init();
-    //ApiHelper.onRequest = (url:string, requestOptions:any) => { console.log("Request: ", url, requestOptions); }
     ApiHelper.onError = () => {};
     UserHelper.addOpenScreenEvent("Splash Screen");
   }, []);
@@ -56,7 +53,7 @@ const SplashScreen = () => {
       const store = useUserStore.getState();
       if (store.user?.jwt) await setUserDataNew();
     } catch (e: any) {
-      console.log(e);
+      console.error("App initialization error:", e);
       ErrorHelper.logError("splash-screen-error", e);
     }
 

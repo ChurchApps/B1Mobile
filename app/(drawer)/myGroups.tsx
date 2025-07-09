@@ -10,7 +10,7 @@ import { TimelineHelper } from "../../src/helpers/Timelinehelper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useUser, useCurrentUserChurch } from "../../src/stores/useUserStore";
+import { useUser } from "../../src/stores/useUserStore";
 
 const theme = {
   ...MD3LightTheme,
@@ -43,12 +43,8 @@ const MyGroups = () => {
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
 
   const user = useUser();
-  const currentUserChurch = useCurrentUserChurch();
 
   // Debug logging
-  console.log("👥 MyGroups - user:", user ? "Present" : "Missing");
-  console.log("👥 MyGroups - user JWT:", user?.jwt ? "Present" : "Missing");
-  console.log("👥 MyGroups - currentUserChurch:", currentUserChurch ? "Present" : "Missing");
 
   // Use react-query for groups data
   const {

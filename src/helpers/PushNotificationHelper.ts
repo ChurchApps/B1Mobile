@@ -87,7 +87,7 @@ export class PushNotificationHelper {
         // Permission not granted, but we continue without notification permissions
       }
     } catch (error) {
-      console.log("Error requesting notification permission:", error);
+      console.error("Error requesting notification permission:", error);
     }
   }
 
@@ -115,7 +115,7 @@ export class PushNotificationHelper {
           await CacheHelper.setValue("fcmToken", fcmToken);
         }
       } catch (error) {
-        console.log(error, "Expo push token not created");
+        console.error("Expo push token not created:", error);
       }
     }
   }
@@ -172,7 +172,7 @@ export class PushNotificationHelper {
         responseSubscription.remove();
       };
     } catch (error) {
-      console.log("Error setting up notification listeners:", error);
+      console.error("Error setting up notification listeners:", error);
     }
   }
 

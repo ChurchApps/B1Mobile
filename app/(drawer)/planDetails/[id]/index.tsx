@@ -86,7 +86,7 @@ const PlanDetails = () => {
 
   useEffect(() => {
     if (planError) {
-      console.log("Error loading Plan Details data:", planError);
+      console.error("Error loading Plan Details data:", planError);
       setErrorMessage("No Data found for given Plan id");
     }
   }, [planError]);

@@ -2,13 +2,29 @@ import { DeviceEventEmitter } from "react-native";
 import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
 export class ErrorHelper {
-  static logEvent() {
-    //console.log("***************Adding new event to analytics : ",{source, message});
+  static logEvent(source?: string, message?: any) {
+    if (__DEV__) {
+      if (source && message) {
+        console.log(`[EVENT] ${source}:`, message);
+      } else if (source) {
+        console.log(`[EVENT] ${source}`);
+      } else {
+        console.log("[EVENT] Unhandled event");
+      }
+    }
     // Analytics.trackEvent(eventType, { source, message })
   }
 
-  static logError() {
-    //console.log("***************Adding new error to analytics : ",{source, message});
+  static logError(source?: string, message?: any) {
+    if (__DEV__) {
+      if (source && message) {
+        console.log(`[ERROR] ${source}:`, message);
+      } else if (source) {
+        console.log(`[ERROR] ${source}`);
+      } else {
+        console.log("[ERROR] Unhandled error");
+      }
+    }
     // Analytics.trackEvent("Error", { source, message })
   }
 

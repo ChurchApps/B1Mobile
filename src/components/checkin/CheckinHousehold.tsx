@@ -39,7 +39,6 @@ export const CheckinHousehold = (props: Props) => {
       CheckinHelper.groupTree = null;
       props.onDone();
     } catch (error: any) {
-      console.log("CLEAR MEMBER LIST ERROR", error);
       ErrorHelper.logError("submit-attendance", error);
     }
   };

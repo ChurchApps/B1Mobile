@@ -58,7 +58,7 @@ export const CheckinServices = (props: Props) => {
     try {
       await getGroupListData(serviceId);
     } catch (error: any) {
-      console.log("SET MEMBER LIST ERROR", error);
+      console.error("SET MEMBER LIST ERROR", error);
       ErrorHelper.logError("create-household", error);
     }
   };
@@ -94,7 +94,7 @@ export const CheckinServices = (props: Props) => {
       CheckinHelper.peopleIds = ArrayHelper.getIds(CheckinHelper.householdMembers, "id");
       props.onDone();
     } catch (error: any) {
-      console.log("SET MEMBER LIST ERROR", error);
+      console.error("SET MEMBER LIST ERROR", error);
       ErrorHelper.logError("get-group-list", error);
     }
   };

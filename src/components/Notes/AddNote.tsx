@@ -64,7 +64,7 @@ export function AddNote({ ...props }: Props) {
           });
       }
     } catch (err) {
-      console.log("err in catch block when call message api", err);
+      console.error("Error calling message API:", err);
     }
   }
 
