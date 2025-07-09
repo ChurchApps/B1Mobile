@@ -16,6 +16,7 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
+      googleServicesFile: "./config/GoogleService-Info.plist",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         NSCameraUsageDescription: "B1 Church needs camera access to allow you to take photos for your profile and share with your church community.",
@@ -32,6 +33,7 @@ module.exports = {
     },
     android: {
       package: "church.b1.mobile",
+      googleServicesFile: "./google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
