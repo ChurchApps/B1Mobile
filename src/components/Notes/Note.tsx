@@ -23,11 +23,7 @@ const Note = ({ message, showEditNote }: NotesInterface) => {
   return (
     <>
       <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70) }]}>
-        <OptimizedImage
-          source={message?.person?.photo ? { uri: PersonHelper.getPhotoUrl(message.person) } : Constants.Images.ic_member}
-          style={[globalStyles.memberListIcon, { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 }]}
-          placeholder={Constants.Images.ic_member}
-        />
+        <OptimizedImage source={message?.person?.photo ? { uri: PersonHelper.getPhotoUrl(message.person) } : Constants.Images.ic_member} style={[globalStyles.memberListIcon, { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 }]} placeholder={Constants.Images.ic_member} />
         <View style={globalStyles.NoteTextInputView}>
           <View>
             <Text style={globalStyles.name}>{message?.displayName}</Text>

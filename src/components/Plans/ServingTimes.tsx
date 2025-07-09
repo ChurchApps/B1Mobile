@@ -1,6 +1,6 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface } from "../../../src/helpers";
@@ -24,13 +24,12 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
 
   const servingTimes = useMemo(() => {
     if (!assignments?.length || !positions?.length || !plans?.length) return [];
-    
+
     const data: any = [];
     assignments.forEach(assignment => {
       const position = positions.find(p => p.id === assignment.positionId);
       const plan = plans.find(p => p?.id === position?.planId);
-      if (position && plan)
-        data.push({ assignmentId: assignment?.id, planId: plan?.id, planName: plan?.name, serviceDate: plan.serviceDate, position: position?.name, status: assignment.status || "Unconfirmed" });
+      if (position && plan) data.push({ assignmentId: assignment?.id, planId: plan?.id, planName: plan?.name, serviceDate: plan.serviceDate, position: position?.name, status: assignment.status || "Unconfirmed" });
     });
     ArrayHelper.sortBy(data, "serviceDate", true);
     return data;
@@ -51,11 +50,7 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
       ) : (
         <View>
           {servingTimes.map((item, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]}
-              activeOpacity={0.8}
-              onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
+            <TouchableOpacity key={idx} style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]} activeOpacity={0.8} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
               <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: "#1976d2" }]}>
                 <Text style={{ color: "white", fontSize: 14, fontWeight: "500" }}>{item.status}</Text>
               </View>

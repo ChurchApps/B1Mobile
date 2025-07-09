@@ -38,8 +38,7 @@ const SplashScreen = () => {
   useEffect(() => {
     ErrorHelper.init();
     //ApiHelper.onRequest = (url:string, requestOptions:any) => { console.log("Request: ", url, requestOptions); }
-    ApiHelper.onError = (url: string, requestOptions: any, error: any) => {
-    };
+    ApiHelper.onError = () => {};
     UserHelper.addOpenScreenEvent("Splash Screen");
   }, []);
 

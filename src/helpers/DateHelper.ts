@@ -7,7 +7,7 @@ export class DateHelper {
     if (date !== undefined && date !== null) {
       try {
         result = new Date(date).toISOString().split("T")[0];
-      } catch (e: unknown) {
+      } catch {
         ErrorHelper.logError();
       }
     }
@@ -22,7 +22,7 @@ export class DateHelper {
   private static formatDateTime(date: Date, format: string) {
     try {
       return dayjs(date).format(format);
-    } catch (e: unknown) {
+    } catch {
       ErrorHelper.logError();
       return "";
     }

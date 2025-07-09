@@ -92,15 +92,7 @@ export const CheckinServices = (props: Props) => {
     }
   };
 
-  const renderGroupItem = (item: any) => (
-    <List.Item
-      title={`${item.campus.name} - ${item.name}`}
-      onPress={() => ServiceSelection(item)}
-      style={{ backgroundColor: theme.colors.surface, marginBottom: spacing.xs }}
-      titleStyle={{ color: theme.colors.onSurface }}
-      left={props => <List.Icon {...props} icon="church" />}
-    />
-  );
+  const renderGroupItem = (item: any) => <List.Item title={`${item.campus.name} - ${item.name}`} onPress={() => ServiceSelection(item)} style={{ backgroundColor: theme.colors.surface, marginBottom: spacing.xs }} titleStyle={{ color: theme.colors.onSurface }} left={props => <List.Icon {...props} icon="church" />} />;
 
   return (
     <LoadingWrapper loading={loading}>

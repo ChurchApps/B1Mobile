@@ -54,11 +54,7 @@ const MembersSearch = () => {
         });
       }}>
       <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-        <OptimizedImage 
-          source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} 
-          style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} 
-          contentFit="cover"
-        />
+        <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} contentFit="cover" />
         <Text variant="titleMedium">{item.name.display}</Text>
       </Card.Content>
     </Card>
@@ -72,15 +68,7 @@ const MembersSearch = () => {
           No results found
         </Text>
       );
-    else
-      return (
-        <FlatList
-          data={searchList}
-          renderItem={({ item }) => renderMemberItem(item)}
-          keyExtractor={(item: any) => item.id}
-          contentContainerStyle={{ width: "100%", maxWidth: 700, alignSelf: "center" }}
-        />
-      );
+    else return <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ width: "100%", maxWidth: 700, alignSelf: "center" }} />;
   };
 
   return (
@@ -91,15 +79,7 @@ const MembersSearch = () => {
           <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
             Find Members
           </Text>
-          <TextInput
-            mode="outlined"
-            label="Member Name"
-            placeholder="Member Name"
-            value={searchText}
-            onChangeText={setSearchText}
-            style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface, width: "100%" }}
-            left={<TextInput.Icon icon="account" />}
-          />
+          <TextInput mode="outlined" label="Member Name" placeholder="Member Name" value={searchText} onChangeText={setSearchText} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface, width: "100%" }} left={<TextInput.Icon icon="account" />} />
           <Button mode="contained" onPress={() => filterMember(searchText)} style={{ marginBottom: spacing.md, width: "100%" }}>
             Search
           </Button>

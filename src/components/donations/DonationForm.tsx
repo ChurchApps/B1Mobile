@@ -270,11 +270,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
   return (
     <Card style={{ marginBottom: spacing.md }}>
-      <Card.Title
-        title="Make a Donation"
-        titleStyle={{ fontSize: 20, fontWeight: "600" }}
-        left={props => <IconButton {...props} icon="gift" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
-      />
+      <Card.Title title="Make a Donation" titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="gift" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
       <Card.Content>
         <RadioButton.Group onValueChange={value => setDonationType(value)} value={donationType}>
           <View style={{ flexDirection: "row", marginBottom: spacing.md }}>
@@ -316,13 +312,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                 </Menu>
               </View>
             ) : (
-              <CardField
-                postalCodeEnabled={false}
-                placeholders={{ number: "4242 4242 4242 4242" }}
-                cardStyle={{ backgroundColor: theme.colors.surface }}
-                style={{ height: 50, marginBottom: spacing.md }}
-                onCardChange={details => setCardDetails(details)}
-              />
+              <CardField postalCodeEnabled={false} placeholders={{ number: "4242 4242 4242 4242" }} cardStyle={{ backgroundColor: theme.colors.surface }} style={{ height: 50, marginBottom: spacing.md }} onCardChange={details => setCardDetails(details)} />
             )}
 
             {donationType === "recurring" && (
@@ -384,16 +374,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         )}
       </Card.Content>
 
-      <PreviewModal
-        show={showPreviewModal}
-        close={() => setShowPreviewModal(false)}
-        donation={donation}
-        paymentMethodName={getMethodLabel(pm.find(m => m.id === selectedMethod)!)}
-        donationType={donationType}
-        handleDonate={makeDonation}
-        isChecked={isChecked}
-        transactionFee={transactionFee}
-      />
+      <PreviewModal show={showPreviewModal} close={() => setShowPreviewModal(false)} donation={donation} paymentMethodName={getMethodLabel(pm.find(m => m.id === selectedMethod)!)} donationType={donationType} handleDonate={makeDonation} isChecked={isChecked} transactionFee={transactionFee} />
     </Card>
   );
 }

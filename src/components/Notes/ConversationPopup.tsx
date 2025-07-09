@@ -123,27 +123,14 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
         onSubmitEditing={() => Keyboard.dismiss()}
         value={newMessage?.content}
       />
-      <IconButton
-        icon="send"
-        mode="contained"
-        size={24}
-        onPress={() => handleSave(message)}
-        style={{ margin: 0, backgroundColor: theme.colors.primary, borderRadius: theme.roundness }}
-        iconColor={theme.colors.onPrimary}
-      />
+      <IconButton icon="send" mode="contained" size={24} onPress={() => handleSave(message)} style={{ margin: 0, backgroundColor: theme.colors.primary, borderRadius: theme.roundness }} iconColor={theme.colors.onPrimary} />
     </Surface>
   );
 
   return (
     <View>
       <View style={{ height: "auto", maxHeight: DimensionHelper.hp(60) }}>
-        <FlatList
-          data={conversations}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => renderConversations(item, index)}
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={{ padding: spacing.sm }}
-        />
+        <FlatList data={conversations} showsVerticalScrollIndicator={false} renderItem={({ item, index }) => renderConversations(item, index)} keyExtractor={item => item.id.toString()} contentContainerStyle={{ padding: spacing.sm }} />
       </View>
       <RenderNewConversation placeholder={"Start Conversation"} type="new" />
     </View>

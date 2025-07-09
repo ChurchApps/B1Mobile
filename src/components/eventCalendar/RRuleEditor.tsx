@@ -3,7 +3,7 @@ import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { DateHelper } from "../../mobilehelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -34,7 +34,6 @@ export default function RRuleEditor(props: Props) {
     { label: "Month", value: RRule.MONTHLY.toString() }
   ]);
   const [isFrequencyOnDropDownOpen, setIsFrequencyOnDropDownOpen] = useState(false);
-  const [selectOn, setSlecton] = useState(null);
 
   const [isEndsDropDownOpen, setIsEndsDropDownOpen] = useState(false);
   const [selectEnds, setSelectEnds] = useState(rRuleOptions.count ? "count" : rRuleOptions.until ? "until" : "never");
@@ -130,7 +129,7 @@ export default function RRuleEditor(props: Props) {
           </>
         );
         break;
-      case RRule.MONTHLY.toString():
+      case RRule.MONTHLY.toString(): {
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const ordinals = ["first", "second", "third", "fourth", "last"];
         // const dayOfMonth = props.start.getDate() || 1;
@@ -155,7 +154,7 @@ export default function RRuleEditor(props: Props) {
                   }
                 ]}
                 setOpen={setIsFrequencyOnDropDownOpen}
-                setValue={setSlecton}
+                setValue={() => {}}
                 onSelectItem={e => {
                   handleMonthOptionChange(e.value || "", dayOfMonth, ordinal, dayOfWeek);
                 }}
@@ -167,6 +166,7 @@ export default function RRuleEditor(props: Props) {
           </>
         );
         break;
+      }
     }
     return result;
   };
@@ -256,7 +256,7 @@ export default function RRuleEditor(props: Props) {
               placeholderTextColor={"lightgray"}
               value={occurances}
               onChangeText={text => {
-                setOccurances(text), handleEndFollowupChange("count", text);
+                (setOccurances(text), handleEndFollowupChange("count", text));
               }}
             />
           </>
@@ -266,9 +266,7 @@ export default function RRuleEditor(props: Props) {
     return result;
   };
 
-  const rRuleString = useMemo(() => {
-    return EventHelper.getPartialRRuleString(rRuleOptions);
-  }, [rRuleOptions]);
+  const rRuleString = useMemo(() => EventHelper.getPartialRRuleString(rRuleOptions), [rRuleOptions]);
 
   useEffect(() => {
     props.onChange(rRuleString);
@@ -296,7 +294,7 @@ export default function RRuleEditor(props: Props) {
         placeholderTextColor={"lightgray"}
         value={interval}
         onChangeText={text => {
-          setInterval(text), handleChange("interval", text);
+          (setInterval(text), handleChange("interval", text));
         }}
       />
       <Text style={styles.labelText}>Frequency</Text>

@@ -157,11 +157,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
 
   const content = (
     <Card style={{ marginBottom: spacing.md }}>
-      <Card.Title
-        title="Recurring Donations"
-        titleStyle={{ fontSize: 20, fontWeight: "600" }}
-        left={props => <IconButton {...props} icon="repeat" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
-      />
+      <Card.Title title="Recurring Donations" titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="repeat" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
       <Card.Content>
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: spacing.md }} color={theme.colors.primary} />

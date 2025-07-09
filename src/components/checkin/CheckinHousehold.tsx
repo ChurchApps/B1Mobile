@@ -58,11 +58,7 @@ export const CheckinHousehold = (props: Props) => {
         left={props => (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <List.Icon {...props} icon={selected == item.id ? "chevron-down" : "chevron-right"} />
-            <OptimizedImage 
-              source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} 
-              style={{ width: 40, height: 40, borderRadius: 20 }} 
-              placeholder={Constants.Images.ic_member}
-            />
+            <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 40, height: 40, borderRadius: 20 }} placeholder={Constants.Images.ic_member} />
           </View>
         )}
         onPress={() => setSelected(selected != item.id ? item.id : null)}
@@ -78,11 +74,7 @@ export const CheckinHousehold = (props: Props) => {
               description={item_time.selectedGroup ? item_time.selectedGroup.name : "NONE"}
               left={props => <List.Icon {...props} icon="clock-outline" />}
               right={() => (
-                <Button
-                  mode="contained"
-                  onPress={() => (item_time.selection ? null : props.showGroups(item, item_time))}
-                  style={{ backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
-                  disabled={item_time.selection}>
+                <Button mode="contained" onPress={() => (item_time.selection ? null : props.showGroups(item, item_time))} style={{ backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }} disabled={item_time.selection}>
                   {item_time.selectedGroup ? item_time.selectedGroup.name : "NONE"}
                 </Button>
               )}

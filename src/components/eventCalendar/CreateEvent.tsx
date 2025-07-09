@@ -278,7 +278,7 @@ export default function CreateEvent(props: Props) {
       <View style={styles.eventType}>
         <CheckBox
           onPress={() => {
-            setAllDay(!allDay), setEvent({ ...event, allDay: !allDay });
+            (setAllDay(!allDay), setEvent({ ...event, allDay: !allDay }));
           }}
           title="All Day"
           isChecked={allDay}

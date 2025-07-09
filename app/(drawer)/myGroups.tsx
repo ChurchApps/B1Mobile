@@ -50,8 +50,7 @@ const MyGroups = () => {
       const { posts, groups } = await TimelineHelper.loadForUser();
       setUserPost(posts);
       setUserGroups(groups);
-      if (posts.length == 0) {
-      }
+      // No additional action needed for empty posts
     } catch (error) {
       console.error("Error loading user data:", error);
     } finally {
@@ -71,7 +70,7 @@ const MyGroups = () => {
 
   useEffect(() => {
     if (UserPost.length > 0 && UserGroups.length > 0) {
-      const combined = UserPost.map((item1, index) => ({
+      const combined = UserPost.map(item1 => ({
         ...item1,
         ...ArrayHelper.getOne(UserGroups, "id", item1.groupId)
       }));
@@ -102,8 +101,8 @@ const MyGroups = () => {
     if (!Array.isArray(groups)) return null;
     return (
       <View style={styles.gridContainer}>
-        {groups.map((item, index) => (
-          <View key={item.id || index} style={styles.gridItem}>
+        {groups.map(item => (
+          <View key={item.id} style={styles.gridItem}>
             {showGroups(item)}
           </View>
         ))}
@@ -121,15 +120,7 @@ const MyGroups = () => {
               <Appbar.Content title="My Groups" titleStyle={styles.headerTitle} />
             </Appbar.Header>
             <View style={styles.contentContainer}>
-              <FlatList
-                data={mergeData}
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-                scrollEnabled={true}
-                ListFooterComponent={() => <View style={styles.groupsContainer}>{getGroupsGrid()}</View>}
-                renderItem={({ item }) => renderItems(item)}
-                keyExtractor={(item: any) => `key-${item.id || Math.random()}`}
-              />
+              <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListFooterComponent={() => <View style={styles.groupsContainer}>{getGroupsGrid()}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={(item: any) => `key-${item.id || Math.random()}`} />
             </View>
           </View>
         </LoadingWrapper>

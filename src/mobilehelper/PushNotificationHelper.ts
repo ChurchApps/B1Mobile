@@ -1,6 +1,6 @@
-import * as Notifications from 'expo-notifications';
-import { DeviceEventEmitter } from 'react-native';
-import * as Device from 'expo-device';
+import * as Notifications from "expo-notifications";
+import { DeviceEventEmitter } from "react-native";
+import * as Device from "expo-device";
 
 export const pushEventBus = {
   emit(eventName: string, data?: any) {
@@ -14,7 +14,6 @@ export const pushEventBus = {
   }
 };
 export class PushNotificationHelper {
-
   static async registerForPushNotificationsAsync() {
     if (!Device.isDevice) {
       return null;
@@ -23,12 +22,12 @@ export class PushNotificationHelper {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
-    if (existingStatus !== 'granted') {
+    if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
 
-    if (finalStatus !== 'granted') {
+    if (finalStatus !== "granted") {
       return null;
     }
 
@@ -42,19 +41,20 @@ export class PushNotificationHelper {
   }
 
   static async NotificationListener() {
-
     // Foreground notification handler
     Notifications.addNotificationReceivedListener(notification => {
       pushEventBus.emit("badge", JSON.stringify(notification));
     });
 
     // Handle when the user taps on the notification from background state
-    Notifications.addNotificationResponseReceivedListener(response => {
+    Notifications.addNotificationResponseReceivedListener(() => {
+      // Handle notification response
     });
 
     // Handle notifications from quit state
     const lastNotification = await Notifications.getLastNotificationResponseAsync();
     if (lastNotification) {
+      // Handle app opened from notification
     }
   }
 }

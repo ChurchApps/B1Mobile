@@ -97,7 +97,7 @@ export class UserHelper {
             };
           }
         });
-        
+
         // Also store MessagingApi token
         if (userChurch.jwt) {
           apiTokens["MessagingApi"] = {
@@ -154,10 +154,10 @@ export class UserHelper {
     ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
     userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
     ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", []);
-    
+
     // Store JWT tokens securely
     await UserHelper.storeSecureTokens(userChurch);
-    
+
     await UserHelper.setPersonRecord(); // to fetch person record, ApiHelper must be properly initialzed
     await CacheHelper.setValue("user", data.user);
 

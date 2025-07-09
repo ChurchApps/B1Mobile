@@ -14,7 +14,6 @@ interface Props {
   updatedFunction: () => void;
   handleDelete: () => void;
   showVerifyForm: boolean;
-  publishKey: string;
 }
 
 const accountTypes = [
@@ -28,7 +27,7 @@ const accountTypes = [
   }
 ];
 
-export function BankForm({ bank, customerId, setMode, updatedFunction, handleDelete, showVerifyForm, publishKey }: Props) {
+export function BankForm({ bank, customerId, setMode, updatedFunction, handleDelete, showVerifyForm }: Props) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [selectedType, setSelectedType] = useState(bank.account_holder_type || accountTypes[0].value);
@@ -41,19 +40,15 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
   const { createToken } = useStripe();
 
   // Input validation functions
-  const validateRoutingNumber = (routing: string): boolean => {
+  const validateRoutingNumber = (routing: string): boolean =>
     // 9 digits for US routing numbers
-    return /^\d{9}$/.test(routing);
-  };
-
-  const validateAccountNumber = (account: string): boolean => {
+    /^\d{9}$/.test(routing);
+  const validateAccountNumber = (account: string): boolean =>
     // 4-17 digits for US account numbers
-    return /^\d{4,17}$/.test(account);
-  };
-
+    /^\d{4,17}$/.test(account);
   // Format routing number with visual grouping
   const formatRoutingNumber = (value: string): string => {
-    const cleanValue = value.replace(/\D/g, '');
+    const cleanValue = value.replace(/\D/g, "");
     if (cleanValue.length <= 9) {
       return cleanValue.replace(/(\d{3})(\d{3})(\d{0,3})/, (match, p1, p2, p3) => {
         if (p3) return `${p1}-${p2}-${p3}`;
@@ -66,14 +61,14 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
 
   // Handle routing number input with formatting
   const handleRoutingNumberChange = (text: string): void => {
-    const cleaned = text.replace(/\D/g, '');
-    const formatted = formatRoutingNumber(cleaned);
+    const cleaned = text.replace(/\D/g, "");
+    formatRoutingNumber(cleaned);
     setRoutingNumber(cleaned); // Store clean value for API
   };
 
   // Handle account number input with length limit
   const handleAccountNumberChange = (text: string): void => {
-    const cleaned = text.replace(/\D/g, '');
+    const cleaned = text.replace(/\D/g, "");
     if (cleaned.length <= 17) {
       setAccountNumber(cleaned);
     }
@@ -143,15 +138,15 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
     try {
       // Use modern Stripe React Native SDK
       const tokenResult = await createToken({
-        type: 'BankAccount',
+        type: "BankAccount",
         bankAccount: {
           routingNumber: routingNumber,
           accountNumber: accountNumber,
-          accountHolderType: selectedType as 'Individual' | 'Company',
+          accountHolderType: selectedType as "Individual" | "Company",
           accountHolderName: name,
-          country: 'US',
-          currency: 'usd',
-        },
+          country: "US",
+          currency: "usd"
+        }
       });
 
       if (tokenResult.error) {
@@ -208,20 +203,11 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
 
   const informationalText = !bank.id && (
     <View style={{ marginTop: DimensionHelper.wp(5), flex: 1, alignItems: "center" }}>
-      <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>
-        Bank accounts will need to be verified before making any donations. Your account will receive two small deposits in approximately 1-3 business days. You will need to enter those deposit
-        amounts to finish verifying your account by selecting the verify account link next to your bank account under the payment methods section.
-      </Text>
+      <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>Bank accounts will need to be verified before making any donations. Your account will receive two small deposits in approximately 1-3 business days. You will need to enter those deposit amounts to finish verifying your account by selecting the verify account link next to your bank account under the payment methods section.</Text>
     </View>
   );
   return (
-    <InputBox
-      title={bank.id ? `${bank.name.toUpperCase()} ****${bank.last4}` : "Add New Bank Account"}
-      headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
-      saveFunction={handleSave}
-      cancelFunction={() => setMode("display")}
-      deleteFunction={bank.id && !showVerifyForm ? handleDelete : undefined}
-      isSubmitting={isSubmitting}>
+    <InputBox title={bank.id ? `${bank.name.toUpperCase()} ****${bank.last4}` : "Add New Bank Account"} headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />} saveFunction={handleSave} cancelFunction={() => setMode("display")} deleteFunction={bank.id && !showVerifyForm ? handleDelete : undefined} isSubmitting={isSubmitting}>
       {informationalText}
       {showVerifyForm ? (
         <View style={{ marginTop: DimensionHelper.wp(5), marginBottom: DimensionHelper.wp(5) }}>
@@ -268,22 +254,12 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
           {!bank.id && (
             <>
               <Text style={globalStyles.semiTitleText}>Account Number</Text>
-              <TextInput 
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} 
-                keyboardType="number-pad" 
-                value={accountNumber} 
-                onChangeText={handleAccountNumberChange}
-                placeholder="Enter account number"
-                maxLength={17}
-                secureTextEntry={false}
-                autoComplete="off"
-                textContentType="none"
-              />
+              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} keyboardType="number-pad" value={accountNumber} onChangeText={handleAccountNumberChange} placeholder="Enter account number" maxLength={17} secureTextEntry={false} autoComplete="off" textContentType="none" />
               <Text style={globalStyles.semiTitleText}>Routing Number</Text>
-              <TextInput 
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} 
-                keyboardType="number-pad" 
-                value={formatRoutingNumber(routingNumber)} 
+              <TextInput
+                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
+                keyboardType="number-pad"
+                value={formatRoutingNumber(routingNumber)}
                 onChangeText={handleRoutingNumberChange}
                 placeholder="123-456-789"
                 maxLength={11} // Includes dashes

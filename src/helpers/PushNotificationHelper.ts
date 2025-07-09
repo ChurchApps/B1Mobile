@@ -86,6 +86,7 @@ export class PushNotificationHelper {
       if (finalStatus === "granted") {
         await PushNotificationHelper.GetFCMToken();
       } else {
+        // Permission not granted, but we continue without notification permissions
       }
     } catch (error) {
       console.log("Error requesting notification permission:", error);
@@ -97,7 +98,7 @@ export class PushNotificationHelper {
       try {
         await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
       } catch {
-        // Permission request failed, but we don't need to handle it
+        // Permission request failed, but we continue without notification permissions
       }
     }
   }
@@ -110,7 +111,6 @@ export class PushNotificationHelper {
         const token = await Notifications.getExpoPushTokenAsync({
           projectId: "f72e5911-b8d5-467c-ad9e-423c180e9938" // Your EAS project ID
         });
-
 
         if (token.data) {
           fcmToken = token.data;
@@ -169,7 +169,6 @@ export class PushNotificationHelper {
         }
       }
 
-
       return () => {
         foregroundSubscription.remove();
         responseSubscription.remove();
@@ -180,7 +179,7 @@ export class PushNotificationHelper {
   }
 
   // Add method to check if we're in a specific chat
-  static isInChat(chatId: string): boolean {
+  static isInChat(): boolean {
     // This should be implemented based on your navigation state
     // You'll need to track the current chat ID in your navigation state
     return false; // Placeholder

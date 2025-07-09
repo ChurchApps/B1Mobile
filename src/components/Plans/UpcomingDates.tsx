@@ -1,6 +1,6 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
@@ -26,7 +26,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
 
   const upcomingDates = useMemo(() => {
     if (!assignments || !positions || !plans || !times) return [];
-    
+
     const data: any = [];
     assignments.forEach(assignment => {
       const position = positions.find(p => p.id === assignment.positionId);
@@ -64,11 +64,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
       ) : (
         <View>
           {upcomingDates.map((item, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]}
-              activeOpacity={0.8}
-              onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
+            <TouchableOpacity key={idx} style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]} activeOpacity={0.8} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
               <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: "#1976d2" }]}>
                 <Text style={{ color: "white", fontSize: 14, fontWeight: "500" }}>{item.status}</Text>
               </View>

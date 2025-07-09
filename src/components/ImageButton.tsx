@@ -105,9 +105,7 @@ export function ImageButton(props: Props) {
           </>
         )}
         <View style={styles.content}>
-          {props.icon && (
-            <View style={styles.icon}>{props.backgroundImage && React.isValidElement(props.icon) ? React.cloneElement(props.icon as React.ReactElement<any>, { color: "#fff" }) : props.icon}</View>
-          )}
+          {props.icon && <View style={styles.icon}>{props.backgroundImage && React.isValidElement(props.icon) ? React.cloneElement(props.icon as React.ReactElement<any>, { color: "#fff" }) : props.icon}</View>}
           <Text style={styles.text}>{props.text}</Text>
         </View>
       </Pressable>

@@ -73,30 +73,9 @@ const Login = () => {
                 Welcome, Please Login.
               </Text>
 
-              <TextInput
-                mode="outlined"
-                label="Email"
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-                left={<TextInput.Icon icon="email" />}
-              />
+              <TextInput mode="outlined" label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="email" />} />
 
-              <TextInput
-                mode="outlined"
-                label="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-                autoCorrect={false}
-                style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-                left={<TextInput.Icon icon="lock" />}
-                right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />}
-              />
+              <TextInput mode="outlined" label="Password" value={password} onChangeText={setPassword} secureTextEntry={!showPassword} autoCapitalize="none" autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="lock" />} right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />} />
 
               <Text variant="bodySmall" style={{ marginBottom: spacing.md }}>
                 By clicking on Login, I confirm that I have read the{" "}

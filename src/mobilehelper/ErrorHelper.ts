@@ -4,7 +4,6 @@ import { setJSExceptionHandler } from "react-native-exception-handler";
 import { FirebaseAnalyticsHelper } from "./AppCenterHelper";
 
 export class ErrorHelper {
-
   static logEvent(eventType: string, source: string, message: string) {
     FirebaseAnalyticsHelper.trackEvent(eventType, { source, message });
   }
@@ -32,7 +31,7 @@ export class ErrorHelper {
   }
 
   static initUnhandled() {
-    setJSExceptionHandler((error, isFatal) => {
+    setJSExceptionHandler(error => {
       ErrorHelper.logError("Unhandled Javascript", error.toString());
     });
 
@@ -42,7 +41,5 @@ export class ErrorHelper {
       ErrorHelper.logError("Unhandled Native", exceptionString);
     }, false, true);
     */
-
   }
-
 }

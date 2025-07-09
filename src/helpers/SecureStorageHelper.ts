@@ -1,12 +1,11 @@
-import * as SecureStore from 'expo-secure-store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 /**
  * Helper class for secure storage of sensitive data like JWT tokens
  * Uses Expo SecureStore for encrypted storage with AsyncStorage fallback
  */
 export class SecureStorageHelper {
-  
   /**
    * Securely store a value with encryption
    */
@@ -14,7 +13,7 @@ export class SecureStorageHelper {
     try {
       await SecureStore.setItemAsync(key, value);
     } catch (error) {
-      console.error('Failed to store secure item:', error);
+      console.error("Failed to store secure item:", error);
       // Fallback to AsyncStorage for development/web
       await AsyncStorage.setItem(`secure_${key}`, value);
     }
@@ -27,7 +26,7 @@ export class SecureStorageHelper {
     try {
       const value = await SecureStore.getItemAsync(key);
       if (value) return value;
-      
+
       // Check for migrated data from AsyncStorage
       const fallbackValue = await AsyncStorage.getItem(`secure_${key}`);
       if (fallbackValue) {
@@ -36,10 +35,10 @@ export class SecureStorageHelper {
         await AsyncStorage.removeItem(`secure_${key}`);
         return fallbackValue;
       }
-      
+
       return null;
     } catch (error) {
-      console.error('Failed to retrieve secure item:', error);
+      console.error("Failed to retrieve secure item:", error);
       // Fallback to AsyncStorage
       return await AsyncStorage.getItem(`secure_${key}`);
     }
@@ -52,14 +51,14 @@ export class SecureStorageHelper {
     try {
       await SecureStore.deleteItemAsync(key);
     } catch (error) {
-      console.error('Failed to remove secure item:', error);
+      console.error("Failed to remove secure item:", error);
     }
-    
+
     // Also clean up any fallback storage
     try {
       await AsyncStorage.removeItem(`secure_${key}`);
     } catch (error) {
-      console.error('Failed to remove fallback item:', error);
+      console.error("Failed to remove fallback item:", error);
     }
   }
 
@@ -77,14 +76,13 @@ export class SecureStorageHelper {
   static async migrateTokensFromAsyncStorage(): Promise<void> {
     try {
       // Check for existing user data with JWT tokens
-      const userData = await AsyncStorage.getItem('USER_DATA');
+      const userData = await AsyncStorage.getItem("USER_DATA");
       if (userData) {
-        const user = JSON.parse(userData);
         // If user data exists, check if we have JWT tokens to migrate
         // This will be handled by the specific token migration in UserHelper
       }
     } catch (error) {
-      console.error('Failed to migrate tokens:', error);
+      console.error("Failed to migrate tokens:", error);
     }
   }
 }

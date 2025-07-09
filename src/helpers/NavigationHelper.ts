@@ -10,8 +10,7 @@ type NavigateFunction = (options: { pathname: string; params?: Record<string, an
 
 export class NavigationHelper {
   static navigateToScreen = (item: LinkInterface, navigate: NavigateFunction) => {
-    const bibleUrl =
-      "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
+    const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
     if (item.linkType == "stream") {
       UserHelper.addOpenScreenEvent("StreamScreen");
       navigate({
@@ -82,12 +81,7 @@ export class NavigationHelper {
     }
     if (item.linkType == "directory") {
       if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.");
-      else if (
-        !UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers) &&
-        UserHelper.currentUserChurch?.person.membershipStatus !== "Member" &&
-        UserHelper.currentUserChurch?.person.membershipStatus !== "Staff"
-      )
-        Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.");
+      else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers) && UserHelper.currentUserChurch?.person.membershipStatus !== "Member" && UserHelper.currentUserChurch?.person.membershipStatus !== "Staff") Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.");
       else {
         UserHelper.addOpenScreenEvent("MembersSearch");
         // navigate('MembersSearch')

@@ -21,7 +21,8 @@ export class UpdateHelper {
           }
         ]);
       }
-    } catch (_error) {
+    } catch {
+      // Update check failed, continuing without update
     }
   }
 
@@ -32,7 +33,8 @@ export class UpdateHelper {
 
       // We'll handle update events through the Updates API directly
       // The addListener API has been deprecated in favor of direct API calls
-    } catch (_error) {
+    } catch {
+      // Update initialization failed, continuing without update
     }
   }
 }

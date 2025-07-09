@@ -4,11 +4,11 @@ export class StyleConstants {
   static deviceWidth = Dimensions.get("window").width;
   static deviceHeight = Dimensions.get("window").height;
 
-  static fontSize = StyleConstants.deviceWidth * 4 / 100;
-  static fontSize1 = StyleConstants.deviceWidth * 4.5 / 100;
-  static fontSize2 = StyleConstants.deviceWidth * 5 / 100;
-  static smallFont = StyleConstants.deviceWidth * 3.6 / 100;
-  static smallerFont = StyleConstants.deviceWidth * 3.0 / 100;
+  static fontSize = (StyleConstants.deviceWidth * 4) / 100;
+  static fontSize1 = (StyleConstants.deviceWidth * 4.5) / 100;
+  static fontSize2 = (StyleConstants.deviceWidth * 5) / 100;
+  static smallFont = (StyleConstants.deviceWidth * 3.6) / 100;
+  static smallerFont = (StyleConstants.deviceWidth * 3.0) / 100;
 
   //Colors
   static baseColor = "#24B8FE";

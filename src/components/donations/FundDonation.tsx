@@ -38,31 +38,13 @@ export function FundDonation({ fundDonation, funds, index, updatedFunction }: Pr
         <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>
           Amount
         </Text>
-        <TextInput
-          mode="outlined"
-          keyboardType="numeric"
-          value={fundDonation.amount ? CurrencyHelper.formatCurrency(fundDonation.amount) : ""}
-          onChangeText={handleAmountChange}
-          style={{ backgroundColor: theme.colors.surface }}
-        />
+        <TextInput mode="outlined" keyboardType="numeric" value={fundDonation.amount ? CurrencyHelper.formatCurrency(fundDonation.amount) : ""} onChangeText={handleAmountChange} style={{ backgroundColor: theme.colors.surface }} />
       </View>
       <View style={{ flex: 1 }}>
         <Text variant="bodyMedium" style={{ marginBottom: spacing.xs }}>
           Fund
         </Text>
-        <Menu
-          visible={showFundMenu}
-          onDismiss={() => setShowFundMenu(false)}
-          anchor={
-            <TextInput
-              mode="outlined"
-              value={getFundName(selectedFund)}
-              onPressIn={() => setShowFundMenu(true)}
-              right={<TextInput.Icon icon="chevron-down" />}
-              style={{ backgroundColor: theme.colors.surface }}
-              editable={false}
-            />
-          }>
+        <Menu visible={showFundMenu} onDismiss={() => setShowFundMenu(false)} anchor={<TextInput mode="outlined" value={getFundName(selectedFund)} onPressIn={() => setShowFundMenu(true)} right={<TextInput.Icon icon="chevron-down" />} style={{ backgroundColor: theme.colors.surface }} editable={false} />}>
           {funds.map(fund => (
             <Menu.Item
               key={fund.id}

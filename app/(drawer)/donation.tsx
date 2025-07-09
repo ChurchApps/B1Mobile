@@ -83,17 +83,13 @@ const Donation = () => {
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.primary }}>
         <LoadingWrapper loading={areMethodsLoading}>
           <View style={{ flex: 1 }}>
-            <Appbar.Header
-              style={{ backgroundColor: theme.colors.primary, elevation: 4, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 3 }}
-              mode="center-aligned">
+            <Appbar.Header style={{ backgroundColor: theme.colors.primary, elevation: 4, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 3 }} mode="center-aligned">
               <Appbar.Action icon="menu" onPress={() => navigation.openDrawer()} color="white" />
               <Appbar.Content title="Donate" titleStyle={{ color: "white", fontSize: 20, fontWeight: "600" }} />
               <Appbar.Action icon="arrow-left" onPress={() => navigation.goBack()} color="white" />
             </Appbar.Header>
             <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: spacing.md }}>
-              {UserHelper.currentUserChurch?.person?.id && (
-                <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} />
-              )}
+              {UserHelper.currentUserChurch?.person?.id && <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} />}
               <DonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />
               {!UserHelper.currentUserChurch?.person?.id ? (
                 <Text variant="bodyMedium" style={{ marginVertical: spacing.md, color: theme.colors.onSurface }}>

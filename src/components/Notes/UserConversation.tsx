@@ -80,11 +80,7 @@ const UserConversations = ({ conversation, conversationId, createConversation }:
       <View style={{ height: "auto", maxHeight: DimensionHelper.hp(100) }}>
         <FlatList data={conversations} renderItem={({ item, index }) => renderConversations(item, index)} keyExtractor={(item, index) => index.toString()} />
       </View>
-      {conversation && Array.isArray(conversation?.messages) && conversation.messages.length > 0 ? (
-        <AddNote type="reply" conversationId={conversation.id} onUpdate={loadConversations} createConversation={async () => conversation.id ?? ""} messageId={editMessageId} />
-      ) : (
-        <AddNote type="new" conversationId={conversationId} onUpdate={loadConversations} createConversation={async () => (await createConversation()) ?? ""} messageId={editMessageId} />
-      )}
+      {conversation && Array.isArray(conversation?.messages) && conversation.messages.length > 0 ? <AddNote type="reply" conversationId={conversation.id} onUpdate={loadConversations} createConversation={async () => conversation.id ?? ""} messageId={editMessageId} /> : <AddNote type="new" conversationId={conversationId} onUpdate={loadConversations} createConversation={async () => (await createConversation()) ?? ""} messageId={editMessageId} />}
     </View>
   );
 };

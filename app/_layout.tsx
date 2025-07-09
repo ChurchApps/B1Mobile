@@ -11,7 +11,7 @@ export default function RootLayout() {
   useEffect(() => {
     const setupApp = async () => {
       await initializeFirebase();
-      
+
       await UserHelper.loadSecureTokens();
     };
 

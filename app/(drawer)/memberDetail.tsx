@@ -61,11 +61,7 @@ const MemberDetail = () => {
   const renderMemberItem = (item: any) => (
     <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={() => onMembersClick(item)}>
       <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-        <OptimizedImage 
-          source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} 
-          style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} 
-          placeholder={Constants.Images.ic_member}
-        />
+        <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} placeholder={Constants.Images.ic_member} />
         <Text variant="titleMedium" numberOfLines={1}>
           {item.name.display}
         </Text>
@@ -77,21 +73,12 @@ const MemberDetail = () => {
     <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
       <MainHeader title="Directory" openDrawer={navigation.openDrawer} back={navigation.goBack} />
       <ScrollView style={{ flex: 1 }} ref={scrollViewRef} contentContainerStyle={{ padding: spacing.md }}>
-        <OptimizedImage
-          source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member}
-          style={{ width: 96, height: 96, borderRadius: 48, alignSelf: "center", marginBottom: spacing.md }}
-          placeholder={Constants.Images.ic_member}
-          priority="high"
-        />
+        <OptimizedImage source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member} style={{ width: 96, height: 96, borderRadius: 48, alignSelf: "center", marginBottom: spacing.md }} placeholder={Constants.Images.ic_member} priority="high" />
         <Surface style={{ alignItems: "center", marginBottom: spacing.md, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, elevation: 2, padding: spacing.md }}>
           <Text variant="titleLarge" style={{ fontWeight: "600", marginBottom: spacing.sm }}>
             {parsedMember?.name?.display}
           </Text>
-          <Button
-            mode="contained"
-            icon="message"
-            onPress={() => router.navigate({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(parsedMember) } })}
-            style={{ marginBottom: spacing.sm }}>
+          <Button mode="contained" icon="message" onPress={() => router.navigate({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(parsedMember) } })} style={{ marginBottom: spacing.sm }}>
             Message
           </Button>
         </Surface>

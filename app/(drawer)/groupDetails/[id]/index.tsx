@@ -4,7 +4,7 @@ import { FlatList, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, Vie
 import { Text, TouchableRipple, Button, Surface, Avatar } from "react-native-paper";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { Calendar, DateData } from "react-native-calendars";
 import Markdown from "@ronradtke/react-native-markdown-display";
 import dayjs from "dayjs";
@@ -12,9 +12,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { EventInterface } from "../../../../src/mobilehelper";
-import { GroupMemberInterface } from "../../../../src/interfaces/Membership";
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "../../../../src/helpers";
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
 import Conversations from "../../../../src/components/Notes/Conversations";
@@ -59,7 +57,7 @@ const GroupDetails = () => {
   const loadData = async () => {
     setLoading(true);
     ApiHelper.get(`/groupmembers?groupId=${id}`, "MembershipApi").then(data => {
-      setGroupMembers(data), setLoading(false);
+      (setGroupMembers(data), setLoading(false));
     });
   };
 
@@ -95,26 +93,6 @@ const GroupDetails = () => {
     endTime.setSeconds(0);
     setEditEvent({ start: startTime, end: endTime, allDay: false, groupId: id, visibility: "public" });
   };
-
-  const showGroupMembers = (topItem: boolean, item: GroupMemberInterface) => (
-    <TouchableRipple
-      style={{ width: DimensionHelper.wp(90), marginHorizontal: 8, marginVertical: 4, borderRadius: 8 }}
-      onPress={() => {
-        router.navigate({
-          pathname: "/memberDetail",
-          params: {
-            member: JSON.stringify(item.person)
-          }
-        });
-      }}>
-      <Surface style={{ flexDirection: "row", alignItems: "center", padding: 12, borderRadius: 8 }}>
-        <Avatar.Image size={48} source={item?.person?.photo ? { uri: EnvironmentHelper.ContentRoot + item.person.photo } : Constants.Images.ic_member} />
-        <Text variant="titleMedium" style={{ marginLeft: 16, flex: 1 }}>
-          {item?.person?.name?.display}
-        </Text>
-      </Surface>
-    </TouchableRipple>
-  );
 
   const expandEvents = (allEvents: EventInterface[]) => {
     const expandedEvents: EventInterface[] = [];
@@ -226,12 +204,7 @@ const GroupDetails = () => {
           <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
             <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
               {photoUrl ? (
-                <OptimizedImage 
-                  source={{ uri: photoUrl }} 
-                  style={{ width: "100%", height: 200, borderRadius: theme.roundness, marginBottom: spacing.md }} 
-                  contentFit="cover"
-                  priority="high"
-                />
+                <OptimizedImage source={{ uri: photoUrl }} style={{ width: "100%", height: 200, borderRadius: theme.roundness, marginBottom: spacing.md }} contentFit="cover" priority="high" />
               ) : (
                 <Surface
                   style={{

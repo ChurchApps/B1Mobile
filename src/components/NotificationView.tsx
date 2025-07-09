@@ -99,17 +99,8 @@ export function NotificationTab() {
     };
     return (
       <TouchableOpacity onPress={() => router.push({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(userchatDetails) } })}>
-        <View
-          style={[
-            globalStyles.messageContainer,
-            { alignSelf: "flex-start", backgroundColor: "#f8f9fa", padding: DimensionHelper.wp(3), borderRadius: DimensionHelper.wp(2), marginHorizontal: DimensionHelper.wp(3) }
-          ]}>
-          <OptimizedImage
-            source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user}
-            style={[globalStyles.churchListIcon, { height: DimensionHelper.wp(12), width: DimensionHelper.wp(12), borderRadius: DimensionHelper.wp(12) }]}
-            tintColor={item.photo ? undefined : Constants.Colors.app_color}
-            placeholder={Constants.Images.ic_user}
-          />
+        <View style={[globalStyles.messageContainer, { alignSelf: "flex-start", backgroundColor: "#f8f9fa", padding: DimensionHelper.wp(3), borderRadius: DimensionHelper.wp(2), marginHorizontal: DimensionHelper.wp(3) }]}>
+          <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { height: DimensionHelper.wp(12), width: DimensionHelper.wp(12), borderRadius: DimensionHelper.wp(12) }]} tintColor={item.photo ? undefined : Constants.Colors.app_color} placeholder={Constants.Images.ic_user} />
           <View style={{ marginLeft: DimensionHelper.wp(2), flex: 1 }}>
             <Text style={[globalStyles.senderNameText, { fontSize: DimensionHelper.wp(4.2), color: "#2c3e50", marginBottom: DimensionHelper.wp(1) }]}>{item.displayName}</Text>
             <View
@@ -137,7 +128,7 @@ export function NotificationTab() {
       const dayDiff = currentDate.diff(endDate, "days");
       return { timeDifference, dayDiff };
     }, [item?.timeSent]);
-    
+
     const { timeDifference, dayDiff } = timeInfo;
     return (
       <TouchableOpacity
@@ -165,8 +156,7 @@ export function NotificationTab() {
         <View style={[globalStyles.notimsgView, { flex: 1, marginHorizontal: DimensionHelper.wp(2) }]}>
           <Text style={{ fontSize: DimensionHelper.wp(3.8), color: "#2c3e50", fontFamily: Constants.Fonts.RobotoRegular }}>{item.message}</Text>
         </View>
-        <View
-          style={[globalStyles.timeSentView, { backgroundColor: "#f8f9fa", paddingHorizontal: DimensionHelper.wp(2), paddingVertical: DimensionHelper.wp(1), borderRadius: DimensionHelper.wp(2) }]}>
+        <View style={[globalStyles.timeSentView, { backgroundColor: "#f8f9fa", paddingHorizontal: DimensionHelper.wp(2), paddingVertical: DimensionHelper.wp(1), borderRadius: DimensionHelper.wp(2) }]}>
           <Text style={{ fontSize: DimensionHelper.wp(3.5), color: "#6c757d", fontFamily: Constants.Fonts.RobotoMedium }}>{dayDiff === 0 ? `${timeDifference}h` : `${dayDiff}d`}</Text>
         </View>
       </TouchableOpacity>
@@ -187,15 +177,9 @@ export function NotificationTab() {
         <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={item => String(item.id)} />
       ) : (
         <View style={{ alignItems: "center", padding: DimensionHelper.wp(5) }}>
-          <Image
-            source={Constants.Images.dash_bell}
-            style={{ width: DimensionHelper.wp(15), height: DimensionHelper.wp(15), marginBottom: DimensionHelper.wp(3) }}
-            tintColor={Constants.Colors.app_color_light}
-          />
+          <Image source={Constants.Images.dash_bell} style={{ width: DimensionHelper.wp(15), height: DimensionHelper.wp(15), marginBottom: DimensionHelper.wp(3) }} tintColor={Constants.Colors.app_color_light} />
           <Text style={{ fontSize: DimensionHelper.wp(4), color: "#6c757d", textAlign: "center", fontFamily: Constants.Fonts.RobotoMedium }}>No notifications yet</Text>
-          <Text style={{ fontSize: DimensionHelper.wp(3.5), color: "#adb5bd", textAlign: "center", marginTop: DimensionHelper.wp(1), fontFamily: Constants.Fonts.RobotoRegular }}>
-            We'll notify you when something new arrives
-          </Text>
+          <Text style={{ fontSize: DimensionHelper.wp(3.5), color: "#adb5bd", textAlign: "center", marginTop: DimensionHelper.wp(1), fontFamily: Constants.Fonts.RobotoRegular }}>We'll notify you when something new arrives</Text>
         </View>
       )}
     </View>
@@ -206,29 +190,12 @@ export function NotificationTab() {
     second: NotificationRoute
   });
 
-  const renderTabBar = (props: any) => (
-    <TabBar
-      {...props}
-      indicatorStyle={{ backgroundColor: Constants.Colors.Active_TabColor, height: DimensionHelper.wp(0.5) }}
-      style={[globalStyles.TabIndicatorStyle, { backgroundColor: "#ffffff", elevation: 2, shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }]}
-      labelStyle={{ color: "#000000", fontSize: DimensionHelper.wp(4), fontFamily: Constants.Fonts.RobotoMedium }}
-      activeColor="#000000"
-      inactiveColor="#000000"
-      inactiveOpacity={0.7}
-    />
-  );
+  const renderTabBar = (props: any) => <TabBar {...props} indicatorStyle={{ backgroundColor: Constants.Colors.Active_TabColor, height: DimensionHelper.wp(0.5) }} style={[globalStyles.TabIndicatorStyle, { backgroundColor: "#ffffff", elevation: 2, shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }]} labelStyle={{ color: "#000000", fontSize: DimensionHelper.wp(4), fontFamily: Constants.Fonts.RobotoMedium }} activeColor="#000000" inactiveColor="#000000" inactiveOpacity={0.7} />;
 
   return (
     <View style={[globalStyles.tabBar, { backgroundColor: "#f8f9fa" }]}>
       {isLoading && <Loader isLoading={isLoading} />}
-      <TabView
-        navigationState={{ index: 0, routes }}
-        renderScene={renderScene}
-        onIndexChange={() => {}}
-        swipeEnabled={false}
-        renderTabBar={renderTabBar}
-        initialLayout={{ width: DimensionHelper.wp(100), height: DimensionHelper.hp(200) }}
-      />
+      <TabView navigationState={{ index: 0, routes }} renderScene={renderScene} onIndexChange={() => {}} swipeEnabled={false} renderTabBar={renderTabBar} initialLayout={{ width: DimensionHelper.wp(100), height: DimensionHelper.hp(200) }} />
     </View>
   );
 }

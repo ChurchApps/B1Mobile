@@ -147,10 +147,7 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
                     </TouchableOpacity>
                   ))}
                   {songDetail?.praiseChartsId && (
-                    <TouchableOpacity
-                      key="praisecharts"
-                      onPress={() => Linking.openURL(`https://www.praisecharts.com/songs/details/${songDetail.praiseChartsId}?XID=churchapps`)}
-                      style={styles.linkRow}>
+                    <TouchableOpacity key="praisecharts" onPress={() => Linking.openURL(`https://www.praisecharts.com/songs/details/${songDetail.praiseChartsId}?XID=churchapps`)} style={styles.linkRow}>
                       {getServiceIcon("PraiseCharts")}
                       <Text style={styles.link}>PraiseCharts</Text>
                     </TouchableOpacity>

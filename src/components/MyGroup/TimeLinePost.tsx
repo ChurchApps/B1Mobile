@@ -24,7 +24,7 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
     const MinDifference = endDate.diff(startDate, "minute");
     const dayDiff = endDate.diff(startDate, "days");
     const formattedDate = dayjs(date).format("MMM D, YYYY h:mm A");
-    
+
     return {
       date,
       TodayDate,
@@ -67,37 +67,12 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
   return (
     <View style={globalStyles.FlatlistViewStyle} key={item.index}>
       <View style={globalStyles.TitleStyle}>
-        <Text style={globalStyles.TitleTextStyle}>
-          {item?.item?.postType == "event" || item?.item?.postType == "group" || item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? item?.item?.name : item?.item?.groupName}
-        </Text>
+        <Text style={globalStyles.TitleTextStyle}>{item?.item?.postType == "event" || item?.item?.postType == "group" || item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? item?.item?.name : item?.item?.groupName}</Text>
       </View>
 
-      {(item?.item?.postType == "event" && item?.item?.photoUrl !== null) ||
-      item?.item?.postType == "sermon" ||
-      item?.item?.postType == "group" ||
-      (item?.item?.postType == "venue" && item?.item?.data?.image != null) ? (
+      {(item?.item?.postType == "event" && item?.item?.photoUrl !== null) || item?.item?.postType == "sermon" || item?.item?.postType == "group" || (item?.item?.postType == "venue" && item?.item?.data?.image != null) ? (
         <View style={globalStyles.ImageMainView}>
-          <View style={globalStyles.ImageView}>
-            {item?.item?.postType == "venue" && item?.item?.data?.image != null ? (
-              <OptimizedImage 
-                source={{ uri: item?.item?.data?.image }} 
-                style={globalStyles.groupImageStyle} 
-                contentFit="cover"
-              />
-            ) : item?.item?.postType == "sermon" ? (
-              <OptimizedImage 
-                source={{ uri: item?.item?.data?.thumbnail }} 
-                style={globalStyles.groupImageStyle} 
-                contentFit="cover"
-              />
-            ) : (
-              <OptimizedImage 
-                source={{ uri: item?.item?.photoUrl }} 
-                style={globalStyles.groupImageStyle} 
-                contentFit="cover"
-              />
-            )}
-          </View>
+          <View style={globalStyles.ImageView}>{item?.item?.postType == "venue" && item?.item?.data?.image != null ? <OptimizedImage source={{ uri: item?.item?.data?.image }} style={globalStyles.groupImageStyle} contentFit="cover" /> : item?.item?.postType == "sermon" ? <OptimizedImage source={{ uri: item?.item?.data?.thumbnail }} style={globalStyles.groupImageStyle} contentFit="cover" /> : <OptimizedImage source={{ uri: item?.item?.photoUrl }} style={globalStyles.groupImageStyle} contentFit="cover" />}</View>
         </View>
       ) : null}
 
@@ -159,19 +134,10 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
 
       {item?.item?.postType == "sermon" || item?.item?.postType == "event" || (item?.item?.postType == "venue" && item?.item?.data?.description != null) ? (
         <View style={globalStyles.PostTitleViewStyle}>
-          <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? globalStyles.tabTextColor : null]}>
-            {item?.item?.data?.description}
-          </Text>
+          <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? globalStyles.tabTextColor : null]}>{item?.item?.data?.description}</Text>
         </View>
       ) : null}
-      <UserConversations
-        conversationId={item?.item?.conversation?.id}
-        groupId={item?.item?.conversation?.groupId}
-        key={item?.item?.conversation?.id}
-        conversation={item?.item?.conversation}
-        createConversation={createConversation}
-        onUpdate={onUpdate}
-      />
+      <UserConversations conversationId={item?.item?.conversation?.id} groupId={item?.item?.conversation?.groupId} key={item?.item?.conversation?.id} conversation={item?.item?.conversation} createConversation={createConversation} onUpdate={onUpdate} />
 
       {showMenu && (
         <Menu visible={showMenu} onDismiss={() => setShowMenu(false)} anchor={<IconButton icon="dots-vertical" onPress={() => setShowMenu(true)} style={{ margin: 0 }} />}>

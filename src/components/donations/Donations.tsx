@@ -99,11 +99,7 @@ export function Donations() {
       </Portal>
 
       <Card>
-        <Card.Title
-          title="Donations"
-          titleStyle={{ fontSize: 20, fontWeight: "600" }}
-          left={props => <IconButton {...props} icon="history" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
-        />
+        <Card.Title title="Donations" titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="history" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
         <Card.Content>{isLoading ? <ActivityIndicator size="large" style={{ margin: spacing.md }} /> : content}</Card.Content>
       </Card>
     </>

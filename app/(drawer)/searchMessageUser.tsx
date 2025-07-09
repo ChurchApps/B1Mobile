@@ -73,15 +73,7 @@ const SearchMessageUser = () => {
           <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
             Search for a person
           </Text>
-          <TextInput
-            mode="outlined"
-            label="Name"
-            placeholder="Name"
-            value={searchText}
-            onChangeText={setSearchText}
-            style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-            left={<TextInput.Icon icon="account" />}
-          />
+          <TextInput mode="outlined" label="Name" placeholder="Name" value={searchText} onChangeText={setSearchText} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
           <Button mode="contained" onPress={() => searchUserApiCall(searchText)} loading={loading} style={{ marginBottom: spacing.md }}>
             Search
           </Button>
@@ -96,20 +88,7 @@ const SearchMessageUser = () => {
       <List.Section>
         {getHeaderView()}
         {(searchText === "" ? (searchList.length !== 0 ? searchList : []) : searchList).map((item: UserSearchInterface) => (
-          <List.Item
-            key={item.id}
-            title={item.name.display}
-            left={() =>
-              item.photo ? (
-                <Image source={{ uri: item.photo }} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} />
-              ) : (
-                <Image source={Constants.Images.ic_user} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md, tintColor: theme.colors.primary }} />
-              )
-            }
-            onPress={() => userSelection(item)}
-            style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }}
-            titleStyle={{ fontWeight: "500" }}
-          />
+          <List.Item key={item.id} title={item.name.display} left={() => (item.photo ? <Image source={{ uri: item.photo }} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} /> : <Image source={Constants.Images.ic_user} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md, tintColor: theme.colors.primary }} />)} onPress={() => userSelection(item)} style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }} titleStyle={{ fontWeight: "500" }} />
         ))}
       </List.Section>
     </View>

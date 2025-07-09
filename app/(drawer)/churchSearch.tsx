@@ -5,7 +5,7 @@ import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { ApiHelper } from "../../src/mobilehelper";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Keyboard, TouchableWithoutFeedback, View, Alert, BackHandler } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, View } from "react-native";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 import RNRestart from "react-native-restart";
@@ -63,7 +63,7 @@ const ChurchSearch = () => {
     try {
       const data = await ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=favicon_400x400", "MembershipApi");
       setSearchList(data);
-    } catch (error) {
+    } catch {
       setLoading(false);
     }
     setLoading(false);
@@ -103,15 +103,7 @@ const ChurchSearch = () => {
           <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
             Find Your Church
           </Text>
-          <TextInput
-            mode="outlined"
-            label="Church name"
-            placeholder="Church name"
-            value={searchText}
-            onChangeText={setSearchText}
-            style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-            left={<TextInput.Icon icon="church" />}
-          />
+          <TextInput mode="outlined" label="Church name" placeholder="Church name" value={searchText} onChangeText={setSearchText} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="church" />} />
           <Button mode="contained" onPress={() => searchApiCall(searchText)} loading={loading} style={{ marginBottom: spacing.md }}>
             Search
           </Button>

@@ -8,7 +8,9 @@ export const runFirebaseTests = async () => {
     // Test both analytics and push notifications
     const testResult = await testFirebaseFeatures();
     if (testResult) {
+      // Test passed successfully
     } else {
+      // Test failed
     }
   } catch (error) {
     console.error("Firebase test failed:", error);

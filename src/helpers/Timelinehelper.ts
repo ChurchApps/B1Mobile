@@ -133,13 +133,13 @@ export class TimelineHelper {
   static standardizePosts(allPosts: TimelinePostInterface[], people: PersonInterface[]) {
     const defaultDate = new Date();
     defaultDate.setDate(defaultDate.getDate() - 7);
-    
+
     // Batch process all posts to avoid repeated operations
     const processedPosts = allPosts.map(p => {
       // Process messages once per post
       if (p.conversation?.messages) {
         p.conversation.messages.forEach(m => {
-          if (m.timeSent && typeof m.timeSent === 'string') {
+          if (m.timeSent && typeof m.timeSent === "string") {
             m.timeSent = new Date(m.timeSent);
           }
           if (!m.person && m.personId) {
@@ -149,18 +149,18 @@ export class TimelineHelper {
       }
 
       // Process dates once per post
-      if (p.timeSent && typeof p.timeSent === 'string') {
+      if (p.timeSent && typeof p.timeSent === "string") {
         p.timeSent = new Date(p.timeSent);
       }
-      
+
       if (!p.timeSent) {
         const messages = p?.conversation?.messages;
-        p.timeSent = (messages && messages.length > 0) ? messages[0].timeSent || defaultDate : defaultDate;
+        p.timeSent = messages && messages.length > 0 ? messages[0].timeSent || defaultDate : defaultDate;
       }
-      
+
       const messages = p?.conversation?.messages;
-      p.timeUpdated = (messages && messages.length > 0) ? messages[messages.length - 1].timeSent : p.timeSent;
-      
+      p.timeUpdated = messages && messages.length > 0 ? messages[messages.length - 1].timeSent : p.timeSent;
+
       return p;
     });
 

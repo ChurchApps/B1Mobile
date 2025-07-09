@@ -1,12 +1,11 @@
 /**
  * StripeHelper - Utility functions for Stripe integration
- * 
+ *
  * Note: This class now serves as a container for Stripe-related utilities.
  * Direct API calls have been replaced with Stripe React Native SDK usage.
  * Use @stripe/stripe-react-native hooks and components for new implementations.
  */
 export class StripeHelper {
-  
   /**
    * Formats a card number for display (masks all but last 4 digits)
    * @param cardNumber - The card number to format

@@ -103,22 +103,12 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
 
   return (
     <Card style={{ marginBottom: spacing.md }}>
-      <Card.Title
-        title={card.id ? "Edit Card" : "Add New Card"}
-        titleStyle={{ fontSize: 20, fontWeight: "600" }}
-        left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
-      />
+      <Card.Title title={card.id ? "Edit Card" : "Add New Card"} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
       <Card.Content>
         {!card.id ? (
           <View style={{ marginBottom: spacing.md }}>
             <TextInput mode="outlined" label="Card Holder Name" value={person?.name?.display} disabled style={{ marginBottom: spacing.sm }} />
-            <CardField
-              postalCodeEnabled={true}
-              placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }}
-              cardStyle={{ backgroundColor: theme.colors.surface, textColor: theme.colors.onSurface }}
-              style={{ height: 50, marginBottom: spacing.sm }}
-              onCardChange={setCardDetails}
-            />
+            <CardField postalCodeEnabled={true} placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }} cardStyle={{ backgroundColor: theme.colors.surface, textColor: theme.colors.onSurface }} style={{ height: 50, marginBottom: spacing.sm }} onCardChange={setCardDetails} />
             <Menu
               visible={showTypeMenu}
               onDismiss={() => setShowTypeMenu(false)}
