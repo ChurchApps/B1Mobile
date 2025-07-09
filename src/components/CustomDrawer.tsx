@@ -1,5 +1,5 @@
 import { CacheHelper, EnvironmentHelper, UserHelper } from "../../src/helpers";
-import { ErrorHelper } from "../../src/helpers/ErrorHelper";
+import { ErrorHelper } from "../mobilehelper";
 import { NavigationHelper } from "../../src/helpers/NavigationHelper";
 import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";

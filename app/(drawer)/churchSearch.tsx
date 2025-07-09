@@ -1,7 +1,7 @@
 import React from "react";
 import { BlueHeader } from "@/components/BlueHeader";
 import { ArrayHelper, ChurchInterface, Constants, UserHelper } from "../../src/helpers";
-import { ErrorHelper } from "../../src/helpers/ErrorHelper";
+import { ErrorHelper } from "../../src/mobilehelper";
 import { ApiHelper } from "../../src/mobilehelper";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";

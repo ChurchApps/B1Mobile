@@ -1,7 +1,7 @@
 import React from "react";
 import { BlueHeader } from "@/components/BlueHeader";
 import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface } from "../../src/helpers";
-import { ErrorHelper } from "../../src/helpers/ErrorHelper";
+import { ErrorHelper } from "../../src/mobilehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";

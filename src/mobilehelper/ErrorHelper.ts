@@ -1,15 +1,13 @@
 import { DeviceEventEmitter } from "react-native";
-import { setJSExceptionHandler } from "react-native-exception-handler";
-
-import { FirebaseAnalyticsHelper } from "./AppCenterHelper";
+import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
 export class ErrorHelper {
   static logEvent(eventType: string, source: string, message: string) {
-    FirebaseAnalyticsHelper.trackEvent(eventType, { source, message });
+    //FirebaseAnalyticsHelper.trackEvent(eventType, { source, message });
   }
 
   static logError(source: string, message: string) {
-    FirebaseAnalyticsHelper.trackEvent("Error", { source, message });
+    //FirebaseAnalyticsHelper.trackEvent("Error", { source, message });
   }
 
   static onJavaError(event: any) {
@@ -35,11 +33,8 @@ export class ErrorHelper {
       ErrorHelper.logError("Unhandled Javascript", error.toString());
     });
 
-    //I believe this cannot be called from the package, only the main app.
-    /*
     setNativeExceptionHandler((exceptionString: string) => {
       ErrorHelper.logError("Unhandled Native", exceptionString);
     }, false, true);
-    */
   }
 }

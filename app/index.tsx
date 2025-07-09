@@ -1,6 +1,6 @@
 import React from "react";
 import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "../src/helpers";
-import { ErrorHelper } from "../src/helpers/ErrorHelper";
+import { ErrorHelper } from "../src/mobilehelper";
 import { PushNotificationHelper } from "../src/helpers/PushNotificationHelper";
 import { UpdateHelper } from "../src/helpers/UpdateHelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";

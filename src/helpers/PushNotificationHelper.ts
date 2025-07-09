@@ -1,6 +1,7 @@
 import * as Notifications from "expo-notifications";
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
+import * as Device from "expo-device";
 import { CacheHelper } from "./CacheHelper";
 import { usePathname } from "expo-router";
 
@@ -88,6 +89,32 @@ export class PushNotificationHelper {
       }
     } catch (error) {
       console.error("Error requesting notification permission:", error);
+    }
+  }
+
+  static async registerForPushNotificationsAsync() {
+    if (!Device.isDevice) {
+      return null;
+    }
+
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
+    if (finalStatus !== "granted") {
+      return null;
+    }
+
+    try {
+      const tokenData = await Notifications.getExpoPushTokenAsync();
+      return tokenData.data;
+    } catch (error) {
+      console.error("Error getting Expo push token:", error);
+      return null;
     }
   }
 
@@ -195,3 +222,5 @@ export const eventBus = {
     DeviceEventEmitter.removeAllListeners(eventName);
   }
 };
+
+export const pushEventBus = eventBus;

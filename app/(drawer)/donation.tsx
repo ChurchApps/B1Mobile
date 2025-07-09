@@ -4,7 +4,7 @@ import { Donations } from "../../src/components/donations/Donations";
 import { PaymentMethods } from "../../src/components/donations/PaymentMethods";
 import { RecurringDonations } from "../../src/components/donations/RecurringDonations";
 import { CacheHelper, UserHelper } from "../../src/helpers";
-import { ErrorHelper } from "../../src/helpers/ErrorHelper";
+import { ErrorHelper } from "../../src/mobilehelper";
 import { StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused } from "@react-navigation/native";

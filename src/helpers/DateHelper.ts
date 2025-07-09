@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { ErrorHelper } from "./ErrorHelper";
+import { ErrorHelper } from "../mobilehelper";
 
 export class DateHelper {
   static formatHtml5Date(date: Date): string {

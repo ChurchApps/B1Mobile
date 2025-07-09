@@ -1,5 +1,5 @@
 import { ApiHelper, CurrencyHelper, DateHelper } from "../../../src/helpers";
-import { ErrorHelper } from "../../../src/helpers/ErrorHelper";
+import { ErrorHelper } from "../../mobilehelper";
 import { StripePaymentMethod, SubscriptionInterface } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
