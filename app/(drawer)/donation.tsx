@@ -17,6 +17,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../src/theme";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const theme = {
   ...MD3LightTheme,
@@ -44,7 +45,8 @@ const Donation = () => {
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([]);
   const [publishKey, setPublishKey] = useState<string>("");
   const isFocused = useIsFocused();
-  const person = UserHelper.currentUserChurch?.person;
+  const currentUserChurch = useCurrentUserChurch();
+  const person = currentUserChurch?.person;
 
   // Use react-query for gateway data
   const {

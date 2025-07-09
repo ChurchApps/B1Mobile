@@ -1,5 +1,5 @@
 import React from "react";
-import { ApiHelper, CacheHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "../src/helpers";
+import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "../src/helpers";
 import { ErrorHelper } from "../src/helpers/ErrorHelper";
 import { PushNotificationHelper } from "../src/helpers/PushNotificationHelper";
 import { UpdateHelper } from "../src/helpers/UpdateHelper";
@@ -7,6 +7,7 @@ import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Image, Platform, View } from "react-native";
+import { useUserStore } from "../src/stores/useUserStore";
 
 if (Platform.OS === "android") {
   // See https://github.com/expo/expo/issues/6536 for this issue.
@@ -21,13 +22,9 @@ const SplashScreen = () => {
   //console.log("*****SPLASH******")
 
   const init = async () => {
-    //   setTimeout(() => {
-    // router.replace('/auth/login')
+    // Load JWT tokens from secure storage if they exist
+    await UserHelper.loadSecureTokens();
 
-    //   }, 1000);
-
-    // Utilities.trackEvent("Splash Screen");
-    await CacheHelper.loadFromStorage();
     await UpdateHelper.initializeUpdates();
     PushNotificationHelper.requestUserPermission();
     PushNotificationHelper.NotificationListener();
@@ -47,20 +44,27 @@ const SplashScreen = () => {
   }, []);
 
   const setUserDataNew = async () => {
-    const user = UserHelper.user;
+    const user = useUserStore.getState().user;
+    if (!user?.jwt) return;
+
     const data = await ApiHelper.postAnonymous("/users/login", { jwt: user.jwt }, "MembershipApi");
-    if (data.user != null) await UserHelper.handleLogin(data);
+    if (data.user != null) await useUserStore.getState().handleLogin(data);
   };
 
   const checkUser = async () => {
     try {
-      if (UserHelper.user?.jwt) await setUserDataNew();
+      const store = useUserStore.getState();
+      if (store.user?.jwt) await setUserDataNew();
     } catch (e: any) {
       console.log(e);
       ErrorHelper.logError("splash-screen-error", e);
     }
 
-    if (!CacheHelper.church) {
+    // Initialize app from persisted data (loads appearance and links)
+    await useUserStore.getState().initializeFromPersistence();
+
+    const currentChurch = useUserStore.getState().currentUserChurch?.church;
+    if (!currentChurch) {
       router.navigate("/(drawer)/churchSearch");
       // router.navigate('/churchSearch')
     } else {

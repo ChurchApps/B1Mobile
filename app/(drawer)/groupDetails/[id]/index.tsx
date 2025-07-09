@@ -13,7 +13,7 @@ import utc from "dayjs/plugin/utc";
 import { useQuery } from "@tanstack/react-query";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { EventInterface } from "../../../../src/mobilehelper";
-import { Constants, EnvironmentHelper, UserHelper } from "../../../../src/helpers";
+import { Constants, EnvironmentHelper } from "../../../../src/helpers";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
 import Conversations from "../../../../src/components/Notes/Conversations";
@@ -21,6 +21,7 @@ import { EventModal } from "../../../../src/components/eventCalendar/EventModal"
 import CreateEvent from "../../../../src/components/eventCalendar/CreateEvent";
 import { useAppTheme } from "../../../../src/theme";
 import { OptimizedImage } from "../../../../src/components/OptimizedImage";
+import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -38,10 +39,12 @@ const GroupDetails = () => {
   const [editEvent, setEditEvent] = useState<EventInterface | null>(null);
   const [showAddEventModal, setShowAddEventModal] = useState<boolean>(false);
 
+  const currentUserChurch = useCurrentUserChurch();
+
   // Use react-query for group details
   const { data: groupDetails, isLoading: groupDetailsLoading } = useQuery({
     queryKey: [`/groups/${id}`, "MembershipApi"],
-    enabled: !!id && !!UserHelper.user?.jwt,
+    enabled: !!id && !!currentUserChurch?.jwt,
     placeholderData: null,
     staleTime: 10 * 60 * 1000, // 10 minutes - group details don't change frequently
     gcTime: 30 * 60 * 1000 // 30 minutes
@@ -50,7 +53,7 @@ const GroupDetails = () => {
   // Use react-query for group members
   const { data: groupMembers = [], isLoading: groupMembersLoading } = useQuery({
     queryKey: [`/groupmembers?groupId=${id}`, "MembershipApi"],
-    enabled: !!id && !!UserHelper.user?.jwt,
+    enabled: !!id && !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 5 * 60 * 1000, // 5 minutes - membership changes occasionally
     gcTime: 15 * 60 * 1000 // 15 minutes
@@ -63,14 +66,13 @@ const GroupDetails = () => {
     refetch: refetchEvents
   } = useQuery({
     queryKey: [`/events/group/${id}`, "ContentApi"],
-    enabled: !!id && !!UserHelper.user?.jwt,
+    enabled: !!id && !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 3 * 60 * 1000, // 3 minutes - events change more frequently
     gcTime: 10 * 60 * 1000 // 10 minutes
   });
 
   const loading = groupDetailsLoading || groupMembersLoading || eventsLoading;
-  const events = useMemo(() => updateTime(eventsData), [eventsData, updateTime]);
 
   const updateTime = useCallback((data: any) => {
     const tz = new Date().getTimezoneOffset();
@@ -83,6 +85,8 @@ const GroupDetails = () => {
       return ev;
     });
   }, []);
+
+  const events = useMemo(() => updateTime(eventsData), [eventsData, updateTime]);
 
   const handleAddEvent = (slotInfo: any) => {
     const startTime = new Date(slotInfo.start);
@@ -177,7 +181,7 @@ const GroupDetails = () => {
 
   const { name, photoUrl, about } = groupDetails;
 
-  if (!UserHelper.currentUserChurch?.person?.id) {
+  if (!currentUserChurch?.person?.id) {
     return (
       <Surface style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text variant="titleMedium">Please Login to view your groups</Text>
@@ -186,7 +190,7 @@ const GroupDetails = () => {
   }
 
   let isLeader = false;
-  UserHelper.currentUserChurch.groups?.forEach((g: any) => {
+  currentUserChurch?.groups?.forEach((g: any) => {
     if (g.id === id && g.leader) isLeader = true;
   });
 

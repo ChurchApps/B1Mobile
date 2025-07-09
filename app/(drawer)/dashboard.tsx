@@ -6,7 +6,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
-import { CacheHelper, UserHelper } from "../../src/helpers";
+import { UserHelper } from "../../src/helpers";
 import { NavigationHelper } from "../../src/helpers/NavigationHelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { LinkInterface } from "../../src/helpers/Interfaces";
@@ -15,6 +15,7 @@ import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { HeaderBell } from "../../src/components/wrapper/HeaderBell";
 import { NotificationTab } from "../../src/components/NotificationView";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { useUserStore, useCurrentChurch, useChurchAppearance } from "../../src/stores/useUserStore";
 
 const theme = {
   ...MD3LightTheme,
@@ -41,6 +42,15 @@ const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
 
+  const currentChurch = useCurrentChurch();
+  const churchAppearance = useChurchAppearance();
+  const { links } = useUserStore();
+
+  // Debug logging
+  console.log("📱 Dashboard - currentChurch:", currentChurch);
+  console.log("📱 Dashboard - churchAppearance:", churchAppearance);
+  console.log("📱 Dashboard - links:", links);
+
   useEffect(() => {
     const subscription = Dimensions.addEventListener("change", () => {});
     UserHelper.addOpenScreenEvent("Dashboard");
@@ -51,8 +61,8 @@ const Dashboard = () => {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      // Wait for UserHelper.links to be available
-      if (!UserHelper.links) {
+      // Wait for links to be available
+      if (!links || links.length === 0) {
         await new Promise(resolve => setTimeout(resolve, 500)); // Give time for links to load
       }
       setLoading(false);
@@ -70,7 +80,7 @@ const Dashboard = () => {
   }, [focused]);
 
   const checkRedirect = () => {
-    if (!CacheHelper.church) router.navigate("/(drawer)/churchSearch");
+    if (!currentChurch) router.navigate("/(drawer)/churchSearch");
   };
 
   const getButton = (item: LinkInterface) => {
@@ -93,8 +103,8 @@ const Dashboard = () => {
 
   const getButtons = () => {
     if (isLoading) return null;
-    if (!Array.isArray(UserHelper.links)) return null;
-    const items = UserHelper.links.filter(item => item.linkType !== "separator");
+    if (!Array.isArray(links)) return null;
+    const items = links.filter(item => item.linkType !== "separator");
     return (
       <View style={styles.gridContainer}>
         {items.map(item => (
@@ -107,12 +117,12 @@ const Dashboard = () => {
   };
 
   const getBrand = () => {
-    if (UserHelper.churchAppearance?.logoLight) {
-      return <OptimizedImage source={{ uri: UserHelper.churchAppearance?.logoLight }} style={styles.logo} contentFit="contain" priority="high" />;
+    if (churchAppearance?.logoLight) {
+      return <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.logo} contentFit="contain" priority="high" />;
     }
     return (
       <Text variant="headlineMedium" style={styles.churchName}>
-        {CacheHelper.church?.name || ""}
+        {currentChurch?.name || ""}
       </Text>
     );
   };

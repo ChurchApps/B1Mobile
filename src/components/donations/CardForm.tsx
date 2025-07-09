@@ -1,10 +1,11 @@
-import { ApiHelper, UserHelper } from "../../../src/helpers";
+import { ApiHelper } from "../../../src/helpers";
 import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
 import React, { useState } from "react";
 import { Alert, View } from "react-native";
 import { Button, Card, IconButton, Menu, Text, TextInput } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
   setMode: (mode: "display" | "edit") => void;
@@ -21,7 +22,8 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   const [month, setMonth] = React.useState<string>(card.exp_month?.toString() || "");
   const [year, setYear] = React.useState<string>(card.exp_year?.toString().slice(-2) || "");
   const { createPaymentMethod } = useStripe();
-  const person = UserHelper.currentUserChurch?.person;
+  const currentUserChurch = useCurrentUserChurch();
+  const person = currentUserChurch?.person;
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [selectedType, setSelectedType] = useState(card.type || "card");
   const cardTypes = [

@@ -1,23 +1,25 @@
 import React, { useState } from "react";
-import { CurrencyHelper, DateHelper, UserHelper } from "../../../src/helpers";
+import { CurrencyHelper, DateHelper } from "../../../src/helpers";
 import { DonationInterface } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { Card, IconButton, List, Portal, Modal, Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 export function Donations() {
   const [showDonationModal, setShowDonationModal] = useState<boolean>(false);
   const [selectedDonation, setSelectedDonation] = useState<DonationInterface>({});
   const isFocused = useIsFocused();
-  const person = UserHelper.currentUserChurch?.person;
+  const currentUserChurch = useCurrentUserChurch();
+  const person = currentUserChurch?.person;
   const { spacing, theme } = useAppTheme();
 
   // Use react-query for donations
   const { data: donations = [], isLoading } = useQuery<DonationInterface[]>({
     queryKey: [`/donations?personId=${person?.id}`, "GivingApi"],
-    enabled: !!person?.id && !!UserHelper.user?.jwt && isFocused,
+    enabled: !!person?.id && !!currentUserChurch?.jwt && isFocused,
     placeholderData: [],
     staleTime: 2 * 60 * 1000, // 2 minutes - financial data should be relatively fresh
     gcTime: 5 * 60 * 1000, // 5 minutes

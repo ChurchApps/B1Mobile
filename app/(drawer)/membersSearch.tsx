@@ -10,17 +10,19 @@ import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text, TextInput } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const MembersSearch = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");
   const [searchList, setSearchList] = useState([]);
+  const currentUserChurch = useCurrentUserChurch();
 
   // Use react-query for members data with aggressive caching
   const { data: membersList = [], isLoading } = useQuery({
     queryKey: ["/people", "MembershipApi"],
-    enabled: !!UserHelper.user?.jwt, // Only run when authenticated
+    enabled: !!currentUserChurch?.jwt, // Only run when authenticated
     placeholderData: [],
     staleTime: 10 * 60 * 1000, // 10 minutes - members don't change frequently
     gcTime: 30 * 60 * 1000 // 30 minutes

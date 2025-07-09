@@ -11,6 +11,7 @@ import { useAppTheme } from "../../src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import { useUser } from "../../src/stores/useUserStore";
 
 interface NotificationContent {
   autoDismiss?: boolean;
@@ -43,6 +44,7 @@ const MessageScreen = () => {
   const [loading, setLoading] = useState(false);
   const { showActionSheetWithOptions } = useActionSheet();
   const conversationIdRef = useRef<string | undefined>(undefined);
+  const user = useUser();
 
   // Update ref when conversation changes
   useEffect(() => {
@@ -154,7 +156,7 @@ const MessageScreen = () => {
           allowAnonymousPosts: false,
           contentType: "privateMessage",
           contentId: UserHelper.currentUserChurch.person.id,
-          title: UserHelper.user.firstName + " " + UserHelper.user.lastName + " Private Message",
+          title: user?.firstName + " " + user?.lastName + " Private Message",
           visibility: "hidden"
         }
       ];

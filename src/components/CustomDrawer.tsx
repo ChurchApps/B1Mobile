@@ -1,7 +1,6 @@
 import { CacheHelper, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { NavigationHelper } from "../../src/helpers/NavigationHelper";
-import { UserInterface } from "../../src/helpers/Interfaces";
 import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -13,14 +12,17 @@ import RNRestart from "react-native-restart";
 import { DimensionHelper } from "../helpers/DimensionHelper";
 import { useAppTheme } from "../../src/theme";
 import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
 
 export function CustomDrawer(props: any) {
   const { spacing } = useAppTheme();
   const paperTheme = useTheme();
-  const [churchName, setChurchName] = useState("");
-  const [churchEmpty, setChurchEmpty] = useState(true);
+  // Use hooks instead of local state
+  const user = useUser();
+  const currentChurch = useCurrentChurch();
+  const { setLinks } = useUserStore();
+
   const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
-  const [user, setUser] = useState<UserInterface | null>(null);
 
   useEffect(() => {
     getChurch();
@@ -29,17 +31,8 @@ export function CustomDrawer(props: any) {
 
   const getChurch = async () => {
     try {
-      if (UserHelper.user) setUser(UserHelper.user);
-
-      if (CacheHelper.church !== null) {
-        setChurchName(CacheHelper.church.name ?? "");
-        setChurchEmpty(false);
-        //updateDrawerList();
+      if (currentChurch !== null) {
         getMemberData();
-        if (CacheHelper.church.id) {
-          //userChurch = await ApiHelper.post("/churches/select", { churchId: CacheHelper.church.id }, "MembershipApi");
-          //if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
-        }
       }
     } catch (e: any) {
       ErrorHelper.logError("custom-drawer", e);
@@ -48,8 +41,8 @@ export function CustomDrawer(props: any) {
 
   const updateDrawerList = async () => {
     let tabs: LinkInterface[] = [];
-    if (CacheHelper.church) {
-      const tempTabs = await ApiHelper.getAnonymous("/links/church/" + CacheHelper.church?.id + "?category=b1Tab", "ContentApi");
+    if (currentChurch) {
+      const tempTabs = await ApiHelper.getAnonymous("/links/church/" + currentChurch.id + "?category=b1Tab", "ContentApi");
       tempTabs.forEach((tab: LinkInterface) => {
         switch (tab.linkType) {
           case "groups":
@@ -71,7 +64,7 @@ export function CustomDrawer(props: any) {
     const data = tabs.concat(specialTabs);
 
     setDrawerList(data);
-    UserHelper.links = data;
+    setLinks(data);
     if (data.length > 0) {
       if (data[0].linkType === "groups") router.navigate("/(drawer)/myGroups");
       else router.navigate("/(drawer)/dashboard");
@@ -88,12 +81,12 @@ export function CustomDrawer(props: any) {
       showLessons = false,
       showChums = false,
       showCheckin;
-    const uc = UserHelper.currentUserChurch;
+    const uc = useUserStore.getState().currentUserChurch;
 
-    if (CacheHelper.church) {
-      const page = await ApiHelper.getAnonymous("/pages/" + CacheHelper.church.id + "/tree?url=/", "ContentApi");
+    if (currentChurch) {
+      const page = await ApiHelper.getAnonymous("/pages/" + currentChurch.id + "/tree?url=/", "ContentApi");
       if (page.url) showWebsite = true;
-      const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + CacheHelper.church.id, "GivingApi");
+      const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + currentChurch.id, "GivingApi");
       if (gateways.length > 0) showDonations = true;
     }
 
@@ -145,12 +138,12 @@ export function CustomDrawer(props: any) {
     // Clear React Query cache and persisted data
     await clearAllCachedData();
 
-    // Clear secure tokens
-    await UserHelper.clearSecureTokens();
+    // Use the store's logout method
+    await useUserStore.getState().logout();
 
     // Clear AsyncStorage (except church data)
     await AsyncStorage.getAllKeys()
-      .then(keys => AsyncStorage.multiRemove(keys.filter(key => key != "CHURCH_DATA")))
+      .then(keys => AsyncStorage.multiRemove(keys.filter(key => key != "CHURCH_DATA" && key != "user-storage")))
       .then(() => RNRestart.Restart());
   };
 
@@ -179,20 +172,21 @@ export function CustomDrawer(props: any) {
   const drawerHeaderComponent = () => (
     <Surface style={styles.headerContainer} elevation={1}>
       {getUserInfo()}
-      <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} icon={() => <MaterialIcons name={churchEmpty ? "search" : "church"} size={24} color={paperTheme.colors.primary} />}>
-        {churchEmpty ? "Find your church..." : churchName}
+      <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={24} color={paperTheme.colors.primary} />}>
+        {!currentChurch ? "Find your church..." : currentChurch.name || ""}
       </Button>
     </Surface>
   );
 
   const getUserInfo = () => {
-    if (!UserHelper.currentUserChurch?.person || !user) return null;
+    const currentUserChurch = useUserStore.getState().currentUserChurch;
+    if (!currentUserChurch?.person || !user) return null;
 
     return (
       <Card style={styles.userCard}>
         <Card.Content style={styles.userCardContent}>
           <View style={styles.userInfoContainer}>
-            <View style={styles.avatarContainer}>{UserHelper.currentUserChurch.person.photo ? <Avatar.Image size={DimensionHelper.wp(12)} source={{ uri: EnvironmentHelper.ContentRoot + UserHelper.currentUserChurch.person.photo }} /> : <Avatar.Text size={DimensionHelper.wp(12)} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />}</View>
+            <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={DimensionHelper.wp(12)} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={DimensionHelper.wp(12)} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />}</View>
             <View style={styles.userTextContainer}>
               <Text variant="titleMedium" numberOfLines={2} style={styles.userName}>
                 {`${user.firstName} ${user.lastName}`}
@@ -201,7 +195,7 @@ export function CustomDrawer(props: any) {
                 <Button mode="text" onPress={editProfileAction} style={styles.editProfileButton} textColor={paperTheme.colors.primary} icon={() => <MaterialIcons name="edit" size={18} color={paperTheme.colors.primary} />}>
                   Profile
                 </Button>
-                {UserHelper.user && (
+                {user && (
                   <TouchableRipple style={styles.messageButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
                     <MaterialCommunityIcons name="email-outline" size={20} color={paperTheme.colors.onSurface} />
                   </TouchableRipple>
@@ -215,8 +209,9 @@ export function CustomDrawer(props: any) {
   };
 
   const editProfileAction = () => {
+    const currentUserChurch = useUserStore.getState().currentUserChurch;
     let url = "https://app.chums.org/login?returnUrl=/profile";
-    if (UserHelper.currentUserChurch.jwt) url += "&jwt=" + UserHelper.currentUserChurch.jwt;
+    if (currentUserChurch?.jwt) url += "&jwt=" + currentUserChurch.jwt;
     Linking.openURL(url);
     logoutAction();
   };
@@ -225,8 +220,8 @@ export function CustomDrawer(props: any) {
     const pkg = require("../../package.json");
     return (
       <Surface style={styles.footerContainer} elevation={1}>
-        <Button mode="outlined" onPress={UserHelper.user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={UserHelper.user ? "logout" : "login"} size={24} color={paperTheme.colors.primary} />}>
-          {UserHelper.user ? "Log out" : "Login"}
+        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color={paperTheme.colors.primary} />}>
+          {user ? "Log out" : "Login"}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>
           Version {pkg.version}

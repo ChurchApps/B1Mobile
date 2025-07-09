@@ -5,11 +5,12 @@ import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, MD3LightTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
-import { ArrayHelper, UserHelper, UserPostInterface } from "../../src/helpers";
+import { ArrayHelper, UserPostInterface } from "../../src/helpers";
 import { TimelineHelper } from "../../src/helpers/Timelinehelper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useUser, useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const theme = {
   ...MD3LightTheme,
@@ -41,6 +42,14 @@ const MyGroups = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
 
+  const user = useUser();
+  const currentUserChurch = useCurrentUserChurch();
+
+  // Debug logging
+  console.log("👥 MyGroups - user:", user ? "Present" : "Missing");
+  console.log("👥 MyGroups - user JWT:", user?.jwt ? "Present" : "Missing");
+  console.log("👥 MyGroups - currentUserChurch:", currentUserChurch ? "Present" : "Missing");
+
   // Use react-query for groups data
   const {
     data: groups = [],
@@ -48,7 +57,7 @@ const MyGroups = () => {
     refetch: refetchGroups
   } = useQuery<Group[]>({
     queryKey: ["/groups/my", "MembershipApi"],
-    enabled: !!UserHelper.user?.jwt, // Only run when authenticated
+    enabled: !!user?.jwt, // Only run when authenticated
     placeholderData: [],
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000 // 10 minutes
@@ -65,7 +74,7 @@ const MyGroups = () => {
       const { posts, groups } = await TimelineHelper.loadForUser();
       return { posts, groups };
     },
-    enabled: !!UserHelper.user?.jwt, // Only run when authenticated
+    enabled: !!user?.jwt, // Only run when authenticated
     placeholderData: { posts: [], groups: [] },
     staleTime: 0, // Instant stale - timeline includes real-time conversations
     gcTime: 5 * 60 * 1000 // 5 minutes

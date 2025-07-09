@@ -6,6 +6,7 @@ import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { useAppTheme } from "../../../src/theme";
 import { List, Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
   onDone: () => void;
@@ -14,11 +15,12 @@ interface Props {
 export const CheckinServices = (props: Props) => {
   const { theme, spacing } = useAppTheme();
   const [loading, setLoading] = useState(false);
+  const currentUserChurch = useCurrentUserChurch();
 
   // Use react-query for services
   const { data: serviceList = [] } = useQuery({
     queryKey: ["/services", "AttendanceApi"],
-    enabled: !!UserHelper.user?.jwt,
+    enabled: !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 10 * 60 * 1000, // 10 minutes - services don't change frequently
     gcTime: 30 * 60 * 1000 // 30 minutes

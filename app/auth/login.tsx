@@ -1,12 +1,13 @@
 import React from "react";
 import { BlueHeader } from "@/components/BlueHeader";
-import { ApiHelper, EnvironmentHelper, LoginResponseInterface, UserHelper } from "../../src/helpers";
+import { ApiHelper, EnvironmentHelper, LoginResponseInterface } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Linking, SafeAreaView, ScrollView, View } from "react-native";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { TextInput, Button, Text, Surface } from "react-native-paper";
 import { useAppTheme } from "../../src/theme";
+import { useUserStore } from "../../src/stores/useUserStore";
 
 const Login = () => {
   const { theme, spacing } = useAppTheme();
@@ -42,7 +43,7 @@ const Login = () => {
       .then(async (data: LoginResponseInterface) => {
         setLoading(false);
         if (data.user != null) {
-          await UserHelper.handleLogin(data as any);
+          await useUserStore.getState().handleLogin(data as any);
 
           // router.replace('(drawer)/dashboard');
           // props.navigation.reset({

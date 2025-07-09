@@ -1,4 +1,4 @@
-import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface, globalStyles } from "../../src/helpers";
+import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserSearchInterface, globalStyles } from "../../src/helpers";
 import { NavigationProps } from "../../src/interfaces";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useNavigation } from "@react-navigation/native";
@@ -10,9 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader } from "./Loader";
 import { router } from "expo-router";
 import { OptimizedImage } from "./OptimizedImage";
+import { useCurrentUserChurch } from "../stores/useUserStore";
 
 export function NotificationTab() {
   const navigation: NavigationProps = useNavigation();
+  const currentUserChurch = useCurrentUserChurch();
 
   const [isLoading, setLoading] = useState(false);
   const [Chatlist, setChatList] = useState<ConversationCheckInterface[]>([]);
@@ -27,7 +29,7 @@ export function NotificationTab() {
   // Use react-query for notifications
   const { data: NotificationData = [] } = useQuery<Array<Record<string, unknown>>>({
     queryKey: ["/notifications/my", "MessagingApi"],
-    enabled: !!UserHelper.user?.jwt,
+    enabled: !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 0, // Instant stale - notifications are real-time
     gcTime: 2 * 60 * 1000, // 2 minutes
@@ -39,7 +41,7 @@ export function NotificationTab() {
       setLoading(true);
       const merged: any[] = [];
       Chatlist.forEach((item1: any) => {
-        const commonId = UserHelper.currentUserChurch.person.id == item1.fromPersonId ? item1.toPersonId : item1.fromPersonId; // item1.toPersonId;
+        const commonId = currentUserChurch?.person?.id == item1.fromPersonId ? item1.toPersonId : item1.fromPersonId; // item1.toPersonId;
         const matchingItem2: any = UserData.find((item2: any) => item2.id === commonId);
         if (matchingItem2) {
           merged.push({
@@ -68,7 +70,7 @@ export function NotificationTab() {
       setLoading(false);
       let userIdList: string[] = [];
       if (Object.keys(data).length != 0) {
-        userIdList = data.map(e => (UserHelper.currentUserChurch.person.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
+        userIdList = data.map(e => (currentUserChurch?.person?.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
         if (userIdList.length != 0) {
           ApiHelper.get("/people/basic?ids=" + userIdList.join(","), "MembershipApi").then((userData: UserSearchInterface[]) => {
             // setLoading(false);

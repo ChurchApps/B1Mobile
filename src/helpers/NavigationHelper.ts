@@ -4,6 +4,7 @@ import { CacheHelper } from "./CacheHelper";
 import { EnvironmentHelper } from "./EnvironmentHelper";
 import { LinkInterface } from "./Interfaces";
 import { UserHelper } from "./UserHelper";
+import { useUserStore } from "../stores/useUserStore";
 //import SafariView from "react-native-safari-view";
 
 type NavigateFunction = (options: { pathname: string; params?: Record<string, any> }) => void;
@@ -24,7 +25,7 @@ export class NavigationHelper {
     }
     if (item.linkType == "lessons") {
       // UserHelper.addOpenScreenEvent('LessonsScreen');
-      const jwt = UserHelper.currentUserChurch?.jwt;
+      const jwt = useUserStore.getState().currentUserChurch?.jwt;
       // navigate('LessonsScreen', { url: EnvironmentHelper.LessonsRoot + "/login?jwt=" + jwt + "&returnUrl=/b1/person&churchId=" + CacheHelper.church!.id, title: item.text })
       navigate({
         pathname: "/(drawer)/lessons",
@@ -80,8 +81,9 @@ export class NavigationHelper {
       });
     }
     if (item.linkType == "directory") {
-      if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.");
-      else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers) && UserHelper.currentUserChurch?.person.membershipStatus !== "Member" && UserHelper.currentUserChurch?.person.membershipStatus !== "Staff") Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.");
+      const currentUserChurch = useUserStore.getState().currentUserChurch;
+      if (!currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.");
+      else if (!UserHelper.checkAccess(Permissions.membershipApi.people.viewMembers) && currentUserChurch?.person.membershipStatus !== "Member" && currentUserChurch?.person.membershipStatus !== "Staff") Alert.alert("Alert", "Your account does not have permission to view the member directory.  Please contact your church staff to request access.");
       else {
         UserHelper.addOpenScreenEvent("MembersSearch");
         // navigate('MembersSearch')
@@ -91,7 +93,8 @@ export class NavigationHelper {
       }
     }
     if (item.linkType == "checkin") {
-      if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.");
+      const currentUserChurch = useUserStore.getState().currentUserChurch;
+      if (!currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.");
       else {
         UserHelper.addOpenScreenEvent("ServiceScreen");
         // navigate('ServiceScreen', {})
@@ -102,7 +105,8 @@ export class NavigationHelper {
       }
     }
     if (item.linkType === "groups") {
-      if (!UserHelper.currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.");
+      const currentUserChurch = useUserStore.getState().currentUserChurch;
+      if (!currentUserChurch?.person?.id) Alert.alert("Alert", "You must be logged in to access this page.");
       UserHelper.addOpenScreenEvent("MyGroups");
       // navigate('MyGroups')
       navigate({
@@ -123,7 +127,7 @@ export class NavigationHelper {
     // } else navigate('DonationScreen')
     if (Platform.OS === "ios") {
       let url = "https://" + CacheHelper.church!.subDomain + ".b1.church/login/?returnUrl=%2Fdonate";
-      const jwt = UserHelper.currentUserChurch?.jwt;
+      const jwt = useUserStore.getState().currentUserChurch?.jwt;
       if (jwt) {
         url += "&jwt=" + jwt;
       }

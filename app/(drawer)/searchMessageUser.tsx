@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Keyboard, TouchableWithoutFeedback, View, Image } from "react-native";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
+import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const SearchMessageUser = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -15,6 +16,7 @@ const SearchMessageUser = () => {
   const [searchText, setSearchText] = useState("");
   const [searchList, setSearchList] = useState<UserSearchInterface[]>([]);
   const [loading, setLoading] = useState(false);
+  const currentUserChurch = useCurrentUserChurch();
 
   useEffect(() => {
     getPreviousConversations();
@@ -27,7 +29,7 @@ const SearchMessageUser = () => {
       setLoading(false);
       let userIdList: string[] = [];
       if (Object.keys(data).length != 0) {
-        userIdList = data.map(e => (UserHelper.currentUserChurch.person.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
+        userIdList = data.map(e => (currentUserChurch?.person?.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
         if (userIdList.length != 0) {
           ApiHelper.get("/people/basic?ids=" + userIdList.join(","), "MembershipApi").then((userData: UserSearchInterface[]) => {
             setLoading(false);

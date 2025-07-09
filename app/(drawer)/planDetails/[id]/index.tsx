@@ -4,7 +4,7 @@ import { PositionDetails } from "../../../../src/components/Plans/PositionDetail
 import { Teams } from "../../../../src/components/Plans/Teams";
 import { ServiceOrder } from "../../../../src/components/Plans/ServiceOrder";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
-import { ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "../../../../src/helpers";
+import { ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, globalStyles } from "../../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -13,6 +13,7 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useQuery } from "@tanstack/react-query";
+import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
 
 const PlanDetails = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -22,6 +23,8 @@ const PlanDetails = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const isFocused = useIsFocused();
   const [selectedTab, setSelectedTab] = useState<"serviceOrder" | "teams">("serviceOrder");
+
+  const currentUserChurch = useCurrentUserChurch();
 
   useEffect(() => {
     setErrorMessage("");
@@ -34,7 +37,7 @@ const PlanDetails = () => {
     error: planError
   } = useQuery<PlanInterface>({
     queryKey: [`/plans/${planId}`, "DoingApi"],
-    enabled: !!planId && !!UserHelper.user?.jwt,
+    enabled: !!planId && !!currentUserChurch?.jwt,
     placeholderData: undefined,
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000 // 30 minutes
@@ -43,7 +46,7 @@ const PlanDetails = () => {
   // Use react-query for plan times
   const { data: times = [], isLoading: timesLoading } = useQuery<TimeInterface[]>({
     queryKey: [`/times/plan/${planId}`, "DoingApi"],
-    enabled: !!planId && !!UserHelper.user?.jwt,
+    enabled: !!planId && !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000 // 30 minutes
@@ -52,7 +55,7 @@ const PlanDetails = () => {
   // Use react-query for plan positions
   const { data: positions = [], isLoading: positionsLoading } = useQuery<PositionInterface[]>({
     queryKey: [`/positions/plan/${planId}`, "DoingApi"],
-    enabled: !!planId && !!UserHelper.user?.jwt,
+    enabled: !!planId && !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000 // 30 minutes
@@ -61,7 +64,7 @@ const PlanDetails = () => {
   // Use react-query for plan assignments
   const { data: assignments = [], isLoading: assignmentsLoading } = useQuery<AssignmentInterface[]>({
     queryKey: [`/assignments/plan/${planId}`, "DoingApi"],
-    enabled: !!planId && !!UserHelper.user?.jwt,
+    enabled: !!planId && !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 5 * 60 * 1000, // 5 minutes - assignments change more frequently
     gcTime: 15 * 60 * 1000 // 15 minutes
@@ -73,7 +76,7 @@ const PlanDetails = () => {
   // Use react-query for people data - depends on assignments
   const { data: people = [], isLoading: peopleLoading } = useQuery<PersonInterface[]>({
     queryKey: [`/people/basic?ids=${escape(peopleIds.join(","))}`, "MembershipApi"],
-    enabled: !!UserHelper.user?.jwt && assignments.length > 0 && peopleIds.length > 0,
+    enabled: !!currentUserChurch?.jwt && assignments.length > 0 && peopleIds.length > 0,
     placeholderData: [],
     staleTime: 15 * 60 * 1000, // 15 minutes - people data is relatively stable
     gcTime: 60 * 60 * 1000 // 1 hour
@@ -95,7 +98,7 @@ const PlanDetails = () => {
     });
 
   const getPositionDetails = () => {
-    const myAssignments = ArrayHelper.getAll(assignments, "personId", UserHelper.currentUserChurch.person.id);
+    const myAssignments = ArrayHelper.getAll(assignments, "personId", currentUserChurch?.person?.id);
     return myAssignments.map(assignment => {
       const position = ArrayHelper.getOne(positions, "id", assignment.positionId);
       const posTimes = times?.filter((time: any) => time?.teams?.indexOf(position?.categoryName) > -1) || [];

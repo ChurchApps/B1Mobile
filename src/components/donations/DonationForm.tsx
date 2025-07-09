@@ -1,4 +1,4 @@
-import { ApiHelper, CacheHelper, CurrencyHelper, UserHelper, UserInterface } from "../../../src/helpers";
+import { ApiHelper, CurrencyHelper, UserHelper, UserInterface } from "../../../src/helpers";
 import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import React, { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
 import { PreviewModal } from "../modals/PreviewModal";
 import { FundDonations } from "./FundDonations";
+import { useUser, useCurrentUserChurch } from "../../../src/stores/useUserStore";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -18,8 +19,9 @@ interface Props {
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
   const { spacing } = useAppTheme();
   const theme = useTheme();
-  const person = UserHelper.currentUserChurch?.person;
-  const user = UserHelper.user;
+  const user = useUser();
+  const currentUserChurch = useCurrentUserChurch();
+  const person = currentUserChurch?.person;
   const [donationType, setDonationType] = useState<string>("");
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [date] = useState(new Date());
@@ -37,12 +39,12 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [showMethodMenu, setShowMethodMenu] = useState(false);
 
   // Determine church ID for funds query
-  const churchId = !UserHelper.currentUserChurch ? CacheHelper.church?.id || "" : !UserHelper.currentUserChurch.person?.id ? (UserHelper.currentUserChurch.church.id ?? "") : CacheHelper.church?.id || "";
+  const churchId = !currentUserChurch ? currentUserChurch?.church?.id || "" : !currentUserChurch.person?.id ? (currentUserChurch.church.id ?? "") : currentUserChurch?.church?.id || "";
 
   // Use react-query for funds
   const { data: funds = [] } = useQuery<FundInterface[]>({
     queryKey: [`/funds/churchId/${churchId}`, "GivingApi"],
-    enabled: !!churchId && !!UserHelper.user?.jwt,
+    enabled: !!churchId && !!user?.jwt,
     placeholderData: [],
     staleTime: 15 * 60 * 1000, // 15 minutes - funds change rarely
     gcTime: 60 * 60 * 1000 // 1 hour
@@ -86,7 +88,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     if (donation.amount && donation.amount < 0.5) {
       Alert.alert("Donation amount must be greater than $0.50");
     } else {
-      if (!UserHelper.currentUserChurch?.person?.id) {
+      if (!currentUserChurch?.person?.id) {
         donation.person = {
           id: "",
           email: email,
@@ -278,7 +280,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
         {donationType && (
           <>
-            {!UserHelper.currentUserChurch?.person?.id && (
+            {!currentUserChurch?.person?.id && (
               <View style={{ marginBottom: spacing.md }}>
                 <TextInput mode="outlined" label="Email" value={email} onChangeText={setEmail} style={{ marginBottom: spacing.sm }} />
                 <TextInput mode="outlined" label="First Name" value={firstName} onChangeText={setFirstName} style={{ marginBottom: spacing.sm }} />

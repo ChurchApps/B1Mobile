@@ -1,10 +1,7 @@
-import { ApiHelper } from "../mobilehelper";
-import { UserHelper } from "./UserHelper";
 import * as Notifications from "expo-notifications";
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
 import { CacheHelper } from "./CacheHelper";
-import { LoginUserChurchInterface } from "./Interfaces";
 import { usePathname } from "expo-router";
 
 // Track current screen
@@ -47,15 +44,16 @@ Notifications.setNotificationHandler({
 
 export class PushNotificationHelper {
   static async registerUserDevice() {
-    const fcmToken = CacheHelper.fcmToken;
-    const deviceName = await DeviceInfo.getDeviceName();
-    const deviceInfo = await PushNotificationHelper.getDeviceInfo();
-    const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
-    const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
-    const currentData: LoginUserChurchInterface | undefined = tst?.find(value => value.church.id == currentChurch!.id);
-    if (currentData != null || currentData != undefined) {
-      ApiHelper.post("/devices/register", { personId: currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi");
-    }
+    // TODO: Update to use useUserStore - this needs refactoring to accept user data as parameter
+    // const fcmToken = CacheHelper.fcmToken;
+    // const deviceName = await DeviceInfo.getDeviceName();
+    // const deviceInfo = await PushNotificationHelper.getDeviceInfo();
+    // const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
+    // const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
+    // const currentData: LoginUserChurchInterface | undefined = tst?.find(value => value.church.id == currentChurch!.id);
+    // if (currentData != null || currentData != undefined) {
+    //   ApiHelper.post("/devices/register", { personId: currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi");
+    // }
   }
 
   static async getDeviceInfo() {

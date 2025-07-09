@@ -4,7 +4,7 @@ import { BlockoutDates } from "../../src/components/Plans/BlockoutDates";
 import { ServingTimes } from "../../src/components/Plans/ServingTimes";
 import { UpcomingDates } from "../../src/components/Plans/UpcomingDates";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ArrayHelper, globalStyles, Constants, UserHelper } from "../../src/helpers";
+import { ArrayHelper, globalStyles, Constants } from "../../src/helpers";
 import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "../../src/helpers/Interfaces";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
@@ -13,14 +13,16 @@ import { useNavigation } from "expo-router";
 import { SafeAreaView, Text, View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useQuery } from "@tanstack/react-query";
+import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const Plan = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const currentUserChurch = useCurrentUserChurch();
 
   // Use react-query for assignments - this is the starting point
   const { data: assignments = [], isLoading: assignmentsLoading } = useQuery<AssignmentInterface[]>({
     queryKey: ["/assignments/my", "DoingApi"],
-    enabled: !!UserHelper.user?.jwt,
+    enabled: !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 15 * 60 * 1000 // 15 minutes

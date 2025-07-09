@@ -1,4 +1,4 @@
-import { ApiHelper, Constants, UserHelper, globalStyles } from "../../../src/helpers";
+import { ApiHelper, Constants, globalStyles } from "../../../src/helpers";
 import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useState } from "react";
@@ -6,6 +6,7 @@ import { Alert, Image, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { InputBox } from "../InputBox";
 import { useStripe } from "@stripe/stripe-react-native";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
   setMode: (mode: string) => void;
@@ -36,7 +37,8 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
   const [routingNumber, setRoutingNumber] = useState<string>("");
   const [firstDeposit, setFirstDeposit] = useState<string>("");
   const [secondDeposit, setSecondDeposit] = useState<string>("");
-  const person = UserHelper.currentUserChurch?.person;
+  const currentUserChurch = useCurrentUserChurch();
+  const person = currentUserChurch?.person;
   const { createToken } = useStripe();
 
   // Input validation functions

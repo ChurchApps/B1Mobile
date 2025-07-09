@@ -1,4 +1,4 @@
-import { ApiHelper, CurrencyHelper, DateHelper, UserHelper } from "../../../src/helpers";
+import { ApiHelper, CurrencyHelper, DateHelper } from "../../../src/helpers";
 import { ErrorHelper } from "../../../src/helpers/ErrorHelper";
 import { StripePaymentMethod, SubscriptionInterface } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
 import { CustomModal } from "../modals/CustomModal";
 import { DimensionHelper } from "../../../src/helpers/DimensionHelper";
+import { useUser } from "../../../src/stores/useUserStore";
 
 interface Props {
   customerId: string;
@@ -19,6 +20,7 @@ interface Props {
 export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunction }: Props) {
   const { spacing } = useAppTheme();
   const theme = useTheme();
+  const user = useUser();
   const [subscriptions, setSubscriptions] = React.useState<SubscriptionInterface[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionInterface>({} as SubscriptionInterface);
@@ -39,7 +41,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   // Use react-query for subscriptions
   const { data: subscriptionsData = [], isLoading } = useQuery<SubscriptionInterface[]>({
     queryKey: [`/customers/${customerId}/subscriptions`, "GivingApi"],
-    enabled: !!customerId && !!UserHelper.user?.jwt && isFocused,
+    enabled: !!customerId && !!user?.jwt && isFocused,
     placeholderData: [],
     staleTime: 5 * 60 * 1000, // 5 minutes - subscription data changes rarely
     gcTime: 15 * 60 * 1000, // 15 minutes

@@ -1,5 +1,4 @@
 import { CacheHelper } from "./CacheHelper";
-import { UserHelper } from "./UserHelper";
 
 export class Utilities {
   static trackEvent(name: string, data?: Record<string, unknown>) {
@@ -7,7 +6,7 @@ export class Utilities {
 
     const props = data ? data : {};
     props.church = CacheHelper.church?.name || "";
-    props.church = UserHelper.user?.displayName;
+    // props.church = UserHelper.user?.displayName; // Legacy - now using UserHelper.addOpenScreenEvent
     props.appVersion = pkg.version;
     // Analytics.trackEvent(name, props);
   }

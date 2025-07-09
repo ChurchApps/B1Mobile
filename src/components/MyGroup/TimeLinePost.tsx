@@ -2,11 +2,12 @@ import { ConversationInterface } from "../../mobilehelper";
 import dayjs from "dayjs";
 import React, { useMemo } from "react";
 import { Text, View } from "react-native";
-import { ApiHelper, UserHelper, globalStyles } from "../../../src/helpers";
+import { ApiHelper, globalStyles } from "../../../src/helpers";
 import { TimelinePostInterface } from "../../../src/helpers/Interfaces";
 import UserConversations from "../Notes/UserConversation";
 import { Menu, IconButton } from "react-native-paper";
 import { OptimizedImage } from "../OptimizedImage";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
   item: { item: TimelinePostInterface; index: number };
@@ -15,6 +16,8 @@ interface Props {
 }
 
 const TimeLinePost = ({ item, onUpdate }: Props) => {
+  const currentUserChurch = useCurrentUserChurch();
+
   const dateCalculations = useMemo(() => {
     const date = item?.item?.data?.start;
     const TodayDate = dayjs().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
@@ -42,7 +45,7 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
   const createConversation = async () => {
     const conv: ConversationInterface = {
       groupId: item?.item?.data?.groupId,
-      churchId: UserHelper.currentUserChurch.church.id,
+      churchId: currentUserChurch?.church?.id,
       contentType: item?.item?.postType,
       contentId: item?.item?.postId,
       title: item?.item?.postType + " #" + item?.item?.postId + " Conversation",

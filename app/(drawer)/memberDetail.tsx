@@ -12,6 +12,7 @@ import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const MemberDetail = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -21,10 +22,12 @@ const MemberDetail = () => {
   const memberinfo = parsedMember?.contactInfo;
   const scrollViewRef = useRef<any>(null);
 
+  const currentUserChurch = useCurrentUserChurch();
+
   // Use react-query for household members
   const { data: householdList = [], isLoading } = useQuery({
     queryKey: [`/people/household/${parsedMember?.householdId}`, "MembershipApi"],
-    enabled: !!parsedMember?.householdId && !!UserHelper.user?.jwt,
+    enabled: !!parsedMember?.householdId && !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 15 * 60 * 1000, // 15 minutes - household members don't change frequently
     gcTime: 60 * 60 * 1000 // 1 hour

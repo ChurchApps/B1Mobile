@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants, UserHelper } from "../../../src/helpers";
+import { Constants } from "../../../src/helpers";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 export const BlockoutDates = () => {
   const fadeAnim = new Animated.Value(0);
+  const currentUserChurch = useCurrentUserChurch();
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -20,7 +22,7 @@ export const BlockoutDates = () => {
   // Use react-query for blockout dates
   const { data: blockoutDates = [] } = useQuery({
     queryKey: ["/blockoutdates/my", "DoingApi"],
-    enabled: !!UserHelper.user?.jwt,
+    enabled: !!currentUserChurch?.jwt,
     placeholderData: [],
     staleTime: 10 * 60 * 1000, // 10 minutes - blockout dates don't change frequently
     gcTime: 30 * 60 * 1000, // 30 minutes

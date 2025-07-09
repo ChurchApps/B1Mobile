@@ -1,6 +1,6 @@
 import React from "react";
 import { BlueHeader } from "@/components/BlueHeader";
-import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper } from "../../src/helpers";
+import { ArrayHelper, ChurchInterface, Constants, UserHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { ApiHelper } from "../../src/mobilehelper";
 import { router } from "expo-router";
@@ -13,12 +13,14 @@ import { Platform } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
+import { useUserStore, useRecentChurches, useUserChurches } from "../../src/stores/useUserStore";
 
 const ChurchSearch = () => {
   const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");
-  const [recentList, setRecentList] = useState<ChurchInterface[]>([]);
-  const [recentListEmpty, setRecentListEmpty] = useState(false);
+  const recentChurches = useRecentChurches();
+  const userChurches = useUserChurches();
+  const { addRecentChurch, selectChurch } = useUserStore();
 
   // Use react-query for church search - only search when text is provided
   const { data: searchList = [], isLoading: loading } = useQuery({
@@ -32,71 +34,54 @@ const ChurchSearch = () => {
 
   useEffect(() => {
     // Utilities.trackEvent("Church Search Screen");
-    GetRecentList();
     UserHelper.addOpenScreenEvent("Church Search Screen");
   }, []);
 
   const churchSelection = async (churchData: ChurchInterface) => {
-    StoreToRecent(churchData);
+    console.log("🔍 Church selected:", churchData.name, "ID:", churchData.id);
     try {
-      let existing: any = null;
-      try {
-        if (UserHelper.churches) existing = ArrayHelper.getOne(UserHelper.churches, "church.id", churchData.id);
-      } catch (e: any) {
-        ErrorHelper.logError("store-recent-church", e);
+      // Check if user is already a member of this church
+      let existing = userChurches.find(uc => uc.church.id === churchData.id);
+      if (existing) {
+        console.log("👤 User is a member of this church");
+        churchData = existing.church;
+      } else {
+        console.log("👤 Anonymous selection - user not a member");
       }
-      if (existing) churchData = existing.church;
+
+      // Add to recent churches
+      addRecentChurch(churchData);
 
       // Clear all cached data when switching churches
       await clearAllCachedData();
 
-      await CacheHelper.setValue("church", churchData);
+      // Use the store to select the church
+      console.log("🏛️ Calling selectChurch...");
+      await selectChurch(churchData);
+      console.log("✅ selectChurch completed");
+
       UserHelper.addAnalyticsEvent("church_selected", {
         id: Date.now(),
         device: Platform.OS,
         church: churchData.name
       });
-      //await UserHelper.setCurrentUserChurch(userChurch);
-      if (UserHelper.user) UserHelper.setPersonRecord();
+
+      console.log("🧭 Navigating to dashboard...");
       router.navigate("/(drawer)/dashboard");
-      // DevSettings.reload()
-      // RNRestart.Restart();
 
       if (Platform.OS === "android") {
+        console.log("🔄 Android restart...");
         RNRestart.Restart();
-      } else {
-        // router.navigate("/(drawer)/dashboard");
       }
     } catch (err: any) {
+      console.error("❌ Church selection error:", err);
       ErrorHelper.logError("church-search", err);
     }
   };
 
-  const GetRecentList = async () => {
-    try {
-      const list = CacheHelper.recentChurches;
-      if (list.length === 0) setRecentListEmpty(true);
-      else {
-        let reverseList = list.reverse();
-        setRecentList(reverseList);
-      }
-    } catch (err: any) {
-      console.log("GET RECENT CHURCHES ERROR", err);
-      ErrorHelper.logError("get-recent-church", err);
-    }
-  };
+  // Remove GetRecentList - no longer needed with hooks
 
-  const StoreToRecent = async (churchData: any) => {
-    let filteredItems: any[] = [];
-    filteredItems = recentList.filter((item: any) => item.id !== churchData.id);
-    filteredItems.push(churchData);
-    try {
-      await CacheHelper.setValue("recentChurches", filteredItems);
-    } catch (err: any) {
-      console.log("SET RECENT CHURCHES ERROR", err);
-      ErrorHelper.logError("store-recent-church", err);
-    }
-  };
+  // Remove StoreToRecent - handled by the store now
 
   const getHeaderView = () => (
     <View>
@@ -112,7 +97,7 @@ const ChurchSearch = () => {
           </Button>
           {searchText === "" && (
             <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginTop: spacing.sm }}>
-              {recentListEmpty ? "No recent churches available." : "Recent Churches"}
+              {recentChurches.length === 0 ? "No recent churches available." : "Recent Churches"}
             </Text>
           )}
         </Surface>
@@ -125,7 +110,7 @@ const ChurchSearch = () => {
       {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
       <List.Section>
         {getHeaderView()}
-        {(searchText === "" ? recentList : searchList).map((item: any, index: any) => (
+        {(searchText === "" ? recentChurches.slice().reverse() : searchList).map((item: any, index: any) => (
           <List.Item
             key={item.id || index}
             title={item.name}
