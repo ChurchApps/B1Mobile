@@ -131,3 +131,19 @@ This is a **church management platform** where:
 ### Development Tips
 - **Debug Server**: Configure debug server host as `YourIP:8081` via developer menu
 - **React Native CLI**: Alternative to Expo commands - `react-native run-android` combines start and install
+
+### Known Issues & Fixes
+
+#### Android Build: expo-json-utils Autolinking Issue
+**Problem**: After `expo prebuild`, Android builds fail with "Project with path ':expo-json-utils' could not be found" error.
+
+**Root Cause**: `expo-json-utils` is nested in `node_modules/expo-manifests/node_modules/expo-json-utils/` instead of root level, causing autolinking to fail.
+
+**Fix**: Add this to `android/settings.gradle` after every `expo prebuild`:
+```gradle
+// Manually include expo-json-utils since it's required by expo-manifests
+include ':expo-json-utils'
+project(':expo-json-utils').projectDir = new File(rootProject.projectDir, '../node_modules/expo-manifests/node_modules/expo-json-utils/android')
+```
+
+**Permanent Solution**: Create a postbuild script to automatically apply this fix after prebuild operations.
