@@ -5,6 +5,7 @@ import { useIsFocused } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { ActivityIndicator, Button, Card, Divider, IconButton, List, Menu, Portal, Text, useTheme } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
 import { CustomModal } from "../modals/CustomModal";
 import { DimensionHelper } from "../../../src/helpers/DimensionHelper";
@@ -19,7 +20,6 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   const { spacing } = useAppTheme();
   const theme = useTheme();
   const [subscriptions, setSubscriptions] = React.useState<SubscriptionInterface[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionInterface>({} as SubscriptionInterface);
   const [showMethodMenu, setShowMethodMenu] = useState<boolean>(false);
@@ -35,29 +35,29 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const isFocused = useIsFocused();
-  const person = UserHelper.currentUserChurch?.person;
 
-  const loadDonations = () => {
-    if (customerId) {
-      setIsLoading(true);
-      ApiHelper.get("/customers/" + customerId + "/subscriptions", "GivingApi").then(subResult => {
-        const subs: SubscriptionInterface[] = [];
-        const requests = subResult.data?.map((s: any) =>
-          ApiHelper.get("/subscriptionfunds?subscriptionId=" + s.id, "GivingApi").then(subFunds => {
-            s.funds = subFunds;
-            subs.push(s);
-          })
-        );
-        return (
-          requests &&
-          Promise.all(requests).then(() => {
-            setSubscriptions(subs);
-            setIsLoading(false);
-          })
-        );
-      });
+  // Use react-query for subscriptions
+  const { data: subscriptionsData = [], isLoading } = useQuery<SubscriptionInterface[]>({
+    queryKey: [`/customers/${customerId}/subscriptions`, "GivingApi"],
+    enabled: !!customerId && !!UserHelper.user?.jwt && isFocused,
+    placeholderData: [],
+    staleTime: 5 * 60 * 1000, // 5 minutes - subscription data changes rarely
+    gcTime: 15 * 60 * 1000, // 15 minutes
+    queryFn: async () => {
+      const subResult = await ApiHelper.get(`/customers/${customerId}/subscriptions`, "GivingApi");
+      const subs: SubscriptionInterface[] = [];
+      if (subResult.data) {
+        const requests = subResult.data.map(async (s: any) => {
+          const subFunds = await ApiHelper.get(`/subscriptionfunds?subscriptionId=${s.id}`, "GivingApi");
+          s.funds = subFunds;
+          return s;
+        });
+        const results = await Promise.all(requests);
+        subs.push(...results);
+      }
+      return subs;
     }
-  };
+  });
 
   const getInterval = (subscription: SubscriptionInterface) => {
     let interval = subscription?.plan?.interval_count + " " + subscription?.plan?.interval;
@@ -65,14 +65,10 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   };
 
   useEffect(() => {
-    if (isFocused) {
-      if (person) {
-        loadDonations();
-      }
+    if (subscriptionsData.length > 0) {
+      setSubscriptions(subscriptionsData);
     }
-  }, [isFocused]);
-
-  useEffect(loadDonations, [customerId]);
+  }, [subscriptionsData]);
 
   const getMethodLabel = (methodId: string) => {
     const method = pm.find(m => m.id === methodId);
@@ -126,7 +122,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
             setIsDeleting(false);
             setShowModal(false);
             await updatedFunction();
-            loadDonations();
+            // React Query will automatically refetch data
           } catch (err: any) {
             setIsDeleting(false);
             Alert.alert("Error in deleting the method");

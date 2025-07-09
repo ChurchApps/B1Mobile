@@ -5,6 +5,7 @@ import { FlatList, View } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { useAppTheme } from "../../../src/theme";
 import { List, Text } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
 
 interface Props {
   onDone: () => void;
@@ -13,20 +14,19 @@ interface Props {
 export const CheckinServices = (props: Props) => {
   const { theme, spacing } = useAppTheme();
   const [loading, setLoading] = useState(false);
-  const [serviceList, setServiceList] = useState([]);
+
+  // Use react-query for services
+  const { data: serviceList = [] } = useQuery({
+    queryKey: ["/services", "AttendanceApi"],
+    enabled: !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes - services don't change frequently
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
 
   useEffect(() => {
-    getServiceData();
     UserHelper.addOpenScreenEvent("ServiceScreen");
   }, []);
-
-  const getServiceData = async () => {
-    setLoading(true);
-    ApiHelper.get("/services", "AttendanceApi").then(data => {
-      setLoading(false);
-      setServiceList(data);
-    });
-  };
 
   const ServiceSelection = (item: any) => {
     setLoading(true);
@@ -36,11 +36,16 @@ export const CheckinServices = (props: Props) => {
   const getMemberData = async (serviceId: any) => {
     const personId = UserHelper.currentUserChurch?.person?.id;
     if (personId) {
-      const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
-      CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
-      CheckinHelper.serviceTimes = await ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi");
-      await createHouseholdTree(serviceId);
-      loadExistingAttendance(serviceId);
+      try {
+        const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
+        CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
+        CheckinHelper.serviceTimes = await ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi");
+        await createHouseholdTree(serviceId);
+        loadExistingAttendance(serviceId);
+      } catch (error) {
+        console.error("Error loading member data:", error);
+        setLoading(false);
+      }
     }
   };
 

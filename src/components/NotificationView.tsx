@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import React, { useEffect, useState, useMemo } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
+import { useQuery } from "@tanstack/react-query";
 import { Loader } from "./Loader";
 import { router } from "expo-router";
 import { OptimizedImage } from "./OptimizedImage";
@@ -14,7 +15,6 @@ export function NotificationTab() {
   const navigation: NavigationProps = useNavigation();
 
   const [isLoading, setLoading] = useState(false);
-  const [NotificationData, setNotificationData] = useState<Array<Record<string, unknown>>>([]);
   const [Chatlist, setChatList] = useState<ConversationCheckInterface[]>([]);
   const [UserData, setUserData] = useState<UserSearchInterface[]>([]);
   const [mergeData, setMergedData] = useState<Array<Record<string, unknown>>>([]);
@@ -24,22 +24,15 @@ export function NotificationTab() {
     { key: "second", title: "NOTIFICATIONS" }
   ]);
 
-  useEffect(() => {
-    getNotifications();
-  }, []);
-  const getNotifications = () => {
-    setLoading(true);
-    ApiHelper.get("/notifications/my", "MessagingApi")
-      .then(data => {
-        if (data && Array.isArray(data)) setNotificationData(data);
-        else setNotificationData([]);
-      })
-      .catch(err => {
-        console.error("Error fetching notifications:", err);
-        setNotificationData([]);
-      })
-      .finally(() => setLoading(false));
-  };
+  // Use react-query for notifications
+  const { data: NotificationData = [] } = useQuery<Array<Record<string, unknown>>>({
+    queryKey: ["/notifications/my", "MessagingApi"],
+    enabled: !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 0, // Instant stale - notifications are real-time
+    gcTime: 2 * 60 * 1000, // 2 minutes
+    select: data => (Array.isArray(data) ? data : []),
+  });
 
   useEffect(() => {
     if (Chatlist.length > 0 && UserData.length > 0) {

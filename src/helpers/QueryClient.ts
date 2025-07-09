@@ -51,8 +51,8 @@ const restoreCache = async (queryClient: QueryClient) => {
 
     const cacheData = JSON.parse(cached);
 
-    // Check cache version and age (don't restore if older than 24 hours)
-    const MAX_CACHE_AGE = 24 * 60 * 60 * 1000; // 24 hours
+    // Check cache version and age (don't restore if older than 30 days)
+    const MAX_CACHE_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
     if (cacheData.version !== CACHE_VERSION || Date.now() - cacheData.timestamp > MAX_CACHE_AGE) {
       await AsyncStorage.removeItem(CACHE_KEY);
       return;

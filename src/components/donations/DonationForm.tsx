@@ -40,7 +40,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const churchId = !UserHelper.currentUserChurch ? CacheHelper.church?.id || "" : !UserHelper.currentUserChurch.person?.id ? (UserHelper.currentUserChurch.church.id ?? "") : CacheHelper.church?.id || "";
 
   // Use react-query for funds
-  const { data: funds = [], isLoading: fundsLoading } = useQuery<FundInterface[]>({
+  const { data: funds = [] } = useQuery<FundInterface[]>({
     queryKey: [`/funds/churchId/${churchId}`, "GivingApi"],
     enabled: !!churchId && !!UserHelper.user?.jwt,
     placeholderData: [],

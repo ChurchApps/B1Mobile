@@ -1,10 +1,11 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { ApiHelper, PlanInterface } from "../../../src/helpers";
+import { PlanInterface, UserHelper } from "../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants } from "../../../src/helpers/Constants";
 import { globalStyles } from "../../../src/helpers/GlobalStyles";
 import Icons from "@expo/vector-icons/MaterialIcons";
+import { useQuery } from "@tanstack/react-query";
 import { PlanItem } from ".";
 import type { PlanItemInterface } from ".";
 
@@ -13,18 +14,14 @@ interface Props {
 }
 
 export const ServiceOrder = (props: Props) => {
-  const [planItems, setPlanItems] = React.useState<PlanItemInterface[]>([]);
-
-  const loadData = async () => {
-    if (props.plan?.id) {
-      const data = await ApiHelper.get("/planItems/plan/" + props.plan.id.toString(), "DoingApi");
-      setPlanItems(data);
-    }
-  };
-
-  React.useEffect(() => {
-    loadData();
-  }, [props.plan?.id]);
+  // Use react-query for plan items
+  const { data: planItems = [] } = useQuery<PlanItemInterface[]>({
+    queryKey: [`/planItems/plan/${props.plan?.id}`, "DoingApi"],
+    enabled: !!props.plan?.id && !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 15 * 60 * 1000, // 15 minutes - plan items rarely change
+    gcTime: 60 * 60 * 1000 // 1 hour
+  });
 
   return (
     <View style={[globalStyles.FlatlistViewStyle, { paddingTop: DimensionHelper.hp(2) }]}>

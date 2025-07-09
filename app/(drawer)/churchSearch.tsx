@@ -10,15 +10,24 @@ import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 import RNRestart from "react-native-restart";
 import { Platform } from "react-native";
+import { useQuery } from "@tanstack/react-query";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 
 const ChurchSearch = () => {
   const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");
-  const [searchList, setSearchList] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [recentList, setRecentList] = useState<ChurchInterface[]>([]);
   const [recentListEmpty, setRecentListEmpty] = useState(false);
+
+  // Use react-query for church search - only search when text is provided
+  const { data: searchList = [], isLoading: loading } = useQuery({
+    queryKey: [`/churches/search/?name=${searchText}&app=B1&include=favicon_400x400`, "MembershipApi"],
+    queryFn: async () => ApiHelper.getAnonymous(`/churches/search/?name=${searchText}&app=B1&include=favicon_400x400`, "MembershipApi"),
+    enabled: searchText.length > 2, // Only search when user has typed at least 3 characters
+    placeholderData: [],
+    staleTime: 5 * 60 * 1000, // 5 minutes - search results can be cached briefly
+    gcTime: 10 * 60 * 1000, // 10 minutes
+  });
 
   useEffect(() => {
     // Utilities.trackEvent("Church Search Screen");
@@ -58,17 +67,6 @@ const ChurchSearch = () => {
     }
   };
 
-  const searchApiCall = async (text: String) => {
-    setLoading(true);
-    try {
-      const data = await ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=favicon_400x400", "MembershipApi");
-      setSearchList(data);
-    } catch {
-      setLoading(false);
-    }
-    setLoading(false);
-  };
-
   const GetRecentList = async () => {
     try {
       const list = CacheHelper.recentChurches;
@@ -104,7 +102,7 @@ const ChurchSearch = () => {
             Find Your Church
           </Text>
           <TextInput mode="outlined" label="Church name" placeholder="Church name" value={searchText} onChangeText={setSearchText} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="church" />} />
-          <Button mode="contained" onPress={() => searchApiCall(searchText)} loading={loading} style={{ marginBottom: spacing.md }}>
+          <Button mode="contained" onPress={() => {}} loading={loading} style={{ marginBottom: spacing.md }}>
             Search
           </Button>
           {searchText === "" && (

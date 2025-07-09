@@ -18,7 +18,7 @@ export const BlockoutDates = () => {
   }, []);
 
   // Use react-query for blockout dates
-  const { data: blockoutDates = [], isLoading } = useQuery({
+  const { data: blockoutDates = [] } = useQuery({
     queryKey: ["/blockoutdates/my", "DoingApi"],
     enabled: !!UserHelper.user?.jwt,
     placeholderData: [],
