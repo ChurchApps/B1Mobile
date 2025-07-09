@@ -12,3 +12,4 @@ export { SecureStorageHelper } from "./SecureStorageHelper";
 export { StripeHelper } from "./StripeHelper";
 export { UserHelper } from "./UserHelper";
 export { Utilities } from "./Utilities";
+export { useChurchSettings } from "../hooks/useChurchSettings";

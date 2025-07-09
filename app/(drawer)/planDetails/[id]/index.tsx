@@ -4,7 +4,7 @@ import { PositionDetails } from "../../../../src/components/Plans/PositionDetail
 import { Teams } from "../../../../src/components/Plans/Teams";
 import { ServiceOrder } from "../../../../src/components/Plans/ServiceOrder";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
-import { ApiHelper, ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "../../../../src/helpers";
+import { ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInterface, PositionInterface, TimeInterface, UserHelper, globalStyles } from "../../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -12,19 +12,13 @@ import { useIsFocused } from "@react-navigation/native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { useQuery } from "@tanstack/react-query";
 
 const PlanDetails = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams<{ id: string }>();
   const planId = id; // No need to JSON.parse since it's a URL parameter
 
-  // console.log("props from planscreen------>", props?.route?.params?.id)
-  const [plan, setPlan] = useState<PlanInterface | null>();
-  const [positions, setPositions] = useState<PositionInterface[]>([]);
-  const [assignments, setAssignments] = useState<AssignmentInterface[]>([]);
-  const [times, setTimes] = useState<TimeInterface[]>([]);
-  const [people, setPeople] = useState<PersonInterface[]>([]);
-  const [isLoading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const isFocused = useIsFocused();
   const [selectedTab, setSelectedTab] = useState<"serviceOrder" | "teams">("serviceOrder");
@@ -33,34 +27,66 @@ const PlanDetails = () => {
     setErrorMessage("");
   }, [isFocused]);
 
-  const loadData = async () => {
-    // console.log("plan id exist or not------>", props?.route?.params?.id)
-    setLoading(true);
-    try {
-      const tempPlan = await ApiHelper.get("/plans/" + planId, "DoingApi");
-      ApiHelper.get("/times/plan/" + planId, "DoingApi").then(data => {
-        setTimes(data);
-      });
-      setPlan(tempPlan);
-      const tempPositions = await ApiHelper.get("/positions/plan/" + planId, "DoingApi");
-      const tempAssignments = await ApiHelper.get("/assignments/plan/" + planId, "DoingApi");
-      const peopleIds = ArrayHelper.getIds(tempAssignments, "personId");
-      const tempPeople = await ApiHelper.get("/people/basic?ids=" + escape(peopleIds.join(",")), "MembershipApi");
-      setPositions(tempPositions);
-      setAssignments(tempAssignments);
-      setPeople(tempPeople);
-      setLoading(false);
-    } catch (error) {
-      console.log("Error loading Plan Details data:", error);
-      setErrorMessage("No Data found for given Plan id");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Use react-query for plan details
+  const {
+    data: plan,
+    isLoading: planLoading,
+    error: planError
+  } = useQuery<PlanInterface>({
+    queryKey: [`/plans/${planId}`, "DoingApi"],
+    enabled: !!planId && !!UserHelper.user?.jwt,
+    placeholderData: undefined,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
+
+  // Use react-query for plan times
+  const { data: times = [], isLoading: timesLoading } = useQuery<TimeInterface[]>({
+    queryKey: [`/times/plan/${planId}`, "DoingApi"],
+    enabled: !!planId && !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
+
+  // Use react-query for plan positions
+  const { data: positions = [], isLoading: positionsLoading } = useQuery<PositionInterface[]>({
+    queryKey: [`/positions/plan/${planId}`, "DoingApi"],
+    enabled: !!planId && !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
+
+  // Use react-query for plan assignments
+  const { data: assignments = [], isLoading: assignmentsLoading } = useQuery<AssignmentInterface[]>({
+    queryKey: [`/assignments/plan/${planId}`, "DoingApi"],
+    enabled: !!planId && !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 5 * 60 * 1000, // 5 minutes - assignments change more frequently
+    gcTime: 15 * 60 * 1000 // 15 minutes
+  });
+
+  // Extract people IDs from assignments
+  const peopleIds = ArrayHelper.getIds(assignments, "personId");
+
+  // Use react-query for people data - depends on assignments
+  const { data: people = [], isLoading: peopleLoading } = useQuery<PersonInterface[]>({
+    queryKey: [`/people/basic?ids=${escape(peopleIds.join(","))}`, "MembershipApi"],
+    enabled: !!UserHelper.user?.jwt && assignments.length > 0 && peopleIds.length > 0,
+    placeholderData: [],
+    staleTime: 15 * 60 * 1000, // 15 minutes - people data is relatively stable
+    gcTime: 60 * 60 * 1000 // 1 hour
+  });
+
+  const isLoading = planLoading || timesLoading || positionsLoading || assignmentsLoading || peopleLoading;
 
   useEffect(() => {
-    loadData();
-  }, [planId]);
+    if (planError) {
+      console.log("Error loading Plan Details data:", planError);
+      setErrorMessage("No Data found for given Plan id");
+    }
+  }, [planError]);
 
   const getTeams = () =>
     ArrayHelper.getUniqueValues(positions, "categoryName").map(category => {

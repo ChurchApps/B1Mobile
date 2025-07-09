@@ -4,6 +4,7 @@ import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-r
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { Button, Card, Checkbox, IconButton, Menu, RadioButton, Text, TextInput, useTheme } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
 import { PreviewModal } from "../modals/PreviewModal";
 import { FundDonations } from "./FundDonations";
@@ -22,7 +23,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [donationType, setDonationType] = useState<string>("");
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [date] = useState(new Date());
-  const [funds, setFunds] = useState<FundInterface[]>([]);
   const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([]);
   const [total, setTotal] = React.useState<number>(0);
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
@@ -35,6 +35,25 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [selectedInterval, setSelectedInterval] = useState<string>("one_week");
   const [showIntervalMenu, setShowIntervalMenu] = useState(false);
   const [showMethodMenu, setShowMethodMenu] = useState(false);
+
+  // Determine church ID for funds query
+  const churchId = !UserHelper.currentUserChurch ? CacheHelper.church?.id || "" : !UserHelper.currentUserChurch.person?.id ? (UserHelper.currentUserChurch.church.id ?? "") : CacheHelper.church?.id || "";
+
+  // Use react-query for funds
+  const { data: funds = [], isLoading: fundsLoading } = useQuery<FundInterface[]>({
+    queryKey: [`/funds/churchId/${churchId}`, "GivingApi"],
+    enabled: !!churchId && !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 15 * 60 * 1000, // 15 minutes - funds change rarely
+    gcTime: 60 * 60 * 1000 // 1 hour
+  });
+
+  // Initialize fund donations when funds data is available
+  useEffect(() => {
+    if (funds.length > 0 && fundDonations.length === 0) {
+      setFundDonations([{ fundId: funds[0].id }]);
+    }
+  }, [funds, fundDonations.length]);
 
   const intervalTypes = [
     { label: "Weekly", value: "one_week" },
@@ -80,24 +99,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
   const handleCancel = () => {
     setDonationType("");
-  };
-
-  const loadData = async () => {
-    let churchId: string = "";
-    // if (!UserHelper.currentUserChurch?.person?.id) churchId = UserHelper.currentUserChurch.church.id ?? "";
-    // else churchId = CacheHelper.church?.id || "";
-    if (!UserHelper.currentUserChurch) {
-      churchId = CacheHelper.church?.id || "";
-    } else if (!UserHelper.currentUserChurch.person?.id) {
-      churchId = UserHelper.currentUserChurch.church.id ?? "";
-    } else {
-      churchId = CacheHelper.church?.id || "";
-    }
-
-    ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then(data => {
-      setFunds(data);
-      if (data.length) setFundDonations([{ fundId: data[0].id }]);
-    });
   };
 
   const handleFundDonationsChange = (fd: FundDonationInterface[]) => {
@@ -263,10 +264,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     if (!method) return "";
     return `${method.name} ending in ${method.last4}`;
   };
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   return (
     <Card style={{ marginBottom: spacing.md }}>

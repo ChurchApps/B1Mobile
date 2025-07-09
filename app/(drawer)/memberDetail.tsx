@@ -1,15 +1,16 @@
 import React from "react";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Alert, Linking, ScrollView, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 
 const MemberDetail = () => {
@@ -18,12 +19,18 @@ const MemberDetail = () => {
   const { member } = useLocalSearchParams<{ member: any }>();
   const parsedMember = JSON.parse(member);
   const memberinfo = parsedMember?.contactInfo;
-  const [isLoading, setLoading] = useState(false);
-  const [householdList, setHouseholdList] = useState([]);
   const scrollViewRef = useRef<any>(null);
 
+  // Use react-query for household members
+  const { data: householdList = [], isLoading } = useQuery({
+    queryKey: [`/people/household/${parsedMember?.householdId}`, "MembershipApi"],
+    enabled: !!parsedMember?.householdId && !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 15 * 60 * 1000, // 15 minutes - household members don't change frequently
+    gcTime: 60 * 60 * 1000 // 1 hour
+  });
+
   useEffect(() => {
-    getHouseholdMembersList();
     UserHelper.addOpenScreenEvent("Member Detail Screen");
   }, []);
 
@@ -39,15 +46,6 @@ const MemberDetail = () => {
   const onAddressClick = () => {
     if (memberinfo.address1) Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${memberinfo.address1}`);
     else Alert.alert("Sorry", "Address of this user is not available.");
-  };
-
-  const getHouseholdMembersList = async () => {
-    setLoading(true);
-    const householdId = parsedMember?.householdId;
-    ApiHelper.get("/people/household/" + householdId, "MembershipApi").then(data => {
-      setLoading(false);
-      setHouseholdList(data);
-    });
   };
 
   const onMembersClick = (item: any) => {

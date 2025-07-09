@@ -14,9 +14,15 @@ export class UserHelper {
   static links: any[];
   static churchAppearance: AppearanceInterface;
 
-  static async setCurrentUserChurch(userChurch: LoginUserChurchInterface) {
+  static async setCurrentUserChurch(userChurch: LoginUserChurchInterface, churchAppearance?: AppearanceInterface) {
     UserHelper.currentUserChurch = userChurch;
-    UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + userChurch.church.id, "MembershipApi");
+    // If churchAppearance is provided (from React Query), use it
+    if (churchAppearance) {
+      UserHelper.churchAppearance = churchAppearance;
+    } else {
+      // Fallback to direct API call for backward compatibility
+      UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + userChurch.church.id, "MembershipApi");
+    }
   }
 
   static async setPersonRecord() {

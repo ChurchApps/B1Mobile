@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants } from "../../../src/helpers";
+import { Constants, UserHelper } from "../../../src/helpers";
 import Icons from "react-native-vector-icons/FontAwesome5";
-import { ApiHelper } from "../../../src/helpers";
+import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 
 export const BlockoutDates = () => {
-  const [blockoutDates, setBlockoutDates] = useState([]);
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -18,18 +17,17 @@ export const BlockoutDates = () => {
     }).start();
   }, []);
 
-  const loadBlockoutDates = async () => {
-    try {
-      const data = await ApiHelper.get("/blockoutdates/my", "DoingApi");
-      setBlockoutDates(data);
-    } catch (error) {
+  // Use react-query for blockout dates
+  const { data: blockoutDates = [], isLoading } = useQuery({
+    queryKey: ["/blockoutdates/my", "DoingApi"],
+    enabled: !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes - blockout dates don't change frequently
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    onError: error => {
       console.error("Error loading blockout dates:", error);
     }
-  };
-
-  useEffect(() => {
-    loadBlockoutDates();
-  }, []);
+  });
 
   return (
     <View style={styles.container}>

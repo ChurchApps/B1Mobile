@@ -1,8 +1,8 @@
 import React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
 import { Text, TouchableRipple, Button, Surface, Avatar } from "react-native-paper";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useLocalSearchParams } from "expo-router";
 import { Calendar, DateData } from "react-native-calendars";
@@ -10,9 +10,10 @@ import Markdown from "@ronradtke/react-native-markdown-display";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+import { useQuery } from "@tanstack/react-query";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { EventInterface } from "../../../../src/mobilehelper";
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "../../../../src/helpers";
+import { Constants, EnvironmentHelper, UserHelper } from "../../../../src/helpers";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
 import Conversations from "../../../../src/components/Notes/Conversations";
@@ -30,45 +31,46 @@ const GroupDetails = () => {
   const { theme, spacing } = useAppTheme();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [groupDetails, setGroupDetails] = useState<any>(null);
-  const [groupMembers, setGroupMembers] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
-  const [events, setEvents] = useState<EventInterface[]>([]);
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-  const isFocused = useIsFocused();
   const [editEvent, setEditEvent] = useState<EventInterface | null>(null);
   const [showAddEventModal, setShowAddEventModal] = useState<boolean>(false);
 
-  const loadGroupDetails = async () => {
-    setLoading(true);
-    try {
-      const data = await ApiHelper.get(`/groups/${id}`, "MembershipApi");
-      setGroupDetails(data);
-    } catch (error) {
-      console.error("Error loading group details:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Use react-query for group details
+  const { data: groupDetails, isLoading: groupDetailsLoading } = useQuery({
+    queryKey: [`/groups/${id}`, "MembershipApi"],
+    enabled: !!id && !!UserHelper.user?.jwt,
+    placeholderData: null,
+    staleTime: 10 * 60 * 1000, // 10 minutes - group details don't change frequently
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
 
-  const loadData = async () => {
-    setLoading(true);
-    ApiHelper.get(`/groupmembers?groupId=${id}`, "MembershipApi").then(data => {
-      (setGroupMembers(data), setLoading(false));
-    });
-  };
+  // Use react-query for group members
+  const { data: groupMembers = [], isLoading: groupMembersLoading } = useQuery({
+    queryKey: [`/groupmembers?groupId=${id}`, "MembershipApi"],
+    enabled: !!id && !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 5 * 60 * 1000, // 5 minutes - membership changes occasionally
+    gcTime: 15 * 60 * 1000 // 15 minutes
+  });
 
-  const loadEvents = async () => {
-    setLoading(true);
-    await ApiHelper.get(`/events/group/${id}`, "ContentApi").then(data => {
-      const result = updateTime(data);
-      setEvents(result);
-      setLoading(false);
-    });
-  };
+  // Use react-query for group events
+  const {
+    data: eventsData = [],
+    isLoading: eventsLoading,
+    refetch: refetchEvents
+  } = useQuery({
+    queryKey: [`/events/group/${id}`, "ContentApi"],
+    enabled: !!id && !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 3 * 60 * 1000, // 3 minutes - events change more frequently
+    gcTime: 10 * 60 * 1000 // 10 minutes
+  });
+
+  const loading = groupDetailsLoading || groupMembersLoading || eventsLoading;
+  const events = useMemo(() => updateTime(eventsData), [eventsData, updateTime]);
 
   const updateTime = useCallback((data: any) => {
     const tz = new Date().getTimezoneOffset();
@@ -164,14 +166,6 @@ const GroupDetails = () => {
     },
     [markedDates]
   );
-
-  useEffect(() => {
-    if (isFocused) {
-      loadGroupDetails();
-      loadData();
-      loadEvents();
-    }
-  }, [id, isFocused]);
 
   if (!groupDetails) {
     return (
@@ -330,7 +324,7 @@ const GroupDetails = () => {
           event={editEvent}
           onDone={() => {
             setShowAddEventModal(false);
-            loadEvents();
+            refetchEvents();
           }}
         />
       )}

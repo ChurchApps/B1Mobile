@@ -1,42 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { ApiHelper, CurrencyHelper, DateHelper, UserHelper } from "../../../src/helpers";
+import React, { useState } from "react";
+import { CurrencyHelper, DateHelper, UserHelper } from "../../../src/helpers";
 import { DonationInterface } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { Card, IconButton, List, Portal, Modal, Text } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
 
 export function Donations() {
-  const [donations, setDonations] = useState<DonationInterface[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showDonationModal, setShowDonationModal] = useState<boolean>(false);
   const [selectedDonation, setSelectedDonation] = useState<DonationInterface>({});
   const isFocused = useIsFocused();
   const person = UserHelper.currentUserChurch?.person;
   const { spacing, theme } = useAppTheme();
 
-  const loadDonations = () => {
-    if (person) {
-      setIsLoading(true);
-      ApiHelper.get("/donations?personId=" + person.id, "GivingApi")
-        .then(data => {
-          if (Array.isArray(data)) setDonations(data);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  };
-
-  useEffect(() => {
-    if (isFocused) {
-      if (person) {
-        loadDonations();
-      }
-    }
-  }, [isFocused]);
-
-  useEffect(loadDonations, []);
+  // Use react-query for donations
+  const { data: donations = [], isLoading } = useQuery<DonationInterface[]>({
+    queryKey: [`/donations?personId=${person?.id}`, "GivingApi"],
+    enabled: !!person?.id && !!UserHelper.user?.jwt && isFocused,
+    placeholderData: [],
+    staleTime: 2 * 60 * 1000, // 2 minutes - financial data should be relatively fresh
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    select: data => (Array.isArray(data) ? data : [])
+  });
 
   const renderDonationItem = (donation: DonationInterface) => (
     <List.Item

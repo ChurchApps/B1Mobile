@@ -4,50 +4,62 @@ import { BlockoutDates } from "../../src/components/Plans/BlockoutDates";
 import { ServingTimes } from "../../src/components/Plans/ServingTimes";
 import { UpcomingDates } from "../../src/components/Plans/UpcomingDates";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ApiHelper, ArrayHelper, globalStyles, Constants } from "../../src/helpers";
+import { ArrayHelper, globalStyles, Constants, UserHelper } from "../../src/helpers";
 import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "../../src/helpers/Interfaces";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
 import { SafeAreaView, Text, View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { useQuery } from "@tanstack/react-query";
 
 const Plan = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const [assignments, setAssignments] = useState<AssignmentInterface[]>([]);
-  const [positions, setPositions] = useState<PositionInterface[]>([]);
-  const [plans, setPlans] = useState<PlanInterface[]>([]);
-  const [times, setTimes] = useState<TimeInterface[]>([]);
-  const [isLoading, setLoading] = useState(false);
 
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const tempAssignments: AssignmentInterface[] = await ApiHelper.get("/assignments/my", "DoingApi");
-      if (tempAssignments.length > 0) {
-        setAssignments(tempAssignments);
-        const positionIds = ArrayHelper.getUniqueValues(tempAssignments, "positionId");
-        const tempPositions = await ApiHelper.get("/positions/ids?ids=" + positionIds, "DoingApi");
-        if (tempPositions.length > 0) {
-          setPositions(tempPositions);
-          const planIds = ArrayHelper.getUniqueValues(tempPositions, "planId");
-          const [tempPlans, tempTimes] = await Promise.all([ApiHelper.get("/plans/ids?ids=" + planIds, "DoingApi"), ApiHelper.get("/times/plans?planIds=" + planIds, "DoingApi")]);
-          setPlans(tempPlans);
-          setTimes(tempTimes);
-        }
-      }
-    } catch (error) {
-      console.error("Error loading Plans data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Use react-query for assignments - this is the starting point
+  const { data: assignments = [], isLoading: assignmentsLoading } = useQuery<AssignmentInterface[]>({
+    queryKey: ["/assignments/my", "DoingApi"],
+    enabled: !!UserHelper.user?.jwt,
+    placeholderData: [],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 15 * 60 * 1000 // 15 minutes
+  });
 
-  useEffect(() => {
-    loadData();
-  }, []);
+  // Extract position IDs from assignments
+  const positionIds = ArrayHelper.getUniqueValues(assignments, "positionId");
+
+  // Use react-query for positions - depends on assignments
+  const { data: positions = [], isLoading: positionsLoading } = useQuery<PositionInterface[]>({
+    queryKey: ["/positions/ids?ids=" + positionIds, "DoingApi"],
+    enabled: !!UserHelper.user?.jwt && assignments.length > 0 && positionIds.length > 0,
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes - positions change less frequently
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
+
+  // Extract plan IDs from positions
+  const planIds = ArrayHelper.getUniqueValues(positions, "planId");
+
+  // Use react-query for plans - depends on positions
+  const { data: plans = [], isLoading: plansLoading } = useQuery<PlanInterface[]>({
+    queryKey: ["/plans/ids?ids=" + planIds, "DoingApi"],
+    enabled: !!UserHelper.user?.jwt && positions.length > 0 && planIds.length > 0,
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
+
+  // Use react-query for times - depends on positions (same planIds)
+  const { data: times = [], isLoading: timesLoading } = useQuery<TimeInterface[]>({
+    queryKey: ["/times/plans?planIds=" + planIds, "DoingApi"],
+    enabled: !!UserHelper.user?.jwt && positions.length > 0 && planIds.length > 0,
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
+
+  const isLoading = assignmentsLoading || positionsLoading || plansLoading || timesLoading;
 
   return (
     <SafeAreaView style={[globalStyles.homeContainer, styles.container]}>
