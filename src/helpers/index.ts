@@ -7,6 +7,7 @@ export { DateHelper } from "./DateHelper";
 export { EnvironmentHelper } from "./EnvironmentHelper";
 export { globalStyles } from "./GlobalStyles";
 export * from "./Interfaces";
+export { queryClient } from "./QueryClient";
 export { SecureStorageHelper } from "./SecureStorageHelper";
 export { StripeHelper } from "./StripeHelper";
 export { UserHelper } from "./UserHelper";

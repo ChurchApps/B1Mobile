@@ -1,13 +1,14 @@
 import React from "react";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, View } from "react-native";
+import { View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text, TextInput } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 
 const MembersSearch = () => {
@@ -15,24 +16,26 @@ const MembersSearch = () => {
   const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");
   const [searchList, setSearchList] = useState([]);
-  const [membersList, setMembersList] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+
+  // Use react-query for members data with aggressive caching
+  const { data: membersList = [], isLoading } = useQuery({
+    queryKey: ["/people", "MembershipApi"],
+    enabled: !!UserHelper.user?.jwt, // Only run when authenticated
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes - members don't change frequently
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
 
   useEffect(() => {
     // Utilities.trackEvent("Member Search Screen");
-    loadMembers();
     UserHelper.addOpenScreenEvent("Member Search Screen");
   }, []);
 
-  const loadMembers = () => {
-    setLoading(true);
-    ApiHelper.get("/people", "MembershipApi").then(data => {
-      setLoading(false);
-      setSearchList(data);
-      setMembersList(data);
-      if (data.length === 0) Alert.alert("Alert", "No matches found");
-    });
-  };
+  useEffect(() => {
+    if (membersList.length > 0) {
+      setSearchList(membersList);
+    }
+  }, [membersList]);
 
   const filterMember = (searchText: string) => {
     let filterList = membersList.filter((item: any) => {

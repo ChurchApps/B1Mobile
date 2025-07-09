@@ -4,7 +4,8 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, MD3LightTheme } from "react-native-paper";
-import { ApiHelper, ArrayHelper, TimelinePostInterface, UserPostInterface } from "../../src/helpers";
+import { useQuery } from "@tanstack/react-query";
+import { ArrayHelper, UserHelper, UserPostInterface } from "../../src/helpers";
 import { TimelineHelper } from "../../src/helpers/Timelinehelper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
@@ -38,45 +39,53 @@ interface Group {
 
 const MyGroups = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [UserPost, setUserPost] = useState<TimelinePostInterface[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [UserGroups, setUserGroups] = useState<any[]>([]);
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
 
-  const LoadUserData = async () => {
-    setLoading(true);
-    try {
+  // Use react-query for groups data
+  const {
+    data: groups = [],
+    isLoading: groupsLoading,
+    refetch: refetchGroups
+  } = useQuery<Group[]>({
+    queryKey: ["/groups/my", "MembershipApi"],
+    enabled: !!UserHelper.user?.jwt, // Only run when authenticated
+    placeholderData: [],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000 // 10 minutes
+  });
+
+  // Use react-query for timeline data
+  const {
+    data: timelineData,
+    isLoading: timelineLoading,
+    refetch: refetchTimeline
+  } = useQuery({
+    queryKey: ["timeline", "user"],
+    queryFn: async () => {
       const { posts, groups } = await TimelineHelper.loadForUser();
-      setUserPost(posts);
-      setUserGroups(groups);
-      // No additional action needed for empty posts
-    } catch (error) {
-      console.error("Error loading user data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return { posts, groups };
+    },
+    enabled: !!UserHelper.user?.jwt, // Only run when authenticated
+    placeholderData: { posts: [], groups: [] },
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000 // 5 minutes
+  });
+
+  const loading = groupsLoading || timelineLoading;
 
   const loadData = async () => {
-    const data = await ApiHelper.get("/groups/my", "MembershipApi");
-    setGroups(data);
-    LoadUserData();
+    await Promise.all([refetchGroups(), refetchTimeline()]);
   };
 
   useEffect(() => {
-    loadData();
-  }, [ApiHelper.isAuthenticated]);
-
-  useEffect(() => {
-    if (UserPost.length > 0 && UserGroups.length > 0) {
-      const combined = UserPost.map(item1 => ({
+    if (timelineData?.posts?.length > 0 && timelineData?.groups?.length > 0) {
+      const combined = timelineData.posts.map(item1 => ({
         ...item1,
-        ...ArrayHelper.getOne(UserGroups, "id", item1.groupId)
+        ...ArrayHelper.getOne(timelineData.groups, "id", item1.groupId)
       }));
       setMergedData(combined);
     }
-  }, [UserPost, UserGroups]);
+  }, [timelineData]);
 
   const showGroups = (item: any) => (
     <Card
