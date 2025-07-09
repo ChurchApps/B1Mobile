@@ -31,7 +31,7 @@ export function NotificationTab() {
     placeholderData: [],
     staleTime: 0, // Instant stale - notifications are real-time
     gcTime: 2 * 60 * 1000, // 2 minutes
-    select: data => (Array.isArray(data) ? data : []),
+    select: data => (Array.isArray(data) ? data : [])
   });
 
   useEffect(() => {

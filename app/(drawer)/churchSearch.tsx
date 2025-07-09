@@ -26,7 +26,7 @@ const ChurchSearch = () => {
     enabled: searchText.length > 2, // Only search when user has typed at least 3 characters
     placeholderData: [],
     staleTime: 5 * 60 * 1000, // 5 minutes - search results can be cached briefly
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000 // 10 minutes
   });
 
   useEffect(() => {

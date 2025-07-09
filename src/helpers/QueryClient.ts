@@ -111,6 +111,82 @@ setInterval(() => {
   persistCache(queryClient);
 }, 30000);
 
+// Function to invalidate all queries after POST requests
+export const invalidateAllQueries = () => {
+  queryClient.invalidateQueries();
+  console.log("All queries invalidated after POST request");
+};
+
+// Smart invalidation based on API endpoints
+const invalidateRelatedQueries = (endpoint: string) => {
+  // Convert endpoint to lowercase for comparison
+  const path = endpoint.toLowerCase();
+
+  // Invalidate specific query patterns based on the API endpoint
+  if (path.includes("/groups") || path.includes("/group")) {
+    queryClient.invalidateQueries({ queryKey: ["/groups"] });
+    queryClient.invalidateQueries({ queryKey: ["/events/group"] });
+  }
+
+  if (path.includes("/events") || path.includes("/event")) {
+    queryClient.invalidateQueries({ queryKey: ["/events"] });
+    queryClient.invalidateQueries({ queryKey: ["timeline"] });
+  }
+
+  if (path.includes("/plans") || path.includes("/plan")) {
+    queryClient.invalidateQueries({ queryKey: ["/plans"] });
+    queryClient.invalidateQueries({ queryKey: ["/planItems"] });
+    queryClient.invalidateQueries({ queryKey: ["/assignments"] });
+  }
+
+  if (path.includes("/donations") || path.includes("/subscriptions")) {
+    queryClient.invalidateQueries({ queryKey: ["/funds"] });
+    queryClient.invalidateQueries({ queryKey: ["/customers"] });
+    queryClient.invalidateQueries({ queryKey: ["/subscriptions"] });
+  }
+
+  if (path.includes("/messages") || path.includes("/conversations")) {
+    queryClient.invalidateQueries({ queryKey: ["/conversations"] });
+    queryClient.invalidateQueries({ queryKey: ["/notifications"] });
+    queryClient.invalidateQueries({ queryKey: ["timeline"] });
+  }
+
+  if (path.includes("/people") || path.includes("/person")) {
+    queryClient.invalidateQueries({ queryKey: ["/people"] });
+    queryClient.invalidateQueries({ queryKey: ["/groups"] });
+  }
+
+  // Always invalidate all for safety
+  queryClient.invalidateQueries();
+};
+
+// Wrapper for ApiHelper.post that invalidates all queries
+const originalPost = ApiHelper.post;
+ApiHelper.post = async (...args: any[]) => {
+  const result = await originalPost.apply(ApiHelper, args);
+  // Use smart invalidation based on endpoint
+  const endpoint = args[0] || "";
+  invalidateRelatedQueries(endpoint);
+  return result;
+};
+
+// Also wrap other mutation methods
+const originalPut = ApiHelper.put;
+ApiHelper.put = async (...args: any[]) => {
+  const result = await originalPut.apply(ApiHelper, args);
+  const endpoint = args[0] || "";
+  invalidateRelatedQueries(endpoint);
+  return result;
+};
+
+const originalDelete = ApiHelper.delete;
+ApiHelper.delete = async (...args: any[]) => {
+  const result = await originalDelete.apply(ApiHelper, args);
+  const endpoint = args[0] || "";
+  invalidateRelatedQueries(endpoint);
+  return result;
+};
+
 // Restore cache on initialization
 export const initializeQueryCache = async () => {
   await restoreCache(queryClient);
