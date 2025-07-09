@@ -1,13 +1,13 @@
 import React from "react";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
 import { UserHelper } from "../../src/helpers";
-import { NavigationHelper } from "../../src/helpers/NavigationHelper";
+import { NavigationUtils } from "../../src/helpers/NavigationUtils";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { LinkInterface } from "../../src/helpers/Interfaces";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -38,10 +38,9 @@ const theme = {
 };
 
 const Dashboard = () => {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const focused = useIsFocused();
   const [isLoading, setLoading] = useState(true);
   const [showNotifications, setShowNotifications] = useState(false);
+  const navigation = useNavigation();
 
   const currentChurch = useCurrentChurch();
   const churchAppearance = useChurchAppearance();
@@ -74,12 +73,12 @@ const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    if (focused) {
+  useFocusEffect(
+    useCallback(() => {
       checkRedirect();
       loadDashboardData();
-    }
-  }, [focused]);
+    }, [])
+  );
 
   const checkRedirect = () => {
     if (!currentChurch) router.navigate("/(drawer)/churchSearch");
@@ -90,7 +89,7 @@ const Dashboard = () => {
     let backgroundImage = item.photo ? { uri: item.photo } : item.linkType.toLowerCase() === "groups" ? require("../../src/assets/images/dash_worship.png") : item.linkType.toLowerCase() === "bible" ? require("../../src/assets/images/dash_bible.png") : item.linkType.toLowerCase() === "votd" ? require("../../src/assets/images/dash_votd.png") : item.linkType.toLowerCase() === "lessons" ? require("../../src/assets/images/dash_lessons.png") : item.linkType.toLowerCase() === "checkin" ? require("../../src/assets/images/dash_checkin.png") : item.text.toLowerCase() === "chums" ? require("../../src/assets/images/dash_chums.png") : item.linkType.toLowerCase() === "donation" ? require("../../src/assets/images/dash_donation.png") : item.linkType.toLowerCase() === "directory" ? require("../../src/assets/images/dash_directory.png") : item.linkType.toLowerCase() === "plans" ? require("../../src/assets/images/dash_votd.png") : require("../../src/assets/images/dash_url.png");
 
     return (
-      <Card key={`card-${item.id || item.linkType + item.text}`} style={styles.card} mode="elevated" onPress={() => NavigationHelper.navigateToScreen(item, router.navigate)}>
+      <Card key={`card-${item.id || item.linkType + item.text}`} style={styles.card} mode="elevated" onPress={() => NavigationUtils.navigateToScreen(item, currentChurch)}>
         <View style={styles.cardImage}>
           <OptimizedImage source={backgroundImage} style={styles.cardImageInner} contentFit="cover" />
         </View>
@@ -135,7 +134,7 @@ const Dashboard = () => {
         <LoadingWrapper loading={isLoading}>
           <View style={styles.container}>
             <Appbar.Header style={styles.header} mode="center-aligned">
-              <Appbar.Action icon="menu" onPress={() => navigation.openDrawer()} color="white" />
+              <Appbar.Action icon={() => <MaterialIcons name="dehaze" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
               <Appbar.Content title="Home" titleStyle={styles.headerTitle} />
               <View style={styles.bellContainer}>
                 <View style={styles.bellWrapper}>

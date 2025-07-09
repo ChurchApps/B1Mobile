@@ -1,7 +1,7 @@
 // Firebase configuration for Expo
 // This file initializes Firebase for the app using Expo Firebase SDK
 
-import { getApp, initializeApp, getApps } from "@react-native-firebase/app";
+import { getApp, getApps } from "@react-native-firebase/app";
 import { getAnalytics, logEvent, setAnalyticsCollectionEnabled } from "@react-native-firebase/analytics";
 
 // Firebase is automatically initialized with Expo
@@ -16,7 +16,7 @@ export const initializeFirebase = async () => {
       // Firebase will be automatically initialized by React Native Firebase
       // when the app starts with the config files
     }
-    
+
     const app = getApp();
     const analytics = getAnalytics(app);
 
@@ -36,7 +36,7 @@ export const logAnalyticsEvent = async (eventName: string, parameters?: any) => 
       console.warn("Firebase not initialized yet, skipping analytics event:", eventName);
       return;
     }
-    
+
     const app = getApp();
     const analytics = getAnalytics(app);
     await logEvent(analytics, eventName, parameters);
@@ -51,7 +51,7 @@ export const testFirebaseFeatures = async (): Promise<boolean> => {
       console.warn("Firebase not initialized yet, cannot test features");
       return false;
     }
-    
+
     const app = getApp();
     const analytics = getAnalytics(app);
 

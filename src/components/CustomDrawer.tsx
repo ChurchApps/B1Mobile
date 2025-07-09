@@ -1,22 +1,25 @@
-import { CacheHelper, EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { NavigationUtils } from "../../src/helpers/NavigationUtils";
 import { ErrorHelper } from "../mobilehelper";
-import { NavigationHelper } from "../../src/helpers/NavigationHelper";
 import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
-import { Linking, ScrollView, StyleSheet, View } from "react-native";
+import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
 import RNRestart from "react-native-restart";
 import { DimensionHelper } from "../helpers/DimensionHelper";
 import { useAppTheme } from "../../src/theme";
 import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from "react-native-paper";
 import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
+import { DrawerActions } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
-export function CustomDrawer(props: any) {
+export function CustomDrawer() {
   const { spacing } = useAppTheme();
   const paperTheme = useTheme();
+  const navigation = useNavigation();
   // Use hooks instead of local state
   const user = useUser();
   const currentChurch = useCurrentChurch();
@@ -27,7 +30,12 @@ export function CustomDrawer(props: any) {
   useEffect(() => {
     getChurch();
     updateDrawerList();
-  }, [props.navigation]);
+  }, [currentChurch]);
+
+  useEffect(() => {
+    // Also trigger on initial mount
+    updateDrawerList();
+  }, []);
 
   const getChurch = async () => {
     try {
@@ -40,34 +48,34 @@ export function CustomDrawer(props: any) {
   };
 
   const updateDrawerList = async () => {
-    let tabs: LinkInterface[] = [];
-    if (currentChurch) {
-      const tempTabs = await ApiHelper.getAnonymous("/links/church/" + currentChurch.id + "?category=b1Tab", "ContentApi");
-      tempTabs.forEach((tab: LinkInterface) => {
-        switch (tab.linkType) {
-          case "groups":
-          case "donation":
-          case "directory":
-          case "plans":
-          case "lessons":
-          case "website":
-          case "checkin":
-            break;
-          default:
-            tabs.push(tab);
-            break;
-        }
-      });
-    }
+    try {
+      let tabs: LinkInterface[] = [];
+      if (currentChurch) {
+        const tempTabs = await ApiHelper.getAnonymous("/links/church/" + currentChurch.id + "?category=b1Tab", "ContentApi");
+        tempTabs.forEach((tab: LinkInterface) => {
+          switch (tab.linkType) {
+            case "groups":
+            case "donation":
+            case "directory":
+            case "plans":
+            case "lessons":
+            case "website":
+            case "checkin":
+              break;
+            default:
+              tabs.push(tab);
+              break;
+          }
+        });
+      }
 
-    let specialTabs = await getSpecialTabs();
-    const data = tabs.concat(specialTabs);
+      let specialTabs = await getSpecialTabs();
+      const data = tabs.concat(specialTabs);
 
-    setDrawerList(data);
-    setLinks(data);
-    if (data.length > 0) {
-      if (data[0].linkType === "groups") router.navigate("/(drawer)/myGroups");
-      else router.navigate("/(drawer)/dashboard");
+      setDrawerList(data);
+      setLinks(data);
+    } catch (error) {
+      console.error("Error updating drawer list:", error);
     }
   };
 
@@ -112,7 +120,7 @@ export function CustomDrawer(props: any) {
       showMyGroups = uc?.groups?.length > 0;
     }
     specialTabs.push({ linkType: "separator", linkData: "", category: "", text: "", icon: "", url: "" });
-    if (showWebsite) specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Website", icon: "home", url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", CacheHelper.church!.subDomain || "") });
+    if (showWebsite) specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Website", icon: "home", url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") });
     if (showMyGroups) specialTabs.push({ linkType: "groups", linkData: "", category: "", text: "My Groups", icon: "group", url: "" });
     if (showCheckin) specialTabs.push({ linkType: "checkin", linkData: "", category: "", text: "Check In", icon: "check_box", url: "" });
     if (showDonations) specialTabs.push({ linkType: "donation", linkData: "", category: "", text: "Donate", icon: "volunteer_activism", url: "" });
@@ -160,8 +168,8 @@ export function CustomDrawer(props: any) {
         title={item.text}
         left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={paperTheme.colors.primary} style={styles.drawerIcon} />)}
         onPress={() => {
-          NavigationHelper.navigateToScreen(item, router.navigate);
-          props.navigation.closeDrawer();
+          NavigationUtils.navigateToScreen(item, currentChurch);
+          navigation.dispatch(DrawerActions.closeDrawer());
         }}
         style={[styles.listItem, { paddingLeft: 20 }]}
         titleStyle={styles.listItemText}
@@ -232,11 +240,15 @@ export function CustomDrawer(props: any) {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {drawerHeaderComponent()}
-        {drawerList.map((item, index) => (
-          <View key={item.id || index}>{listItem(false, item)}</View>
-        ))}
+        {drawerList.length === 0 ? (
+          <View style={{ padding: 20 }}>
+            <Text>Loading navigation...</Text>
+          </View>
+        ) : (
+          drawerList.map((item, index) => <View key={item.id || index}>{listItem(false, item)}</View>)
+        )}
         {drawerFooterComponent()}
       </ScrollView>
     </View>
@@ -303,10 +315,18 @@ const styles = StyleSheet.create({
     height: 24,
     marginRight: 8
   },
+  scrollContainer: {
+    flex: 1
+  },
+  scrollContent: {
+    paddingBottom: 40 // Extra space for footer to be visible
+  },
   footerContainer: {
     padding: 16,
-    marginTop: 8,
-    backgroundColor: "white"
+    marginTop: 16,
+    backgroundColor: "white",
+    borderTopWidth: 1,
+    borderTopColor: "#e0e0e0"
   },
   logoutButton: {
     marginBottom: 8

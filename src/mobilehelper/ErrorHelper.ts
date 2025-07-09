@@ -2,11 +2,13 @@ import { DeviceEventEmitter } from "react-native";
 import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
 export class ErrorHelper {
-  static logEvent(eventType: string, source: string, message: string) {
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  static logEvent(_eventType: string, _source: string, _message: string) {
     //FirebaseAnalyticsHelper.trackEvent(eventType, { source, message });
   }
 
-  static logError(source: string, message: string) {
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  static logError(_source: string, _message: string) {
     //FirebaseAnalyticsHelper.trackEvent("Error", { source, message });
   }
 
@@ -33,8 +35,12 @@ export class ErrorHelper {
       ErrorHelper.logError("Unhandled Javascript", error.toString());
     });
 
-    setNativeExceptionHandler((exceptionString: string) => {
-      ErrorHelper.logError("Unhandled Native", exceptionString);
-    }, false, true);
+    setNativeExceptionHandler(
+      (exceptionString: string) => {
+        ErrorHelper.logError("Unhandled Native", exceptionString);
+      },
+      false,
+      true
+    );
   }
 }

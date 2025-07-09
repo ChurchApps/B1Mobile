@@ -1,9 +1,9 @@
 import React from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Provider as PaperProvider, Appbar, Card, Text, MD3LightTheme } from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { ArrayHelper, UserPostInterface } from "../../src/helpers";
 import { TimelineHelper } from "../../src/helpers/Timelinehelper";
@@ -11,6 +11,8 @@ import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useUser } from "../../src/stores/useUserStore";
+import { useNavigation } from "@react-navigation/native";
+import { DrawerActions } from "@react-navigation/native";
 
 const theme = {
   ...MD3LightTheme,
@@ -39,8 +41,8 @@ interface Group {
 }
 
 const MyGroups = () => {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
+  const navigation = useNavigation();
 
   const user = useUser();
 
@@ -130,7 +132,7 @@ const MyGroups = () => {
         <LoadingWrapper loading={loading}>
           <View style={styles.container}>
             <Appbar.Header style={styles.header} mode="center-aligned">
-              <Appbar.Action icon="menu" onPress={() => navigation.openDrawer()} color="white" />
+              <Appbar.Action icon={() => <MaterialIcons name="dehaze" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
               <Appbar.Content title="My Groups" titleStyle={styles.headerTitle} />
             </Appbar.Header>
             <View style={styles.contentContainer}>

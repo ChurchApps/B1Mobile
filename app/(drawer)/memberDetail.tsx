@@ -4,6 +4,7 @@ import { Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { DrawerActions } from "@react-navigation/native";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Alert, Linking, ScrollView, View } from "react-native";
@@ -72,7 +73,7 @@ const MemberDetail = () => {
 
   return (
     <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
-      <MainHeader title="Directory" openDrawer={navigation.openDrawer} back={navigation.goBack} />
+      <MainHeader title="Directory" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
       <ScrollView style={{ flex: 1 }} ref={scrollViewRef} contentContainerStyle={{ padding: spacing.md }}>
         <OptimizedImage source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member} style={{ width: 96, height: 96, borderRadius: 48, alignSelf: "center", marginBottom: spacing.md }} placeholder={Constants.Images.ic_member} priority="high" />
         <Surface style={{ alignItems: "center", marginBottom: spacing.md, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, elevation: 2, padding: spacing.md }}>

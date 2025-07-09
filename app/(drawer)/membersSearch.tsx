@@ -2,6 +2,7 @@ import React from "react";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { DrawerActions } from "@react-navigation/native";
 import { router, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -78,7 +79,7 @@ const MembersSearch = () => {
 
   return (
     <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
-      <MainHeader title="Directory" openDrawer={navigation.openDrawer} back={navigation.goBack} />
+      <MainHeader title="Directory" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.md }}>
         <View style={{ width: "100%", maxWidth: 500, alignSelf: "center" }}>
           <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>

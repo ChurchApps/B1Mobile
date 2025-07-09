@@ -4,11 +4,12 @@ import { BlockoutDates } from "../../src/components/Plans/BlockoutDates";
 import { ServingTimes } from "../../src/components/Plans/ServingTimes";
 import { UpcomingDates } from "../../src/components/Plans/UpcomingDates";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ArrayHelper, globalStyles, Constants } from "../../src/helpers";
+import { ArrayHelper, globalStyles, Constants, UserHelper } from "../../src/helpers";
 import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "../../src/helpers/Interfaces";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { SafeAreaView, Text, View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -65,7 +66,7 @@ const Plan = () => {
 
   return (
     <SafeAreaView style={[globalStyles.homeContainer, styles.container]}>
-      <MainHeader title={"Plans"} openDrawer={navigation.openDrawer} back={navigation.goBack} />
+      <MainHeader title={"Plans"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
       {isLoading ? (
         <Loader isLoading={isLoading} />
       ) : (

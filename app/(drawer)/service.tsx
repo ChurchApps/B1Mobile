@@ -6,7 +6,7 @@ import { CheckinServices } from "../../src/components/checkin/CheckinServices";
 import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface } from "../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, SafeAreaView, ScrollView, View } from "react-native";
@@ -44,7 +44,7 @@ const Service = () => {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
       <Appbar.Header>
-        <Appbar.Action icon="menu" onPress={navigation.openDrawer} />
+        <Appbar.Action icon="menu" onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
         <Appbar.Content title="Checkin" />
         <Appbar.Action icon="arrow-left" onPress={navigation.goBack} />
       </Appbar.Header>

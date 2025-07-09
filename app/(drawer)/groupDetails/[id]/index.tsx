@@ -2,7 +2,7 @@ import React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
 import { Text, TouchableRipple, Button, Surface, Avatar } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useLocalSearchParams } from "expo-router";
 import { Calendar, DateData } from "react-native-calendars";
@@ -198,7 +198,7 @@ const GroupDetails = () => {
     <LoadingWrapper loading={loading}>
       <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
         <SafeAreaView style={{ flex: 1 }}>
-          <MainHeader title={name} openDrawer={navigation.openDrawer} back={navigation.goBack} />
+          <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
           <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
             <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
               {photoUrl ? (

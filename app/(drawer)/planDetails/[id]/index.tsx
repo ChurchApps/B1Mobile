@@ -8,7 +8,7 @@ import { ArrayHelper, AssignmentInterface, Constants, PersonInterface, PlanInter
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, DrawerActions } from "@react-navigation/native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, Text, View, StyleSheet, TouchableOpacity } from "react-native";
@@ -97,6 +97,11 @@ const PlanDetails = () => {
       return <Teams key={`team-${category.toLowerCase().replace(/\s+/g, "-")}`} positions={pos} assignments={assignments} people={people} name={category} />;
     });
 
+  const loadData = () => {
+    // Data is managed by react-query and refetched automatically
+    // This function is kept for component compatibility
+  };
+
   const getPositionDetails = () => {
     const myAssignments = ArrayHelper.getAll(assignments, "personId", currentUserChurch?.person?.id);
     return myAssignments.map(assignment => {
@@ -120,7 +125,7 @@ const PlanDetails = () => {
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader title={"Plan Details"} openDrawer={navigation.openDrawer} back={navigation.goBack} />
+      <MainHeader title={"Plan Details"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
       {plan && (
         <View style={[styles.headerGradient, { backgroundColor: Constants.Colors.app_color }]}>
           <View style={styles.headerContent}>
