@@ -2,6 +2,7 @@ export { BlueHeader } from "./BlueHeader";
 export { BottomButton } from "./BottomButton";
 export { CustomDrawer } from "./CustomDrawer";
 export { DisplayBox } from "./DisplayBox";
+export { ErrorBoundary } from "./ErrorBoundary";
 export { InputBox } from "./InputBox";
 export { Loader } from "./Loader";
 export { NotificationTab } from "./NotificationView";

@@ -8,6 +8,7 @@ import { initializeFirebase } from "../src/config/firebase";
 import { ThemeProvider } from "../src/theme/ThemeProvider";
 import { UserHelper } from "../src/helpers/UserHelper";
 import { queryClient, initializeQueryCache } from "../src/helpers/QueryClient";
+import { ErrorBoundary } from "../src/components/ErrorBoundary";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -21,16 +22,18 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <SafeAreaProvider>
-          <Stack screenOptions={{ headerShown: false }} initialRouteName="auth">
-            <Stack.Screen name="auth" />
-            <Stack.Screen name="index" />
-            <Stack.Screen name="(drawer)" />
-          </Stack>
-        </SafeAreaProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <SafeAreaProvider>
+            <Stack screenOptions={{ headerShown: false }} initialRouteName="auth">
+              <Stack.Screen name="auth" />
+              <Stack.Screen name="index" />
+              <Stack.Screen name="(drawer)" />
+            </Stack>
+          </SafeAreaProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
