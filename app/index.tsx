@@ -3,6 +3,7 @@ import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } fro
 import { ErrorHelper } from "../src/mobilehelper";
 import { PushNotificationHelper } from "../src/helpers/PushNotificationHelper";
 import { UpdateHelper } from "../src/helpers/UpdateHelper";
+import { SecureStorageHelper } from "../src/helpers/SecureStorageHelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { router } from "expo-router";
 import { useEffect } from "react";
@@ -41,17 +42,18 @@ const SplashScreen = () => {
   }, []);
 
   const setUserDataNew = async () => {
-    const user = useUserStore.getState().user;
-    if (!user?.jwt) return;
+    // Get JWT from secure storage instead of user object
+    const jwt = await SecureStorageHelper.getSecureItem("default_jwt");
+    if (!jwt) return;
 
-    const data = await ApiHelper.postAnonymous("/users/login", { jwt: user.jwt }, "MembershipApi");
+    const data = await ApiHelper.postAnonymous("/users/login", { jwt }, "MembershipApi");
     if (data.user != null) await useUserStore.getState().handleLogin(data);
   };
 
   const checkUser = async () => {
     try {
-      const store = useUserStore.getState();
-      if (store.user?.jwt) await setUserDataNew();
+      // Try to re-authenticate using stored JWT
+      await setUserDataNew();
     } catch (e: any) {
       console.error("App initialization error:", e);
       ErrorHelper.logError("splash-screen-error", e);

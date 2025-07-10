@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserInterface, ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface, LoginResponseInterface, RolePermissionInterface } from "../helpers/Interfaces";
+import { UserInterface, ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface, LoginResponseInterface } from "../helpers/Interfaces";
 import { ApiHelper } from "../mobilehelper";
 import { SecureStorageHelper } from "../helpers/SecureStorageHelper";
 import { PushNotificationHelper } from "../helpers/PushNotificationHelper";
@@ -365,9 +365,8 @@ export const useUserStore = create<UserState>()(
         // Clear API permissions
         ApiHelper.setDefaultPermissions("");
 
-        // Clear secure storage
+        // Clear secure storage (only JWT token now)
         await SecureStorageHelper.removeSecureItem("default_jwt");
-        await SecureStorageHelper.removeSecureItem("api_tokens");
 
         // Clear state
         set({
@@ -436,33 +435,23 @@ export const useUserStore = create<UserState>()(
 // Helper function to store JWT tokens securely
 async function storeSecureTokens(userChurch: LoginUserChurchInterface): Promise<void> {
   try {
-    // Store default JWT token
+    // Only store the main JWT token to avoid SecureStore size limits
     if (userChurch?.jwt) {
       await SecureStorageHelper.setSecureItem("default_jwt", userChurch.jwt);
     }
 
-    // Store API-specific tokens
+    // Set API permissions in memory (they'll be refreshed on app restart)
     if (userChurch?.apis && userChurch.apis.length > 0) {
-      const apiTokens: Record<string, { jwt: string; permissions: RolePermissionInterface[] }> = {};
-
       userChurch.apis.forEach(api => {
         if (api.keyName && api.jwt) {
-          apiTokens[api.keyName] = {
-            jwt: api.jwt,
-            permissions: api.permissions || []
-          };
+          ApiHelper.setPermissions(api.keyName, api.jwt, api.permissions || []);
         }
       });
 
-      // Also store MessagingApi token
+      // Also set MessagingApi token
       if (userChurch.jwt) {
-        apiTokens["MessagingApi"] = {
-          jwt: userChurch.jwt,
-          permissions: []
-        };
+        ApiHelper.setPermissions("MessagingApi", userChurch.jwt, []);
       }
-
-      await SecureStorageHelper.setSecureItem("api_tokens", JSON.stringify(apiTokens));
     }
   } catch (error) {
     console.error("Failed to store secure tokens:", error);

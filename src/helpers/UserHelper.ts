@@ -41,15 +41,15 @@ export class UserHelper {
       const defaultToken = await SecureStorageHelper.getSecureItem("default_jwt");
       if (defaultToken) {
         ApiHelper.setDefaultPermissions(defaultToken);
+        // We'll use this token to re-authenticate and get fresh permissions
+        // This happens in the app initialization flow
       }
 
-      // Load API-specific tokens
-      const apiTokens = await SecureStorageHelper.getSecureItem("api_tokens");
-      if (apiTokens) {
-        const tokens = JSON.parse(apiTokens);
-        Object.entries(tokens).forEach(([apiName, tokenData]: [string, any]) => {
-          ApiHelper.setPermissions(apiName, tokenData.jwt, tokenData.permissions || []);
-        });
+      // One-time migration: Remove old api_tokens to prevent SecureStore size warning
+      const hasOldTokens = await SecureStorageHelper.hasSecureItem("api_tokens");
+      if (hasOldTokens) {
+        await SecureStorageHelper.removeSecureItem("api_tokens");
+        console.log("Migrated: Removed old api_tokens from SecureStore");
       }
     } catch (error) {
       console.error("Failed to load secure tokens:", error);
@@ -62,7 +62,6 @@ export class UserHelper {
   static async clearSecureTokens(): Promise<void> {
     try {
       await SecureStorageHelper.removeSecureItem("default_jwt");
-      await SecureStorageHelper.removeSecureItem("api_tokens");
     } catch (error) {
       console.error("Failed to clear secure tokens:", error);
     }
