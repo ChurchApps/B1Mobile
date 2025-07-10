@@ -1,7 +1,7 @@
 import React from "react";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View, TouchableOpacity, ScrollView } from "react-native";
-import { Text, TouchableRipple, Button, Surface, Avatar, Card, Chip, IconButton } from "react-native-paper";
+import { FlatList, SafeAreaView, StyleSheet, View, TouchableOpacity } from "react-native";
+import { Text, Button, Surface, Avatar, Card, Chip, IconButton } from "react-native-paper";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useLocalSearchParams } from "expo-router";
@@ -16,17 +16,15 @@ import { EventInterface } from "../../../../src/mobilehelper";
 import { Constants, EnvironmentHelper } from "../../../../src/helpers";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
-import Conversations from "../../../../src/components/Notes/Conversations";
 import { EventModal } from "../../../../src/components/eventCalendar/EventModal";
 import CreateEvent from "../../../../src/components/eventCalendar/CreateEvent";
+import GroupChatModal from "../../../../src/components/modals/GroupChatModal";
 import { useAppTheme } from "../../../../src/theme";
 import { OptimizedImage } from "../../../../src/components/OptimizedImage";
 import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-const TABS = ["About", "Conversations", "Group Members", "Group Calendar"];
 
 const GroupDetails = () => {
   const { theme, spacing } = useAppTheme();
@@ -38,6 +36,7 @@ const GroupDetails = () => {
   const [selectedEvents, setSelectedEvents] = useState<any>(null);
   const [editEvent, setEditEvent] = useState<EventInterface | null>(null);
   const [showAddEventModal, setShowAddEventModal] = useState<boolean>(false);
+  const [showChatModal, setShowChatModal] = useState<boolean>(false);
 
   const currentUserChurch = useCurrentUserChurch();
 
@@ -60,7 +59,7 @@ const GroupDetails = () => {
     }
   });
 
-  // Use react-query for group members
+  // Use react-query for group members - load immediately in parallel
   const {
     data: groupMembers = [],
     isLoading: groupMembersLoading,
@@ -68,7 +67,7 @@ const GroupDetails = () => {
     isError: groupMembersIsError
   } = useQuery({
     queryKey: [`/groupmembers?groupId=${id}`, "MembershipApi"],
-    enabled: !!id && !!currentUserChurch?.jwt && !!groupDetails, // Only load after group details
+    enabled: !!id && !!currentUserChurch?.jwt, // Load in parallel with group details
     placeholderData: [],
     staleTime: 5 * 60 * 1000, // 5 minutes - membership changes occasionally
     gcTime: 15 * 60 * 1000, // 15 minutes
@@ -76,7 +75,7 @@ const GroupDetails = () => {
     retryDelay: 1000
   });
 
-  // Use react-query for group events
+  // Use react-query for group events - load only when needed (lazy loading)
   const {
     data: eventsData = [],
     isLoading: eventsLoading,
@@ -85,7 +84,7 @@ const GroupDetails = () => {
     refetch: refetchEvents
   } = useQuery({
     queryKey: [`/events/group/${id}`, "ContentApi"],
-    enabled: !!id && !!currentUserChurch?.jwt && !!groupDetails, // Only load after group details
+    enabled: !!id && !!currentUserChurch?.jwt && activeTab === 3, // Only load when calendar tab is active
     placeholderData: [],
     staleTime: 3 * 60 * 1000, // 3 minutes - events change more frequently
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -93,7 +92,8 @@ const GroupDetails = () => {
     retryDelay: 1000
   });
 
-  const loading = groupDetailsLoading || groupMembersLoading || eventsLoading;
+  // Only block on essential data for initial render
+  const loading = groupDetailsLoading;
   const hasError = groupDetailsIsError || groupMembersIsError || eventsIsError;
   const errors = [groupDetailsError, groupMembersError, eventsError].filter(Boolean);
 
@@ -190,37 +190,44 @@ const GroupDetails = () => {
     }
   }, []);
 
+  // Optimize event expansion with lazy computation
   const expandedEvents = useMemo(() => {
-    // Limit processing for performance - only expand events if reasonable amount
-    if (events.length > 100) {
+    // Only expand events when calendar tab is active
+    if (activeTab !== 3) return [];
+
+    // Limit processing for performance
+    if (events.length > 50) {
       console.warn("Large number of events detected, limiting expansion for performance");
-      return events.slice(0, 50); // Limit to first 50 events
+      return events.slice(0, 25); // Limit to first 25 events for better performance
     }
     return expandEvents(events);
-  }, [events, expandEvents]);
+  }, [events, expandEvents, activeTab]);
 
+  // Optimize marked dates calculation with better performance
   const markedDates = useMemo(() => {
-    const marked: any = {};
+    // Only calculate when calendar tab is active and events are loaded
+    if (activeTab !== 3 || !expandedEvents || expandedEvents.length === 0) return {};
 
-    if (!expandedEvents || expandedEvents.length === 0) return marked;
+    const marked: any = {};
+    const maxEventsToProcess = 20; // Limit for performance
+    const eventsToProcess = expandedEvents.slice(0, maxEventsToProcess);
 
     try {
-      expandedEvents.forEach(event => {
+      eventsToProcess.forEach(event => {
         if (!event.start || !event.end) return;
 
         try {
           let currentDate = dayjs(event.start);
           const endDate = dayjs(event.end);
           let iterations = 0;
-          const maxIterations = 365; // Prevent infinite loops
+          const maxIterations = 30; // Reduced max iterations for better performance
 
           while ((currentDate.isBefore(endDate) || currentDate.isSame(endDate, "day")) && iterations < maxIterations) {
             const dateString = currentDate.format("YYYY-MM-DD");
-            const dotColor = "#fff";
 
             marked[dateString] = {
               ...marked[dateString],
-              dots: [...(marked[dateString]?.dots || []), { color: dotColor }],
+              dots: [...(marked[dateString]?.dots || []), { color: "#1565C0" }],
               events: [...(marked[dateString]?.events || []), event],
               marked: true,
               textColor: "black",
@@ -229,10 +236,6 @@ const GroupDetails = () => {
 
             currentDate = currentDate.add(1, "day");
             iterations++;
-          }
-
-          if (iterations >= maxIterations) {
-            console.warn("Event marking exceeded max iterations for event:", event.id);
           }
         } catch (dateError) {
           console.warn("Error marking dates for event:", event.id, dateError);
@@ -243,7 +246,7 @@ const GroupDetails = () => {
     }
 
     return marked;
-  }, [expandedEvents]);
+  }, [expandedEvents, activeTab]);
 
   const onDayPress = useCallback(
     (day: DateData) => {
@@ -257,12 +260,52 @@ const GroupDetails = () => {
     [markedDates]
   );
 
-  // Handle loading and error states
+  // Show skeleton UI immediately with progressive loading
   if (groupDetailsLoading) {
     return (
-      <LoadingWrapper loading={true}>
-        <View />
-      </LoadingWrapper>
+      <View style={styles.container}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <MainHeader title="Loading..." openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+
+          <FlatList
+            data={[{ key: "skeleton" }]}
+            renderItem={() => (
+              <View>
+                {/* Skeleton Hero Section */}
+                <View style={styles.heroSection}>
+                  <Card style={styles.heroCard}>
+                    <View style={[styles.heroImageContainer, styles.skeletonHero]}>
+                      <View style={styles.heroOverlay}>
+                        <View style={[styles.skeletonText, { width: "60%", height: 28, marginBottom: 12 }]} />
+                        <View style={styles.heroStats}>
+                          <View style={[styles.skeletonText, { width: 80, height: 20 }]} />
+                        </View>
+                      </View>
+                    </View>
+                  </Card>
+                </View>
+
+                {/* Skeleton Navigation */}
+                <Card style={styles.navigationCard}>
+                  <Card.Content>
+                    <View style={styles.navigationGrid}>
+                      {[1, 2, 3, 4].map(i => (
+                        <View key={i} style={styles.navButton}>
+                          <View style={[styles.skeletonCircle, { width: 40, height: 40, marginBottom: 4 }]} />
+                          <View style={[styles.skeletonText, { width: 50, height: 12 }]} />
+                        </View>
+                      ))}
+                    </View>
+                  </Card.Content>
+                </Card>
+              </View>
+            )}
+            keyExtractor={item => item.key}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.mainContainer}
+          />
+        </SafeAreaView>
+      </View>
     );
   }
 
@@ -332,9 +375,9 @@ const GroupDetails = () => {
       <View style={styles.container}>
         <SafeAreaView style={{ flex: 1 }}>
           <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
-          
+
           <FlatList
-            data={[{ key: 'content' }]}
+            data={[{ key: "content" }]}
             renderItem={() => (
               <View>
                 {/* Hero Section */}
@@ -387,40 +430,40 @@ const GroupDetails = () => {
                 <Card style={styles.navigationCard}>
                   <Card.Content>
                     <View style={styles.navigationGrid}>
-                      <TouchableOpacity 
-                        style={[styles.navButton, activeTab === 0 && styles.activeNavButton]} 
-                        onPress={() => setActiveTab(0)}>
+                      <TouchableOpacity style={[styles.navButton, activeTab === 0 && styles.activeNavButton]} onPress={() => setActiveTab(0)}>
                         <View style={styles.navButtonIcon}>
                           <Avatar.Icon size={40} icon="information" style={[styles.navButtonAvatar, activeTab === 0 && styles.activeNavButtonAvatar]} />
                         </View>
-                        <Text variant="bodySmall" style={[styles.navButtonText, activeTab === 0 && styles.activeNavButtonText]}>About</Text>
+                        <Text variant="bodySmall" style={[styles.navButtonText, activeTab === 0 && styles.activeNavButtonText]}>
+                          About
+                        </Text>
                       </TouchableOpacity>
-                      
-                      <TouchableOpacity 
-                        style={[styles.navButton, activeTab === 1 && styles.activeNavButton]} 
-                        onPress={() => setActiveTab(1)}>
+
+                      <TouchableOpacity style={styles.navButton} onPress={() => setShowChatModal(true)}>
                         <View style={styles.navButtonIcon}>
-                          <Avatar.Icon size={40} icon="chat" style={[styles.navButtonAvatar, activeTab === 1 && styles.activeNavButtonAvatar]} />
+                          <Avatar.Icon size={40} icon="chat" style={styles.navButtonAvatar} />
                         </View>
-                        <Text variant="bodySmall" style={[styles.navButtonText, activeTab === 1 && styles.activeNavButtonText]}>Messages</Text>
+                        <Text variant="bodySmall" style={styles.navButtonText}>
+                          Messages
+                        </Text>
                       </TouchableOpacity>
-                      
-                      <TouchableOpacity 
-                        style={[styles.navButton, activeTab === 2 && styles.activeNavButton]} 
-                        onPress={() => setActiveTab(2)}>
+
+                      <TouchableOpacity style={[styles.navButton, activeTab === 2 && styles.activeNavButton]} onPress={() => setActiveTab(2)}>
                         <View style={styles.navButtonIcon}>
                           <Avatar.Icon size={40} icon="account-group" style={[styles.navButtonAvatar, activeTab === 2 && styles.activeNavButtonAvatar]} />
                         </View>
-                        <Text variant="bodySmall" style={[styles.navButtonText, activeTab === 2 && styles.activeNavButtonText]}>Members</Text>
+                        <Text variant="bodySmall" style={[styles.navButtonText, activeTab === 2 && styles.activeNavButtonText]}>
+                          Members
+                        </Text>
                       </TouchableOpacity>
-                      
-                      <TouchableOpacity 
-                        style={[styles.navButton, activeTab === 3 && styles.activeNavButton]} 
-                        onPress={() => setActiveTab(3)}>
+
+                      <TouchableOpacity style={[styles.navButton, activeTab === 3 && styles.activeNavButton]} onPress={() => setActiveTab(3)}>
                         <View style={styles.navButtonIcon}>
                           <Avatar.Icon size={40} icon="calendar" style={[styles.navButtonAvatar, activeTab === 3 && styles.activeNavButtonAvatar]} />
                         </View>
-                        <Text variant="bodySmall" style={[styles.navButtonText, activeTab === 3 && styles.activeNavButtonText]}>Events</Text>
+                        <Text variant="bodySmall" style={[styles.navButtonText, activeTab === 3 && styles.activeNavButtonText]}>
+                          Events
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   </Card.Content>
@@ -447,24 +490,29 @@ const GroupDetails = () => {
                         )}
                       </View>
                     )}
-                    
-                    {activeTab === 1 && (
-                      <View style={styles.conversationsContainer}>
-                        <Conversations contentType="group" contentId={id} groupId={id} from="GroupDetails" />
-                      </View>
-                    )}
-                    
+
                     {activeTab === 2 && (
                       <View style={styles.membersContainer}>
-                        {groupMembers.length > 0 ? (
+                        {groupMembersLoading ? (
+                          <View>
+                            {[1, 2, 3].map(i => (
+                              <Card key={i} style={styles.modernMemberCard}>
+                                <Card.Content style={styles.memberCardContent}>
+                                  <View style={[styles.skeletonCircle, { width: 56, height: 56 }]} />
+                                  <View style={styles.memberInfo}>
+                                    <View style={[styles.skeletonText, { width: "70%", height: 16, marginBottom: 4 }]} />
+                                    <View style={[styles.skeletonText, { width: "50%", height: 12 }]} />
+                                  </View>
+                                </Card.Content>
+                              </Card>
+                            ))}
+                          </View>
+                        ) : groupMembers.length > 0 ? (
                           <View>
                             {groupMembers.map((item: any) => (
                               <Card key={item?.id} style={styles.modernMemberCard}>
                                 <Card.Content style={styles.memberCardContent}>
-                                  <Avatar.Image 
-                                    size={56} 
-                                    source={item?.person?.photo ? { uri: EnvironmentHelper.ContentRoot + item.person.photo } : Constants.Images.ic_member} 
-                                  />
+                                  <Avatar.Image size={56} source={item?.person?.photo ? { uri: EnvironmentHelper.ContentRoot + item.person.photo } : Constants.Images.ic_member} />
                                   <View style={styles.memberInfo}>
                                     <Text variant="titleMedium" style={styles.memberName}>
                                       {item?.person?.name?.display}
@@ -473,11 +521,7 @@ const GroupDetails = () => {
                                       Group Member
                                     </Text>
                                   </View>
-                                  <IconButton
-                                    icon="dots-vertical"
-                                    size={20}
-                                    onPress={() => {}}
-                                  />
+                                  <IconButton icon="dots-vertical" size={20} onPress={() => {}} />
                                 </Card.Content>
                               </Card>
                             ))}
@@ -495,7 +539,7 @@ const GroupDetails = () => {
                         )}
                       </View>
                     )}
-                    
+
                     {activeTab === 3 && (
                       <View style={styles.calendarContainer}>
                         {isLeader && (
@@ -510,41 +554,47 @@ const GroupDetails = () => {
                             Add Event
                           </Button>
                         )}
-                        <Calendar
-                          current={selected}
-                          markingType="multi-dot"
-                          markedDates={markedDates}
-                          onDayPress={onDayPress}
-                          theme={{
-                            backgroundColor: theme.colors.surface,
-                            calendarBackground: theme.colors.surface,
-                            textSectionTitleColor: theme.colors.primary,
-                            selectedDayBackgroundColor: theme.colors.primary,
-                            selectedDayTextColor: theme.colors.onPrimary,
-                            todayTextColor: theme.colors.primary,
-                            dayTextColor: theme.colors.onSurface,
-                            textDisabledColor: theme.colors.onSurfaceDisabled,
-                            arrowColor: theme.colors.primary,
-                            monthTextColor: theme.colors.onSurface,
-                            indicatorColor: theme.colors.primary,
-                            textDayFontWeight: '500',
-                            textMonthFontWeight: '600',
-                            textDayHeaderFontWeight: '600'
-                          }}
-                        />
+                        {eventsLoading ? (
+                          <View style={styles.calendarSkeleton}>
+                            <View style={[styles.skeletonText, { width: "100%", height: 300, borderRadius: 8 }]} />
+                          </View>
+                        ) : (
+                          <Calendar
+                            current={selected}
+                            markingType="multi-dot"
+                            markedDates={markedDates}
+                            onDayPress={onDayPress}
+                            theme={{
+                              backgroundColor: theme.colors.surface,
+                              calendarBackground: theme.colors.surface,
+                              textSectionTitleColor: theme.colors.primary,
+                              selectedDayBackgroundColor: theme.colors.primary,
+                              selectedDayTextColor: theme.colors.onPrimary,
+                              todayTextColor: theme.colors.primary,
+                              dayTextColor: theme.colors.onSurface,
+                              textDisabledColor: theme.colors.onSurfaceDisabled,
+                              arrowColor: theme.colors.primary,
+                              monthTextColor: theme.colors.onSurface,
+                              indicatorColor: theme.colors.primary,
+                              textDayFontWeight: "500",
+                              textMonthFontWeight: "600",
+                              textDayHeaderFontWeight: "600"
+                            }}
+                          />
+                        )}
                       </View>
                     )}
                   </View>
                 </Card>
               </View>
             )}
-            keyExtractor={(item) => item.key}
+            keyExtractor={item => item.key}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.mainContainer}
           />
         </SafeAreaView>
       </View>
-      
+
       {showEventModal && (
         <EventModal isVisible={showEventModal} close={() => setShowEventModal(false)}>
           {selectedEvents &&
@@ -565,6 +615,9 @@ const GroupDetails = () => {
           }}
         />
       )}
+
+      {/* Group Chat Modal */}
+      <GroupChatModal visible={showChatModal} onDismiss={() => setShowChatModal(false)} groupId={id || ""} groupName={groupDetails?.name || "Group Chat"} />
     </LoadingWrapper>
   );
 };
@@ -578,7 +631,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 24
   },
-  
+
   // Hero Section
   heroSection: {
     paddingHorizontal: 16,
@@ -633,7 +686,7 @@ const styles = StyleSheet.create({
   leaderChip: {
     backgroundColor: "rgba(255, 193, 7, 0.9)"
   },
-  
+
   markdownStyles: {
     body: {
       color: "#3c3c3c",
@@ -641,7 +694,7 @@ const styles = StyleSheet.create({
       lineHeight: 24
     }
   },
-  
+
   // Navigation Buttons
   navigationCard: {
     marginHorizontal: 16,
@@ -689,7 +742,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     lineHeight: 12
   },
-  
+
   // Content Card
   contentCard: {
     marginHorizontal: 16,
@@ -702,17 +755,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16
   },
-  
+
   // About
   aboutContainer: {
     minHeight: 200
   },
-  
+
   // Conversations
   conversationsContainer: {
     minHeight: 300
   },
-  
+
   // Members
   membersContainer: {
     minHeight: 200
@@ -745,7 +798,7 @@ const styles = StyleSheet.create({
   memberRole: {
     color: "#9E9E9E"
   },
-  
+
   // Empty States
   emptyState: {
     alignItems: "center",
@@ -767,7 +820,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 20
   },
-  
+
   // Calendar
   calendarContainer: {
     minHeight: 350
@@ -776,7 +829,23 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     backgroundColor: "#70DC87"
   },
-  
+  calendarSkeleton: {
+    padding: 16
+  },
+
+  // Skeleton Styles
+  skeletonHero: {
+    backgroundColor: "#E9ECEF"
+  },
+  skeletonText: {
+    backgroundColor: "#E9ECEF",
+    borderRadius: 4
+  },
+  skeletonCircle: {
+    backgroundColor: "#E9ECEF",
+    borderRadius: 50
+  },
+
   // Legacy styles for backward compatibility
   tabContainer: {
     flexDirection: "row",

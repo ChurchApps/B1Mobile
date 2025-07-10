@@ -1,14 +1,13 @@
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 import React from "react";
-import { Text, View } from "react-native";
-import { Constants, globalStyles } from "../../../src/helpers";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Constants } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PersonHelper } from "../../../src/helpers/PersonHelper";
-import { OptimizedImage } from "../OptimizedImage";
+import { Avatar, Chip } from "react-native-paper";
 
 interface NotesInterface {
   item: any;
@@ -20,44 +19,132 @@ interface NotesInterface {
 
 const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface) => {
   const displayDuration = dayjs(message?.timeSent).fromNow();
-  const isEdited = message.timeUpdated && message.timeUpdated !== message.timeSent && <> • (edited)</>;
+  const isEdited = message.timeUpdated && message.timeUpdated !== message.timeSent;
+  const replyCount = item?.postCount ? item.postCount - 1 : 0;
 
   return (
-    <>
-      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70), marginLeft: DimensionHelper.wp(2) }]}>
-        <OptimizedImage source={message?.person?.photo ? { uri: PersonHelper.getPhotoUrl(message.person) } : Constants.Images.ic_member} style={[globalStyles.memberListIcon, { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 }]} placeholder={Constants.Images.ic_member} />
+    <View style={styles.messageContainer}>
+      {/* Main Message */}
+      <View style={styles.messageContent}>
+        <Avatar.Image size={40} source={message?.person?.photo && message.person ? { uri: PersonHelper.getPhotoUrl(message.person) } : Constants.Images.ic_member} style={styles.avatar} />
 
-        <View style={globalStyles.NoteTextInputView}>
-          <View>
-            <Text style={globalStyles.name}>{message?.displayName}</Text>
-            <Text>{message?.content}</Text>
+        <View style={styles.messageBody}>
+          <View style={styles.messageHeader}>
+            <Text style={styles.userName}>{message?.displayName}</Text>
+            <Text style={styles.timestamp}>{displayDuration}</Text>
+            {isEdited && (
+              <Chip icon="pencil" textStyle={styles.editedChip} style={styles.editedChipContainer}>
+                edited
+              </Chip>
+            )}
+          </View>
+
+          <Text style={styles.messageText}>{message?.content}</Text>
+
+          {/* Action Row */}
+          <View style={styles.actionRow}>
+            <TouchableOpacity style={[styles.replyButton, showReplyBox === idx && styles.replyButtonActive]} onPress={() => (showReplyBox === idx ? handleReply(null) : handleReply(idx))}>
+              <Text style={[styles.replyText, showReplyBox === idx && styles.replyTextActive]}>{showReplyBox === idx ? "Cancel" : "Reply"}</Text>
+            </TouchableOpacity>
+
+            {replyCount > 0 && (
+              <Chip icon="chat-outline" textStyle={styles.replyCountText} style={styles.replyCountChip}>
+                {replyCount} {replyCount === 1 ? "reply" : "replies"}
+              </Chip>
+            )}
           </View>
         </View>
       </View>
-      <Text
-        numberOfLines={1}
-        ellipsizeMode="tail"
-        style={[
-          globalStyles.textInputStyle,
-          {
-            paddingTop: 0,
-            height: 24,
-            fontSize: 11,
-            width: DimensionHelper.wp(100),
-            left: 72,
-            top: -4
-          }
-        ]}>
-        <Text>{displayDuration}</Text>
-        {"  "}
-        <Text> {isEdited}</Text>
-        {"       "}
-        <Text style={globalStyles.replyBtn} onPress={() => (showReplyBox === idx ? handleReply(null) : handleReply(idx))}>
-          {item.postCount && `${item.postCount - 1 === 0 ? "" : item?.postCount - 1} REPLY`}
-        </Text>
-      </Text>
-    </>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  messageContainer: {
+    marginBottom: 2
+  },
+  messageContent: {
+    flexDirection: "row",
+    paddingVertical: 8,
+    paddingHorizontal: 4
+  },
+  avatar: {
+    marginRight: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2
+  },
+  messageBody: {
+    flex: 1,
+    paddingTop: 2
+  },
+  messageHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+    gap: 8
+  },
+  userName: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#1565C0"
+  },
+  timestamp: {
+    fontSize: 12,
+    color: "#9E9E9E",
+    fontWeight: "500"
+  },
+  editedChipContainer: {
+    backgroundColor: "rgba(158, 158, 158, 0.1)",
+    height: 20
+  },
+  editedChip: {
+    fontSize: 10,
+    color: "#9E9E9E",
+    lineHeight: 12
+  },
+  messageText: {
+    fontSize: 15,
+    lineHeight: 20,
+    color: "#3c3c3c",
+    marginBottom: 8
+  },
+  actionRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginTop: 4
+  },
+  replyButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 16,
+    backgroundColor: "#F6F6F8"
+  },
+  replyButtonActive: {
+    backgroundColor: "#E3F2FD",
+    borderWidth: 1,
+    borderColor: "#1565C0"
+  },
+  replyText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#9E9E9E"
+  },
+  replyTextActive: {
+    color: "#1565C0"
+  },
+  replyCountChip: {
+    backgroundColor: "rgba(21, 101, 192, 0.1)",
+    height: 24
+  },
+  replyCountText: {
+    fontSize: 11,
+    color: "#1565C0",
+    fontWeight: "600"
+  }
+});
 
 export default Notes;

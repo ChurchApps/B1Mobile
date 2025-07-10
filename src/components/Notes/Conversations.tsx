@@ -52,17 +52,28 @@ const Conversations = ({ contentType, contentId, groupId }: CustomConversationIn
           }
           return false;
         });
-        const people = await ApiHelper.get("/people/basic?ids=" + peopleIds.join(","), "MembershipApi");
-        people.reverse();
-        filteredConversations.forEach(conversation => {
-          if (conversation.messages) {
-            conversation.messages.forEach((message: any) => {
-              if (message.personId) {
-                message.person = ArrayHelper.getOne(people, "id", message.personId);
-              }
-            });
+        if (peopleIds.length > 0) {
+          try {
+            const people = await ApiHelper.get("/people/basic?ids=" + peopleIds.join(","), "MembershipApi");
+
+            if (Array.isArray(people)) {
+              people.reverse();
+              filteredConversations.forEach(conversation => {
+                if (conversation.messages) {
+                  conversation.messages.forEach((message: any) => {
+                    if (message.personId) {
+                      const person = ArrayHelper.getOne(people, "id", message.personId);
+                      message.person = person || null; // Ensure we don't assign undefined
+                    }
+                  });
+                }
+              });
+            }
+          } catch (peopleError) {
+            console.warn("Failed to load people data for conversations:", peopleError);
+            // Continue without person data
           }
-        });
+        }
         setConversations(filteredConversations);
       }
     } catch (error) {

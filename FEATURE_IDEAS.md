@@ -1,5 +1,7 @@
-- Browse all small groups
+- Browse all small groups / join
 - Pull in Social Media Content
 - Take attendance
 - Scan checkin QR
 - RSVP to events
+- Chat reactions (like, love, etc)
+- FreeShow control (remote show)

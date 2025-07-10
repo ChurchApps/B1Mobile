@@ -20,7 +20,7 @@ interface NotesInterface {
 const Note = React.memo(({ message, showEditNote }: NotesInterface) => {
   const displayDuration = useMemo(() => dayjs(message?.timeSent).fromNow(), [message?.timeSent]);
 
-  const photoUrl = useMemo(() => (message?.person?.photo ? PersonHelper.getPhotoUrl(message.person) : null), [message?.person?.photo]);
+  const photoUrl = useMemo(() => (message?.person?.photo && message.person ? PersonHelper.getPhotoUrl(message.person) : null), [message?.person?.photo, message?.person]);
 
   const handleEditPress = useCallback(() => {
     showEditNote(message.id);
