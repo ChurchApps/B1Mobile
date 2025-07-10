@@ -5,6 +5,7 @@ export { DisplayBox } from "./DisplayBox";
 export { ErrorBoundary } from "./ErrorBoundary";
 export { InputBox } from "./InputBox";
 export { Loader } from "./Loader";
+export { MemberCard } from "./MemberCard";
 export { NotificationTab } from "./NotificationView";
 export { OptimizedImage } from "./OptimizedImage";
 export { SermonCard } from "./SermonCard";
