@@ -3,7 +3,7 @@ import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
-import { Provider as PaperProvider, Appbar, Card, Text, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
+import { Provider as PaperProvider, Card, Text, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { UserHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
@@ -11,7 +11,7 @@ import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { LinkInterface } from "../../src/helpers/Interfaces";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
-import { HeaderBell } from "../../src/components/wrapper/HeaderBell";
+import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { NotificationTab } from "../../src/components/NotificationView";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
@@ -170,15 +170,10 @@ const Dashboard = () => {
       <SafeAreaProvider>
         <LoadingWrapper loading={isLoading}>
           <View style={styles.container}>
-            <Appbar.Header style={styles.header} mode="center-aligned">
-              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={handleDrawerOpen} />
-              <Appbar.Content title="Home" titleStyle={styles.headerTitle} />
-              <View style={styles.bellContainer}>
-                <View style={styles.bellWrapper}>
-                  <HeaderBell toggleNotifications={handleNotificationToggle} />
-                </View>
-              </View>
-            </Appbar.Header>
+            <MainHeader 
+              title="Home" 
+              openDrawer={handleDrawerOpen}
+            />
             <View style={styles.contentContainer}>
               <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <Surface style={styles.brandContainer} elevation={1}>
@@ -202,20 +197,7 @@ const Dashboard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.primary
-  },
-  header: {
-    backgroundColor: theme.colors.primary,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3
-  },
-  headerTitle: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "600"
+    backgroundColor: "#F6F6F8" // Background from style guide
   },
   contentContainer: {
     flex: 1,
@@ -291,17 +273,6 @@ const styles = StyleSheet.create({
     color: theme.colors.primary,
     fontSize: 16,
     fontWeight: "500"
-  },
-  bellContainer: {
-    marginRight: 8,
-    width: 40,
-    height: 40,
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  bellWrapper: {
-    transform: [{ scale: 1.2 }],
-    opacity: 0.9
   },
   modalContainer: {
     backgroundColor: "white",

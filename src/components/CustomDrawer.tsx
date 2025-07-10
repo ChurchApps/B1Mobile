@@ -11,14 +11,13 @@ import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
 import RNRestart from "react-native-restart";
 import { DimensionHelper } from "../helpers/DimensionHelper";
 import { useAppTheme } from "../../src/theme";
-import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple } from "react-native-paper";
 import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 
 export function CustomDrawer() {
   const { spacing } = useAppTheme();
-  const paperTheme = useTheme();
   const navigation = useNavigation();
   // Use hooks instead of local state
   const user = useUser();
@@ -157,7 +156,7 @@ export function CustomDrawer() {
 
   const listItem = (topItem: boolean, item: any) => {
     if (item.linkType === "separator") {
-      return <Divider style={{ marginVertical: spacing.sm }} />;
+      return <Divider style={styles.separator} />;
     }
 
     const icon = item.icon ? item.icon.split("_").join("-") : "";
@@ -166,23 +165,32 @@ export function CustomDrawer() {
     return (
       <List.Item
         title={item.text}
-        left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={paperTheme.colors.primary} style={styles.drawerIcon} />)}
+        left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color="#1565C0" style={styles.drawerIcon} />)}
         onPress={() => {
           NavigationUtils.navigateToScreen(item, currentChurch);
           navigation.dispatch(DrawerActions.closeDrawer());
         }}
-        style={[styles.listItem, { paddingLeft: 20 }]}
+        style={styles.listItem}
         titleStyle={styles.listItemText}
       />
     );
   };
 
   const drawerHeaderComponent = () => (
-    <Surface style={styles.headerContainer} elevation={1}>
-      {getUserInfo()}
-      <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={24} color={paperTheme.colors.primary} />}>
-        {!currentChurch ? "Find your church..." : currentChurch.name || ""}
-      </Button>
+    <Surface style={styles.headerContainer} elevation={2}>
+      <View style={styles.headerContent}>
+        {getUserInfo()}
+        <Button 
+          mode="contained" 
+          onPress={() => router.navigate("/(drawer)/churchSearch")} 
+          style={styles.churchButton} 
+          buttonColor="#FFFFFF"
+          textColor="#1565C0"
+          icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#1565C0" />}
+        >
+          {!currentChurch ? "Find Church" : currentChurch.name || ""}
+        </Button>
+      </View>
     </Surface>
   );
 
@@ -191,28 +199,38 @@ export function CustomDrawer() {
     if (!currentUserChurch?.person || !user) return null;
 
     return (
-      <Card style={styles.userCard}>
-        <Card.Content style={styles.userCardContent}>
-          <View style={styles.userInfoContainer}>
-            <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={DimensionHelper.wp(12)} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={DimensionHelper.wp(12)} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />}</View>
-            <View style={styles.userTextContainer}>
-              <Text variant="titleMedium" numberOfLines={2} style={styles.userName}>
-                {`${user.firstName} ${user.lastName}`}
-              </Text>
-              <View style={styles.buttonContainer}>
-                <Button mode="text" onPress={editProfileAction} style={styles.editProfileButton} textColor={paperTheme.colors.primary} icon={() => <MaterialIcons name="edit" size={18} color={paperTheme.colors.primary} />}>
-                  Profile
-                </Button>
-                {user && (
-                  <TouchableRipple style={styles.messageButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
-                    <MaterialCommunityIcons name="email-outline" size={20} color={paperTheme.colors.onSurface} />
-                  </TouchableRipple>
-                )}
-              </View>
+      <View style={styles.userInfoSection}>
+        <View style={styles.userRow}>
+          <View style={styles.avatarContainer}>
+            {currentUserChurch.person.photo ? 
+              <Avatar.Image size={48} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : 
+              <Avatar.Text size={48} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />
+            }
+          </View>
+          <View style={styles.userTextContainer}>
+            <Text variant="titleMedium" numberOfLines={1} style={styles.userName}>
+              {`${user.firstName} ${user.lastName}`}
+            </Text>
+            <View style={styles.actionButtons}>
+              <Button 
+                mode="text" 
+                onPress={editProfileAction} 
+                style={styles.profileButton}
+                textColor="#1565C0"
+                compact
+                icon={() => <MaterialIcons name="edit" size={16} color="#1565C0" />}
+              >
+                Edit Profile
+              </Button>
+              {user && (
+                <TouchableRipple style={styles.messageIconButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
+                  <MaterialCommunityIcons name="email-outline" size={20} color="#1565C0" />
+                </TouchableRipple>
+              )}
             </View>
           </View>
-        </Card.Content>
-      </Card>
+        </View>
+      </View>
     );
   };
 
@@ -228,7 +246,7 @@ export function CustomDrawer() {
     const pkg = require("../../package.json");
     return (
       <Surface style={styles.footerContainer} elevation={1}>
-        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color={paperTheme.colors.primary} />}>
+        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#1565C0" />}>
           {user ? "Log out" : "Login"}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>
@@ -247,7 +265,11 @@ export function CustomDrawer() {
             <Text>Loading navigation...</Text>
           </View>
         ) : (
-          drawerList.map((item, index) => <View key={item.id || index}>{listItem(false, item)}</View>)
+          <View style={styles.menuContainer}>
+            {drawerList.map((item, index) => (
+              <View key={item.id || index}>{listItem(false, item)}</View>
+            ))}
+          </View>
         )}
         {drawerFooterComponent()}
       </ScrollView>
@@ -258,27 +280,26 @@ export function CustomDrawer() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa"
+    backgroundColor: "#F6F6F8" // Background from style guide
   },
   headerContainer: {
-    padding: 16,
-    backgroundColor: "white",
-    marginBottom: 8
+    backgroundColor: "#FFFFFF", // Clean white background
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0"
   },
-  userCard: {
-    marginBottom: 16,
-    backgroundColor: "white"
+  headerContent: {
+    padding: 16
   },
-  userCardContent: {
-    padding: 12
+  userInfoSection: {
+    marginBottom: 16
   },
-  userInfoContainer: {
+  userRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     gap: 12
   },
   avatarContainer: {
-    marginTop: 4
+    // Avatar styling handled by component
   },
   userTextContainer: {
     flex: 1,
@@ -286,29 +307,45 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: "600",
-    fontSize: 16,
-    lineHeight: 22,
-    marginBottom: 4
+    fontSize: 18, // H3 from style guide
+    lineHeight: 24,
+    marginBottom: 4,
+    color: "#3c3c3c" // Dark gray from style guide
   },
-  buttonContainer: {
+  actionButtons: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8
+    justifyContent: "space-between"
   },
-  editProfileButton: {
+  profileButton: {
     margin: 0,
     padding: 0,
     minWidth: 0,
     height: 32
   },
-  messageButton: {
-    padding: 4
+  messageIconButton: {
+    padding: 8,
+    borderRadius: 24,
+    backgroundColor: "#F6F6F8"
   },
   churchButton: {
-    marginTop: 8
+    borderRadius: 8,
+    elevation: 1,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2
+  },
+  menuContainer: {
+    backgroundColor: "#FFFFFF",
+    marginTop: 8,
   },
   listItem: {
-    paddingVertical: 8
+    minHeight: 48, // Style guide menu item height
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
   },
   tabIcon: {
     width: 24,
@@ -319,28 +356,36 @@ const styles = StyleSheet.create({
     flex: 1
   },
   scrollContent: {
-    paddingBottom: 40 // Extra space for footer to be visible
+    flexGrow: 1,
+    paddingBottom: 16 // Reduced padding following 8px grid
   },
   footerContainer: {
     padding: 16,
-    marginTop: 16,
-    backgroundColor: "white",
+    marginTop: "auto", // Push to bottom
+    backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
-    borderTopColor: "#e0e0e0"
+    borderTopColor: "#F0F0F0"
   },
   logoutButton: {
     marginBottom: 8
   },
   versionText: {
     textAlign: "center",
-    color: "#a0d3fc"
+    color: "#9E9E9E" // Medium gray from style guide
   },
   drawerIcon: {
-    marginRight: 8,
+    marginLeft: 0,
+    marginRight: 16, // 16px right margin from style guide
     alignSelf: "center"
   },
   listItemText: {
-    fontSize: 16,
-    fontWeight: "500"
+    fontSize: 16, // Body text from style guide
+    fontWeight: "500",
+    color: "#3c3c3c" // Dark gray from style guide
+  },
+  separator: {
+    marginVertical: 8,
+    backgroundColor: "#F0F0F0",
+    height: 1
   }
 });

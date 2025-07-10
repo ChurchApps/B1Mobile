@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Constants } from '../helpers';
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Constants } from "../helpers";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -23,7 +23,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    console.error("ErrorBoundary caught an error:", error, errorInfo);
   }
 
   retry = () => {
@@ -40,9 +40,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       return (
         <View style={styles.container}>
           <Text style={styles.title}>Something went wrong</Text>
-          <Text style={styles.message}>
-            {this.state.error?.message || 'An unexpected error occurred'}
-          </Text>
+          <Text style={styles.message}>{this.state.error?.message || "An unexpected error occurred"}</Text>
           <TouchableOpacity style={styles.button} onPress={this.retry}>
             <Text style={styles.buttonText}>Try Again</Text>
           </TouchableOpacity>
@@ -57,34 +55,34 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff"
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: Constants.Colors.church_primary,
     marginBottom: 16,
-    textAlign: 'center',
+    textAlign: "center"
   },
   message: {
     fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+    color: "#666",
+    textAlign: "center",
     marginBottom: 32,
-    lineHeight: 24,
+    lineHeight: 24
   },
   button: {
     backgroundColor: Constants.Colors.church_primary,
     paddingHorizontal: 32,
     paddingVertical: 16,
-    borderRadius: 8,
+    borderRadius: 8
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
-  },
+    fontWeight: "600"
+  }
 });
