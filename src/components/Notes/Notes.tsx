@@ -6,7 +6,7 @@ import React from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Constants } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
-import { PersonHelper } from "../../../src/helpers/PersonHelper";
+import { PersonHelper } from "../../../src/helpers";
 import { Avatar, Chip } from "react-native-paper";
 
 interface NotesInterface {

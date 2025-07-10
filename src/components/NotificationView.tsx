@@ -4,7 +4,7 @@ import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
 import React, { useEffect, useState, useMemo } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "./Loader";
@@ -46,7 +46,7 @@ export function NotificationTab() {
         if (matchingItem2) {
           merged.push({
             id: commonId,
-            message: item1.conversation.messages[0].content,
+            message: item1.conversation.messages?.[0]?.content || "",
             displayName: matchingItem2.name.display,
             photo: matchingItem2.photo
           });
@@ -116,15 +116,10 @@ export function NotificationTab() {
     );
   };
   const renderItems = (item: any) => {
-    const timeInfo = useMemo(() => {
-      const currentDate = dayjs();
-      const endDate = dayjs(item?.timeSent);
-      const timeDifference = currentDate.diff(endDate, "hours");
-      const dayDiff = currentDate.diff(endDate, "days");
-      return { timeDifference, dayDiff };
-    }, [item?.timeSent]);
-
-    const { timeDifference, dayDiff } = timeInfo;
+    const currentDate = dayjs();
+    const endDate = dayjs(item?.timeSent);
+    const timeDifference = currentDate.diff(endDate, "hours");
+    const dayDiff = currentDate.diff(endDate, "days");
     return (
       <TouchableOpacity
         style={[
@@ -160,7 +155,11 @@ export function NotificationTab() {
 
   const MessagesRoute = () => (
     <View style={globalStyles.MessagetabView}>
-      <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={item => String(item.id)} initialNumToRender={10} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
+      {isLoading ? (
+        <Loader isLoading={true} />
+      ) : (
+        <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={item => `message-${item.id}`} initialNumToRender={10} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
+      )}
     </View>
   );
 
@@ -169,7 +168,7 @@ export function NotificationTab() {
       {isLoading ? (
         <Loader isLoading={true} />
       ) : NotificationData.length > 0 ? (
-        <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={item => String(item.id)} initialNumToRender={8} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={4} updateCellsBatchingPeriod={100} />
+        <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={item => `notification-${item.id}`} initialNumToRender={8} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={4} updateCellsBatchingPeriod={100} />
       ) : (
         <View style={{ alignItems: "center", padding: DimensionHelper.wp(5) }}>
           <Image source={Constants.Images.dash_bell} style={{ width: DimensionHelper.wp(15), height: DimensionHelper.wp(15), marginBottom: DimensionHelper.wp(3) }} tintColor={Constants.Colors.app_color_light} />

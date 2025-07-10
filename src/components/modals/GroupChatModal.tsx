@@ -170,7 +170,6 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
           <Appbar.Header style={styles.header}>
             <Appbar.BackAction onPress={onDismiss} />
             <Appbar.Content title={groupName} titleStyle={styles.headerTitle} subtitle="Plan: M" subtitleStyle={styles.headerSubtitle} />
-            <IconButton icon="dots-vertical" onPress={() => {}} />
           </Appbar.Header>
 
           {/* Messages */}
@@ -179,7 +178,6 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
 
             {/* Input Bar */}
             <Surface style={styles.inputBar}>
-              <IconButton icon="plus" size={24} onPress={() => {}} style={styles.attachButton} />
               <TextInput mode="outlined" placeholder="Send a message" value={newMessage} onChangeText={setNewMessage} multiline maxLength={500} style={styles.textInput} contentStyle={styles.inputContent} outlineStyle={styles.inputOutline} onSubmitEditing={sendMessage} blurOnSubmit={false} />
               <IconButton icon="send" size={24} onPress={sendMessage} disabled={!newMessage.trim()} style={[styles.sendButton, newMessage.trim() && styles.sendButtonActive]} iconColor={newMessage.trim() ? "#FFFFFF" : "#9E9E9E"} />
             </Surface>
@@ -320,7 +318,7 @@ const styles = StyleSheet.create({
   },
   inputBar: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     paddingHorizontal: 8,
     paddingVertical: 8,
     backgroundColor: "#FFFFFF",
@@ -330,10 +328,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4
   },
-  attachButton: {
-    margin: 0,
-    marginRight: 4
-  },
   textInput: {
     flex: 1,
     maxHeight: 100,
@@ -341,7 +335,8 @@ const styles = StyleSheet.create({
   },
   inputContent: {
     fontSize: 15,
-    lineHeight: 20
+    lineHeight: 20,
+    textAlignVertical: "center"
   },
   inputOutline: {
     borderColor: "#E9ECEF",
@@ -350,7 +345,7 @@ const styles = StyleSheet.create({
   },
   sendButton: {
     margin: 0,
-    marginLeft: 4,
+    marginLeft: 8,
     backgroundColor: "#F6F6F8"
   },
   sendButtonActive: {

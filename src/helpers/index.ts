@@ -8,6 +8,7 @@ export { EnvironmentHelper } from "./EnvironmentHelper";
 export { globalStyles } from "./GlobalStyles";
 export * from "./Interfaces";
 export { NavigationUtils } from "./NavigationUtils";
+export { PersonHelper } from "./PersonHelper";
 export { queryClient, initializeQueryCache } from "./QueryClient";
 export { SecureStorageHelper } from "./SecureStorageHelper";
 export { StripeHelper } from "./StripeHelper";
