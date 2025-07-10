@@ -1,6 +1,6 @@
 import React from "react";
 import { useCallback, useMemo, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View, ScrollView } from "react-native";
+import { FlatList, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View } from "react-native";
 import { Text, TouchableRipple, Button, Surface, Avatar } from "react-native-paper";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -112,7 +112,7 @@ const GroupDetails = () => {
           return ev;
         } catch (error) {
           console.warn("Error updating time for event:", d.id, error);
-          return d; // Return original event if time update fails
+          return d;
         }
       });
     } catch (error) {
@@ -382,12 +382,12 @@ const GroupDetails = () => {
               </View>
 
               {activeTab === 0 && (
-                <ScrollView>
+                <View style={{ flex: 1, minHeight: 300 }}>
                   <Conversations contentType="group" contentId={id} groupId={id} from="GroupDetails" />
-                </ScrollView>
+                </View>
               )}
               {activeTab === 1 && (
-                <View style={{ backgroundColor: theme.colors.background, borderRadius: theme.roundness, paddingVertical: spacing.sm }}>
+                <View style={{ flex: 1, backgroundColor: theme.colors.background, borderRadius: theme.roundness, paddingVertical: spacing.sm }}>
                   <FlatList
                     data={groupMembers}
                     renderItem={({ item }) => (
@@ -405,12 +405,13 @@ const GroupDetails = () => {
                       </Text>
                     )}
                     contentContainerStyle={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}
+                    showsVerticalScrollIndicator={false}
                   />
                 </View>
               )}
               {activeTab === 2 && (
-                <ScrollView>
-                  <Surface style={{ padding: spacing.md }}>
+                <View style={{ flex: 1 }}>
+                  <Surface style={{ padding: spacing.md, flex: 1 }}>
                     {isLeader && (
                       <Button
                         mode="outlined"
@@ -439,7 +440,7 @@ const GroupDetails = () => {
                       }}
                     />
                   </Surface>
-                </ScrollView>
+                </View>
               )}
             </Surface>
           </KeyboardAvoidingView>
