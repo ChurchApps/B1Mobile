@@ -2,7 +2,7 @@ import React from "react";
 import { EnhancedDonationForm } from "../../src/components/donations/EnhancedDonationForm";
 import { EnhancedGivingHistory } from "../../src/components/donations/EnhancedGivingHistory";
 import { PaymentMethods } from "../../src/components/donations/PaymentMethods";
-import { CacheHelper, UserHelper, CurrencyHelper } from "../../src/helpers";
+import { UserHelper, CurrencyHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/mobilehelper";
 import { StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -57,8 +57,8 @@ const Donation = () => {
     isLoading: gatewayLoading,
     refetch: refetchGateway
   } = useQuery({
-    queryKey: ["/gateways/churchId/" + CacheHelper.church?.id, "GivingApi"],
-    enabled: !!CacheHelper.church?.id && isFocused,
+    queryKey: ["/gateways/churchId/" + currentUserChurch?.church?.id, "GivingApi"],
+    enabled: !!currentUserChurch?.church?.id && isFocused,
     placeholderData: [],
     staleTime: 10 * 60 * 1000, // 10 minutes - gateway config rarely changes
     gcTime: 30 * 60 * 1000 // 30 minutes

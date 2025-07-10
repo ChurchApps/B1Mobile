@@ -34,15 +34,55 @@ export class UserHelper {
   }
 
   /**
+   * Check if JWT token is valid and not expired
+   */
+  static isTokenValid(jwt: string): boolean {
+    try {
+      const payload = JSON.parse(atob(jwt.split(".")[1]));
+      const now = Math.floor(Date.now() / 1000);
+      return payload.exp > now;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Attempt to refresh JWT token using existing token
+   */
+  static async refreshToken(): Promise<boolean> {
+    try {
+      const currentToken = await SecureStorageHelper.getSecureItem("default_jwt");
+      if (!currentToken || !this.isTokenValid(currentToken)) {
+        return false;
+      }
+
+      const response = await ApiHelper.postAnonymous("/users/refresh", { jwt: currentToken }, "MembershipApi");
+      if (response.jwt) {
+        await SecureStorageHelper.setSecureItem("default_jwt", response.jwt);
+        ApiHelper.setDefaultPermissions(response.jwt);
+        return true;
+      }
+    } catch (error) {
+      console.log("Token refresh failed:", error);
+      return false;
+    }
+    return false;
+  }
+
+  /**
    * Load JWT tokens from secure storage on app initialization
    */
   static async loadSecureTokens(): Promise<void> {
     try {
       const defaultToken = await SecureStorageHelper.getSecureItem("default_jwt");
       if (defaultToken) {
-        ApiHelper.setDefaultPermissions(defaultToken);
-        // We'll use this token to re-authenticate and get fresh permissions
-        // This happens in the app initialization flow
+        // Check if token is still valid
+        if (this.isTokenValid(defaultToken)) {
+          ApiHelper.setDefaultPermissions(defaultToken);
+        } else {
+          console.log("Stored JWT token is expired, will attempt refresh during authentication");
+          // Don't set expired token, let authentication handle it
+        }
       }
 
       // One-time migration: Remove old api_tokens to prevent SecureStore size warning

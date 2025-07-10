@@ -89,7 +89,7 @@ export const useUserStore = create<UserState>()(
         }
 
         // Load church links
-        await get().loadChurchLinks(userChurch.church.id);
+        await get().loadChurchLinks(userChurch.church.id || "");
 
         // Load person record if user is logged in
         if (userChurch.jwt) {
@@ -207,10 +207,11 @@ export const useUserStore = create<UserState>()(
       setAnonymousChurch: async (church: ChurchInterface) => {
         // Create a minimal LoginUserChurchInterface for anonymous browsing
         const anonymousUserChurch: LoginUserChurchInterface = {
+          person: null,
           church: church,
           jwt: "",
           apis: [],
-          permissions: []
+          groups: []
         };
 
         // Set as current church
@@ -228,7 +229,7 @@ export const useUserStore = create<UserState>()(
         }
 
         // Load church links
-        await get().loadChurchLinks(church.id);
+        await get().loadChurchLinks(church.id || "");
       },
 
       // Load church navigation links
@@ -278,7 +279,8 @@ export const useUserStore = create<UserState>()(
           showDirectory = false,
           showLessons = false,
           showChums = false,
-          showCheckin = false;
+          showCheckin = false,
+          showSermons = false;
 
         const uc = state.currentUserChurch;
 
@@ -290,6 +292,16 @@ export const useUserStore = create<UserState>()(
           // Check for donations
           const gateways = await ApiHelper.getAnonymous(`/gateways/churchId/${churchId}`, "GivingApi");
           if (gateways.length > 0) showDonations = true;
+
+          // Check for sermons
+          try {
+            const playlists = await ApiHelper.getAnonymous(`/playlists/public/${churchId}`, "ContentApi");
+            if (playlists.length > 0) showSermons = true;
+          } catch (error) {
+            console.error("Error checking for sermons in store:", error);
+            // Still show sermons tab - let the sermons screen handle the error
+            showSermons = true;
+          }
         } catch (error) {
           console.error("❌ Error checking church features:", error);
         }
@@ -333,6 +345,7 @@ export const useUserStore = create<UserState>()(
         if (showDirectory) specialTabs.push({ linkType: "directory", text: "Directory", icon: "people" });
         if (showPlans) specialTabs.push({ linkType: "plans", text: "Plans", icon: "calendar_today" });
         if (showLessons) specialTabs.push({ linkType: "lessons", text: "Lessons", icon: "local_library" });
+        if (showSermons) specialTabs.push({ linkType: "sermons", text: "Sermons", icon: "play_circle" });
         if (showWebsite) specialTabs.push({ linkType: "website", text: "Website", icon: "language" });
         if (showCheckin) specialTabs.push({ linkType: "checkin", text: "Check-in", icon: "how_to_reg" });
         if (showChums) specialTabs.push({ linkType: "chums", text: "Member Search", icon: "person_search" });

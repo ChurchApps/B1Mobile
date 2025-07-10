@@ -48,8 +48,12 @@ const ChurchSearch = () => {
       // Add to recent churches
       addRecentChurch(churchData);
 
-      // Clear all cached data when switching churches
-      await clearAllCachedData();
+      // Only clear cached data if switching to a different church
+      const currentChurch = useUserStore.getState().currentUserChurch?.church;
+      if (currentChurch?.id !== churchData.id) {
+        console.log("Switching churches, clearing cached data");
+        await clearAllCachedData();
+      }
 
       // Use the store to select the church
       await selectChurch(churchData);
@@ -62,7 +66,9 @@ const ChurchSearch = () => {
 
       router.navigate("/(drawer)/dashboard");
 
-      if (Platform.OS === "android") {
+      // Only restart Android app if switching to a different church to refresh state
+      if (Platform.OS === "android" && currentChurch?.id !== churchData.id) {
+        console.log("Restarting Android app due to church switch");
         RNRestart.Restart();
       }
     } catch (err: any) {

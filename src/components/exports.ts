@@ -7,6 +7,7 @@ export { InputBox } from "./InputBox";
 export { Loader } from "./Loader";
 export { NotificationTab } from "./NotificationView";
 export { OptimizedImage } from "./OptimizedImage";
+export { SermonCard } from "./SermonCard";
 export { SimpleHeader } from "./SimpleHeader";
 export { WebsiteScreen } from "./WebsiteScreen";
 export { WhiteHeader } from "./WhiteHeader";

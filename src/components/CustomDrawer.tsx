@@ -1,4 +1,4 @@
-import { EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { EnvironmentHelper, UserHelper, SecureStorageHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
 import { ErrorHelper } from "../mobilehelper";
 import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
@@ -84,7 +84,8 @@ export function CustomDrawer() {
       showDirectory = false,
       showLessons = false,
       showChums = false,
-      showCheckin;
+      showCheckin,
+      showSermons = false;
     const uc = useUserStore.getState().currentUserChurch;
 
     if (currentChurch) {
@@ -92,6 +93,16 @@ export function CustomDrawer() {
       if (page.url) showWebsite = true;
       const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + currentChurch.id, "GivingApi");
       if (gateways.length > 0) showDonations = true;
+      try {
+        console.log("Checking for sermons, church ID:", currentChurch.id);
+        const playlists = await ApiHelper.getAnonymous("/playlists/public/" + currentChurch.id, "ContentApi");
+        console.log("Found playlists:", playlists.length);
+        if (playlists.length > 0) showSermons = true;
+      } catch (error) {
+        console.error("Error checking for sermons:", error);
+        // Still try to show sermons tab as it might be a temporary error
+        showSermons = true;
+      }
     }
 
     if (uc?.person) {
@@ -123,6 +134,7 @@ export function CustomDrawer() {
     if (showDirectory) specialTabs.push({ linkType: "directory", linkData: "", category: "", text: "Member Directory", icon: "groups", url: "" });
     if (showPlans) specialTabs.push({ linkType: "plans", linkData: "", category: "", text: "Plans", icon: "event", url: "" });
     if (showLessons) specialTabs.push({ linkType: "lessons", linkData: "", category: "", text: "Lessons", icon: "school", url: "" });
+    if (showSermons) specialTabs.push({ linkType: "sermons", linkData: "", category: "", text: "Sermons", icon: "play_circle", url: "" });
     if (showChums) specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Chums", icon: "account_circle", url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id });
     return specialTabs;
   };
@@ -139,16 +151,35 @@ export function CustomDrawer() {
   };
 
   const logoutAction = async () => {
-    // Clear React Query cache and persisted data
-    await clearAllCachedData();
+    try {
+      console.log("Starting logout process...");
 
-    // Use the store's logout method
-    await useUserStore.getState().logout();
+      // Clear React Query cache and persisted data
+      await clearAllCachedData();
 
-    // Clear AsyncStorage (except church data)
-    await AsyncStorage.getAllKeys()
-      .then(keys => AsyncStorage.multiRemove(keys.filter(key => key != "CHURCH_DATA" && key != "user-storage")))
-      .then(() => RNRestart.Restart());
+      // Clear JWT from secure storage
+      try {
+        await SecureStorageHelper.removeSecureItem("default_jwt");
+        console.log("Cleared JWT from secure storage");
+      } catch (error) {
+        console.warn("Failed to clear JWT from secure storage:", error);
+      }
+
+      // Use the store's logout method
+      await useUserStore.getState().logout();
+
+      // Clear AsyncStorage (except church data to preserve church selection)
+      await AsyncStorage.getAllKeys()
+        .then(keys => AsyncStorage.multiRemove(keys.filter(key => key !== "CHURCH_DATA")))
+        .then(() => {
+          console.log("Logout complete, restarting app");
+          RNRestart.Restart();
+        });
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Still restart even if there were errors
+      RNRestart.Restart();
+    }
   };
 
   const listItem = (topItem: boolean, item: any) => {

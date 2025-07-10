@@ -41,19 +41,70 @@ const SplashScreen = () => {
     init();
   }, []);
 
-  const setUserDataNew = async () => {
-    // Get JWT from secure storage instead of user object
-    const jwt = await SecureStorageHelper.getSecureItem("default_jwt");
-    if (!jwt) return;
+  const setUserDataNew = async (): Promise<boolean> => {
+    try {
+      // Get JWT from secure storage instead of user object
+      const jwt = await SecureStorageHelper.getSecureItem("default_jwt");
+      if (!jwt) {
+        console.log("No JWT token found in secure storage");
+        return false;
+      }
 
-    const data = await ApiHelper.postAnonymous("/users/login", { jwt }, "MembershipApi");
-    if (data.user != null) await useUserStore.getState().handleLogin(data);
+      // Check if token is expired before making API call
+      if (!UserHelper.isTokenValid(jwt)) {
+        console.log("Stored JWT token is expired, attempting refresh...");
+        const refreshed = await UserHelper.refreshToken();
+        if (!refreshed) {
+          console.log("Token refresh failed, user needs to re-login");
+          await clearAuthData();
+          return false;
+        }
+        // Get the refreshed token
+        const newJwt = await SecureStorageHelper.getSecureItem("default_jwt");
+        if (!newJwt) return false;
+      }
+
+      // Attempt to re-authenticate with JWT
+      const data = await ApiHelper.postAnonymous("/users/login", { jwt: await SecureStorageHelper.getSecureItem("default_jwt") }, "MembershipApi");
+
+      if (data.user != null) {
+        await useUserStore.getState().handleLogin(data);
+        console.log("Successfully re-authenticated user");
+        return true;
+      } else {
+        console.log("Re-authentication failed: no user data returned");
+        await clearAuthData();
+        return false;
+      }
+    } catch (error: any) {
+      console.error("Re-authentication failed:", error);
+
+      // Handle specific error cases
+      if (error.status === 401 || error.status === 403) {
+        console.log("Authentication failed (401/403), clearing stored credentials");
+        await clearAuthData();
+      }
+
+      return false;
+    }
+  };
+
+  const clearAuthData = async () => {
+    try {
+      await SecureStorageHelper.removeSecureItem("default_jwt");
+      await useUserStore.getState().logout();
+      console.log("Cleared authentication data");
+    } catch (error) {
+      console.error("Error clearing auth data:", error);
+    }
   };
 
   const checkUser = async () => {
+    let authenticationSuccessful = false;
+
     try {
       // Try to re-authenticate using stored JWT
-      await setUserDataNew();
+      authenticationSuccessful = await setUserDataNew();
     } catch (e: any) {
       console.error("App initialization error:", e);
       ErrorHelper.logError("splash-screen-error", e);
@@ -63,19 +114,27 @@ const SplashScreen = () => {
     await useUserStore.getState().initializeFromPersistence();
 
     const currentChurch = useUserStore.getState().currentUserChurch?.church;
-    if (!currentChurch) {
-      router.navigate("/(drawer)/churchSearch");
-      // router.navigate('/churchSearch')
-    } else {
-      router.replace("/(drawer)/dashboard");
-    }
+    const user = useUserStore.getState().user;
 
-    // router.replace('/auth/login');
-    //props.navigation.navigate('MainStack', {});
-    // props.navigation.reset({
-    //   index: 0,
-    //   routes: [{ name: 'MainStack' }]
-    // }, 500)
+    // Determine navigation based on authentication status
+    if (!user || !authenticationSuccessful) {
+      // User is not authenticated or authentication failed
+      if (currentChurch) {
+        // User was previously logged in but authentication failed
+        console.log("Authentication failed but church exists, going to dashboard in anonymous mode");
+        router.replace("/(drawer)/dashboard");
+      } else {
+        // No previous church selected
+        router.navigate("/(drawer)/churchSearch");
+      }
+    } else {
+      // User is successfully authenticated
+      if (!currentChurch) {
+        router.navigate("/(drawer)/churchSearch");
+      } else {
+        router.replace("/(drawer)/dashboard");
+      }
+    }
   };
 
   if (DimensionHelper.wp(100) > DimensionHelper.hp(100)) {
