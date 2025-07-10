@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
-import { Provider as PaperProvider, Appbar, Card, Text, MD3LightTheme } from "react-native-paper";
+import { Provider as PaperProvider, Card, Text, MD3LightTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useQuery } from "@tanstack/react-query";
 import { ArrayHelper, UserPostInterface } from "../../src/helpers";
 import { TimelineHelper } from "../../src/helpers/Timelinehelper";
@@ -136,10 +137,11 @@ const MyGroups = () => {
       <SafeAreaProvider>
         <LoadingWrapper loading={loading}>
           <View style={styles.container}>
-            <Appbar.Header style={styles.header} mode="center-aligned">
-              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
-              <Appbar.Content title="My Groups" titleStyle={styles.headerTitle} />
-            </Appbar.Header>
+            <MainHeader 
+              title="My Groups" 
+              openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())}
+              back={() => router.navigate("/(drawer)/dashboard")}
+            />
             <View style={styles.contentContainer}>
               <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListFooterComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={(item: any) => `key-${item.id || Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
             </View>

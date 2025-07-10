@@ -21,7 +21,7 @@ export function MainHeader(props: Props) {
 
   const LeftComponent = () => (
     <View style={styles.leftContainer}>
-      {Platform.OS === "ios" && props.back && (
+      {props.back && (
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => {

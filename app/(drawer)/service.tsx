@@ -11,8 +11,9 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { Image, SafeAreaView, ScrollView, View } from "react-native";
 import { useAppTheme } from "../../src/theme";
-import { Appbar, Surface } from "react-native-paper";
+import { Surface } from "react-native-paper";
 import { useChurchAppearance } from "../../src/stores/useUserStore";
+import { MainHeader } from "../../src/components/wrapper/MainHeader";
 
 const Service = () => {
   const { theme, spacing } = useAppTheme();
@@ -43,11 +44,11 @@ const Service = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
-      <Appbar.Header>
-        <Appbar.Action icon="menu" onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
-        <Appbar.Content title="Checkin" />
-        <Appbar.Action icon="arrow-left" onPress={navigation.goBack} />
-      </Appbar.Header>
+      <MainHeader 
+        title="Checkin" 
+        openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())}
+        back={() => router.navigate("/(drawer)/dashboard")}
+      />
       <ScrollView>
         <SafeAreaView style={{ flex: 1 }}>
           {getBrand()}

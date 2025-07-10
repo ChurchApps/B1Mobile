@@ -11,12 +11,14 @@ import { useIsFocused, useNavigation, DrawerActions } from "@react-navigation/na
 import { initStripe } from "@stripe/stripe-react-native";
 import { useEffect, useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
-import { Provider as PaperProvider, Appbar, Text, MD3LightTheme } from "react-native-paper";
+import { Provider as PaperProvider, Text, MD3LightTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../src/theme";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import { MainHeader } from "../../src/components/wrapper/MainHeader";
+import { router } from "expo-router";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const theme = {
@@ -116,11 +118,11 @@ const Donation = () => {
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.primary }}>
         <LoadingWrapper loading={areMethodsLoading}>
           <View style={{ flex: 1 }}>
-            <Appbar.Header style={{ backgroundColor: theme.colors.primary, elevation: 4, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 3 }} mode="center-aligned">
-              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
-              <Appbar.Content title="Donate" titleStyle={{ color: "white", fontSize: 20, fontWeight: "600" }} />
-              <Appbar.Action icon="arrow-left" onPress={() => navigation.goBack()} color="white" />
-            </Appbar.Header>
+            <MainHeader 
+              title="Donate" 
+              openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())}
+              back={() => router.navigate("/(drawer)/dashboard")}
+            />
             <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: spacing.md }}>
               {UserHelper.currentUserChurch?.person?.id && <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} />}
               <DonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />
