@@ -23,6 +23,9 @@ interface UserState {
   // Group view tracking
   groupViewCounts: Record<string, number>;
 
+  // Link view tracking
+  linkViewCounts: Record<string, number>;
+
   // FCM token for push notifications
   fcmToken: string;
 
@@ -34,6 +37,7 @@ interface UserState {
   setFcmToken: (token: string) => void;
   addRecentChurch: (church: ChurchInterface) => void;
   incrementGroupViewCount: (groupId: string) => void;
+  incrementLinkViewCount: (linkId: string) => void;
 
   // Complex actions
   handleLogin: (data: LoginResponseInterface) => Promise<void>;
@@ -62,6 +66,7 @@ export const useUserStore = create<UserState>()(
       links: [],
       recentChurches: [],
       groupViewCounts: {},
+      linkViewCounts: {},
       fcmToken: "",
 
       // Basic setters
@@ -112,6 +117,17 @@ export const useUserStore = create<UserState>()(
           groupViewCounts: {
             ...state.groupViewCounts,
             [groupId]: currentCount + 1
+          }
+        });
+      },
+
+      incrementLinkViewCount: linkId => {
+        const state = get();
+        const currentCount = state.linkViewCounts[linkId] || 0;
+        set({
+          linkViewCounts: {
+            ...state.linkViewCounts,
+            [linkId]: currentCount + 1
           }
         });
       },
@@ -426,6 +442,7 @@ export const useUserStore = create<UserState>()(
         currentUserChurch: state.currentUserChurch,
         recentChurches: state.recentChurches,
         groupViewCounts: state.groupViewCounts,
+        linkViewCounts: state.linkViewCounts,
         fcmToken: state.fcmToken
       })
     }
@@ -467,3 +484,5 @@ export const useUserChurches = () => useUserStore(state => state.userChurches);
 export const useRecentChurches = () => useUserStore(state => state.recentChurches);
 export const useGroupViewCounts = () => useUserStore(state => state.groupViewCounts);
 export const useIncrementGroupViewCount = () => useUserStore(state => state.incrementGroupViewCount);
+export const useLinkViewCounts = () => useUserStore(state => state.linkViewCounts);
+export const useIncrementLinkViewCount = () => useUserStore(state => state.incrementLinkViewCount);

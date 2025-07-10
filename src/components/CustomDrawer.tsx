@@ -9,14 +9,12 @@ import { useEffect, useState } from "react";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
 import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
 import RNRestart from "react-native-restart";
-import { useAppTheme } from "../../src/theme";
 import { Avatar, Button, Divider, List, Surface, Text, TouchableRipple } from "react-native-paper";
 import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 
 export function CustomDrawer() {
-  const { spacing } = useAppTheme();
   const navigation = useNavigation();
   // Use hooks instead of local state
   const user = useUser();

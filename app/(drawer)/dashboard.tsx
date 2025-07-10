@@ -13,7 +13,7 @@ import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
-import { useUserStore, useCurrentChurch, useChurchAppearance } from "../../src/stores/useUserStore";
+import { useUserStore, useCurrentChurch, useChurchAppearance, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
 
 const theme = {
   ...MD3LightTheme,
@@ -41,6 +41,8 @@ const Dashboard = () => {
   const currentChurch = useCurrentChurch();
   const churchAppearance = useChurchAppearance();
   const { links } = useUserStore();
+  const linkViewCounts = useLinkViewCounts();
+  const incrementLinkViewCount = useIncrementLinkViewCount();
 
   // Debug logging
 
@@ -101,10 +103,37 @@ const Dashboard = () => {
     return imageMap[item.linkType.toLowerCase()] || require("../../src/assets/images/dash_url.png");
   }, []);
 
+  const generateLinkId = useCallback((item: LinkInterface) => item.id || `${item.linkType}_${item.text}`, []);
+
+  const handleLinkPress = useCallback(
+    (item: LinkInterface) => {
+      const linkId = generateLinkId(item);
+      incrementLinkViewCount(linkId);
+      NavigationUtils.navigateToScreen(item, currentChurch);
+    },
+    [generateLinkId, incrementLinkViewCount, currentChurch]
+  );
+
   const filteredLinks = useMemo(() => {
     if (!Array.isArray(links)) return [];
-    return links.filter(item => item.linkType !== "separator");
-  }, [links]);
+
+    const filtered = links.filter(item => item.linkType !== "separator");
+
+    // Sort by view count (most visited first), then by original order
+    return filtered.sort((a, b) => {
+      const aId = generateLinkId(a);
+      const bId = generateLinkId(b);
+      const aCount = linkViewCounts[aId] || 0;
+      const bCount = linkViewCounts[bId] || 0;
+
+      // If view counts are equal, maintain original order
+      if (aCount === bCount) {
+        return filtered.indexOf(a) - filtered.indexOf(b);
+      }
+
+      return bCount - aCount; // Sort by view count descending
+    });
+  }, [links, linkViewCounts, generateLinkId]);
 
   const featuredContent = useMemo(() => {
     if (isLoading || filteredLinks.length === 0) return null;
@@ -118,7 +147,7 @@ const Dashboard = () => {
         {/* Hero Section */}
         {featuredItems.length > 0 && (
           <View style={styles.heroSection}>
-            <Card style={styles.heroCard} mode="elevated" onPress={() => NavigationUtils.navigateToScreen(featuredItems[0], currentChurch)}>
+            <Card style={styles.heroCard} mode="elevated" onPress={() => handleLinkPress(featuredItems[0])}>
               <View style={styles.heroImageContainer}>
                 <OptimizedImage source={getBackgroundImage(featuredItems[0])} style={styles.heroImage} contentFit="cover" />
                 <View style={styles.heroOverlay}>
@@ -142,7 +171,7 @@ const Dashboard = () => {
             </Text>
             <View style={styles.featuredGrid}>
               {featuredItems.slice(1, 3).map(item => (
-                <Card key={item.id || item.linkType + item.text} style={styles.featuredCard} mode="elevated" onPress={() => NavigationUtils.navigateToScreen(item, currentChurch)}>
+                <Card key={generateLinkId(item)} style={styles.featuredCard} mode="elevated" onPress={() => handleLinkPress(item)}>
                   <View style={styles.featuredImageContainer}>
                     <OptimizedImage source={getBackgroundImage(item)} style={styles.featuredImage} contentFit="cover" />
                     <View style={styles.featuredOverlay}>
@@ -165,7 +194,7 @@ const Dashboard = () => {
             </Text>
             <View style={styles.quickActionsGrid}>
               {otherItems.map(item => (
-                <TouchableOpacity key={item.id || item.linkType + item.text} style={styles.quickActionItem} onPress={() => NavigationUtils.navigateToScreen(item, currentChurch)}>
+                <TouchableOpacity key={generateLinkId(item)} style={styles.quickActionItem} onPress={() => handleLinkPress(item)}>
                   <View style={styles.quickActionIcon}>
                     <MaterialIcons name={item.icon ? item.icon.split("_").join("-") : "apps"} size={24} color="#1565C0" />
                   </View>
@@ -179,7 +208,7 @@ const Dashboard = () => {
         )}
       </>
     );
-  }, [isLoading, filteredLinks, getBackgroundImage, currentChurch]);
+  }, [isLoading, filteredLinks, getBackgroundImage, handleLinkPress, generateLinkId]);
 
   const welcomeSection = useMemo(
     () => (
