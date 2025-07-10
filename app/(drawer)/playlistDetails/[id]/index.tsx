@@ -7,6 +7,7 @@ import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
@@ -100,9 +101,16 @@ const PlaylistDetails = () => {
           {hasImage ? (
             <OptimizedImage source={{ uri: playlist.thumbnail }} style={styles.headerImage} contentFit="cover" />
           ) : (
-            <View style={[styles.headerImage, styles.headerFallback]}>
-              <MaterialIcons name="playlist-play" size={48} color="#FFFFFF" opacity={0.7} />
-            </View>
+            <LinearGradient colors={["#1565C0", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.headerImage, styles.headerFallback]}>
+              <View style={styles.headerPattern}>
+                <View style={styles.headerCircle1} />
+                <View style={styles.headerCircle2} />
+                <View style={styles.headerCircle3} />
+              </View>
+              <View style={styles.headerIcon}>
+                <MaterialIcons name="playlist-play" size={48} color="#FFFFFF" opacity={0.9} />
+              </View>
+            </LinearGradient>
           )}
           <View style={styles.headerOverlay}>
             <View style={styles.headerInfo}>
@@ -244,9 +252,48 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   headerFallback: {
-    backgroundColor: "#1565C0",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    position: "relative",
+    overflow: "hidden"
+  },
+  headerPattern: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.2
+  },
+  headerCircle1: {
+    position: "absolute",
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    top: -30,
+    right: -30
+  },
+  headerCircle2: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    bottom: -25,
+    left: -25
+  },
+  headerCircle3: {
+    position: "absolute",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(255,255,255,0.12)",
+    top: "40%",
+    left: "30%"
+  },
+  headerIcon: {
+    zIndex: 2
   },
   headerOverlay: {
     position: "absolute",

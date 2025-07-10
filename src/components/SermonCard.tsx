@@ -2,6 +2,7 @@ import React from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "./OptimizedImage";
 import { DateHelper } from "../helpers";
 import { SermonInterface } from "../mobilehelper";
@@ -30,9 +31,16 @@ export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDur
             {hasImage ? (
               <OptimizedImage source={{ uri: sermon.thumbnail }} style={styles.sermonImage} contentFit="cover" />
             ) : (
-              <View style={[styles.sermonImage, styles.sermonFallback]}>
-                <MaterialIcons name="play-circle-outline" size={32} color="#FFFFFF" opacity={0.7} />
-              </View>
+              <LinearGradient colors={["#1565C0", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.sermonImage, styles.sermonFallback]}>
+                <View style={styles.fallbackPattern}>
+                  <View style={styles.patternCircle1} />
+                  <View style={styles.patternCircle2} />
+                  <View style={styles.patternCircle3} />
+                </View>
+                <View style={styles.fallbackIcon}>
+                  <MaterialIcons name="play-circle-outline" size={32} color="#FFFFFF" opacity={0.9} />
+                </View>
+              </LinearGradient>
             )}
 
             {/* Play button overlay */}
@@ -91,9 +99,49 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   sermonFallback: {
-    backgroundColor: "#1565C0",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    position: "relative",
+    overflow: "hidden"
+  },
+  fallbackPattern: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.3
+  },
+  patternCircle1: {
+    position: "absolute",
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    top: -30,
+    right: -30
+  },
+  patternCircle2: {
+    position: "absolute",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    bottom: -20,
+    left: -20
+  },
+  patternCircle3: {
+    position: "absolute",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(255,255,255,0.12)",
+    top: "50%",
+    left: "20%",
+    marginTop: -30
+  },
+  fallbackIcon: {
+    zIndex: 2
   },
   playOverlay: {
     position: "absolute",

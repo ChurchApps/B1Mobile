@@ -7,6 +7,7 @@ import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
@@ -128,9 +129,16 @@ const Sermons = () => {
             {hasImage ? (
               <OptimizedImage source={{ uri: featuredSermon.thumbnail }} style={styles.heroImage} contentFit="cover" />
             ) : (
-              <View style={[styles.heroImage, styles.heroFallback]}>
-                <MaterialIcons name="video-library" size={48} color="#FFFFFF" opacity={0.7} />
-              </View>
+              <LinearGradient colors={["#1565C0", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.heroImage, styles.heroFallback]}>
+                <View style={styles.heroPattern}>
+                  <View style={styles.heroCircle1} />
+                  <View style={styles.heroCircle2} />
+                  <View style={styles.heroCircle3} />
+                </View>
+                <View style={styles.heroIcon}>
+                  <MaterialIcons name="video-library" size={48} color="#FFFFFF" opacity={0.9} />
+                </View>
+              </LinearGradient>
             )}
             <View style={styles.heroOverlay}>
               <View style={styles.heroContent}>
@@ -169,9 +177,15 @@ const Sermons = () => {
               {hasImage ? (
                 <OptimizedImage source={{ uri: playlist.thumbnail }} style={styles.playlistImage} contentFit="cover" />
               ) : (
-                <View style={[styles.playlistImage, styles.playlistFallback]}>
-                  <MaterialIcons name="playlist-play" size={32} color="#FFFFFF" opacity={0.7} />
-                </View>
+                <LinearGradient colors={["#1565C0", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.playlistImage, styles.playlistFallback]}>
+                  <View style={styles.playlistPattern}>
+                    <View style={styles.playlistCircle1} />
+                    <View style={styles.playlistCircle2} />
+                  </View>
+                  <View style={styles.playlistIcon}>
+                    <MaterialIcons name="playlist-play" size={32} color="#FFFFFF" opacity={0.9} />
+                  </View>
+                </LinearGradient>
               )}
             </View>
             <View style={styles.playlistOverlay}>
@@ -380,9 +394,48 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   heroFallback: {
-    backgroundColor: "#1565C0",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    position: "relative",
+    overflow: "hidden"
+  },
+  heroPattern: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.2
+  },
+  heroCircle1: {
+    position: "absolute",
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    top: -50,
+    right: -50
+  },
+  heroCircle2: {
+    position: "absolute",
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    bottom: -40,
+    left: -40
+  },
+  heroCircle3: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "rgba(255,255,255,0.12)",
+    top: "30%",
+    left: "25%"
+  },
+  heroIcon: {
+    zIndex: 2
   },
   heroOverlay: {
     position: "absolute",
@@ -478,9 +531,39 @@ const styles = StyleSheet.create({
     height: "100%"
   },
   playlistFallback: {
-    backgroundColor: "#1565C0",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    position: "relative",
+    overflow: "hidden"
+  },
+  playlistPattern: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    opacity: 0.3
+  },
+  playlistCircle1: {
+    position: "absolute",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    top: -20,
+    right: -20
+  },
+  playlistCircle2: {
+    position: "absolute",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    bottom: -15,
+    left: -15
+  },
+  playlistIcon: {
+    zIndex: 2
   },
   playlistOverlay: {
     position: "absolute",
