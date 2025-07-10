@@ -6,8 +6,8 @@ import { useIsFocused } from "@react-navigation/native";
 import { Alert, View } from "react-native";
 import { ActivityIndicator, Button, Card, Divider, IconButton, List, Text, useTheme } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
-import { PaymentMethodModal } from "../modals/PaymentMethodModal";
-import { BankForm } from "./BankForm";
+import { EnhancedPaymentMethodModal } from "../modals/EnhancedPaymentMethodModal";
+import { EnhancedBankForm } from "./EnhancedBankForm";
 import { CardForm } from "./CardForm";
 
 interface Props {
@@ -69,7 +69,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
       editModeContent = <CardForm setMode={setMode} card={editPaymentMethod} customerId={customerId} updatedFunction={updatedFunction} handleDelete={handleDelete} />;
       break;
     case "bank":
-      editModeContent = <BankForm setMode={setMode} bank={editPaymentMethod} customerId={customerId} updatedFunction={updatedFunction} handleDelete={handleDelete} showVerifyForm={verify} />;
+      editModeContent = <EnhancedBankForm setMode={setMode} bank={editPaymentMethod} customerId={customerId} updatedFunction={updatedFunction} handleDelete={handleDelete} showVerifyForm={verify} />;
       break;
   }
 
@@ -144,7 +144,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
 
   return (
     <>
-      <PaymentMethodModal show={showModal} close={() => setShowModal(false)} onSelect={handleEdit} />
+      <EnhancedPaymentMethodModal show={showModal} close={() => setShowModal(false)} onSelect={handleEdit} />
       {content}
     </>
   );

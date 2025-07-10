@@ -17,4 +17,5 @@ export * from "./Plans/exports";
 
 // Modals
 export { PaymentMethodModal } from "./modals/PaymentMethodModal";
+export { EnhancedPaymentMethodModal } from "./modals/EnhancedPaymentMethodModal";
 export { PreviewModal } from "./modals/PreviewModal";

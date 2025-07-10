@@ -1,33 +1,35 @@
 import React from "react";
-import { DonationForm } from "../../src/components/donations/DonationForm";
-import { Donations } from "../../src/components/donations/Donations";
+import { EnhancedDonationForm } from "../../src/components/donations/EnhancedDonationForm";
+import { EnhancedGivingHistory } from "../../src/components/donations/EnhancedGivingHistory";
 import { PaymentMethods } from "../../src/components/donations/PaymentMethods";
-import { RecurringDonations } from "../../src/components/donations/RecurringDonations";
-import { CacheHelper, UserHelper } from "../../src/helpers";
+import { CacheHelper, UserHelper, CurrencyHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/mobilehelper";
 import { StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused, useNavigation, DrawerActions } from "@react-navigation/native";
 import { initStripe } from "@stripe/stripe-react-native";
-import { useEffect, useState } from "react";
-import { Alert, ScrollView, View } from "react-native";
-import { Provider as PaperProvider, Text, MD3LightTheme } from "react-native-paper";
+import { useEffect, useState, useMemo } from "react";
+import { Alert, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Provider as PaperProvider, Text, MD3LightTheme, Card, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
-import { useAppTheme } from "../../src/theme";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { router } from "expo-router";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
+import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#175ec1",
+    primary: "#1565C0",
     secondary: "#f0f2f5",
     surface: "#ffffff",
-    background: "#f8f9fa",
+    background: "#F6F6F8",
+    onSurface: "#3c3c3c",
+    onBackground: "#3c3c3c",
     elevation: {
       level0: "transparent",
       level1: "#ffffff",
@@ -41,10 +43,10 @@ const theme = {
 
 const Donation = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const { spacing } = useAppTheme();
   const [customerId, setCustomerId] = useState<string>("");
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([]);
   const [publishKey, setPublishKey] = useState<string>("");
+  const [activeSection, setActiveSection] = useState<"overview" | "donate" | "manage" | "history">("overview");
   const isFocused = useIsFocused();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
@@ -112,25 +114,150 @@ const Donation = () => {
     }
   };
 
+  // Sample data for demonstration - in real app this would come from API
+  const givingStats = useMemo(
+    () => ({
+      ytd: 2850.0,
+      lastGift: 125.0,
+      totalGifts: 12,
+      lastGiftDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 1 week ago
+    }),
+    []
+  );
+
+  const renderOverviewSection = () => (
+    <>
+      {/* Hero Stats Card */}
+      <Card style={styles.heroCard}>
+        <LinearGradient colors={["#1565C0", "#2196F3"]} style={styles.heroGradient}>
+          <View style={styles.heroContent}>
+            <Text variant="headlineSmall" style={styles.heroTitle}>
+              Your Giving Impact
+            </Text>
+            <Text variant="displaySmall" style={styles.heroAmount}>
+              {CurrencyHelper.formatCurrency(givingStats.ytd)}
+            </Text>
+            <Text variant="bodyMedium" style={styles.heroSubtitle}>
+              Total this year • {givingStats.totalGifts} gifts
+            </Text>
+          </View>
+        </LinearGradient>
+      </Card>
+
+      {/* Recent Activity */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text variant="titleLarge" style={styles.sectionTitle}>
+            Recent Activity
+          </Text>
+          <Button mode="text" onPress={() => setActiveSection("history")} labelStyle={{ color: "#1565C0" }}>
+            View All
+          </Button>
+        </View>
+
+        <Card style={styles.activityCard}>
+          <Card.Content style={styles.activityContent}>
+            <View style={styles.activityIcon}>
+              <MaterialIcons name="favorite" size={24} color="#70DC87" />
+            </View>
+            <View style={styles.activityDetails}>
+              <Text variant="titleMedium" style={styles.activityTitle}>
+                Last Gift
+              </Text>
+              <Text variant="bodyMedium" style={styles.activityAmount}>
+                {CurrencyHelper.formatCurrency(givingStats.lastGift)}
+              </Text>
+              <Text variant="bodySmall" style={styles.activityDate}>
+                {givingStats.lastGiftDate.toLocaleDateString()}
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.repeatButton} onPress={() => setActiveSection("donate")}>
+              <Text variant="labelMedium" style={styles.repeatButtonText}>
+                Repeat
+              </Text>
+            </TouchableOpacity>
+          </Card.Content>
+        </Card>
+      </View>
+
+      {/* CTA Section */}
+      <Card style={styles.ctaCard}>
+        <Card.Content style={styles.ctaContent}>
+          <MaterialIcons name="volunteer-activism" size={48} color="#1565C0" style={styles.ctaIcon} />
+          <Text variant="titleLarge" style={styles.ctaTitle}>
+            Make a Difference Today
+          </Text>
+          <Text variant="bodyMedium" style={styles.ctaSubtitle}>
+            Your generosity helps our church community thrive and grow.
+          </Text>
+          <Button mode="contained" onPress={() => setActiveSection("donate")} style={styles.ctaButton} labelStyle={styles.ctaButtonText}>
+            Give Now
+          </Button>
+        </Card.Content>
+      </Card>
+    </>
+  );
+
+  const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />;
+
+  const renderManageSection = () => (
+    <>
+      {!currentUserChurch?.person?.id ? (
+        <Card style={styles.loginPromptCard}>
+          <Card.Content style={styles.loginPromptContent}>
+            <MaterialIcons name="login" size={48} color="#9E9E9E" style={styles.loginPromptIcon} />
+            <Text variant="titleMedium" style={styles.loginPromptTitle}>
+              Please login to manage payment methods
+            </Text>
+            <Text variant="bodyMedium" style={styles.loginPromptSubtitle}>
+              Save your payment information for faster, more convenient giving.
+            </Text>
+          </Card.Content>
+        </Card>
+      ) : (
+        <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} />
+      )}
+    </>
+  );
+
+  const renderHistorySection = () => <EnhancedGivingHistory customerId={customerId} />;
+
   return (
     <PaperProvider theme={theme}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.primary }}>
+      <SafeAreaView style={styles.container}>
         <LoadingWrapper loading={areMethodsLoading}>
-          <View style={{ flex: 1 }}>
-            <MainHeader title="Donate" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
-            <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: spacing.md }}>
-              {currentUserChurch?.person?.id && <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} />}
-              <DonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />
-              {!currentUserChurch?.person?.id ? (
-                <Text variant="bodyMedium" style={{ marginVertical: spacing.md, color: theme.colors.onSurface }}>
-                  Please login to view existing donations
+          <View style={styles.content}>
+            <MainHeader title="Giving" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
+
+            {/* Tab Navigation */}
+            <View style={styles.tabContainer}>
+              <TouchableOpacity style={[styles.tab, activeSection === "overview" && styles.activeTab]} onPress={() => setActiveSection("overview")}>
+                <Text variant="labelLarge" style={[styles.tabText, activeSection === "overview" && styles.activeTabText]}>
+                  Overview
                 </Text>
-              ) : (
-                <>
-                  <RecurringDonations customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} />
-                  <Donations />
-                </>
-              )}
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.tab, activeSection === "donate" && styles.activeTab]} onPress={() => setActiveSection("donate")}>
+                <Text variant="labelLarge" style={[styles.tabText, activeSection === "donate" && styles.activeTabText]}>
+                  Give
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.tab, activeSection === "manage" && styles.activeTab]} onPress={() => setActiveSection("manage")}>
+                <Text variant="labelLarge" style={[styles.tabText, activeSection === "manage" && styles.activeTabText]}>
+                  Manage
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.tab, activeSection === "history" && styles.activeTab]} onPress={() => setActiveSection("history")}>
+                <Text variant="labelLarge" style={[styles.tabText, activeSection === "history" && styles.activeTabText]}>
+                  History
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+              {activeSection === "overview" && renderOverviewSection()}
+              {activeSection === "donate" && renderDonateSection()}
+              {activeSection === "manage" && renderManageSection()}
+              {activeSection === "history" && renderHistorySection()}
             </ScrollView>
           </View>
         </LoadingWrapper>
@@ -138,5 +265,226 @@ const Donation = () => {
     </PaperProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F6F6F8" // Background from style guide
+  },
+  content: {
+    flex: 1
+  },
+  tabContainer: {
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0"
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 16,
+    alignItems: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent"
+  },
+  activeTab: {
+    borderBottomColor: "#1565C0"
+  },
+  tabText: {
+    color: "#9E9E9E",
+    fontWeight: "500"
+  },
+  activeTabText: {
+    color: "#1565C0",
+    fontWeight: "700"
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: "#F6F6F8"
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 16,
+    paddingBottom: 32
+  },
+
+  // Hero Card Styles
+  heroCard: {
+    marginBottom: 24,
+    borderRadius: 20,
+    overflow: "hidden",
+    elevation: 6,
+    shadowColor: "#1565C0",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8
+  },
+  heroGradient: {
+    padding: 24,
+    minHeight: 160
+  },
+  heroContent: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1
+  },
+  heroTitle: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    marginBottom: 8,
+    textAlign: "center"
+  },
+  heroAmount: {
+    color: "#FFFFFF",
+    fontWeight: "800",
+    marginBottom: 8
+  },
+  heroSubtitle: {
+    color: "#FFFFFF",
+    opacity: 0.9,
+    textAlign: "center"
+  },
+
+  // Section Styles
+  section: {
+    marginBottom: 24
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16
+  },
+  sectionTitle: {
+    color: "#3c3c3c",
+    fontWeight: "700",
+    fontSize: 20
+  },
+
+  // Activity Card
+  activityCard: {
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3
+  },
+  activityContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 4
+  },
+  activityIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#F6F6F8",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16
+  },
+  activityDetails: {
+    flex: 1
+  },
+  activityTitle: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    marginBottom: 2
+  },
+  activityAmount: {
+    color: "#1565C0",
+    fontWeight: "700",
+    marginBottom: 2
+  },
+  activityDate: {
+    color: "#9E9E9E"
+  },
+  repeatButton: {
+    backgroundColor: "rgba(21, 101, 192, 0.1)",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20
+  },
+  repeatButtonText: {
+    color: "#1565C0",
+    fontWeight: "600"
+  },
+
+  // CTA Card
+  ctaCard: {
+    borderRadius: 20,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    borderWidth: 1,
+    borderColor: "rgba(21, 101, 192, 0.1)"
+  },
+  ctaContent: {
+    alignItems: "center",
+    padding: 24
+  },
+  ctaIcon: {
+    marginBottom: 16
+  },
+  ctaTitle: {
+    color: "#3c3c3c",
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 8
+  },
+  ctaSubtitle: {
+    color: "#9E9E9E",
+    textAlign: "center",
+    marginBottom: 24,
+    paddingHorizontal: 16
+  },
+  ctaButton: {
+    backgroundColor: "#1565C0",
+    borderRadius: 12,
+    paddingHorizontal: 32,
+    elevation: 3,
+    shadowColor: "#1565C0",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4
+  },
+  ctaButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: 16
+  },
+
+  // Login Prompt
+  loginPromptCard: {
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3
+  },
+  loginPromptContent: {
+    alignItems: "center",
+    padding: 32
+  },
+  loginPromptIcon: {
+    marginBottom: 16
+  },
+  loginPromptTitle: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 8
+  },
+  loginPromptSubtitle: {
+    color: "#9E9E9E",
+    textAlign: "center",
+    lineHeight: 20
+  }
+});
 
 export default Donation;
