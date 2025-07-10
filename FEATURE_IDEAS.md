@@ -1,0 +1,5 @@
+- Browse all small groups
+- Pull in Social Media Content
+- Take attendance
+- Scan checkin QR
+- RSVP to events
