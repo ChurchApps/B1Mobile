@@ -41,7 +41,7 @@ export function NotificationTab() {
       setLoading(true);
       const merged: any[] = [];
       Chatlist.forEach((item1: any) => {
-        const commonId = currentUserChurch?.person?.id == item1.fromPersonId ? item1.toPersonId : item1.fromPersonId; // item1.toPersonId;
+        const commonId = currentUserChurch?.person?.id == item1.fromPersonId ? item1.toPersonId : item1.fromPersonId;
         const matchingItem2: any = UserData.find((item2: any) => item2.id === commonId);
         if (matchingItem2) {
           merged.push({
@@ -62,6 +62,10 @@ export function NotificationTab() {
   }, []);
 
   const getPreviousConversations = () => {
+    if (!currentUserChurch?.person?.id) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     ApiHelper.get("/privateMessages", "MessagingApi").then((data: ConversationCheckInterface[]) => {
       if (data && data.length != 0) {
@@ -158,7 +162,7 @@ export function NotificationTab() {
       {isLoading ? (
         <Loader isLoading={true} />
       ) : (
-        <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={item => `message-${item.id}`} initialNumToRender={10} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
+        <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={(item, index) => `message-${item.id}-${index}`} initialNumToRender={10} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
       )}
     </View>
   );
@@ -168,7 +172,7 @@ export function NotificationTab() {
       {isLoading ? (
         <Loader isLoading={true} />
       ) : NotificationData.length > 0 ? (
-        <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={item => `notification-${item.id}`} initialNumToRender={8} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={4} updateCellsBatchingPeriod={100} />
+        <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={(item, index) => `notification-${item.id}-${index}`} initialNumToRender={8} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={4} updateCellsBatchingPeriod={100} />
       ) : (
         <View style={{ alignItems: "center", padding: DimensionHelper.wp(5) }}>
           <Image source={Constants.Images.dash_bell} style={{ width: DimensionHelper.wp(15), height: DimensionHelper.wp(15), marginBottom: DimensionHelper.wp(3) }} tintColor={Constants.Colors.app_color_light} />

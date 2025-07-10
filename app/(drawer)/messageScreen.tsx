@@ -145,11 +145,14 @@ const MessageScreen = () => {
   );
 
   const loadMembers = () => {
-    ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi");
+    if (UserHelper.currentUserChurch?.person?.id) {
+      ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi");
+    }
   };
 
   const sendMessageInitiate = () => {
     if (messageText == "") return;
+    if (!UserHelper.currentUserChurch?.person?.id) return;
     if (currentConversation == null || currentConversation == undefined || Object.keys(currentConversation).length == 0) {
       let params = [
         {

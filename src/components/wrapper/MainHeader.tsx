@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Entypo";
 import { NotificationTab } from "../NotificationView";
 import { HeaderBell } from "./HeaderBell";
+import { useUser } from "../../stores/useUserStore";
 
 interface Props {
   title: string;
@@ -16,6 +17,7 @@ interface Props {
 export function MainHeader(props: Props) {
   const [showNotifications, setShowNotifications] = React.useState(false);
   const insets = useSafeAreaInsets();
+  const user = useUser();
 
   const styles = createStyles();
 
@@ -51,7 +53,7 @@ export function MainHeader(props: Props) {
             </Text>
           </View>
           <View style={styles.rightContainer}>
-            {!props.hideBell && (
+            {!props.hideBell && user && (
               <HeaderBell
                 toggleNotifications={() => {
                   setShowNotifications(!showNotifications);
