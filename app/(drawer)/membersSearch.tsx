@@ -81,7 +81,24 @@ const MembersSearch = () => {
       );
     }
 
-    return <FlatList data={searchList} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ width: "100%", maxWidth: 700, alignSelf: "center" }} />;
+    return (
+      <FlatList
+        data={searchList}
+        renderItem={({ item }) => renderMemberItem(item)}
+        keyExtractor={(item: any) => item.id}
+        contentContainerStyle={{ width: "100%", maxWidth: 700, alignSelf: "center" }}
+        initialNumToRender={12}
+        windowSize={10}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={8}
+        updateCellsBatchingPeriod={100}
+        getItemLayout={(data, index) => ({
+          length: 80, // Estimated height of Card with member item
+          offset: 80 * index,
+          index
+        })}
+      />
+    );
   }, [isLoading, searchList, spacing.md, theme.colors.onSurfaceVariant, renderMemberItem]);
 
   return (

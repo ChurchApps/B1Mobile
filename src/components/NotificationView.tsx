@@ -160,7 +160,7 @@ export function NotificationTab() {
 
   const MessagesRoute = () => (
     <View style={globalStyles.MessagetabView}>
-      <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={item => String(item.id)} />
+      <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={item => String(item.id)} initialNumToRender={10} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
     </View>
   );
 
@@ -169,7 +169,7 @@ export function NotificationTab() {
       {isLoading ? (
         <Loader isLoading={true} />
       ) : NotificationData.length > 0 ? (
-        <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={item => String(item.id)} />
+        <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={item => String(item.id)} initialNumToRender={8} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={4} updateCellsBatchingPeriod={100} />
       ) : (
         <View style={{ alignItems: "center", padding: DimensionHelper.wp(5) }}>
           <Image source={Constants.Images.dash_bell} style={{ width: DimensionHelper.wp(15), height: DimensionHelper.wp(15), marginBottom: DimensionHelper.wp(3) }} tintColor={Constants.Colors.app_color_light} />

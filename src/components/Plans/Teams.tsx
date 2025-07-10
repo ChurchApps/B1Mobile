@@ -63,7 +63,22 @@ export const Teams = React.memo(({ positions, assignments, people, name }: Props
         <Icons name="people" style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp(5.5)} />
         <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3), color: Constants.Colors.app_color }]}>{name}</Text>
       </View>
-      <FlatList data={teamData} renderItem={renderItem} scrollEnabled={false} />
+      <FlatList
+        data={teamData}
+        renderItem={renderItem}
+        scrollEnabled={false}
+        keyExtractor={(item, index) => `${item?.id || index}`}
+        initialNumToRender={5}
+        windowSize={5}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={3}
+        updateCellsBatchingPeriod={100}
+        getItemLayout={(data, index) => ({
+          length: 60, // Estimated height based on component structure
+          offset: 60 * index,
+          index
+        })}
+      />
     </View>
   );
 });

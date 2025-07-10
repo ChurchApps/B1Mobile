@@ -237,7 +237,7 @@ const MessageScreen = () => {
     </Surface>
   );
 
-  const messagesView = () => <FlatList inverted data={messageList} style={{ paddingVertical: spacing.md }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ paddingBottom: spacing.lg }} />;
+  const messagesView = () => <FlatList inverted data={messageList} style={{ paddingVertical: spacing.md }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ paddingBottom: spacing.lg }} initialNumToRender={15} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={10} updateCellsBatchingPeriod={100} />;
 
   const singleMessageItem = (item: MessageInterface) => {
     const isMine = item.personId !== details.id;

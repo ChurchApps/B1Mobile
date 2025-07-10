@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { CurrencyHelper, DateHelper } from "../../../src/helpers";
 import { DonationInterface } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ActivityIndicator, ScrollView, View, FlatList } from "react-native";
 import { Card, IconButton, List, Portal, Modal, Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
@@ -26,32 +26,54 @@ export function Donations() {
     select: data => (Array.isArray(data) ? data : [])
   });
 
-  const renderDonationItem = (donation: DonationInterface) => (
-    <List.Item
-      key={donation.id}
-      title={DateHelper.prettyDate(new Date(donation.donationDate || ""))}
-      description={donation.fund?.name}
-      right={() => (
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text variant="bodyLarge" style={{ marginRight: spacing.md }}>
-            {CurrencyHelper.formatCurrency(donation.fund?.amount || 0)}
-          </Text>
-          <IconButton
-            icon="eye"
-            size={20}
-            onPress={() => {
-              setShowDonationModal(true);
-              setSelectedDonation(donation);
-            }}
-          />
-        </View>
-      )}
-    />
+  const renderDonationItem = useCallback(
+    ({ item: donation }: { item: DonationInterface }) => (
+      <List.Item
+        title={DateHelper.prettyDate(new Date(donation.donationDate || ""))}
+        description={donation.fund?.name}
+        right={() => (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text variant="bodyLarge" style={{ marginRight: spacing.md }}>
+              {CurrencyHelper.formatCurrency(donation.fund?.amount || 0)}
+            </Text>
+            <IconButton
+              icon="eye"
+              size={20}
+              onPress={() => {
+                setShowDonationModal(true);
+                setSelectedDonation(donation);
+              }}
+            />
+          </View>
+        )}
+      />
+    ),
+    [spacing.md, setShowDonationModal, setSelectedDonation]
   );
 
+  const keyExtractor = useCallback((item: DonationInterface) => item.id?.toString() || "", []);
+
+  const listData = useMemo(() => donations || [], [donations]);
+
   const content =
-    donations?.length > 0 ? (
-      <List.Section>{donations.map(renderDonationItem)}</List.Section>
+    listData.length > 0 ? (
+      <FlatList
+        data={listData}
+        renderItem={renderDonationItem}
+        keyExtractor={keyExtractor}
+        initialNumToRender={10}
+        windowSize={10}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={5}
+        updateCellsBatchingPeriod={100}
+        getItemLayout={(data, index) => ({
+          length: 72, // Estimated height of List.Item
+          offset: 72 * index,
+          index
+        })}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+      />
     ) : (
       <Text variant="bodyLarge" style={{ padding: spacing.md, textAlign: "center" }}>
         Donations will appear once a donation has been entered.
