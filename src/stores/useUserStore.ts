@@ -20,6 +20,9 @@ interface UserState {
   // Recent churches for quick switching
   recentChurches: ChurchInterface[];
 
+  // Group view tracking
+  groupViewCounts: Record<string, number>;
+
   // FCM token for push notifications
   fcmToken: string;
 
@@ -30,6 +33,7 @@ interface UserState {
   setLinks: (links: any[]) => void;
   setFcmToken: (token: string) => void;
   addRecentChurch: (church: ChurchInterface) => void;
+  incrementGroupViewCount: (groupId: string) => void;
 
   // Complex actions
   handleLogin: (data: LoginResponseInterface) => Promise<void>;
@@ -57,6 +61,7 @@ export const useUserStore = create<UserState>()(
       churchAppearance: null,
       links: [],
       recentChurches: [],
+      groupViewCounts: {},
       fcmToken: "",
 
       // Basic setters
@@ -98,6 +103,17 @@ export const useUserStore = create<UserState>()(
         const filtered = state.recentChurches.filter(c => c.id !== church.id);
         const updated = [church, ...filtered].slice(0, 5); // Keep only 5 recent churches
         set({ recentChurches: updated });
+      },
+
+      incrementGroupViewCount: groupId => {
+        const state = get();
+        const currentCount = state.groupViewCounts[groupId] || 0;
+        set({
+          groupViewCounts: {
+            ...state.groupViewCounts,
+            [groupId]: currentCount + 1
+          }
+        });
       },
 
       // Handle login response
@@ -410,6 +426,7 @@ export const useUserStore = create<UserState>()(
         user: state.user,
         currentUserChurch: state.currentUserChurch,
         recentChurches: state.recentChurches,
+        groupViewCounts: state.groupViewCounts,
         fcmToken: state.fcmToken
       })
     }
@@ -459,3 +476,5 @@ export const useCurrentUserChurch = () => useUserStore(state => state.currentUse
 export const useChurchAppearance = () => useUserStore(state => state.churchAppearance);
 export const useUserChurches = () => useUserStore(state => state.userChurches);
 export const useRecentChurches = () => useUserStore(state => state.recentChurches);
+export const useGroupViewCounts = () => useUserStore(state => state.groupViewCounts);
+export const useIncrementGroupViewCount = () => useUserStore(state => state.incrementGroupViewCount);

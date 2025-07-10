@@ -9,7 +9,7 @@ import { TimelineHelper } from "../../src/helpers/Timelinehelper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { useUser } from "../../src/stores/useUserStore";
+import { useUser, useGroupViewCounts, useIncrementGroupViewCount } from "../../src/stores/useUserStore";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 
@@ -44,6 +44,8 @@ const MyGroups = () => {
   const navigation = useNavigation();
 
   const user = useUser();
+  const groupViewCounts = useGroupViewCounts();
+  const incrementGroupViewCount = useIncrementGroupViewCount();
 
   // Debug logging
 
@@ -97,46 +99,120 @@ const MyGroups = () => {
     setMergedData(mergedTimelineData);
   }, [mergedTimelineData]);
 
-  const showGroups = useCallback((item: any) => {
-    const handlePress = () => {
-      router.navigate({
-        pathname: `/groupDetails/${item.id}`
-      });
-    };
+  const showGroups = useCallback(
+    (item: any, isFeatured: boolean = false) => {
+      const handlePress = () => {
+        // Track the view
+        incrementGroupViewCount(item.id);
 
-    return (
-      <Card style={styles.groupCard} onPress={handlePress}>
-        <View style={styles.groupImageContainer}>
-          <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
-          <View style={styles.groupOverlay}>
-            <Text variant="headlineSmall" style={styles.groupName} numberOfLines={2}>
-              {item.name}
-            </Text>
-            <Text variant="bodyMedium" style={styles.groupSubtitle}>
-              Tap to explore
-            </Text>
+        router.navigate({
+          pathname: `/groupDetails/${item.id}`
+        });
+      };
+
+      if (!isFeatured) {
+        // Compact layout for regular groups
+        return (
+          <Card style={styles.regularGroupCard} onPress={handlePress}>
+            <View style={styles.regularGroupContent}>
+              <View style={styles.regularGroupImageContainer}>
+                <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.regularGroupImage} />
+              </View>
+              <View style={styles.regularGroupTextContainer}>
+                <Text variant="titleMedium" style={styles.regularGroupName} numberOfLines={2}>
+                  {item.name}
+                </Text>
+                <Text variant="bodySmall" style={styles.regularGroupSubtitle}>
+                  Tap to explore
+                </Text>
+              </View>
+            </View>
+          </Card>
+        );
+      }
+
+      // Featured layout (full-width 16:9)
+      return (
+        <Card style={styles.featuredGroupCard} onPress={handlePress}>
+          <View style={styles.groupImageContainer}>
+            <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
+            <View style={styles.groupOverlay}>
+              <Text variant="headlineSmall" style={styles.featuredGroupName} numberOfLines={2}>
+                {item.name}
+              </Text>
+              <Text variant="bodyMedium" style={styles.groupSubtitle}>
+                Most visited
+              </Text>
+            </View>
           </View>
-        </View>
-      </Card>
-    );
-  }, []);
+        </Card>
+      );
+    },
+    [incrementGroupViewCount]
+  );
 
   const renderItems = useCallback((item: any) => <TimeLinePost item={item} onUpdate={loadData} />, [loadData]);
 
+  // Sort groups by view count and separate into featured vs regular
+  const sortedGroups = useMemo(() => {
+    if (!Array.isArray(groups)) return { featured: [], regular: [] };
+
+    // Sort groups by view count (descending)
+    const sorted = [...groups].sort((a, b) => {
+      const aViews = groupViewCounts[a.id] || 0;
+      const bViews = groupViewCounts[b.id] || 0;
+      return bViews - aViews;
+    });
+
+    // Split into featured (top 1-3) and regular
+    const featuredCount = Math.min(3, Math.max(1, sorted.length));
+    const featured = sorted.slice(0, featuredCount);
+    const regular = sorted.slice(featuredCount);
+
+    return { featured, regular };
+  }, [groups, groupViewCounts]);
+
   const groupsGrid = useMemo(() => {
-    if (!Array.isArray(groups)) return null;
+    if (!Array.isArray(groups) || groups.length === 0) return null;
+
+    const { featured, regular } = sortedGroups;
+
     return (
       <View style={styles.groupsSection}>
-        <View style={styles.groupsList}>
-          {groups.map(item => (
-            <View key={item.id} style={styles.groupItem}>
-              {showGroups(item)}
+        {/* Featured Groups */}
+        {featured.length > 0 && (
+          <View style={styles.featuredSection}>
+            <Text variant="titleMedium" style={styles.featuredTitle}>
+              Your Most Visited
+            </Text>
+            <View style={styles.groupsList}>
+              {featured.map(item => (
+                <View key={item.id} style={styles.groupItem}>
+                  {showGroups(item, true)}
+                </View>
+              ))}
             </View>
-          ))}
-        </View>
+          </View>
+        )}
+
+        {/* Regular Groups */}
+        {regular.length > 0 && (
+          <View style={styles.regularSection}>
+            <Text variant="titleMedium" style={styles.regularTitle}>
+              Other Groups
+            </Text>
+            <View style={styles.regularGroupsList}>
+              {regular.map(item => (
+                <View key={item.id} style={styles.regularGroupItem}>
+                  {showGroups(item, false)}
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
       </View>
     );
-  }, [groups, showGroups]);
+  }, [sortedGroups, showGroups]);
 
   return (
     <PaperProvider theme={theme}>
@@ -197,10 +273,36 @@ const styles = StyleSheet.create({
   groupsSection: {
     marginBottom: 16
   },
+  featuredSection: {
+    marginBottom: 24
+  },
+  featuredTitle: {
+    color: "#1565C0",
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 16,
+    paddingHorizontal: 4
+  },
+  regularSection: {
+    marginBottom: 16
+  },
+  regularTitle: {
+    color: "#9E9E9E",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 12,
+    paddingHorizontal: 4
+  },
   groupsList: {
     gap: 16
   },
+  regularGroupsList: {
+    gap: 12
+  },
   groupItem: {
+    width: "100%"
+  },
+  regularGroupItem: {
     width: "100%"
   },
   groupCard: {
@@ -212,6 +314,58 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 6,
     backgroundColor: "#FFFFFF"
+  },
+  featuredGroupCard: {
+    overflow: "hidden",
+    borderRadius: 20,
+    elevation: 6,
+    shadowColor: "#1565C0",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    backgroundColor: "#FFFFFF",
+    borderWidth: 2,
+    borderColor: "rgba(21, 101, 192, 0.1)"
+  },
+  regularGroupCard: {
+    overflow: "hidden",
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
+  },
+  regularGroupContent: {
+    flexDirection: "row",
+    padding: 12,
+    alignItems: "center"
+  },
+  regularGroupImageContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    overflow: "hidden",
+    marginRight: 12
+  },
+  regularGroupImage: {
+    width: "100%",
+    height: "100%"
+  },
+  regularGroupTextContainer: {
+    flex: 1,
+    justifyContent: "center"
+  },
+  regularGroupName: {
+    color: "#3c3c3c",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 2
+  },
+  regularGroupSubtitle: {
+    color: "#9E9E9E",
+    fontSize: 12
   },
   groupImageContainer: {
     position: "relative",
@@ -242,6 +396,15 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(0, 0, 0, 0.3)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2
+  },
+  featuredGroupName: {
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 4,
+    textShadowColor: "rgba(0, 0, 0, 0.4)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3
   },
   groupSubtitle: {
     color: "#FFFFFF",
