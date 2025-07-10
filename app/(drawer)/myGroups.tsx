@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { Provider as PaperProvider, Card, Text, MD3LightTheme } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useQuery } from "@tanstack/react-query";
 import { ArrayHelper, UserPostInterface } from "../../src/helpers";
@@ -18,17 +17,17 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#175ec1",
-    secondary: "#f0f2f5",
-    surface: "#ffffff",
-    background: "#f8f9fa",
+    primary: "#1565C0", // Primary Blue from style guide
+    secondary: "#F6F6F8", // Background from style guide
+    surface: "#FFFFFF", // Card Background from style guide
+    background: "#F6F6F8", // Background from style guide
     elevation: {
       level0: "transparent",
-      level1: "#ffffff",
-      level2: "#f8f9fa",
-      level3: "#f0f2f5",
-      level4: "#e9ecef",
-      level5: "#e2e6ea"
+      level1: "#FFFFFF",
+      level2: "#F6F6F8",
+      level3: "#F0F0F0",
+      level4: "#E9ECEF",
+      level5: "#E2E6EA"
     }
   }
 };
@@ -107,12 +106,17 @@ const MyGroups = () => {
 
     return (
       <Card style={styles.groupCard} onPress={handlePress}>
-        <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
-        <Card.Content style={styles.groupContent}>
-          <Text variant="titleMedium" style={styles.groupName}>
-            {item.name}
-          </Text>
-        </Card.Content>
+        <View style={styles.groupImageContainer}>
+          <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
+          <View style={styles.groupOverlay}>
+            <Text variant="headlineSmall" style={styles.groupName} numberOfLines={2}>
+              {item.name}
+            </Text>
+            <Text variant="bodyMedium" style={styles.groupSubtitle}>
+              Tap to explore
+            </Text>
+          </View>
+        </View>
       </Card>
     );
   }, []);
@@ -122,12 +126,14 @@ const MyGroups = () => {
   const groupsGrid = useMemo(() => {
     if (!Array.isArray(groups)) return null;
     return (
-      <View style={styles.gridContainer}>
-        {groups.map(item => (
-          <View key={item.id} style={styles.gridItem}>
-            {showGroups(item)}
-          </View>
-        ))}
+      <View style={styles.groupsSection}>
+        <View style={styles.groupsList}>
+          {groups.map(item => (
+            <View key={item.id} style={styles.groupItem}>
+              {showGroups(item)}
+            </View>
+          ))}
+        </View>
       </View>
     );
   }, [groups, showGroups]);
@@ -137,13 +143,31 @@ const MyGroups = () => {
       <SafeAreaProvider>
         <LoadingWrapper loading={loading}>
           <View style={styles.container}>
-            <MainHeader 
-              title="My Groups" 
-              openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())}
-              back={() => router.navigate("/(drawer)/dashboard")}
-            />
+            <MainHeader title="My Groups" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
             <View style={styles.contentContainer}>
-              <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListFooterComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={(item: any) => `key-${item.id || Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
+              <FlatList
+                data={mergeData}
+                contentContainerStyle={styles.listContent}
+                showsVerticalScrollIndicator={false}
+                scrollEnabled={true}
+                ListHeaderComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>}
+                ListFooterComponent={() =>
+                  mergeData.length > 0 && (
+                    <View style={styles.timelineSeparator}>
+                      <Text variant="titleMedium" style={styles.timelineTitle}>
+                        Recent Activity
+                      </Text>
+                    </View>
+                  )
+                }
+                renderItem={({ item }) => renderItems(item)}
+                keyExtractor={(item: any) => `key-${item.id || Math.random()}`}
+                initialNumToRender={8}
+                windowSize={10}
+                removeClippedSubviews={true}
+                maxToRenderPerBatch={5}
+                updateCellsBatchingPeriod={100}
+              />
             </View>
           </View>
         </LoadingWrapper>
@@ -155,65 +179,87 @@ const MyGroups = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.primary
-  },
-  header: {
-    backgroundColor: theme.colors.primary,
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3
-  },
-  headerTitle: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "600"
+    backgroundColor: "#F6F6F8" // Background from style guide
   },
   contentContainer: {
     flex: 1,
-    backgroundColor: "#f8f9fa"
+    backgroundColor: "#F6F6F8"
   },
   listContent: {
-    paddingBottom: 20
+    flexGrow: 1,
+    paddingBottom: 24
   },
   groupsContainer: {
-    padding: 16
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    backgroundColor: "#F6F6F8"
   },
-  gridContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginTop: 8
-  },
-  gridItem: {
-    width: "48%",
+  groupsSection: {
     marginBottom: 16
   },
+  groupsList: {
+    gap: 16
+  },
+  groupItem: {
+    width: "100%"
+  },
   groupCard: {
-    height: 160,
     overflow: "hidden",
-    borderRadius: 12,
-    elevation: 2,
+    borderRadius: 16,
+    elevation: 3,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    backgroundColor: "#FFFFFF"
+  },
+  groupImageContainer: {
+    position: "relative",
+    aspectRatio: 16 / 9, // 16:9 aspect ratio
+    overflow: "hidden"
   },
   groupImage: {
-    height: 120,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12
+    width: "100%",
+    height: "100%",
+    borderRadius: 16
   },
-  groupContent: {
-    padding: 12,
-    alignItems: "center",
-    backgroundColor: "white"
+  groupOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16
   },
   groupName: {
-    color: theme.colors.primary,
-    fontSize: 16,
-    fontWeight: "500",
+    color: "#FFFFFF",
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 4,
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2
+  },
+  groupSubtitle: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    opacity: 0.9,
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2
+  },
+  timelineSeparator: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#F6F6F8"
+  },
+  timelineTitle: {
+    color: "#3c3c3c",
+    fontSize: 18,
+    fontWeight: "600",
     textAlign: "center"
   }
 });

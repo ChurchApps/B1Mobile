@@ -1,9 +1,7 @@
 import React from "react";
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Drawer } from "expo-router/drawer";
 
 import { CustomDrawer } from "../../src/components/CustomDrawer";
-import { Constants } from "@/helpers";
 import { ErrorBoundary } from "../../src/components/ErrorBoundary";
 
 export default function DrawerLayout() {

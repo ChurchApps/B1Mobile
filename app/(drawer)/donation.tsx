@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 import { Alert, ScrollView, View } from "react-native";
 import { Provider as PaperProvider, Text, MD3LightTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../src/theme";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
@@ -118,11 +117,7 @@ const Donation = () => {
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.primary }}>
         <LoadingWrapper loading={areMethodsLoading}>
           <View style={{ flex: 1 }}>
-            <MainHeader 
-              title="Donate" 
-              openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())}
-              back={() => router.navigate("/(drawer)/dashboard")}
-            />
+            <MainHeader title="Donate" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
             <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: spacing.md }}>
               {UserHelper.currentUserChurch?.person?.id && <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} />}
               <DonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />

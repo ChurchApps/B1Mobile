@@ -9,9 +9,8 @@ import { useEffect, useState } from "react";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
 import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
 import RNRestart from "react-native-restart";
-import { DimensionHelper } from "../helpers/DimensionHelper";
 import { useAppTheme } from "../../src/theme";
-import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple } from "react-native-paper";
+import { Avatar, Button, Divider, List, Surface, Text, TouchableRipple } from "react-native-paper";
 import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
@@ -180,14 +179,7 @@ export function CustomDrawer() {
     <Surface style={styles.headerContainer} elevation={2}>
       <View style={styles.headerContent}>
         {getUserInfo()}
-        <Button 
-          mode="contained" 
-          onPress={() => router.navigate("/(drawer)/churchSearch")} 
-          style={styles.churchButton} 
-          buttonColor="#FFFFFF"
-          textColor="#1565C0"
-          icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#1565C0" />}
-        >
+        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#1565C0" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#1565C0" />}>
           {!currentChurch ? "Find Church" : currentChurch.name || ""}
         </Button>
       </View>
@@ -201,25 +193,13 @@ export function CustomDrawer() {
     return (
       <View style={styles.userInfoSection}>
         <View style={styles.userRow}>
-          <View style={styles.avatarContainer}>
-            {currentUserChurch.person.photo ? 
-              <Avatar.Image size={48} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : 
-              <Avatar.Text size={48} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />
-            }
-          </View>
+          <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={48} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={48} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />}</View>
           <View style={styles.userTextContainer}>
             <Text variant="titleMedium" numberOfLines={1} style={styles.userName}>
               {`${user.firstName} ${user.lastName}`}
             </Text>
             <View style={styles.actionButtons}>
-              <Button 
-                mode="text" 
-                onPress={editProfileAction} 
-                style={styles.profileButton}
-                textColor="#1565C0"
-                compact
-                icon={() => <MaterialIcons name="edit" size={16} color="#1565C0" />}
-              >
+              <Button mode="text" onPress={editProfileAction} style={styles.profileButton} textColor="#1565C0" compact icon={() => <MaterialIcons name="edit" size={16} color="#1565C0" />}>
                 Edit Profile
               </Button>
               {user && (
@@ -337,7 +317,7 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     backgroundColor: "#FFFFFF",
-    marginTop: 8,
+    marginTop: 8
   },
   listItem: {
     minHeight: 48, // Style guide menu item height
@@ -345,7 +325,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
+    borderBottomColor: "#F0F0F0"
   },
   tabIcon: {
     width: 24,

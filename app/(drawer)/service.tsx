@@ -44,11 +44,7 @@ const Service = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
-      <MainHeader 
-        title="Checkin" 
-        openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())}
-        back={() => router.navigate("/(drawer)/dashboard")}
-      />
+      <MainHeader title="Checkin" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
       <ScrollView>
         <SafeAreaView style={{ flex: 1 }}>
           {getBrand()}

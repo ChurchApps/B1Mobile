@@ -3,11 +3,10 @@ import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from "reac
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
-import { Provider as PaperProvider, Card, Text, Surface, MD3LightTheme, Portal, Modal } from "react-native-paper";
+import { Provider as PaperProvider, Card, Text, MD3LightTheme, Portal, Modal } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { UserHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { LinkInterface } from "../../src/helpers/Interfaces";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
@@ -135,11 +134,11 @@ const Dashboard = () => {
 
   const featuredContent = useMemo(() => {
     if (isLoading || filteredLinks.length === 0) return null;
-    
+
     // Get featured items (first 3 most important items)
     const featuredItems = filteredLinks.slice(0, 3);
     const otherItems = filteredLinks.slice(3);
-    
+
     return (
       <>
         {/* Hero Section */}
@@ -164,15 +163,12 @@ const Dashboard = () => {
         {/* Featured Cards */}
         {featuredItems.length > 1 && (
           <View style={styles.featuredSection}>
-            <Text variant="titleLarge" style={styles.sectionTitle}>Featured</Text>
+            <Text variant="titleLarge" style={styles.sectionTitle}>
+              Featured
+            </Text>
             <View style={styles.featuredGrid}>
               {featuredItems.slice(1, 3).map(item => (
-                <Card 
-                  key={item.id || item.linkType + item.text} 
-                  style={styles.featuredCard} 
-                  mode="elevated" 
-                  onPress={() => NavigationUtils.navigateToScreen(item, currentChurch)}
-                >
+                <Card key={item.id || item.linkType + item.text} style={styles.featuredCard} mode="elevated" onPress={() => NavigationUtils.navigateToScreen(item, currentChurch)}>
                   <View style={styles.featuredImageContainer}>
                     <OptimizedImage source={getBackgroundImage(item)} style={styles.featuredImage} contentFit="cover" />
                     <View style={styles.featuredOverlay}>
@@ -190,20 +186,14 @@ const Dashboard = () => {
         {/* Quick Actions */}
         {otherItems.length > 0 && (
           <View style={styles.quickActionsSection}>
-            <Text variant="titleLarge" style={styles.sectionTitle}>Quick Actions</Text>
+            <Text variant="titleLarge" style={styles.sectionTitle}>
+              Quick Actions
+            </Text>
             <View style={styles.quickActionsGrid}>
               {otherItems.map(item => (
-                <TouchableOpacity 
-                  key={item.id || item.linkType + item.text}
-                  style={styles.quickActionItem}
-                  onPress={() => NavigationUtils.navigateToScreen(item, currentChurch)}
-                >
+                <TouchableOpacity key={item.id || item.linkType + item.text} style={styles.quickActionItem} onPress={() => NavigationUtils.navigateToScreen(item, currentChurch)}>
                   <View style={styles.quickActionIcon}>
-                    <MaterialIcons 
-                      name={item.icon ? item.icon.split("_").join("-") : "apps"} 
-                      size={24} 
-                      color="#1565C0" 
-                    />
+                    <MaterialIcons name={item.icon ? item.icon.split("_").join("-") : "apps"} size={24} color="#1565C0" />
                   </View>
                   <Text variant="bodyMedium" style={styles.quickActionText} numberOfLines={2}>
                     {item.text}
@@ -217,20 +207,15 @@ const Dashboard = () => {
     );
   }, [isLoading, filteredLinks, getBackgroundImage, currentChurch]);
 
-  const welcomeSection = useMemo(() => {
-    return (
+  const welcomeSection = useMemo(
+    () => (
       <View style={styles.welcomeSection}>
         <View style={styles.welcomeContent}>
           <Text variant="headlineMedium" style={styles.welcomeTitle}>
             Welcome to
           </Text>
           {churchAppearance?.logoLight ? (
-            <OptimizedImage 
-              source={{ uri: churchAppearance.logoLight }} 
-              style={styles.churchLogo} 
-              contentFit="contain" 
-              priority="high" 
-            />
+            <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.churchLogo} contentFit="contain" priority="high" />
           ) : (
             <Text variant="headlineLarge" style={styles.churchName}>
               {currentChurch?.name || ""}
@@ -241,8 +226,9 @@ const Dashboard = () => {
           </Text>
         </View>
       </View>
-    );
-  }, [churchAppearance?.logoLight, currentChurch?.name]);
+    ),
+    [churchAppearance?.logoLight, currentChurch?.name]
+  );
 
   const handleNotificationToggle = useCallback(() => {
     setShowNotifications(true);
@@ -257,10 +243,7 @@ const Dashboard = () => {
       <SafeAreaProvider>
         <LoadingWrapper loading={isLoading}>
           <View style={styles.container}>
-            <MainHeader 
-              title="Home" 
-              openDrawer={handleDrawerOpen}
-            />
+            <MainHeader title="Home" openDrawer={handleDrawerOpen} />
             <View style={styles.contentContainer}>
               <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {welcomeSection}
@@ -295,7 +278,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 24
   },
-  
+
   // Welcome Section
   welcomeSection: {
     padding: 24,
@@ -326,7 +309,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     opacity: 0.8
   },
-  
+
   // Hero Section
   heroSection: {
     paddingHorizontal: 16,
@@ -373,7 +356,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2
   },
-  
+
   // Featured Section
   featuredSection: {
     paddingHorizontal: 16,
@@ -423,7 +406,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2
   },
-  
+
   // Quick Actions Section
   quickActionsSection: {
     paddingHorizontal: 16,
@@ -462,7 +445,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500"
   },
-  
+
   // Modal
   modalContainer: {
     backgroundColor: "white",
