@@ -1,9 +1,9 @@
 import * as React from "react";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { DateHelper } from "@churchapps/mobilehelper";
+import { DateHelper } from "../../mobilehelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
-import { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import { useEffect, useState, useMemo } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -34,7 +34,6 @@ export default function RRuleEditor(props: Props) {
     { label: "Month", value: RRule.MONTHLY.toString() }
   ]);
   const [isFrequencyOnDropDownOpen, setIsFrequencyOnDropDownOpen] = useState(false);
-  const [selectOn, setSlecton] = useState(null);
 
   const [isEndsDropDownOpen, setIsEndsDropDownOpen] = useState(false);
   const [selectEnds, setSelectEnds] = useState(rRuleOptions.count ? "count" : rRuleOptions.until ? "until" : "never");
@@ -130,7 +129,7 @@ export default function RRuleEditor(props: Props) {
           </>
         );
         break;
-      case RRule.MONTHLY.toString():
+      case RRule.MONTHLY.toString(): {
         const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const ordinals = ["first", "second", "third", "fourth", "last"];
         // const dayOfMonth = props.start.getDate() || 1;
@@ -155,7 +154,7 @@ export default function RRuleEditor(props: Props) {
                   }
                 ]}
                 setOpen={setIsFrequencyOnDropDownOpen}
-                setValue={setSlecton}
+                setValue={() => {}}
                 onSelectItem={e => {
                   handleMonthOptionChange(e.value || "", dayOfMonth, ordinal, dayOfWeek);
                 }}
@@ -167,6 +166,7 @@ export default function RRuleEditor(props: Props) {
           </>
         );
         break;
+      }
     }
     return result;
   };
@@ -212,7 +212,7 @@ export default function RRuleEditor(props: Props) {
             <Text style={styles.labelText}>End Date</Text>
             <View style={styles.dateConatiner}>
               <Text style={styles.dateText} numberOfLines={1}>
-                {moment(onEndDate).format("YYYY-MM-DD")}
+                {dayjs(onEndDate).format("YYYY-MM-DD")}
               </Text>
               <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setonEndPicker(true)} />
               <DatePicker
@@ -256,7 +256,7 @@ export default function RRuleEditor(props: Props) {
               placeholderTextColor={"lightgray"}
               value={occurances}
               onChangeText={text => {
-                setOccurances(text), handleEndFollowupChange("count", text);
+                (setOccurances(text), handleEndFollowupChange("count", text));
               }}
             />
           </>
@@ -266,10 +266,11 @@ export default function RRuleEditor(props: Props) {
     return result;
   };
 
+  const rRuleString = useMemo(() => EventHelper.getPartialRRuleString(rRuleOptions), [rRuleOptions]);
+
   useEffect(() => {
-    const result = EventHelper.getPartialRRuleString(rRuleOptions);
-    props.onChange(result);
-  }, [rRuleOptions]);
+    props.onChange(rRuleString);
+  }, [rRuleString, props.onChange]);
 
   return (
     <View>
@@ -293,7 +294,7 @@ export default function RRuleEditor(props: Props) {
         placeholderTextColor={"lightgray"}
         value={interval}
         onChangeText={text => {
-          setInterval(text), handleChange("interval", text);
+          (setInterval(text), handleChange("interval", text));
         }}
       />
       <Text style={styles.labelText}>Frequency</Text>

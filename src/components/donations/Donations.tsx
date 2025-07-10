@@ -1,69 +1,79 @@
-import React, { useEffect, useState } from "react";
-import { ApiHelper, CurrencyHelper, DateHelper, UserHelper } from "../../../src/helpers";
+import React, { useState, useCallback, useMemo } from "react";
+import { CurrencyHelper, DateHelper } from "../../../src/helpers";
 import { DonationInterface } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ActivityIndicator, ScrollView, View, FlatList } from "react-native";
 import { Card, IconButton, List, Portal, Modal, Text } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 export function Donations() {
-  const [donations, setDonations] = useState<DonationInterface[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showDonationModal, setShowDonationModal] = useState<boolean>(false);
   const [selectedDonation, setSelectedDonation] = useState<DonationInterface>({});
   const isFocused = useIsFocused();
-  const person = UserHelper.currentUserChurch?.person;
+  const currentUserChurch = useCurrentUserChurch();
+  const person = currentUserChurch?.person;
   const { spacing, theme } = useAppTheme();
 
-  const loadDonations = () => {
-    if (person) {
-      setIsLoading(true);
-      ApiHelper.get("/donations?personId=" + person.id, "GivingApi")
-        .then(data => {
-          if (Array.isArray(data)) setDonations(data);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  };
+  // Use react-query for donations
+  const { data: donations = [], isLoading } = useQuery<DonationInterface[]>({
+    queryKey: [`/donations?personId=${person?.id}`, "GivingApi"],
+    enabled: !!person?.id && !!currentUserChurch?.jwt && isFocused,
+    placeholderData: [],
+    staleTime: 2 * 60 * 1000, // 2 minutes - financial data should be relatively fresh
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    select: data => (Array.isArray(data) ? data : [])
+  });
 
-  useEffect(() => {
-    if (isFocused) {
-      if (person) {
-        loadDonations();
-      }
-    }
-  }, [isFocused]);
-
-  useEffect(loadDonations, []);
-
-  const renderDonationItem = (donation: DonationInterface) => (
-    <List.Item
-      key={donation.id}
-      title={DateHelper.prettyDate(new Date(donation.donationDate || ""))}
-      description={donation.fund?.name}
-      right={() => (
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text variant="bodyLarge" style={{ marginRight: spacing.md }}>
-            {CurrencyHelper.formatCurrency(donation.fund?.amount || 0)}
-          </Text>
-          <IconButton
-            icon="eye"
-            size={20}
-            onPress={() => {
-              setShowDonationModal(true);
-              setSelectedDonation(donation);
-            }}
-          />
-        </View>
-      )}
-    />
+  const renderDonationItem = useCallback(
+    ({ item: donation }: { item: DonationInterface }) => (
+      <List.Item
+        title={DateHelper.prettyDate(new Date(donation.donationDate || ""))}
+        description={donation.fund?.name}
+        right={() => (
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text variant="bodyLarge" style={{ marginRight: spacing.md }}>
+              {CurrencyHelper.formatCurrency(donation.fund?.amount || 0)}
+            </Text>
+            <IconButton
+              icon="eye"
+              size={20}
+              onPress={() => {
+                setShowDonationModal(true);
+                setSelectedDonation(donation);
+              }}
+            />
+          </View>
+        )}
+      />
+    ),
+    [spacing.md, setShowDonationModal, setSelectedDonation]
   );
 
+  const keyExtractor = useCallback((item: DonationInterface) => item.id?.toString() || "", []);
+
+  const listData = useMemo(() => donations || [], [donations]);
+
   const content =
-    donations?.length > 0 ? (
-      <List.Section>{donations.map(renderDonationItem)}</List.Section>
+    listData.length > 0 ? (
+      <FlatList
+        data={listData}
+        renderItem={renderDonationItem}
+        keyExtractor={keyExtractor}
+        initialNumToRender={10}
+        windowSize={10}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={5}
+        updateCellsBatchingPeriod={100}
+        getItemLayout={(data, index) => ({
+          length: 72, // Estimated height of List.Item
+          offset: 72 * index,
+          index
+        })}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+      />
     ) : (
       <Text variant="bodyLarge" style={{ padding: spacing.md, textAlign: "center" }}>
         Donations will appear once a donation has been entered.
@@ -99,11 +109,7 @@ export function Donations() {
       </Portal>
 
       <Card>
-        <Card.Title
-          title="Donations"
-          titleStyle={{ fontSize: 20, fontWeight: "600" }}
-          left={props => <IconButton {...props} icon="history" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
-        />
+        <Card.Title title="Donations" titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="history" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
         <Card.Content>{isLoading ? <ActivityIndicator size="large" style={{ margin: spacing.md }} /> : content}</Card.Content>
       </Card>
     </>

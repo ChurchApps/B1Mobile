@@ -3,15 +3,16 @@ import { CheckinComplete } from "../../src/components/checkin/CheckinComplete";
 import { CheckinGroups } from "../../src/components/checkin/CheckinGroups";
 import { CheckinHousehold } from "../../src/components/checkin/CheckinHousehold";
 import { CheckinServices } from "../../src/components/checkin/CheckinServices";
-import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface, UserHelper } from "../../src/helpers";
+import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface } from "../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Image, SafeAreaView, ScrollView, View } from "react-native";
 import { useAppTheme } from "../../src/theme";
 import { Appbar, Surface } from "react-native-paper";
+import { useChurchAppearance } from "../../src/stores/useUserStore";
 
 const Service = () => {
   const { theme, spacing } = useAppTheme();
@@ -19,6 +20,7 @@ const Service = () => {
   const [step, setStep] = useState("Services");
   const [groupMember, setGroupMember] = useState<PersonInterface>();
   const [groupTime, setGroupTime] = useState<ServiceTimeInterface>();
+  const churchAppearance = useChurchAppearance();
 
   const handleShowGroups = (member: PersonInterface, time: ServiceTimeInterface) => {
     setGroupMember(member);
@@ -35,14 +37,14 @@ const Service = () => {
   };
 
   const getBrand = () => {
-    if (UserHelper.churchAppearance?.logoLight) return <Image source={{ uri: UserHelper.churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} />;
+    if (churchAppearance?.logoLight) return <Image source={{ uri: churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} />;
     else return <Image source={Constants.Images.logoBlue} style={{ width: "100%", height: DimensionHelper.wp(25) }} />;
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
       <Appbar.Header>
-        <Appbar.Action icon="menu" onPress={navigation.openDrawer} />
+        <Appbar.Action icon="menu" onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
         <Appbar.Content title="Checkin" />
         <Appbar.Action icon="arrow-left" onPress={navigation.goBack} />
       </Appbar.Header>

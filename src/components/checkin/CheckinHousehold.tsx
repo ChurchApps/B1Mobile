@@ -1,10 +1,11 @@
 import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface } from "../../../src/helpers";
-import { ErrorHelper } from "@churchapps/mobilehelper";
+import { ErrorHelper } from "../../mobilehelper";
 import React, { useState } from "react";
-import { FlatList, Image, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { useAppTheme } from "../../../src/theme";
 import { Button, Divider, List, Text } from "react-native-paper";
+import { OptimizedImage } from "../OptimizedImage";
 
 interface Props {
   onDone: () => void;
@@ -38,7 +39,6 @@ export const CheckinHousehold = (props: Props) => {
       CheckinHelper.groupTree = null;
       props.onDone();
     } catch (error: any) {
-      console.log("CLEAR MEMBER LIST ERROR", error);
       ErrorHelper.logError("submit-attendance", error);
     }
   };
@@ -57,7 +57,7 @@ export const CheckinHousehold = (props: Props) => {
         left={props => (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <List.Icon {...props} icon={selected == item.id ? "chevron-down" : "chevron-right"} />
-            <Image source={{ uri: EnvironmentHelper.ContentRoot + item.photo }} style={{ width: 40, height: 40, borderRadius: 20 }} />
+            <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 40, height: 40, borderRadius: 20 }} placeholder={Constants.Images.ic_member} />
           </View>
         )}
         onPress={() => setSelected(selected != item.id ? item.id : null)}
@@ -73,11 +73,7 @@ export const CheckinHousehold = (props: Props) => {
               description={item_time.selectedGroup ? item_time.selectedGroup.name : "NONE"}
               left={props => <List.Icon {...props} icon="clock-outline" />}
               right={() => (
-                <Button
-                  mode="contained"
-                  onPress={() => (item_time.selection ? null : props.showGroups(item, item_time))}
-                  style={{ backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }}
-                  disabled={item_time.selection}>
+                <Button mode="contained" onPress={() => (item_time.selection ? null : props.showGroups(item, item_time))} style={{ backgroundColor: item_time.selectedGroup ? Constants.Colors.button_green : Constants.Colors.button_bg }} disabled={item_time.selection}>
                   {item_time.selectedGroup ? item_time.selectedGroup.name : "NONE"}
                 </Button>
               )}

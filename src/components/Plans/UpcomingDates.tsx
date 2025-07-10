@@ -1,6 +1,6 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
-import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
@@ -14,7 +14,6 @@ interface Props {
 }
 
 export const UpcomingDates = ({ plans, positions, assignments, times }: Props) => {
-  const [upcomingDates, setUpcomingDates] = useState<any[]>([]);
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -25,7 +24,9 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
     }).start();
   }, []);
 
-  const getUpcomingDates = () => {
+  const upcomingDates = useMemo(() => {
+    if (!assignments || !positions || !plans || !times) return [];
+
     const data: any = [];
     assignments.forEach(assignment => {
       const position = positions.find(p => p.id === assignment.positionId);
@@ -45,13 +46,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
       }
     });
     ArrayHelper.sortBy(data, "serviceDate", true);
-    setUpcomingDates(data);
-  };
-
-  useEffect(() => {
-    if (assignments && positions && plans && times) {
-      getUpcomingDates();
-    }
+    return data;
   }, [assignments, positions, plans, times]);
 
   return (
@@ -69,11 +64,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
       ) : (
         <View>
           {upcomingDates.map((item, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]}
-              activeOpacity={0.8}
-              onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
+            <TouchableOpacity key={idx} style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]} activeOpacity={0.8} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
               <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: "#1976d2" }]}>
                 <Text style={{ color: "white", fontSize: 14, fontWeight: "500" }}>{item.status}</Text>
               </View>
@@ -83,7 +74,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
                 </Text>
                 <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 2 }}>
                   <Icons name="calendar-day" size={14} color="#666" style={{ marginRight: 4 }} />
-                  <Text style={{ fontSize: 16, color: "#222", marginRight: 12 }}>{moment(item.serviceDate).format("YYYY-MM-DD")}</Text>
+                  <Text style={{ fontSize: 16, color: "#222", marginRight: 12 }}>{dayjs(item.serviceDate).format("YYYY-MM-DD")}</Text>
                   <Icons name="clock" size={14} color="#666" style={{ marginRight: 4 }} />
                   <Text style={{ fontSize: 16, color: "#222" }}>{item.time}</Text>
                 </View>

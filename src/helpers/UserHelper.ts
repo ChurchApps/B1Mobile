@@ -1,35 +1,15 @@
-import { ApiHelper, LoginResponseInterface } from "@churchapps/mobilehelper";
+import { ApiHelper } from "../mobilehelper";
 import { Platform } from "react-native";
 import { logAnalyticsEvent } from "../config/firebase";
-import { CacheHelper } from "./CacheHelper";
-import { AppearanceInterface, ChurchInterface, IPermission, LoginUserChurchInterface, UserInterface } from "./Interfaces";
-import { PushNotificationHelper } from "./PushNotificationHelper";
+import { SecureStorageHelper } from "./SecureStorageHelper";
+import { IPermission } from "./Interfaces";
 
 export class UserHelper {
-  static churches: ChurchInterface[];
-  static userChurches: LoginUserChurchInterface[];
-  static currentUserChurch: LoginUserChurchInterface;
-  static user: UserInterface;
-  static links: any[];
-  static churchAppearance: AppearanceInterface;
-
-  static async setCurrentUserChurch(userChurch: LoginUserChurchInterface) {
-    UserHelper.currentUserChurch = userChurch;
-    UserHelper.churchAppearance = await ApiHelper.getAnonymous("/settings/public/" + userChurch.church.id, "MembershipApi");
-  }
-
-  static async setPersonRecord() {
-    if (UserHelper.currentUserChurch && !UserHelper.currentUserChurch.person) {
-      console.log(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
-      const data: any = await ApiHelper.get(`/people/claim/${UserHelper.currentUserChurch.church.id}`, "MembershipApi");
-      UserHelper.currentUserChurch.person = data.person;
-    }
-
-    PushNotificationHelper.registerUserDevice();
-  }
+  // UserHelper now only contains utility methods
+  // All state is managed in useUserStore
 
   static checkAccess({ api, contentType, action }: IPermission): boolean {
-    const permissions = ApiHelper.getConfig(api)?.permisssions;
+    const permissions = ApiHelper.getConfig(api)?.permissions;
 
     let result = false;
     if (permissions !== undefined) {
@@ -53,37 +33,38 @@ export class UserHelper {
     });
   }
 
-  static handleLogin = async (data: LoginResponseInterface) => {
-    let currentChurch: LoginUserChurchInterface = data.userChurches[0];
+  /**
+   * Load JWT tokens from secure storage on app initialization
+   */
+  static async loadSecureTokens(): Promise<void> {
+    try {
+      const defaultToken = await SecureStorageHelper.getSecureItem("default_jwt");
+      if (defaultToken) {
+        ApiHelper.setDefaultPermissions(defaultToken);
+      }
 
-    let church = CacheHelper.church;
-    if (church != null && church?.id != null && church.id != "") {
-      currentChurch = data.userChurches.find(churches => churches.church.id == church?.id) ?? data.userChurches[0];
+      // Load API-specific tokens
+      const apiTokens = await SecureStorageHelper.getSecureItem("api_tokens");
+      if (apiTokens) {
+        const tokens = JSON.parse(apiTokens);
+        Object.entries(tokens).forEach(([apiName, tokenData]: [string, any]) => {
+          ApiHelper.setPermissions(apiName, tokenData.jwt, tokenData.permissions || []);
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load secure tokens:", error);
     }
+  }
 
-    const userChurch: LoginUserChurchInterface = currentChurch;
-
-    UserHelper.user = data.user;
-    UserHelper.userChurches = data.userChurches;
-    const churches: ChurchInterface[] = [];
-    data.userChurches.forEach(uc => churches.push(uc.church));
-    UserHelper.churches = churches;
-
-    if (userChurch) await UserHelper.setCurrentUserChurch(userChurch);
-    //console.log("USER CHURCH IS", userChurch);
-
-    UserHelper.addAnalyticsEvent("login", {
-      id: Date.now(),
-      device: Platform.OS,
-      church: userChurch.church.name
-    });
-
-    ApiHelper.setDefaultPermissions(userChurch?.jwt || "");
-    userChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
-    ApiHelper.setPermissions("MessagingApi", userChurch?.jwt || "", []);
-    await UserHelper.setPersonRecord(); // to fetch person record, ApiHelper must be properly initialzed
-    await CacheHelper.setValue("user", data.user);
-
-    if (userChurch && !church) await CacheHelper.setValue("church", userChurch.church);
-  };
+  /**
+   * Clear all stored JWT tokens (for logout)
+   */
+  static async clearSecureTokens(): Promise<void> {
+    try {
+      await SecureStorageHelper.removeSecureItem("default_jwt");
+      await SecureStorageHelper.removeSecureItem("api_tokens");
+    } catch (error) {
+      console.error("Failed to clear secure tokens:", error);
+    }
+  }
 }

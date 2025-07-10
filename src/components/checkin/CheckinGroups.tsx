@@ -1,5 +1,5 @@
 import { CheckinHelper, PersonInterface, ServiceTimeInterface, UserHelper } from "../../../src/helpers";
-import { ArrayHelper } from "@churchapps/mobilehelper";
+import { ArrayHelper } from "../../mobilehelper";
 import React, { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 import { useAppTheme } from "../../../src/theme";
@@ -32,12 +32,7 @@ export const CheckinGroups = (props: Props) => {
 
   const renderGroupItem = (item: any) => (
     <View style={{ marginBottom: spacing.sm, backgroundColor: theme.colors.surfaceVariant, borderRadius: 8, borderWidth: 1, borderColor: theme.colors.outlineVariant, overflow: "hidden" }}>
-      <List.Item
-        title={item.name}
-        left={props => <List.Icon {...props} icon={selected == item.key ? "chevron-down" : "chevron-right"} />}
-        onPress={() => setSelected(selected != item.key ? item.key : null)}
-        style={{ backgroundColor: "transparent" }}
-      />
+      <List.Item title={item.name} left={props => <List.Icon {...props} icon={selected == item.key ? "chevron-down" : "chevron-right"} />} onPress={() => setSelected(selected != item.key ? item.key : null)} style={{ backgroundColor: "transparent" }} />
       {selected == item.key &&
         item.items.map((item_group: any) => (
           <View key={`group-item-${item_group.id}`} style={{ backgroundColor: theme.colors.background }}>

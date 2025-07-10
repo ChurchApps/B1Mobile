@@ -1,4 +1,4 @@
-import { ArrayHelper } from "@churchapps/mobilehelper";
+import { ArrayHelper } from "../mobilehelper";
 import { PersonInterface, ServiceTimeInterface } from "./Interfaces";
 
 export class CheckinHelper {

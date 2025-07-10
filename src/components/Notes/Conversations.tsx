@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { ApiHelper, ArrayHelper, ConversationInterface } from "../../../src/helpers";
+import { useQuery } from "@tanstack/react-query";
 import ConversationPopup from "./ConversationPopup";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface CustomConversationInterface {
   contentType: string;
@@ -12,9 +14,26 @@ interface CustomConversationInterface {
 
 const Conversations = ({ contentType, contentId, groupId }: CustomConversationInterface) => {
   const [conversations, setConversations] = useState<ConversationInterface[]>([]);
+  const currentUserChurch = useCurrentUserChurch();
+
+  // Use react-query for conversations
+  const { data: rawConversations = [] } = useQuery<ConversationInterface[]>({
+    queryKey: [`/conversations/${contentType}/${contentId}`, "MessagingApi"],
+    enabled: !!contentId && !!currentUserChurch?.jwt,
+    placeholderData: [],
+    staleTime: 0, // Instant stale - conversations are real-time
+    gcTime: 3 * 60 * 1000 // 3 minutes
+  });
+
+  useEffect(() => {
+    if (rawConversations.length > 0) {
+      loadConversations();
+    }
+  }, [rawConversations]);
+
   const loadConversations = async () => {
     try {
-      const conversations: ConversationInterface[] = contentId ? await ApiHelper.get("/conversations/" + contentType + "/" + contentId, "MessagingApi") : [];
+      const conversations: ConversationInterface[] = rawConversations;
 
       if (conversations.length > 0) {
         const peopleIds: string[] = [];

@@ -1,4 +1,4 @@
-import { ApiHelper, ArrayHelper, ConversationInterface, GroupInterface, PersonInterface } from "@churchapps/mobilehelper";
+import { ApiHelper, ArrayHelper, ConversationInterface, GroupInterface, PersonInterface } from "../mobilehelper";
 import { TimelinePostInterface } from "./Interfaces";
 
 export class TimelineHelper {
@@ -133,21 +133,38 @@ export class TimelineHelper {
   static standardizePosts(allPosts: TimelinePostInterface[], people: PersonInterface[]) {
     const defaultDate = new Date();
     defaultDate.setDate(defaultDate.getDate() - 7);
-    allPosts.forEach(p => {
-      p.conversation?.messages?.forEach(m => {
-        if (m.timeSent) m.timeSent = new Date(m.timeSent);
-        m.person = ArrayHelper.getOne(people, "id", m.personId);
-      });
 
-      if (p.timeSent) p.timeSent = new Date(p.timeSent);
-      if (!p.timeSent) {
-        if (p?.conversation?.messages && p.conversation.messages.length > 0) p.timeSent = p.conversation.messages[0].timeSent || defaultDate;
-        else p.timeSent = defaultDate;
+    // Batch process all posts to avoid repeated operations
+    const processedPosts = allPosts.map(p => {
+      // Process messages once per post
+      if (p.conversation?.messages) {
+        p.conversation.messages.forEach(m => {
+          if (m.timeSent && typeof m.timeSent === "string") {
+            m.timeSent = new Date(m.timeSent);
+          }
+          if (!m.person && m.personId) {
+            m.person = ArrayHelper.getOne(people, "id", m.personId);
+          }
+        });
       }
-      if (p?.conversation?.messages && p.conversation.messages.length > 0) p.timeUpdated = p.conversation.messages[p.conversation.messages.length - 1].timeSent;
-      else p.timeUpdated = p.timeSent;
+
+      // Process dates once per post
+      if (p.timeSent && typeof p.timeSent === "string") {
+        p.timeSent = new Date(p.timeSent);
+      }
+
+      if (!p.timeSent) {
+        const messages = p?.conversation?.messages;
+        p.timeSent = messages && messages.length > 0 ? messages[0].timeSent || defaultDate : defaultDate;
+      }
+
+      const messages = p?.conversation?.messages;
+      p.timeUpdated = messages && messages.length > 0 ? messages[messages.length - 1].timeSent : p.timeSent;
+
+      return p;
     });
 
-    ArrayHelper.sortBy(allPosts, "timeUpdated", true);
+    // Single sort operation at the end
+    ArrayHelper.sortBy(processedPosts, "timeUpdated", true);
   }
 }

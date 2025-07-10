@@ -8,36 +8,18 @@ ENV['RCT_NEW_ARCH_ENABLED'] = '0' if podfile_properties['newArchEnabled'] == 'fa
 ENV['EX_DEV_CLIENT_NETWORK_INSPECTOR'] = podfile_properties['EX_DEV_CLIENT_NETWORK_INSPECTOR']
 
 platform :ios, podfile_properties['ios.deploymentTarget'] || '15.1'
-
-# use_modular_headers! # <-- Commented to avoid UIKit/module build errors
-install! 'cocoapods', :deterministic_uuids => false
+install! 'cocoapods',
+  :deterministic_uuids => false
 
 prepare_react_native_project!
-
-pre_install do |installer|
-  installer.pod_targets.each do |pod|
-    if pod.name.eql?('React-RuntimeHermes')
-      def pod.build_type;
-        Pod::BuildType.static_library
-      end
-    end
-  end
-end
 
 target 'B1Mobile' do
   use_expo_modules!
 
-  # Firebase Core manually added to fix module not found error
-  pod 'Firebase', :modular_headers => true
-  pod 'FirebaseCore', :modular_headers => true
-  pod 'GoogleUtilities', :modular_headers => true
-
-  $RNFirebaseAsStaticFramework = true
-
-  config_command = if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
-    ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"]
+  if ENV['EXPO_USE_COMMUNITY_AUTOLINKING'] == '1'
+    config_command = ['node', '-e', "process.argv=['', '', 'config'];require('@react-native-community/cli').run()"];
   else
-    [
+    config_command = [
       'npx',
       'expo-modules-autolinking',
       'react-native-config',
@@ -55,6 +37,7 @@ target 'B1Mobile' do
   use_react_native!(
     :path => config[:reactNativePath],
     :hermes_enabled => podfile_properties['expo.jsEngine'] == nil || podfile_properties['expo.jsEngine'] == 'hermes',
+    # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/..",
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
@@ -67,25 +50,13 @@ target 'B1Mobile' do
       :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
     )
 
+    # This is necessary for Xcode 14, because it signs resource bundles by default
+    # when building for devices.
     installer.target_installation_results.pod_target_installation_results
-      .each do |_, target_installation_result|
-        target_installation_result.resource_bundle_targets.each do |resource_bundle_target|
-          resource_bundle_target.build_configurations.each do |config|
-            config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
-          end
-        end
-      end
-
-    installer.pods_project.targets.each do |target|
-      if target.name.start_with?("React-") && target.name != "React-RuntimeHermes"
-        target.build_configurations.each do |config|
-          config.build_settings.delete('DEFINES_MODULE')
-        end
-      end
-
-      if target.name == "hermes-engine"
-        target.build_configurations.each do |config|
-          config.build_settings['DEFINES_MODULE'] = 'YES'
+      .each do |pod_name, target_installation_result|
+      target_installation_result.resource_bundle_targets.each do |resource_bundle_target|
+        resource_bundle_target.build_configurations.each do |config|
+          config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
         end
       end
     end

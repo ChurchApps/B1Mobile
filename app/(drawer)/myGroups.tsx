@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { router, useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
+import { router } from "expo-router";
 import { Provider as PaperProvider, Appbar, Card, Text, MD3LightTheme } from "react-native-paper";
-import { ApiHelper, ArrayHelper, TimelinePostInterface, UserPostInterface } from "../../src/helpers";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
+import { ArrayHelper, UserPostInterface } from "../../src/helpers";
 import { TimelineHelper } from "../../src/helpers/Timelinehelper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useUser } from "../../src/stores/useUserStore";
+import { useNavigation } from "@react-navigation/native";
+import { DrawerActions } from "@react-navigation/native";
 
 const theme = {
   ...MD3LightTheme,
@@ -37,80 +40,96 @@ interface Group {
 }
 
 const MyGroups = () => {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const [groups, setGroups] = useState<Group[]>([]);
-  const [UserPost, setUserPost] = useState<TimelinePostInterface[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [UserGroups, setUserGroups] = useState<any[]>([]);
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
+  const navigation = useNavigation();
 
-  const LoadUserData = async () => {
-    setLoading(true);
-    try {
+  const user = useUser();
+
+  // Debug logging
+
+  // Use react-query for groups data
+  const {
+    data: groups = [],
+    isLoading: groupsLoading,
+    refetch: refetchGroups
+  } = useQuery<Group[]>({
+    queryKey: ["/groups/my", "MembershipApi"],
+    enabled: !!user?.jwt, // Only run when authenticated
+    placeholderData: [],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000 // 10 minutes
+  });
+
+  // Use react-query for timeline data
+  const {
+    data: timelineData,
+    isLoading: timelineLoading,
+    refetch: refetchTimeline
+  } = useQuery({
+    queryKey: ["timeline", "user"],
+    queryFn: async () => {
       const { posts, groups } = await TimelineHelper.loadForUser();
-      setUserPost(posts);
-      setUserGroups(groups);
-      if (posts.length == 0) {
-        console.log("no data found");
-      }
-    } catch (error) {
-      console.error("Error loading user data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return { posts, groups };
+    },
+    enabled: !!user?.jwt, // Only run when authenticated
+    placeholderData: { posts: [], groups: [] },
+    staleTime: 0, // Instant stale - timeline includes real-time conversations
+    gcTime: 5 * 60 * 1000 // 5 minutes
+  });
+
+  const loading = groupsLoading || timelineLoading;
 
   const loadData = async () => {
-    const data = await ApiHelper.get("/groups/my", "MembershipApi");
-    setGroups(data);
-    LoadUserData();
+    await Promise.all([refetchGroups(), refetchTimeline()]);
   };
 
-  useEffect(() => {
-    loadData();
-  }, [ApiHelper.isAuthenticated]);
-
-  useEffect(() => {
-    if (UserPost.length > 0 && UserGroups.length > 0) {
-      const combined = UserPost.map((item1, index) => ({
+  const mergedTimelineData = useMemo(() => {
+    if (timelineData?.posts?.length && timelineData?.groups?.length && timelineData.posts.length > 0 && timelineData.groups.length > 0) {
+      return timelineData.posts.map(item1 => ({
         ...item1,
-        ...ArrayHelper.getOne(UserGroups, "id", item1.groupId)
+        ...ArrayHelper.getOne(timelineData.groups, "id", item1.groupId)
       }));
-      setMergedData(combined);
     }
-  }, [UserPost, UserGroups]);
+    return [];
+  }, [timelineData]);
 
-  const showGroups = (item: any) => (
-    <Card
-      style={styles.groupCard}
-      onPress={() => {
-        router.navigate({
-          pathname: `/groupDetails/${item.id}`
-        });
-      }}>
-      <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
-      <Card.Content style={styles.groupContent}>
-        <Text variant="titleMedium" style={styles.groupName}>
-          {item.name}
-        </Text>
-      </Card.Content>
-    </Card>
-  );
+  useEffect(() => {
+    setMergedData(mergedTimelineData);
+  }, [mergedTimelineData]);
 
-  const renderItems = (item: any) => <TimeLinePost item={item} onUpdate={loadData} />;
+  const showGroups = useCallback((item: any) => {
+    const handlePress = () => {
+      router.navigate({
+        pathname: `/groupDetails/${item.id}`
+      });
+    };
 
-  const getGroupsGrid = () => {
+    return (
+      <Card style={styles.groupCard} onPress={handlePress}>
+        <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
+        <Card.Content style={styles.groupContent}>
+          <Text variant="titleMedium" style={styles.groupName}>
+            {item.name}
+          </Text>
+        </Card.Content>
+      </Card>
+    );
+  }, []);
+
+  const renderItems = useCallback((item: any) => <TimeLinePost item={item} onUpdate={loadData} />, [loadData]);
+
+  const groupsGrid = useMemo(() => {
     if (!Array.isArray(groups)) return null;
     return (
       <View style={styles.gridContainer}>
-        {groups.map((item, index) => (
-          <View key={item.id || index} style={styles.gridItem}>
+        {groups.map(item => (
+          <View key={item.id} style={styles.gridItem}>
             {showGroups(item)}
           </View>
         ))}
       </View>
     );
-  };
+  }, [groups, showGroups]);
 
   return (
     <PaperProvider theme={theme}>
@@ -118,19 +137,11 @@ const MyGroups = () => {
         <LoadingWrapper loading={loading}>
           <View style={styles.container}>
             <Appbar.Header style={styles.header} mode="center-aligned">
-              <Appbar.Action icon="menu" onPress={() => navigation.openDrawer()} color="white" />
+              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
               <Appbar.Content title="My Groups" titleStyle={styles.headerTitle} />
             </Appbar.Header>
             <View style={styles.contentContainer}>
-              <FlatList
-                data={mergeData}
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-                scrollEnabled={true}
-                ListFooterComponent={() => <View style={styles.groupsContainer}>{getGroupsGrid()}</View>}
-                renderItem={({ item }) => renderItems(item)}
-                keyExtractor={(item: any) => `key-${item.id || Math.random()}`}
-              />
+              <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListFooterComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={(item: any) => `key-${item.id || Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
             </View>
           </View>
         </LoadingWrapper>

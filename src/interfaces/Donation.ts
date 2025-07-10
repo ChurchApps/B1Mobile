@@ -60,12 +60,12 @@ export interface StripeCardExpirationInterface {
   exp_year: string;
 }
 export interface StripeBankAccountInterface {
-  account_holder_name: any;
-  account_holder_type: any;
+  account_holder_name: string;
+  account_holder_type: string;
   country: string;
   currency: string;
-  account_number: any;
-  routing_number: any;
+  account_number: string;
+  routing_number: string;
 }
 export interface StripeBankAccountUpdateInterface {
   paymentMethodId: string;

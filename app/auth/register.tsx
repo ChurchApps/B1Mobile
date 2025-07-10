@@ -59,37 +59,11 @@ const Register = () => {
         Register an Account
       </Text>
 
-      <TextInput
-        mode="outlined"
-        label="First name"
-        value={firstName}
-        onChangeText={setFirstName}
-        autoCorrect={false}
-        style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-        left={<TextInput.Icon icon="account" />}
-      />
+      <TextInput mode="outlined" label="First name" value={firstName} onChangeText={setFirstName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
 
-      <TextInput
-        mode="outlined"
-        label="Last name"
-        value={lastName}
-        onChangeText={setLastName}
-        autoCorrect={false}
-        style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-        left={<TextInput.Icon icon="account" />}
-      />
+      <TextInput mode="outlined" label="Last name" value={lastName} onChangeText={setLastName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
 
-      <TextInput
-        mode="outlined"
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        autoCorrect={false}
-        keyboardType="email-address"
-        style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-        left={<TextInput.Icon icon="email" />}
-      />
+      <TextInput mode="outlined" label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="email" />} />
 
       <Text variant="bodySmall" style={{ marginBottom: spacing.md }}>
         By clicking on Register, I confirm that I have read the{" "}

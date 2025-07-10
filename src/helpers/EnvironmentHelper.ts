@@ -1,4 +1,4 @@
-import { ApiHelper } from "@churchapps/mobilehelper";
+import { ApiHelper } from "../mobilehelper";
 import Constants from "expo-constants";
 
 export class EnvironmentHelper {
@@ -19,9 +19,8 @@ export class EnvironmentHelper {
     const extra = Constants.expoConfig?.extra || {};
     let stage = extra.STAGE;
 
-    stage = "prod";
-    //stage = "staging";
-    console.log("STAGE IS: " + stage);
+    //stage = "prod";
+    stage = "staging";
     switch (stage) {
       case "prod":
         EnvironmentHelper.initProd();

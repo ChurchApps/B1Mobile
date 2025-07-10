@@ -1,12 +1,13 @@
 import React from "react";
 import { BlueHeader } from "@/components/BlueHeader";
-import { ApiHelper, EnvironmentHelper, LoginResponseInterface, UserHelper } from "../../src/helpers";
+import { ApiHelper, EnvironmentHelper, LoginResponseInterface } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Linking, SafeAreaView, ScrollView, View } from "react-native";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { TextInput, Button, Text, Surface } from "react-native-paper";
 import { useAppTheme } from "../../src/theme";
+import { useUserStore } from "../../src/stores/useUserStore";
 
 const Login = () => {
   const { theme, spacing } = useAppTheme();
@@ -41,11 +42,8 @@ const Login = () => {
     ApiHelper.postAnonymous("/users/login", params, "MembershipApi")
       .then(async (data: LoginResponseInterface) => {
         setLoading(false);
-        console.log("Called login");
         if (data.user != null) {
-          console.log("Login successful", data);
-          await UserHelper.handleLogin(data as any);
-          console.log("handled Login.  Restarting");
+          await useUserStore.getState().handleLogin(data as any);
 
           // router.replace('(drawer)/dashboard');
           // props.navigation.reset({
@@ -76,30 +74,9 @@ const Login = () => {
                 Welcome, Please Login.
               </Text>
 
-              <TextInput
-                mode="outlined"
-                label="Email"
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-                left={<TextInput.Icon icon="email" />}
-              />
+              <TextInput mode="outlined" label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="email" />} />
 
-              <TextInput
-                mode="outlined"
-                label="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-                autoCorrect={false}
-                style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-                left={<TextInput.Icon icon="lock" />}
-                right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />}
-              />
+              <TextInput mode="outlined" label="Password" value={password} onChangeText={setPassword} secureTextEntry={!showPassword} autoCapitalize="none" autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="lock" />} right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />} />
 
               <Text variant="bodySmall" style={{ marginBottom: spacing.md }}>
                 By clicking on Login, I confirm that I have read the{" "}

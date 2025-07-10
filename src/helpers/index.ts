@@ -1,4 +1,4 @@
-export { ApiHelper, ArrayHelper } from "@churchapps/mobilehelper";
+export { ApiHelper, ArrayHelper } from "../mobilehelper";
 export { CacheHelper } from "./CacheHelper";
 export { CheckinHelper } from "./CheckinHelper";
 export { Constants } from "./Constants";
@@ -7,6 +7,10 @@ export { DateHelper } from "./DateHelper";
 export { EnvironmentHelper } from "./EnvironmentHelper";
 export { globalStyles } from "./GlobalStyles";
 export * from "./Interfaces";
+export { NavigationUtils } from "./NavigationUtils";
+export { queryClient, initializeQueryCache } from "./QueryClient";
+export { SecureStorageHelper } from "./SecureStorageHelper";
 export { StripeHelper } from "./StripeHelper";
 export { UserHelper } from "./UserHelper";
 export { Utilities } from "./Utilities";
+export { useChurchSettings } from "../hooks/useChurchSettings";

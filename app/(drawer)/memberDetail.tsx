@@ -1,15 +1,19 @@
 import React from "react";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Icon from "@expo/vector-icons/MaterialCommunityIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { DrawerActions } from "@react-navigation/native";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import { useEffect, useRef, useState } from "react";
-import { Alert, Image, Linking, ScrollView, View } from "react-native";
+import { useEffect, useRef } from "react";
+import { Alert, Linking, ScrollView, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, Card, Surface, Text } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const MemberDetail = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -17,12 +21,20 @@ const MemberDetail = () => {
   const { member } = useLocalSearchParams<{ member: any }>();
   const parsedMember = JSON.parse(member);
   const memberinfo = parsedMember?.contactInfo;
-  const [isLoading, setLoading] = useState(false);
-  const [householdList, setHouseholdList] = useState([]);
   const scrollViewRef = useRef<any>(null);
 
+  const currentUserChurch = useCurrentUserChurch();
+
+  // Use react-query for household members
+  const { data: householdList = [], isLoading } = useQuery({
+    queryKey: [`/people/household/${parsedMember?.householdId}`, "MembershipApi"],
+    enabled: !!parsedMember?.householdId && !!currentUserChurch?.jwt,
+    placeholderData: [],
+    staleTime: 15 * 60 * 1000, // 15 minutes - household members don't change frequently
+    gcTime: 60 * 60 * 1000 // 1 hour
+  });
+
   useEffect(() => {
-    getHouseholdMembersList();
     UserHelper.addOpenScreenEvent("Member Detail Screen");
   }, []);
 
@@ -40,15 +52,6 @@ const MemberDetail = () => {
     else Alert.alert("Sorry", "Address of this user is not available.");
   };
 
-  const getHouseholdMembersList = async () => {
-    setLoading(true);
-    const householdId = parsedMember?.householdId;
-    ApiHelper.get("/people/household/" + householdId, "MembershipApi").then(data => {
-      setLoading(false);
-      setHouseholdList(data);
-    });
-  };
-
   const onMembersClick = (item: any) => {
     scrollViewRef.current.scrollTo({ y: 0, animated: false });
     router.navigate({
@@ -60,7 +63,7 @@ const MemberDetail = () => {
   const renderMemberItem = (item: any) => (
     <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }} onPress={() => onMembersClick(item)}>
       <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-        <Image source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} />
+        <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} placeholder={Constants.Images.ic_member} />
         <Text variant="titleMedium" numberOfLines={1}>
           {item.name.display}
         </Text>
@@ -70,21 +73,14 @@ const MemberDetail = () => {
 
   return (
     <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
-      <MainHeader title="Directory" openDrawer={navigation.openDrawer} back={navigation.goBack} />
+      <MainHeader title="Directory" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
       <ScrollView style={{ flex: 1 }} ref={scrollViewRef} contentContainerStyle={{ padding: spacing.md }}>
-        <Image
-          source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member}
-          style={{ width: 96, height: 96, borderRadius: 48, alignSelf: "center", marginBottom: spacing.md }}
-        />
+        <OptimizedImage source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member} style={{ width: 96, height: 96, borderRadius: 48, alignSelf: "center", marginBottom: spacing.md }} placeholder={Constants.Images.ic_member} priority="high" />
         <Surface style={{ alignItems: "center", marginBottom: spacing.md, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, elevation: 2, padding: spacing.md }}>
           <Text variant="titleLarge" style={{ fontWeight: "600", marginBottom: spacing.sm }}>
             {parsedMember?.name?.display}
           </Text>
-          <Button
-            mode="contained"
-            icon="message"
-            onPress={() => router.navigate({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(parsedMember) } })}
-            style={{ marginBottom: spacing.sm }}>
+          <Button mode="contained" icon="message" onPress={() => router.navigate({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(parsedMember) } })} style={{ marginBottom: spacing.sm }}>
             Message
           </Button>
         </Surface>

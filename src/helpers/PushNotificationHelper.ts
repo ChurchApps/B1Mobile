@@ -1,11 +1,8 @@
-import { ApiHelper } from "@churchapps/mobilehelper";
-import { UserHelper } from "./UserHelper";
 import * as Notifications from "expo-notifications";
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
+import * as Device from "expo-device";
 import { CacheHelper } from "./CacheHelper";
-import { LoginUserChurchInterface } from "./Interfaces";
-import { usePathname } from "expo-router";
 
 // Track current screen
 let currentScreen = "";
@@ -13,7 +10,6 @@ let currentScreen = "";
 // Function to update current screen
 export const updateCurrentScreen = (screen: string) => {
   currentScreen = screen;
-  console.log("Current screen updated:", currentScreen);
 };
 
 // Configure notification behavior
@@ -48,19 +44,20 @@ Notifications.setNotificationHandler({
 
 export class PushNotificationHelper {
   static async registerUserDevice() {
-    const fcmToken = CacheHelper.fcmToken;
-    const deviceName = await DeviceInfo.getDeviceName();
-    const deviceInfo = await PushNotificationHelper.getDeviceInfo();
-    const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
-    const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
-    const currentData: LoginUserChurchInterface | undefined = tst?.find(value => value.church.id == currentChurch!.id);
-    if (currentData != null || currentData != undefined) {
-      ApiHelper.post("/devices/register", { personId: currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi");
-    }
+    // TODO: Update to use useUserStore - this needs refactoring to accept user data as parameter
+    // const fcmToken = CacheHelper.fcmToken;
+    // const deviceName = await DeviceInfo.getDeviceName();
+    // const deviceInfo = await PushNotificationHelper.getDeviceInfo();
+    // const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
+    // const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
+    // const currentData: LoginUserChurchInterface | undefined = tst?.find(value => value.church.id == currentChurch!.id);
+    // if (currentData != null || currentData != undefined) {
+    //   ApiHelper.post("/devices/register", { personId: currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi");
+    // }
   }
 
   static async getDeviceInfo() {
-    const details: any = {};
+    const details: Record<string, unknown> = {};
     details.appName = DeviceInfo.getApplicationName();
     details.buildId = await DeviceInfo.getBuildId();
     details.buildNumber = DeviceInfo.getBuildNumber();
@@ -87,10 +84,36 @@ export class PushNotificationHelper {
       if (finalStatus === "granted") {
         await PushNotificationHelper.GetFCMToken();
       } else {
-        console.log("Notification permission denied");
+        // Permission not granted, but we continue without notification permissions
       }
     } catch (error) {
-      console.log("Error requesting notification permission:", error);
+      console.error("Error requesting notification permission:", error);
+    }
+  }
+
+  static async registerForPushNotificationsAsync() {
+    if (!Device.isDevice) {
+      return null;
+    }
+
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
+    if (finalStatus !== "granted") {
+      return null;
+    }
+
+    try {
+      const tokenData = await Notifications.getExpoPushTokenAsync();
+      return tokenData.data;
+    } catch (error) {
+      console.error("Error getting Expo push token:", error);
+      return null;
     }
   }
 
@@ -99,15 +122,13 @@ export class PushNotificationHelper {
       try {
         await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
       } catch {
-        // Permission request failed, but we don't need to handle it
+        // Permission request failed, but we continue without notification permissions
       }
     }
   }
 
   static async GetFCMToken() {
-    console.log("GET TOKEN");
     let fcmToken = CacheHelper.fcmToken;
-    console.log("fcmToken", fcmToken);
     if (!fcmToken) {
       try {
         // Get the Expo push token
@@ -115,32 +136,21 @@ export class PushNotificationHelper {
           projectId: "f72e5911-b8d5-467c-ad9e-423c180e9938" // Your EAS project ID
         });
 
-        console.log("Expo push token:", token);
-
         if (token.data) {
           fcmToken = token.data;
           await CacheHelper.setValue("fcmToken", fcmToken);
-          console.log("Expo push token generated:", fcmToken);
         }
       } catch (error) {
-        console.log(error, "Expo push token not created");
+        console.error("Expo push token not created:", error);
       }
     }
   }
 
   static async NotificationListener() {
     try {
-      // Track screen changes using pathname
-      const pathname = usePathname();
-      if (pathname) {
-        currentScreen = pathname;
-        console.log("Current screen:", currentScreen);
-      }
-
       // Listen for notifications received while app is foregrounded
       const foregroundSubscription = Notifications.addNotificationReceivedListener(notification => {
         const content = notification.request.content;
-        console.log("Notification received in foreground:", content);
 
         // Emit notification event for internal handling
         eventBus.emit("notification", content);
@@ -154,7 +164,6 @@ export class PushNotificationHelper {
       // Listen for user interactions with notifications
       const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
         const content = response.notification.request.content;
-        console.log("Notification response received:", content);
 
         // Handle navigation based on notification type
         if (content.data?.type === "chat") {
@@ -169,7 +178,6 @@ export class PushNotificationHelper {
       const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
       if (lastNotificationResponse) {
         const content = lastNotificationResponse.notification.request.content;
-        console.log("App opened from notification:", content);
 
         // Handle navigation for app launch from notification
         if (content.data?.type === "chat") {
@@ -179,19 +187,17 @@ export class PushNotificationHelper {
         }
       }
 
-      console.log("Expo notification listeners set up");
-
       return () => {
         foregroundSubscription.remove();
         responseSubscription.remove();
       };
     } catch (error) {
-      console.log("Error setting up notification listeners:", error);
+      console.error("Error setting up notification listeners:", error);
     }
   }
 
   // Add method to check if we're in a specific chat
-  static isInChat(chatId: string): boolean {
+  static isInChat(): boolean {
     // This should be implemented based on your navigation state
     // You'll need to track the current chat ID in your navigation state
     return false; // Placeholder
@@ -209,3 +215,5 @@ export const eventBus = {
     DeviceEventEmitter.removeAllListeners(eventName);
   }
 };
+
+export const pushEventBus = eventBus;

@@ -1,10 +1,12 @@
 import { ApiHelper, CheckinHelper, PersonInterface, UserHelper } from "../../../src/helpers";
-import { ArrayHelper, ErrorHelper } from "@churchapps/mobilehelper";
+import { ArrayHelper, ErrorHelper } from "../../mobilehelper";
 import React, { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { useAppTheme } from "../../../src/theme";
 import { List, Text } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
   onDone: () => void;
@@ -13,20 +15,20 @@ interface Props {
 export const CheckinServices = (props: Props) => {
   const { theme, spacing } = useAppTheme();
   const [loading, setLoading] = useState(false);
-  const [serviceList, setServiceList] = useState([]);
+  const currentUserChurch = useCurrentUserChurch();
+
+  // Use react-query for services
+  const { data: serviceList = [] } = useQuery({
+    queryKey: ["/services", "AttendanceApi"],
+    enabled: !!currentUserChurch?.jwt,
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes - services don't change frequently
+    gcTime: 30 * 60 * 1000 // 30 minutes
+  });
 
   useEffect(() => {
-    getServiceData();
     UserHelper.addOpenScreenEvent("ServiceScreen");
   }, []);
-
-  const getServiceData = async () => {
-    setLoading(true);
-    ApiHelper.get("/services", "AttendanceApi").then(data => {
-      setLoading(false);
-      setServiceList(data);
-    });
-  };
 
   const ServiceSelection = (item: any) => {
     setLoading(true);
@@ -36,11 +38,16 @@ export const CheckinServices = (props: Props) => {
   const getMemberData = async (serviceId: any) => {
     const personId = UserHelper.currentUserChurch?.person?.id;
     if (personId) {
-      const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
-      CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
-      CheckinHelper.serviceTimes = await ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi");
-      await createHouseholdTree(serviceId);
-      loadExistingAttendance(serviceId);
+      try {
+        const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
+        CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
+        CheckinHelper.serviceTimes = await ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi");
+        await createHouseholdTree(serviceId);
+        loadExistingAttendance(serviceId);
+      } catch (error) {
+        console.error("Error loading member data:", error);
+        setLoading(false);
+      }
     }
   };
 
@@ -51,7 +58,7 @@ export const CheckinServices = (props: Props) => {
     try {
       await getGroupListData(serviceId);
     } catch (error: any) {
-      console.log("SET MEMBER LIST ERROR", error);
+      console.error("SET MEMBER LIST ERROR", error);
       ErrorHelper.logError("create-household", error);
     }
   };
@@ -87,20 +94,12 @@ export const CheckinServices = (props: Props) => {
       CheckinHelper.peopleIds = ArrayHelper.getIds(CheckinHelper.householdMembers, "id");
       props.onDone();
     } catch (error: any) {
-      console.log("SET MEMBER LIST ERROR", error);
+      console.error("SET MEMBER LIST ERROR", error);
       ErrorHelper.logError("get-group-list", error);
     }
   };
 
-  const renderGroupItem = (item: any) => (
-    <List.Item
-      title={`${item.campus.name} - ${item.name}`}
-      onPress={() => ServiceSelection(item)}
-      style={{ backgroundColor: theme.colors.surface, marginBottom: spacing.xs }}
-      titleStyle={{ color: theme.colors.onSurface }}
-      left={props => <List.Icon {...props} icon="church" />}
-    />
-  );
+  const renderGroupItem = (item: any) => <List.Item title={`${item.campus.name} - ${item.name}`} onPress={() => ServiceSelection(item)} style={{ backgroundColor: theme.colors.surface, marginBottom: spacing.xs }} titleStyle={{ color: theme.colors.onSurface }} left={props => <List.Icon {...props} icon="church" />} />;
 
   return (
     <LoadingWrapper loading={loading}>

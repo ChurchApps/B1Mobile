@@ -11,6 +11,7 @@ import { useAppTheme } from "../../src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import { useUser } from "../../src/stores/useUserStore";
 
 interface NotificationContent {
   autoDismiss?: boolean;
@@ -43,6 +44,7 @@ const MessageScreen = () => {
   const [loading, setLoading] = useState(false);
   const { showActionSheetWithOptions } = useActionSheet();
   const conversationIdRef = useRef<string | undefined>(undefined);
+  const user = useUser();
 
   // Update ref when conversation changes
   useEffect(() => {
@@ -90,27 +92,22 @@ const MessageScreen = () => {
   useEffect(() => {
     // Listen for new messages
     const handleNewMessage = (content: NotificationContent) => {
-      console.log("New message received:", content);
       // Only refresh if the notification is for this conversation
       if (content.data?.conversationId && conversationIdRef.current && content.data.conversationId === conversationIdRef.current) {
-        console.log("Refreshing messages for current conversation");
         getMessagesList(conversationIdRef.current);
       }
     };
 
     // Listen for notification updates
     const handleNotification = (content: NotificationContent) => {
-      console.log("Notification received:", content);
       // Only refresh if the notification is for this conversation
       if (content.data?.conversationId && conversationIdRef.current && content.data.conversationId === conversationIdRef.current) {
-        console.log("Refreshing messages from notification");
         getMessagesList(conversationIdRef.current);
       }
     };
 
     // Listen for any conversation updates
     const handleConversationUpdate = (data?: { conversationId?: string }) => {
-      console.log("Conversation update received", data);
       // If we have a specific conversation ID, only refresh if it matches
       if (data?.conversationId && conversationIdRef.current && data.conversationId === conversationIdRef.current) {
         getMessagesList(conversationIdRef.current);
@@ -159,7 +156,7 @@ const MessageScreen = () => {
           allowAnonymousPosts: false,
           contentType: "privateMessage",
           contentId: UserHelper.currentUserChurch.person.id,
-          title: UserHelper.user.firstName + " " + UserHelper.user.lastName + " Private Message",
+          title: user?.firstName + " " + user?.lastName + " Private Message",
           visibility: "hidden"
         }
       ];
@@ -240,16 +237,7 @@ const MessageScreen = () => {
     </Surface>
   );
 
-  const messagesView = () => (
-    <FlatList
-      inverted
-      data={messageList}
-      style={{ paddingVertical: spacing.md }}
-      renderItem={({ item }) => singleMessageItem(item)}
-      keyExtractor={(item: any) => item.id}
-      contentContainerStyle={{ paddingBottom: spacing.lg }}
-    />
-  );
+  const messagesView = () => <FlatList inverted data={messageList} style={{ paddingVertical: spacing.md }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ paddingBottom: spacing.lg }} initialNumToRender={15} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={10} updateCellsBatchingPeriod={100} />;
 
   const singleMessageItem = (item: MessageInterface) => {
     const isMine = item.personId !== details.id;

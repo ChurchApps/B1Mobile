@@ -16,6 +16,7 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
+      googleServicesFile: "./config/GoogleService-Info.plist",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         NSCameraUsageDescription: "B1 Church needs camera access to allow you to take photos for your profile and share with your church community.",
@@ -31,6 +32,8 @@ module.exports = {
       }
     },
     android: {
+      package: "church.b1.mobile",
+      googleServicesFile: "./google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
@@ -50,6 +53,19 @@ module.exports = {
       favicon: "./assets/favicon.png"
     },
     runtimeVersion: "2.0.0",
+    plugins: [
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          icon: "./assets/images/notification-icon.png",
+          color: "#ffffff",
+          sounds: [
+            "./assets/sounds/notification.mp3"
+          ]
+        }
+      ]
+    ],
     extra: {
       ATTENDANCE_API: process.env.ATTENDANCE_API || "https://attendanceapi.churchapps.org",
       B1_WEB_ROOT: process.env.B1_WEB_ROOT || "https://{subdomain}.b1.church",

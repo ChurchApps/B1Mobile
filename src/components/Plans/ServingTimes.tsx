@@ -1,6 +1,6 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
-import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface } from "../../../src/helpers";
@@ -12,7 +12,6 @@ interface Props {
   assignments: AssignmentInterface[];
 }
 export const ServingTimes = ({ plans, positions, assignments }: Props) => {
-  const [servingTimes, setServingTimes] = useState<any[]>([]);
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -23,21 +22,17 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
     }).start();
   }, []);
 
-  const getServingTimes = () => {
+  const servingTimes = useMemo(() => {
+    if (!assignments?.length || !positions?.length || !plans?.length) return [];
+
     const data: any = [];
     assignments.forEach(assignment => {
       const position = positions.find(p => p.id === assignment.positionId);
       const plan = plans.find(p => p?.id === position?.planId);
-      if (position && plan)
-        data.push({ assignmentId: assignment?.id, planId: plan?.id, planName: plan?.name, serviceDate: plan.serviceDate, position: position?.name, status: assignment.status || "Unconfirmed" });
+      if (position && plan) data.push({ assignmentId: assignment?.id, planId: plan?.id, planName: plan?.name, serviceDate: plan.serviceDate, position: position?.name, status: assignment.status || "Unconfirmed" });
     });
     ArrayHelper.sortBy(data, "serviceDate", true);
-    setServingTimes(data);
-  };
-  useEffect(() => {
-    if (assignments?.length > 0 && positions?.length > 0 && plans?.length > 0) {
-      getServingTimes();
-    }
+    return data;
   }, [assignments, positions, plans]);
 
   return (
@@ -55,11 +50,7 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
       ) : (
         <View>
           {servingTimes.map((item, idx) => (
-            <TouchableOpacity
-              key={idx}
-              style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]}
-              activeOpacity={0.8}
-              onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
+            <TouchableOpacity key={idx} style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]} activeOpacity={0.8} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
               <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: "#1976d2" }]}>
                 <Text style={{ color: "white", fontSize: 14, fontWeight: "500" }}>{item.status}</Text>
               </View>
@@ -72,7 +63,7 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
                   <Text style={{ fontSize: 18, fontWeight: "bold", color: "#222" }} numberOfLines={1}>
                     {item.planName}
                   </Text>
-                  <Text style={{ fontSize: 16, color: "#222" }}>{moment(item.serviceDate).format("YYYY-MM-DD")}</Text>
+                  <Text style={{ fontSize: 16, color: "#222" }}>{dayjs(item.serviceDate).format("YYYY-MM-DD")}</Text>
                 </View>
               </View>
             </TouchableOpacity>

@@ -6,6 +6,34 @@ import { Constants } from "../../../src/helpers/Constants";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
+interface SongDetail {
+  id?: string;
+  title?: string;
+  artist?: string;
+  album?: string;
+  language?: string;
+  bpm?: number;
+  keySignature?: string;
+  tones?: string;
+  meter?: string;
+  seconds?: number;
+  thumbnail?: string;
+  praiseChartsId?: string;
+}
+
+interface Arrangement {
+  id?: string;
+  songDetailId?: string;
+  lyrics?: string;
+}
+
+interface LinkData {
+  id?: string;
+  text?: string;
+  url: string;
+  service?: string;
+}
+
 interface Props {
   arrangementKeyId?: string;
   onClose: () => void;
@@ -13,10 +41,10 @@ interface Props {
 
 export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
   const [loading, setLoading] = useState(false);
-  const [songDetail, setSongDetail] = useState<any>(null);
-  const [arrangement, setArrangement] = useState<any>(null);
-  const [links, setLinks] = useState<any[]>([]);
-  const [externalLinks, setExternalLinks] = useState<any[]>([]);
+  const [songDetail, setSongDetail] = useState<SongDetail | null>(null);
+  const [arrangement, setArrangement] = useState<Arrangement | null>(null);
+  const [links, setLinks] = useState<LinkData[]>([]);
+  const [externalLinks, setExternalLinks] = useState<LinkData[]>([]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -119,10 +147,7 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
                     </TouchableOpacity>
                   ))}
                   {songDetail?.praiseChartsId && (
-                    <TouchableOpacity
-                      key="praisecharts"
-                      onPress={() => Linking.openURL(`https://www.praisecharts.com/songs/details/${songDetail.praiseChartsId}?XID=churchapps`)}
-                      style={styles.linkRow}>
+                    <TouchableOpacity key="praisecharts" onPress={() => Linking.openURL(`https://www.praisecharts.com/songs/details/${songDetail.praiseChartsId}?XID=churchapps`)} style={styles.linkRow}>
                       {getServiceIcon("PraiseCharts")}
                       <Text style={styles.link}>PraiseCharts</Text>
                     </TouchableOpacity>

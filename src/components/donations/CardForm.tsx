@@ -1,13 +1,14 @@
-import { ApiHelper, UserHelper } from "../../../src/helpers";
+import { ApiHelper } from "../../../src/helpers";
 import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
 import React, { useState } from "react";
 import { Alert, View } from "react-native";
 import { Button, Card, IconButton, Menu, Text, TextInput } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
-  setMode: any;
+  setMode: (mode: "display" | "edit") => void;
   card: StripePaymentMethod;
   customerId: string;
   updatedFunction: () => void;
@@ -21,7 +22,8 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   const [month, setMonth] = React.useState<string>(card.exp_month?.toString() || "");
   const [year, setYear] = React.useState<string>(card.exp_year?.toString().slice(-2) || "");
   const { createPaymentMethod } = useStripe();
-  const person = UserHelper.currentUserChurch?.person;
+  const currentUserChurch = useCurrentUserChurch();
+  const person = currentUserChurch?.person;
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [selectedType, setSelectedType] = useState(card.type || "card");
   const cardTypes = [
@@ -103,22 +105,12 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
 
   return (
     <Card style={{ marginBottom: spacing.md }}>
-      <Card.Title
-        title={card.id ? "Edit Card" : "Add New Card"}
-        titleStyle={{ fontSize: 20, fontWeight: "600" }}
-        left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
-      />
+      <Card.Title title={card.id ? "Edit Card" : "Add New Card"} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
       <Card.Content>
         {!card.id ? (
           <View style={{ marginBottom: spacing.md }}>
             <TextInput mode="outlined" label="Card Holder Name" value={person?.name?.display} disabled style={{ marginBottom: spacing.sm }} />
-            <CardField
-              postalCodeEnabled={true}
-              placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }}
-              cardStyle={{ backgroundColor: theme.colors.surface, textColor: theme.colors.onSurface }}
-              style={{ height: 50, marginBottom: spacing.sm }}
-              onCardChange={setCardDetails}
-            />
+            <CardField postalCodeEnabled={true} placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }} cardStyle={{ backgroundColor: theme.colors.surface, textColor: theme.colors.onSurface }} style={{ height: 50, marginBottom: spacing.sm }} onCardChange={setCardDetails} />
             <Menu
               visible={showTypeMenu}
               onDismiss={() => setShowTypeMenu(false)}

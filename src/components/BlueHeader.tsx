@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   navigation?: {
-    navigate: (screenName: string, params?: any) => void;
+    navigate: (screenName: string, params?: Record<string, unknown>) => void;
     openDrawer?: () => void;
   };
   showBack: Boolean;

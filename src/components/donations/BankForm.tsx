@@ -1,19 +1,20 @@
-import { ApiHelper, Constants, StripeHelper, UserHelper, globalStyles } from "../../../src/helpers";
+import { ApiHelper, Constants, globalStyles } from "../../../src/helpers";
 import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useState } from "react";
 import { Alert, Image, Text, TextInput, View } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { InputBox } from "../InputBox";
+import { useStripe } from "@stripe/stripe-react-native";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
-  setMode: any;
+  setMode: (mode: string) => void;
   bank: StripePaymentMethod;
   customerId: string;
   updatedFunction: () => void;
   handleDelete: () => void;
   showVerifyForm: boolean;
-  publishKey: string;
 }
 
 const accountTypes = [
@@ -27,7 +28,7 @@ const accountTypes = [
   }
 ];
 
-export function BankForm({ bank, customerId, setMode, updatedFunction, handleDelete, showVerifyForm, publishKey }: Props) {
+export function BankForm({ bank, customerId, setMode, updatedFunction, handleDelete, showVerifyForm }: Props) {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [selectedType, setSelectedType] = useState(bank.account_holder_type || accountTypes[0].value);
@@ -36,7 +37,44 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
   const [routingNumber, setRoutingNumber] = useState<string>("");
   const [firstDeposit, setFirstDeposit] = useState<string>("");
   const [secondDeposit, setSecondDeposit] = useState<string>("");
-  const person = UserHelper.currentUserChurch?.person;
+  const currentUserChurch = useCurrentUserChurch();
+  const person = currentUserChurch?.person;
+  const { createToken } = useStripe();
+
+  // Input validation functions
+  const validateRoutingNumber = (routing: string): boolean =>
+    // 9 digits for US routing numbers
+    /^\d{9}$/.test(routing);
+  const validateAccountNumber = (account: string): boolean =>
+    // 4-17 digits for US account numbers
+    /^\d{4,17}$/.test(account);
+  // Format routing number with visual grouping
+  const formatRoutingNumber = (value: string): string => {
+    const cleanValue = value.replace(/\D/g, "");
+    if (cleanValue.length <= 9) {
+      return cleanValue.replace(/(\d{3})(\d{3})(\d{0,3})/, (match, p1, p2, p3) => {
+        if (p3) return `${p1}-${p2}-${p3}`;
+        if (p2) return `${p1}-${p2}`;
+        return p1;
+      });
+    }
+    return cleanValue.slice(0, 9);
+  };
+
+  // Handle routing number input with formatting
+  const handleRoutingNumberChange = (text: string): void => {
+    const cleaned = text.replace(/\D/g, "");
+    formatRoutingNumber(cleaned);
+    setRoutingNumber(cleaned); // Store clean value for API
+  };
+
+  // Handle account number input with length limit
+  const handleAccountNumberChange = (text: string): void => {
+    const cleaned = text.replace(/\D/g, "");
+    if (cleaned.length <= 17) {
+      setAccountNumber(cleaned);
+    }
+  };
 
   const handleSave = () => {
     setIsSubmitting(true);
@@ -86,21 +124,41 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
       return;
     }
 
-    const response = await StripeHelper.createToken(publishKey, {
-      "bank_account[country]": "US",
-      "bank_account[currency]": "usd",
-      "bank_account[account_holder_name]": name,
-      "bank_account[account_holder_type]": selectedType,
-      "bank_account[routing_number]": routingNumber,
-      "bank_account[account_number]": accountNumber
-    });
-
-    if (response?.error?.message) {
-      Alert.alert("Error", response.error.message);
+    // Input validation
+    if (!validateRoutingNumber(routingNumber)) {
       setIsSubmitting(false);
-    } else {
+      Alert.alert("Invalid Routing Number", "Please enter a valid 9-digit routing number.");
+      return;
+    }
+
+    if (!validateAccountNumber(accountNumber)) {
+      setIsSubmitting(false);
+      Alert.alert("Invalid Account Number", "Please enter a valid account number (4-17 digits).");
+      return;
+    }
+
+    try {
+      // Use modern Stripe React Native SDK
+      const tokenResult = await createToken({
+        type: "BankAccount",
+        bankAccount: {
+          routingNumber: routingNumber,
+          accountNumber: accountNumber,
+          accountHolderType: selectedType as "Individual" | "Company",
+          accountHolderName: name,
+          country: "US",
+          currency: "usd"
+        }
+      });
+
+      if (tokenResult.error) {
+        Alert.alert("Error", tokenResult.error.message);
+        setIsSubmitting(false);
+        return;
+      }
+
       const paymentMethod: PaymentMethodInterface = {
-        id: response.id,
+        id: tokenResult.token.id,
         customerId,
         personId: person.id,
         email: person.contactInfo.email,
@@ -114,6 +172,8 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
         setMode("display");
         await updatedFunction();
       }
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to create bank account token");
     }
 
     setIsSubmitting(false);
@@ -145,20 +205,11 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
 
   const informationalText = !bank.id && (
     <View style={{ marginTop: DimensionHelper.wp(5), flex: 1, alignItems: "center" }}>
-      <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>
-        Bank accounts will need to be verified before making any donations. Your account will receive two small deposits in approximately 1-3 business days. You will need to enter those deposit
-        amounts to finish verifying your account by selecting the verify account link next to your bank account under the payment methods section.
-      </Text>
+      <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>Bank accounts will need to be verified before making any donations. Your account will receive two small deposits in approximately 1-3 business days. You will need to enter those deposit amounts to finish verifying your account by selecting the verify account link next to your bank account under the payment methods section.</Text>
     </View>
   );
   return (
-    <InputBox
-      title={bank.id ? `${bank.name.toUpperCase()} ****${bank.last4}` : "Add New Bank Account"}
-      headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />}
-      saveFunction={handleSave}
-      cancelFunction={() => setMode("display")}
-      deleteFunction={bank.id && !showVerifyForm ? handleDelete : undefined}
-      isSubmitting={isSubmitting}>
+    <InputBox title={bank.id ? `${bank.name.toUpperCase()} ****${bank.last4}` : "Add New Bank Account"} headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />} saveFunction={handleSave} cancelFunction={() => setMode("display")} deleteFunction={bank.id && !showVerifyForm ? handleDelete : undefined} isSubmitting={isSubmitting}>
       {informationalText}
       {showVerifyForm ? (
         <View style={{ marginTop: DimensionHelper.wp(5), marginBottom: DimensionHelper.wp(5) }}>
@@ -205,9 +256,18 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
           {!bank.id && (
             <>
               <Text style={globalStyles.semiTitleText}>Account Number</Text>
-              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} keyboardType="number-pad" value={accountNumber} onChangeText={text => setAccountNumber(text)} />
+              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} keyboardType="number-pad" value={accountNumber} onChangeText={handleAccountNumberChange} placeholder="Enter account number" maxLength={17} secureTextEntry={false} autoComplete="off" textContentType="none" />
               <Text style={globalStyles.semiTitleText}>Routing Number</Text>
-              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} keyboardType="number-pad" value={routingNumber} onChangeText={text => setRoutingNumber(text)} />
+              <TextInput
+                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
+                keyboardType="number-pad"
+                value={formatRoutingNumber(routingNumber)}
+                onChangeText={handleRoutingNumberChange}
+                placeholder="123-456-789"
+                maxLength={11} // Includes dashes
+                autoComplete="off"
+                textContentType="none"
+              />
             </>
           )}
         </View>

@@ -1,12 +1,14 @@
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import React from "react";
-import { Dimensions, Image, SafeAreaView, View } from "react-native";
+import { Dimensions, SafeAreaView, View } from "react-native";
 // import { Utilities, globalStyles } from '../helpers';
 // import { NavigationProps } from '../interfaces';
 import { globalStyles } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { UserHelper } from "../../src/helpers/UserHelper";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
 
 const Votd = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -46,9 +48,9 @@ const Votd = () => {
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader title="Verse of the Day" openDrawer={navigation.openDrawer} back={navigation.goBack} />
+      <MainHeader title="Verse of the Day" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
       <View style={globalStyles.webViewContainer}>
-        <Image source={{ uri: url }} style={{ flex: 1 }} resizeMode="stretch" />
+        <OptimizedImage source={{ uri: url }} style={{ flex: 1 }} contentFit="fill" priority="high" />
       </View>
     </SafeAreaView>
   );

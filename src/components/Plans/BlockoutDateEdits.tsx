@@ -1,6 +1,6 @@
-import { ApiHelper } from "@churchapps/mobilehelper";
+import { ApiHelper } from "../../mobilehelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
+import dayjs from "dayjs";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ModalDatePicker } from "react-native-material-date-picker";
@@ -61,7 +61,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
 
           <View style={globalStyles.InputBtnView}>
             <View style={globalStyles.InputView}>
-              <Text style={globalStyles.PassInputTextStyle}>{moment(startDate).format("DD-MM-YYYY")}</Text>
+              <Text style={globalStyles.PassInputTextStyle}>{dayjs(startDate).format("DD-MM-YYYY")}</Text>
             </View>
             <ModalDatePicker
               button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
@@ -79,7 +79,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
           </View>
           <View style={globalStyles.InputBtnView}>
             <View style={globalStyles.InputView}>
-              <Text style={globalStyles.PassInputTextStyle}>{moment(endDate).format("DD-MM-YYYY")}</Text>
+              <Text style={globalStyles.PassInputTextStyle}>{dayjs(endDate).format("DD-MM-YYYY")}</Text>
             </View>
             <ModalDatePicker
               button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}

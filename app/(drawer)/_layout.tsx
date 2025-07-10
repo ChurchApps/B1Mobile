@@ -4,6 +4,7 @@ import { Drawer } from "expo-router/drawer";
 
 import { CustomDrawer } from "../../src/components/CustomDrawer";
 import { Constants } from "@/helpers";
+import { ErrorBoundary } from "../../src/components/ErrorBoundary";
 
 export default function DrawerLayout() {
   /*
@@ -16,16 +17,18 @@ export default function DrawerLayout() {
   */
 
   return (
-    <Drawer
-      screenOptions={{
-        headerShown: false,
-        drawerStyle: {
-          width: DimensionHelper.wp(60),
-          height: DimensionHelper.hp(100),
-          backgroundColor: Constants.Colors.app_color
-        },
-        drawerType: "slide"
-      }}
-      drawerContent={props => <CustomDrawer {...props} />}></Drawer>
+    <ErrorBoundary>
+      <Drawer
+        screenOptions={{
+          headerShown: false,
+          drawerStyle: {
+            width: DimensionHelper.wp(60),
+            height: DimensionHelper.hp(100),
+            backgroundColor: Constants.Colors.app_color
+          },
+          drawerType: "slide"
+        }}
+        drawerContent={props => <CustomDrawer {...props} />}></Drawer>
+    </ErrorBoundary>
   );
 }

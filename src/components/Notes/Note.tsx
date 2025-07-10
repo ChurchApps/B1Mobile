@@ -1,38 +1,41 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
-import React from "react";
-import { Image, Text, View } from "react-native";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
+import React, { useMemo, useCallback } from "react";
+import { Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PersonHelper } from "../../../src/helpers/PersonHelper";
+import { OptimizedImage } from "../OptimizedImage";
 
 interface NotesInterface {
   message: MessageInterface;
   showEditNote: (noteId: any) => void;
 }
 
-const Note = ({ message, showEditNote }: NotesInterface) => {
-  const displayDuration = moment(message?.timeSent).fromNow();
+const Note = React.memo(({ message, showEditNote }: NotesInterface) => {
+  const displayDuration = useMemo(() => dayjs(message?.timeSent).fromNow(), [message?.timeSent]);
+
+  const photoUrl = useMemo(() => (message?.person?.photo ? PersonHelper.getPhotoUrl(message.person) : null), [message?.person?.photo]);
+
+  const handleEditPress = useCallback(() => {
+    showEditNote(message.id);
+  }, [showEditNote, message.id]);
 
   return (
     <>
       <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70) }]}>
-        <Image
-          source={message?.person?.photo ? { uri: PersonHelper.getPhotoUrl(message.person) } : Constants.Images.ic_member}
-          style={[globalStyles.memberListIcon, { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 }]}
-        />
+        <OptimizedImage source={photoUrl ? { uri: photoUrl } : Constants.Images.ic_member} style={[globalStyles.memberListIcon, { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 }]} placeholder={Constants.Images.ic_member} />
         <View style={globalStyles.NoteTextInputView}>
           <View>
             <Text style={globalStyles.name}>{message?.displayName}</Text>
             <Text>{message?.content}</Text>
           </View>
-          <TouchableOpacity
-            style={globalStyles.EditIconStyles}
-            onPress={() => {
-              showEditNote(message.id);
-            }}>
+          <TouchableOpacity style={globalStyles.EditIconStyles} onPress={handleEditPress}>
             <Icon name="edit" color={Constants.Colors.app_color} size={DimensionHelper.wp(5)} />
           </TouchableOpacity>
         </View>
@@ -56,6 +59,6 @@ const Note = ({ message, showEditNote }: NotesInterface) => {
       </Text>
     </>
   );
-};
+});
 
 export default Note;

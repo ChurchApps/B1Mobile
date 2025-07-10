@@ -7,14 +7,14 @@ import { MainHeader } from "./wrapper/MainHeader";
 import { UserHelper } from "../helpers/UserHelper";
 
 interface WebsiteScreenProps {
-  url: any;
-  title: any;
+  url: string;
+  title: string;
 }
 
 export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
-  const webviewRef = useRef<any>(null);
+  const webviewRef = useRef<WebView>(null);
 
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });
@@ -51,7 +51,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
     return null;
   };
 
-  const handleWebViewNavigationStateChange = (event: any) => {
+  const handleWebViewNavigationStateChange = (event: { url: string }) => {
     const { url } = event;
 
     // Dynamically extract base URL
@@ -74,7 +74,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
         const fullUrl = `${baseUrl}${basePath}`;
         const id = extractIdFromUrl(url, fullUrl);
         if (id) {
-          router.navigate(screenPath as any, { params: { id } });
+          router.navigate(screenPath as never, { params: { id } });
           return false;
         }
       } else if (url === `${baseUrl}${basePath}`) {

@@ -1,31 +1,51 @@
-import { ConversationInterface } from "@churchapps/mobilehelper";
-import moment from "moment";
-import React from "react";
-import { Image, Text, View } from "react-native";
-import { ApiHelper, UserHelper, globalStyles } from "../../../src/helpers";
+import { ConversationInterface } from "../../mobilehelper";
+import dayjs from "dayjs";
+import React, { useMemo, useCallback } from "react";
+import { Text, View } from "react-native";
+import { ApiHelper, globalStyles } from "../../../src/helpers";
+import { TimelinePostInterface } from "../../../src/helpers/Interfaces";
 import UserConversations from "../Notes/UserConversation";
 import { Menu, IconButton } from "react-native-paper";
+import { OptimizedImage } from "../OptimizedImage";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
-  item: any;
+  item: { item: TimelinePostInterface; index: number };
   index?: number;
   onUpdate: () => void;
 }
 
-const TimeLinePost = ({ item, onUpdate }: Props) => {
-  const date = item?.item?.data?.start;
-  const TodayDate = moment().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
-  const startDate = moment(item?.item?.timeSent);
-  const endDate = item?.item?.postType == "event" || item?.item?.postType == "group" ? moment(TodayDate) : moment(item?.item?.data?.end);
-  const timeDifference = endDate.diff(startDate, "hours");
-  const MinDifference = endDate.diff(startDate, "minute");
-  const dayDiff = endDate.diff(startDate, "days");
-  const formattedDate = moment(date).format("MMM D, YYYY h:mm A");
+const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
+  const currentUserChurch = useCurrentUserChurch();
 
-  const createConversation = async () => {
+  const dateCalculations = useMemo(() => {
+    const date = item?.item?.data?.start;
+    const TodayDate = dayjs().format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+    const startDate = dayjs(item?.item?.timeSent);
+    const endDate = item?.item?.postType == "event" || item?.item?.postType == "group" ? dayjs(TodayDate) : dayjs(item?.item?.data?.end);
+    const timeDifference = endDate.diff(startDate, "hours");
+    const MinDifference = endDate.diff(startDate, "minute");
+    const dayDiff = endDate.diff(startDate, "days");
+    const formattedDate = dayjs(date).format("MMM D, YYYY h:mm A");
+
+    return {
+      date,
+      TodayDate,
+      startDate,
+      endDate,
+      timeDifference,
+      MinDifference,
+      dayDiff,
+      formattedDate
+    };
+  }, [item?.item?.data?.start, item?.item?.timeSent, item?.item?.postType, item?.item?.data?.end]);
+
+  const { timeDifference, MinDifference, dayDiff, formattedDate } = dateCalculations;
+
+  const createConversation = useCallback(async () => {
     const conv: ConversationInterface = {
       groupId: item?.item?.data?.groupId,
-      churchId: UserHelper.currentUserChurch.church.id,
+      churchId: currentUserChurch?.church?.id,
       contentType: item?.item?.postType,
       contentId: item?.item?.postId,
       title: item?.item?.postType + " #" + item?.item?.postId + " Conversation",
@@ -35,40 +55,27 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
     item?.item?.conversation;
     const cId = result[0].id;
     return cId;
-  };
+  }, [item?.item?.data?.groupId, currentUserChurch?.church?.id, item?.item?.postType, item?.item?.postId]);
 
   const [showMenu, setShowMenu] = React.useState(false);
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     // Implement edit functionality
-  };
+  }, []);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     // Implement delete functionality
-  };
+  }, []);
 
   return (
     <View style={globalStyles.FlatlistViewStyle} key={item.index}>
       <View style={globalStyles.TitleStyle}>
-        <Text style={globalStyles.TitleTextStyle}>
-          {item?.item?.postType == "event" || item?.item?.postType == "group" || item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? item?.item?.name : item?.item?.groupName}
-        </Text>
+        <Text style={globalStyles.TitleTextStyle}>{item?.item?.postType == "event" || item?.item?.postType == "group" || item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? item?.item?.name : item?.item?.groupName}</Text>
       </View>
 
-      {(item?.item?.postType == "event" && item?.item?.photoUrl !== null) ||
-      item?.item?.postType == "sermon" ||
-      item?.item?.postType == "group" ||
-      (item?.item?.postType == "venue" && item?.item?.data?.image != null) ? (
+      {(item?.item?.postType == "event" && item?.item?.photoUrl !== null) || item?.item?.postType == "sermon" || item?.item?.postType == "group" || (item?.item?.postType == "venue" && item?.item?.data?.image != null) ? (
         <View style={globalStyles.ImageMainView}>
-          <View style={globalStyles.ImageView}>
-            {item?.item?.postType == "venue" && item?.item?.data?.image != null ? (
-              <Image source={{ uri: item?.item?.data?.image }} style={globalStyles.groupImageStyle} resizeMode="cover" />
-            ) : item?.item?.postType == "sermon" ? (
-              <Image source={{ uri: item?.item?.data?.thumbnail }} style={globalStyles.groupImageStyle} resizeMode="cover" />
-            ) : (
-              <Image source={{ uri: item?.item?.photoUrl }} style={globalStyles.groupImageStyle} resizeMode="cover" />
-            )}
-          </View>
+          <View style={globalStyles.ImageView}>{item?.item?.postType == "venue" && item?.item?.data?.image != null ? <OptimizedImage source={{ uri: item?.item?.data?.image }} style={globalStyles.groupImageStyle} contentFit="cover" /> : item?.item?.postType == "sermon" ? <OptimizedImage source={{ uri: item?.item?.data?.thumbnail }} style={globalStyles.groupImageStyle} contentFit="cover" /> : <OptimizedImage source={{ uri: item?.item?.photoUrl }} style={globalStyles.groupImageStyle} contentFit="cover" />}</View>
         </View>
       ) : null}
 
@@ -130,19 +137,10 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
 
       {item?.item?.postType == "sermon" || item?.item?.postType == "event" || (item?.item?.postType == "venue" && item?.item?.data?.description != null) ? (
         <View style={globalStyles.PostTitleViewStyle}>
-          <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? globalStyles.tabTextColor : null]}>
-            {item?.item?.data?.description}
-          </Text>
+          <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? globalStyles.tabTextColor : null]}>{item?.item?.data?.description}</Text>
         </View>
       ) : null}
-      <UserConversations
-        conversationId={item?.item?.conversation?.id}
-        groupId={item?.item?.conversation?.groupId}
-        key={item?.item?.conversation?.id}
-        conversation={item?.item?.conversation}
-        createConversation={createConversation}
-        onUpdate={onUpdate}
-      />
+      <UserConversations conversationId={item?.item?.conversation?.id} groupId={item?.item?.conversation?.groupId} key={item?.item?.conversation?.id} conversation={item?.item?.conversation} createConversation={createConversation} onUpdate={onUpdate} />
 
       {showMenu && (
         <Menu visible={showMenu} onDismiss={() => setShowMenu(false)} anchor={<IconButton icon="dots-vertical" onPress={() => setShowMenu(true)} style={{ margin: 0 }} />}>
@@ -164,5 +162,5 @@ const TimeLinePost = ({ item, onUpdate }: Props) => {
       )}
     </View>
   );
-};
+});
 export default TimeLinePost;

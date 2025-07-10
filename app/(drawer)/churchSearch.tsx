@@ -1,100 +1,79 @@
 import React from "react";
 import { BlueHeader } from "@/components/BlueHeader";
-import { ArrayHelper, CacheHelper, ChurchInterface, Constants, UserHelper } from "../../src/helpers";
-import { ErrorHelper } from "../../src/helpers/ErrorHelper";
-import { ApiHelper } from "@churchapps/mobilehelper";
+import { ArrayHelper, ChurchInterface, Constants, UserHelper } from "../../src/helpers";
+import { ErrorHelper } from "../../src/mobilehelper";
+import { ApiHelper } from "../../src/mobilehelper";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Keyboard, TouchableWithoutFeedback, View, Image, Alert, BackHandler } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, View } from "react-native";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 import RNRestart from "react-native-restart";
 import { Platform } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { clearAllCachedData } from "../../src/helpers/QueryClient";
+import { useUserStore, useRecentChurches, useUserChurches } from "../../src/stores/useUserStore";
 
 const ChurchSearch = () => {
   const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");
-  const [searchList, setSearchList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [recentList, setRecentList] = useState<ChurchInterface[]>([]);
-  const [recentListEmpty, setRecentListEmpty] = useState(false);
+  const recentChurches = useRecentChurches();
+  const userChurches = useUserChurches();
+  const { addRecentChurch, selectChurch } = useUserStore();
+
+  // Use react-query for church search - only search when text is provided
+  const { data: searchList = [], isLoading: loading } = useQuery({
+    queryKey: [`/churches/search/?name=${searchText}&app=B1&include=favicon_400x400`, "MembershipApi"],
+    queryFn: async () => ApiHelper.getAnonymous(`/churches/search/?name=${searchText}&app=B1&include=favicon_400x400`, "MembershipApi"),
+    enabled: searchText.length > 2, // Only search when user has typed at least 3 characters
+    placeholderData: [],
+    staleTime: 5 * 60 * 1000, // 5 minutes - search results can be cached briefly
+    gcTime: 10 * 60 * 1000 // 10 minutes
+  });
 
   useEffect(() => {
     // Utilities.trackEvent("Church Search Screen");
-    GetRecentList();
     UserHelper.addOpenScreenEvent("Church Search Screen");
   }, []);
 
   const churchSelection = async (churchData: ChurchInterface) => {
-    StoreToRecent(churchData);
     try {
-      let existing: any = null;
-      try {
-        if (UserHelper.churches) existing = ArrayHelper.getOne(UserHelper.churches, "church.id", churchData.id);
-      } catch (e: any) {
-        ErrorHelper.logError("store-recent-church", e);
+      // Check if user is already a member of this church
+      let existing = userChurches.find(uc => uc.church.id === churchData.id);
+      if (existing) {
+        churchData = existing.church;
       }
-      if (existing) churchData = existing.church;
-      await CacheHelper.setValue("church", churchData);
+
+      // Add to recent churches
+      addRecentChurch(churchData);
+
+      // Clear all cached data when switching churches
+      await clearAllCachedData();
+
+      // Use the store to select the church
+      await selectChurch(churchData);
+
       UserHelper.addAnalyticsEvent("church_selected", {
         id: Date.now(),
         device: Platform.OS,
         church: churchData.name
       });
-      //await UserHelper.setCurrentUserChurch(userChurch);
-      console.log("SET PERSON RECORD");
-      if (UserHelper.user) UserHelper.setPersonRecord();
+
       router.navigate("/(drawer)/dashboard");
-      // DevSettings.reload()
-      // RNRestart.Restart();
 
       if (Platform.OS === "android") {
         RNRestart.Restart();
-      } else {
-        // router.navigate("/(drawer)/dashboard");
       }
     } catch (err: any) {
+      console.error("❌ Church selection error:", err);
       ErrorHelper.logError("church-search", err);
     }
   };
 
-  const searchApiCall = async (text: String) => {
-    setLoading(true);
-    try {
-      const data = await ApiHelper.getAnonymous("/churches/search/?name=" + text + "&app=B1&include=favicon_400x400", "MembershipApi");
-      setSearchList(data);
-    } catch (error) {
-      setLoading(false);
-      console.log(error);
-    }
-    setLoading(false);
-  };
+  // Remove GetRecentList - no longer needed with hooks
 
-  const GetRecentList = async () => {
-    try {
-      const list = CacheHelper.recentChurches;
-      if (list.length === 0) setRecentListEmpty(true);
-      else {
-        let reverseList = list.reverse();
-        setRecentList(reverseList);
-      }
-    } catch (err: any) {
-      console.log("GET RECENT CHURCHES ERROR", err);
-      ErrorHelper.logError("get-recent-church", err);
-    }
-  };
-
-  const StoreToRecent = async (churchData: any) => {
-    let filteredItems: any[] = [];
-    filteredItems = recentList.filter((item: any) => item.id !== churchData.id);
-    filteredItems.push(churchData);
-    try {
-      await CacheHelper.setValue("recentChurches", filteredItems);
-    } catch (err: any) {
-      console.log("SET RECENT CHURCHES ERROR", err);
-      ErrorHelper.logError("store-recent-church", err);
-    }
-  };
+  // Remove StoreToRecent - handled by the store now
 
   const getHeaderView = () => (
     <View>
@@ -104,21 +83,13 @@ const ChurchSearch = () => {
           <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
             Find Your Church
           </Text>
-          <TextInput
-            mode="outlined"
-            label="Church name"
-            placeholder="Church name"
-            value={searchText}
-            onChangeText={setSearchText}
-            style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }}
-            left={<TextInput.Icon icon="church" />}
-          />
-          <Button mode="contained" onPress={() => searchApiCall(searchText)} loading={loading} style={{ marginBottom: spacing.md }}>
+          <TextInput mode="outlined" label="Church name" placeholder="Church name" value={searchText} onChangeText={setSearchText} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="church" />} />
+          <Button mode="contained" onPress={() => {}} loading={loading} style={{ marginBottom: spacing.md }}>
             Search
           </Button>
           {searchText === "" && (
             <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginTop: spacing.sm }}>
-              {recentListEmpty ? "No recent churches available." : "Recent Churches"}
+              {recentChurches.length === 0 ? "No recent churches available." : "Recent Churches"}
             </Text>
           )}
         </Surface>
@@ -131,12 +102,12 @@ const ChurchSearch = () => {
       {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
       <List.Section>
         {getHeaderView()}
-        {(searchText === "" ? recentList : searchList).map((item: any, index: any) => (
+        {(searchText === "" ? recentChurches.slice().reverse() : searchList).map((item: any, index: any) => (
           <List.Item
             key={item.id || index}
             title={item.name}
             left={() => (
-              <Image
+              <OptimizedImage
                 source={(() => {
                   let churchImage = Constants.Images.ic_church;
                   if (item.settings && item.settings.length > 0) {
@@ -147,6 +118,7 @@ const ChurchSearch = () => {
                   return churchImage;
                 })()}
                 style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }}
+                placeholder={Constants.Images.ic_church}
               />
             )}
             onPress={() => churchSelection(item)}

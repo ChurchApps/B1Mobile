@@ -1,11 +1,12 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useState } from "react";
 import { FlatList, Keyboard, View } from "react-native";
-import { ApiHelper, ConversationInterface, UserHelper } from "../../../src/helpers";
+import { ApiHelper, ConversationInterface } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import Notes from "./Notes";
 import { TextInput, IconButton, Surface } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
+import { useUser } from "../../stores/useUserStore";
 
 interface NewConversation {
   placeholder: string;
@@ -18,6 +19,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
   const [newMessage] = useState<MessageInterface>();
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
   const textRef = React.useRef("");
+  const user = useUser();
 
   const handleReply = (value: number) => setShowReplyBox(value);
   const onUpdate = () => loadConversations();
@@ -47,7 +49,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
         });
       }
     } catch (err) {
-      console.log("err", err);
+      console.error("Error saving conversation:", err);
     }
   };
 
@@ -57,7 +59,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
       allowAnonymousPosts: false,
       contentType: "group",
       contentId: groupId,
-      title: UserHelper.user.firstName + " " + UserHelper.user.lastName + +" Conversation",
+      title: user?.firstName + " " + user?.lastName + " Conversation",
       visibility: "hidden"
     };
     const result: ConversationInterface[] = await ApiHelper.post("/conversations", [conv], "MessagingApi");
@@ -123,27 +125,14 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
         onSubmitEditing={() => Keyboard.dismiss()}
         value={newMessage?.content}
       />
-      <IconButton
-        icon="send"
-        mode="contained"
-        size={24}
-        onPress={() => handleSave(message)}
-        style={{ margin: 0, backgroundColor: theme.colors.primary, borderRadius: theme.roundness }}
-        iconColor={theme.colors.onPrimary}
-      />
+      <IconButton icon="send" mode="contained" size={24} onPress={() => handleSave(message)} style={{ margin: 0, backgroundColor: theme.colors.primary, borderRadius: theme.roundness }} iconColor={theme.colors.onPrimary} />
     </Surface>
   );
 
   return (
     <View>
       <View style={{ height: "auto", maxHeight: DimensionHelper.hp(60) }}>
-        <FlatList
-          data={conversations}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => renderConversations(item, index)}
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={{ padding: spacing.sm }}
-        />
+        <FlatList data={conversations} showsVerticalScrollIndicator={false} renderItem={({ item, index }) => renderConversations(item, index)} keyExtractor={item => item.id.toString()} contentContainerStyle={{ padding: spacing.sm }} />
       </View>
       <RenderNewConversation placeholder={"Start Conversation"} type="new" />
     </View>

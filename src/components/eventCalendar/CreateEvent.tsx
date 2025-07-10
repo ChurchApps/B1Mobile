@@ -1,7 +1,7 @@
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { ApiHelper, DateHelper, EventExceptionInterface, EventInterface } from "@churchapps/mobilehelper";
+import { ApiHelper, DateHelper, EventExceptionInterface, EventInterface } from "../../mobilehelper";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import moment from "moment";
+import dayjs from "dayjs";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
@@ -166,7 +166,7 @@ export default function CreateEvent(props: Props) {
           <View style={styles.eventType}>
             <View style={styles.dateConatiner}>
               <Text style={styles.dateText} numberOfLines={1}>
-                {moment(startDate).format("YYYY-MM-DD")}
+                {dayjs(startDate).format("YYYY-MM-DD")}
               </Text>
               <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setOpenStartPicker(true)} />
               <DatePicker
@@ -185,7 +185,7 @@ export default function CreateEvent(props: Props) {
             </View>
             <View style={styles.dateConatiner}>
               <Text style={styles.dateText} numberOfLines={1}>
-                {moment(endDate).format("YYYY-MM-DD")}
+                {dayjs(endDate).format("YYYY-MM-DD")}
               </Text>
               <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setOpenEndPicker(true)} />
               <DatePicker
@@ -211,7 +211,7 @@ export default function CreateEvent(props: Props) {
           <View style={styles.eventType}>
             <View style={styles.dateConatiner}>
               <Text style={styles.dateText} numberOfLines={1}>
-                {moment(startDate).format("YYYY-MM-DD")}
+                {dayjs(startDate).format("YYYY-MM-DD")}
               </Text>
               <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setOpenStartPicker(true)} />
               <DatePicker
@@ -230,7 +230,7 @@ export default function CreateEvent(props: Props) {
             </View>
             <View style={styles.dateConatiner}>
               <Text style={styles.dateText} numberOfLines={1}>
-                {moment(endDate).format("YYYY-MM-DD")}
+                {dayjs(endDate).format("YYYY-MM-DD")}
               </Text>
               <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setOpenEndPicker(true)} />
               <DatePicker
@@ -278,7 +278,7 @@ export default function CreateEvent(props: Props) {
       <View style={styles.eventType}>
         <CheckBox
           onPress={() => {
-            setAllDay(!allDay), setEvent({ ...event, allDay: !allDay });
+            (setAllDay(!allDay), setEvent({ ...event, allDay: !allDay }));
           }}
           title="All Day"
           isChecked={allDay}

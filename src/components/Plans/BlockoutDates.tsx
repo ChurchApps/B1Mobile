@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants } from "../../../src/helpers";
 import Icons from "react-native-vector-icons/FontAwesome5";
-import { ApiHelper } from "../../../src/helpers";
-import moment from "moment";
+import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 export const BlockoutDates = () => {
-  const [blockoutDates, setBlockoutDates] = useState([]);
   const fadeAnim = new Animated.Value(0);
+  const currentUserChurch = useCurrentUserChurch();
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -18,18 +19,17 @@ export const BlockoutDates = () => {
     }).start();
   }, []);
 
-  const loadBlockoutDates = async () => {
-    try {
-      const data = await ApiHelper.get("/blockoutdates/my", "DoingApi");
-      setBlockoutDates(data);
-    } catch (error) {
+  // Use react-query for blockout dates
+  const { data: blockoutDates = [] } = useQuery({
+    queryKey: ["/blockoutdates/my", "DoingApi"],
+    enabled: !!currentUserChurch?.jwt,
+    placeholderData: [],
+    staleTime: 10 * 60 * 1000, // 10 minutes - blockout dates don't change frequently
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    onError: error => {
       console.error("Error loading blockout dates:", error);
     }
-  };
-
-  useEffect(() => {
-    loadBlockoutDates();
-  }, []);
+  });
 
   return (
     <View style={styles.container}>
@@ -58,11 +58,11 @@ export const BlockoutDates = () => {
               <View style={styles.cardContent}>
                 <View style={styles.dateInfo}>
                   <Icons name="calendar-day" size={16} color="#1976d2" style={styles.icon} />
-                  <Text style={{ fontSize: 16, color: "#222", fontWeight: "bold" }}>{moment(date.startDate).format("YYYY-MM-DD")}</Text>
+                  <Text style={{ fontSize: 16, color: "#222", fontWeight: "bold" }}>{dayjs(date.startDate).format("YYYY-MM-DD")}</Text>
                   {date.endDate && date.endDate !== date.startDate && (
                     <>
                       <Text style={styles.dateSeparator}>to</Text>
-                      <Text style={{ fontSize: 16, color: "#222", fontWeight: "bold" }}>{moment(date.endDate).format("YYYY-MM-DD")}</Text>
+                      <Text style={{ fontSize: 16, color: "#222", fontWeight: "bold" }}>{dayjs(date.endDate).format("YYYY-MM-DD")}</Text>
                     </>
                   )}
                 </View>

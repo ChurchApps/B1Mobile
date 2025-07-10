@@ -1,12 +1,14 @@
-import { ApiHelper, CacheHelper, CurrencyHelper, UserHelper, UserInterface } from "../../../src/helpers";
+import { ApiHelper, CurrencyHelper, UserHelper, UserInterface } from "../../../src/helpers";
 import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { Button, Card, Checkbox, IconButton, Menu, RadioButton, Text, TextInput, useTheme } from "react-native-paper";
+import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
 import { PreviewModal } from "../modals/PreviewModal";
 import { FundDonations } from "./FundDonations";
+import { useUser, useCurrentUserChurch } from "../../../src/stores/useUserStore";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -17,12 +19,12 @@ interface Props {
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
   const { spacing } = useAppTheme();
   const theme = useTheme();
-  const person = UserHelper.currentUserChurch?.person;
-  const user = UserHelper.user;
+  const user = useUser();
+  const currentUserChurch = useCurrentUserChurch();
+  const person = currentUserChurch?.person;
   const [donationType, setDonationType] = useState<string>("");
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [date] = useState(new Date());
-  const [funds, setFunds] = useState<FundInterface[]>([]);
   const [fundDonations, setFundDonations] = useState<FundDonationInterface[]>([]);
   const [total, setTotal] = React.useState<number>(0);
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
@@ -35,6 +37,25 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [selectedInterval, setSelectedInterval] = useState<string>("one_week");
   const [showIntervalMenu, setShowIntervalMenu] = useState(false);
   const [showMethodMenu, setShowMethodMenu] = useState(false);
+
+  // Determine church ID for funds query
+  const churchId = !currentUserChurch ? currentUserChurch?.church?.id || "" : !currentUserChurch.person?.id ? (currentUserChurch.church.id ?? "") : currentUserChurch?.church?.id || "";
+
+  // Use react-query for funds
+  const { data: funds = [] } = useQuery<FundInterface[]>({
+    queryKey: [`/funds/churchId/${churchId}`, "GivingApi"],
+    enabled: !!churchId && !!user?.jwt,
+    placeholderData: [],
+    staleTime: 15 * 60 * 1000, // 15 minutes - funds change rarely
+    gcTime: 60 * 60 * 1000 // 1 hour
+  });
+
+  // Initialize fund donations when funds data is available
+  useEffect(() => {
+    if (funds.length > 0 && fundDonations.length === 0) {
+      setFundDonations([{ fundId: funds[0].id }]);
+    }
+  }, [funds, fundDonations.length]);
 
   const intervalTypes = [
     { label: "Weekly", value: "one_week" },
@@ -67,7 +88,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     if (donation.amount && donation.amount < 0.5) {
       Alert.alert("Donation amount must be greater than $0.50");
     } else {
-      if (!UserHelper.currentUserChurch?.person?.id) {
+      if (!currentUserChurch?.person?.id) {
         donation.person = {
           id: "",
           email: email,
@@ -80,24 +101,6 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
   const handleCancel = () => {
     setDonationType("");
-  };
-
-  const loadData = async () => {
-    let churchId: string = "";
-    // if (!UserHelper.currentUserChurch?.person?.id) churchId = UserHelper.currentUserChurch.church.id ?? "";
-    // else churchId = CacheHelper.church?.id || "";
-    if (!UserHelper.currentUserChurch) {
-      churchId = CacheHelper.church?.id || "";
-    } else if (!UserHelper.currentUserChurch.person?.id) {
-      churchId = UserHelper.currentUserChurch.church.id ?? "";
-    } else {
-      churchId = CacheHelper.church?.id || "";
-    }
-
-    ApiHelper.get("/funds/churchId/" + churchId, "GivingApi").then(data => {
-      setFunds(data);
-      if (data.length) setFundDonations([{ fundId: data[0].id }]);
-    });
   };
 
   const handleFundDonationsChange = (fd: FundDonationInterface[]) => {
@@ -264,17 +267,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     return `${method.name} ending in ${method.last4}`;
   };
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   return (
     <Card style={{ marginBottom: spacing.md }}>
-      <Card.Title
-        title="Make a Donation"
-        titleStyle={{ fontSize: 20, fontWeight: "600" }}
-        left={props => <IconButton {...props} icon="gift" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />}
-      />
+      <Card.Title title="Make a Donation" titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="gift" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
       <Card.Content>
         <RadioButton.Group onValueChange={value => setDonationType(value)} value={donationType}>
           <View style={{ flexDirection: "row", marginBottom: spacing.md }}>
@@ -285,7 +280,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
         {donationType && (
           <>
-            {!UserHelper.currentUserChurch?.person?.id && (
+            {!currentUserChurch?.person?.id && (
               <View style={{ marginBottom: spacing.md }}>
                 <TextInput mode="outlined" label="Email" value={email} onChangeText={setEmail} style={{ marginBottom: spacing.sm }} />
                 <TextInput mode="outlined" label="First Name" value={firstName} onChangeText={setFirstName} style={{ marginBottom: spacing.sm }} />
@@ -316,13 +311,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                 </Menu>
               </View>
             ) : (
-              <CardField
-                postalCodeEnabled={false}
-                placeholders={{ number: "4242 4242 4242 4242" }}
-                cardStyle={{ backgroundColor: theme.colors.surface }}
-                style={{ height: 50, marginBottom: spacing.md }}
-                onCardChange={details => setCardDetails(details)}
-              />
+              <CardField postalCodeEnabled={false} placeholders={{ number: "4242 4242 4242 4242" }} cardStyle={{ backgroundColor: theme.colors.surface }} style={{ height: 50, marginBottom: spacing.md }} onCardChange={details => setCardDetails(details)} />
             )}
 
             {donationType === "recurring" && (
@@ -384,16 +373,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         )}
       </Card.Content>
 
-      <PreviewModal
-        show={showPreviewModal}
-        close={() => setShowPreviewModal(false)}
-        donation={donation}
-        paymentMethodName={getMethodLabel(pm.find(m => m.id === selectedMethod)!)}
-        donationType={donationType}
-        handleDonate={makeDonation}
-        isChecked={isChecked}
-        transactionFee={transactionFee}
-      />
+      <PreviewModal show={showPreviewModal} close={() => setShowPreviewModal(false)} donation={donation} paymentMethodName={getMethodLabel(pm.find(m => m.id === selectedMethod)!)} donationType={donationType} handleDonate={makeDonation} isChecked={isChecked} transactionFee={transactionFee} />
     </Card>
   );
 }
