@@ -119,9 +119,9 @@ const Donation = () => {
           <View style={{ flex: 1 }}>
             <MainHeader title="Donate" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
             <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: spacing.md }}>
-              {UserHelper.currentUserChurch?.person?.id && <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} />}
+              {currentUserChurch?.person?.id && <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} />}
               <DonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />
-              {!UserHelper.currentUserChurch?.person?.id ? (
+              {!currentUserChurch?.person?.id ? (
                 <Text variant="bodyMedium" style={{ marginVertical: spacing.md, color: theme.colors.onSurface }}>
                   Please login to view existing donations
                 </Text>
