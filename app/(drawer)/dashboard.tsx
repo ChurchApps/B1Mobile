@@ -3,7 +3,7 @@ import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from "reac
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
-import { Provider as PaperProvider, Card, Text, MD3LightTheme, Portal, Modal } from "react-native-paper";
+import { Provider as PaperProvider, Card, Text, MD3LightTheme } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { UserHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
@@ -11,7 +11,6 @@ import { LinkInterface } from "../../src/helpers/Interfaces";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { NotificationTab } from "../../src/components/NotificationView";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 import { useUserStore, useCurrentChurch, useChurchAppearance } from "../../src/stores/useUserStore";
@@ -37,7 +36,6 @@ const theme = {
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
-  const [showNotifications, setShowNotifications] = useState(false);
   const navigation = useNavigation();
 
   const currentChurch = useCurrentChurch();
@@ -102,30 +100,6 @@ const Dashboard = () => {
 
     return imageMap[item.linkType.toLowerCase()] || require("../../src/assets/images/dash_url.png");
   }, []);
-
-  const getButton = useCallback(
-    (item: LinkInterface) => {
-      if (item.linkType === "separator") return null;
-
-      const backgroundImage = getBackgroundImage(item);
-
-      const handlePress = () => NavigationUtils.navigateToScreen(item, currentChurch);
-
-      return (
-        <Card key={`card-${item.id || item.linkType + item.text}`} style={styles.card} mode="elevated" onPress={handlePress}>
-          <View style={styles.cardImage}>
-            <OptimizedImage source={backgroundImage} style={styles.cardImageInner} contentFit="cover" />
-          </View>
-          <Card.Content style={styles.cardContent}>
-            <Text variant="titleMedium" style={styles.cardText}>
-              {item.text}
-            </Text>
-          </Card.Content>
-        </Card>
-      );
-    },
-    [currentChurch, getBackgroundImage]
-  );
 
   const filteredLinks = useMemo(() => {
     if (!Array.isArray(links)) return [];
@@ -230,10 +204,6 @@ const Dashboard = () => {
     [churchAppearance?.logoLight, currentChurch?.name]
   );
 
-  const handleNotificationToggle = useCallback(() => {
-    setShowNotifications(true);
-  }, []);
-
   const handleDrawerOpen = useCallback(() => {
     navigation.dispatch(DrawerActions.openDrawer());
   }, [navigation]);
@@ -250,11 +220,6 @@ const Dashboard = () => {
                 {featuredContent}
               </ScrollView>
             </View>
-            <Portal>
-              <Modal visible={showNotifications} onDismiss={() => setShowNotifications(false)} contentContainerStyle={styles.modalContainer}>
-                <NotificationTab />
-              </Modal>
-            </Portal>
           </View>
         </LoadingWrapper>
       </SafeAreaProvider>
@@ -444,20 +409,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     fontWeight: "500"
-  },
-
-  // Modal
-  modalContainer: {
-    backgroundColor: "white",
-    margin: 20,
-    borderRadius: 12,
-    height: "80%",
-    overflow: "hidden",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84
   }
 });
 

@@ -1,16 +1,36 @@
-import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserSearchInterface, globalStyles } from "../../src/helpers";
+import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserSearchInterface } from "../../src/helpers";
 import { NavigationProps } from "../../src/interfaces";
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
-import React, { useEffect, useState, useMemo } from "react";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, StyleSheet, View, ScrollView } from "react-native";
+import { Provider as PaperProvider, Card, Text, MD3LightTheme, Chip, Button } from "react-native-paper";
+import { MaterialIcons } from "@expo/vector-icons";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "./Loader";
 import { router } from "expo-router";
 import { OptimizedImage } from "./OptimizedImage";
 import { useCurrentUserChurch } from "../stores/useUserStore";
+
+const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: "#1565C0",
+    secondary: "#F6F6F8",
+    surface: "#FFFFFF",
+    background: "#F6F6F8",
+    elevation: {
+      level0: "transparent",
+      level1: "#FFFFFF",
+      level2: "#F6F6F8",
+      level3: "#F0F0F0",
+      level4: "#E9ECEF",
+      level5: "#E2E6EA"
+    }
+  }
+};
 
 export function NotificationTab() {
   const navigation: NavigationProps = useNavigation();
@@ -22,8 +42,8 @@ export function NotificationTab() {
   const [mergeData, setMergedData] = useState<Array<Record<string, unknown>>>([]);
 
   const [routes] = React.useState([
-    { key: "first", title: "MESSAGES" },
-    { key: "second", title: "NOTIFICATIONS" }
+    { key: "first", title: "Messages" },
+    { key: "second", title: "Notifications" }
   ]);
 
   // Use react-query for notifications
@@ -97,26 +117,24 @@ export function NotificationTab() {
       photo: item.photo
     };
     return (
-      <TouchableOpacity onPress={() => router.push({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(userchatDetails) } })}>
-        <View style={[globalStyles.messageContainer, { alignSelf: "flex-start", backgroundColor: "#f8f9fa", padding: DimensionHelper.wp(3), borderRadius: DimensionHelper.wp(2), marginHorizontal: DimensionHelper.wp(3) }]}>
-          <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={[globalStyles.churchListIcon, { height: DimensionHelper.wp(12), width: DimensionHelper.wp(12), borderRadius: DimensionHelper.wp(12) }]} tintColor={item.photo ? undefined : Constants.Colors.app_color} placeholder={Constants.Images.ic_user} />
-          <View style={{ marginLeft: DimensionHelper.wp(2), flex: 1 }}>
-            <Text style={[globalStyles.senderNameText, { fontSize: DimensionHelper.wp(4.2), color: "#2c3e50", marginBottom: DimensionHelper.wp(1) }]}>{item.displayName}</Text>
-            <View
-              style={[
-                globalStyles.messageView,
-                {
-                  width: "100%",
-                  backgroundColor: "#ffffff",
-                  borderColor: "#e9ecef",
-                  padding: DimensionHelper.wp(2)
-                }
-              ]}>
-              <Text style={{ fontSize: DimensionHelper.wp(3.8), color: "#495057" }}>{item.message}</Text>
+      <Card style={styles.messageCard} mode="elevated" onPress={() => router.push({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(userchatDetails) } })}>
+        <Card.Content style={styles.messageContent}>
+          <View style={styles.messageHeader}>
+            <View style={styles.avatarContainer}>
+              <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={styles.avatar} tintColor={item.photo ? undefined : "#1565C0"} placeholder={Constants.Images.ic_user} />
             </View>
+            <View style={styles.messageInfo}>
+              <Text variant="titleMedium" style={styles.senderName}>
+                {item.displayName}
+              </Text>
+              <Text variant="bodyMedium" style={styles.messagePreview} numberOfLines={2}>
+                {item.message}
+              </Text>
+            </View>
+            <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
           </View>
-        </View>
-      </TouchableOpacity>
+        </Card.Content>
+      </Card>
     );
   };
   const renderItems = (item: any) => {
@@ -124,61 +142,104 @@ export function NotificationTab() {
     const endDate = dayjs(item?.timeSent);
     const timeDifference = currentDate.diff(endDate, "hours");
     const dayDiff = currentDate.diff(endDate, "days");
+
+    const getNotificationIcon = (type: string) => {
+      switch (type?.toLowerCase()) {
+        case "plan":
+        case "schedule":
+          return "calendar-today";
+        case "message":
+          return "message";
+        case "group":
+          return "group";
+        case "donation":
+          return "payment";
+        default:
+          return "notifications";
+      }
+    };
+
+    const getTimeDisplay = () => {
+      if (dayDiff === 0) {
+        if (timeDifference === 0) return "now";
+        return `${timeDifference}h`;
+      } else if (dayDiff === 1) {
+        return "yesterday";
+      } else if (dayDiff < 7) {
+        return `${dayDiff}d`;
+      } else {
+        return endDate.format("MMM D");
+      }
+    };
+
     return (
-      <TouchableOpacity
-        style={[
-          globalStyles.NotificationView,
-          {
-            backgroundColor: "#ffffff",
-            marginHorizontal: DimensionHelper.wp(3),
-            marginVertical: DimensionHelper.wp(1.5),
-            padding: DimensionHelper.wp(3),
-            borderRadius: DimensionHelper.wp(2),
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 2,
-            elevation: 2
-          }
-        ]}
-        onPress={() => {
-          navigation.navigate("PlanDetails", { id: item?.contentId });
-        }}>
-        <View style={[globalStyles.bellIconView, { backgroundColor: Constants.Colors.app_color_light, padding: DimensionHelper.wp(2), borderRadius: DimensionHelper.wp(2) }]}>
-          <Image source={Constants.Images.dash_bell} style={[globalStyles.bellIcon, { width: DimensionHelper.wp(6), height: DimensionHelper.wp(6) }]} tintColor={Constants.Colors.app_color} />
-        </View>
-        <View style={[globalStyles.notimsgView, { flex: 1, marginHorizontal: DimensionHelper.wp(2) }]}>
-          <Text style={{ fontSize: DimensionHelper.wp(3.8), color: "#2c3e50", fontFamily: Constants.Fonts.RobotoRegular }}>{item.message}</Text>
-        </View>
-        <View style={[globalStyles.timeSentView, { backgroundColor: "#f8f9fa", paddingHorizontal: DimensionHelper.wp(2), paddingVertical: DimensionHelper.wp(1), borderRadius: DimensionHelper.wp(2) }]}>
-          <Text style={{ fontSize: DimensionHelper.wp(3.5), color: "#6c757d", fontFamily: Constants.Fonts.RobotoMedium }}>{dayDiff === 0 ? `${timeDifference}h` : `${dayDiff}d`}</Text>
-        </View>
-      </TouchableOpacity>
+      <Card style={styles.notificationCard} mode="elevated" onPress={() => navigation.navigate("PlanDetails", { id: item?.contentId })}>
+        <Card.Content style={styles.notificationContent}>
+          <View style={styles.notificationHeader}>
+            <View style={styles.notificationIcon}>
+              <MaterialIcons name={getNotificationIcon(item?.type)} size={24} color="#1565C0" />
+            </View>
+            <View style={styles.notificationInfo}>
+              <Text variant="bodyMedium" style={styles.notificationMessage} numberOfLines={3}>
+                {item.message}
+              </Text>
+              <View style={styles.notificationMeta}>
+                <Chip mode="outlined" compact style={styles.timeChip}>
+                  <Text variant="bodySmall" style={styles.timeText}>
+                    {getTimeDisplay()}
+                  </Text>
+                </Chip>
+              </View>
+            </View>
+          </View>
+        </Card.Content>
+      </Card>
     );
   };
 
   const MessagesRoute = () => (
-    <View style={globalStyles.MessagetabView}>
+    <View style={styles.tabContainer}>
       {isLoading ? (
         <Loader isLoading={true} />
+      ) : mergeData.length > 0 ? (
+        <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={(item, index) => `message-${item.id}-${index}`} contentContainerStyle={styles.listContent} initialNumToRender={10} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
       ) : (
-        <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={(item, index) => `message-${item.id}-${index}`} initialNumToRender={10} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
+        <ScrollView contentContainerStyle={styles.emptyContainer}>
+          <View style={styles.emptyState}>
+            <MaterialIcons name="message" size={64} color="#E0E0E0" />
+            <Text variant="headlineSmall" style={styles.emptyTitle}>
+              No messages yet
+            </Text>
+            <Text variant="bodyMedium" style={styles.emptySubtitle}>
+              Start a conversation with someone from your church
+            </Text>
+            <Button mode="contained" onPress={() => router.push("/(drawer)/searchMessageUser")} style={styles.actionButton}>
+              <Text style={styles.actionButtonText}>Find People</Text>
+            </Button>
+          </View>
+        </ScrollView>
       )}
     </View>
   );
 
   const NotificationRoute = () => (
-    <View style={[globalStyles.NotificationtabView, { flex: 1, justifyContent: "center", alignItems: "center" }]}>
+    <View style={styles.tabContainer}>
       {isLoading ? (
         <Loader isLoading={true} />
       ) : NotificationData.length > 0 ? (
-        <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={(item, index) => `notification-${item.id}-${index}`} initialNumToRender={8} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={4} updateCellsBatchingPeriod={100} />
+        <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={(item, index) => `notification-${item.id}-${index}`} contentContainerStyle={styles.listContent} initialNumToRender={8} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={4} updateCellsBatchingPeriod={100} />
       ) : (
-        <View style={{ alignItems: "center", padding: DimensionHelper.wp(5) }}>
-          <Image source={Constants.Images.dash_bell} style={{ width: DimensionHelper.wp(15), height: DimensionHelper.wp(15), marginBottom: DimensionHelper.wp(3) }} tintColor={Constants.Colors.app_color_light} />
-          <Text style={{ fontSize: DimensionHelper.wp(4), color: "#6c757d", textAlign: "center", fontFamily: Constants.Fonts.RobotoMedium }}>No notifications yet</Text>
-          <Text style={{ fontSize: DimensionHelper.wp(3.5), color: "#adb5bd", textAlign: "center", marginTop: DimensionHelper.wp(1), fontFamily: Constants.Fonts.RobotoRegular }}>We'll notify you when something new arrives</Text>
-        </View>
+        <ScrollView contentContainerStyle={styles.emptyContainer}>
+          <View style={styles.emptyState}>
+            <MaterialIcons name="notifications" size={64} color="#E0E0E0" />
+            <Text variant="headlineSmall" style={styles.emptyTitle}>
+              No notifications yet
+            </Text>
+            <Text variant="bodyMedium" style={styles.emptySubtitle}>
+              We'll notify you when something new arrives
+            </Text>
+          </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -188,12 +249,185 @@ export function NotificationTab() {
     second: NotificationRoute
   });
 
-  const renderTabBar = (props: any) => <TabBar {...props} indicatorStyle={{ backgroundColor: Constants.Colors.Active_TabColor, height: DimensionHelper.wp(0.5) }} style={[globalStyles.TabIndicatorStyle, { backgroundColor: "#ffffff", elevation: 2, shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }]} labelStyle={{ color: "#000000", fontSize: DimensionHelper.wp(4), fontFamily: Constants.Fonts.RobotoMedium }} activeColor="#000000" inactiveColor="#000000" inactiveOpacity={0.7} />;
+  const renderTabBar = (props: any) => (
+    <TabBar
+      {...props}
+      indicatorStyle={styles.tabIndicator}
+      style={styles.tabBar}
+      labelStyle={styles.tabLabel}
+      activeColor="#1565C0"
+      inactiveColor="#9E9E9E"
+      renderLabel={({ route, focused, color }) => (
+        <Text variant="titleSmall" style={[styles.tabLabel, { color, fontWeight: focused ? "700" : "500" }]}>
+          {route.title}
+        </Text>
+      )}
+    />
+  );
 
   return (
-    <View style={[globalStyles.tabBar, { backgroundColor: "#f8f9fa" }]}>
-      {isLoading && <Loader isLoading={isLoading} />}
-      <TabView navigationState={{ index: 0, routes }} renderScene={renderScene} onIndexChange={() => {}} swipeEnabled={false} renderTabBar={renderTabBar} initialLayout={{ width: DimensionHelper.wp(100), height: DimensionHelper.hp(200) }} />
-    </View>
+    <PaperProvider theme={theme}>
+      <View style={styles.container}>
+        {isLoading && <Loader isLoading={isLoading} />}
+        <TabView navigationState={{ index: 0, routes }} renderScene={renderScene} onIndexChange={() => {}} swipeEnabled={false} renderTabBar={renderTabBar} initialLayout={{ width: 400 }} />
+      </View>
+    </PaperProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F6F6F8"
+  },
+  tabContainer: {
+    flex: 1,
+    backgroundColor: "#F6F6F8"
+  },
+  tabBar: {
+    backgroundColor: "#FFFFFF",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0"
+  },
+  tabIndicator: {
+    backgroundColor: "#1565C0",
+    height: 3,
+    borderRadius: 1.5
+  },
+  tabLabel: {
+    fontSize: 16,
+    textTransform: "capitalize",
+    letterSpacing: 0.5
+  },
+  listContent: {
+    paddingVertical: 8,
+    paddingBottom: 24
+  },
+  // Message Card Styles
+  messageCard: {
+    marginHorizontal: 16,
+    marginVertical: 6,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
+  },
+  messageContent: {
+    padding: 16
+  },
+  messageHeader: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  avatarContainer: {
+    marginRight: 12
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#F6F6F8"
+  },
+  messageInfo: {
+    flex: 1
+  },
+  senderName: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    marginBottom: 4
+  },
+  messagePreview: {
+    color: "#9E9E9E",
+    lineHeight: 20
+  },
+  // Notification Card Styles
+  notificationCard: {
+    marginHorizontal: 16,
+    marginVertical: 6,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
+  },
+  notificationContent: {
+    padding: 16
+  },
+  notificationHeader: {
+    flexDirection: "row",
+    alignItems: "flex-start"
+  },
+  notificationIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F6F6F8",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12
+  },
+  notificationInfo: {
+    flex: 1
+  },
+  notificationMessage: {
+    color: "#3c3c3c",
+    lineHeight: 20,
+    marginBottom: 8
+  },
+  notificationMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  timeChip: {
+    backgroundColor: "#F6F6F8",
+    borderColor: "#E0E0E0"
+  },
+  timeText: {
+    color: "#9E9E9E",
+    fontSize: 12
+  },
+  // Empty State Styles
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 24
+  },
+  emptyState: {
+    alignItems: "center",
+    maxWidth: 300
+  },
+  emptyTitle: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    marginTop: 16,
+    marginBottom: 8,
+    textAlign: "center"
+  },
+  emptySubtitle: {
+    color: "#9E9E9E",
+    textAlign: "center",
+    marginBottom: 24,
+    lineHeight: 20
+  },
+  actionButton: {
+    backgroundColor: "#1565C0",
+    paddingHorizontal: 24,
+    borderRadius: 8
+  },
+  actionButtonText: {
+    color: "#FFFFFF",
+    fontWeight: "600"
+  }
+});

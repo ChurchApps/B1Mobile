@@ -3,9 +3,9 @@ import React from "react";
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Entypo";
-import { NotificationTab } from "../NotificationView";
 import { HeaderBell } from "./HeaderBell";
 import { useUser } from "../../stores/useUserStore";
+import { router } from "expo-router";
 
 interface Props {
   title: string;
@@ -15,7 +15,6 @@ interface Props {
 }
 
 export function MainHeader(props: Props) {
-  const [showNotifications, setShowNotifications] = React.useState(false);
   const insets = useSafeAreaInsets();
   const user = useUser();
 
@@ -56,14 +55,13 @@ export function MainHeader(props: Props) {
             {!props.hideBell && user && (
               <HeaderBell
                 toggleNotifications={() => {
-                  setShowNotifications(!showNotifications);
+                  router.push("/(drawer)/notifications");
                 }}
               />
             )}
           </View>
         </View>
       </View>
-      {showNotifications && <NotificationTab />}
     </>
   );
 }
