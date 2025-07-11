@@ -100,7 +100,7 @@ const MyGroups = () => {
   }, [mergedTimelineData]);
 
   const showGroups = useCallback(
-    (item: any, isFeatured: boolean = false) => {
+    (item: any, type: "hero" | "featured" | "regular" = "regular") => {
       const handlePress = () => {
         // Track the view
         incrementGroupViewCount(item.id);
@@ -110,19 +110,17 @@ const MyGroups = () => {
         });
       };
 
-      if (!isFeatured) {
-        // Compact layout for regular groups
+      if (type === "hero") {
+        // Hero layout (large full-width card like dashboard)
         return (
-          <Card style={styles.regularGroupCard} onPress={handlePress}>
-            <View style={styles.regularGroupContent}>
-              <View style={styles.regularGroupImageContainer}>
-                <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.regularGroupImage} />
-              </View>
-              <View style={styles.regularGroupTextContainer}>
-                <Text variant="titleMedium" style={styles.regularGroupName} numberOfLines={2}>
+          <Card style={styles.heroCard} onPress={handlePress}>
+            <View style={styles.heroImageContainer}>
+              <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.heroImage} />
+              <View style={styles.heroOverlay}>
+                <Text variant="headlineLarge" style={styles.heroTitle}>
                   {item.name}
                 </Text>
-                <Text variant="bodySmall" style={styles.regularGroupSubtitle}>
+                <Text variant="bodyLarge" style={styles.heroSubtitle}>
                   Tap to explore
                 </Text>
               </View>
@@ -131,17 +129,35 @@ const MyGroups = () => {
         );
       }
 
-      // Featured layout (full-width 16:9)
+      if (type === "featured") {
+        // Featured layout (side-by-side cards like dashboard)
+        return (
+          <Card style={styles.featuredCard} onPress={handlePress}>
+            <View style={styles.featuredImageContainer}>
+              <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.featuredImage} />
+              <View style={styles.featuredOverlay}>
+                <Text variant="titleMedium" style={styles.featuredTitle}>
+                  {item.name}
+                </Text>
+              </View>
+            </View>
+          </Card>
+        );
+      }
+
+      // Regular layout (compact list items)
       return (
-        <Card style={styles.featuredGroupCard} onPress={handlePress}>
-          <View style={styles.groupImageContainer}>
-            <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.groupImage} />
-            <View style={styles.groupOverlay}>
-              <Text variant="headlineSmall" style={styles.featuredGroupName} numberOfLines={2}>
+        <Card style={styles.regularGroupCard} onPress={handlePress}>
+          <View style={styles.regularGroupContent}>
+            <View style={styles.regularGroupImageContainer}>
+              <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.regularGroupImage} />
+            </View>
+            <View style={styles.regularGroupTextContainer}>
+              <Text variant="titleMedium" style={styles.regularGroupName} numberOfLines={2}>
                 {item.name}
               </Text>
-              <Text variant="bodyMedium" style={styles.groupSubtitle}>
-                Most visited
+              <Text variant="bodySmall" style={styles.regularGroupSubtitle}>
+                Tap to explore
               </Text>
             </View>
           </View>
@@ -153,9 +169,9 @@ const MyGroups = () => {
 
   const renderItems = useCallback((item: any) => <TimeLinePost item={item} onUpdate={loadData} />, [loadData]);
 
-  // Sort groups by view count and separate into featured vs regular
+  // Sort groups by view count and separate into hero, featured, and regular
   const sortedGroups = useMemo(() => {
-    if (!Array.isArray(groups)) return { featured: [], regular: [] };
+    if (!Array.isArray(groups)) return { hero: null, featured: [], regular: [] };
 
     // Sort groups by view count (descending)
     const sorted = [...groups].sort((a, b) => {
@@ -164,47 +180,52 @@ const MyGroups = () => {
       return bViews - aViews;
     });
 
-    // Split into featured (top 1-3) and regular
-    const featuredCount = Math.min(3, Math.max(1, sorted.length));
-    const featured = sorted.slice(0, featuredCount);
-    const regular = sorted.slice(featuredCount);
+    if (sorted.length === 0) return { hero: null, featured: [], regular: [] };
 
-    return { featured, regular };
+    // Split into hero (1st), featured (2nd and 3rd), and regular (rest)
+    const hero = sorted[0];
+    const featured = sorted.slice(1, 3);
+    const regular = sorted.slice(3);
+
+    return { hero, featured, regular };
   }, [groups, groupViewCounts]);
 
   const groupsGrid = useMemo(() => {
     if (!Array.isArray(groups) || groups.length === 0) return null;
 
-    const { featured, regular } = sortedGroups;
+    const { hero, featured, regular } = sortedGroups;
 
     return (
       <View style={styles.groupsSection}>
+        {/* Hero Section */}
+        {hero && <View style={styles.heroSection}>{showGroups(hero, "hero")}</View>}
+
         {/* Featured Groups */}
         {featured.length > 0 && (
           <View style={styles.featuredSection}>
-            <Text variant="titleMedium" style={styles.featuredTitle}>
-              Your Most Visited
+            <Text variant="titleLarge" style={styles.sectionTitle}>
+              Featured
             </Text>
-            <View style={styles.groupsList}>
+            <View style={styles.featuredGrid}>
               {featured.map(item => (
-                <View key={item.id} style={styles.groupItem}>
-                  {showGroups(item, true)}
+                <View key={item.id} style={styles.featuredItem}>
+                  {showGroups(item, "featured")}
                 </View>
               ))}
             </View>
           </View>
         )}
 
-        {/* Regular Groups */}
+        {/* Other Groups */}
         {regular.length > 0 && (
           <View style={styles.regularSection}>
-            <Text variant="titleMedium" style={styles.regularTitle}>
+            <Text variant="titleLarge" style={styles.sectionTitle}>
               Other Groups
             </Text>
             <View style={styles.regularGroupsList}>
               {regular.map(item => (
                 <View key={item.id} style={styles.regularGroupItem}>
-                  {showGroups(item, false)}
+                  {showGroups(item, "regular")}
                 </View>
               ))}
             </View>
@@ -273,59 +294,114 @@ const styles = StyleSheet.create({
   groupsSection: {
     marginBottom: 16
   },
+
+  // Hero Section (matching dashboard)
+  heroSection: {
+    marginBottom: 24
+  },
+  heroCard: {
+    borderRadius: 16,
+    overflow: "hidden",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    backgroundColor: "#FFFFFF"
+  },
+  heroImageContainer: {
+    height: 200,
+    position: "relative"
+  },
+  heroImage: {
+    width: "100%",
+    height: "100%"
+  },
+  heroOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    padding: 20
+  },
+  heroTitle: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    marginBottom: 4,
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2
+  },
+  heroSubtitle: {
+    color: "#FFFFFF",
+    opacity: 0.9,
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2
+  },
+
+  // Featured Section (matching dashboard)
   featuredSection: {
     marginBottom: 24
   },
-  featuredTitle: {
-    color: "#0D47A1",
-    fontSize: 18,
-    fontWeight: "700",
+  sectionTitle: {
+    color: "#3c3c3c",
+    fontWeight: "600",
     marginBottom: 16,
-    paddingHorizontal: 4
+    paddingLeft: 4
   },
+  featuredGrid: {
+    flexDirection: "row",
+    gap: 12
+  },
+  featuredItem: {
+    flex: 1
+  },
+  featuredCard: {
+    borderRadius: 12,
+    overflow: "hidden",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    backgroundColor: "#FFFFFF"
+  },
+  featuredImageContainer: {
+    height: 120,
+    position: "relative"
+  },
+  featuredImage: {
+    width: "100%",
+    height: "100%"
+  },
+  featuredOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    padding: 12
+  },
+  featuredTitle: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2
+  },
+
+  // Regular Section
   regularSection: {
     marginBottom: 16
-  },
-  regularTitle: {
-    color: "#9E9E9E",
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 12,
-    paddingHorizontal: 4
-  },
-  groupsList: {
-    gap: 16
   },
   regularGroupsList: {
     gap: 12
   },
-  groupItem: {
-    width: "100%"
-  },
   regularGroupItem: {
     width: "100%"
-  },
-  groupCard: {
-    overflow: "hidden",
-    borderRadius: 16,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
-    backgroundColor: "#FFFFFF"
-  },
-  featuredGroupCard: {
-    overflow: "hidden",
-    borderRadius: 20,
-    elevation: 6,
-    shadowColor: "#0D47A1",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 2,
-    borderColor: "rgba(21, 101, 192, 0.1)"
   },
   regularGroupCard: {
     overflow: "hidden",
@@ -366,53 +442,6 @@ const styles = StyleSheet.create({
   regularGroupSubtitle: {
     color: "#9E9E9E",
     fontSize: 12
-  },
-  groupImageContainer: {
-    position: "relative",
-    aspectRatio: 16 / 9, // 16:9 aspect ratio
-    overflow: "hidden"
-  },
-  groupImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 16
-  },
-  groupOverlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16
-  },
-  groupName: {
-    color: "#FFFFFF",
-    fontSize: 22,
-    fontWeight: "700",
-    marginBottom: 4,
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
-  },
-  featuredGroupName: {
-    color: "#FFFFFF",
-    fontSize: 24,
-    fontWeight: "800",
-    marginBottom: 4,
-    textShadowColor: "rgba(0, 0, 0, 0.4)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3
-  },
-  groupSubtitle: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    opacity: 0.9,
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
   },
   timelineSeparator: {
     paddingHorizontal: 16,

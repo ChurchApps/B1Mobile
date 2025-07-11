@@ -4,7 +4,7 @@ import { FlatList, SafeAreaView, StyleSheet, View, TouchableOpacity } from "reac
 import { Text, Button, Surface, Avatar, Card, Chip, IconButton } from "react-native-paper";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, router } from "expo-router";
 import { Calendar, DateData } from "react-native-calendars";
 import Markdown from "@ronradtke/react-native-markdown-display";
 import dayjs from "dayjs";
@@ -511,7 +511,22 @@ const GroupDetails = () => {
                           <View>
                             {groupMembers.map((item: any) => (
                               <Card key={item?.id} style={styles.modernMemberCard}>
-                                <Card.Content style={styles.memberCardContent}>
+                                <TouchableOpacity
+                                  style={styles.memberCardContent}
+                                  onPress={() => {
+                                    // Navigate to member details page with full member object
+                                    const memberData = {
+                                      id: item?.person?.id,
+                                      name: { display: item?.person?.name?.display },
+                                      photo: item?.person?.photo,
+                                      householdId: item?.person?.householdId,
+                                      contactInfo: item?.person?.contactInfo
+                                    };
+                                    router.navigate({
+                                      pathname: "/(drawer)/memberDetail",
+                                      params: { member: JSON.stringify(memberData) }
+                                    });
+                                  }}>
                                   <Avatar.Image size={56} source={item?.person?.photo ? { uri: EnvironmentHelper.ContentRoot + item.person.photo } : Constants.Images.ic_member} />
                                   <View style={styles.memberInfo}>
                                     <Text variant="titleMedium" style={styles.memberName}>
@@ -521,8 +536,8 @@ const GroupDetails = () => {
                                       Group Member
                                     </Text>
                                   </View>
-                                  <IconButton icon="dots-vertical" size={20} onPress={() => {}} />
-                                </Card.Content>
+                                  <IconButton icon="chevron-right" size={20} iconColor="#9E9E9E" />
+                                </TouchableOpacity>
                               </Card>
                             ))}
                           </View>
@@ -770,21 +785,21 @@ const styles = StyleSheet.create({
   membersContainer: {
     minHeight: 200
   },
-  membersList: {
-    gap: 12
-  },
   modernMemberCard: {
     borderRadius: 12,
     elevation: 1,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
-    shadowRadius: 2
+    shadowRadius: 2,
+    backgroundColor: "#FFFFFF",
+    marginBottom: 8
   },
   memberCardContent: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 12
+    paddingVertical: 12,
+    paddingHorizontal: 16
   },
   memberInfo: {
     flex: 1,
