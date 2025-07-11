@@ -66,12 +66,14 @@ const Login = () => {
     setLoading(true);
     ApiHelper.postAnonymous("/users/login", params, "MembershipApi")
       .then(async (data: LoginResponseInterface) => {
-        setLoading(false);
         if (data.user != null) {
           await useUserStore.getState().handleLogin(data as any);
-
-          router.navigate("/");
-        } else Alert.alert("Alert", "Invalid login");
+          setLoading(false);
+          router.replace("/(drawer)/dashboard");
+        } else {
+          setLoading(false);
+          Alert.alert("Alert", "Invalid login");
+        }
       })
       .catch(() => {
         setLoading(false);

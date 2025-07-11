@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { View, StyleSheet, TouchableOpacity, FlatList, Modal, ScrollView } from "react-native";
 import { Card, Text, Button, Chip, Menu, Divider } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
@@ -313,97 +313,105 @@ export function EnhancedGivingHistory({ customerId }: Props) {
       </View>
 
       {/* Transaction Detail Modal */}
-      {selectedTransaction && (
-        <Card style={styles.detailModal}>
-          <Card.Content>
-            <View style={styles.detailHeader}>
-              <Text variant="titleLarge" style={styles.detailTitle}>
-                Transaction Details
-              </Text>
-              <TouchableOpacity onPress={() => setSelectedTransaction(null)}>
-                <MaterialIcons name="close" size={24} color="#9E9E9E" />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.detailAmount}>
-              <Text variant="displayMedium" style={styles.detailAmountText}>
-                {CurrencyHelper.formatCurrency(selectedTransaction.amount)}
-              </Text>
-              <View style={styles.statusBadge}>
-                <View style={[styles.statusDot, { backgroundColor: getStatusColor(selectedTransaction.status) }]} />
-                <Text variant="labelMedium" style={styles.statusText}>
-                  {selectedTransaction.status.charAt(0).toUpperCase() + selectedTransaction.status.slice(1)}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.detailBreakdown}>
-              <View style={styles.detailRow}>
-                <Text variant="bodyMedium" style={styles.detailLabel}>
-                  Gift Amount
-                </Text>
-                <Text variant="bodyMedium" style={styles.detailValue}>
-                  {CurrencyHelper.formatCurrency(selectedTransaction.amount - selectedTransaction.fees)}
-                </Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text variant="bodyMedium" style={styles.detailLabel}>
-                  Processing Fee
-                </Text>
-                <Text variant="bodyMedium" style={styles.detailValue}>
-                  {CurrencyHelper.formatCurrency(selectedTransaction.fees)}
-                </Text>
-              </View>
-              <Divider style={styles.detailDivider} />
-              <View style={styles.detailRow}>
-                <Text variant="titleMedium" style={styles.detailTotalLabel}>
-                  Total
-                </Text>
-                <Text variant="titleMedium" style={styles.detailTotalValue}>
-                  {CurrencyHelper.formatCurrency(selectedTransaction.amount)}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.detailInfo}>
-              <View style={styles.detailRow}>
-                <Text variant="bodyMedium" style={styles.detailLabel}>
-                  Fund
-                </Text>
-                <Text variant="bodyMedium" style={styles.detailValue}>
-                  {selectedTransaction.fund}
-                </Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text variant="bodyMedium" style={styles.detailLabel}>
-                  Date
-                </Text>
-                <Text variant="bodyMedium" style={styles.detailValue}>
-                  {selectedTransaction.date.toLocaleDateString()}
-                </Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text variant="bodyMedium" style={styles.detailLabel}>
-                  Method
-                </Text>
-                <Text variant="bodyMedium" style={styles.detailValue}>
-                  {selectedTransaction.method}
-                </Text>
-              </View>
-              {selectedTransaction.recurring && (
-                <View style={styles.detailRow}>
-                  <Text variant="bodyMedium" style={styles.detailLabel}>
-                    Frequency
+      <Modal visible={selectedTransaction !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSelectedTransaction(null)}>
+        <View style={styles.modalContainer}>
+          <ScrollView style={styles.modalScrollView} contentContainerStyle={styles.modalContent}>
+            <Card style={styles.detailModal}>
+              <Card.Content>
+                <View style={styles.detailHeader}>
+                  <Text variant="titleLarge" style={styles.detailTitle}>
+                    Transaction Details
                   </Text>
-                  <Text variant="bodyMedium" style={styles.detailValue}>
-                    {selectedTransaction.frequency}
-                  </Text>
+                  <TouchableOpacity onPress={() => setSelectedTransaction(null)}>
+                    <MaterialIcons name="close" size={24} color="#9E9E9E" />
+                  </TouchableOpacity>
                 </View>
-              )}
-            </View>
-          </Card.Content>
-        </Card>
-      )}
+
+                {selectedTransaction && (
+                  <>
+                    <View style={styles.detailAmount}>
+                      <Text variant="displayMedium" style={styles.detailAmountText}>
+                        {CurrencyHelper.formatCurrency(selectedTransaction.amount)}
+                      </Text>
+                      <View style={styles.statusBadge}>
+                        <View style={[styles.statusDot, { backgroundColor: getStatusColor(selectedTransaction.status) }]} />
+                        <Text variant="labelMedium" style={styles.statusText}>
+                          {selectedTransaction.status.charAt(0).toUpperCase() + selectedTransaction.status.slice(1)}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.detailBreakdown}>
+                      <View style={styles.detailRow}>
+                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                          Gift Amount
+                        </Text>
+                        <Text variant="bodyMedium" style={styles.detailValue}>
+                          {CurrencyHelper.formatCurrency(selectedTransaction.amount - selectedTransaction.fees)}
+                        </Text>
+                      </View>
+                      <View style={styles.detailRow}>
+                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                          Processing Fee
+                        </Text>
+                        <Text variant="bodyMedium" style={styles.detailValue}>
+                          {CurrencyHelper.formatCurrency(selectedTransaction.fees)}
+                        </Text>
+                      </View>
+                      <Divider style={styles.detailDivider} />
+                      <View style={styles.detailRow}>
+                        <Text variant="titleMedium" style={styles.detailTotalLabel}>
+                          Total
+                        </Text>
+                        <Text variant="titleMedium" style={styles.detailTotalValue}>
+                          {CurrencyHelper.formatCurrency(selectedTransaction.amount)}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.detailInfo}>
+                      <View style={styles.detailRow}>
+                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                          Fund
+                        </Text>
+                        <Text variant="bodyMedium" style={styles.detailValue}>
+                          {selectedTransaction.fund}
+                        </Text>
+                      </View>
+                      <View style={styles.detailRow}>
+                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                          Date
+                        </Text>
+                        <Text variant="bodyMedium" style={styles.detailValue}>
+                          {selectedTransaction.date.toLocaleDateString()}
+                        </Text>
+                      </View>
+                      <View style={styles.detailRow}>
+                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                          Method
+                        </Text>
+                        <Text variant="bodyMedium" style={styles.detailValue}>
+                          {selectedTransaction.method}
+                        </Text>
+                      </View>
+                      {selectedTransaction.recurring && (
+                        <View style={styles.detailRow}>
+                          <Text variant="bodyMedium" style={styles.detailLabel}>
+                            Frequency
+                          </Text>
+                          <Text variant="bodyMedium" style={styles.detailValue}>
+                            {selectedTransaction.frequency}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  </>
+                )}
+              </Card.Content>
+            </Card>
+          </ScrollView>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -588,11 +596,18 @@ const styles = StyleSheet.create({
   },
 
   // Detail Modal
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "#F6F6F8"
+  },
+  modalScrollView: {
+    flex: 1
+  },
+  modalContent: {
+    padding: 16,
+    paddingTop: 50 // Safe area
+  },
   detailModal: {
-    position: "absolute",
-    top: 0,
-    left: 16,
-    right: 16,
     borderRadius: 20,
     elevation: 8,
     shadowColor: "#000",

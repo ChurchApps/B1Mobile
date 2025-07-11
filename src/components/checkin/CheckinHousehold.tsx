@@ -1,11 +1,10 @@
-import { ApiHelper, CheckinHelper, Constants, EnvironmentHelper, PersonInterface, ServiceTimeInterface } from "../../../src/helpers";
+import { ApiHelper, CheckinHelper, PersonInterface, ServiceTimeInterface } from "../../../src/helpers";
 import { ErrorHelper } from "../../mobilehelper";
 import React, { useState } from "react";
-import { FlatList, View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
+import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
-import { useAppTheme } from "../../../src/theme";
 import { Button, Divider, Card, Text, Chip } from "react-native-paper";
-import { OptimizedImage } from "../OptimizedImage";
+import { Avatar } from "../common/Avatar";
 import { MaterialIcons } from "@expo/vector-icons";
 
 interface Props {
@@ -14,10 +13,8 @@ interface Props {
 }
 
 export const CheckinHousehold = (props: Props) => {
-  const { theme, spacing } = useAppTheme();
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
-  const screenWidth = Dimensions.get("window").width;
 
   // Debug logging
   console.log("CheckinHousehold - householdMembers:", CheckinHelper.householdMembers);
@@ -55,7 +52,7 @@ export const CheckinHousehold = (props: Props) => {
       <TouchableOpacity onPress={() => setSelected(selected != item.id ? item.id : null)} activeOpacity={0.7} style={styles.memberHeader}>
         <View style={styles.memberHeaderContent}>
           <View style={styles.memberImageContainer}>
-            <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={styles.memberImage} placeholder={Constants.Images.ic_member} />
+            <Avatar size={56} photoUrl={item.photo} firstName={item.name?.first} lastName={item.name?.last} />
           </View>
 
           <View style={styles.memberInfo}>
