@@ -45,17 +45,14 @@ const Service = () => {
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
       <MainHeader title="Checkin" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
-      <ScrollView>
-        <SafeAreaView style={{ flex: 1 }}>
-          {getBrand()}
-          <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
-            {step === "Services" && <CheckinServices onDone={() => setStep("Household")} />}
-            {step === "Household" && <CheckinHousehold showGroups={handleShowGroups} onDone={() => setStep("Complete")} />}
-            {step === "Groups" && <CheckinGroups member={groupMember!} time={groupTime!} onDone={() => setStep("Household")} />}
-            {step === "Complete" && <CheckinComplete onDone={clearData} />}
-          </Surface>
-        </SafeAreaView>
-      </ScrollView>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          {step === "Services" && <CheckinServices onDone={() => setStep("Household")} />}
+          {step === "Household" && <CheckinHousehold showGroups={handleShowGroups} onDone={() => setStep("Complete")} />}
+          {step === "Groups" && <CheckinGroups member={groupMember!} time={groupTime!} onDone={() => setStep("Household")} />}
+          {step === "Complete" && <CheckinComplete onDone={clearData} />}
+        </View>
+      </SafeAreaView>
     </View>
   );
 };
