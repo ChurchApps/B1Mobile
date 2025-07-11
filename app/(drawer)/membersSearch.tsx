@@ -37,7 +37,7 @@ const theme = {
 
 interface Member {
   id: string;
-  name: { display: string };
+  name: { display: string; first?: string; last?: string };
   photo?: string;
   contactInfo?: {
     email?: string;
@@ -85,26 +85,41 @@ const MembersSearch = () => {
     return uniqueMembers;
   }, [membersList, searchText]);
 
-  // Group members by first letter for section list
+  // Group members by first letter for section list (sorted by last name)
   const groupedMembers = useMemo(() => {
     if (!filteredMembers.length) return [];
 
     const groups: { [key: string]: Member[] } = {};
 
     filteredMembers.forEach((member: Member) => {
-      const firstLetter = member.name.display.charAt(0).toUpperCase();
+      // Extract last name for grouping and sorting
+      const nameParts = member.name.display.trim().split(" ");
+      const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0];
+      const firstLetter = lastName.charAt(0).toUpperCase();
+
       if (!groups[firstLetter]) {
         groups[firstLetter] = [];
       }
       groups[firstLetter].push(member);
     });
 
-    // Convert to section list format and sort
+    // Convert to section list format and sort by last name
     return Object.keys(groups)
       .sort()
       .map(letter => ({
         title: letter,
-        data: groups[letter].sort((a, b) => a.name.display.localeCompare(b.name.display))
+        data: groups[letter].sort((a, b) => {
+          // Extract last names for sorting
+          const aLastName = a.name.display.trim().split(" ").slice(-1)[0];
+          const bLastName = b.name.display.trim().split(" ").slice(-1)[0];
+          const lastNameComparison = aLastName.localeCompare(bLastName);
+
+          // If last names are the same, sort by first name
+          if (lastNameComparison === 0) {
+            return a.name.display.localeCompare(b.name.display);
+          }
+          return lastNameComparison;
+        })
       }));
   }, [filteredMembers]);
 
@@ -163,7 +178,30 @@ const MembersSearch = () => {
             </View>
 
             {/* Results */}
-            {groupedMembers.length > 0 ? <SectionList sections={groupedMembers} renderItem={renderMemberItem} renderSectionHeader={renderSectionHeader} keyExtractor={(item: Member) => item.id} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} stickySectionHeadersEnabled={true} initialNumToRender={15} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={10} updateCellsBatchingPeriod={100} /> : renderEmptyState()}
+            {groupedMembers.length > 0 ? (
+              <SectionList
+                sections={groupedMembers}
+                renderItem={renderMemberItem}
+                renderSectionHeader={renderSectionHeader}
+                keyExtractor={(item: Member) => item.id}
+                contentContainerStyle={styles.listContent}
+                showsVerticalScrollIndicator={false}
+                stickySectionHeadersEnabled={true}
+                initialNumToRender={10}
+                windowSize={21}
+                removeClippedSubviews={true}
+                maxToRenderPerBatch={5}
+                updateCellsBatchingPeriod={50}
+                getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
+                onEndReachedThreshold={0.5}
+                maintainVisibleContentPosition={{
+                  minIndexForVisible: 0,
+                  autoscrollToTopThreshold: 10
+                }}
+              />
+            ) : (
+              renderEmptyState()
+            )}
           </View>
         </Surface>
       </LoadingWrapper>

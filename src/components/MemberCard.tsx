@@ -1,13 +1,12 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Card, Text } from "react-native-paper";
-import { OptimizedImage } from "./OptimizedImage";
-import { Constants, EnvironmentHelper } from "../helpers";
+import { Avatar } from "./common/Avatar";
 import { MaterialIcons } from "@expo/vector-icons";
 
 interface Member {
   id: string;
-  name: { display: string };
+  name: { display: string; first?: string; last?: string };
   photo?: string;
 }
 
@@ -21,7 +20,7 @@ interface MemberCardProps {
   size?: "small" | "medium" | "large";
 }
 
-export const MemberCard: React.FC<MemberCardProps> = ({ member, onPress, showActions = false, onCall, onEmail, subtitle, size = "medium" }) => {
+export const MemberCard = React.memo<MemberCardProps>(({ member, onPress, showActions = false, onCall, onEmail, subtitle, size = "medium" }) => {
   const handlePress = () => {
     onPress(member);
   };
@@ -29,15 +28,36 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onPress, showAct
   const avatarSize = size === "small" ? 40 : size === "large" ? 64 : 48;
   const cardStyle = size === "small" ? styles.smallCard : size === "large" ? styles.largeCard : styles.memberCard;
 
+  // Format name with bold last name
+  const formatName = (displayName: string) => {
+    const nameParts = displayName.trim().split(" ");
+    if (nameParts.length > 1) {
+      const firstName = nameParts.slice(0, -1).join(" ");
+      const lastName = nameParts[nameParts.length - 1];
+      return { firstName, lastName };
+    }
+    return { firstName: displayName, lastName: "" };
+  };
+
+  const { firstName, lastName } = formatName(member.name.display);
+
   return (
     <Card style={cardStyle} onPress={handlePress}>
       <Card.Content style={styles.memberContent}>
         <View style={styles.memberInfo}>
-          <OptimizedImage source={member.photo ? { uri: EnvironmentHelper.ContentRoot + member.photo } : Constants.Images.ic_member} style={[styles.memberAvatar, { width: avatarSize, height: avatarSize, borderRadius: avatarSize / 2 }]} contentFit="cover" />
+          <Avatar size={avatarSize} photoUrl={member.photo} firstName={member.name.first || firstName} lastName={member.name.last || lastName} style={styles.memberAvatar} />
           <View style={styles.memberDetails}>
-            <Text variant="titleMedium" style={styles.memberName} numberOfLines={1}>
-              {member.name.display}
-            </Text>
+            <View style={styles.nameContainer}>
+              <Text variant="titleMedium" style={styles.memberName} numberOfLines={1}>
+                {firstName}
+                {lastName ? " " : ""}
+              </Text>
+              {lastName && (
+                <Text variant="titleMedium" style={styles.memberLastName} numberOfLines={1}>
+                  {lastName}
+                </Text>
+              )}
+            </View>
             {subtitle && (
               <Text variant="bodySmall" style={styles.memberSubtitle} numberOfLines={1}>
                 {subtitle}
@@ -73,7 +93,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onPress, showAct
       </Card.Content>
     </Card>
   );
-};
+});
 
 const styles = StyleSheet.create({
   memberCard: {
@@ -118,14 +138,24 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   memberAvatar: {
-    marginRight: 12
+    marginRight: 16
   },
   memberDetails: {
     flex: 1
   },
+  nameContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "baseline"
+  },
   memberName: {
     color: "#3c3c3c",
     fontWeight: "600",
+    marginBottom: 2
+  },
+  memberLastName: {
+    color: "#3c3c3c",
+    fontWeight: "800",
     marginBottom: 2
   },
   memberSubtitle: {

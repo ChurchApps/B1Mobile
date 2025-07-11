@@ -100,6 +100,53 @@ const Sermons = () => {
     return [...recentSermons].sort((a: SermonInterface, b: SermonInterface) => new Date(b.publishDate || 0).getTime() - new Date(a.publishDate || 0).getTime());
   }, [recentSermons]);
 
+  // Live stream data (in a real app, this would come from an API)
+  const liveStreamData = useMemo(() => {
+    // Sample live stream schedule
+    const now = new Date();
+    const nextSunday = new Date(now);
+    nextSunday.setDate(now.getDate() + ((7 - now.getDay()) % 7));
+    nextSunday.setHours(10, 0, 0, 0); // 10:00 AM
+
+    // If it's already past Sunday 10 AM, move to next week
+    if (nextSunday <= now) {
+      nextSunday.setDate(nextSunday.getDate() + 7);
+    }
+
+    return {
+      isLive: false, // Set to true when actually live
+      nextStreamDate: nextSunday,
+      streamTitle: "Sunday Morning Service",
+      streamDescription: "Join us for worship, prayer, and God's Word",
+      streamUrl: "https://example.com/live-stream" // In real app, this would be the actual stream URL
+    };
+  }, []);
+
+  // Calculate time until next stream
+  const timeUntilStream = useMemo(() => {
+    const now = new Date();
+    const streamDate = liveStreamData.nextStreamDate;
+    const diffMs = streamDate.getTime() - now.getTime();
+
+    if (diffMs <= 0) {
+      return { expired: true, days: 0, hours: 0, minutes: 0 };
+    }
+
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    return { expired: false, days, hours, minutes };
+  }, [liveStreamData.nextStreamDate]);
+
+  // Show countdown if within 24 hours or currently live
+  const showCountdown = useMemo(() => {
+    if (liveStreamData.isLive) return true;
+    const diffMs = liveStreamData.nextStreamDate.getTime() - new Date().getTime();
+    const hours = diffMs / (1000 * 60 * 60);
+    return hours <= 24 && hours > 0;
+  }, [liveStreamData.isLive, liveStreamData.nextStreamDate]);
+
   const handlePlaylistPress = (playlist: PlaylistInterface) => {
     if (!playlist.id || !playlist.title) {
       console.warn("Invalid playlist object:", playlist);
@@ -212,9 +259,95 @@ const Sermons = () => {
 
   const renderSermonCard = (sermon: SermonInterface) => <SermonCard key={sermon.id} sermon={sermon} onPress={handleSermonPress} />;
 
+  const renderCountdown = () => {
+    if (liveStreamData.isLive) {
+      return (
+        <Card style={styles.liveCard}>
+          <LinearGradient colors={["#D32F2F", "#F44336"]} style={styles.liveGradient}>
+            <View style={styles.liveContent}>
+              <View style={styles.liveIndicator}>
+                <View style={styles.liveDot} />
+                <Text variant="titleMedium" style={styles.liveText}>
+                  LIVE NOW
+                </Text>
+              </View>
+              <Text variant="headlineSmall" style={styles.liveTitle}>
+                {liveStreamData.streamTitle}
+              </Text>
+              <Text variant="bodyMedium" style={styles.liveDescription}>
+                {liveStreamData.streamDescription}
+              </Text>
+              <Button
+                mode="contained"
+                style={styles.watchButton}
+                labelStyle={styles.watchButtonText}
+                icon="play-circle"
+                onPress={() => {
+                  // In a real app, this would open the live stream
+                  console.log("Opening live stream:", liveStreamData.streamUrl);
+                }}>
+                Watch Live
+              </Button>
+            </View>
+          </LinearGradient>
+        </Card>
+      );
+    }
+
+    return (
+      <Card style={styles.countdownCard}>
+        <LinearGradient colors={["#0D47A1", "#1976D2"]} style={styles.countdownGradient}>
+          <View style={styles.countdownContent}>
+            <Text variant="titleMedium" style={styles.countdownLabel}>
+              Next Service In
+            </Text>
+            <View style={styles.countdownTimer}>
+              {timeUntilStream.days > 0 && (
+                <View style={styles.timeUnit}>
+                  <Text variant="displaySmall" style={styles.timeNumber}>
+                    {timeUntilStream.days}
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.timeLabel}>
+                    {timeUntilStream.days === 1 ? "Day" : "Days"}
+                  </Text>
+                </View>
+              )}
+              <View style={styles.timeUnit}>
+                <Text variant="displaySmall" style={styles.timeNumber}>
+                  {timeUntilStream.hours}
+                </Text>
+                <Text variant="bodyMedium" style={styles.timeLabel}>
+                  {timeUntilStream.hours === 1 ? "Hour" : "Hours"}
+                </Text>
+              </View>
+              <View style={styles.timeUnit}>
+                <Text variant="displaySmall" style={styles.timeNumber}>
+                  {timeUntilStream.minutes}
+                </Text>
+                <Text variant="bodyMedium" style={styles.timeLabel}>
+                  {timeUntilStream.minutes === 1 ? "Minute" : "Minutes"}
+                </Text>
+              </View>
+            </View>
+            <Text variant="titleMedium" style={styles.streamTitle}>
+              {liveStreamData.streamTitle}
+            </Text>
+            <Text variant="bodyMedium" style={styles.streamDescription}>
+              {liveStreamData.streamDescription}
+            </Text>
+            <Text variant="bodySmall" style={styles.streamTime}>
+              {liveStreamData.nextStreamDate.toLocaleDateString()} at {liveStreamData.nextStreamDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </Text>
+          </View>
+        </LinearGradient>
+      </Card>
+    );
+  };
+
   const renderPlaylistsSection = () => (
     <View style={styles.section}>
-      {renderFeaturedSermon()}
+      {/* Show countdown/live stream in hero zone if within 24 hours, otherwise show featured sermon */}
+      {showCountdown ? renderCountdown() : renderFeaturedSermon()}
 
       <View style={styles.sectionHeader}>
         <Text variant="titleLarge" style={styles.sectionTitle}>
@@ -242,6 +375,9 @@ const Sermons = () => {
 
   const renderRecentSection = () => (
     <View style={styles.section}>
+      {/* Show countdown/live stream at the top if within 24 hours */}
+      {showCountdown && renderCountdown()}
+
       <View style={styles.sectionHeader}>
         <Text variant="titleLarge" style={styles.sectionTitle}>
           Recent Sermons
@@ -624,6 +760,129 @@ const styles = StyleSheet.create({
     color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
+  },
+
+  // Live Stream Styles
+  liveCard: {
+    marginBottom: 24,
+    borderRadius: 20,
+    overflow: "hidden",
+    elevation: 6,
+    shadowColor: "#D32F2F",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8
+  },
+  liveGradient: {
+    padding: 24,
+    alignItems: "center"
+  },
+  liveContent: {
+    alignItems: "center"
+  },
+  liveIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16
+  },
+  liveDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "#FFFFFF",
+    marginRight: 8
+  },
+  liveText: {
+    color: "#FFFFFF",
+    fontWeight: "800",
+    letterSpacing: 1
+  },
+  liveTitle: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 8
+  },
+  liveDescription: {
+    color: "#FFFFFF",
+    opacity: 0.9,
+    textAlign: "center",
+    marginBottom: 20
+  },
+  watchButton: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 25,
+    paddingHorizontal: 24
+  },
+  watchButtonText: {
+    color: "#D32F2F",
+    fontWeight: "700"
+  },
+
+  // Countdown Styles
+  countdownCard: {
+    marginBottom: 24,
+    borderRadius: 20,
+    overflow: "hidden",
+    elevation: 6,
+    shadowColor: "#0D47A1",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8
+  },
+  countdownGradient: {
+    padding: 24,
+    alignItems: "center"
+  },
+  countdownContent: {
+    alignItems: "center"
+  },
+  countdownLabel: {
+    color: "#FFFFFF",
+    fontWeight: "600",
+    marginBottom: 20,
+    textTransform: "uppercase",
+    letterSpacing: 1
+  },
+  countdownTimer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    gap: 24
+  },
+  timeUnit: {
+    alignItems: "center"
+  },
+  timeNumber: {
+    color: "#FFFFFF",
+    fontWeight: "800",
+    fontSize: 36,
+    marginBottom: 4
+  },
+  timeLabel: {
+    color: "#FFFFFF",
+    opacity: 0.8,
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase"
+  },
+  streamTitle: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 8
+  },
+  streamDescription: {
+    color: "#FFFFFF",
+    opacity: 0.9,
+    textAlign: "center",
+    marginBottom: 12
+  },
+  streamTime: {
+    color: "#FFFFFF",
+    opacity: 0.8,
+    textAlign: "center",
+    fontSize: 14
   },
 
   // Error State
