@@ -428,7 +428,7 @@ export const useUserStore = create<UserState>()(
       // Load person record for current church
       loadPersonRecord: async () => {
         const state = get();
-        if (state.currentUserChurch && !state.currentUserChurch.person) {
+        if (state.currentUserChurch && (!state.currentUserChurch.person || !state.currentUserChurch.person.name)) {
           try {
             const data: { person: PersonInterface } = await ApiHelper.get(`/people/claim/${state.currentUserChurch.church.id}`, "MembershipApi");
 

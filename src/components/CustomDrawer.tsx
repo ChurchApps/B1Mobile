@@ -222,6 +222,7 @@ export function CustomDrawer() {
     const currentUserChurch = useUserStore.getState().currentUserChurch;
     if (!currentUserChurch?.person || !user) return null;
 
+
     return (
       <View style={styles.userInfoSection}>
         <View style={styles.userRow}>
