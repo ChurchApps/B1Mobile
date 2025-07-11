@@ -17,8 +17,8 @@ export const CheckinHousehold = (props: Props) => {
   const { theme, spacing } = useAppTheme();
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
-  const screenWidth = Dimensions.get('window').width;
-  
+  const screenWidth = Dimensions.get("window").width;
+
   // Debug logging
   console.log("CheckinHousehold - householdMembers:", CheckinHelper.householdMembers);
   console.log("CheckinHousehold - serviceTimes:", CheckinHelper.serviceTimes);
@@ -52,20 +52,12 @@ export const CheckinHousehold = (props: Props) => {
 
   const renderMemberItem = (item: any) => (
     <Card style={styles.memberCard}>
-      <TouchableOpacity
-        onPress={() => setSelected(selected != item.id ? item.id : null)}
-        activeOpacity={0.7}
-        style={styles.memberHeader}
-      >
+      <TouchableOpacity onPress={() => setSelected(selected != item.id ? item.id : null)} activeOpacity={0.7} style={styles.memberHeader}>
         <View style={styles.memberHeaderContent}>
           <View style={styles.memberImageContainer}>
-            <OptimizedImage
-              source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member}
-              style={styles.memberImage}
-              placeholder={Constants.Images.ic_member}
-            />
+            <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={styles.memberImage} placeholder={Constants.Images.ic_member} />
           </View>
-          
+
           <View style={styles.memberInfo}>
             <Text variant="titleLarge" style={styles.memberName}>
               {item.name.display}
@@ -75,12 +67,7 @@ export const CheckinHousehold = (props: Props) => {
                 {item.serviceTimes
                   .filter((time: any) => time.selectedGroup)
                   .map((time: any, index: number) => (
-                    <Chip
-                      key={index}
-                      mode="outlined"
-                      style={styles.summaryChip}
-                      textStyle={styles.summaryChipText}
-                    >
+                    <Chip key={index} mode="outlined" style={styles.summaryChip} textStyle={styles.summaryChipText}>
                       {time.selectedGroup.name}
                     </Chip>
                   ))}
@@ -92,17 +79,13 @@ export const CheckinHousehold = (props: Props) => {
               </View>
             )}
           </View>
-          
+
           <View style={styles.expandIcon}>
-            <MaterialIcons
-              name={selected === item.id ? "expand-less" : "expand-more"}
-              size={24}
-              color="#9E9E9E"
-            />
+            <MaterialIcons name={selected === item.id ? "expand-less" : "expand-more"} size={24} color="#9E9E9E" />
           </View>
         </View>
       </TouchableOpacity>
-      
+
       {selected === item.id && item.serviceTimes && (
         <View style={styles.serviceTimesContainer}>
           <Divider style={styles.divider} />
@@ -121,19 +104,7 @@ export const CheckinHousehold = (props: Props) => {
                   </Text>
                 </View>
               </View>
-              <Button
-                mode={item_time.selectedGroup ? "contained" : "outlined"}
-                onPress={() => !item_time.selection && props.showGroups(item, item_time)}
-                style={[
-                  styles.selectGroupButton,
-                  item_time.selectedGroup && styles.selectedGroupButton
-                ]}
-                labelStyle={[
-                  styles.selectGroupButtonText,
-                  item_time.selectedGroup && styles.selectedGroupButtonText
-                ]}
-                disabled={item_time.selection}
-              >
+              <Button mode={item_time.selectedGroup ? "contained" : "outlined"} onPress={() => !item_time.selection && props.showGroups(item, item_time)} style={[styles.selectGroupButton, item_time.selectedGroup && styles.selectedGroupButton]} labelStyle={[styles.selectGroupButtonText, item_time.selectedGroup && styles.selectedGroupButtonText]} disabled={item_time.selection}>
                 {item_time.selectedGroup ? "Change" : "Select Group"}
               </Button>
             </View>
@@ -174,26 +145,13 @@ export const CheckinHousehold = (props: Props) => {
               </View>
             </Card>
           ) : (
-            <FlatList
-              data={CheckinHelper.householdMembers}
-              renderItem={({ item }) => renderMemberItem(item)}
-              keyExtractor={(item: any) => item.id}
-              style={styles.membersList}
-              contentContainerStyle={styles.membersContent}
-              showsVerticalScrollIndicator={false}
-            />
+            <FlatList data={CheckinHelper.householdMembers} renderItem={({ item }) => renderMemberItem(item)} keyExtractor={(item: any) => item.id} style={styles.membersList} contentContainerStyle={styles.membersContent} showsVerticalScrollIndicator={false} />
           )}
         </View>
 
         {/* Bottom Action */}
         <View style={styles.bottomSection}>
-          <Button
-            mode="contained"
-            onPress={submitAttendance}
-            style={styles.checkinButton}
-            labelStyle={styles.checkinButtonText}
-            icon="check-circle"
-          >
+          <Button mode="contained" onPress={submitAttendance} style={styles.checkinButton} labelStyle={styles.checkinButtonText} icon="check-circle">
             Complete Check-in
           </Button>
         </View>
@@ -205,35 +163,35 @@ export const CheckinHousehold = (props: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F8'
+    backgroundColor: "#F6F6F8"
   },
   headerSection: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     padding: 24,
-    alignItems: 'center',
+    alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: "#F0F0F0",
     marginBottom: 16
   },
   iconHeaderContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#F6F6F8',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F6F6F8",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 16
   },
   headerTitle: {
-    color: '#3c3c3c',
-    fontWeight: '700',
-    textAlign: 'center',
+    color: "#3c3c3c",
+    fontWeight: "700",
+    textAlign: "center",
     marginBottom: 8
   },
   headerSubtitle: {
-    color: '#9E9E9E',
-    textAlign: 'center',
-    maxWidth: '80%'
+    color: "#9E9E9E",
+    textAlign: "center",
+    maxWidth: "80%"
   },
   contentSection: {
     flex: 1,
@@ -246,22 +204,22 @@ const styles = StyleSheet.create({
     paddingBottom: 16
   },
   memberCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     marginBottom: 12,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
-    overflow: 'hidden'
+    overflow: "hidden"
   },
   memberHeader: {
     borderRadius: 12
   },
   memberHeaderContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16
   },
   memberImageContainer: {
@@ -276,130 +234,130 @@ const styles = StyleSheet.create({
     flex: 1
   },
   memberName: {
-    color: '#3c3c3c',
-    fontWeight: '600',
+    color: "#3c3c3c",
+    fontWeight: "600",
     marginBottom: 8
   },
   memberSummary: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: 6
   },
   summaryChip: {
-    backgroundColor: 'rgba(13, 71, 161, 0.1)',
-    borderColor: '#0D47A1'
+    backgroundColor: "rgba(13, 71, 161, 0.1)",
+    borderColor: "#0D47A1"
   },
   summaryChipText: {
-    color: '#0D47A1',
+    color: "#0D47A1",
     fontSize: 12
   },
   noSelectionText: {
-    color: '#9E9E9E',
-    fontStyle: 'italic'
+    color: "#9E9E9E",
+    fontStyle: "italic"
   },
   expandIcon: {
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center"
   },
   serviceTimesContainer: {
-    backgroundColor: '#F6F6F8'
+    backgroundColor: "#F6F6F8"
   },
   divider: {
     height: 1,
-    backgroundColor: '#F0F0F0'
+    backgroundColor: "#F0F0F0"
   },
   serviceTimeItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0'
+    borderBottomColor: "#F0F0F0"
   },
   serviceTimeInfo: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: "row",
+    alignItems: "center"
   },
   serviceTimeIconContainer: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 12
   },
   serviceTimeDetails: {
     flex: 1
   },
   serviceTimeName: {
-    color: '#3c3c3c',
-    fontWeight: '600',
+    color: "#3c3c3c",
+    fontWeight: "600",
     marginBottom: 2
   },
   selectedGroupText: {
-    color: '#9E9E9E'
+    color: "#9E9E9E"
   },
   selectGroupButton: {
     borderRadius: 8,
     minWidth: 100
   },
   selectedGroupButton: {
-    backgroundColor: '#70DC87'
+    backgroundColor: "#70DC87"
   },
   selectGroupButtonText: {
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: "600"
   },
   selectedGroupButtonText: {
-    color: '#FFFFFF'
+    color: "#FFFFFF"
   },
   bottomSection: {
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0'
+    borderTopColor: "#F0F0F0"
   },
   checkinButton: {
-    backgroundColor: '#0D47A1',
+    backgroundColor: "#0D47A1",
     borderRadius: 12,
     height: 56,
-    justifyContent: 'center',
+    justifyContent: "center",
     elevation: 3,
-    shadowColor: '#0D47A1',
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4
   },
   checkinButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
+    color: "#FFFFFF",
+    fontWeight: "700",
     fontSize: 16
   },
   emptyCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
   },
   emptyContent: {
     padding: 32,
-    alignItems: 'center'
+    alignItems: "center"
   },
   emptyTitle: {
-    color: '#3c3c3c',
-    fontWeight: '600',
+    color: "#3c3c3c",
+    fontWeight: "600",
     marginTop: 16,
     marginBottom: 8,
-    textAlign: 'center'
+    textAlign: "center"
   },
   emptySubtitle: {
-    color: '#9E9E9E',
-    textAlign: 'center',
+    color: "#9E9E9E",
+    textAlign: "center",
     lineHeight: 20
   }
 });

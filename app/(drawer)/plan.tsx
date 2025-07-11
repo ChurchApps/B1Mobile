@@ -86,9 +86,7 @@ const Plan = () => {
   const isLoading = assignmentsLoading || positionsLoading || plansLoading || timesLoading;
 
   // Filter plans to only show upcoming ones
-  const upcomingPlans = useMemo(() => {
-    return plans.filter(p => p.serviceDate && new Date(p.serviceDate) >= new Date());
-  }, [plans]);
+  const upcomingPlans = useMemo(() => plans.filter(p => p.serviceDate && new Date(p.serviceDate) >= new Date()), [plans]);
 
   // Filter assignments to only those for upcoming plans
   const upcomingAssignments = useMemo(() => {
@@ -104,8 +102,7 @@ const Plan = () => {
     const requestedCount = upcomingAssignments.length;
     const confirmedCount = upcomingAssignments.filter(a => a.status === "Confirmed" || a.status === "Accepted").length;
     const pendingCount = upcomingAssignments.filter(a => !a.status || a.status === "Unconfirmed" || a.status === "Pending").length;
-    const nextPlan = upcomingPlans
-      .sort((a, b) => new Date(a.serviceDate!).getTime() - new Date(b.serviceDate!).getTime())[0];
+    const nextPlan = upcomingPlans.sort((a, b) => new Date(a.serviceDate!).getTime() - new Date(b.serviceDate!).getTime())[0];
 
     return {
       requested: requestedCount,

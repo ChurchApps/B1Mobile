@@ -1,7 +1,7 @@
 import React from "react";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface, UserHelper } from "../../src/helpers";
+import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface } from "../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "../../src/helpers/Interfaces";
 import { eventBus, updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";

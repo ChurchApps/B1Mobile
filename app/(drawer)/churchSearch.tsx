@@ -6,8 +6,6 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { ActivityIndicator, Button, Text, TextInput, Provider as PaperProvider, MD3LightTheme, Card } from "react-native-paper";
-import RNRestart from "react-native-restart";
-import { Platform } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
@@ -92,21 +90,11 @@ const ChurchSearch = () => {
 
       UserHelper.addAnalyticsEvent("church_selected", {
         id: Date.now(),
-        device: Platform.OS,
         church: churchData.name
       });
 
       // Navigate to dashboard immediately for better UX
       router.replace("/(drawer)/dashboard");
-
-      // For Android: Only restart if switching churches and after a delay to allow navigation
-      if (Platform.OS === "android" && isSwitchingChurch) {
-        console.log("Scheduling Android app restart due to church switch");
-        // Add a small delay to allow the navigation to complete first
-        setTimeout(() => {
-          RNRestart.Restart();
-        }, 500);
-      }
 
       setSelectingChurch(false);
     } catch (err: any) {
@@ -120,7 +108,7 @@ const ChurchSearch = () => {
 
   // Remove StoreToRecent - handled by the store now
 
-  const renderChurchItem = ({ item, index }: { item: ChurchInterface; index: number }) => {
+  const renderChurchItem = ({ item }: { item: ChurchInterface }) => {
     const churchImage = (() => {
       // Default to B1 logo
       let image = Constants.Images.logoBlue;
@@ -133,7 +121,7 @@ const ChurchSearch = () => {
           setting = ArrayHelper.getOne(item.settings, "keyName", "favicon_400x400");
         }
         if (!setting) setting = item.settings[0];
-        if (setting?.value && setting.value.trim() !== '') {
+        if (setting?.value && setting.value.trim() !== "") {
           image = { uri: setting.value };
         }
       }
@@ -144,11 +132,7 @@ const ChurchSearch = () => {
       <Card style={styles.churchCard} onPress={() => !selectingChurch && churchSelection(item)}>
         <Card.Content style={styles.churchContent}>
           <View style={styles.churchImageContainer}>
-            <OptimizedImage
-              source={churchImage}
-              style={styles.churchImage}
-              placeholder={Constants.Images.logoBlue}
-            />
+            <OptimizedImage source={churchImage} style={styles.churchImage} placeholder={Constants.Images.logoBlue} />
           </View>
           <View style={styles.churchDetails}>
             <Text variant="titleMedium" style={styles.churchName} numberOfLines={2}>
@@ -158,11 +142,7 @@ const ChurchSearch = () => {
               {selectingChurch ? "Connecting..." : "Tap to connect"}
             </Text>
           </View>
-          {selectingChurch ? (
-            <ActivityIndicator size="small" color="#0D47A1" />
-          ) : (
-            <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
-          )}
+          {selectingChurch ? <ActivityIndicator size="small" color="#0D47A1" /> : <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />}
         </Card.Content>
       </Card>
     );
@@ -223,12 +203,7 @@ const ChurchSearch = () => {
                   }}
                 />
                 {searchText.length > 0 && (
-                  <Button
-                    mode="text"
-                    onPress={() => setSearchText("")}
-                    style={styles.clearButton}
-                    labelStyle={styles.clearButtonText}
-                  >
+                  <Button mode="text" onPress={() => setSearchText("")} style={styles.clearButton} labelStyle={styles.clearButtonText}>
                     Clear Search
                   </Button>
                 )}
@@ -266,16 +241,7 @@ const ChurchSearch = () => {
                   )}
                 </View>
 
-                {displayedChurches.length > 0 && (
-                  <FlatList
-                    data={displayedChurches}
-                    renderItem={renderChurchItem}
-                    keyExtractor={(item) => item.id || item.name || Math.random().toString()}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.listContent}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
-                  />
-                )}
+                {displayedChurches.length > 0 && <FlatList data={displayedChurches} renderItem={renderChurchItem} keyExtractor={item => item.id || item.name || Math.random().toString()} showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent} ItemSeparatorComponent={() => <View style={styles.separator} />} />}
               </>
             )}
           </View>

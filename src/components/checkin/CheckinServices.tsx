@@ -1,10 +1,10 @@
 import { ApiHelper, CheckinHelper, PersonInterface, UserHelper } from "../../../src/helpers";
-import { ArrayHelper, ErrorHelper } from "../../mobilehelper";
+import { ArrayHelper } from "../../mobilehelper";
 import React, { useEffect, useState } from "react";
 import { FlatList, View, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { useAppTheme } from "../../../src/theme";
-import { Card, Text, Button } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -17,7 +17,7 @@ export const CheckinServices = (props: Props) => {
   const { theme, spacing } = useAppTheme();
   const [loading, setLoading] = useState(false);
   const currentUserChurch = useCurrentUserChurch();
-  const screenWidth = Dimensions.get('window').width;
+  const screenWidth = Dimensions.get("window").width;
 
   // Use react-query for services
   const { data: serviceList = [], isLoading: servicesLoading } = useQuery({
@@ -44,7 +44,7 @@ export const CheckinServices = (props: Props) => {
     console.log("getMemberData - currentUserChurch:", currentUserChurch);
     console.log("getMemberData - personId:", personId);
     console.log("getMemberData - initial householdId:", householdId);
-    
+
     if (personId) {
       try {
         // If no householdId in the user object, fetch the person to get it
@@ -55,28 +55,25 @@ export const CheckinServices = (props: Props) => {
           console.log("getMemberData - person from API:", person);
           console.log("getMemberData - householdId from person:", householdId);
         }
-        
+
         if (!householdId) {
           console.log("Still no householdId found, using personId as fallback");
           householdId = personId;
         }
-        
+
         // Step 1: Load service times and groups in parallel (like Chums)
-        const [serviceTimes, groups] = await Promise.all([
-          ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi"),
-          ApiHelper.get("/groups", "MembershipApi")
-        ]);
-        
+        const [serviceTimes, groups] = await Promise.all([ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi"), ApiHelper.get("/groups", "MembershipApi")]);
+
         console.log("getMemberData - serviceTimes:", serviceTimes);
         console.log("getMemberData - groups:", groups);
-        
+
         CheckinHelper.serviceTimes = serviceTimes;
         CheckinHelper.serviceId = serviceId;
-        
+
         // Step 2: Load household members using the householdId
         CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + householdId, "MembershipApi");
         console.log("getMemberData - householdMembers:", CheckinHelper.householdMembers);
-        
+
         // If still no household members, create array with just the current person
         if (!CheckinHelper.householdMembers || CheckinHelper.householdMembers.length === 0) {
           console.log("No household members returned from API, creating fallback");
@@ -85,22 +82,22 @@ export const CheckinServices = (props: Props) => {
             CheckinHelper.householdMembers = [currentPerson];
           }
         }
-        
+
         // Step 3: Create group tree
         const group_tree = createGroupTree(groups);
         CheckinHelper.groupTree = group_tree;
-        
+
         // Step 4: Assign service times to each household member
         CheckinHelper.householdMembers?.forEach((member: any) => {
           member.serviceTimes = CheckinHelper.serviceTimes;
         });
-        
+
         // Step 5: Get people IDs for existing visits check
         CheckinHelper.peopleIds = ArrayHelper.getIds(CheckinHelper.householdMembers, "id");
-        
+
         // Step 6: Load existing attendance
         await loadExistingAttendance(serviceId);
-        
+
         console.log("All data loaded, navigating to household screen");
       } catch (error) {
         console.error("Error loading member data:", error);
@@ -147,11 +144,7 @@ export const CheckinServices = (props: Props) => {
   // Remove this function as it's now integrated into getMemberData
 
   const renderServiceItem = (item: any) => (
-    <TouchableOpacity
-      style={styles.serviceCard}
-      onPress={() => ServiceSelection(item)}
-      activeOpacity={0.7}
-    >
+    <TouchableOpacity style={styles.serviceCard} onPress={() => ServiceSelection(item)} activeOpacity={0.7}>
       <View style={styles.serviceContent}>
         <View style={styles.serviceIconContainer}>
           <MaterialIcons name="church" size={28} color="#0D47A1" />
@@ -209,14 +202,7 @@ export const CheckinServices = (props: Props) => {
               </View>
             </Card>
           ) : (
-            <FlatList
-              data={serviceList}
-              renderItem={({ item }) => renderServiceItem(item)}
-              keyExtractor={(item: any) => item.id}
-              style={styles.servicesList}
-              contentContainerStyle={styles.servicesContent}
-              showsVerticalScrollIndicator={false}
-            />
+            <FlatList data={serviceList} renderItem={({ item }) => renderServiceItem(item)} keyExtractor={(item: any) => item.id} style={styles.servicesList} contentContainerStyle={styles.servicesContent} showsVerticalScrollIndicator={false} />
           )}
         </View>
       </View>
@@ -227,35 +213,35 @@ export const CheckinServices = (props: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F8'
+    backgroundColor: "#F6F6F8"
   },
   headerSection: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     padding: 24,
-    alignItems: 'center',
+    alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    borderBottomColor: "#F0F0F0",
     marginBottom: 16
   },
   iconHeaderContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#F6F6F8',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F6F6F8",
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 16
   },
   headerTitle: {
-    color: '#3c3c3c',
-    fontWeight: '700',
-    textAlign: 'center',
+    color: "#3c3c3c",
+    fontWeight: "700",
+    textAlign: "center",
     marginBottom: 8
   },
   headerSubtitle: {
-    color: '#9E9E9E',
-    textAlign: 'center',
-    maxWidth: '80%'
+    color: "#9E9E9E",
+    textAlign: "center",
+    maxWidth: "80%"
   },
   contentSection: {
     flex: 1,
@@ -268,18 +254,18 @@ const styles = StyleSheet.create({
     paddingBottom: 24
   },
   serviceCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     marginBottom: 12,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
   },
   serviceContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 16,
     minHeight: 72
   },
@@ -287,60 +273,60 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#F6F6F8',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#F6F6F8",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 16
   },
   serviceInfo: {
     flex: 1
   },
   serviceName: {
-    color: '#3c3c3c',
-    fontWeight: '600',
+    color: "#3c3c3c",
+    fontWeight: "600",
     marginBottom: 4
   },
   campusName: {
-    color: '#0D47A1',
-    fontWeight: '500'
+    color: "#0D47A1",
+    fontWeight: "500"
   },
   serviceArrow: {
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center"
   },
   emptyCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
   },
   emptyContent: {
     padding: 32,
-    alignItems: 'center'
+    alignItems: "center"
   },
   emptyTitle: {
-    color: '#3c3c3c',
-    fontWeight: '600',
+    color: "#3c3c3c",
+    fontWeight: "600",
     marginTop: 16,
     marginBottom: 8,
-    textAlign: 'center'
+    textAlign: "center"
   },
   emptySubtitle: {
-    color: '#9E9E9E',
-    textAlign: 'center',
+    color: "#9E9E9E",
+    textAlign: "center",
     lineHeight: 20
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 48
   },
   loadingText: {
-    color: '#9E9E9E',
+    color: "#9E9E9E",
     marginTop: 16
   }
 });

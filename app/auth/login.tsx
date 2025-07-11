@@ -1,12 +1,10 @@
 import React from "react";
-import { BlueHeader } from "@/components/BlueHeader";
 import { ApiHelper, EnvironmentHelper, LoginResponseInterface } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Linking, SafeAreaView, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
-import { TextInput, Button, Text, Surface, Provider as PaperProvider, MD3LightTheme, Card } from "react-native-paper";
-import { useAppTheme } from "../../src/theme";
+import { TextInput, Button, Text, Provider as PaperProvider, MD3LightTheme, Card } from "react-native-paper";
 import { useUserStore, useCurrentChurch, useChurchAppearance } from "../../src/stores/useUserStore";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -38,7 +36,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // Get current church data if available
   const currentChurch = useCurrentChurch();
   const churchAppearance = useChurchAppearance();
@@ -72,14 +70,7 @@ const Login = () => {
         if (data.user != null) {
           await useUserStore.getState().handleLogin(data as any);
 
-          // router.replace('(drawer)/dashboard');
-          // props.navigation.reset({
-          //   index: 0,
-          //   routes: [{ name: 'MainStack' }]
-          // }, 500)
-          //DevSettings.reload();
-          router.navigate("/"); //Expo seems to remember the page you were on.
-          //RNRestart.Restart();
+          router.navigate("/");
         } else Alert.alert("Alert", "Invalid login");
       })
       .catch(() => {
@@ -105,12 +96,7 @@ const Login = () => {
                         <>
                           {churchAppearance?.logoLight ? (
                             <View style={styles.churchLogoContainer}>
-                              <OptimizedImage 
-                                source={{ uri: churchAppearance.logoLight }} 
-                                style={styles.churchLogo} 
-                                contentFit="contain" 
-                                priority="high" 
-                              />
+                              <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.churchLogo} contentFit="contain" priority="high" />
                             </View>
                           ) : (
                             <MaterialIcons name="church" size={48} color="#FFFFFF" style={styles.heroIcon} />
@@ -124,12 +110,7 @@ const Login = () => {
                         </>
                       ) : (
                         <>
-                          <OptimizedImage 
-                            source={require("../../src/assets/images/logoWhite.png")} 
-                            style={styles.b1Logo} 
-                            contentFit="contain" 
-                            priority="high" 
-                          />
+                          <OptimizedImage source={require("../../src/assets/images/logoWhite.png")} style={styles.b1Logo} contentFit="contain" priority="high" />
                           <Text variant="headlineMedium" style={styles.heroTitle}>
                             Welcome to B1
                           </Text>
@@ -194,14 +175,7 @@ const Login = () => {
                       </Text>
                     </TouchableOpacity>
 
-                    <Button
-                      mode="contained"
-                      onPress={() => validateDetails() && loginApiCall()}
-                      loading={loading}
-                      style={styles.loginButton}
-                      labelStyle={styles.loginButtonText}
-                      disabled={loading}
-                    >
+                    <Button mode="contained" onPress={() => validateDetails() && loginApiCall()} loading={loading} style={styles.loginButton} labelStyle={styles.loginButtonText} disabled={loading}>
                       Sign In
                     </Button>
 
@@ -229,12 +203,7 @@ const Login = () => {
                       <Text variant="bodyMedium" style={styles.helpText}>
                         First, find and select your church, then create your account or sign in.
                       </Text>
-                      <Button 
-                        mode="outlined" 
-                        onPress={() => router.navigate("/(drawer)/churchSearch")}
-                        style={styles.helpButton}
-                        labelStyle={styles.helpButtonText}
-                      >
+                      <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.helpButton} labelStyle={styles.helpButtonText}>
                         Find Your Church
                       </Button>
                     </Card.Content>

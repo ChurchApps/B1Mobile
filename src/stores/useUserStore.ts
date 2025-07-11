@@ -391,21 +391,38 @@ export const useUserStore = create<UserState>()(
 
       // Logout
       logout: async () => {
+        const state = get();
+        const currentChurch = state.currentUserChurch?.church;
+
         // Clear API permissions
         ApiHelper.setDefaultPermissions("");
 
         // Clear secure storage (only JWT token now)
         await SecureStorageHelper.removeSecureItem("default_jwt");
 
-        // Clear state
+        // Clear user-specific state but preserve church context
         set({
           user: null,
           churches: [],
           userChurches: [],
-          currentUserChurch: null,
-          churchAppearance: null,
-          links: []
+          currentUserChurch: currentChurch
+            ? {
+                person: null,
+                church: currentChurch,
+                jwt: "",
+                apis: [],
+                groups: []
+              }
+            : null
+          // Keep churchAppearance and links so UI stays consistent
+          // churchAppearance: null,
+          // links: []
         });
+
+        // If we have a current church, reload its public data for anonymous browsing
+        if (currentChurch) {
+          await get().setAnonymousChurch(currentChurch);
+        }
       },
 
       // Load person record for current church

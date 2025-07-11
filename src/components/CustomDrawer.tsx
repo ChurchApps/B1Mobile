@@ -8,7 +8,6 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
 import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
-import RNRestart from "react-native-restart";
 import { Avatar, Button, Divider, List, Surface, Text, TouchableRipple } from "react-native-paper";
 import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
 import { DrawerActions } from "@react-navigation/native";
@@ -174,15 +173,14 @@ export function CustomDrawer() {
       await AsyncStorage.getAllKeys()
         .then(keys => AsyncStorage.multiRemove(keys.filter(key => key !== "CHURCH_DATA")))
         .then(() => {
-          console.log("Logout complete, restarting app");
-          RNRestart.Restart();
+          console.log("Logout complete, navigating to dashboard");
+          router.replace("/(drawer)/dashboard");
         });
     } catch (error) {
       console.error("Error during logout:", error);
-      // Still restart even if there were errors
-      RNRestart.Restart();
+      // Navigate to dashboard even if there were errors
+      router.replace("/(drawer)/dashboard");
     } finally {
-      // This won't actually run because the app restarts, but good practice
       setIsLoggingOut(false);
     }
   };
@@ -260,15 +258,8 @@ export function CustomDrawer() {
     const pkg = require("../../package.json");
     return (
       <Surface style={styles.footerContainer} elevation={1}>
-        <Button 
-          mode="outlined" 
-          onPress={user ? logoutAction : () => router.navigate("/auth/login")} 
-          style={styles.logoutButton} 
-          icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />}
-          loading={isLoggingOut}
-          disabled={isLoggingOut}
-        >
-          {isLoggingOut ? "Signing out..." : (user ? "Log out" : "Login")}
+        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />} loading={isLoggingOut} disabled={isLoggingOut}>
+          {isLoggingOut ? "Signing out..." : user ? "Log out" : "Login"}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>
           Version {pkg.version}

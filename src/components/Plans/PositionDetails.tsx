@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import React from "react";
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ApiHelper, PositionInterface, TimeInterface } from "../../../src/helpers";
 import { Card, Button } from "react-native-paper";
@@ -112,31 +112,17 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
         {times.length > 0 && (
           <View style={styles.timesSection}>
             <Text style={styles.sectionTitle}>Service Times</Text>
-            <View style={styles.timesList}>
-              {getTimes()}
-            </View>
+            <View style={styles.timesList}>{getTimes()}</View>
           </View>
         )}
 
         {/* Action Buttons */}
         {canRespond && (
           <View style={styles.actionsContainer}>
-            <Button
-              mode="outlined"
-              onPress={handleDecline}
-              style={styles.declineButton}
-              labelStyle={styles.declineButtonText}
-              icon="close"
-            >
+            <Button mode="outlined" onPress={handleDecline} style={styles.declineButton} labelStyle={styles.declineButtonText} icon="close">
               Decline
             </Button>
-            <Button
-              mode="contained"
-              onPress={handleAccept}
-              style={styles.acceptButton}
-              labelStyle={styles.acceptButtonText}
-              icon="check"
-            >
+            <Button mode="contained" onPress={handleAccept} style={styles.acceptButton} labelStyle={styles.acceptButtonText} icon="check">
               Accept
             </Button>
           </View>
@@ -160,7 +146,7 @@ const styles = StyleSheet.create({
   cardContent: {
     padding: 4
   },
-  
+
   // Position Header
   positionHeader: {
     flexDirection: "row",
@@ -180,7 +166,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     flex: 1
   },
-  
+
   // Status Badge
   statusBadge: {
     flexDirection: "row",
@@ -195,7 +181,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600"
   },
-  
+
   // Times Section
   timesSection: {
     marginBottom: 16
@@ -231,7 +217,7 @@ const styles = StyleSheet.create({
     color: "#666",
     lineHeight: 18
   },
-  
+
   // Actions
   actionsContainer: {
     flexDirection: "row",

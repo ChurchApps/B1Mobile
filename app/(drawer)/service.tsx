@@ -9,9 +9,8 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Image, SafeAreaView, ScrollView, View } from "react-native";
+import { Image, SafeAreaView, View } from "react-native";
 import { useAppTheme } from "../../src/theme";
-import { Surface } from "react-native-paper";
 import { useChurchAppearance } from "../../src/stores/useUserStore";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 

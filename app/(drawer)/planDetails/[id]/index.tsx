@@ -14,7 +14,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
 import { Provider as PaperProvider, Card, MD3LightTheme } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
 import { LinearGradient } from "expo-linear-gradient";
 
 const theme = {
@@ -129,17 +128,14 @@ const PlanDetails = () => {
   };
 
   // My assignments for prominent display
-  const myAssignments = useMemo(() => {
-    return ArrayHelper.getAll(assignments, "personId", currentUserChurch?.person?.id);
-  }, [assignments, currentUserChurch?.person?.id]);
+  const myAssignments = useMemo(() => ArrayHelper.getAll(assignments, "personId", currentUserChurch?.person?.id), [assignments, currentUserChurch?.person?.id]);
 
-  const getPositionDetails = () => {
-    return myAssignments.map(assignment => {
+  const getPositionDetails = () =>
+    myAssignments.map(assignment => {
       const position = ArrayHelper.getOne(positions, "id", assignment.positionId);
       const posTimes = times?.filter((time: any) => time?.teams?.indexOf(position?.categoryName) > -1) || [];
       return <PositionDetails key={`position-${assignment.id}`} position={position} assignment={assignment} times={posTimes} onUpdate={loadData} />;
     });
-  };
 
   const renderOverviewSection = () => (
     <>
@@ -150,9 +146,7 @@ const PlanDetails = () => {
             <View style={styles.overviewHeroContent}>
               <MaterialIcons name="assignment" size={48} color="white" style={styles.overviewHeroIcon} />
               <Text style={styles.overviewHeroTitle}>{plan.name}</Text>
-              <Text style={styles.overviewHeroDate}>
-                {plan.serviceDate ? new Date(plan.serviceDate).toLocaleDateString() : "TBD"}
-              </Text>
+              <Text style={styles.overviewHeroDate}>{plan.serviceDate ? new Date(plan.serviceDate).toLocaleDateString() : "TBD"}</Text>
             </View>
           </LinearGradient>
         </Card>
@@ -188,7 +182,7 @@ const PlanDetails = () => {
               <MaterialIcons name="note" size={24} color="#0D47A1" />
               <Text style={styles.overviewNotesTitle}>Plan Notes</Text>
             </View>
-            <Text style={styles.overviewNotesText}>{plan.notes.replace(/\n/g, ' ')}</Text>
+            <Text style={styles.overviewNotesText}>{plan.notes.replace(/\n/g, " ")}</Text>
           </Card.Content>
         </Card>
       )}
@@ -207,25 +201,16 @@ const PlanDetails = () => {
       <SafeAreaProvider>
         <View style={styles.container}>
           <MainHeader title="Plan Details" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
-          
+
           {/* Tab Navigation */}
           <View style={styles.tabContainer}>
-            <TouchableOpacity
-              style={[styles.tab, selectedTab === "overview" && styles.activeTab]}
-              onPress={() => setSelectedTab("overview")}
-            >
+            <TouchableOpacity style={[styles.tab, selectedTab === "overview" && styles.activeTab]} onPress={() => setSelectedTab("overview")}>
               <Text style={[styles.tabText, selectedTab === "overview" && styles.activeTabText]}>Overview</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tab, selectedTab === "serviceOrder" && styles.activeTab]}
-              onPress={() => setSelectedTab("serviceOrder")}
-            >
+            <TouchableOpacity style={[styles.tab, selectedTab === "serviceOrder" && styles.activeTab]} onPress={() => setSelectedTab("serviceOrder")}>
               <Text style={[styles.tabText, selectedTab === "serviceOrder" && styles.activeTabText]}>Service Order</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.tab, selectedTab === "teams" && styles.activeTab]}
-              onPress={() => setSelectedTab("teams")}
-            >
+            <TouchableOpacity style={[styles.tab, selectedTab === "teams" && styles.activeTab]} onPress={() => setSelectedTab("teams")}>
               <Text style={[styles.tabText, selectedTab === "teams" && styles.activeTabText]}>Teams</Text>
             </TouchableOpacity>
           </View>
@@ -236,11 +221,7 @@ const PlanDetails = () => {
               <Text style={styles.errorText}>{errorMessage}</Text>
             </View>
           ) : (
-            <ScrollView
-              style={styles.scrollView}
-              contentContainerStyle={styles.scrollContent}
-              showsVerticalScrollIndicator={false}
-            >
+            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               {isLoading && renderLoadingIndicator()}
               {!isLoading && selectedTab === "overview" && renderOverviewSection()}
               {!isLoading && selectedTab === "serviceOrder" && plan && (
@@ -248,11 +229,7 @@ const PlanDetails = () => {
                   <ServiceOrder plan={plan} />
                 </View>
               )}
-              {!isLoading && selectedTab === "teams" && (
-                <View style={styles.contentSection}>
-                  {getTeams()}
-                </View>
-              )}
+              {!isLoading && selectedTab === "teams" && <View style={styles.contentSection}>{getTeams()}</View>}
             </ScrollView>
           )}
         </View>
@@ -266,7 +243,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  
+
   // Tab Navigation
   tabContainer: {
     flexDirection: "row",
@@ -408,7 +385,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "700"
   },
-  
+
   // No Assignments Card
   noAssignmentsCard: {
     borderRadius: 16,
