@@ -12,9 +12,11 @@ import { Avatar, Button, Divider, List, Surface, Text, TouchableRipple } from "r
 import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import type { DrawerNavigationProp } from "@react-navigation/drawer";
 
-export function CustomDrawer() {
-  const navigation = useNavigation();
+export function CustomDrawer(props?: any) {
+  // Use the drawer navigation prop if available, otherwise fallback to useNavigation
+  const navigation = props?.navigation || useNavigation<DrawerNavigationProp<any>>();
   // Use hooks instead of local state
   const user = useUser();
   const currentChurch = useCurrentChurch();
@@ -199,7 +201,18 @@ export function CustomDrawer() {
         left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color="#0D47A1" style={styles.drawerIcon} />)}
         onPress={() => {
           NavigationUtils.navigateToScreen(item, currentChurch);
-          navigation.dispatch(DrawerActions.closeDrawer());
+          // Use setTimeout to ensure navigation completes before closing drawer
+          setTimeout(() => {
+            try {
+              if (navigation && typeof navigation.closeDrawer === 'function') {
+                navigation.closeDrawer();
+              } else {
+                navigation.dispatch(DrawerActions.closeDrawer());
+              }
+            } catch (error) {
+              console.warn('Failed to close drawer:', error);
+            }
+          }, 100);
         }}
         style={styles.listItem}
         titleStyle={styles.listItemText}
@@ -237,7 +250,9 @@ export function CustomDrawer() {
               </Button>
               {user && (
                 <TouchableRipple style={styles.messageIconButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
-                  <MaterialCommunityIcons name="email-outline" size={20} color="#0D47A1" />
+                  <>
+                    <MaterialCommunityIcons name="email-outline" size={20} color="#0D47A1" />
+                  </>
                 </TouchableRipple>
               )}
             </View>

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, SafeAreaView, Dimensions } from "react-native";
-import { Portal, Modal, Appbar, Text, TextInput, IconButton, Avatar, Surface } from "react-native-paper";
+import { Portal, Modal, Appbar, Text, TextInput, IconButton, Avatar as PaperAvatar, Surface } from "react-native-paper";
 import { ApiHelper, ConversationInterface, ArrayHelper } from "../../helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { PersonHelper, Constants } from "../../helpers";
+import { Avatar } from "../common/Avatar";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -143,7 +144,7 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
 
     return (
       <View style={[styles.messageContainer, item.isOwn && styles.ownMessageContainer]}>
-        {!item.isOwn && <View style={styles.avatarContainer}>{showAvatar ? <Avatar.Image size={32} source={item.person?.photo && item.person ? { uri: PersonHelper.getPhotoUrl(item.person) } : Constants.Images.ic_member} /> : <View style={styles.avatarSpacer} />}</View>}
+        {!item.isOwn && <View style={styles.avatarContainer}>{showAvatar ? <Avatar size={32} photoUrl={item.person?.photo} firstName={item.person?.name?.first} lastName={item.person?.name?.last} /> : <View style={styles.avatarSpacer} />}</View>}
 
         <View style={[styles.messageBubble, item.isOwn ? styles.ownBubble : styles.otherBubble]}>
           {showName && <Text style={styles.senderName}>{item.person?.name?.display || item.displayName}</Text>}
@@ -156,7 +157,7 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Avatar.Icon size={64} icon="chat-outline" style={styles.emptyIcon} />
+      <PaperAvatar.Icon size={64} icon="chat-outline" style={styles.emptyIcon} />
       <Text style={styles.emptyTitle}>Start the conversation</Text>
       <Text style={styles.emptySubtitle}>Be the first to share something with the group</Text>
     </View>

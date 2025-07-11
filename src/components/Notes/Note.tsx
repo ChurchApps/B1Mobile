@@ -11,6 +11,7 @@ import { Constants, globalStyles } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PersonHelper } from "../../../src/helpers";
 import { OptimizedImage } from "../OptimizedImage";
+import { Avatar } from "../common/Avatar";
 
 interface NotesInterface {
   message: MessageInterface;
@@ -29,7 +30,7 @@ const Note = React.memo(({ message, showEditNote }: NotesInterface) => {
   return (
     <>
       <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70) }]}>
-        <OptimizedImage source={photoUrl ? { uri: photoUrl } : Constants.Images.ic_member} style={[globalStyles.memberListIcon, { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 }]} placeholder={Constants.Images.ic_member} />
+        <Avatar size={DimensionHelper.wp(12)} photoUrl={message?.person?.photo} firstName={message?.person?.name?.first} lastName={message?.person?.name?.last} style={globalStyles.memberListIcon} />
         <View style={globalStyles.NoteTextInputView}>
           <View>
             <Text style={globalStyles.name}>{message?.displayName}</Text>

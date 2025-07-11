@@ -2,7 +2,8 @@ import React, { useMemo, useCallback } from "react";
 import { FlatList, Text, View, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AssignmentInterface, EnvironmentHelper, PersonInterface, PositionInterface } from "../../../src/helpers";
-import { Card, Avatar } from "react-native-paper";
+import { Card } from "react-native-paper";
+import { Avatar } from "../common/Avatar";
 
 interface TeamMemberInterface {
   id?: string;
@@ -47,7 +48,7 @@ export const Teams = React.memo(({ positions, assignments, people, name }: Props
       <Card key={item.id} style={styles.memberCard} mode="outlined">
         <Card.Content style={styles.memberContent}>
           <View style={styles.memberInfo}>
-            <Avatar.Image size={48} source={item?.item?.photo ? { uri: EnvironmentHelper.ContentRoot + item?.item?.photo } : undefined} style={styles.avatar} />
+            <Avatar size={48} photoUrl={item?.item?.photo} firstName={people.find(p => p.id === item?.item?.personId)?.name?.first} lastName={people.find(p => p.id === item?.item?.personId)?.name?.last} style={styles.avatar} />
             <View style={styles.memberDetails}>
               <Text style={styles.memberName}>{item?.item?.name}</Text>
               <Text style={styles.memberPosition}>{item?.item?.position}</Text>

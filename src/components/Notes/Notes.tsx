@@ -7,7 +7,8 @@ import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Constants } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PersonHelper } from "../../../src/helpers";
-import { Avatar, Chip } from "react-native-paper";
+import { Chip } from "react-native-paper";
+import { Avatar } from "../common/Avatar";
 
 interface NotesInterface {
   item: any;
@@ -26,7 +27,7 @@ const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface
     <View style={styles.messageContainer}>
       {/* Main Message */}
       <View style={styles.messageContent}>
-        <Avatar.Image size={40} source={message?.person?.photo && message.person ? { uri: PersonHelper.getPhotoUrl(message.person) } : Constants.Images.ic_member} style={styles.avatar} />
+        <Avatar size={40} photoUrl={message?.person?.photo} firstName={message?.person?.name?.first} lastName={message?.person?.name?.last} style={styles.avatar} />
 
         <View style={styles.messageBody}>
           <View style={styles.messageHeader}>

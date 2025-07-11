@@ -12,6 +12,7 @@ import { Loader } from "./Loader";
 import { router } from "expo-router";
 import { OptimizedImage } from "./OptimizedImage";
 import { useCurrentUserChurch } from "../stores/useUserStore";
+import { Avatar } from "./common/Avatar";
 
 const theme = {
   ...MD3LightTheme,
@@ -68,6 +69,8 @@ export function NotificationTab() {
             id: commonId,
             message: item1.conversation.messages?.[0]?.content || "",
             displayName: matchingItem2.name.display,
+            firstName: matchingItem2.name.first,
+            lastName: matchingItem2.name.last,
             photo: matchingItem2.photo
           });
         }
@@ -121,7 +124,7 @@ export function NotificationTab() {
         <Card.Content style={styles.messageContent}>
           <View style={styles.messageHeader}>
             <View style={styles.avatarContainer}>
-              <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={styles.avatar} tintColor={item.photo ? undefined : "#0D47A1"} placeholder={Constants.Images.ic_user} />
+              <Avatar size={48} photoUrl={item.photo} firstName={item.firstName} lastName={item.lastName} style={styles.avatar} />
             </View>
             <View style={styles.messageInfo}>
               <Text variant="titleMedium" style={styles.senderName}>
