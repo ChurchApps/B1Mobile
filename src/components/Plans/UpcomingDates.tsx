@@ -1,10 +1,10 @@
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
 import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
-import Icons from "react-native-vector-icons/FontAwesome5";
-import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
+import { MaterialIcons } from "@expo/vector-icons";
+import { ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
 import { router } from "expo-router";
+import { Card } from "react-native-paper";
 
 interface Props {
   plans: PlanInterface[];
@@ -52,38 +52,56 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icons name="calendar-week" style={styles.headerIcon} size={DimensionHelper.wp(5.5)} />
+        <MaterialIcons name="upcoming" style={styles.headerIcon} size={24} />
         <Text style={styles.headerTitle}>Upcoming Dates</Text>
       </View>
 
       {upcomingDates.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Icons name="calendar-times" size={DimensionHelper.wp(8)} color="#ccc" />
-          <Text style={styles.emptyStateText}>No upcoming dates found</Text>
-        </View>
+        <Card style={styles.emptyStateCard}>
+          <Card.Content style={styles.emptyStateContent}>
+            <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
+            <Text style={styles.emptyStateText}>No upcoming dates found</Text>
+            <Text style={styles.emptyStateSubtext}>Your future assignments will appear here</Text>
+          </Card.Content>
+        </Card>
       ) : (
-        <View>
+        <View style={styles.cardsList}>
           {upcomingDates.map((item, idx) => (
-            <TouchableOpacity key={idx} style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]} activeOpacity={0.8} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
-              <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: "#1976d2" }]}>
-                <Text style={{ color: "white", fontSize: 14, fontWeight: "500" }}>{item.status}</Text>
-              </View>
-              <View style={styles.cardContentColumn}>
-                <Text style={{ fontSize: 18, fontWeight: "bold", color: "#222", marginBottom: 2 }} numberOfLines={1}>
-                  {item.planName}
-                </Text>
-                <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 2 }}>
-                  <Icons name="calendar-day" size={14} color="#666" style={{ marginRight: 4 }} />
-                  <Text style={{ fontSize: 16, color: "#222", marginRight: 12 }}>{dayjs(item.serviceDate).format("YYYY-MM-DD")}</Text>
-                  <Icons name="clock" size={14} color="#666" style={{ marginRight: 4 }} />
-                  <Text style={{ fontSize: 16, color: "#222" }}>{item.time}</Text>
-                </View>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Icons name="user-tie" size={14} color={Constants.Colors.app_color} style={{ marginRight: 6 }} />
-                  <Text style={{ fontSize: 16, color: "#222" }}>{item.position}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
+            <Card key={idx} style={styles.upcomingCard} mode="elevated">
+              <TouchableOpacity style={styles.cardTouchable} activeOpacity={0.7} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
+                <Card.Content style={styles.cardContent}>
+                  <View style={styles.cardHeader}>
+                    <View style={styles.planInfo}>
+                      <Text style={styles.planName} numberOfLines={1}>
+                        {item.planName}
+                      </Text>
+                    </View>
+                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+                      <Text style={styles.statusText}>{item.status}</Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.detailsContainer}>
+                    <View style={styles.detailRow}>
+                      <MaterialIcons name="event" size={18} color="#1565C0" />
+                      <Text style={styles.detailText}>{dayjs(item.serviceDate).format("MMM DD, YYYY")}</Text>
+                    </View>
+
+                    {item.time && (
+                      <View style={styles.detailRow}>
+                        <MaterialIcons name="access-time" size={18} color="#1565C0" />
+                        <Text style={styles.detailText}>{item.time}</Text>
+                      </View>
+                    )}
+
+                    <View style={styles.roleContainer}>
+                      <MaterialIcons name="assignment-ind" size={18} color="#1565C0" />
+                      <Text style={styles.roleText}>{item.position}</Text>
+                    </View>
+                  </View>
+                </Card.Content>
+              </TouchableOpacity>
+            </Card>
           ))}
         </View>
       )}
@@ -91,128 +109,151 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
   );
 };
 
+const getStatusColor = (status: string) => {
+  switch (status?.toLowerCase()) {
+    case "confirmed":
+      return "#70DC87";
+    case "declined":
+      return "#B0120C";
+    case "pending":
+      return "#FEAA24";
+    default:
+      return "#9E9E9E";
+  }
+};
+
 const styles = StyleSheet.create({
   container: {
-    marginBottom: DimensionHelper.hp(3)
+    marginBottom: 24
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: DimensionHelper.hp(2)
+    marginBottom: 16,
+    paddingLeft: 4
   },
   headerIcon: {
-    color: Constants.Colors.app_color,
-    marginRight: DimensionHelper.wp(2)
+    color: "#1565C0",
+    marginRight: 8
   },
   headerTitle: {
-    fontSize: DimensionHelper.wp(4.5),
-    fontWeight: "600",
-    color: "#333"
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#3c3c3c"
   },
-  listContent: {
-    gap: DimensionHelper.hp(1.5)
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: DimensionHelper.wp(4),
+
+  // Empty State
+  emptyStateCard: {
+    borderRadius: 16,
+    elevation: 2,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3
+  },
+  emptyStateContent: {
+    alignItems: "center",
+    padding: 32
+  },
+  emptyStateText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#3c3c3c",
+    marginTop: 16,
+    textAlign: "center"
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: "#9E9E9E",
+    marginTop: 8,
+    textAlign: "center"
+  },
+
+  // Cards List
+  cardsList: {
+    gap: 12
+  },
+  upcomingCard: {
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
+  },
+  cardTouchable: {
+    borderRadius: 16
   },
   cardContent: {
+    padding: 4
+  },
+
+  // Card Header
+  cardHeader: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 16
   },
   planInfo: {
     flex: 1,
-    marginRight: DimensionHelper.wp(2)
+    marginRight: 12
   },
-  planNameVisible: {
-    fontSize: DimensionHelper.wp(3.8),
-    fontWeight: "600",
-    color: "#222",
-    marginBottom: 4
+  planName: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#3c3c3c"
   },
-  dateTimeContainer: {
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  icon: {
-    marginRight: 4
-  },
-  timeIcon: {
-    marginLeft: DimensionHelper.wp(3)
-  },
-  dateTextVisible: {
-    fontSize: DimensionHelper.wp(3.2),
-    color: "#333"
-  },
-  timeTextVisible: {
-    fontSize: DimensionHelper.wp(3.2),
-    color: "#333"
-  },
-  roleInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: DimensionHelper.wp(3)
-  },
-  roleIcon: {
-    marginRight: 6
-  },
-  roleTextVisible: {
-    fontSize: DimensionHelper.wp(3.2),
-    color: "#333"
-  },
+
+  // Status Badge
   statusBadge: {
-    paddingHorizontal: DimensionHelper.wp(3),
-    paddingVertical: DimensionHelper.hp(0.5),
-    borderRadius: 12,
-    minWidth: DimensionHelper.wp(20),
-    alignItems: "center"
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 80
   },
   statusText: {
     color: "white",
-    fontSize: DimensionHelper.wp(3),
-    fontWeight: "500"
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase"
   },
-  emptyState: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: DimensionHelper.wp(6),
+
+  // Details Container
+  detailsContainer: {
+    gap: 12
+  },
+  detailRow: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginBottom: DimensionHelper.hp(2)
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    backgroundColor: "rgba(21, 101, 192, 0.05)",
+    borderRadius: 8
   },
-  emptyStateText: {
-    fontSize: DimensionHelper.wp(3.5),
-    color: "#666",
-    marginTop: DimensionHelper.hp(2),
-    marginBottom: DimensionHelper.hp(1)
+  detailText: {
+    fontSize: 14,
+    color: "#3c3c3c",
+    fontWeight: "500",
+    marginLeft: 8
   },
-  cardContentColumn: {
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "center"
+
+  // Role Container
+  roleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(21, 101, 192, 0.08)",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12
   },
-  statusBadgeTopRight: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    zIndex: 2
+  roleText: {
+    fontSize: 14,
+    color: "#1565C0",
+    fontWeight: "600",
+    marginLeft: 8
   }
 });

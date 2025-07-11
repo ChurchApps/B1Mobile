@@ -1,8 +1,8 @@
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useMemo, useCallback } from "react";
-import { FlatList, Image, Text, View } from "react-native";
-import Icons from "react-native-vector-icons/MaterialIcons";
-import { AssignmentInterface, Constants, EnvironmentHelper, PersonInterface, PositionInterface, globalStyles } from "../../../src/helpers";
+import { FlatList, Text, View, StyleSheet } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { AssignmentInterface, EnvironmentHelper, PersonInterface, PositionInterface } from "../../../src/helpers";
+import { Card, Avatar } from "react-native-paper";
 
 interface TeamMemberInterface {
   id?: string;
@@ -18,6 +18,7 @@ interface Props {
   people: PersonInterface[];
   name: string;
 }
+
 export const Teams = React.memo(({ positions, assignments, people, name }: Props) => {
   const teamData = useMemo(() => {
     if (!people || !positions || !assignments) return [];
@@ -43,42 +44,110 @@ export const Teams = React.memo(({ positions, assignments, people, name }: Props
 
   const renderItem = useCallback(
     (item: any) => (
-      <View key={item.id}>
-        <View style={{ flexDirection: "row", alignItems: "center", padding: 10 }}>
-          <Image source={{ uri: EnvironmentHelper.ContentRoot + item?.item?.photo }} style={{ width: 50, height: 50, borderRadius: 5 }} />
-          <View style={{ marginLeft: 10 }}>
-            <Text>{item?.item?.name}</Text>
-            <Text>{item?.item?.position}</Text>
+      <Card key={item.id} style={styles.memberCard} mode="outlined">
+        <Card.Content style={styles.memberContent}>
+          <View style={styles.memberInfo}>
+            <Avatar.Image size={48} source={item?.item?.photo ? { uri: EnvironmentHelper.ContentRoot + item?.item?.photo } : undefined} style={styles.avatar} />
+            <View style={styles.memberDetails}>
+              <Text style={styles.memberName}>{item?.item?.name}</Text>
+              <Text style={styles.memberPosition}>{item?.item?.position}</Text>
+            </View>
           </View>
-        </View>
-        <View style={globalStyles.BorderSeparatorView} />
-      </View>
+          <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
+        </Card.Content>
+      </Card>
     ),
     []
   );
 
   return (
-    <View style={globalStyles.FlatlistViewStyle}>
-      <View style={{ marginLeft: DimensionHelper.wp(3), marginVertical: DimensionHelper.hp(1.5), flexDirection: "row", alignItems: "center" }}>
-        <Icons name="people" style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp(5.5)} />
-        <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3), color: Constants.Colors.app_color }]}>{name}</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <MaterialIcons name="group" size={24} color="#1565C0" style={styles.headerIcon} />
+        <Text style={styles.headerTitle}>{name}</Text>
+        <View style={styles.memberCount}>
+          <Text style={styles.memberCountText}>{teamData.length}</Text>
+        </View>
       </View>
-      <FlatList
-        data={teamData}
-        renderItem={renderItem}
-        scrollEnabled={false}
-        keyExtractor={(item, index) => `${item?.id || index}`}
-        initialNumToRender={5}
-        windowSize={5}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={3}
-        updateCellsBatchingPeriod={100}
-        getItemLayout={(data, index) => ({
-          length: 60, // Estimated height based on component structure
-          offset: 60 * index,
-          index
-        })}
-      />
+      <View style={styles.membersList}>
+        <FlatList data={teamData} renderItem={renderItem} scrollEnabled={false} showsVerticalScrollIndicator={false} keyExtractor={(item, index) => `${item?.id || index}`} ItemSeparatorComponent={() => <View style={styles.separator} />} initialNumToRender={5} windowSize={5} removeClippedSubviews={true} maxToRenderPerBatch={3} updateCellsBatchingPeriod={100} />
+      </View>
     </View>
   );
+});
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 24
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "rgba(21, 101, 192, 0.05)",
+    borderRadius: 12,
+    marginBottom: 12
+  },
+  headerIcon: {
+    marginRight: 8
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#1565C0",
+    flex: 1
+  },
+  memberCount: {
+    backgroundColor: "#1565C0",
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    minWidth: 24,
+    alignItems: "center"
+  },
+  memberCountText: {
+    color: "white",
+    fontSize: 12,
+    fontWeight: "600"
+  },
+  membersList: {
+    backgroundColor: "transparent"
+  },
+  memberCard: {
+    borderRadius: 12,
+    backgroundColor: "#FFFFFF",
+    borderColor: "rgba(21, 101, 192, 0.1)"
+  },
+  memberContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 4
+  },
+  memberInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1
+  },
+  avatar: {
+    marginRight: 12
+  },
+  memberDetails: {
+    flex: 1
+  },
+  memberName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#3c3c3c",
+    marginBottom: 2
+  },
+  memberPosition: {
+    fontSize: 14,
+    color: "#9E9E9E",
+    fontWeight: "500"
+  },
+  separator: {
+    height: 8
+  }
 });
