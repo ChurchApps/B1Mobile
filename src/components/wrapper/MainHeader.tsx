@@ -69,7 +69,7 @@ export function MainHeader(props: Props) {
 const createStyles = () =>
   StyleSheet.create({
     headerContainer: {
-      backgroundColor: "#1565C0", // Primary blue from style guide
+      backgroundColor: "#0D47A1", // Primary blue from style guide
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 4,

@@ -21,7 +21,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0",
+    primary: "#0D47A1",
     secondary: "#F6F6F8",
     surface: "#FFFFFF",
     background: "#F6F6F8",
@@ -146,7 +146,7 @@ const PlanDetails = () => {
       {/* Hero Card */}
       {plan && (
         <Card style={styles.overviewHeroCard}>
-          <LinearGradient colors={["#1565C0", "#2196F3"]} style={styles.overviewHeroGradient}>
+          <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.overviewHeroGradient}>
             <View style={styles.overviewHeroContent}>
               <MaterialIcons name="assignment" size={48} color="white" style={styles.overviewHeroIcon} />
               <Text style={styles.overviewHeroTitle}>{plan.name}</Text>
@@ -162,7 +162,7 @@ const PlanDetails = () => {
       {myAssignments.length > 0 ? (
         <View style={styles.myPositionsSection}>
           <View style={styles.myPositionsHeader}>
-            <MaterialIcons name="assignment-ind" size={24} color="#1565C0" />
+            <MaterialIcons name="assignment-ind" size={24} color="#0D47A1" />
             <Text style={styles.myPositionsTitle}>My Assignments</Text>
             <View style={styles.assignmentCount}>
               <Text style={styles.assignmentCountText}>{myAssignments.length}</Text>
@@ -185,7 +185,7 @@ const PlanDetails = () => {
         <Card style={styles.overviewNotesCard}>
           <Card.Content>
             <View style={styles.overviewNotesHeader}>
-              <MaterialIcons name="note" size={24} color="#1565C0" />
+              <MaterialIcons name="note" size={24} color="#0D47A1" />
               <Text style={styles.overviewNotesTitle}>Plan Notes</Text>
             </View>
             <Text style={styles.overviewNotesText}>{plan.notes.replace(/\n/g, ' ')}</Text>
@@ -197,7 +197,7 @@ const PlanDetails = () => {
 
   const renderLoadingIndicator = () => (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#1565C0" />
+      <ActivityIndicator size="large" color="#0D47A1" />
       <Text style={styles.loadingText}>Loading plan details...</Text>
     </View>
   );
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "transparent"
   },
   activeTab: {
-    borderBottomColor: "#1565C0"
+    borderBottomColor: "#0D47A1"
   },
   tabText: {
     color: "#9E9E9E",
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   activeTabText: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "700"
   },
 
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -391,12 +391,12 @@ const styles = StyleSheet.create({
   myPositionsTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#1565C0",
+    color: "#0D47A1",
     flex: 1,
     marginLeft: 8
   },
   assignmentCount: {
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 6,

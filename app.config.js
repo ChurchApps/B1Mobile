@@ -8,9 +8,9 @@ module.exports = {
     userInterfaceStyle: "light",
     scheme: "b1mobile", // For deep linking
     splash: {
-      image: "./assets/splash.png",
+      image: "./src/assets/images/logoWhite.png",
       resizeMode: "contain",
-      backgroundColor: "#ffffff"
+      backgroundColor: "#2196F3"
     },
     assetBundlePatterns: ["**/*"],
     ios: {

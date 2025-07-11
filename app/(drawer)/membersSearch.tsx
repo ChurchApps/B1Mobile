@@ -17,7 +17,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0", // Primary Blue from style guide
+    primary: "#0D47A1", // Primary Blue from style guide
     secondary: "#F6F6F8", // Background from style guide
     surface: "#FFFFFF", // Card Background from style guide
     background: "#F6F6F8", // Background from style guide
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   sectionTitle: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "700",
     fontSize: 18,
     minWidth: 32

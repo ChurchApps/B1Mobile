@@ -17,7 +17,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0", // Primary Blue from style guide
+    primary: "#0D47A1", // Primary Blue from style guide
     secondary: "#F6F6F8", // Background from style guide
     surface: "#FFFFFF", // Card Background from style guide
     background: "#F6F6F8", // Background from style guide
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     marginBottom: 24
   },
   featuredTitle: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontSize: 18,
     fontWeight: "700",
     marginBottom: 16,
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 20,
     elevation: 6,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,

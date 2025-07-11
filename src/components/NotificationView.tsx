@@ -17,7 +17,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0",
+    primary: "#0D47A1",
     secondary: "#F6F6F8",
     surface: "#FFFFFF",
     background: "#F6F6F8",
@@ -121,7 +121,7 @@ export function NotificationTab() {
         <Card.Content style={styles.messageContent}>
           <View style={styles.messageHeader}>
             <View style={styles.avatarContainer}>
-              <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={styles.avatar} tintColor={item.photo ? undefined : "#1565C0"} placeholder={Constants.Images.ic_user} />
+              <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_user} style={styles.avatar} tintColor={item.photo ? undefined : "#0D47A1"} placeholder={Constants.Images.ic_user} />
             </View>
             <View style={styles.messageInfo}>
               <Text variant="titleMedium" style={styles.senderName}>
@@ -177,7 +177,7 @@ export function NotificationTab() {
         <Card.Content style={styles.notificationContent}>
           <View style={styles.notificationHeader}>
             <View style={styles.notificationIcon}>
-              <MaterialIcons name={getNotificationIcon(item?.type)} size={24} color="#1565C0" />
+              <MaterialIcons name={getNotificationIcon(item?.type)} size={24} color="#0D47A1" />
             </View>
             <View style={styles.notificationInfo}>
               <Text variant="bodyMedium" style={styles.notificationMessage} numberOfLines={3}>
@@ -255,7 +255,7 @@ export function NotificationTab() {
       indicatorStyle={styles.tabIndicator}
       style={styles.tabBar}
       labelStyle={styles.tabLabel}
-      activeColor="#1565C0"
+      activeColor="#0D47A1"
       inactiveColor="#9E9E9E"
       renderLabel={({ route, focused, color }) => (
         <Text variant="titleSmall" style={[styles.tabLabel, { color, fontWeight: focused ? "700" : "500" }]}>
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#F0F0F0"
   },
   tabIndicator: {
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     height: 3,
     borderRadius: 1.5
   },
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
     lineHeight: 20
   },
   actionButton: {
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     paddingHorizontal: 24,
     borderRadius: 8
   },

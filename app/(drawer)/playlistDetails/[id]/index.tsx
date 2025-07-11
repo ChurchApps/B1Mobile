@@ -21,7 +21,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0",
+    primary: "#0D47A1",
     secondary: "#f0f2f5",
     surface: "#ffffff",
     background: "#F6F6F8",
@@ -101,7 +101,7 @@ const PlaylistDetails = () => {
           {hasImage ? (
             <OptimizedImage source={{ uri: playlist.thumbnail }} style={styles.headerImage} contentFit="cover" />
           ) : (
-            <LinearGradient colors={["#1565C0", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.headerImage, styles.headerFallback]}>
+            <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.headerImage, styles.headerFallback]}>
               <View style={styles.headerPattern}>
                 <View style={styles.headerCircle1} />
                 <View style={styles.headerCircle2} />

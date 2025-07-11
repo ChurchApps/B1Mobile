@@ -16,7 +16,7 @@ const paymentMethods = [
     title: "Credit or Debit Card",
     subtitle: "Visa, Mastercard, American Express",
     icon: "credit-card",
-    color: "#1565C0"
+    color: "#0D47A1"
   },
   {
     type: "bank",

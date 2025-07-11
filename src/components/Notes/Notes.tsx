@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#1565C0"
+    color: "#0D47A1"
   },
   timestamp: {
     fontSize: 12,
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   replyButtonActive: {
     backgroundColor: "#E3F2FD",
     borderWidth: 1,
-    borderColor: "#1565C0"
+    borderColor: "#0D47A1"
   },
   replyText: {
     fontSize: 12,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     color: "#9E9E9E"
   },
   replyTextActive: {
-    color: "#1565C0"
+    color: "#0D47A1"
   },
   replyCountChip: {
     backgroundColor: "rgba(21, 101, 192, 0.1)",
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   replyCountText: {
     fontSize: 11,
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "600"
   }
 });

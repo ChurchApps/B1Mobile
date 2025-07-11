@@ -24,7 +24,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0",
+    primary: "#0D47A1",
     secondary: "#f0f2f5",
     surface: "#ffffff",
     background: "#F6F6F8",
@@ -129,7 +129,7 @@ const Donation = () => {
     <>
       {/* Hero Stats Card */}
       <Card style={styles.heroCard}>
-        <LinearGradient colors={["#1565C0", "#2196F3"]} style={styles.heroGradient}>
+        <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
           <View style={styles.heroContent}>
             <Text variant="headlineSmall" style={styles.heroTitle}>
               Your Giving Impact
@@ -150,7 +150,7 @@ const Donation = () => {
           <Text variant="titleLarge" style={styles.sectionTitle}>
             Recent Activity
           </Text>
-          <Button mode="text" onPress={() => setActiveSection("history")} labelStyle={{ color: "#1565C0" }}>
+          <Button mode="text" onPress={() => setActiveSection("history")} labelStyle={{ color: "#0D47A1" }}>
             View All
           </Button>
         </View>
@@ -183,7 +183,7 @@ const Donation = () => {
       {/* CTA Section */}
       <Card style={styles.ctaCard}>
         <Card.Content style={styles.ctaContent}>
-          <MaterialIcons name="volunteer-activism" size={48} color="#1565C0" style={styles.ctaIcon} />
+          <MaterialIcons name="volunteer-activism" size={48} color="#0D47A1" style={styles.ctaIcon} />
           <Text variant="titleLarge" style={styles.ctaTitle}>
             Make a Difference Today
           </Text>
@@ -289,14 +289,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "transparent"
   },
   activeTab: {
-    borderBottomColor: "#1565C0"
+    borderBottomColor: "#0D47A1"
   },
   tabText: {
     color: "#9E9E9E",
     fontWeight: "500"
   },
   activeTabText: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "700"
   },
   scrollView: {
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     marginBottom: 2
   },
   activityAmount: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "700",
     marginBottom: 2
   },
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
     borderRadius: 20
   },
   repeatButtonText: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "600"
   },
 
@@ -443,11 +443,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16
   },
   ctaButton: {
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     borderRadius: 12,
     paddingHorizontal: 32,
     elevation: 3,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4

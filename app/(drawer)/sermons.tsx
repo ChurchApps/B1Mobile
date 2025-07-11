@@ -21,7 +21,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0",
+    primary: "#0D47A1",
     secondary: "#f0f2f5",
     surface: "#ffffff",
     background: "#F6F6F8",
@@ -129,7 +129,7 @@ const Sermons = () => {
             {hasImage ? (
               <OptimizedImage source={{ uri: featuredSermon.thumbnail }} style={styles.heroImage} contentFit="cover" />
             ) : (
-              <LinearGradient colors={["#1565C0", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.heroImage, styles.heroFallback]}>
+              <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.heroImage, styles.heroFallback]}>
                 <View style={styles.heroPattern}>
                   <View style={styles.heroCircle1} />
                   <View style={styles.heroCircle2} />
@@ -177,7 +177,7 @@ const Sermons = () => {
               {hasImage ? (
                 <OptimizedImage source={{ uri: playlist.thumbnail }} style={styles.playlistImage} contentFit="cover" />
               ) : (
-                <LinearGradient colors={["#1565C0", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.playlistImage, styles.playlistFallback]}>
+                <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.playlistImage, styles.playlistFallback]}>
                   <View style={styles.playlistPattern}>
                     <View style={styles.playlistCircle1} />
                     <View style={styles.playlistCircle2} />
@@ -349,14 +349,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "transparent"
   },
   activeTab: {
-    borderBottomColor: "#1565C0"
+    borderBottomColor: "#0D47A1"
   },
   tabText: {
     color: "#9E9E9E",
     fontWeight: "500"
   },
   activeTabText: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "700"
   },
   scrollView: {
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4
@@ -646,7 +646,7 @@ const styles = StyleSheet.create({
     marginBottom: 24
   },
   errorButton: {
-    backgroundColor: "#1565C0"
+    backgroundColor: "#0D47A1"
   }
 });
 

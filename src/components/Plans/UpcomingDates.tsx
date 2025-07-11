@@ -83,19 +83,19 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
 
                   <View style={styles.detailsContainer}>
                     <View style={styles.detailRow}>
-                      <MaterialIcons name="event" size={18} color="#1565C0" />
+                      <MaterialIcons name="event" size={18} color="#0D47A1" />
                       <Text style={styles.detailText}>{dayjs(item.serviceDate).format("MMM DD, YYYY")}</Text>
                     </View>
 
                     {item.time && (
                       <View style={styles.detailRow}>
-                        <MaterialIcons name="access-time" size={18} color="#1565C0" />
+                        <MaterialIcons name="access-time" size={18} color="#0D47A1" />
                         <Text style={styles.detailText}>{item.time}</Text>
                       </View>
                     )}
 
                     <View style={styles.roleContainer}>
-                      <MaterialIcons name="assignment-ind" size={18} color="#1565C0" />
+                      <MaterialIcons name="assignment-ind" size={18} color="#0D47A1" />
                       <Text style={styles.roleText}>{item.position}</Text>
                     </View>
                   </View>
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4
   },
   headerIcon: {
-    color: "#1565C0",
+    color: "#0D47A1",
     marginRight: 8
   },
   headerTitle: {
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
   },
   roleText: {
     fontSize: 14,
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "600",
     marginLeft: 8
   }

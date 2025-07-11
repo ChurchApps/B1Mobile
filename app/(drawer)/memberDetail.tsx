@@ -19,7 +19,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0", // Primary Blue from style guide
+    primary: "#0D47A1", // Primary Blue from style guide
     secondary: "#F6F6F8", // Background from style guide
     surface: "#FFFFFF", // Card Background from style guide
     background: "#F6F6F8", // Background from style guide
@@ -132,7 +132,7 @@ const MemberDetail = () => {
           <ScrollView ref={scrollViewRef} style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             {/* Hero Section */}
             <Card style={styles.heroCard}>
-              <LinearGradient colors={["#1565C0", "#2196F3"]} style={styles.heroGradient}>
+              <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
                 <View style={styles.heroContent}>
                   <OptimizedImage source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member} style={styles.heroAvatar} placeholder={Constants.Images.ic_member} priority="high" contentFit="cover" />
                   <Text variant="headlineMedium" style={styles.heroName}>
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -350,12 +350,12 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 8,
     elevation: 3,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4

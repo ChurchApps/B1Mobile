@@ -22,6 +22,7 @@ export function CustomDrawer() {
   const { setLinks } = useUserStore();
 
   const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     getChurch();
@@ -152,6 +153,7 @@ export function CustomDrawer() {
 
   const logoutAction = async () => {
     try {
+      setIsLoggingOut(true);
       console.log("Starting logout process...");
 
       // Clear React Query cache and persisted data
@@ -179,6 +181,9 @@ export function CustomDrawer() {
       console.error("Error during logout:", error);
       // Still restart even if there were errors
       RNRestart.Restart();
+    } finally {
+      // This won't actually run because the app restarts, but good practice
+      setIsLoggingOut(false);
     }
   };
 
@@ -193,7 +198,7 @@ export function CustomDrawer() {
     return (
       <List.Item
         title={item.text}
-        left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color="#1565C0" style={styles.drawerIcon} />)}
+        left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color="#0D47A1" style={styles.drawerIcon} />)}
         onPress={() => {
           NavigationUtils.navigateToScreen(item, currentChurch);
           navigation.dispatch(DrawerActions.closeDrawer());
@@ -208,7 +213,7 @@ export function CustomDrawer() {
     <Surface style={styles.headerContainer} elevation={2}>
       <View style={styles.headerContent}>
         {getUserInfo()}
-        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#1565C0" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#1565C0" />}>
+        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#0D47A1" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#0D47A1" />}>
           {!currentChurch ? "Find Church" : currentChurch.name || ""}
         </Button>
       </View>
@@ -228,12 +233,12 @@ export function CustomDrawer() {
               {`${user.firstName} ${user.lastName}`}
             </Text>
             <View style={styles.actionButtons}>
-              <Button mode="text" onPress={editProfileAction} style={styles.profileButton} textColor="#1565C0" compact icon={() => <MaterialIcons name="edit" size={16} color="#1565C0" />}>
+              <Button mode="text" onPress={editProfileAction} style={styles.profileButton} textColor="#0D47A1" compact icon={() => <MaterialIcons name="edit" size={16} color="#0D47A1" />}>
                 Edit Profile
               </Button>
               {user && (
                 <TouchableRipple style={styles.messageIconButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
-                  <MaterialCommunityIcons name="email-outline" size={20} color="#1565C0" />
+                  <MaterialCommunityIcons name="email-outline" size={20} color="#0D47A1" />
                 </TouchableRipple>
               )}
             </View>
@@ -255,8 +260,15 @@ export function CustomDrawer() {
     const pkg = require("../../package.json");
     return (
       <Surface style={styles.footerContainer} elevation={1}>
-        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#1565C0" />}>
-          {user ? "Log out" : "Login"}
+        <Button 
+          mode="outlined" 
+          onPress={user ? logoutAction : () => router.navigate("/auth/login")} 
+          style={styles.logoutButton} 
+          icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />}
+          loading={isLoggingOut}
+          disabled={isLoggingOut}
+        >
+          {isLoggingOut ? "Signing out..." : (user ? "Log out" : "Login")}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>
           Version {pkg.version}

@@ -62,7 +62,7 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
                         {item.planName}
                       </Text>
                       <View style={styles.dateContainer}>
-                        <MaterialIcons name="event" size={16} color="#1565C0" style={styles.dateIcon} />
+                        <MaterialIcons name="event" size={16} color="#0D47A1" style={styles.dateIcon} />
                         <Text style={styles.dateText}>{dayjs(item.serviceDate).format("MMM DD, YYYY")}</Text>
                       </View>
                     </View>
@@ -72,7 +72,7 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
                   </View>
 
                   <View style={styles.roleContainer}>
-                    <MaterialIcons name="assignment-ind" size={18} color="#1565C0" />
+                    <MaterialIcons name="assignment-ind" size={18} color="#0D47A1" />
                     <Text style={styles.roleText}>{item.position}</Text>
                   </View>
                 </Card.Content>
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4
   },
   headerIcon: {
-    color: "#1565C0",
+    color: "#0D47A1",
     marginRight: 8
   },
   headerTitle: {
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   },
   roleText: {
     fontSize: 14,
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "600",
     marginLeft: 6
   }

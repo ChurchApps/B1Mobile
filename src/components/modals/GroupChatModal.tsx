@@ -253,14 +253,14 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4
   },
   ownBubble: {
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     alignSelf: "flex-end",
     borderBottomRightRadius: 4
   },
   senderName: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#1565C0",
+    color: "#0D47A1",
     marginBottom: 2
   },
   messageText: {
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F6F6F8"
   },
   sendButtonActive: {
-    backgroundColor: "#1565C0"
+    backgroundColor: "#0D47A1"
   }
 });
 

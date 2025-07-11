@@ -327,7 +327,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
                 Set up automatic giving
               </Text>
             </View>
-            <Switch value={isRecurring} onValueChange={setIsRecurring} thumbColor={isRecurring ? "#1565C0" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#1565C0" }} />
+            <Switch value={isRecurring} onValueChange={setIsRecurring} thumbColor={isRecurring ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
           </View>
 
           {isRecurring && (
@@ -422,7 +422,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
                 Add {CurrencyHelper.formatCurrency(getTransactionFee(parseFloat(amount || "0")))} to cover processing costs
               </Text>
             </View>
-            <Switch value={coverFees} onValueChange={setCoverFees} thumbColor={coverFees ? "#1565C0" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#1565C0" }} />
+            <Switch value={coverFees} onValueChange={setCoverFees} thumbColor={coverFees ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
           </View>
         </Card.Content>
       </Card>
@@ -435,7 +435,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
       </View>
 
       {/* Give Button */}
-      <Button mode="contained" onPress={handleGive} style={styles.giveButton} labelStyle={styles.giveButtonText} disabled={!amount || parseFloat(amount) < 0.5} buttonColor="#1565C0" textColor="#FFFFFF">
+      <Button mode="contained" onPress={handleGive} style={styles.giveButton} labelStyle={styles.giveButtonText} disabled={!amount || parseFloat(amount) < 0.5} buttonColor="#0D47A1" textColor="#FFFFFF">
         {isRecurring ? `Give ${CurrencyHelper.formatCurrency(calculateTotal())} ${getIntervalLabel(selectedInterval)}` : `Give ${CurrencyHelper.formatCurrency(calculateTotal())}`}
       </Button>
     </View>
@@ -466,17 +466,17 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: "700",
     textAlign: "center",
-    color: "#1565C0"
+    color: "#0D47A1"
   },
   amountInputOutline: {
     borderWidth: 2,
-    borderColor: "#1565C0",
+    borderColor: "#0D47A1",
     borderRadius: 12
   },
   dollarSign: {
     fontSize: 32,
     fontWeight: "700",
-    color: "#1565C0"
+    color: "#0D47A1"
   },
 
   // Guest User Section
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16
   },
   totalLabel: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "800"
   },
 
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingVertical: 8,
     elevation: 4,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4

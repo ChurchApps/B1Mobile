@@ -11,7 +11,7 @@ import { useAppTheme } from "../../src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
-import { useUser } from "../../src/stores/useUserStore";
+import { useUser, useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 interface NotificationContent {
   autoDismiss?: boolean;
@@ -45,6 +45,7 @@ const MessageScreen = () => {
   const { showActionSheetWithOptions } = useActionSheet();
   const conversationIdRef = useRef<string | undefined>(undefined);
   const user = useUser();
+  const currentUserChurch = useCurrentUserChurch();
 
   // Update ref when conversation changes
   useEffect(() => {
@@ -145,27 +146,27 @@ const MessageScreen = () => {
   );
 
   const loadMembers = () => {
-    if (UserHelper.currentUserChurch?.person?.id) {
-      ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi");
+    if (currentUserChurch?.person?.id) {
+      ApiHelper.get(`/people/ids?ids=${currentUserChurch.person.id}`, "MembershipApi");
     }
   };
 
   const sendMessageInitiate = () => {
     if (messageText == "") return;
-    if (!UserHelper.currentUserChurch?.person?.id) return;
+    if (!currentUserChurch?.person?.id) return;
     if (currentConversation == null || currentConversation == undefined || Object.keys(currentConversation).length == 0) {
       let params = [
         {
           allowAnonymousPosts: false,
           contentType: "privateMessage",
-          contentId: UserHelper.currentUserChurch.person.id,
+          contentId: currentUserChurch.person.id,
           title: user?.firstName + " " + user?.lastName + " Private Message",
           visibility: "hidden"
         }
       ];
       ApiHelper.post("/conversations", params, "MessagingApi").then(async (data: ConversationCreateInterface[]) => {
         if (data != null && data.length > 0 && data[0]?.id) {
-          let params = [{ fromPersonId: UserHelper.currentUserChurch.person.id, toPersonId: details.id, conversationId: data[0]?.id }];
+          let params = [{ fromPersonId: currentUserChurch.person.id, toPersonId: details.id, conversationId: data[0]?.id }];
           ApiHelper.post("/privateMessages", params, "MessagingApi").then((data: PrivateMessagesCreate[]) => {
             if (data != null && data.length > 0 && data[0]?.id) {
               sendMessage(data[0].conversationId);

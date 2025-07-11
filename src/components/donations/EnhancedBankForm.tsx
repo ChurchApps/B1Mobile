@@ -227,7 +227,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
           <Card style={styles.instructionsCard}>
             <Card.Content>
               <View style={styles.instructionsHeader}>
-                <MaterialIcons name="verified-user" size={48} color="#1565C0" />
+                <MaterialIcons name="verified-user" size={48} color="#0D47A1" />
                 <Text variant="titleLarge" style={styles.instructionsTitle}>
                   Verify Your Account
                 </Text>
@@ -260,7 +260,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
         <>
           {/* Information Banner */}
           {!isEditing && (
-            <Banner visible={true} icon={({ size }) => <MaterialIcons name="info" size={size} color="#1565C0" />} style={styles.infoBanner}>
+            <Banner visible={true} icon={({ size }) => <MaterialIcons name="info" size={size} color="#0D47A1" />} style={styles.infoBanner}>
               <Text variant="bodyMedium" style={styles.bannerText}>
                 Bank accounts require verification. You'll receive two small deposits in 1-3 business days to complete setup.
               </Text>
@@ -313,7 +313,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
                     Bank Account Details
                   </Text>
                   <TouchableOpacity style={styles.toggleButton} onPress={() => setShowBankDetails(!showBankDetails)}>
-                    <MaterialIcons name={showBankDetails ? "visibility-off" : "visibility"} size={20} color="#1565C0" />
+                    <MaterialIcons name={showBankDetails ? "visibility-off" : "visibility"} size={20} color="#0D47A1" />
                     <Text variant="labelMedium" style={styles.toggleText}>
                       {showBankDetails ? "Hide" : "Show"}
                     </Text>
@@ -333,7 +333,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
                       Securely store this account for faster giving
                     </Text>
                   </View>
-                  <Switch value={saveForFuture} onValueChange={setSaveForFuture} thumbColor={saveForFuture ? "#1565C0" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#1565C0" }} />
+                  <Switch value={saveForFuture} onValueChange={setSaveForFuture} thumbColor={saveForFuture ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
                 </View>
               </Card.Content>
             </Card>
@@ -362,7 +362,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
           Cancel
         </Button>
 
-        <Button mode="contained" onPress={handleSave} loading={isSubmitting} disabled={isSubmitting} style={styles.saveButton} labelStyle={styles.saveButtonText} buttonColor="#1565C0">
+        <Button mode="contained" onPress={handleSave} loading={isSubmitting} disabled={isSubmitting} style={styles.saveButton} labelStyle={styles.saveButtonText} buttonColor="#0D47A1">
           {showVerifyForm ? "Verify Account" : isEditing ? "Update Account" : "Add Account"}
         </Button>
       </View>
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   dollarSign: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#1565C0"
+    color: "#0D47A1"
   },
 
   // Toggle Button
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
     borderRadius: 16
   },
   toggleText: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "600",
     marginLeft: 4
   },

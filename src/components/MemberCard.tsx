@@ -52,12 +52,12 @@ export const MemberCard: React.FC<MemberCardProps> = ({ member, onPress, showAct
             <View style={styles.quickActions}>
               {onCall && (
                 <TouchableOpacity style={styles.actionButton} onPress={() => onCall(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                  <MaterialIcons name="phone" size={20} color="#1565C0" />
+                  <MaterialIcons name="phone" size={20} color="#0D47A1" />
                 </TouchableOpacity>
               )}
               {onEmail && (
                 <TouchableOpacity style={styles.actionButton} onPress={() => onEmail(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                  <MaterialIcons name="email" size={20} color="#1565C0" />
+                  <MaterialIcons name="email" size={20} color="#0D47A1" />
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={styles.actionButton} onPress={handlePress}>

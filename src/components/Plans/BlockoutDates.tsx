@@ -66,7 +66,7 @@ export const BlockoutDates = () => {
               onPress={() => {
                 /* TODO: Add navigation to blockout dates creation */
               }}
-              labelStyle={{ color: "#1565C0" }}
+              labelStyle={{ color: "#0D47A1" }}
               icon="plus">
               Add New
             </Button>
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     paddingLeft: 4
   },
   headerIcon: {
-    color: "#1565C0",
+    color: "#0D47A1",
     marginRight: 8
   },
   headerTitle: {
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   addButton: {
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     borderRadius: 12
   },
   addButtonText: {

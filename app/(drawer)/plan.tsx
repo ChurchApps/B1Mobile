@@ -22,7 +22,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0",
+    primary: "#0D47A1",
     secondary: "#F6F6F8",
     surface: "#FFFFFF",
     background: "#F6F6F8",
@@ -117,7 +117,7 @@ const Plan = () => {
 
   const renderHeroSection = () => (
     <Card style={styles.heroCard}>
-      <LinearGradient colors={["#1565C0", "#2196F3"]} style={styles.heroGradient}>
+      <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
         <View style={styles.heroContent}>
           <MaterialIcons name="assignment" size={48} color="white" style={styles.heroIcon} />
           <Text style={styles.heroTitle}>Your Serving Schedule</Text>
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8

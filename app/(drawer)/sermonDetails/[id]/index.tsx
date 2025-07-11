@@ -19,7 +19,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#1565C0",
+    primary: "#0D47A1",
     secondary: "#f0f2f5",
     surface: "#ffffff",
     background: "#F6F6F8",
@@ -202,11 +202,11 @@ const SermonDetails = () => {
   const renderActionButtons = () => (
     <View style={styles.actionContainer}>
       <View style={styles.actionRow}>
-        <Button mode="outlined" onPress={handleShare} style={styles.actionButton} icon={() => <MaterialIcons name="share" size={20} color="#1565C0" />}>
+        <Button mode="outlined" onPress={handleShare} style={styles.actionButton} icon={() => <MaterialIcons name="share" size={20} color="#0D47A1" />}>
           Share
         </Button>
 
-        <Button mode="outlined" onPress={handleExternalLink} style={styles.actionButton} icon={() => <MaterialIcons name="open-in-new" size={20} color="#1565C0" />}>
+        <Button mode="outlined" onPress={handleExternalLink} style={styles.actionButton} icon={() => <MaterialIcons name="open-in-new" size={20} color="#0D47A1" />}>
           Open Link
         </Button>
       </View>
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     padding: 20
   },
   seriesLabel: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "600",
     marginBottom: 8,
     textTransform: "uppercase",
@@ -415,14 +415,14 @@ const styles = StyleSheet.create({
   actionButton: {
     flex: 1,
     marginHorizontal: 8,
-    borderColor: "#1565C0"
+    borderColor: "#0D47A1"
   },
   watchButton: {
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     borderRadius: 12,
     paddingVertical: 4,
     elevation: 3,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 16,
     right: 16,
-    backgroundColor: "#1565C0"
+    backgroundColor: "#0D47A1"
   },
 
   // Error State
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
     marginBottom: 24
   },
   errorButton: {
-    backgroundColor: "#1565C0"
+    backgroundColor: "#0D47A1"
   }
 });
 

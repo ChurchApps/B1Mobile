@@ -31,7 +31,7 @@ export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDur
             {hasImage ? (
               <OptimizedImage source={{ uri: sermon.thumbnail }} style={styles.sermonImage} contentFit="cover" />
             ) : (
-              <LinearGradient colors={["#1565C0", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.sermonImage, styles.sermonFallback]}>
+              <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.sermonImage, styles.sermonFallback]}>
                 <View style={styles.fallbackPattern}>
                   <View style={styles.patternCircle1} />
                   <View style={styles.patternCircle2} />

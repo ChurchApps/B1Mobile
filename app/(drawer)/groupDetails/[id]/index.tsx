@@ -227,7 +227,7 @@ const GroupDetails = () => {
 
             marked[dateString] = {
               ...marked[dateString],
-              dots: [...(marked[dateString]?.dots || []), { color: "#1565C0" }],
+              dots: [...(marked[dateString]?.dots || []), { color: "#0D47A1" }],
               events: [...(marked[dateString]?.events || []), event],
               marked: true,
               textColor: "black",
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -652,7 +652,7 @@ const styles = StyleSheet.create({
     position: "relative"
   },
   noImageHero: {
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     justifyContent: "center"
   },
   heroImage: {
@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
   activeNavButton: {
     backgroundColor: "#E3F2FD",
     borderWidth: 2,
-    borderColor: "#1565C0"
+    borderColor: "#0D47A1"
   },
   navButtonIcon: {
     marginBottom: 4
@@ -727,7 +727,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#9E9E9E"
   },
   activeNavButtonAvatar: {
-    backgroundColor: "#1565C0"
+    backgroundColor: "#0D47A1"
   },
   navButtonText: {
     color: "#9E9E9E",
@@ -737,7 +737,7 @@ const styles = StyleSheet.create({
     lineHeight: 12
   },
   activeNavButtonText: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "700",
     fontSize: 11,
     lineHeight: 12

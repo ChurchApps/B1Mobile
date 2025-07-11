@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     gap: 12
   },
   headerIcon: {
-    backgroundColor: "#1565C0"
+    backgroundColor: "#0D47A1"
   },
   headerTitle: {
     color: "#3c3c3c",
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     borderRadius: 20,
     elevation: 4,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,

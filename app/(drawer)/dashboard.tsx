@@ -196,7 +196,7 @@ const Dashboard = () => {
               {otherItems.map(item => (
                 <TouchableOpacity key={generateLinkId(item)} style={styles.quickActionItem} onPress={() => handleLinkPress(item)}>
                   <View style={styles.quickActionIcon}>
-                    <MaterialIcons name={item.icon ? item.icon.split("_").join("-") : "apps"} size={24} color="#1565C0" />
+                    <MaterialIcons name={item.icon ? item.icon.split("_").join("-") : "apps"} size={24} color="#0D47A1" />
                   </View>
                   <Text variant="bodyMedium" style={styles.quickActionText} numberOfLines={2}>
                     {item.text}
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   churchName: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "700",
     marginBottom: 12,
     textAlign: "center"
@@ -331,7 +331,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    background: "linear-gradient(transparent, rgba(0,0,0,0.7))",
     backgroundColor: "rgba(0,0,0,0.5)",
     padding: 20
   },

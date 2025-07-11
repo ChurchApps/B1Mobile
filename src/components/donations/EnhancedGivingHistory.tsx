@@ -149,7 +149,7 @@ export function EnhancedGivingHistory({ customerId }: Props) {
   const renderTransactionItem = ({ item }: { item: DonationRecord }) => (
     <TouchableOpacity onPress={() => setSelectedTransaction(item)} style={styles.transactionItem}>
       <View style={styles.transactionIcon}>
-        <MaterialIcons name={item.recurring ? "repeat" : "favorite"} size={24} color="#1565C0" />
+        <MaterialIcons name={item.recurring ? "repeat" : "favorite"} size={24} color="#0D47A1" />
       </View>
 
       <View style={styles.transactionDetails}>
@@ -179,7 +179,7 @@ export function EnhancedGivingHistory({ customerId }: Props) {
     <Card style={styles.recurringCard}>
       <Card.Content style={styles.recurringContent}>
         <View style={styles.recurringIcon}>
-          <MaterialIcons name="autorenew" size={24} color="#1565C0" />
+          <MaterialIcons name="autorenew" size={24} color="#0D47A1" />
         </View>
 
         <View style={styles.recurringDetails}>
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   summaryCard: {
     borderRadius: 20,
     elevation: 4,
-    shadowColor: "#1565C0",
+    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
     borderRadius: 20
   },
   periodText: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "600",
     marginRight: 4
   },
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   statValue: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "800",
     marginBottom: 4
   },
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     marginBottom: 2
   },
   recurringAmount: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "600",
     marginBottom: 2
   },
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
     color: "#9E9E9E"
   },
   manageButton: {
-    borderColor: "#1565C0"
+    borderColor: "#0D47A1"
   },
 
   // Transactions
@@ -564,11 +564,11 @@ const styles = StyleSheet.create({
   recurringChip: {
     alignSelf: "flex-start",
     height: 24,
-    borderColor: "#1565C0"
+    borderColor: "#0D47A1"
   },
   recurringChipText: {
     fontSize: 10,
-    color: "#1565C0"
+    color: "#0D47A1"
   },
   transactionAmount: {
     alignItems: "flex-end"
@@ -660,7 +660,7 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   detailTotalValue: {
-    color: "#1565C0",
+    color: "#0D47A1",
     fontWeight: "700"
   },
   detailInfo: {

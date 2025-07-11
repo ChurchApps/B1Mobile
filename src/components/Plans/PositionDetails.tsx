@@ -59,7 +59,7 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
       const formattedEndDate = formatTime(endDate);
       return (
         <View key={time.id} style={styles.timeItem}>
-          <MaterialIcons name="access-time" size={16} color="#1565C0" />
+          <MaterialIcons name="access-time" size={16} color="#0D47A1" />
           <View style={styles.timeDetails}>
             <Text style={styles.timeTitle}>{time.displayName}</Text>
             <Text style={styles.timeText}>
@@ -99,7 +99,7 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
         {/* Position Header */}
         <View style={styles.positionHeader}>
           <View style={styles.positionInfo}>
-            <MaterialIcons name="assignment-ind" size={24} color="#1565C0" />
+            <MaterialIcons name="assignment-ind" size={24} color="#0D47A1" />
             <Text style={styles.positionName}>{position?.name}</Text>
           </View>
           <View style={[styles.statusBadge, { backgroundColor: getStatusColor(assignment.status) }]}>
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   },
   acceptButton: {
     flex: 1,
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     borderRadius: 8
   },
   acceptButtonText: {

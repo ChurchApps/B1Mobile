@@ -63,7 +63,7 @@ export const Teams = React.memo(({ positions, assignments, people, name }: Props
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialIcons name="group" size={24} color="#1565C0" style={styles.headerIcon} />
+        <MaterialIcons name="group" size={24} color="#0D47A1" style={styles.headerIcon} />
         <Text style={styles.headerTitle}>{name}</Text>
         <View style={styles.memberCount}>
           <Text style={styles.memberCountText}>{teamData.length}</Text>
@@ -95,11 +95,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#1565C0",
+    color: "#0D47A1",
     flex: 1
   },
   memberCount: {
-    backgroundColor: "#1565C0",
+    backgroundColor: "#0D47A1",
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,

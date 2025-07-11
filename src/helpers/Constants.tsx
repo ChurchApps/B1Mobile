@@ -1,7 +1,7 @@
 export class Constants {
   static Colors = {
     // Primary Brand Colors from Style Guide
-    app_color: "#1565C0", // Primary Blue (was #1C75BC)
+    app_color: "#0D47A1", // Darker Primary Blue (was #0D47A1)
     app_color_light: "#568BDA", // Light Blue from style guide
     bright_blue: "#2196F3", // Bright Blue for icons/highlights
 
@@ -27,7 +27,7 @@ export class Constants {
     Light_Red: "#ffdddd",
     Black_color: "#000000",
     Orange_color: "#ed6c02",
-    Active_TabColor: "#1565C0" // Updated to Primary Blue
+    Active_TabColor: "#0D47A1" // Updated to Primary Blue
   };
 
   static Fonts = {

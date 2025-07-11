@@ -5,9 +5,9 @@ const path = require('path');
 
 const settingsGradlePath = path.join(__dirname, '..', 'android', 'settings.gradle');
 const fixToAdd = `
-// Manually include expo-json-utils since it's required by expo-manifests
+// Manually include expo-json-utils since autolinking may fail
 include ':expo-json-utils'
-project(':expo-json-utils').projectDir = new File(rootProject.projectDir, '../node_modules/expo-manifests/node_modules/expo-json-utils/android')`;
+project(':expo-json-utils').projectDir = new File(rootProject.projectDir, '../node_modules/expo-json-utils/android')`;
 
 try {
   const content = fs.readFileSync(settingsGradlePath, 'utf8');

@@ -6,7 +6,7 @@ This style guide defines the design system for the B1 Mobile React Native/Expo a
 ## Colors
 
 ### Primary Brand Colors
-- **Primary Blue**: `#1565C0` - Main brand color for primary buttons, headers, and key UI elements
+- **Primary Blue**: `#0D47A1` - Main brand color for primary buttons, headers, and key UI elements
 - **Light Blue**: `#568BDA` - Secondary blue for subheaders and accent elements  
 - **Bright Blue**: `#2196F3` - Alternative blue for icons and highlights
 
@@ -85,7 +85,7 @@ This style guide defines the design system for the B1 Mobile React Native/Expo a
 #### Primary Button
 ```javascript
 {
-  backgroundColor: "#1565C0",
+  backgroundColor: "#0D47A1",
   borderRadius: 8,
   height: 48,
   justifyContent: "center",
@@ -105,7 +105,7 @@ This style guide defines the design system for the B1 Mobile React Native/Expo a
   borderRadius: 8,
   height: 48,
   borderWidth: 1,
-  borderColor: "#1565C0",
+  borderColor: "#0D47A1",
   justifyContent: "center",
   alignItems: "center",
   paddingHorizontal: 24
@@ -115,7 +115,7 @@ This style guide defines the design system for the B1 Mobile React Native/Expo a
 #### Large Action Button (Bottom of Screen)
 ```javascript
 {
-  backgroundColor: "#1565C0",
+  backgroundColor: "#0D47A1",
   height: 56,
   margin: 16,
   borderRadius: 8,
