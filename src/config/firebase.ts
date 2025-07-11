@@ -31,7 +31,12 @@ export const initializeFirebase = async () => {
 
 export const logAnalyticsEvent = async (eventName: string, parameters?: any) => {
   try {
-    // Check if Firebase is initialized
+    // Initialize Firebase if not already initialized
+    if (!isInitialized) {
+      await initializeFirebase();
+    }
+
+    // Double-check initialization
     if (!isInitialized) {
       console.warn("Firebase not initialized yet, skipping analytics event:", eventName);
       return;

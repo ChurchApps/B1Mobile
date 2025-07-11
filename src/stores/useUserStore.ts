@@ -331,7 +331,7 @@ export const useUserStore = create<UserState>()(
 
           // Check for plans
           try {
-            const plans = await ApiHelper.get("/plans", "AttendanceApi");
+            const plans = await ApiHelper.get("/plans", "DoingApi");
             showPlans = plans.length > 0;
           } catch {
             // Ignore error

@@ -2,7 +2,7 @@ import * as Notifications from "expo-notifications";
 import { DeviceEventEmitter, PermissionsAndroid, Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
 import * as Device from "expo-device";
-import { CacheHelper } from "./CacheHelper";
+import { useUserStore } from "../stores/useUserStore";
 
 // Track current screen
 let currentScreen = "";
@@ -138,7 +138,7 @@ export class PushNotificationHelper {
 
         if (token.data) {
           fcmToken = token.data;
-          await CacheHelper.setValue("fcmToken", fcmToken);
+          useUserStore.getState().setFcmToken(fcmToken);
         }
       } catch (error) {
         console.error("Expo push token not created:", error);

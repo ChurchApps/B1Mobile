@@ -6,8 +6,8 @@ import { Constants } from "../../../src/helpers/Constants";
 import { globalStyles } from "../../../src/helpers/GlobalStyles";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
-import { PlanItem } from ".";
-import type { PlanItemInterface } from ".";
+import { PlanItem } from "./PlanItem";
+import type { PlanItemInterface } from "./PlanItem";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
