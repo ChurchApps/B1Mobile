@@ -5,7 +5,7 @@ import { Text, Button, Surface, Avatar, Card, Chip, IconButton } from "react-nat
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "../../../../src/hooks";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useLocalSearchParams, router } from "expo-router";
+import { useLocalSearchParams, router, useFocusEffect } from "expo-router";
 import { Calendar, DateData } from "react-native-calendars";
 import Markdown from "@ronradtke/react-native-markdown-display";
 import dayjs from "dayjs";
@@ -18,7 +18,6 @@ import { Constants, EnvironmentHelper } from "../../../../src/helpers";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
 import { EventModal } from "../../../../src/components/eventCalendar/EventModal";
-import CreateEvent from "../../../../src/components/eventCalendar/CreateEvent";
 import GroupChatModal from "../../../../src/components/modals/GroupChatModal";
 import { useAppTheme } from "../../../../src/theme";
 import { OptimizedImage } from "../../../../src/components/OptimizedImage";
@@ -36,11 +35,16 @@ const GroupDetails = () => {
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<any>(null);
-  const [editEvent, setEditEvent] = useState<EventInterface | null>(null);
-  const [showAddEventModal, setShowAddEventModal] = useState<boolean>(false);
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
 
   const currentUserChurch = useCurrentUserChurch();
+
+  // Refresh events when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchEvents();
+    }, [refetchEvents])
+  );
 
   // Use react-query for group details
   const {
@@ -125,24 +129,6 @@ const GroupDetails = () => {
 
   const events = useMemo(() => updateTime(eventsData), [eventsData, updateTime]);
 
-  const handleAddEvent = useCallback(
-    (slotInfo: any) => {
-      try {
-        const startTime = new Date(slotInfo.start);
-        startTime.setHours(12);
-        startTime.setMinutes(0);
-        startTime.setSeconds(0);
-        const endTime = new Date(slotInfo.start);
-        endTime.setHours(13);
-        endTime.setMinutes(0);
-        endTime.setSeconds(0);
-        setEditEvent({ start: startTime, end: endTime, allDay: false, groupId: id, visibility: "public" });
-      } catch (error) {
-        console.error("Error creating new event:", error);
-      }
-    },
-    [id]
-  );
 
   const expandEvents = useCallback((allEvents: EventInterface[]) => {
     if (!allEvents || allEvents.length === 0) return [];
@@ -564,8 +550,29 @@ const GroupDetails = () => {
                             mode="contained"
                             icon="calendar-plus"
                             onPress={() => {
-                              setShowAddEventModal(true);
-                              handleAddEvent({ start: new Date(), end: new Date() });
+                              const tomorrow = new Date();
+                              tomorrow.setDate(tomorrow.getDate() + 1);
+                              
+                              const startTime = new Date(tomorrow);
+                              startTime.setHours(14, 0, 0, 0); // 2:00 PM
+                              
+                              const endTime = new Date(tomorrow);
+                              endTime.setHours(15, 0, 0, 0); // 3:00 PM
+                              
+                              const newEvent = { 
+                                start: startTime, 
+                                end: endTime,
+                                allDay: false, 
+                                groupId: id, 
+                                visibility: "public",
+                                title: "",
+                                description: "",
+                                recurrenceRule: ""
+                              };
+                              router.navigate({
+                                pathname: "/(drawer)/createEvent",
+                                params: { event: JSON.stringify(newEvent) }
+                              });
                             }}
                             style={styles.addEventButton}>
                             Add Event
@@ -622,15 +629,6 @@ const GroupDetails = () => {
               </View>
             ))}
         </EventModal>
-      )}
-      {showAddEventModal && editEvent && (
-        <CreateEvent
-          event={editEvent}
-          onDone={() => {
-            setShowAddEventModal(false);
-            refetchEvents();
-          }}
-        />
       )}
 
       {/* Group Chat Modal */}
