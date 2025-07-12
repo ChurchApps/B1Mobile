@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
-import { 
-  BlockoutDates, 
-  ServingTimes, 
-  UpcomingDates 
-} from "../../src/components/Plans/LazyPlanComponents";
+import { BlockoutDates } from "../../src/components/Plans/BlockoutDates";
+import { ServingTimes } from "../../src/components/Plans/ServingTimes";
+import { UpcomingDates } from "../../src/components/Plans/UpcomingDates";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { ArrayHelper } from "@/helpers/index";
 import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "@/helpers/Interfaces";

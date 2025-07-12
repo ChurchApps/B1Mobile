@@ -14,7 +14,6 @@ import { useQuery } from "@tanstack/react-query";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { EventInterface } from "../../../../src/mobilehelper";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
-import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
 import GroupChatModal from "../../../../src/components/modals/GroupChatModal";
 import { useAppTheme } from "../../../../src/theme";
 import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
@@ -233,7 +232,7 @@ const GroupDetails = () => {
   });
 
   return (
-    <LoadingWrapper loading={loading}>
+    <>
       <View style={styles.container}>
         <SafeAreaView style={{ flex: 1 }}>
           <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
@@ -304,7 +303,7 @@ const GroupDetails = () => {
 
       {/* Group Chat Modal */}
       <GroupChatModal visible={showChatModal} onDismiss={() => setShowChatModal(false)} groupId={id || ""} groupName={groupDetails?.name || "Group Chat"} />
-    </LoadingWrapper>
+    </>
   );
 };
 
