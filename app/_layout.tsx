@@ -9,7 +9,6 @@ import { ThemeProvider } from "../src/theme/ThemeProvider";
 import { UserHelper } from "../src/helpers/UserHelper";
 import { queryClient, initializeQueryCache } from "../src/helpers/QueryClient";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
-import { SkeletonProvider } from "../src/components/common/SkeletonProvider";
 import { NotificationNavigationHandler } from "../src/components/NotificationNavigationHandler";
 
 export default function RootLayout() {
@@ -27,16 +26,14 @@ export default function RootLayout() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <SkeletonProvider>
-            <SafeAreaProvider>
-              <NotificationNavigationHandler />
-              <Stack screenOptions={{ headerShown: false }} initialRouteName="auth">
-                <Stack.Screen name="auth" />
-                <Stack.Screen name="index" />
-                <Stack.Screen name="(drawer)" />
-              </Stack>
-            </SafeAreaProvider>
-          </SkeletonProvider>
+          <SafeAreaProvider>
+            <NotificationNavigationHandler />
+            <Stack screenOptions={{ headerShown: false }} initialRouteName="auth">
+              <Stack.Screen name="auth" />
+              <Stack.Screen name="index" />
+              <Stack.Screen name="(drawer)" />
+            </Stack>
+          </SafeAreaProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>

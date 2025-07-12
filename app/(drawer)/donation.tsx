@@ -160,20 +160,18 @@ const Donation = () => {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaView style={styles.container}>
-        <LoadingWrapper loading={areMethodsLoading}>
-          <View style={styles.content}>
-            <MainHeader title="Giving" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+        <View style={styles.content}>
+          <MainHeader title="Giving" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
-            <DonationTabBar activeSection={activeSection} onTabChange={setActiveSection} />
+          <DonationTabBar activeSection={activeSection} onTabChange={setActiveSection} />
 
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              {activeSection === "overview" && renderOverviewSection()}
-              {activeSection === "donate" && renderDonateSection()}
-              {activeSection === "manage" && renderManageSection()}
-              {activeSection === "history" && renderHistorySection()}
-            </ScrollView>
-          </View>
-        </LoadingWrapper>
+          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            {activeSection === "overview" && renderOverviewSection()}
+            {activeSection === "donate" && renderDonateSection()}
+            {activeSection === "manage" && renderManageSection()}
+            {activeSection === "history" && renderHistorySection()}
+          </ScrollView>
+        </View>
       </SafeAreaView>
     </PaperProvider>
   );

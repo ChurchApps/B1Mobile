@@ -10,6 +10,7 @@ import { useIsFocused, DrawerActions } from "@react-navigation/native";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useState, useMemo } from "react";
 import { ScrollView, Text, View, StyleSheet, TouchableOpacity, ActivityIndicator } from "react-native";
+import { InlineLoader } from "../../../../src/components/common/LoadingComponents";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
 import { Provider as PaperProvider, Card, MD3LightTheme } from "react-native-paper";
@@ -140,8 +141,12 @@ const PlanDetails = () => {
   const renderOverviewSection = () => (
     <>
       {/* Hero Card */}
-      {plan && (
-        <Card style={styles.overviewHeroCard}>
+      <Card style={styles.overviewHeroCard}>
+        {planLoading ? (
+          <Card.Content style={styles.loadingCardContent}>
+            <InlineLoader size="large" text="Loading plan details..." />
+          </Card.Content>
+        ) : plan ? (
           <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.overviewHeroGradient}>
             <View style={styles.overviewHeroContent}>
               <MaterialIcons name="assignment" size={48} color="white" style={styles.overviewHeroIcon} />
@@ -149,43 +154,61 @@ const PlanDetails = () => {
               <Text style={styles.overviewHeroDate}>{plan.serviceDate ? new Date(plan.serviceDate).toLocaleDateString() : "TBD"}</Text>
             </View>
           </LinearGradient>
-        </Card>
-      )}
+        ) : (
+          <Card.Content style={styles.loadingCardContent}>
+            <MaterialIcons name="error-outline" size={48} color="#9E9E9E" />
+            <Text style={styles.errorCardText}>Plan not found</Text>
+          </Card.Content>
+        )}
+      </Card>
 
       {/* My Position Details - Made Prominent */}
-      {myAssignments.length > 0 ? (
-        <View style={styles.myPositionsSection}>
-          <View style={styles.myPositionsHeader}>
-            <MaterialIcons name="assignment-ind" size={24} color="#0D47A1" />
-            <Text style={styles.myPositionsTitle}>My Assignments</Text>
+      <View style={styles.myPositionsSection}>
+        <View style={styles.myPositionsHeader}>
+          <MaterialIcons name="assignment-ind" size={24} color="#0D47A1" />
+          <Text style={styles.myPositionsTitle}>My Assignments</Text>
+          {!assignmentsLoading && (
             <View style={styles.assignmentCount}>
               <Text style={styles.assignmentCountText}>{myAssignments.length}</Text>
             </View>
-          </View>
-          {getPositionDetails()}
+          )}
         </View>
-      ) : (
-        <Card style={styles.noAssignmentsCard}>
-          <Card.Content style={styles.noAssignmentsContent}>
-            <MaterialIcons name="assignment-late" size={48} color="#9E9E9E" />
-            <Text style={styles.noAssignmentsText}>No assignments for this plan</Text>
-            <Text style={styles.noAssignmentsSubtext}>Check with your team leader if you expected to be assigned</Text>
-          </Card.Content>
-        </Card>
-      )}
+        
+        {assignmentsLoading || positionsLoading || timesLoading ? (
+          <Card style={styles.loadingCard}>
+            <Card.Content style={styles.loadingCardContent}>
+              <InlineLoader size="large" text="Loading assignments..." />
+            </Card.Content>
+          </Card>
+        ) : myAssignments.length > 0 ? (
+          getPositionDetails()
+        ) : (
+          <Card style={styles.noAssignmentsCard}>
+            <Card.Content style={styles.noAssignmentsContent}>
+              <MaterialIcons name="assignment-late" size={48} color="#9E9E9E" />
+              <Text style={styles.noAssignmentsText}>No assignments for this plan</Text>
+              <Text style={styles.noAssignmentsSubtext}>Check with your team leader if you expected to be assigned</Text>
+            </Card.Content>
+          </Card>
+        )}
+      </View>
 
       {/* Notes */}
-      {plan?.notes && (
-        <Card style={styles.overviewNotesCard}>
-          <Card.Content>
-            <View style={styles.overviewNotesHeader}>
-              <MaterialIcons name="note" size={24} color="#0D47A1" />
-              <Text style={styles.overviewNotesTitle}>Plan Notes</Text>
-            </View>
+      <Card style={styles.overviewNotesCard}>
+        <Card.Content>
+          <View style={styles.overviewNotesHeader}>
+            <MaterialIcons name="note" size={24} color="#0D47A1" />
+            <Text style={styles.overviewNotesTitle}>Plan Notes</Text>
+          </View>
+          {planLoading ? (
+            <InlineLoader text="Loading notes..." />
+          ) : plan?.notes ? (
             <Text style={styles.overviewNotesText}>{plan.notes.replace(/\n/g, " ")}</Text>
-          </Card.Content>
-        </Card>
-      )}
+          ) : (
+            <Text style={styles.noNotesText}>No notes available for this plan</Text>
+          )}
+        </Card.Content>
+      </Card>
     </>
   );
 
@@ -222,14 +245,39 @@ const PlanDetails = () => {
             </View>
           ) : (
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              {isLoading && renderLoadingIndicator()}
-              {!isLoading && selectedTab === "overview" && renderOverviewSection()}
-              {!isLoading && selectedTab === "serviceOrder" && plan && (
+              {selectedTab === "overview" && renderOverviewSection()}
+              {selectedTab === "serviceOrder" && (
                 <View style={styles.contentSection}>
-                  <ServiceOrder plan={plan} />
+                  <Card style={styles.serviceOrderCard}>
+                    <Card.Content>
+                      <View style={styles.sectionHeader}>
+                        <MaterialIcons name="format-list-numbered" size={24} color="#0D47A1" />
+                        <Text style={styles.sectionTitle}>Service Order</Text>
+                      </View>
+                      {planLoading ? (
+                        <InlineLoader size="large" text="Loading service order..." />
+                      ) : plan ? (
+                        <ServiceOrder plan={plan} />
+                      ) : (
+                        <Text style={styles.noDataText}>Service order not available</Text>
+                      )}
+                    </Card.Content>
+                  </Card>
                 </View>
               )}
-              {!isLoading && selectedTab === "teams" && <View style={styles.contentSection}>{getTeams()}</View>}
+              {selectedTab === "teams" && (
+                <View style={styles.contentSection}>
+                  {assignmentsLoading || positionsLoading || peopleLoading ? (
+                    <Card style={styles.loadingCard}>
+                      <Card.Content style={styles.loadingCardContent}>
+                        <InlineLoader size="large" text="Loading teams..." />
+                      </Card.Content>
+                    </Card>
+                  ) : (
+                    getTeams()
+                  )}
+                </View>
+              )}
             </ScrollView>
           )}
         </View>
@@ -440,6 +488,61 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     lineHeight: 20
+  },
+
+  // Loading States
+  loadingCard: {
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    marginBottom: 16
+  },
+  loadingCardContent: {
+    alignItems: "center",
+    padding: 40
+  },
+  errorCardText: {
+    fontSize: 16,
+    color: "#9E9E9E",
+    marginTop: 12,
+    textAlign: "center"
+  },
+  noNotesText: {
+    fontSize: 14,
+    color: "#9E9E9E",
+    fontStyle: "italic"
+  },
+  noDataText: {
+    fontSize: 14,
+    color: "#9E9E9E",
+    textAlign: "center",
+    padding: 20,
+    fontStyle: "italic"
+  },
+
+  // Section Headers
+  serviceOrderCard: {
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    marginBottom: 16
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#3c3c3c",
+    marginLeft: 8
   }
 });
 

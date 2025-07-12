@@ -5,13 +5,15 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface } from "../../../src/helpers";
 import { router } from "expo-router";
 import { Card } from "react-native-paper";
+import { InlineLoader } from "../common/LoadingComponents";
 
 interface Props {
   plans: PlanInterface[];
   positions: PositionInterface[];
   assignments: AssignmentInterface[];
+  isLoading?: boolean;
 }
-export const ServingTimes = ({ plans, positions, assignments }: Props) => {
+export const ServingTimes = ({ plans, positions, assignments, isLoading = false }: Props) => {
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -42,45 +44,49 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
         <Text style={styles.headerTitle}>Serving Times</Text>
       </View>
 
-      {servingTimes.length === 0 ? (
-        <Card style={styles.emptyStateCard}>
-          <Card.Content style={styles.emptyStateContent}>
-            <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-            <Text style={styles.emptyStateText}>No serving times found</Text>
-            <Text style={styles.emptyStateSubtext}>Your upcoming assignments will appear here</Text>
-          </Card.Content>
-        </Card>
-      ) : (
-        <View style={styles.cardsList}>
-          {servingTimes.map((item, idx) => (
-            <Card key={idx} style={styles.servingCard} mode="elevated">
-              <TouchableOpacity style={styles.cardTouchable} activeOpacity={0.7} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
-                <Card.Content style={styles.cardContent}>
-                  <View style={styles.cardHeader}>
-                    <View style={styles.planInfo}>
-                      <Text style={styles.planName} numberOfLines={1}>
-                        {item.planName}
-                      </Text>
-                      <View style={styles.dateContainer}>
-                        <MaterialIcons name="event" size={16} color="#0D47A1" style={styles.dateIcon} />
-                        <Text style={styles.dateText}>{dayjs(item.serviceDate).format("MMM DD, YYYY")}</Text>
+      <Card style={styles.contentCard}>
+        <Card.Content>
+          {isLoading ? (
+            <InlineLoader size="large" text="Loading serving times..." />
+          ) : servingTimes.length === 0 ? (
+            <View style={styles.emptyStateContent}>
+              <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
+              <Text style={styles.emptyStateText}>No serving times found</Text>
+              <Text style={styles.emptyStateSubtext}>Your upcoming assignments will appear here</Text>
+            </View>
+          ) : (
+            <View style={styles.cardsList}>
+              {servingTimes.map((item, idx) => (
+                <Card key={idx} style={styles.servingCard} mode="elevated">
+                  <TouchableOpacity style={styles.cardTouchable} activeOpacity={0.7} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
+                    <Card.Content style={styles.cardContent}>
+                      <View style={styles.cardHeader}>
+                        <View style={styles.planInfo}>
+                          <Text style={styles.planName} numberOfLines={1}>
+                            {item.planName}
+                          </Text>
+                          <View style={styles.dateContainer}>
+                            <MaterialIcons name="event" size={16} color="#0D47A1" style={styles.dateIcon} />
+                            <Text style={styles.dateText}>{dayjs(item.serviceDate).format("MMM DD, YYYY")}</Text>
+                          </View>
+                        </View>
+                        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+                          <Text style={styles.statusText}>{item.status}</Text>
+                        </View>
                       </View>
-                    </View>
-                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-                      <Text style={styles.statusText}>{item.status}</Text>
-                    </View>
-                  </View>
 
-                  <View style={styles.roleContainer}>
-                    <MaterialIcons name="assignment-ind" size={18} color="#0D47A1" />
-                    <Text style={styles.roleText}>{item.position}</Text>
-                  </View>
-                </Card.Content>
-              </TouchableOpacity>
-            </Card>
-          ))}
-        </View>
-      )}
+                      <View style={styles.roleContainer}>
+                        <MaterialIcons name="assignment-ind" size={18} color="#0D47A1" />
+                        <Text style={styles.roleText}>{item.position}</Text>
+                      </View>
+                    </Card.Content>
+                  </TouchableOpacity>
+                </Card>
+              ))}
+            </View>
+          )}
+        </Card.Content>
+      </Card>
     </View>
   );
 };
@@ -118,14 +124,15 @@ const styles = StyleSheet.create({
     color: "#3c3c3c"
   },
 
-  // Empty State
-  emptyStateCard: {
+  // Content Card
+  contentCard: {
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 3
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
   },
   emptyStateContent: {
     alignItems: "center",

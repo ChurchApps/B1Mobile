@@ -6,5 +6,3 @@ export * from "./DataList";
 export * from "./BaseModal";
 export * from "./LoadingComponents";
 export * from "./LazyWrapper";
-export * from "./SkeletonLoader";
-export * from "./SkeletonProvider";

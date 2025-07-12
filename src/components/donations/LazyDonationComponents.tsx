@@ -22,19 +22,19 @@ const LazyPaymentMethods = lazy(() =>
 
 // Wrapper components with lazy loading
 export const EnhancedDonationForm: React.FC<any> = (props) => (
-  <LazyWrapper skeletonType="donation">
+  <LazyWrapper loadingText="Loading donation form...">
     <LazyEnhancedDonationForm {...props} />
   </LazyWrapper>
 );
 
 export const EnhancedGivingHistory: React.FC<any> = (props) => (
-  <LazyWrapper skeletonType="giving">
+  <LazyWrapper loadingText="Loading giving history...">
     <LazyEnhancedGivingHistory {...props} />
   </LazyWrapper>
 );
 
 export const PaymentMethods: React.FC<any> = (props) => (
-  <LazyWrapper skeletonType="list" skeletonCount={2}>
+  <LazyWrapper loadingText="Loading payment methods...">
     <LazyPaymentMethods {...props} />
   </LazyWrapper>
 );

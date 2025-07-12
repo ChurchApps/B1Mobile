@@ -25,7 +25,6 @@ import {
   GroupMembersTab,
   GroupCalendarTab,
   GroupEventModal,
-  GroupDetailsSkeleton,
   EventProcessor
 } from "../../../../src/components/group/exports";
 
@@ -110,8 +109,7 @@ const GroupDetails = () => {
   });
 
 
-  // Only block on essential data for initial render
-  const loading = groupDetailsLoading;
+  // Only show full loading if group details is loading (essential data)
   const hasError = groupDetailsIsError || groupMembersIsError || eventsIsError;
   const errors = [groupDetailsError, groupMembersError, eventsError].filter(Boolean);
 
@@ -160,22 +158,16 @@ const GroupDetails = () => {
     [markedDates]
   );
 
-  // Show skeleton UI immediately with progressive loading
+  // Show minimal loading only for critical group details data
   if (groupDetailsLoading) {
     return (
-      <View style={styles.container}>
-        <SafeAreaView style={{ flex: 1 }}>
-          <MainHeader title="Loading..." openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
-
-          <FlatList
-            data={[{ key: "skeleton" }]}
-            renderItem={() => <GroupDetailsSkeleton />}
-            keyExtractor={item => item.key}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.mainContainer}
-          />
-        </SafeAreaView>
-      </View>
+      <LoadingWrapper loading={true}>
+        <View style={styles.container}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <MainHeader title="Loading..." openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
+          </SafeAreaView>
+        </View>
+      </LoadingWrapper>
     );
   }
 
@@ -254,7 +246,7 @@ const GroupDetails = () => {
                 <GroupHeroSection
                   name={name}
                   photoUrl={photoUrl}
-                  memberCount={groupMembers.length}
+                  memberCount={groupMembersLoading ? undefined : groupMembers.length}
                   isLeader={isLeader}
                 />
 

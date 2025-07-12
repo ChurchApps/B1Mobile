@@ -5,15 +5,17 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
 import { router } from "expo-router";
 import { Card } from "react-native-paper";
+import { InlineLoader } from "../common/LoadingComponents";
 
 interface Props {
   plans: PlanInterface[];
   positions: PositionInterface[];
   assignments: AssignmentInterface[];
   times: TimeInterface[];
+  isLoading?: boolean;
 }
 
-export const UpcomingDates = ({ plans, positions, assignments, times }: Props) => {
+export const UpcomingDates = ({ plans, positions, assignments, times, isLoading = false }: Props) => {
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -56,15 +58,17 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
         <Text style={styles.headerTitle}>Upcoming Dates</Text>
       </View>
 
-      {upcomingDates.length === 0 ? (
-        <Card style={styles.emptyStateCard}>
-          <Card.Content style={styles.emptyStateContent}>
-            <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-            <Text style={styles.emptyStateText}>No upcoming dates found</Text>
-            <Text style={styles.emptyStateSubtext}>Your future assignments will appear here</Text>
-          </Card.Content>
-        </Card>
-      ) : (
+      <Card style={styles.contentCard}>
+        <Card.Content>
+          {isLoading ? (
+            <InlineLoader size="large" text="Loading upcoming dates..." />
+          ) : upcomingDates.length === 0 ? (
+            <View style={styles.emptyStateContent}>
+              <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
+              <Text style={styles.emptyStateText}>No upcoming dates found</Text>
+              <Text style={styles.emptyStateSubtext}>Your future assignments will appear here</Text>
+            </View>
+          ) : (
         <View style={styles.cardsList}>
           {upcomingDates.map((item, idx) => (
             <Card key={idx} style={styles.upcomingCard} mode="elevated">
@@ -104,7 +108,9 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
             </Card>
           ))}
         </View>
-      )}
+          )}
+        </Card.Content>
+      </Card>
     </View>
   );
 };
@@ -142,14 +148,15 @@ const styles = StyleSheet.create({
     color: "#3c3c3c"
   },
 
-  // Empty State
-  emptyStateCard: {
+  // Content Card
+  contentCard: {
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 3
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
   },
   emptyStateContent: {
     alignItems: "center",

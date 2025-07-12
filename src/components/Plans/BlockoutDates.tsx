@@ -5,8 +5,13 @@ import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { Card, Button } from "react-native-paper";
+import { InlineLoader } from "../common/LoadingComponents";
 
-export const BlockoutDates = () => {
+interface Props {
+  isLoading?: boolean;
+}
+
+export const BlockoutDates = ({ isLoading = false }: Props) => {
   const fadeAnim = new Animated.Value(0);
   const currentUserChurch = useCurrentUserChurch();
 
@@ -19,7 +24,7 @@ export const BlockoutDates = () => {
   }, []);
 
   // Use react-query for blockout dates
-  const { data: blockoutDates = [] } = useQuery({
+  const { data: blockoutDates = [], isLoading: blockoutLoading } = useQuery({
     queryKey: ["/blockoutdates/my", "DoingApi"],
     enabled: !!currentUserChurch?.jwt,
     placeholderData: [],
@@ -30,6 +35,8 @@ export const BlockoutDates = () => {
     }
   });
 
+  const showLoading = isLoading || blockoutLoading;
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -37,25 +44,27 @@ export const BlockoutDates = () => {
         <Text style={styles.headerTitle}>Blockout Dates</Text>
       </View>
 
-      {blockoutDates.length === 0 ? (
-        <Card style={styles.emptyStateCard}>
-          <Card.Content style={styles.emptyStateContent}>
-            <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-            <Text style={styles.emptyStateText}>No blockout dates set</Text>
-            <Text style={styles.emptyStateSubtext}>Block dates when you're unavailable to serve</Text>
-            <Button
-              mode="contained"
-              onPress={() => {
-                /* TODO: Add navigation to blockout dates creation */
-              }}
-              style={styles.addButton}
-              labelStyle={styles.addButtonText}
-              icon="plus">
-              Add Blockout Date
-            </Button>
-          </Card.Content>
-        </Card>
-      ) : (
+      <Card style={styles.contentCard}>
+        <Card.Content>
+          {showLoading ? (
+            <InlineLoader size="large" text="Loading blockout dates..." />
+          ) : blockoutDates.length === 0 ? (
+            <View style={styles.emptyStateContent}>
+              <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
+              <Text style={styles.emptyStateText}>No blockout dates set</Text>
+              <Text style={styles.emptyStateSubtext}>Block dates when you're unavailable to serve</Text>
+              <Button
+                mode="contained"
+                onPress={() => {
+                  /* TODO: Add navigation to blockout dates creation */
+                }}
+                style={styles.addButton}
+                labelStyle={styles.addButtonText}
+                icon="plus">
+                Add Blockout Date
+              </Button>
+            </View>
+          ) : (
         <View style={styles.cardsList}>
           <View style={styles.listHeader}>
             <Text style={styles.listHeaderText}>
@@ -103,7 +112,9 @@ export const BlockoutDates = () => {
             </Card>
           ))}
         </View>
-      )}
+          )}
+        </Card.Content>
+      </Card>
     </View>
   );
 };
@@ -128,14 +139,15 @@ const styles = StyleSheet.create({
     color: "#3c3c3c"
   },
 
-  // Empty State
-  emptyStateCard: {
+  // Content Card
+  contentCard: {
     borderRadius: 16,
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 3
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
   },
   emptyStateContent: {
     alignItems: "center",

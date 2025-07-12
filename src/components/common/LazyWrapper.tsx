@@ -1,43 +1,17 @@
 import React, { Suspense } from 'react';
-import { 
-  SkeletonCard, 
-  SkeletonDonationForm, 
-  SkeletonGivingHistory, 
-  SkeletonPlanItem,
-  SkeletonSermonCard,
-  SkeletonList 
-} from './SkeletonLoader';
+import { InlineLoader } from './LoadingComponents';
 
 interface LazyWrapperProps {
   children: React.ReactNode;
-  skeletonType?: 'card' | 'donation' | 'giving' | 'plan' | 'sermon' | 'list';
-  skeletonCount?: number;
+  loadingText?: string;
 }
 
 export const LazyWrapper: React.FC<LazyWrapperProps> = ({ 
   children, 
-  skeletonType = 'card',
-  skeletonCount = 3
+  loadingText = "Loading..."
 }) => {
-  const getSkeletonFallback = () => {
-    switch (skeletonType) {
-      case 'donation':
-        return <SkeletonDonationForm />;
-      case 'giving':
-        return <SkeletonGivingHistory />;
-      case 'plan':
-        return <SkeletonPlanItem />;
-      case 'sermon':
-        return <SkeletonSermonCard />;
-      case 'list':
-        return <SkeletonList count={skeletonCount} />;
-      default:
-        return <SkeletonCard />;
-    }
-  };
-
   return (
-    <Suspense fallback={getSkeletonFallback()}>
+    <Suspense fallback={<InlineLoader size="large" text={loadingText} />}>
       {children}
     </Suspense>
   );

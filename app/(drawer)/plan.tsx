@@ -18,6 +18,7 @@ import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 import { Provider as PaperProvider, Card, MD3LightTheme } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import { InlineLoader } from "../../src/components/common/LoadingComponents";
 import { LinearGradient } from "expo-linear-gradient";
 
 const theme = {
@@ -116,21 +117,27 @@ const Plan = () => {
 
   const renderHeroSection = () => (
     <Card style={styles.heroCard}>
-      <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
-        <View style={styles.heroContent}>
-          <MaterialIcons name="assignment" size={48} color="white" style={styles.heroIcon} />
-          <Text style={styles.heroTitle}>Your Serving Schedule</Text>
-          <Text style={styles.heroSubtitle}>
-            {planStats.confirmed} confirmed • {planStats.pending} pending
-          </Text>
-          {planStats.nextPlan && (
-            <View style={styles.nextPlanContainer}>
-              <Text style={styles.nextPlanLabel}>Next Service:</Text>
-              <Text style={styles.nextPlanDate}>{new Date(planStats.nextPlan.serviceDate).toLocaleDateString()}</Text>
-            </View>
-          )}
-        </View>
-      </LinearGradient>
+      {isLoading ? (
+        <Card.Content style={styles.loadingHeroContent}>
+          <InlineLoader size="large" text="Loading your schedule..." />
+        </Card.Content>
+      ) : (
+        <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
+          <View style={styles.heroContent}>
+            <MaterialIcons name="assignment" size={48} color="white" style={styles.heroIcon} />
+            <Text style={styles.heroTitle}>Your Serving Schedule</Text>
+            <Text style={styles.heroSubtitle}>
+              {planStats.confirmed} confirmed • {planStats.pending} pending
+            </Text>
+            {planStats.nextPlan && (
+              <View style={styles.nextPlanContainer}>
+                <Text style={styles.nextPlanLabel}>Next Service:</Text>
+                <Text style={styles.nextPlanDate}>{new Date(planStats.nextPlan.serviceDate).toLocaleDateString()}</Text>
+              </View>
+            )}
+          </View>
+        </LinearGradient>
+      )}
     </Card>
   );
 
@@ -139,22 +146,40 @@ const Plan = () => {
       <Card style={styles.statCard}>
         <Card.Content style={styles.statContent}>
           <MaterialIcons name="assignment" size={32} color="#2196F3" />
-          <Text style={styles.statNumber}>{planStats.requested}</Text>
-          <Text style={styles.statLabel}>Requested</Text>
+          {isLoading ? (
+            <InlineLoader text="Loading..." />
+          ) : (
+            <>
+              <Text style={styles.statNumber}>{planStats.requested}</Text>
+              <Text style={styles.statLabel}>Requested</Text>
+            </>
+          )}
         </Card.Content>
       </Card>
       <Card style={styles.statCard}>
         <Card.Content style={styles.statContent}>
           <MaterialIcons name="event-available" size={32} color="#70DC87" />
-          <Text style={styles.statNumber}>{planStats.confirmed}</Text>
-          <Text style={styles.statLabel}>Confirmed</Text>
+          {isLoading ? (
+            <InlineLoader text="Loading..." />
+          ) : (
+            <>
+              <Text style={styles.statNumber}>{planStats.confirmed}</Text>
+              <Text style={styles.statLabel}>Confirmed</Text>
+            </>
+          )}
         </Card.Content>
       </Card>
       <Card style={styles.statCard}>
         <Card.Content style={styles.statContent}>
           <MaterialIcons name="schedule" size={32} color="#FEAA24" />
-          <Text style={styles.statNumber}>{planStats.pending}</Text>
-          <Text style={styles.statLabel}>Pending</Text>
+          {isLoading ? (
+            <InlineLoader text="Loading..." />
+          ) : (
+            <>
+              <Text style={styles.statNumber}>{planStats.pending}</Text>
+              <Text style={styles.statLabel}>Pending</Text>
+            </>
+          )}
         </Card.Content>
       </Card>
     </View>
@@ -163,24 +188,18 @@ const Plan = () => {
   return (
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
-        <LoadingWrapper loading={isLoading}>
-          <View style={styles.container}>
-            <MainHeader title="Plans" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
-            <View style={styles.contentContainer}>
-              <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                {!isLoading && (
-                  <>
-                    {renderHeroSection()}
-                    {renderStatsCards()}
-                    <ServingTimes assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} navigation={navigation} />
-                    <UpcomingDates assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} times={times} navigation={navigation} />
-                    <BlockoutDates />
-                  </>
-                )}
-              </ScrollView>
-            </View>
+        <View style={styles.container}>
+          <MainHeader title="Plans" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+          <View style={styles.contentContainer}>
+            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+              {renderHeroSection()}
+              {renderStatsCards()}
+              <ServingTimes assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} isLoading={isLoading} />
+              <UpcomingDates assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} times={times} isLoading={isLoading} />
+              <BlockoutDates isLoading={isLoading} />
+            </ScrollView>
           </View>
-        </LoadingWrapper>
+        </View>
       </SafeAreaProvider>
     </PaperProvider>
   );
@@ -290,6 +309,12 @@ const styles = StyleSheet.create({
     color: "#9E9E9E",
     fontWeight: "500",
     textAlign: "center"
+  },
+
+  // Loading States
+  loadingHeroContent: {
+    alignItems: "center",
+    padding: 60
   }
 });
 

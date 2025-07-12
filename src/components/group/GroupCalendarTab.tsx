@@ -4,6 +4,7 @@ import { Button } from "react-native-paper";
 import { Calendar, DateData } from "react-native-calendars";
 import { router } from "expo-router";
 import { useAppTheme } from "../../theme";
+import { InlineLoader } from "../common/LoadingComponents";
 
 interface GroupCalendarTabProps {
   groupId: string;
@@ -67,8 +68,8 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({
         </Button>
       )}
       {isLoading ? (
-        <View style={styles.calendarSkeleton}>
-          <View style={[styles.skeletonText, { width: "100%", height: 300, borderRadius: 8 }]} />
+        <View style={styles.calendarContainer}>
+          <InlineLoader size="large" text="Loading calendar..." />
         </View>
       ) : (
         <Calendar
@@ -105,12 +106,5 @@ const styles = StyleSheet.create({
   addEventButton: {
     marginBottom: 16,
     backgroundColor: "#70DC87"
-  },
-  calendarSkeleton: {
-    padding: 16
-  },
-  skeletonText: {
-    backgroundColor: "#E9ECEF",
-    borderRadius: 4
   }
 });

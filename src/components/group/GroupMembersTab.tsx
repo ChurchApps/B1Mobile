@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Text, Card, Avatar, IconButton } from "react-native-paper";
 import { router } from "expo-router";
 import { Constants, EnvironmentHelper } from "../../helpers";
+import { InlineLoader } from "../common/LoadingComponents";
 
 interface GroupMember {
   id: string;
@@ -38,17 +39,7 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({ members, isLoa
   if (isLoading) {
     return (
       <View style={styles.membersContainer}>
-        {[1, 2, 3].map(i => (
-          <Card key={i} style={styles.modernMemberCard}>
-            <Card.Content style={styles.memberCardContent}>
-              <View style={[styles.skeletonCircle, { width: 56, height: 56 }]} />
-              <View style={styles.memberInfo}>
-                <View style={[styles.skeletonText, { width: "70%", height: 16, marginBottom: 4 }]} />
-                <View style={[styles.skeletonText, { width: "50%", height: 12 }]} />
-              </View>
-            </Card.Content>
-          </Card>
-        ))}
+        <InlineLoader size="large" text="Loading members..." />
       </View>
     );
   }
@@ -152,13 +143,5 @@ const styles = StyleSheet.create({
     color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
-  },
-  skeletonText: {
-    backgroundColor: "#E9ECEF",
-    borderRadius: 4
-  },
-  skeletonCircle: {
-    backgroundColor: "#E9ECEF",
-    borderRadius: 50
   }
 });
