@@ -1,11 +1,5 @@
 import { MessageInterface } from "@churchapps/helpers";
 
-export interface ApiConfig {
-  keyName: string;
-  url: string;
-  jwt: string;
-  permisssions: RolePermissionInterface[];
-}
 export type ApiListType = "MembershipApi" | "MessagingApi" | "AttendanceApi" | "ContentApi" | "GivingApi";
 export interface AppearanceInterface {
   primaryColor?: string;
@@ -34,16 +28,6 @@ export interface ApiInterface {
   permissions: RolePermissionInterface[];
   jwt: string;
 }
-export interface ApplicationInterface {
-  name: string;
-  keyName?: string;
-  permissions: RolePermissionInterface[];
-}
-export interface ChurchAppInterface {
-  id?: string;
-  churchId?: string;
-  appName?: string;
-}
 export interface ChurchInterface {
   id?: string;
   name?: string;
@@ -57,16 +41,6 @@ export interface ChurchInterface {
   subDomain?: string;
   settings?: GenericSettingInterface[];
   archivedDate?: Date;
-}
-export interface ForgotResponse {
-  emailed: boolean;
-}
-export interface LoadCreateUserRequestInterface {
-  userEmail: string;
-  fromEmail?: string;
-  subject?: string;
-  body?: string;
-  userName: string;
 }
 export interface LoginResponseInterface {
   user: UserInterface;
@@ -86,12 +60,6 @@ export interface PermissionInterface {
   action?: string;
   displaySection?: string;
   displayAction?: string;
-}
-export interface RegisterInterface {
-  churchName?: string;
-  displayName?: string;
-  email?: string;
-  password?: string;
 }
 export interface RoleInterface {
   id?: string;
@@ -114,23 +82,6 @@ export interface RoleMemberInterface {
   roleId?: string;
   userId?: string;
   user?: UserInterface;
-}
-export interface ResetPasswordRequestInterface {
-  userEmail: string;
-  fromEmail: string;
-  subject: string;
-  body: string;
-}
-export interface ResetPasswordResponseInterface {
-  emailed: boolean;
-}
-export interface SwitchAppRequestInterface {
-  appName: string;
-  churchId: string;
-}
-export interface SwitchAppResponseInterface {
-  appName: string;
-  churchId: string;
 }
 export interface UserInterface {
   id?: string;
@@ -237,29 +188,6 @@ export interface ServiceTimeInterface {
   id?: string;
   name?: string;
   groups?: GroupInterface[];
-}
-export interface SessionInterface {
-  id?: string;
-  groupId?: string;
-  serviceTimeId?: string;
-  sessionDate?: Date;
-  displayName?: string;
-}
-export interface VisitInterface {
-  id?: string;
-  personId?: string;
-  serviceId?: string;
-  groupId?: string;
-  visitDate?: Date;
-  visitSessions?: VisitSessionInterface[];
-  person?: PersonInterface;
-}
-export interface VisitSessionInterface {
-  id?: string;
-  visitId?: string;
-  sessionId?: string;
-  visit?: VisitInterface;
-  session?: SessionInterface;
 }
 export interface IPermission {
   api: string;
