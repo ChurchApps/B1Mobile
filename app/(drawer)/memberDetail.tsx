@@ -7,7 +7,7 @@ import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { Alert, Linking, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Card, Surface, Text, MD3LightTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
-import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { Avatar } from "../../src/components/common/Avatar";
 import { MemberCard } from "../../src/components/MemberCard";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -134,7 +134,7 @@ const MemberDetail = () => {
             <Card style={styles.heroCard}>
               <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
                 <View style={styles.heroContent}>
-                  <OptimizedImage source={parsedMember?.photo ? { uri: EnvironmentHelper.ContentRoot + parsedMember?.photo } : Constants.Images.ic_member} style={styles.heroAvatar} placeholder={Constants.Images.ic_member} priority="high" contentFit="cover" />
+                  <Avatar size={120} photoUrl={parsedMember?.photo} firstName={parsedMember?.name?.display?.split(' ')[0]} lastName={parsedMember?.name?.display?.split(' ').slice(1).join(' ').split(' ')[0]} style={styles.heroAvatar} />
                   <Text variant="headlineMedium" style={styles.heroName}>
                     {parsedMember?.name?.display}
                   </Text>
