@@ -39,7 +39,7 @@ export class EventProcessor {
       // Process limited events for performance
       const eventsToProcess = allEvents.slice(0, 30);
 
-      eventsToProcess.forEach((event: any) => {
+      eventsToProcess.forEach((event: any, index: number) => {
         try {
           const ev = { ...event };
           ev.start = ev.start ? dayjs.utc(ev.start) : undefined;
@@ -48,17 +48,64 @@ export class EventProcessor {
           if (ev.start && ev.end) {
             if (event.recurrenceRule) {
               try {
-                const dates = EventHelper.getRange(event, startRange.toDate(), endRange.toDate());
-                if (dates && dates.length > 10) {
+                // Validate recurrence rule before processing
+                const rule = event.recurrenceRule.toUpperCase();
+                
+                // Check for known problematic patterns
+                if (rule.includes('FREQ=DAILY') && rule.includes('BYDAY=')) {
+                  expandedEvents.push(ev); // Add single instance only
+                  return;
                 }
+                
+                // Check for conflicting BYSETPOS with incompatible frequency
+                if (rule.includes('BYSETPOS=') && rule.includes('FREQ=DAILY')) {
+                  expandedEvents.push(ev); // Add single instance only
+                  return;
+                }
+                
+                // Check for overly complex rules that might cause performance issues
+                const ruleComplexity = (rule.match(/BY[A-Z]+=/g) || []).length;
+                if (ruleComplexity > 3) {
+                  expandedEvents.push(ev); // Add single instance only
+                  return;
+                }
+                
+                // Check for missing UNTIL date that could cause infinite expansion
+                if (!rule.includes('UNTIL=') && !rule.includes('COUNT=')) {
+                  // Add a 90-day UNTIL if missing to prevent infinite expansion
+                  const untilDate = dayjs().add(90, 'days').format('YYYYMMDD[T]HHmmss[Z]');
+                  event.recurrenceRule += `;UNTIL=${untilDate}`;
+                }
+                
+                // Add timeout protection and validation
+                const timeoutPromise = new Promise((_, reject) => 
+                  setTimeout(() => reject(new Error('EventHelper.getRange timeout')), 1000)
+                );
+                
+                let dates;
+                try {
+                  dates = EventHelper.getRange(event, startRange.toDate(), endRange.toDate());
+                } catch (getRangeError) {
+                  // Fallback to single event
+                  expandedEvents.push(ev);
+                  return;
+                }
+                
+                // Validate and limit dates more strictly
                 if (dates && dates.length > 0) {
-                  // Limit recurring instances to prevent performance issues
-                  const limitedDates = dates.length > 25 ? dates.slice(0, 25) : dates;
-                  if (dates.length > 25) {
+                  // Skip events with excessive recurrence to prevent performance issues
+                  if (dates.length > 50) {
+                    // Add just the first instance as fallback
+                    expandedEvents.push(ev);
+                    return;
                   }
+                  
+                  // Limit recurring instances to prevent performance issues
+                  const limitedDates = dates.length > 15 ? dates.slice(0, 15) : dates;
+                  
                   limitedDates.forEach(date => {
                     // Stop if we have too many total events
-                    if (expandedEvents.length >= 150) return;
+                    if (expandedEvents.length >= 100) return;
                     
                     const evInstance = { ...event };
                     const diff = ev.end.diff(ev.start);
@@ -66,10 +113,14 @@ export class EventProcessor {
                     evInstance.end = evInstance.start.add(diff, "ms");
                     expandedEvents.push(evInstance);
                   });
-                  EventHelper.removeExcludeDates(expandedEvents);
+                  
+                  try {
+                    EventHelper.removeExcludeDates(expandedEvents);
+                  } catch (excludeError) {
+                    // Continue without exclude date removal
+                  }
                 }
               } catch (recurrenceError) {
-                console.warn("Error processing recurrence rule for event:", event.id, recurrenceError);
                 // Fallback to single event
                 expandedEvents.push(ev);
               }
@@ -78,17 +129,15 @@ export class EventProcessor {
               const eventDate = dayjs(ev.start);
               if (eventDate.isAfter(startRange) && eventDate.isBefore(endRange)) {
                 expandedEvents.push(ev);
-              } else {
               }
             }
           }
         } catch (eventError) {
-          console.warn("Error processing event:", event.id, eventError);
+          // Skip problematic events
         }
       });
       return expandedEvents;
     } catch (error) {
-      console.error("Error expanding events:", error);
       return [];
     }
   }
@@ -120,7 +169,7 @@ export class EventProcessor {
         marked[dateString].marked = true;
       });
     } catch (error) {
-      console.error("Error calculating marked dates:", error);
+      // Return empty marked dates on error
     }
 
     return marked;

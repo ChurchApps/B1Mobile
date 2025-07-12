@@ -67,33 +67,32 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({
           Add Event
         </Button>
       )}
-      {isLoading ? (
-        <View style={styles.calendarContainer}>
-          <InlineLoader size="large" text="Loading calendar..." />
+      <Calendar
+        current={selected}
+        markingType="multi-dot"
+        markedDates={markedDates}
+        onDayPress={onDayPress}
+        theme={{
+          backgroundColor: theme.colors.surface,
+          calendarBackground: theme.colors.surface,
+          textSectionTitleColor: theme.colors.primary,
+          selectedDayBackgroundColor: theme.colors.primary,
+          selectedDayTextColor: theme.colors.onPrimary,
+          todayTextColor: theme.colors.primary,
+          dayTextColor: theme.colors.onSurface,
+          textDisabledColor: theme.colors.onSurfaceDisabled,
+          arrowColor: theme.colors.primary,
+          monthTextColor: theme.colors.onSurface,
+          indicatorColor: theme.colors.primary,
+          textDayFontWeight: "500",
+          textMonthFontWeight: "600",
+          textDayHeaderFontWeight: "600"
+        }}
+      />
+      {isLoading && (
+        <View style={styles.loadingOverlay}>
+          <InlineLoader size="small" text="Loading events..." />
         </View>
-      ) : (
-        <Calendar
-          current={selected}
-          markingType="multi-dot"
-          markedDates={markedDates}
-          onDayPress={onDayPress}
-          theme={{
-            backgroundColor: theme.colors.surface,
-            calendarBackground: theme.colors.surface,
-            textSectionTitleColor: theme.colors.primary,
-            selectedDayBackgroundColor: theme.colors.primary,
-            selectedDayTextColor: theme.colors.onPrimary,
-            todayTextColor: theme.colors.primary,
-            dayTextColor: theme.colors.onSurface,
-            textDisabledColor: theme.colors.onSurfaceDisabled,
-            arrowColor: theme.colors.primary,
-            monthTextColor: theme.colors.onSurface,
-            indicatorColor: theme.colors.primary,
-            textDayFontWeight: "500",
-            textMonthFontWeight: "600",
-            textDayHeaderFontWeight: "600"
-          }}
-        />
       )}
     </View>
   );
@@ -106,5 +105,12 @@ const styles = StyleSheet.create({
   addEventButton: {
     marginBottom: 16,
     backgroundColor: "#70DC87"
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 80,
+    left: 0,
+    right: 0,
+    alignItems: 'center'
   }
 });

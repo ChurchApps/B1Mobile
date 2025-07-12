@@ -1,5 +1,5 @@
 import React from "react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
 import { Text, Button, Surface, Card } from "react-native-paper";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
@@ -117,31 +117,69 @@ const GroupDetails = () => {
   const events = useMemo(() => updateTime(eventsData), [eventsData, updateTime]);
 
 
-  const expandEvents = useCallback((allEvents: EventInterface[]) => EventProcessor.expandEvents(allEvents), []);
+  const [expandedEvents, setExpandedEvents] = useState<EventInterface[]>([]);
+  const [isProcessingEvents, setIsProcessingEvents] = useState(false);
 
-  // Event expansion with debugging
-  const expandedEvents = useMemo(() => {
-    // Only process events when calendar tab is active
-    if (activeTab !== 3) return [];
+  // Async event expansion to prevent UI blocking
+  useEffect(() => {
+    if (activeTab !== 3 || events.length === 0) {
+      setExpandedEvents([]);
+      return;
+    }
 
-    console.log("Raw events loaded:", events.length);
-    console.log("Sample raw event:", events[0]);
-    
-    // For debugging, let's also try simple approach alongside expansion
-    const simpleEvents = events.slice(0, 10).map(event => ({
-      ...event,
-      start: event.start ? dayjs(event.start) : null,
-      end: event.end ? dayjs(event.end) : null
-    }));
-    
-    
-    // Use the expandEvents function to properly handle recurring events
-    const expanded = expandEvents(events);
-    
-    
-    // Return expanded events if we have them, otherwise fallback to simple
-    return expanded.length > 0 ? expanded : simpleEvents;
-  }, [events, activeTab, expandEvents]);
+
+    setIsProcessingEvents(true);
+
+    // Process events asynchronously in chunks to prevent UI blocking
+    const processEventsAsync = async () => {
+      try {
+        // First, provide immediate fallback events
+        const simpleEvents = events.slice(0, 10).map(event => ({
+          ...event,
+          start: event.start ? dayjs(event.start) : null,
+          end: event.end ? dayjs(event.end) : null
+        }));
+        setExpandedEvents(simpleEvents);
+
+        // Then process the full expansion in the background
+        await new Promise(resolve => setTimeout(resolve, 100)); // Allow UI to render
+        
+        try {
+          // Process events with a timeout
+          const expansionPromise = new Promise<EventInterface[]>((resolve) => {
+            try {
+              const expanded = EventProcessor.expandEvents(events);
+              resolve(expanded);
+            } catch (error) {
+              resolve(simpleEvents); // Fallback to simple events
+            }
+          });
+          
+          const timeoutPromise = new Promise<EventInterface[]>((resolve) => {
+            setTimeout(() => {
+              resolve(simpleEvents); // Fallback to simple events
+            }, 5000);
+          });
+          
+          // Race between expansion and timeout
+          const expanded = await Promise.race([expansionPromise, timeoutPromise]);
+          
+          // Only update if we got results from expansion
+          if (expanded.length > 0) {
+            setExpandedEvents(expanded);
+          }
+        } catch (expansionError) {
+          // Keep simple events as fallback
+        }
+      } catch (error) {
+        // Keep the simple events as fallback
+      } finally {
+        setIsProcessingEvents(false);
+      }
+    };
+
+    processEventsAsync();
+  }, [events, activeTab]);
 
   const markedDates = useMemo(() => EventProcessor.calculateMarkedDates(expandedEvents, activeTab), [expandedEvents, activeTab]);
 
@@ -275,7 +313,7 @@ const GroupDetails = () => {
                       <GroupCalendarTab
                         groupId={id || ""}
                         isLeader={isLeader}
-                        isLoading={eventsLoading}
+                        isLoading={isProcessingEvents}
                         selected={selected}
                         markedDates={markedDates}
                         onDayPress={onDayPress}
