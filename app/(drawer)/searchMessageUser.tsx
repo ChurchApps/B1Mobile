@@ -4,7 +4,8 @@ import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearc
 import { ErrorHelper } from "../../src/mobilehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
-import { Keyboard, TouchableWithoutFeedback, View, Image } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, View } from "react-native";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
@@ -102,7 +103,7 @@ const SearchMessageUser = () => {
       <List.Section>
         {headerView}
         {displayedSearchList.map((item: UserSearchInterface) => (
-          <List.Item key={item.id} title={item.name.display} left={() => (item.photo ? <Image source={{ uri: item.photo }} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} /> : <Image source={Constants.Images.ic_user} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md, tintColor: theme.colors.primary }} />)} onPress={() => userSelection(item)} style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }} titleStyle={{ fontWeight: "500" }} />
+          <List.Item key={item.id} title={item.name.display} left={() => (item.photo ? <OptimizedImage source={{ uri: item.photo }} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} contentFit="cover" /> : <OptimizedImage source={Constants.Images.ic_user} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} tintColor={theme.colors.primary} contentFit="cover" />)} onPress={() => userSelection(item)} style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }} titleStyle={{ fontWeight: "500" }} />
         ))}
       </List.Section>
     </View>

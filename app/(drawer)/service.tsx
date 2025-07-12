@@ -9,7 +9,8 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "../../src/hooks";
 import { useState } from "react";
-import { Image, SafeAreaView, View } from "react-native";
+import { SafeAreaView, View } from "react-native";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { useAppTheme } from "../../src/theme";
 import { useChurchAppearance } from "../../src/stores/useUserStore";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
@@ -38,8 +39,8 @@ const Service = () => {
   };
 
   const getBrand = () => {
-    if (churchAppearance?.logoLight) return <Image source={{ uri: churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} />;
-    else return <Image source={Constants.Images.logoBlue} style={{ width: "100%", height: DimensionHelper.wp(25) }} />;
+    if (churchAppearance?.logoLight) return <OptimizedImage source={{ uri: churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} contentFit="contain" priority="high" />;
+    else return <OptimizedImage source={Constants.Images.logoBlue} style={{ width: "100%", height: DimensionHelper.wp(25) }} contentFit="contain" priority="high" />;
   };
 
   return (
