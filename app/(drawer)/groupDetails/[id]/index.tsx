@@ -2,7 +2,8 @@ import React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, View, TouchableOpacity } from "react-native";
 import { Text, Button, Surface, Avatar, Card, Chip, IconButton } from "react-native-paper";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation } from "../../../../src/hooks";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useLocalSearchParams, router } from "expo-router";
 import { Calendar, DateData } from "react-native-calendars";
@@ -28,7 +29,8 @@ dayjs.extend(timezone);
 
 const GroupDetails = () => {
   const { theme, spacing } = useAppTheme();
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const navigation = useReactNavigation<DrawerNavigationProp<any>>();
+  const { navigateBack } = useNavigation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [activeTab, setActiveTab] = useState(0);
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
@@ -265,7 +267,7 @@ const GroupDetails = () => {
     return (
       <View style={styles.container}>
         <SafeAreaView style={{ flex: 1 }}>
-          <MainHeader title="Loading..." openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+          <MainHeader title="Loading..." openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
 
           <FlatList
             data={[{ key: "skeleton" }]}
@@ -323,7 +325,7 @@ const GroupDetails = () => {
           onPress={() => {
             // Refetch all queries
             if (groupDetailsError) refetchEvents();
-            navigation.goBack();
+            navigateBack();
           }}>
           Go Back
         </Button>
@@ -340,7 +342,7 @@ const GroupDetails = () => {
         <Text variant="bodyMedium" style={{ marginBottom: spacing.lg, textAlign: "center", color: theme.colors.onSurfaceVariant }}>
           The requested group could not be found or you don't have permission to view it.
         </Text>
-        <Button mode="contained" onPress={() => navigation.goBack()}>
+        <Button mode="contained" onPress={() => navigateBack()}>
           Go Back
         </Button>
       </Surface>
@@ -358,7 +360,7 @@ const GroupDetails = () => {
         <Text variant="bodyMedium" style={{ marginBottom: spacing.lg, textAlign: "center", color: theme.colors.onSurfaceVariant }}>
           Please login to view group details.
         </Text>
-        <Button mode="contained" onPress={() => navigation.goBack()}>
+        <Button mode="contained" onPress={() => navigateBack()}>
           Go Back
         </Button>
       </Surface>
@@ -374,7 +376,7 @@ const GroupDetails = () => {
     <LoadingWrapper loading={loading}>
       <View style={styles.container}>
         <SafeAreaView style={{ flex: 1 }}>
-          <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+          <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
 
           <FlatList
             data={[{ key: "content" }]}

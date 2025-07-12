@@ -5,7 +5,8 @@ import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface } fr
 import { MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "../../src/helpers/Interfaces";
 import { eventBus, updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
-import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
+import { useLocalSearchParams, useFocusEffect } from "expo-router";
+import { useNavigation } from "../../src/hooks";
 import { FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform } from "react-native";
 import { useAppTheme } from "../../src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
@@ -37,6 +38,7 @@ const MessageScreen = () => {
   const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
   const details = JSON.parse(userDetails);
   const { theme, spacing } = useAppTheme();
+  const { navigateBack } = useNavigation();
   const [messageText, setMessageText] = useState("");
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
@@ -217,7 +219,7 @@ const MessageScreen = () => {
 
   const MessageHeader = () => (
     <Surface style={{ flexDirection: "row", alignItems: "center", backgroundColor: theme.colors.primary, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, elevation: 4 }}>
-      <IconButton icon="arrow-left" size={28} iconColor="white" onPress={() => router.navigate("/(drawer)/dashboard")} />
+      <IconButton icon="arrow-left" size={28} iconColor="white" onPress={() => navigateBack()} />
       <Text variant="titleLarge" style={{ color: "white", fontWeight: "600", flex: 1 }}>
         Messages
       </Text>

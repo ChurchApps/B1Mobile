@@ -10,8 +10,8 @@ import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useUser, useGroupViewCounts, useIncrementGroupViewCount } from "../../src/stores/useUserStore";
-import { useNavigation } from "@react-navigation/native";
-import { DrawerActions } from "@react-navigation/native";
+import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation } from "../../src/hooks";
 
 const theme = {
   ...MD3LightTheme,
@@ -41,7 +41,8 @@ interface Group {
 
 const MyGroups = () => {
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
-  const navigation = useNavigation();
+  const navigation = useReactNavigation();
+  const { navigateBack, router } = useNavigation();
 
   const user = useUser();
   const groupViewCounts = useGroupViewCounts();
@@ -240,7 +241,7 @@ const MyGroups = () => {
       <SafeAreaProvider>
         <LoadingWrapper loading={loading}>
           <View style={styles.container}>
-            <MainHeader title="My Groups" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
+            <MainHeader title="My Groups" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
             <View style={styles.contentContainer}>
               <FlatList
                 data={mergeData}

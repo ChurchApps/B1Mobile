@@ -2,9 +2,11 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleProp, ViewStyle } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Constants } from "../../helpers";
 import { HeaderBell } from "../wrapper/HeaderBell";
+import { StandardBackButton } from "../navigation/StandardBackButton";
+import { designSystem } from "../../theme/designSystem";
 
 interface HeaderProps {
   variant?: "blue" | "white" | "simple" | "transparent";
@@ -36,11 +38,11 @@ export const Header: React.FC<HeaderProps> = ({
 
   const getBackgroundColor = () => {
     switch (variant) {
-      case "blue": return Constants.Colors.primary;
+      case "blue": return Constants.Colors.app_color;
       case "white": return "#ffffff";
       case "simple": return "#ffffff";
       case "transparent": return "transparent";
-      default: return Constants.Colors.primary;
+      default: return Constants.Colors.app_color;
     }
   };
 
@@ -55,9 +57,8 @@ export const Header: React.FC<HeaderProps> = ({
   const handleBackPress = () => {
     if (onBackPress) {
       onBackPress();
-    } else if (router.canGoBack()) {
-      router.back();
     }
+    // StandardBackButton will handle the navigation logic
   };
 
   const handleMenuPress = () => {
@@ -89,9 +90,12 @@ export const Header: React.FC<HeaderProps> = ({
     >
       <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
         {showBack && (
-          <TouchableOpacity onPress={handleBackPress} style={{ marginRight: 12 }}>
-            <AntDesign name="arrowleft" size={24} color={getIconColor()} />
-          </TouchableOpacity>
+          <StandardBackButton
+            color={getIconColor()}
+            size={24}
+            onCustomBack={onBackPress}
+            style={{ marginRight: designSystem.spacing.sm }}
+          />
         )}
         
         {showMenu && (
@@ -104,8 +108,8 @@ export const Header: React.FC<HeaderProps> = ({
           <Image
             source={
               variant === "blue" || variant === "transparent"
-                ? Constants.Images.B1Logo_White
-                : Constants.Images.B1Logo_Black
+                ? Constants.Images.logoWhite
+                : Constants.Images.logoBlue
             }
             style={{ width: 40, height: 40 }}
             resizeMode="contain"

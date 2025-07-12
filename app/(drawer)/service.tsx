@@ -6,8 +6,8 @@ import { CheckinServices } from "../../src/components/checkin/CheckinServices";
 import { CheckinHelper, Constants, PersonInterface, ServiceTimeInterface } from "../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
-import { router } from "expo-router";
+import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation } from "../../src/hooks";
 import { useState } from "react";
 import { Image, SafeAreaView, View } from "react-native";
 import { useAppTheme } from "../../src/theme";
@@ -16,7 +16,8 @@ import { MainHeader } from "../../src/components/wrapper/MainHeader";
 
 const Service = () => {
   const { theme, spacing } = useAppTheme();
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const navigation = useReactNavigation<DrawerNavigationProp<any>>();
+  const { navigateBack } = useNavigation();
   const [step, setStep] = useState("Services");
   const [groupMember, setGroupMember] = useState<PersonInterface>();
   const [groupTime, setGroupTime] = useState<ServiceTimeInterface>();
@@ -33,7 +34,7 @@ const Service = () => {
     setGroupMember(undefined);
     setGroupTime(undefined);
     setStep("Services");
-    router.navigate("/(drawer)/dashboard");
+    navigateBack();
   };
 
   const getBrand = () => {
@@ -43,7 +44,7 @@ const Service = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
-      <MainHeader title="Checkin" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
+      <MainHeader title="Checkin" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           {step === "Services" && <CheckinServices onDone={() => setStep("Household")} />}

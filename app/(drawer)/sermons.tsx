@@ -3,9 +3,9 @@ import { ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Provider as PaperProvider, Text, MD3LightTheme, Card, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { router } from "expo-router";
+import { useNavigation } from "../../src/hooks";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -39,7 +39,8 @@ const theme = {
 };
 
 const Sermons = () => {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const navigation = useReactNavigation<DrawerNavigationProp<any>>();
+  const { navigateBack, router } = useNavigation();
   const [activeSection, setActiveSection] = useState<"playlists" | "recent">("playlists");
   const currentChurch = useCurrentChurch();
 
@@ -407,7 +408,7 @@ const Sermons = () => {
     return (
       <PaperProvider theme={theme}>
         <SafeAreaView style={styles.container}>
-          <MainHeader title="Sermons" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
+          <MainHeader title="Sermons" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
           <View style={styles.errorContainer}>
             <MaterialIcons name="error-outline" size={48} color="#B0120C" />
             <Text variant="titleMedium" style={styles.errorTitle}>
@@ -421,7 +422,7 @@ const Sermons = () => {
                 Church ID: {currentChurch?.id || "Not set"}
               </Text>
             )}
-            <Button mode="contained" onPress={() => router.navigate("/(drawer)/dashboard")} style={styles.errorButton}>
+            <Button mode="contained" onPress={() => navigateBack()} style={styles.errorButton}>
               Go Back
             </Button>
           </View>
@@ -435,7 +436,7 @@ const Sermons = () => {
       <SafeAreaView style={styles.container}>
         <LoadingWrapper loading={isLoading}>
           <View style={styles.content}>
-            <MainHeader title="Sermons" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
+            <MainHeader title="Sermons" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
             {/* Tab Navigation */}
             <View style={styles.tabContainer}>

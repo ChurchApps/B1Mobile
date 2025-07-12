@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { Constants } from "../helpers";
+import { designSystem } from "./designSystem";
 
 export const CommonStyles = StyleSheet.create({
   // Container styles
@@ -11,21 +11,17 @@ export const CommonStyles = StyleSheet.create({
   containerWithPadding: {
     flex: 1,
     backgroundColor: "#ffffff",
-    padding: 16
+    padding: designSystem.spacing.md
   },
 
   // Card styles
   card: {
     backgroundColor: "#ffffff",
-    borderRadius: 8,
-    padding: 16,
-    marginHorizontal: 16,
-    marginVertical: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
+    borderRadius: designSystem.borderRadius.md,
+    padding: designSystem.spacing.md,
+    marginHorizontal: designSystem.spacing.md,
+    marginVertical: designSystem.spacing.sm,
+    ...designSystem.shadows.md
   },
 
   // Text styles

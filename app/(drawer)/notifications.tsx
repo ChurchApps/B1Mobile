@@ -1,8 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { DrawerActions } from "@react-navigation/native";
-import { router } from "expo-router";
+import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation } from "../../src/hooks";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { NotificationTab } from "../../src/components/NotificationView";
@@ -10,7 +9,8 @@ import { UserHelper } from "../../src/helpers";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 
 const Notifications = () => {
-  const navigation = useNavigation();
+  const navigation = useReactNavigation();
+  const { navigateBack } = useNavigation();
 
   React.useEffect(() => {
     UserHelper.addOpenScreenEvent("Notifications");
@@ -25,7 +25,7 @@ const Notifications = () => {
   };
 
   const handleBack = () => {
-    router.navigate("/(drawer)/dashboard");
+    navigateBack();
   };
 
   return (

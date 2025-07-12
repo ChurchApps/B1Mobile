@@ -20,7 +20,17 @@ if (Platform.OS === "android") {
 EnvironmentHelper.init();
 
 const SplashScreen = () => {
+  const [isInitialized, setIsInitialized] = React.useState(false);
+  
   const init = async () => {
+    // Prevent multiple initializations
+    if (isInitialized) {
+      console.log("Splash screen already initialized, skipping...");
+      return;
+    }
+    
+    setIsInitialized(true);
+    
     // Load JWT tokens from secure storage if they exist
     await UserHelper.loadSecureTokens();
 

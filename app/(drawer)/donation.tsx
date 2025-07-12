@@ -6,7 +6,7 @@ import { UserHelper, CurrencyHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/mobilehelper";
 import { StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useIsFocused, useNavigation, DrawerActions } from "@react-navigation/native";
+import { useIsFocused, useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { initStripe } from "@stripe/stripe-react-native";
 import { useEffect, useState, useMemo } from "react";
 import { Alert, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { router } from "expo-router";
+import { useNavigation } from "../../src/hooks";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -42,7 +42,8 @@ const theme = {
 };
 
 const Donation = () => {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const navigation = useReactNavigation<DrawerNavigationProp<any>>();
+  const { navigateBack } = useNavigation();
   const [customerId, setCustomerId] = useState<string>("");
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([]);
   const [publishKey, setPublishKey] = useState<string>("");
@@ -227,7 +228,7 @@ const Donation = () => {
       <SafeAreaView style={styles.container}>
         <LoadingWrapper loading={areMethodsLoading}>
           <View style={styles.content}>
-            <MainHeader title="Giving" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.navigate("/(drawer)/dashboard")} />
+            <MainHeader title="Giving" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
             {/* Tab Navigation */}
             <View style={styles.tabContainer}>
