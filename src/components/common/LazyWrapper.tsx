@@ -1,40 +1,43 @@
 import React, { Suspense } from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { Text } from 'react-native-paper';
-import { useAppTheme } from '@/theme';
+import { 
+  SkeletonCard, 
+  SkeletonDonationForm, 
+  SkeletonGivingHistory, 
+  SkeletonPlanItem,
+  SkeletonSermonCard,
+  SkeletonList 
+} from './SkeletonLoader';
 
 interface LazyWrapperProps {
   children: React.ReactNode;
-  fallbackText?: string;
+  skeletonType?: 'card' | 'donation' | 'giving' | 'plan' | 'sermon' | 'list';
+  skeletonCount?: number;
 }
 
 export const LazyWrapper: React.FC<LazyWrapperProps> = ({ 
   children, 
-  fallbackText = "Loading..." 
+  skeletonType = 'card',
+  skeletonCount = 3
 }) => {
-  const theme = useAppTheme();
-
-  const LoadingFallback = () => (
-    <View style={{
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: theme.colors.background,
-      padding: 20
-    }}>
-      <ActivityIndicator size="large" color={theme.colors.primary} />
-      <Text style={{ 
-        marginTop: 16, 
-        color: theme.colors.onSurface,
-        fontSize: 16 
-      }}>
-        {fallbackText}
-      </Text>
-    </View>
-  );
+  const getSkeletonFallback = () => {
+    switch (skeletonType) {
+      case 'donation':
+        return <SkeletonDonationForm />;
+      case 'giving':
+        return <SkeletonGivingHistory />;
+      case 'plan':
+        return <SkeletonPlanItem />;
+      case 'sermon':
+        return <SkeletonSermonCard />;
+      case 'list':
+        return <SkeletonList count={skeletonCount} />;
+      default:
+        return <SkeletonCard />;
+    }
+  };
 
   return (
-    <Suspense fallback={<LoadingFallback />}>
+    <Suspense fallback={getSkeletonFallback()}>
       {children}
     </Suspense>
   );

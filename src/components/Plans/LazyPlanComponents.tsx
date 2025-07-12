@@ -22,19 +22,19 @@ const LazyUpcomingDates = lazy(() =>
 
 // Wrapper components with lazy loading
 export const BlockoutDates: React.FC<any> = (props) => (
-  <LazyWrapper fallbackText="Loading blockout dates...">
+  <LazyWrapper skeletonType="plan">
     <LazyBlockoutDates {...props} />
   </LazyWrapper>
 );
 
 export const ServingTimes: React.FC<any> = (props) => (
-  <LazyWrapper fallbackText="Loading serving times...">
+  <LazyWrapper skeletonType="list" skeletonCount={4}>
     <LazyServingTimes {...props} />
   </LazyWrapper>
 );
 
 export const UpcomingDates: React.FC<any> = (props) => (
-  <LazyWrapper fallbackText="Loading upcoming dates...">
+  <LazyWrapper skeletonType="plan">
     <LazyUpcomingDates {...props} />
   </LazyWrapper>
 );

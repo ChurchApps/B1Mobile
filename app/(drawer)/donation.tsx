@@ -16,6 +16,7 @@ import { Alert, ScrollView, View, StyleSheet, TouchableOpacity } from "react-nat
 import { Provider as PaperProvider, Text, MD3LightTheme, Card, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
+import { useDonationFunds } from "../../src/hooks/useStaleWhileRevalidate";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useNavigation } from "../../src/hooks";
@@ -54,6 +55,13 @@ const Donation = () => {
   const isFocused = useIsFocused();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
+
+  // Example of stale-while-revalidate for donation funds
+  const { 
+    data: fundsData, 
+    showSkeleton: showFundsSkeleton, 
+    isRevalidating: fundsRevalidating 
+  } = useDonationFunds(currentUserChurch?.church?.id || '');
 
   // Use react-query for gateway data
   const {

@@ -92,7 +92,7 @@ const restoreCache = async (queryClient: QueryClient) => {
   }
 };
 
-// Create the query client
+// Create the query client with stale-while-revalidate strategy
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -100,13 +100,20 @@ export const queryClient = new QueryClient({
         const [path, apiListType] = queryKey;
         return ApiHelper.get(path as string, apiListType as string);
       },
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes (was cacheTime in v4)
+      // Stale-while-revalidate configuration
+      staleTime: 0, // All data is immediately stale and will revalidate
+      gcTime: 30 * 60 * 1000, // Keep data in cache for 30 minutes
       retry: 3,
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
       networkMode: "offlineFirst", // Use cache first, then network
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: true
+      refetchOnWindowFocus: true, // Revalidate when window gets focus
+      refetchOnReconnect: true, // Revalidate when network reconnects
+      refetchOnMount: "always", // Always revalidate on component mount
+      // Enable background refetching
+      refetchInterval: false, // Don't use time-based polling
+      refetchIntervalInBackground: false,
+      // Ensure queries are considered stale immediately for better UX
+      structuralSharing: true, // Prevent unnecessary re-renders
     },
     mutations: {
       networkMode: "offlineFirst",
