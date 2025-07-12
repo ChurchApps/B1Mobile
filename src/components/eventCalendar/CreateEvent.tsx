@@ -404,25 +404,27 @@ export default function CreateEvent(props: Props) {
         )}
       </ScrollView>
 
-      {/* Fixed Bottom Actions */}
-      <View style={styles.bottomActions}>
-        <Button
-          mode="outlined"
-          onPress={() => props.onDone?.()}
-          style={styles.actionButton}
-        >
-          Cancel
-        </Button>
-        <Button
-          mode="contained"
-          onPress={event?.id ? handleEditEvent : handleSave}
-          loading={loading}
-          disabled={!title.trim() || loading}
-          style={styles.actionButton}
-        >
-          {event?.id ? "Save Changes" : "Create Event"}
-        </Button>
-      </View>
+      {/* Fixed Bottom Actions - Hide when recurring edit modal is open */}
+      {!showEventEditModal && (
+        <View style={styles.bottomActions}>
+          <Button
+            mode="outlined"
+            onPress={() => props.onDone?.()}
+            style={styles.actionButton}
+          >
+            Cancel
+          </Button>
+          <Button
+            mode="contained"
+            onPress={event?.id ? handleEditEvent : handleSave}
+            loading={loading}
+            disabled={!title.trim() || loading}
+            style={styles.actionButton}
+          >
+            {event?.id ? "Save Changes" : "Create Event"}
+          </Button>
+        </View>
+      )}
 
       {/* Date Pickers */}
       <DatePicker

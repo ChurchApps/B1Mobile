@@ -699,11 +699,32 @@ const GroupDetails = () => {
                         <Text variant="titleMedium" style={styles.eventTitle}>
                           {event.title}
                         </Text>
-                        {event.visibility === "private" && (
-                          <Chip compact icon="lock" style={styles.privateChip}>
-                            Private
-                          </Chip>
-                        )}
+                        <View style={styles.eventHeaderActions}>
+                          {event.visibility === "private" && (
+                            <Chip compact icon="lock" style={styles.privateChip}>
+                              Private
+                            </Chip>
+                          )}
+                          {isLeader && (
+                            <IconButton
+                              icon="pencil"
+                              size={20}
+                              iconColor="#0D47A1"
+                              onPress={() => {
+                                setShowEventModal(false);
+                                router.navigate({
+                                  pathname: "/(drawer)/createEvent",
+                                  params: { 
+                                    event: JSON.stringify(event),
+                                    groupId: id
+                                  }
+                                });
+                              }}
+                              style={styles.editEventButton}
+                              mode="contained-tonal"
+                            />
+                          )}
+                        </View>
                       </View>
                       
                       {event.description && (
@@ -1055,6 +1076,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     flex: 1,
     marginRight: 8
+  },
+  eventHeaderActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8
+  },
+  editEventButton: {
+    margin: 0
   },
   privateChip: {
     backgroundColor: "#FFF3E0",
