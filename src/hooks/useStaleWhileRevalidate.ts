@@ -1,6 +1,13 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { ApiHelper } from '@/helpers';
 
+// Cache strategy: Immediate stale + 30-day retention
+// - Data is immediately considered stale (staleTime: 0)
+// - Fresh data fetches in background on every access
+// - But cached data persists for 30 days for snappy app reopening
+// - Users see old data instantly, then get fresh data seamlessly
+const LONG_TERM_CACHE_TIME = 30 * 24 * 60 * 60 * 1000; // 30 days
+
 interface StaleWhileRevalidateOptions<T> extends Omit<UseQueryOptions<T>, 'queryKey' | 'queryFn'> {
   queryKey: any[];
   apiEndpoint: string;
@@ -32,8 +39,8 @@ export function useStaleWhileRevalidate<T = any>({
     refetchOnMount: 'always',
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    // Keep cached data longer since we're always revalidating
-    gcTime: 30 * 60 * 1000, // 30 minutes
+    // Keep cached data for 30 days for snappy app reopening
+    gcTime: LONG_TERM_CACHE_TIME,
     ...options,
   });
 
@@ -50,11 +57,14 @@ export function useStaleWhileRevalidate<T = any>({
 
 // Specialized hooks for common use cases
 
+// Specialized hooks with immediate staleness but long-term caching
+// All data is considered immediately stale but cached for 30 days
+
 export function useChurchData(churchId: string) {
   return useStaleWhileRevalidate({
     queryKey: ['church', churchId],
     apiEndpoint: `/churches/${churchId}`,
-    customStaleTime: 10 * 60 * 1000, // Church data can be stale for 10 minutes
+    // No custom stale time - use immediate staleness
   });
 }
 
@@ -62,7 +72,7 @@ export function useChurchAppearance(churchId: string) {
   return useStaleWhileRevalidate({
     queryKey: ['appearance', churchId],
     apiEndpoint: `/settings/public/${churchId}`,
-    customStaleTime: 15 * 60 * 1000, // Appearance changes less frequently
+    // No custom stale time - use immediate staleness
   });
 }
 
@@ -70,7 +80,7 @@ export function useUserData() {
   return useStaleWhileRevalidate({
     queryKey: ['user'],
     apiEndpoint: '/users/current',
-    customStaleTime: 5 * 60 * 1000, // User data should be fresh
+    // No custom stale time - use immediate staleness
   });
 }
 
@@ -78,7 +88,7 @@ export function useGroups() {
   return useStaleWhileRevalidate({
     queryKey: ['groups'],
     apiEndpoint: '/groups',
-    customStaleTime: 0, // Always fresh groups data
+    // No custom stale time - use immediate staleness
   });
 }
 
@@ -87,7 +97,7 @@ export function usePlans() {
     queryKey: ['plans'],
     apiEndpoint: '/plans',
     apiType: 'DoingApi',
-    customStaleTime: 2 * 60 * 1000, // Plans should be relatively fresh
+    // No custom stale time - use immediate staleness
   });
 }
 
@@ -96,7 +106,7 @@ export function useSermons(churchId: string) {
     queryKey: ['sermons', churchId],
     apiEndpoint: `/playlists/public/${churchId}`,
     apiType: 'ContentApi',
-    customStaleTime: 5 * 60 * 1000, // Sermons can be stale for 5 minutes
+    // No custom stale time - use immediate staleness
   });
 }
 
@@ -105,6 +115,6 @@ export function useDonationFunds(churchId: string) {
     queryKey: ['funds', churchId],
     apiEndpoint: `/funds/churchId/${churchId}`,
     apiType: 'GivingApi',
-    customStaleTime: 15 * 60 * 1000, // Funds don't change often
+    // No custom stale time - use immediate staleness
   });
 }

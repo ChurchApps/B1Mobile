@@ -150,19 +150,23 @@ import { globalStyles } from "@/helpers/GlobalStyles";
 export const SkeletonCard: React.FC = () => { /* ... */ };
 export const SkeletonDonationForm: React.FC = () => { /* ... */ };
 
-// Stale-while-revalidate configuration
+// Optimized cache strategy: immediate stale + 30-day retention
+const LONG_TERM_CACHE_TIME = 30 * 24 * 60 * 60 * 1000; // 30 days
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 0, // All data immediately stale
+      staleTime: 0, // All data immediately stale - always revalidate
+      gcTime: LONG_TERM_CACHE_TIME, // 30-day cache retention for snappy reopening
       refetchOnMount: "always",
       refetchOnWindowFocus: true,
       refetchOnReconnect: true,
+      networkMode: "offlineFirst", // Show cached data instantly
     }
   }
 });
 ```
-**Status**: ✅ Implemented comprehensive skeleton loading system and configured React Query for optimal stale-while-revalidate caching
+**Status**: ✅ Implemented skeleton loading + optimized cache strategy (immediate stale, 30-day retention) for instant app reopening even after weeks
 
 #### 8. **Implement Screen-Level Caching**
 ```typescript

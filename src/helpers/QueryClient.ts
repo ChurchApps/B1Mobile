@@ -6,6 +6,9 @@ import { ApiHelper } from "../mobilehelper";
 const CACHE_KEY = "REACT_QUERY_CACHE";
 const CACHE_VERSION = "1.0";
 
+// Long-term cache strategy: 30 days retention
+const LONG_TERM_CACHE_TIME = 30 * 24 * 60 * 60 * 1000; // 30 days
+
 // Critical queries that should be persisted more frequently
 const CRITICAL_QUERIES = ['/churches', '/user', '/appearance', '/settings/public'];
 
@@ -63,8 +66,7 @@ const restoreCache = async (queryClient: QueryClient) => {
     const cacheData = JSON.parse(cached);
 
     // Check cache version and age (don't restore if older than 30 days)
-    const MAX_CACHE_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
-    if (cacheData.version !== CACHE_VERSION || Date.now() - cacheData.timestamp > MAX_CACHE_AGE) {
+    if (cacheData.version !== CACHE_VERSION || Date.now() - cacheData.timestamp > LONG_TERM_CACHE_TIME) {
       await AsyncStorage.removeItem(CACHE_KEY);
       return;
     }
@@ -100,9 +102,9 @@ export const queryClient = new QueryClient({
         const [path, apiListType] = queryKey;
         return ApiHelper.get(path as string, apiListType as string);
       },
-      // Stale-while-revalidate configuration
+      // Stale-while-revalidate configuration with long-term cache retention
       staleTime: 0, // All data is immediately stale and will revalidate
-      gcTime: 30 * 60 * 1000, // Keep data in cache for 30 minutes
+      gcTime: LONG_TERM_CACHE_TIME, // Keep data in cache for 30 days for snappy app reopening
       retry: 3,
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
       networkMode: "offlineFirst", // Use cache first, then network
