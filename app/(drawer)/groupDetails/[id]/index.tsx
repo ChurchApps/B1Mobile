@@ -1,7 +1,7 @@
 import React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, View, TouchableOpacity } from "react-native";
-import { Text, Button, Surface, Avatar, Card, Chip, IconButton } from "react-native-paper";
+import { Text, Button, Surface, Avatar, Card, Chip, IconButton, Divider } from "react-native-paper";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "../../../../src/hooks";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -12,6 +12,7 @@ import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useQuery } from "@tanstack/react-query";
+import { MaterialIcons } from "@expo/vector-icons";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { EventInterface } from "../../../../src/mobilehelper";
 import { Constants, EnvironmentHelper } from "../../../../src/helpers";
@@ -30,9 +31,27 @@ const GroupDetails = () => {
   const { theme, spacing } = useAppTheme();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack } = useNavigation();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState(0);
-  const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
+  const { id, activeTab: initialActiveTab } = useLocalSearchParams<{ id: string; activeTab?: string }>();
+  const [activeTab, setActiveTab] = useState(initialActiveTab ? parseInt(initialActiveTab) : 0);
+  // Find the most recent event date for initial calendar view
+  const getInitialCalendarDate = () => {
+    if (!eventsData || eventsData.length === 0) {
+      return dayjs().format("YYYY-MM-DD"); // Default to today if no events
+    }
+    
+    // Find the most recent event
+    const sortedEvents = eventsData
+      .filter(event => event.start)
+      .sort((a, b) => dayjs(b.start).valueOf() - dayjs(a.start).valueOf());
+    
+    if (sortedEvents.length > 0) {
+      return dayjs(sortedEvents[0].start).format("YYYY-MM-DD");
+    }
+    
+    return dayjs().format("YYYY-MM-DD");
+  };
+
+  const [selected, setSelected] = useState(getInitialCalendarDate());
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<any>(null);
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
@@ -43,8 +62,20 @@ const GroupDetails = () => {
   useFocusEffect(
     React.useCallback(() => {
       refetchEvents();
-    }, [refetchEvents])
+      // If we came back with an activeTab parameter, set it
+      if (initialActiveTab) {
+        setActiveTab(parseInt(initialActiveTab));
+      }
+    }, [refetchEvents, initialActiveTab])
   );
+
+  // Update calendar view when events are loaded
+  React.useEffect(() => {
+    if (eventsData && eventsData.length > 0 && activeTab === 3) {
+      const newDate = getInitialCalendarDate();
+      setSelected(newDate);
+    }
+  }, [eventsData, activeTab]);
 
   // Use react-query for group details
   const {
@@ -98,6 +129,19 @@ const GroupDetails = () => {
     retryDelay: 1000
   });
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log("Events query state:", {
+      activeTab,
+      enabled: !!id && !!currentUserChurch?.jwt && activeTab === 3,
+      eventsLoading,
+      eventsData: eventsData?.length,
+      eventsError,
+      id,
+      hasJWT: !!currentUserChurch?.jwt
+    });
+  }, [activeTab, id, currentUserChurch?.jwt, eventsLoading, eventsData, eventsError]);
+
   // Only block on essential data for initial render
   const loading = groupDetailsLoading;
   const hasError = groupDetailsIsError || groupMembersIsError || eventsIsError;
@@ -135,8 +179,8 @@ const GroupDetails = () => {
 
     try {
       const expandedEvents: EventInterface[] = [];
-      const startRange = dayjs().subtract(1, "year");
-      const endRange = dayjs().add(1, "year");
+      const startRange = dayjs().subtract(3, "months");
+      const endRange = dayjs().add(6, "months");
 
       allEvents.forEach((event: any) => {
         try {
@@ -149,7 +193,9 @@ const GroupDetails = () => {
               try {
                 const dates = EventHelper.getRange(event, startRange.toDate(), endRange.toDate());
                 if (dates && dates.length > 0) {
-                  dates.forEach(date => {
+                  // Limit recurring instances to prevent performance issues
+                  const limitedDates = dates.length > 200 ? dates.slice(0, 200) : dates;
+                  limitedDates.forEach(date => {
                     const evInstance = { ...event };
                     const diff = ev.end.diff(ev.start);
                     evInstance.start = dayjs(date);
@@ -178,61 +224,60 @@ const GroupDetails = () => {
     }
   }, []);
 
-  // Optimize event expansion with lazy computation
+  // Simplified event loading - temporarily disable expansion
   const expandedEvents = useMemo(() => {
-    // Only expand events when calendar tab is active
+    // Only process events when calendar tab is active
     if (activeTab !== 3) return [];
 
-    // Limit processing for performance
-    if (events.length > 50) {
-      console.warn("Large number of events detected, limiting expansion for performance");
-      return events.slice(0, 25); // Limit to first 25 events for better performance
-    }
-    return expandEvents(events);
-  }, [events, expandEvents, activeTab]);
+    console.log("Raw events loaded:", events.length);
+    
+    // For now, just return the raw events without expansion
+    // This will help us debug if the basic events are loading
+    const simpleEvents = events.map(event => ({
+      ...event,
+      start: event.start ? dayjs(event.start) : null,
+      end: event.end ? dayjs(event.end) : null
+    }));
+    
+    console.log("Processed simple events:", simpleEvents.length);
+    return simpleEvents;
+  }, [events, activeTab]);
 
   // Optimize marked dates calculation with better performance
   const markedDates = useMemo(() => {
     // Only calculate when calendar tab is active and events are loaded
-    if (activeTab !== 3 || !expandedEvents || expandedEvents.length === 0) return {};
-
-    const marked: any = {};
-    const maxEventsToProcess = 20; // Limit for performance
-    const eventsToProcess = expandedEvents.slice(0, maxEventsToProcess);
-
-    try {
-      eventsToProcess.forEach(event => {
-        if (!event.start || !event.end) return;
-
-        try {
-          let currentDate = dayjs(event.start);
-          const endDate = dayjs(event.end);
-          let iterations = 0;
-          const maxIterations = 30; // Reduced max iterations for better performance
-
-          while ((currentDate.isBefore(endDate) || currentDate.isSame(endDate, "day")) && iterations < maxIterations) {
-            const dateString = currentDate.format("YYYY-MM-DD");
-
-            marked[dateString] = {
-              ...marked[dateString],
-              dots: [...(marked[dateString]?.dots || []), { color: "#0D47A1" }],
-              events: [...(marked[dateString]?.events || []), event],
-              marked: true,
-              textColor: "black",
-              selected: true
-            };
-
-            currentDate = currentDate.add(1, "day");
-            iterations++;
-          }
-        } catch (dateError) {
-          console.warn("Error marking dates for event:", event.id, dateError);
-        }
-      });
-    } catch (error) {
-      console.error("Error creating marked dates:", error);
+    if (activeTab !== 3 || !expandedEvents || expandedEvents.length === 0) {
+      console.log("MarkedDates: Not calculating - activeTab:", activeTab, "events:", expandedEvents?.length);
+      return {};
     }
 
+    console.log("MarkedDates: Calculating for", expandedEvents.length, "events");
+    const marked: any = {};
+
+    try {
+      // Mark all events, but limit to prevent performance issues
+      expandedEvents.slice(0, 50).forEach(event => {
+        if (!event.start) return;
+
+        const dateString = dayjs(event.start).format("YYYY-MM-DD");
+        console.log("Marking date:", dateString, "for event:", event.title);
+
+        if (!marked[dateString]) {
+          marked[dateString] = {
+            dots: [],
+            events: []
+          };
+        }
+
+        marked[dateString].dots.push({ color: "#0D47A1" });
+        marked[dateString].events.push(event);
+        marked[dateString].marked = true;
+      });
+    } catch (error) {
+      console.error("Error calculating marked dates:", error);
+    }
+
+    console.log("MarkedDates: Final marked dates:", Object.keys(marked).length);
     return marked;
   }, [expandedEvents, activeTab]);
 
@@ -571,7 +616,10 @@ const GroupDetails = () => {
                               };
                               router.navigate({
                                 pathname: "/(drawer)/createEvent",
-                                params: { event: JSON.stringify(newEvent) }
+                                params: { 
+                                  event: JSON.stringify(newEvent),
+                                  groupId: id
+                                }
                               });
                             }}
                             style={styles.addEventButton}>
@@ -621,13 +669,68 @@ const GroupDetails = () => {
 
       {showEventModal && (
         <EventModal isVisible={showEventModal} close={() => setShowEventModal(false)}>
-          {selectedEvents &&
-            selectedEvents.map((event: EventInterface) => (
-              <View key={event.id}>
-                <Text variant="titleMedium">{event.title}</Text>
-                <Text variant="bodyMedium">{event.description}</Text>
-              </View>
-            ))}
+          <View style={styles.eventModalContent}>
+            <View style={styles.eventModalHeader}>
+              <Text variant="headlineSmall" style={styles.eventModalTitle}>
+                {dayjs(selected).format("MMMM D, YYYY")} Events
+              </Text>
+              <IconButton
+                icon="close"
+                size={24}
+                onPress={() => setShowEventModal(false)}
+                style={styles.eventModalClose}
+              />
+            </View>
+            
+            <Divider style={styles.eventModalDivider} />
+            
+            <View style={styles.eventsContainer}>
+              {selectedEvents &&
+                selectedEvents.map((event: EventInterface, index: number) => (
+                  <Card key={event.id || index} style={styles.eventCard}>
+                    <Card.Content style={styles.eventCardContent}>
+                      <View style={styles.eventHeader}>
+                        <Text variant="titleMedium" style={styles.eventTitle}>
+                          {event.title}
+                        </Text>
+                        {event.visibility === "private" && (
+                          <Chip compact icon="lock" style={styles.privateChip}>
+                            Private
+                          </Chip>
+                        )}
+                      </View>
+                      
+                      {event.description && (
+                        <Text variant="bodyMedium" style={styles.eventDescription}>
+                          {event.description}
+                        </Text>
+                      )}
+                      
+                      <View style={styles.eventDetails}>
+                        <View style={styles.eventTime}>
+                          <MaterialIcons name="access-time" size={16} color="#666" />
+                          <Text variant="bodySmall" style={styles.eventTimeText}>
+                            {event.allDay 
+                              ? "All day" 
+                              : `${dayjs(event.start).format("h:mm A")} - ${dayjs(event.end).format("h:mm A")}`
+                            }
+                          </Text>
+                        </View>
+                        
+                        {event.recurrenceRule && (
+                          <View style={styles.eventRecurrence}>
+                            <MaterialIcons name="repeat" size={16} color="#666" />
+                            <Text variant="bodySmall" style={styles.eventRecurrenceText}>
+                              Recurring
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    </Card.Content>
+                  </Card>
+                ))}
+            </View>
+          </View>
         </EventModal>
       )}
 
@@ -890,6 +993,94 @@ const styles = StyleSheet.create({
   noMemberText: {
     textAlign: "center",
     marginTop: 10
+  },
+  
+  // Event Modal Styles
+  eventModalContent: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    padding: 0,
+    maxHeight: "80%",
+    minWidth: "90%"
+  },
+  eventModalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 16
+  },
+  eventModalTitle: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    flex: 1
+  },
+  eventModalClose: {
+    margin: 0
+  },
+  eventModalDivider: {
+    marginBottom: 8
+  },
+  eventsContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 16
+  },
+  eventCard: {
+    marginBottom: 12,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4
+  },
+  eventCardContent: {
+    padding: 16
+  },
+  eventHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8
+  },
+  eventTitle: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    flex: 1,
+    marginRight: 8
+  },
+  privateChip: {
+    backgroundColor: "#FFF3E0",
+    borderColor: "#FF9800"
+  },
+  eventDescription: {
+    color: "#666",
+    marginBottom: 12,
+    lineHeight: 20
+  },
+  eventDetails: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16
+  },
+  eventTime: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4
+  },
+  eventTimeText: {
+    color: "#666",
+    fontSize: 12
+  },
+  eventRecurrence: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4
+  },
+  eventRecurrenceText: {
+    color: "#666",
+    fontSize: 12
   }
 });
 
