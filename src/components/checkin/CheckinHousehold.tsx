@@ -1,4 +1,6 @@
-import { ApiHelper, CheckinHelper, PersonInterface, ServiceTimeInterface } from "../../../src/helpers";
+import { ApiHelper } from "@/helpers/index";
+import { CheckinHelper } from "@/helpers/CheckinHelper";
+import { PersonInterface, ServiceTimeInterface } from "@/helpers/Interfaces";
 import { ErrorHelper } from "../../mobilehelper";
 import React, { useState } from "react";
 import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";

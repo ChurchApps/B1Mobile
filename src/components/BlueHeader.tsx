@@ -1,4 +1,5 @@
-import { Constants, globalStyles } from "../../src/helpers";
+import { Constants } from "@/helpers/Constants";
+import { globalStyles } from "@/helpers/GlobalStyles";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import Icon from "@expo/vector-icons/Fontisto";
 import { router } from "expo-router";

@@ -1,10 +1,12 @@
 import React, { useMemo } from "react";
-import { BlockoutDates } from "../../src/components/Plans/BlockoutDates";
-import { ServingTimes } from "../../src/components/Plans/ServingTimes";
-import { UpcomingDates } from "../../src/components/Plans/UpcomingDates";
+import { 
+  BlockoutDates, 
+  ServingTimes, 
+  UpcomingDates 
+} from "../../src/components/Plans/LazyPlanComponents";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ArrayHelper } from "../../src/helpers";
-import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "../../src/helpers/Interfaces";
+import { ArrayHelper } from "@/helpers/index";
+import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "@/helpers/Interfaces";
 import { MaterialIcons } from "@expo/vector-icons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";

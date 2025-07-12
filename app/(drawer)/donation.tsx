@@ -1,8 +1,11 @@
 import React from "react";
-import { EnhancedDonationForm } from "../../src/components/donations/EnhancedDonationForm";
-import { EnhancedGivingHistory } from "../../src/components/donations/EnhancedGivingHistory";
-import { PaymentMethods } from "../../src/components/donations/PaymentMethods";
-import { UserHelper, CurrencyHelper } from "../../src/helpers";
+import { 
+  EnhancedDonationForm, 
+  EnhancedGivingHistory, 
+  PaymentMethods 
+} from "../../src/components/donations/LazyDonationComponents";
+import { UserHelper } from "@/helpers/UserHelper";
+import { CurrencyHelper } from "@/helpers/CurrencyHelper";
 import { ErrorHelper } from "../../src/mobilehelper";
 import { StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";

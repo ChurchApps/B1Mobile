@@ -1,4 +1,5 @@
-import { Constants, globalStyles } from "../../src/helpers";
+import { Constants } from "@/helpers/Constants";
+import { globalStyles } from "@/helpers/GlobalStyles";
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 

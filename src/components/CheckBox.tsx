@@ -1,4 +1,4 @@
-import { Constants } from "../../src/helpers";
+import { Constants } from "@/helpers/Constants";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";

@@ -1,4 +1,4 @@
-import { UserHelper } from "../../../src/helpers";
+import { UserHelper } from "@/helpers/UserHelper";
 import React, { useEffect } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { useAppTheme } from "../../../src/theme";
