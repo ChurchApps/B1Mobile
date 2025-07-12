@@ -1,6 +1,7 @@
 export { BankForm } from "./BankForm";
 export { EnhancedBankForm } from "./EnhancedBankForm";
 export { CardForm } from "./CardForm";
+export { DonationComplete } from "./DonationComplete";
 export { DonationForm } from "./DonationForm";
 export { EnhancedDonationForm } from "./EnhancedDonationForm";
 export { EnhancedGivingHistory } from "./EnhancedGivingHistory";

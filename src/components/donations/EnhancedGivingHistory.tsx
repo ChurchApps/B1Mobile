@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { View, StyleSheet, TouchableOpacity, FlatList, Modal, ScrollView } from "react-native";
+import { View, StyleSheet, TouchableOpacity, FlatList, Modal, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { Card, Text, Button, Chip, Menu, Divider } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
@@ -27,10 +27,11 @@ export function EnhancedGivingHistory({ customerId }: Props) {
   const [selectedPeriod, setSelectedPeriod] = useState<string>("ytd");
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<DonationRecord | null>(null);
+  const [selectedRecurring, setSelectedRecurring] = useState<any>(null);
 
   // Sample data - in real app this would come from API
-  const { data: donations = [] } = useQuery<DonationRecord[]>({
-    queryKey: ["/donations/history", customerId],
+  const { data: donations = [], isLoading: donationsLoading } = useQuery<DonationRecord[]>({
+    queryKey: ["/donations/history", customerId, selectedPeriod],
     enabled: !!customerId && !!currentUserChurch?.person?.id,
     placeholderData: [
       {
@@ -65,10 +66,47 @@ export function EnhancedGivingHistory({ customerId }: Props) {
         recurring: false
       }
     ],
-    staleTime: 5 * 60 * 1000
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      // Simulate loading delay for demo purposes
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return [
+        {
+          id: "1",
+          amount: 125.0,
+          fees: 3.93,
+          fund: "General Fund",
+          date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          method: "Visa ****4242",
+          status: "completed" as const,
+          recurring: false
+        },
+        {
+          id: "2",
+          amount: 300.0,
+          fees: 9.2,
+          fund: "Building Fund",
+          date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          method: "Bank ****7890",
+          status: "completed" as const,
+          recurring: true,
+          frequency: "Monthly"
+        },
+        {
+          id: "3",
+          amount: 75.0,
+          fees: 2.48,
+          fund: "Missions",
+          date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000),
+          method: "Visa ****4242",
+          status: "completed" as const,
+          recurring: false
+        }
+      ];
+    }
   });
 
-  const { data: recurringDonations = [] } = useQuery({
+  const { data: recurringDonations = [], isLoading: recurringLoading } = useQuery({
     queryKey: ["/donations/recurring", customerId],
     enabled: !!customerId && !!currentUserChurch?.person?.id,
     placeholderData: [
@@ -91,7 +129,31 @@ export function EnhancedGivingHistory({ customerId }: Props) {
         status: "active"
       }
     ],
-    staleTime: 10 * 60 * 1000
+    staleTime: 10 * 60 * 1000,
+    queryFn: async () => {
+      // Simulate loading delay for demo purposes
+      await new Promise(resolve => setTimeout(resolve, 800));
+      return [
+        {
+          id: "r1",
+          amount: 300.0,
+          fund: "Building Fund",
+          frequency: "Monthly",
+          nextDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+          method: "Bank ****7890",
+          status: "active"
+        },
+        {
+          id: "r2",
+          amount: 50.0,
+          fund: "General Fund",
+          frequency: "Weekly",
+          nextDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+          method: "Visa ****4242",
+          status: "active"
+        }
+      ];
+    }
   });
 
   const periods = [
@@ -132,6 +194,10 @@ export function EnhancedGivingHistory({ customerId }: Props) {
   }, [filteredDonations]);
 
   const getPeriodLabel = (value: string) => periods.find(p => p.value === value)?.label || "Year to Date";
+  
+  const handleManageRecurring = (item: any) => {
+    setSelectedRecurring(item);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -194,7 +260,7 @@ export function EnhancedGivingHistory({ customerId }: Props) {
           </Text>
         </View>
 
-        <Button mode="outlined" compact onPress={() => {}} style={styles.manageButton}>
+        <Button mode="outlined" compact onPress={() => handleManageRecurring(item)} style={styles.manageButton}>
           Manage
         </Button>
       </Card.Content>
@@ -250,56 +316,81 @@ export function EnhancedGivingHistory({ customerId }: Props) {
             </Menu>
           </View>
 
-          <View style={styles.statsGrid}>
-            <View style={styles.statItem}>
-              <Text variant="displaySmall" style={styles.statValue}>
-                {CurrencyHelper.formatCurrency(givingStats.total)}
-              </Text>
-              <Text variant="bodyMedium" style={styles.statLabel}>
-                Total Given
+          {donationsLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#0D47A1" />
+              <Text variant="bodyMedium" style={styles.loadingText}>
+                Loading giving summary...
               </Text>
             </View>
-
-            <View style={styles.statsRow}>
-              <View style={styles.miniStat}>
-                <Text variant="titleLarge" style={styles.miniStatValue}>
-                  {givingStats.count}
+          ) : (
+            <View style={styles.statsGrid}>
+              <View style={styles.statItem}>
+                <Text variant="displaySmall" style={styles.statValue}>
+                  {CurrencyHelper.formatCurrency(givingStats.total)}
                 </Text>
-                <Text variant="bodySmall" style={styles.miniStatLabel}>
-                  Gifts
-                </Text>
-              </View>
-
-              <View style={styles.miniStat}>
-                <Text variant="titleLarge" style={styles.miniStatValue}>
-                  {givingStats.recurring}
-                </Text>
-                <Text variant="bodySmall" style={styles.miniStatLabel}>
-                  Recurring
+                <Text variant="bodyMedium" style={styles.statLabel}>
+                  Total Given
                 </Text>
               </View>
 
-              <View style={styles.miniStat}>
-                <Text variant="titleLarge" style={styles.miniStatValue}>
-                  {CurrencyHelper.formatCurrency(givingStats.fees)}
-                </Text>
-                <Text variant="bodySmall" style={styles.miniStatLabel}>
-                  Fees Covered
-                </Text>
+              <View style={styles.statsRow}>
+                <View style={styles.miniStat}>
+                  <Text variant="titleLarge" style={styles.miniStatValue}>
+                    {givingStats.count}
+                  </Text>
+                  <Text variant="bodySmall" style={styles.miniStatLabel}>
+                    Gifts
+                  </Text>
+                </View>
+
+                <View style={styles.miniStat}>
+                  <Text variant="titleLarge" style={styles.miniStatValue}>
+                    {givingStats.recurring}
+                  </Text>
+                  <Text variant="bodySmall" style={styles.miniStatLabel}>
+                    Recurring
+                  </Text>
+                </View>
+
+                <View style={styles.miniStat}>
+                  <Text variant="titleLarge" style={styles.miniStatValue}>
+                    {CurrencyHelper.formatCurrency(givingStats.fees)}
+                  </Text>
+                  <Text variant="bodySmall" style={styles.miniStatLabel}>
+                    Fees Covered
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
+          )}
         </Card.Content>
       </Card>
 
       {/* Recurring Donations */}
-      {recurringDonations.length > 0 && (
+      {recurringLoading ? (
         <View style={styles.section}>
           <Text variant="titleMedium" style={styles.sectionTitle}>
             Active Recurring Gifts
           </Text>
-          <FlatList data={recurringDonations} renderItem={renderRecurringItem} keyExtractor={item => item.id} scrollEnabled={false} showsVerticalScrollIndicator={false} />
+          <Card style={styles.loadingCard}>
+            <Card.Content style={styles.loadingCardContent}>
+              <ActivityIndicator size="small" color="#0D47A1" />
+              <Text variant="bodyMedium" style={styles.loadingText}>
+                Loading recurring donations...
+              </Text>
+            </Card.Content>
+          </Card>
         </View>
+      ) : (
+        recurringDonations.length > 0 && (
+          <View style={styles.section}>
+            <Text variant="titleMedium" style={styles.sectionTitle}>
+              Active Recurring Gifts
+            </Text>
+            <FlatList data={recurringDonations} renderItem={renderRecurringItem} keyExtractor={item => item.id} scrollEnabled={false} showsVerticalScrollIndicator={false} />
+          </View>
+        )
       )}
 
       {/* Transaction History */}
@@ -308,7 +399,16 @@ export function EnhancedGivingHistory({ customerId }: Props) {
           Recent Transactions
         </Text>
         <Card style={styles.transactionsCard}>
-          <FlatList data={filteredDonations} renderItem={renderTransactionItem} keyExtractor={item => item.id} scrollEnabled={false} showsVerticalScrollIndicator={false} ItemSeparatorComponent={() => <Divider style={styles.divider} />} />
+          {donationsLoading ? (
+            <Card.Content style={styles.loadingCardContent}>
+              <ActivityIndicator size="small" color="#0D47A1" />
+              <Text variant="bodyMedium" style={styles.loadingText}>
+                Loading transactions...
+              </Text>
+            </Card.Content>
+          ) : (
+            <FlatList data={filteredDonations} renderItem={renderTransactionItem} keyExtractor={item => item.id} scrollEnabled={false} showsVerticalScrollIndicator={false} ItemSeparatorComponent={() => <Divider style={styles.divider} />} />
+          )}
         </Card>
       </View>
 
@@ -404,6 +504,94 @@ export function EnhancedGivingHistory({ customerId }: Props) {
                           </Text>
                         </View>
                       )}
+                    </View>
+                  </>
+                )}
+              </Card.Content>
+            </Card>
+          </ScrollView>
+        </View>
+      </Modal>
+
+      {/* Recurring Donation Management Modal */}
+      <Modal visible={selectedRecurring !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSelectedRecurring(null)}>
+        <View style={styles.modalContainer}>
+          <ScrollView style={styles.modalScrollView} contentContainerStyle={styles.modalContent}>
+            <Card style={styles.detailModal}>
+              <Card.Content>
+                <View style={styles.detailHeader}>
+                  <Text variant="titleLarge" style={styles.detailTitle}>
+                    Manage Recurring Donation
+                  </Text>
+                  <TouchableOpacity onPress={() => setSelectedRecurring(null)}>
+                    <MaterialIcons name="close" size={24} color="#9E9E9E" />
+                  </TouchableOpacity>
+                </View>
+
+                {selectedRecurring && (
+                  <>
+                    <View style={styles.detailAmount}>
+                      <Text variant="displayMedium" style={styles.detailAmountText}>
+                        {CurrencyHelper.formatCurrency(selectedRecurring.amount)}
+                      </Text>
+                      <Text variant="titleMedium" style={styles.recurringFreqText}>
+                        {selectedRecurring.frequency}
+                      </Text>
+                    </View>
+
+                    <View style={styles.recurringInfo}>
+                      <View style={styles.detailRow}>
+                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                          Fund
+                        </Text>
+                        <Text variant="bodyMedium" style={styles.detailValue}>
+                          {selectedRecurring.fund}
+                        </Text>
+                      </View>
+                      <View style={styles.detailRow}>
+                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                          Next Payment
+                        </Text>
+                        <Text variant="bodyMedium" style={styles.detailValue}>
+                          {selectedRecurring.nextDate?.toLocaleDateString()}
+                        </Text>
+                      </View>
+                      <View style={styles.detailRow}>
+                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                          Payment Method
+                        </Text>
+                        <Text variant="bodyMedium" style={styles.detailValue}>
+                          {selectedRecurring.method}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.managementActions}>
+                      <Button 
+                        mode="contained" 
+                        onPress={() => {
+                          Alert.alert(
+                            "Stop Recurring Donation",
+                            "Are you sure you want to stop this recurring donation? You can always set up a new recurring donation later.",
+                            [
+                              { text: "Keep Donation", style: "cancel" },
+                              { 
+                                text: "Stop Donation", 
+                                style: "destructive",
+                                onPress: () => {
+                                  console.log("Stop recurring donation:", selectedRecurring.id);
+                                  setSelectedRecurring(null);
+                                }
+                              }
+                            ]
+                          );
+                        }} 
+                        style={styles.stopButton}
+                        buttonColor="#B0120C"
+                        textColor="#FFFFFF"
+                      >
+                        Stop Recurring Donation
+                      </Button>
                     </View>
                   </>
                 )}
@@ -680,6 +868,46 @@ const styles = StyleSheet.create({
   },
   detailInfo: {
     gap: 8
+  },
+
+  // Recurring Management
+  recurringFreqText: {
+    color: "#0D47A1",
+    fontWeight: "600",
+    textAlign: "center"
+  },
+  recurringInfo: {
+    marginBottom: 24,
+    gap: 8
+  },
+  managementActions: {
+    marginTop: 16
+  },
+  stopButton: {
+    borderRadius: 12,
+    paddingVertical: 4
+  },
+
+  // Loading States
+  loadingContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 40,
+    gap: 12
+  },
+  loadingCard: {
+    borderRadius: 16,
+    elevation: 2
+  },
+  loadingCardContent: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 24,
+    gap: 12
+  },
+  loadingText: {
+    color: "#9E9E9E",
+    textAlign: "center"
   },
 
   // Login Prompt

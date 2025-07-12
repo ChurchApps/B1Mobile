@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Alert, ScrollView } from "react-native";
-import { Card, Text, TextInput, Button, Menu, Switch, Banner, Divider } from "react-native-paper";
+import { Card, Text, TextInput, Button, Menu, Banner, Divider } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import { ApiHelper } from "../../helpers";
@@ -31,12 +31,18 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
   const [routingNumber, setRoutingNumber] = useState<string>("");
   const [firstDeposit, setFirstDeposit] = useState<string>("");
   const [secondDeposit, setSecondDeposit] = useState<string>("");
-  const [saveForFuture, setSaveForFuture] = useState<boolean>(true);
   const [showBankDetails, setShowBankDetails] = useState<boolean>(false);
 
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
   const { createToken } = useStripe();
+
+  // Pre-populate name for new bank accounts
+  useEffect(() => {
+    if (!bank.id && person?.name?.display && !name) {
+      setName(person.name.display);
+    }
+  }, [bank.id, person?.name?.display, name]);
 
   // Input validation functions
   const validateRoutingNumber = (routing: string): boolean => /^\\d{9}$/.test(routing);
@@ -320,39 +326,14 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
                   </TouchableOpacity>
                 </View>
 
-                <TextInput mode="outlined" label="Routing Number *" value={formatRoutingNumber(routingNumber)} onChangeText={handleRoutingNumberChange} keyboardType="number-pad" style={styles.input} placeholder="123-456-789" maxLength={11} secureTextEntry={!showBankDetails} right={<TextInput.Icon icon="bank" />} />
+                <TextInput mode="outlined" label="Routing Number *" value={formatRoutingNumber(routingNumber)} onChangeText={handleRoutingNumberChange} keyboardType="number-pad" style={styles.input} placeholder="123-456-789" maxLength={11} secureTextEntry={!showBankDetails} />
 
-                <TextInput mode="outlined" label="Account Number *" value={accountNumber} onChangeText={handleAccountNumberChange} keyboardType="number-pad" style={styles.input} placeholder="Enter account number" maxLength={17} secureTextEntry={!showBankDetails} right={<TextInput.Icon icon="account-balance" />} />
+                <TextInput mode="outlined" label="Account Number *" value={accountNumber} onChangeText={handleAccountNumberChange} keyboardType="number-pad" style={styles.input} placeholder="Enter account number" maxLength={17} secureTextEntry={!showBankDetails} />
 
-                <View style={styles.switchRow}>
-                  <View style={styles.switchContent}>
-                    <Text variant="titleSmall" style={styles.switchTitle}>
-                      Save for future donations
-                    </Text>
-                    <Text variant="bodySmall" style={styles.switchSubtitle}>
-                      Securely store this account for faster giving
-                    </Text>
-                  </View>
-                  <Switch value={saveForFuture} onValueChange={setSaveForFuture} thumbColor={saveForFuture ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
-                </View>
               </Card.Content>
             </Card>
           )}
 
-          {/* Security Information */}
-          <Card style={styles.securityCard}>
-            <Card.Content>
-              <View style={styles.securityHeader}>
-                <MaterialIcons name="security" size={24} color="#70DC87" />
-                <Text variant="titleMedium" style={styles.securityTitle}>
-                  Your Information is Secure
-                </Text>
-              </View>
-              <Text variant="bodyMedium" style={styles.securityText}>
-                We use bank-level security and encryption to protect your financial information. Your data is never stored on our servers.
-              </Text>
-            </Card.Content>
-          </Card>
         </>
       )}
 

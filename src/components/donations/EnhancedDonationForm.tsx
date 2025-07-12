@@ -8,6 +8,7 @@ import { ApiHelper, CurrencyHelper } from "../../helpers";
 import { FundInterface, StripeDonationInterface, StripePaymentMethod } from "../../interfaces";
 import { useUser, useCurrentUserChurch } from "../../stores/useUserStore";
 import { CacheHelper } from "../../helpers";
+import { DonationComplete } from "./DonationComplete";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -27,6 +28,9 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [selectedInterval, setSelectedInterval] = useState<string>("one_month");
   const [coverFees, setCoverFees] = useState<boolean>(false);
+  const [transactionFee, setTransactionFee] = useState<number>(0);
+  const [showComplete, setShowComplete] = useState<boolean>(false);
+  const [completionData, setCompletionData] = useState<{amount: string, isRecurring: boolean, interval: string}>({amount: "", isRecurring: false, interval: ""});
 
   // Menu visibility
   const [showFundMenu, setShowFundMenu] = useState(false);
@@ -64,6 +68,20 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
     }
   }, [pm, selectedMethod]);
 
+  // Calculate transaction fee when amount or payment method changes
+  useEffect(() => {
+    const calculateFee = async () => {
+      const amountNumber = parseFloat(amount || "0");
+      if (amountNumber > 0 && selectedMethod) {
+        const fee = await getTransactionFee(amountNumber);
+        setTransactionFee(fee);
+      } else {
+        setTransactionFee(0);
+      }
+    };
+    calculateFee();
+  }, [amount, selectedMethod]);
+
   const intervalTypes = [
     { label: "Weekly", value: "one_week" },
     { label: "Monthly", value: "one_month" },
@@ -74,16 +92,31 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
   const calculateTotal = () => {
     const baseAmount = parseFloat(amount || "0");
     if (coverFees && baseAmount > 0) {
-      const feeAmount = getTransactionFee(baseAmount);
-      return baseAmount + feeAmount;
+      return baseAmount + transactionFee;
     }
     return baseAmount;
   };
 
-  const getTransactionFee = (amount: number) => {
-    const fixedFee = 0.3;
-    const fixedPercent = 0.029;
-    return Math.round(((amount + fixedFee) / (1 - fixedPercent) - amount) * 100) / 100;
+  const getTransactionFee = async (amount: number) => {
+    if (amount > 0) {
+      const selectedPaymentMethod = pm.find(p => p.id === selectedMethod);
+      let dt: string = "";
+      if (selectedPaymentMethod?.type === "card") dt = "creditCard";
+      if (selectedPaymentMethod?.type === "bank") dt = "ach";
+      
+      try {
+        const response = await ApiHelper.post("/donate/fee?churchId=" + churchId, { type: dt, amount }, "GivingApi");
+        return response.calculatedFee;
+      } catch (error) {
+        console.log("Error calculating transaction fee: ", error);
+        // Fallback to credit card calculation
+        const fixedFee = 0.3;
+        const fixedPercent = 0.029;
+        return Math.round(((amount + fixedFee) / (1 - fixedPercent) - amount) * 100) / 100;
+      }
+    } else {
+      return 0;
+    }
   };
 
   const getMethodLabel = (method: StripePaymentMethod) => {
@@ -244,6 +277,13 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
     const result = await ApiHelper.post(endpoint, donation, "GivingApi");
 
     if (result?.status === "succeeded" || result?.status === "pending" || result?.status === "active") {
+      // Store completion data
+      setCompletionData({
+        amount: CurrencyHelper.formatCurrency(calculateTotal()),
+        isRecurring: isRecurring,
+        interval: selectedInterval
+      });
+      
       // Reset form
       setAmount("");
       setIsRecurring(false);
@@ -251,12 +291,27 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
       setEmail("");
       setFirstName("");
       setLastName("");
-
-      Alert.alert("Thank You!", "Your donation has been processed successfully.", [{ text: "OK", onPress: () => updatedFunction() }]);
+      
+      // Show completion screen
+      setShowComplete(true);
     } else if (result?.raw?.message) {
       throw new Error(result.raw.message);
     }
   };
+
+  if (showComplete) {
+    return (
+      <DonationComplete
+        amount={completionData.amount}
+        isRecurring={completionData.isRecurring}
+        interval={completionData.interval}
+        onDone={() => {
+          setShowComplete(false);
+          updatedFunction();
+        }}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -265,7 +320,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
         <Text variant="titleMedium" style={styles.amountLabel}>
           Gift Amount
         </Text>
-        <TextInput mode="outlined" value={amount} onChangeText={setAmount} keyboardType="numeric" style={styles.amountInput} contentStyle={styles.amountInputText} placeholder="0.00" left={<TextInput.Icon icon={() => <Text style={styles.dollarSign}>$</Text>} />} outlineStyle={styles.amountInputOutline} />
+        <TextInput mode="outlined" value={amount} onChangeText={setAmount} keyboardType="numeric" style={styles.amountInput} contentStyle={styles.amountInputText} placeholder="0.00" left={<TextInput.Icon icon={() => <Text style={styles.dollarSign}>$</Text>} />} outlineStyle={styles.amountInputOutline} onFocus={() => { if (amount === "0.00" || amount === "0" || parseFloat(amount || "0") === 0) setAmount(""); }} />
       </View>
 
       {/* Guest User Fields */}
@@ -419,7 +474,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
                 Cover transaction fees
               </Text>
               <Text variant="bodyMedium" style={styles.switchSubtitle}>
-                Add {CurrencyHelper.formatCurrency(getTransactionFee(parseFloat(amount || "0")))} to cover processing costs
+                Add {CurrencyHelper.formatCurrency(transactionFee)} to cover processing costs
               </Text>
             </View>
             <Switch value={coverFees} onValueChange={setCoverFees} thumbColor={coverFees ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
