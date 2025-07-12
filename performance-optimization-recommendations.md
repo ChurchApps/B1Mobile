@@ -97,7 +97,7 @@ const CRITICAL_QUERIES = ['/churches', '/user', '/appearance'];
 **Impact**: Reduced AsyncStorage I/O overhead
 **Status**: ✅ Implemented with smart persistence strategy - critical queries every 1 minute, all queries every 5 minutes
 
-#### 4. **Implement Progressive Loading**
+#### 4. **Implement Progressive Loading** ✅ **COMPLETED**
 ```typescript
 // Load essential data first, defer nice-to-have data
 const selectChurch = async (church: ChurchInterface) => {
@@ -111,6 +111,7 @@ const selectChurch = async (church: ChurchInterface) => {
   setTimeout(() => loadSpecialTabs(church.id), 100);
 };
 ```
+**Status**: ✅ Implemented progressive loading in `useUserStore.ts` - church selection now shows UI immediately, loads appearance/links in background
 
 ### Medium Impact Optimizations
 

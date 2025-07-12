@@ -75,25 +75,31 @@ export const useUserStore = create<UserState>()(
       setCurrentUserChurch: async (userChurch, appearance) => {
         set({ currentUserChurch: userChurch });
 
-        // Update church appearance
+        // Progressive: Load appearance in background (non-blocking)
         if (appearance) {
           set({ churchAppearance: appearance });
         } else {
-          // Fallback to API call if appearance not provided
-          try {
-            const fetchedAppearance = await ApiHelper.getAnonymous(`/settings/public/${userChurch.church.id}`, "MembershipApi");
-            set({ churchAppearance: fetchedAppearance });
-          } catch (error) {
-            console.error("Failed to fetch church appearance:", error);
-          }
+          // Load appearance without blocking UI
+          setTimeout(async () => {
+            try {
+              const fetchedAppearance = await ApiHelper.getAnonymous(`/settings/public/${userChurch.church.id}`, "MembershipApi");
+              set({ churchAppearance: fetchedAppearance });
+            } catch (error) {
+              console.error("Failed to fetch church appearance:", error);
+            }
+          }, 0);
         }
 
-        // Load church links
-        await get().loadChurchLinks(userChurch.church.id || "");
+        // Progressive: Load church links without blocking UI
+        setTimeout(() => {
+          get().loadChurchLinks(userChurch.church.id || "");
+        }, 50);
 
-        // Load person record if user is logged in
+        // Deferred: Load person record after initial render
         if (userChurch.jwt) {
-          await get().loadPersonRecord();
+          setTimeout(() => {
+            get().loadPersonRecord();
+          }, 100);
         }
       },
 
@@ -187,16 +193,20 @@ export const useUserStore = create<UserState>()(
         const userChurch = state.userChurches.find(uc => uc.church.id === church.id);
 
         if (userChurch) {
-          // User is logged in and this is one of their churches
-          await get().setCurrentUserChurch(userChurch);
+          // Essential: Set church immediately for fast UI update
           get().addRecentChurch(church);
-
-          // Update API permissions for the new church
+          
+          // Essential: Update API permissions immediately
           ApiHelper.setDefaultPermissions(userChurch.jwt || "");
           userChurch.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
 
-          // Store new JWT tokens
-          await storeSecureTokens(userChurch);
+          // Progressive: Set current church (triggers background loading)
+          await get().setCurrentUserChurch(userChurch);
+
+          // Deferred: Store JWT tokens in background
+          setTimeout(() => {
+            storeSecureTokens(userChurch);
+          }, 200);
         } else {
           // Anonymous church selection (user not logged in to this church)
           await get().setAnonymousChurch(church);
@@ -214,28 +224,30 @@ export const useUserStore = create<UserState>()(
           groups: []
         };
 
-        // Set as current church
+        // Essential: Set church immediately for fast UI update
         set({ currentUserChurch: anonymousUserChurch });
-
-        // Add to recent churches
         get().addRecentChurch(church);
 
-        // Fetch church appearance and links
-        try {
-          const appearance = await ApiHelper.getAnonymous(`/settings/public/${church.id}`, "MembershipApi");
-          set({ churchAppearance: appearance });
-        } catch (error) {
-          console.error("❌ Failed to fetch church appearance:", error);
-        }
+        // Progressive: Fetch church appearance in background
+        setTimeout(async () => {
+          try {
+            const appearance = await ApiHelper.getAnonymous(`/settings/public/${church.id}`, "MembershipApi");
+            set({ churchAppearance: appearance });
+          } catch (error) {
+            console.error("❌ Failed to fetch church appearance:", error);
+          }
+        }, 0);
 
-        // Load church links
-        await get().loadChurchLinks(church.id || "");
+        // Deferred: Load church links after initial render
+        setTimeout(() => {
+          get().loadChurchLinks(church.id || "");
+        }, 100);
       },
 
       // Load church navigation links
       loadChurchLinks: async (churchId: string) => {
         try {
-          // Get main navigation links
+          // Essential: Get main navigation links first
           let tabs: any[] = [];
           const tempTabs = await ApiHelper.getAnonymous(`/links/church/${churchId}?category=b1Tab`, "ContentApi");
 
@@ -255,13 +267,20 @@ export const useUserStore = create<UserState>()(
             }
           });
 
-          // Get special tabs (dynamic feature availability)
-          const specialTabs = await get().getSpecialTabs(churchId);
+          // Progressive: Set basic tabs immediately
+          set({ links: tabs });
 
-          const allLinks = tabs.concat(specialTabs);
-
-          // Update links in store
-          set({ links: allLinks });
+          // Deferred: Load special tabs (feature availability) in background
+          setTimeout(async () => {
+            try {
+              const specialTabs = await get().getSpecialTabs(churchId);
+              const allLinks = tabs.concat(specialTabs);
+              set({ links: allLinks });
+            } catch (error) {
+              console.error("❌ Failed to load special tabs:", error);
+              // Keep the basic tabs if special tabs fail
+            }
+          }, 200);
         } catch (error) {
           console.error("❌ Failed to load church links:", error);
           set({ links: [] });
