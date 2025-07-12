@@ -1,7 +1,8 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import * as React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { StripePaymentMethod } from "../../../src/interfaces";
 import { CustomModal } from "./CustomModal";
@@ -27,7 +28,11 @@ export function PaymentMethodModal({ show, close, onSelect }: Props) {
               close();
             }}
             style={{ flexDirection: "row", alignItems: "center" }}>
-            <Icon name={index == 0 ? "credit-card-alt" : "bank"} style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp(4) }} size={DimensionHelper.wp(6)} />
+            {index == 0 ? (
+              <MaterialIcons name="credit-card" style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp(4) }} size={DimensionHelper.wp(6)} />
+            ) : (
+              <MaterialCommunityIcons name="bank" style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp(4) }} size={DimensionHelper.wp(6)} />
+            )}
             <Text
               style={{
                 fontSize: DimensionHelper.wp(4.8),

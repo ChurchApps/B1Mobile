@@ -4,8 +4,8 @@ import dayjs from "dayjs";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ModalDatePicker } from "react-native-material-date-picker";
-import Icon from "react-native-vector-icons/FontAwesome";
-import Icons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { BlockoutDateInterface, Constants, globalStyles } from "../../../src/helpers";
 import { CustomModal } from "../modals/CustomModal";
 
@@ -54,7 +54,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
         <View style={{ paddingHorizontal: DimensionHelper.wp(1) }}>
           <View style={[globalStyles.donationPreviewView, { borderBottomWidth: 0 }]}>
             <View style={globalStyles.PlanIconTitleView}>
-              <Icons name="block-helper" style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp(5.5)} />
+              <MaterialCommunityIcons name="block-helper" style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp(5.5)} />
               <Text style={globalStyles.PlanTitleTextStyle}>Blockout Dates</Text>
             </View>
           </View>
@@ -64,7 +64,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
               <Text style={globalStyles.PassInputTextStyle}>{dayjs(startDate).format("DD-MM-YYYY")}</Text>
             </View>
             <ModalDatePicker
-              button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
+              button={<MaterialIcons name={"calendar-today"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
               locale="en"
               onSelect={(date: Date) => {
                 const selectedDate = new Date(date);
@@ -82,7 +82,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
               <Text style={globalStyles.PassInputTextStyle}>{dayjs(endDate).format("DD-MM-YYYY")}</Text>
             </View>
             <ModalDatePicker
-              button={<Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
+              button={<MaterialIcons name={"calendar-today"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
               locale="en"
               onSelect={(date: Date) => {
                 const selectedDate = new Date(date);

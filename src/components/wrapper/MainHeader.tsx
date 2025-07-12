@@ -2,7 +2,7 @@ import { Constants } from "../../../src/helpers";
 import React from "react";
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Icon from "react-native-vector-icons/Entypo";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { HeaderBell } from "./HeaderBell";
 import { useUser } from "../../stores/useUserStore";
 import { router } from "expo-router";
@@ -28,7 +28,7 @@ export function MainHeader(props: Props) {
           onPress={() => {
             if (props.back) props.back();
           }}>
-          <Icon name="chevron-left" size={24} color="#FFFFFF" />
+          <MaterialIcons name="chevron-left" size={24} color="#FFFFFF" />
         </TouchableOpacity>
       )}
       <TouchableOpacity

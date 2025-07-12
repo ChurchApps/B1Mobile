@@ -1,4 +1,3 @@
-export { BlueHeader } from "./BlueHeader";
 export { BottomButton } from "./BottomButton";
 export { CustomDrawer } from "./CustomDrawer";
 export { ErrorBoundary } from "./ErrorBoundary";

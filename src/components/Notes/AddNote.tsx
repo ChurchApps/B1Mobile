@@ -2,8 +2,7 @@ import { MessageInterface } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useEffect, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import DeleteIcon from "react-native-vector-icons/MaterialIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ApiHelper, Constants, globalStyles } from "../../../src/helpers";
 
 type Props = {
@@ -114,11 +113,11 @@ export function AddNote({ ...props }: Props) {
             justifyContent: props.messageId ? "space-between" : "center"
           }}>
           <TouchableOpacity onPress={() => handleSave()}>
-            <Icon name={"send"} color={Constants.Colors.app_color} size={DimensionHelper.wp(5)} />
+            <MaterialIcons name={"send"} color={Constants.Colors.app_color} size={DimensionHelper.wp(5)} />
           </TouchableOpacity>
           {props.messageId && (
             <TouchableOpacity onPress={() => deleteNote()}>
-              <DeleteIcon name={"delete"} color={Constants.Colors.app_color} size={DimensionHelper.wp(6.2)} />
+              <MaterialIcons name={"delete"} color={Constants.Colors.app_color} size={DimensionHelper.wp(6.2)} />
             </TouchableOpacity>
           )}
         </View>

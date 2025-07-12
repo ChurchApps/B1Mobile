@@ -25,22 +25,9 @@ config.resolver.alias = {
   '@stores': path.resolve(__dirname, 'src/stores'),
   '@theme': path.resolve(__dirname, 'src/theme'),
   '@config': path.resolve(__dirname, 'src/config'),
-  // Enable tree shaking for vector icons
-  '@expo/vector-icons/AntDesign': '@expo/vector-icons/build/AntDesign',
-  '@expo/vector-icons/Entypo': '@expo/vector-icons/build/Entypo',
-  '@expo/vector-icons/EvilIcons': '@expo/vector-icons/build/EvilIcons',
-  '@expo/vector-icons/Feather': '@expo/vector-icons/build/Feather',
-  '@expo/vector-icons/FontAwesome': '@expo/vector-icons/build/FontAwesome',
-  '@expo/vector-icons/FontAwesome5': '@expo/vector-icons/build/FontAwesome5',
-  '@expo/vector-icons/FontAwesome6': '@expo/vector-icons/build/FontAwesome6',
-  '@expo/vector-icons/Fontisto': '@expo/vector-icons/build/Fontisto',
-  '@expo/vector-icons/Foundation': '@expo/vector-icons/build/Foundation',
-  '@expo/vector-icons/Ionicons': '@expo/vector-icons/build/Ionicons',
+  // Enable tree shaking for vector icons - only keep used ones
   '@expo/vector-icons/MaterialCommunityIcons': '@expo/vector-icons/build/MaterialCommunityIcons',
   '@expo/vector-icons/MaterialIcons': '@expo/vector-icons/build/MaterialIcons',
-  '@expo/vector-icons/Octicons': '@expo/vector-icons/build/Octicons',
-  '@expo/vector-icons/SimpleLineIcons': '@expo/vector-icons/build/SimpleLineIcons',
-  '@expo/vector-icons/Zocial': '@expo/vector-icons/build/Zocial',
 };
 
 // Optimize transformer for better performance
