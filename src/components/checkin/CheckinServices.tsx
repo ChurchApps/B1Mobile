@@ -7,7 +7,7 @@ import { useAppTheme } from "../../../src/theme";
 import { Card, Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface Props {
   onDone: () => void;

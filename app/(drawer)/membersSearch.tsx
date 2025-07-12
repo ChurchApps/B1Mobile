@@ -9,7 +9,7 @@ import { Surface, Text, TextInput, MD3LightTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { MemberCard } from "../../src/components/MemberCard";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 

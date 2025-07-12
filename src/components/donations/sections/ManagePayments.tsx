@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { Text, Card } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { PaymentMethods } from "../LazyDonationComponents";
 import { StripePaymentMethod } from "../../../interfaces";
 import { UserInterface } from "../../../interfaces";

@@ -4,7 +4,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
 import { Provider as PaperProvider, Card, Text, MD3LightTheme } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { UserHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
 import { LinkInterface } from "../../src/helpers/Interfaces";

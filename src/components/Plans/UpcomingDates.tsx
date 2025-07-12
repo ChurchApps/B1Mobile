@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
 import { router } from "expo-router";
 import { Card } from "react-native-paper";
@@ -52,7 +52,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times }: Props) =
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialIcons name="upcoming" style={styles.headerIcon} size={24} />
+        <MaterialIcons name="schedule" style={styles.headerIcon} size={24} />
         <Text style={styles.headerTitle}>Upcoming Dates</Text>
       </View>
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Alert, BackHandler } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "../../hooks/useNavigation";
 import { designSystem } from "../../theme/designSystem";
 

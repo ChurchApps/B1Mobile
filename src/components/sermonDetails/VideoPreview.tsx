@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Card } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { OptimizedImage } from "../OptimizedImage";
 import { SermonInterface } from "../../mobilehelper";
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Card, ActivityIndicator } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { OptimizedImage } from "../OptimizedImage";
 import { ArrayHelper, Constants } from "../../helpers";
 import { ChurchInterface } from "../../helpers";

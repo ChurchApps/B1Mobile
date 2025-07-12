@@ -4,7 +4,7 @@ import { Teams } from "../../../../src/components/Plans/Teams";
 import { ServiceOrder } from "../../../../src/components/Plans/ServiceOrder";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
 import { ArrayHelper, AssignmentInterface, PersonInterface, PlanInterface, PositionInterface, TimeInterface } from "../../../../src/helpers";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused, DrawerActions } from "@react-navigation/native";
 import { useLocalSearchParams, useNavigation } from "expo-router";

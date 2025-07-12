@@ -14,7 +14,7 @@ import {
   ActivityIndicator,
   Appbar
 } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import CheckBox from "../CheckBox";
 import EditRecurringModal from "./EditRecurringModal";
 import RRuleEditor from "./RRuleEditor";

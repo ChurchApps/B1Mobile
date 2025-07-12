@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface } from "../../../src/helpers";
 import { router } from "expo-router";
 import { Card } from "react-native-paper";

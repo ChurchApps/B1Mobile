@@ -12,7 +12,7 @@ android/app/release
 android/app/.cxx
 .expo
 /.expo
-
+dist-analysis
 
 npm-debug.*
 *.jks

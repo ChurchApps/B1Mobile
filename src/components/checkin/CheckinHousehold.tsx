@@ -7,7 +7,7 @@ import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { Button, Divider, Card, Text, Chip } from "react-native-paper";
 import { Avatar } from "../common/Avatar";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface Props {
   onDone: () => void;

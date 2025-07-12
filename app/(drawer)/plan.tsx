@@ -7,7 +7,7 @@ import {
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { ArrayHelper } from "@/helpers/index";
 import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "@/helpers/Interfaces";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";

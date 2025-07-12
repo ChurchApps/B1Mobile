@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View, ScrollView } from "react-native";
 import { Provider as PaperProvider, Card, Text, MD3LightTheme, Chip, Button } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "./Loader";

@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import React from "react";
 import { Text, View, StyleSheet } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ApiHelper, PositionInterface, TimeInterface } from "../../../src/helpers";
 import { Card, Button } from "react-native-paper";
 

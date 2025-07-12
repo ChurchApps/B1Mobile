@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { useAppTheme } from "../../../src/theme";
 import { Text } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 
 interface Props {

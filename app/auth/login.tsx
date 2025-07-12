@@ -7,7 +7,7 @@ import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { TextInput, Button, Text, Provider as PaperProvider, MD3LightTheme, Card } from "react-native-paper";
 import { useUserStore, useCurrentChurch, useChurchAppearance } from "../../src/stores/useUserStore";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 
 const theme = {

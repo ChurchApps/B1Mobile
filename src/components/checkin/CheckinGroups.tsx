@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { useAppTheme } from "../../../src/theme";
 import { Button, Divider, Card, Text } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface Props {
   member: PersonInterface;

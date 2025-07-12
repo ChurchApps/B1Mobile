@@ -2,7 +2,8 @@ import { EnvironmentHelper, UserHelper, SecureStorageHelper } from "../../src/he
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
 import { ErrorHelper } from "../mobilehelper";
 import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";

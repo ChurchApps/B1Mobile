@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { Card, Text, Button, Modal, Portal } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StripePaymentMethod } from "../../interfaces";
 
 interface Props {

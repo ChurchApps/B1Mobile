@@ -6,7 +6,7 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "../../src/hooks";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";

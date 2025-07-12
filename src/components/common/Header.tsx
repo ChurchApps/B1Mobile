@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleProp, ViewStyle } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Constants } from "../../helpers";
 import { HeaderBell } from "../wrapper/HeaderBell";
 import { StandardBackButton } from "../navigation/StandardBackButton";

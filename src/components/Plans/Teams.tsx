@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { FlatList, Text, View, StyleSheet } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { AssignmentInterface, EnvironmentHelper, PersonInterface, PositionInterface } from "../../../src/helpers";
 import { Card } from "react-native-paper";
 import { Avatar } from "../common/Avatar";

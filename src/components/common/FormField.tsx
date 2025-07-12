@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleProp, ViewStyle } from "react-native";
 import { TextInput } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Constants } from "../../helpers";
 
 interface FormFieldProps {

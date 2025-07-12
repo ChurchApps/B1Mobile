@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Card, Text, TextInput, Button, Switch, Menu } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import { ApiHelper, CurrencyHelper } from "../../helpers";
