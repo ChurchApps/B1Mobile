@@ -247,7 +247,7 @@ export const useUserStore = create<UserState>()(
       // Load church navigation links
       loadChurchLinks: async (churchId: string) => {
         try {
-          // Essential: Get main navigation links first
+          // Get main navigation links first
           let tabs: any[] = [];
           const tempTabs = await ApiHelper.getAnonymous(`/links/church/${churchId}?category=b1Tab`, "ContentApi");
 
@@ -267,20 +267,17 @@ export const useUserStore = create<UserState>()(
             }
           });
 
-          // Progressive: Set basic tabs immediately
-          set({ links: tabs });
-
-          // Deferred: Load special tabs (feature availability) in background
-          setTimeout(async () => {
-            try {
-              const specialTabs = await get().getSpecialTabs(churchId);
-              const allLinks = tabs.concat(specialTabs);
-              set({ links: allLinks });
-            } catch (error) {
-              console.error("❌ Failed to load special tabs:", error);
-              // Keep the basic tabs if special tabs fail
-            }
-          }, 200);
+          // Load special tabs (feature availability) before updating state
+          try {
+            const specialTabs = await get().getSpecialTabs(churchId);
+            const allLinks = tabs.concat(specialTabs);
+            // Only update state once with complete data
+            set({ links: allLinks });
+          } catch (error) {
+            console.error("❌ Failed to load special tabs:", error);
+            // Set basic tabs only if special tabs fail
+            set({ links: tabs });
+          }
         } catch (error) {
           console.error("❌ Failed to load church links:", error);
           set({ links: [] });

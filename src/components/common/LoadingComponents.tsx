@@ -25,9 +25,9 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ visible, message
         shadowRadius: 4,
         elevation: 5
       }}>
-        <ActivityIndicator size="large" color={Constants.Colors.primary} />
+        <ActivityIndicator size="large" color={Constants.Colors.primary || "#0D47A1"} />
         {message && (
-          <Text style={[CommonStyles.bodyText, { marginTop: 12 }]}>
+          <Text style={[CommonStyles.bodyText, { marginTop: 12, color: "#3c3c3c", textAlign: "center" }]}>
             {message}
           </Text>
         )}
@@ -58,7 +58,7 @@ export const LoadingView: React.FC<LoadingViewProps> = ({
   if (loading) {
     return (
       <View style={[CommonStyles.centerContainer, style]}>
-        <ActivityIndicator size="large" color={Constants.Colors.primary} />
+        <ActivityIndicator size="large" color={Constants.Colors.primary || "#0D47A1"} />
       </View>
     );
   }
@@ -134,15 +134,15 @@ interface InlineLoaderProps {
 
 export const InlineLoader: React.FC<InlineLoaderProps> = ({
   size = "small",
-  color = Constants.Colors.primary,
+  color = Constants.Colors.primary || "#0D47A1",
   text,
   style
 }) => {
   return (
-    <View style={[CommonStyles.row, { justifyContent: "center" }, style]}>
+    <View style={[CommonStyles.row, { justifyContent: "center", padding: 8 }, style]}>
       <ActivityIndicator size={size} color={color} />
       {text && (
-        <Text style={[CommonStyles.bodyText, { marginLeft: 8, color }]}>
+        <Text style={[CommonStyles.bodyText, { marginLeft: 8, color: "#3c3c3c" }]}>
           {text}
         </Text>
       )}

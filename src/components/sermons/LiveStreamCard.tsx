@@ -45,7 +45,7 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
               style={styles.watchButton}
               labelStyle={styles.watchButtonText}
               icon="play-circle"
-              onPress={onWatchLive || (() => console.log("Opening live stream:", liveStreamData.streamUrl))}>
+              onPress={onWatchLive || (() => {})}>
               Watch Live
             </Button>
           </View>

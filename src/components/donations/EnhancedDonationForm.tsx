@@ -108,7 +108,6 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
         const response = await ApiHelper.post("/donate/fee?churchId=" + churchId, { type: dt, amount }, "GivingApi");
         return response.calculatedFee;
       } catch (error) {
-        console.log("Error calculating transaction fee: ", error);
         // Fallback to credit card calculation
         const fixedFee = 0.3;
         const fixedPercent = 0.029;

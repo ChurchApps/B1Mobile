@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '@/theme';
 
 interface SkeletonProps {
@@ -16,45 +17,59 @@ export const SkeletonItem: React.FC<SkeletonProps> = ({
   style
 }) => {
   const theme = useAppTheme();
-  const animatedValue = useRef(new Animated.Value(0)).current;
+  const shimmerValue = useRef(new Animated.Value(0)).current;
+  const screenWidth = Dimensions.get('window').width;
 
   useEffect(() => {
     const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(animatedValue, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: false,
-        }),
-        Animated.timing(animatedValue, {
-          toValue: 0,
-          duration: 1000,
-          useNativeDriver: false,
-        }),
-      ])
+      Animated.timing(shimmerValue, {
+        toValue: 1,
+        duration: 1500,
+        useNativeDriver: true,
+      })
     );
     animation.start();
 
     return () => animation.stop();
-  }, [animatedValue]);
+  }, [shimmerValue]);
 
-  const backgroundColor = animatedValue.interpolate({
+  const translateX = shimmerValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [theme.colors.surfaceVariant, theme.colors.outline],
+    outputRange: [-screenWidth, screenWidth],
   });
 
   return (
-    <Animated.View
+    <View
       style={[
         {
           width,
           height,
           borderRadius,
-          backgroundColor,
+          backgroundColor: theme.colors.surfaceVariant || '#E8E8E8',
+          overflow: 'hidden',
         },
         style,
       ]}
-    />
+    >
+      <Animated.View
+        style={{
+          width: screenWidth,
+          height: '100%',
+          position: 'absolute',
+          transform: [{ translateX }],
+        }}
+      >
+        <LinearGradient
+          colors={['transparent', 'rgba(255,255,255,0.5)', 'transparent']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+        />
+      </Animated.View>
+    </View>
   );
 };
 

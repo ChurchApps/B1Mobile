@@ -62,7 +62,6 @@ export const testFirebaseFeatures = async (): Promise<boolean> => {
 
     // Test analytics
     await logEvent(analytics, "test_event", { test: true });
-    console.log("Firebase test event logged successfully");
 
     return true;
   } catch (error) {

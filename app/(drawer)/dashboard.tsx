@@ -58,18 +58,17 @@ const Dashboard = () => {
   }, []);
 
   const loadDashboardData = async () => {
-    try {
-      setLoading(true);
-      // Wait for links to be available
-      if (!links || links.length === 0) {
-        await new Promise(resolve => setTimeout(resolve, 500)); // Give time for links to load
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error("Error loading dashboard data:", error);
+    // Simply set loading state - useEffect will handle when to stop loading
+    // based on actual data availability, not arbitrary timeouts
+    setLoading(true);
+  };
+
+  // Stop loading when links are actually available
+  useEffect(() => {
+    if (links && links.length > 0) {
       setLoading(false);
     }
-  };
+  }, [links]);
 
   useFocusEffect(
     useCallback(() => {

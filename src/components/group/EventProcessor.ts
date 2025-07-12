@@ -35,11 +35,9 @@ export class EventProcessor {
       const startRange = dayjs().subtract(3, "months");
       const endRange = dayjs().add(3, "months");
       
-      console.log("Expanding events from", startRange.format("YYYY-MM-DD"), "to", endRange.format("YYYY-MM-DD"));
 
       // Process limited events for performance
       const eventsToProcess = allEvents.slice(0, 30);
-      console.log(`Processing ${eventsToProcess.length} of ${allEvents.length} events for performance`);
 
       eventsToProcess.forEach((event: any) => {
         try {
@@ -52,13 +50,11 @@ export class EventProcessor {
               try {
                 const dates = EventHelper.getRange(event, startRange.toDate(), endRange.toDate());
                 if (dates && dates.length > 10) {
-                  console.log(`Recurring event "${event.title}" generated ${dates.length} instances`);
                 }
                 if (dates && dates.length > 0) {
                   // Limit recurring instances to prevent performance issues
                   const limitedDates = dates.length > 25 ? dates.slice(0, 25) : dates;
                   if (dates.length > 25) {
-                    console.log(`Limited "${event.title}" from ${dates.length} to ${limitedDates.length} instances`);
                   }
                   limitedDates.forEach(date => {
                     // Stop if we have too many total events
@@ -82,9 +78,7 @@ export class EventProcessor {
               const eventDate = dayjs(ev.start);
               if (eventDate.isAfter(startRange) && eventDate.isBefore(endRange)) {
                 expandedEvents.push(ev);
-                console.log(`Added non-recurring event: ${event.title} on ${eventDate.format("YYYY-MM-DD")}`);
               } else {
-                console.log(`Filtered out event: ${event.title} on ${eventDate.format("YYYY-MM-DD")} (outside range)`);
               }
             }
           }
@@ -102,11 +96,9 @@ export class EventProcessor {
   static calculateMarkedDates(expandedEvents: EventInterface[], activeTab: number): any {
     // Only calculate when calendar tab is active and events are loaded
     if (activeTab !== 3 || !expandedEvents || expandedEvents.length === 0) {
-      console.log("MarkedDates: Not calculating - activeTab:", activeTab, "events:", expandedEvents?.length);
       return {};
     }
 
-    console.log("MarkedDates: Calculating for", expandedEvents.length, "events");
     const marked: any = {};
 
     try {
@@ -131,7 +123,6 @@ export class EventProcessor {
       console.error("Error calculating marked dates:", error);
     }
 
-    console.log("MarkedDates: Final marked dates:", Object.keys(marked).length);
     return marked;
   }
 }

@@ -579,7 +579,6 @@ export function EnhancedGivingHistory({ customerId }: Props) {
                                 text: "Stop Donation", 
                                 style: "destructive",
                                 onPress: () => {
-                                  console.log("Stop recurring donation:", selectedRecurring.id);
                                   setSelectedRecurring(null);
                                 }
                               }

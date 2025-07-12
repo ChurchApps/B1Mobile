@@ -33,7 +33,6 @@ export const CheckinServices = (props: Props) => {
   }, []);
 
   const ServiceSelection = async (item: any) => {
-    console.log("Service selected:", item.name, item.id);
     setLoading(true);
     await getMemberData(item.id);
   };
@@ -41,42 +40,31 @@ export const CheckinServices = (props: Props) => {
   const getMemberData = async (serviceId: any) => {
     const personId = currentUserChurch?.person?.id;
     let householdId = currentUserChurch?.person?.householdId;
-    console.log("getMemberData - currentUserChurch:", currentUserChurch);
-    console.log("getMemberData - personId:", personId);
-    console.log("getMemberData - initial householdId:", householdId);
 
     if (personId) {
       try {
         // If no householdId in the user object, fetch the person to get it
         if (!householdId) {
-          console.log("No householdId found, fetching person details");
           const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
           householdId = person.householdId;
-          console.log("getMemberData - person from API:", person);
-          console.log("getMemberData - householdId from person:", householdId);
         }
 
         if (!householdId) {
-          console.log("Still no householdId found, using personId as fallback");
           householdId = personId;
         }
 
         // Step 1: Load service times and groups in parallel (like Chums)
         const [serviceTimes, groups] = await Promise.all([ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi"), ApiHelper.get("/groups", "MembershipApi")]);
 
-        console.log("getMemberData - serviceTimes:", serviceTimes);
-        console.log("getMemberData - groups:", groups);
 
         CheckinHelper.serviceTimes = serviceTimes;
         CheckinHelper.serviceId = serviceId;
 
         // Step 2: Load household members using the householdId
         CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + householdId, "MembershipApi");
-        console.log("getMemberData - householdMembers:", CheckinHelper.householdMembers);
 
         // If still no household members, create array with just the current person
         if (!CheckinHelper.householdMembers || CheckinHelper.householdMembers.length === 0) {
-          console.log("No household members returned from API, creating fallback");
           const currentPerson = currentUserChurch?.person;
           if (currentPerson) {
             CheckinHelper.householdMembers = [currentPerson];
@@ -98,13 +86,11 @@ export const CheckinServices = (props: Props) => {
         // Step 6: Load existing attendance
         await loadExistingAttendance(serviceId);
 
-        console.log("All data loaded, navigating to household screen");
       } catch (error) {
         console.error("Error loading member data:", error);
         setLoading(false);
       }
     } else {
-      console.log("No person ID found");
       setLoading(false);
       // Could implement anonymous check-in flow here
     }
@@ -116,7 +102,6 @@ export const CheckinServices = (props: Props) => {
     try {
       const peopleIdsString = CheckinHelper.peopleIds.join(",");
       const data = await ApiHelper.get("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + encodeURIComponent(peopleIdsString) + "&include=visitSessions", "AttendanceApi");
-      console.log("loadExistingAttendance - data:", data);
       CheckinHelper.setExistingAttendance(data);
     } catch (error) {
       console.error("Error loading existing attendance:", error);

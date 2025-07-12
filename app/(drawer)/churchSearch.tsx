@@ -86,7 +86,6 @@ const ChurchSearch = () => {
 
       // Only clear cached data if switching to a different church
       if (isSwitchingChurch) {
-        console.log("Switching churches, clearing cached data");
         await clearAllCachedData();
       }
 

@@ -97,9 +97,7 @@ export function CustomDrawer(props?: any) {
       const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + currentChurch.id, "GivingApi");
       if (gateways.length > 0) showDonations = true;
       try {
-        console.log("Checking for sermons, church ID:", currentChurch.id);
         const playlists = await ApiHelper.getAnonymous("/playlists/public/" + currentChurch.id, "ContentApi");
-        console.log("Found playlists:", playlists.length);
         if (playlists.length > 0) showSermons = true;
       } catch (error) {
         console.error("Error checking for sermons:", error);

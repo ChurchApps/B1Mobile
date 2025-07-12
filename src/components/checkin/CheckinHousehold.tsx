@@ -18,10 +18,6 @@ export const CheckinHousehold = (props: Props) => {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Debug logging
-  console.log("CheckinHousehold - householdMembers:", CheckinHelper.householdMembers);
-  console.log("CheckinHousehold - serviceTimes:", CheckinHelper.serviceTimes);
-  console.log("CheckinHousehold - groupTree:", CheckinHelper.groupTree);
 
   const submitAttendance = async () => {
     setLoading(true);

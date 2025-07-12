@@ -109,18 +109,6 @@ const GroupDetails = () => {
     retryDelay: 1000
   });
 
-  // Debug logging
-  React.useEffect(() => {
-    console.log("Events query state:", {
-      activeTab,
-      enabled: !!id && !!currentUserChurch?.jwt && activeTab === 3,
-      eventsLoading,
-      eventsData: eventsData?.length,
-      eventsError,
-      id,
-      hasJWT: !!currentUserChurch?.jwt
-    });
-  }, [activeTab, id, currentUserChurch?.jwt, eventsLoading, eventsData, eventsError]);
 
   // Only block on essential data for initial render
   const loading = groupDetailsLoading;
@@ -149,14 +137,10 @@ const GroupDetails = () => {
       end: event.end ? dayjs(event.end) : null
     }));
     
-    console.log("Simple events:", simpleEvents.length);
-    console.log("Sample simple event:", simpleEvents[0]);
     
     // Use the expandEvents function to properly handle recurring events
     const expanded = expandEvents(events);
     
-    console.log("Expanded events:", expanded.length);
-    console.log("Sample expanded event:", expanded[0]);
     
     // Return expanded events if we have them, otherwise fallback to simple
     return expanded.length > 0 ? expanded : simpleEvents;

@@ -45,7 +45,6 @@ const Sermons = () => {
 
   useEffect(() => {
     UserHelper.addOpenScreenEvent("SermonsScreen");
-    console.log("Sermons screen loaded, church ID:", currentChurch?.id);
   }, []);
 
   // Fetch playlists
@@ -152,7 +151,6 @@ const Sermons = () => {
       console.warn("Invalid playlist object:", playlist);
       return;
     }
-    console.log("Navigating to playlist:", playlist.id, playlist.title);
     router.push("/(drawer)/playlistDetails/" + playlist.id + "?title=" + encodeURIComponent(playlist.title));
   };
 
