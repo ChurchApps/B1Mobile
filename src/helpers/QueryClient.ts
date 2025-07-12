@@ -6,11 +6,22 @@ import { ApiHelper } from "../mobilehelper";
 const CACHE_KEY = "REACT_QUERY_CACHE";
 const CACHE_VERSION = "1.0";
 
+// Critical queries that should be persisted more frequently
+const CRITICAL_QUERIES = ['/churches', '/user', '/appearance', '/settings/public'];
+
 // Function to save cache to AsyncStorage
-const persistCache = async (queryClient: QueryClient) => {
+const persistCache = async (queryClient: QueryClient, onlyCritical = false) => {
   try {
     const cache = queryClient.getQueryCache();
-    const queries = cache.getAll();
+    let queries = cache.getAll();
+
+    // If onlyCritical is true, only persist critical queries
+    if (onlyCritical) {
+      queries = queries.filter(query => {
+        const queryKey = query.queryKey[0] as string;
+        return CRITICAL_QUERIES.some(critical => queryKey.includes(critical));
+      });
+    }
 
     // Extract serializable data
     const serializedQueries = queries.map(query => ({
@@ -104,10 +115,22 @@ export const queryClient = new QueryClient({
   }
 });
 
-// Auto-persist cache every 30 seconds
+// Auto-persist cache with optimized frequency
+// Persist critical queries every 2 minutes, all queries every 5 minutes
+let criticalPersistCounter = 0;
+
 setInterval(() => {
-  persistCache(queryClient);
-}, 30000);
+  criticalPersistCounter++;
+  
+  if (criticalPersistCounter >= 5) {
+    // Every 5 intervals (5 minutes) - persist all queries
+    persistCache(queryClient, false);
+    criticalPersistCounter = 0;
+  } else {
+    // Every interval (1 minute) - persist only critical queries
+    persistCache(queryClient, true);
+  }
+}, 60000); // Run every 1 minute
 
 // Function to invalidate all queries after POST requests
 export const invalidateAllQueries = () => {

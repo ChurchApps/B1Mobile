@@ -31,14 +31,25 @@ const SplashScreen = () => {
     
     setIsInitialized(true);
     
-    // Load JWT tokens from secure storage if they exist
-    await UserHelper.loadSecureTokens();
+    try {
+      // Parallelize independent initialization tasks
+      await Promise.all([
+        UserHelper.loadSecureTokens(),
+        UpdateHelper.initializeUpdates(),
+        PushNotificationHelper.requestUserPermission()
+      ]);
 
-    await UpdateHelper.initializeUpdates();
-    PushNotificationHelper.requestUserPermission();
-    PushNotificationHelper.NotificationListener();
-    PushNotificationHelper.NotificationPermissionAndroid();
-    checkUser();
+      // Set up notification listeners (these don't need to be awaited)
+      PushNotificationHelper.NotificationListener();
+      PushNotificationHelper.NotificationPermissionAndroid();
+      
+      // Only authentication check needs to be sequential after token loading
+      checkUser();
+    } catch (error) {
+      console.error("Initialization error:", error);
+      // Continue with app initialization even if some steps fail
+      checkUser();
+    }
   };
 
   useEffect(() => {
