@@ -1,7 +1,5 @@
 import { MD3LightTheme, MD3DarkTheme, configureFonts, useTheme } from "react-native-paper";
-import { Dimensions, Platform } from "react-native";
-
-const { width, height } = Dimensions.get("window");
+import { Platform } from "react-native";
 
 // Custom font configuration
 const fontConfig = {
@@ -28,81 +26,8 @@ const customColors = {
   onError: "#FFFFFF"
 };
 
-// Custom spacing and dimensions
-export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 48
-};
-
-export const dimensions = {
-  screenWidth: width,
-  screenHeight: height,
-  wp: (percentage: number) => (width * percentage) / 100,
-  hp: (percentage: number) => (height * percentage) / 100
-};
-
 // Custom component styles that can be reused
-export const componentStyles = {
-  surface: {
-    borderRadius: 8,
-    padding: spacing.md,
-    margin: spacing.md
-  },
-  card: {
-    borderRadius: 8,
-    padding: spacing.md,
-    marginVertical: spacing.sm,
-    marginHorizontal: spacing.md
-  },
-  avatar: {
-    size: {
-      small: 40,
-      medium: 48,
-      large: 64
-    }
-  },
-  image: {
-    groupPhoto: {
-      width: "100%" as const,
-      height: 200,
-      borderRadius: 8,
-      marginBottom: spacing.md
-    },
-    profilePhoto: {
-      width: 120,
-      height: 120,
-      borderRadius: 60
-    }
-  },
-  input: {
-    marginVertical: spacing.sm,
-    marginHorizontal: spacing.md
-  },
-  button: {
-    marginVertical: spacing.sm,
-    marginHorizontal: spacing.md
-  },
-  list: {
-    item: {
-      padding: spacing.md,
-      marginVertical: spacing.xs,
-      marginHorizontal: spacing.md,
-      borderRadius: 8
-    }
-  },
-  calendar: {
-    header: {
-      marginBottom: spacing.md
-    },
-    day: {
-      borderRadius: 8
-    }
-  }
-};
+export const componentStyles = {};
 
 // Extend Paper's theme with our custom values
 export const lightTheme = {
@@ -136,8 +61,6 @@ export const useAppTheme = () => {
   const theme = useTheme();
   return {
     theme,
-    spacing,
-    dimensions,
     componentStyles
   };
 };
