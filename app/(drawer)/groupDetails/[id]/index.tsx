@@ -33,25 +33,7 @@ const GroupDetails = () => {
   const { navigateBack } = useNavigation();
   const { id, activeTab: initialActiveTab } = useLocalSearchParams<{ id: string; activeTab?: string }>();
   const [activeTab, setActiveTab] = useState(initialActiveTab ? parseInt(initialActiveTab) : 0);
-  // Find the most recent event date for initial calendar view
-  const getInitialCalendarDate = () => {
-    if (!eventsData || eventsData.length === 0) {
-      return dayjs().format("YYYY-MM-DD"); // Default to today if no events
-    }
-    
-    // Find the most recent event
-    const sortedEvents = eventsData
-      .filter(event => event.start)
-      .sort((a, b) => dayjs(b.start).valueOf() - dayjs(a.start).valueOf());
-    
-    if (sortedEvents.length > 0) {
-      return dayjs(sortedEvents[0].start).format("YYYY-MM-DD");
-    }
-    
-    return dayjs().format("YYYY-MM-DD");
-  };
-
-  const [selected, setSelected] = useState(getInitialCalendarDate());
+  const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD")); // Always default to today
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<any>(null);
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
@@ -69,13 +51,6 @@ const GroupDetails = () => {
     }, [refetchEvents, initialActiveTab])
   );
 
-  // Update calendar view when events are loaded
-  React.useEffect(() => {
-    if (eventsData && eventsData.length > 0 && activeTab === 3) {
-      const newDate = getInitialCalendarDate();
-      setSelected(newDate);
-    }
-  }, [eventsData, activeTab]);
 
   // Use react-query for group details
   const {
@@ -179,10 +154,16 @@ const GroupDetails = () => {
 
     try {
       const expandedEvents: EventInterface[] = [];
-      const startRange = dayjs().subtract(3, "months");
-      const endRange = dayjs().add(6, "months");
+      const startRange = dayjs().subtract(3, "months"); // April 2025 (3 months before July)
+      const endRange = dayjs().add(3, "months");     // October 2025 (3 months after July)
+      
+      console.log("Expanding events from", startRange.format("YYYY-MM-DD"), "to", endRange.format("YYYY-MM-DD"));
 
-      allEvents.forEach((event: any) => {
+      // Process limited events for performance
+      const eventsToProcess = allEvents.slice(0, 30);
+      console.log(`Processing ${eventsToProcess.length} of ${allEvents.length} events for performance`);
+
+      eventsToProcess.forEach((event: any) => {
         try {
           const ev = { ...event };
           ev.start = ev.start ? dayjs.utc(ev.start) : undefined;
@@ -192,10 +173,20 @@ const GroupDetails = () => {
             if (event.recurrenceRule) {
               try {
                 const dates = EventHelper.getRange(event, startRange.toDate(), endRange.toDate());
+                // Reduced logging for performance
+                if (dates && dates.length > 10) {
+                  console.log(`Recurring event "${event.title}" generated ${dates.length} instances`);
+                }
                 if (dates && dates.length > 0) {
                   // Limit recurring instances to prevent performance issues
-                  const limitedDates = dates.length > 200 ? dates.slice(0, 200) : dates;
+                  const limitedDates = dates.length > 25 ? dates.slice(0, 25) : dates;
+                  if (dates.length > 25) {
+                    console.log(`Limited "${event.title}" from ${dates.length} to ${limitedDates.length} instances`);
+                  }
                   limitedDates.forEach(date => {
+                    // Stop if we have too many total events
+                    if (expandedEvents.length >= 150) return;
+                    
                     const evInstance = { ...event };
                     const diff = ev.end.diff(ev.start);
                     evInstance.start = dayjs(date);
@@ -210,7 +201,14 @@ const GroupDetails = () => {
                 expandedEvents.push(ev);
               }
             } else {
-              expandedEvents.push(ev);
+              // For non-recurring events, check if they're in our date range
+              const eventDate = dayjs(ev.start);
+              if (eventDate.isAfter(startRange) && eventDate.isBefore(endRange)) {
+                expandedEvents.push(ev);
+                console.log(`Added non-recurring event: ${event.title} on ${eventDate.format("YYYY-MM-DD")}`);
+              } else {
+                console.log(`Filtered out event: ${event.title} on ${eventDate.format("YYYY-MM-DD")} (outside range)`);
+              }
             }
           }
         } catch (eventError) {
@@ -224,24 +222,33 @@ const GroupDetails = () => {
     }
   }, []);
 
-  // Simplified event loading - temporarily disable expansion
+  // Event expansion with debugging
   const expandedEvents = useMemo(() => {
     // Only process events when calendar tab is active
     if (activeTab !== 3) return [];
 
     console.log("Raw events loaded:", events.length);
+    console.log("Sample raw event:", events[0]);
     
-    // For now, just return the raw events without expansion
-    // This will help us debug if the basic events are loading
-    const simpleEvents = events.map(event => ({
+    // For debugging, let's also try simple approach alongside expansion
+    const simpleEvents = events.slice(0, 10).map(event => ({
       ...event,
       start: event.start ? dayjs(event.start) : null,
       end: event.end ? dayjs(event.end) : null
     }));
     
-    console.log("Processed simple events:", simpleEvents.length);
-    return simpleEvents;
-  }, [events, activeTab]);
+    console.log("Simple events:", simpleEvents.length);
+    console.log("Sample simple event:", simpleEvents[0]);
+    
+    // Use the expandEvents function to properly handle recurring events
+    const expanded = expandEvents(events);
+    
+    console.log("Expanded events:", expanded.length);
+    console.log("Sample expanded event:", expanded[0]);
+    
+    // Return expanded events if we have them, otherwise fallback to simple
+    return expanded.length > 0 ? expanded : simpleEvents;
+  }, [events, activeTab, expandEvents]);
 
   // Optimize marked dates calculation with better performance
   const markedDates = useMemo(() => {
@@ -255,12 +262,11 @@ const GroupDetails = () => {
     const marked: any = {};
 
     try {
-      // Mark all events, but limit to prevent performance issues
-      expandedEvents.slice(0, 50).forEach(event => {
+      // Mark only first 30 events for performance
+      expandedEvents.slice(0, 30).forEach(event => {
         if (!event.start) return;
 
         const dateString = dayjs(event.start).format("YYYY-MM-DD");
-        console.log("Marking date:", dateString, "for event:", event.title);
 
         if (!marked[dateString]) {
           marked[dateString] = {
