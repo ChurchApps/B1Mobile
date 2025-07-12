@@ -1,19 +1,18 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
-import { Provider as PaperProvider, Text, MD3LightTheme, Card, Button } from "react-native-paper";
+import { ScrollView, View, StyleSheet } from "react-native";
+import { Provider as PaperProvider, Text, MD3LightTheme, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "../../src/hooks";
 import { MaterialIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
-import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { SermonCard } from "../../src/components/SermonCard";
-import { UserHelper, DateHelper } from "../../src/helpers";
+import { FeaturedSermon, PlaylistCard, LiveStreamCard, EmptyState, SermonsTabBar, type LiveStreamData } from "../../src/components/sermons/exports";
+import { UserHelper } from "../../src/helpers";
 import { PlaylistInterface, SermonInterface } from "../../src/mobilehelper";
 import { useCurrentChurch } from "../../src/stores/useUserStore";
 
@@ -102,7 +101,7 @@ const Sermons = () => {
   }, [recentSermons]);
 
   // Live stream data (in a real app, this would come from an API)
-  const liveStreamData = useMemo(() => {
+  const liveStreamData = useMemo<LiveStreamData>(() => {
     // Sample live stream schedule
     const now = new Date();
     const nextSunday = new Date(now);
@@ -167,182 +166,17 @@ const Sermons = () => {
 
   const renderFeaturedSermon = () => {
     if (!featuredSermon) return null;
-
-    const hasImage = featuredSermon.thumbnail && featuredSermon.thumbnail.trim() !== "";
-
-    return (
-      <TouchableOpacity onPress={() => handleSermonPress(featuredSermon)}>
-        <Card style={styles.heroCard}>
-          <View style={styles.heroContainer}>
-            {hasImage ? (
-              <OptimizedImage source={{ uri: featuredSermon.thumbnail }} style={styles.heroImage} contentFit="cover" />
-            ) : (
-              <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.heroImage, styles.heroFallback]}>
-                <View style={styles.heroPattern}>
-                  <View style={styles.heroCircle1} />
-                  <View style={styles.heroCircle2} />
-                  <View style={styles.heroCircle3} />
-                </View>
-                <View style={styles.heroIcon}>
-                  <MaterialIcons name="video-library" size={48} color="#FFFFFF" opacity={0.9} />
-                </View>
-              </LinearGradient>
-            )}
-            <View style={styles.heroOverlay}>
-              <View style={styles.heroContent}>
-                <Text variant="labelMedium" style={styles.heroLabel}>
-                  Latest Sermon
-                </Text>
-                <Text variant="headlineSmall" style={styles.heroTitle} numberOfLines={2}>
-                  {featuredSermon.title || "Untitled Sermon"}
-                </Text>
-                <Text variant="bodyMedium" style={styles.heroDate}>
-                  {featuredSermon.publishDate ? DateHelper.prettyDate(new Date(featuredSermon.publishDate)) : ""}
-                </Text>
-                {featuredSermon.duration && (
-                  <Text variant="bodySmall" style={styles.heroDuration}>
-                    {Math.floor(featuredSermon.duration / 60)}:{(featuredSermon.duration % 60).toString().padStart(2, "0")}
-                  </Text>
-                )}
-              </View>
-              <View style={styles.playButton}>
-                <MaterialIcons name="play-arrow" size={32} color="#FFFFFF" />
-              </View>
-            </View>
-          </View>
-        </Card>
-      </TouchableOpacity>
-    );
+    return <FeaturedSermon sermon={featuredSermon} onPress={handleSermonPress} />;
   };
 
   const renderPlaylistCard = (playlist: PlaylistInterface) => {
-    const hasImage = playlist.thumbnail && playlist.thumbnail.trim() !== "";
-    return (
-      <TouchableOpacity key={playlist.id} onPress={() => handlePlaylistPress(playlist)}>
-        <Card style={styles.playlistCard}>
-          <View style={styles.playlistContent}>
-            <View style={styles.playlistImageContainer}>
-              {hasImage ? (
-                <OptimizedImage source={{ uri: playlist.thumbnail }} style={styles.playlistImage} contentFit="cover" />
-              ) : (
-                <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.playlistImage, styles.playlistFallback]}>
-                  <View style={styles.playlistPattern}>
-                    <View style={styles.playlistCircle1} />
-                    <View style={styles.playlistCircle2} />
-                  </View>
-                  <View style={styles.playlistIcon}>
-                    <MaterialIcons name="playlist-play" size={32} color="#FFFFFF" opacity={0.9} />
-                  </View>
-                </LinearGradient>
-              )}
-            </View>
-            <View style={styles.playlistOverlay}>
-              <View style={styles.playlistInfo}>
-                <Text variant="titleMedium" style={styles.playlistTitle} numberOfLines={2}>
-                  {playlist.title}
-                </Text>
-                {playlist.description && (
-                  <Text variant="bodySmall" style={styles.playlistDescription} numberOfLines={2}>
-                    {playlist.description}
-                  </Text>
-                )}
-                <Text variant="bodySmall" style={styles.playlistDate}>
-                  {playlist.publishDate ? DateHelper.prettyDate(new Date(playlist.publishDate)) : ""}
-                </Text>
-              </View>
-              <MaterialIcons name="chevron-right" size={24} color="#FFFFFF" />
-            </View>
-          </View>
-        </Card>
-      </TouchableOpacity>
-    );
+    return <PlaylistCard key={playlist.id} playlist={playlist} onPress={handlePlaylistPress} />;
   };
 
   const renderSermonCard = (sermon: SermonInterface) => <SermonCard key={sermon.id} sermon={sermon} onPress={handleSermonPress} />;
 
   const renderCountdown = () => {
-    if (liveStreamData.isLive) {
-      return (
-        <Card style={styles.liveCard}>
-          <LinearGradient colors={["#D32F2F", "#F44336"]} style={styles.liveGradient}>
-            <View style={styles.liveContent}>
-              <View style={styles.liveIndicator}>
-                <View style={styles.liveDot} />
-                <Text variant="titleMedium" style={styles.liveText}>
-                  LIVE NOW
-                </Text>
-              </View>
-              <Text variant="headlineSmall" style={styles.liveTitle}>
-                {liveStreamData.streamTitle}
-              </Text>
-              <Text variant="bodyMedium" style={styles.liveDescription}>
-                {liveStreamData.streamDescription}
-              </Text>
-              <Button
-                mode="contained"
-                style={styles.watchButton}
-                labelStyle={styles.watchButtonText}
-                icon="play-circle"
-                onPress={() => {
-                  // In a real app, this would open the live stream
-                  console.log("Opening live stream:", liveStreamData.streamUrl);
-                }}>
-                Watch Live
-              </Button>
-            </View>
-          </LinearGradient>
-        </Card>
-      );
-    }
-
-    return (
-      <Card style={styles.countdownCard}>
-        <LinearGradient colors={["#0D47A1", "#1976D2"]} style={styles.countdownGradient}>
-          <View style={styles.countdownContent}>
-            <Text variant="titleMedium" style={styles.countdownLabel}>
-              Next Service In
-            </Text>
-            <View style={styles.countdownTimer}>
-              {timeUntilStream.days > 0 && (
-                <View style={styles.timeUnit}>
-                  <Text variant="displaySmall" style={styles.timeNumber}>
-                    {timeUntilStream.days}
-                  </Text>
-                  <Text variant="bodyMedium" style={styles.timeLabel}>
-                    {timeUntilStream.days === 1 ? "Day" : "Days"}
-                  </Text>
-                </View>
-              )}
-              <View style={styles.timeUnit}>
-                <Text variant="displaySmall" style={styles.timeNumber}>
-                  {timeUntilStream.hours}
-                </Text>
-                <Text variant="bodyMedium" style={styles.timeLabel}>
-                  {timeUntilStream.hours === 1 ? "Hour" : "Hours"}
-                </Text>
-              </View>
-              <View style={styles.timeUnit}>
-                <Text variant="displaySmall" style={styles.timeNumber}>
-                  {timeUntilStream.minutes}
-                </Text>
-                <Text variant="bodyMedium" style={styles.timeLabel}>
-                  {timeUntilStream.minutes === 1 ? "Minute" : "Minutes"}
-                </Text>
-              </View>
-            </View>
-            <Text variant="titleMedium" style={styles.streamTitle}>
-              {liveStreamData.streamTitle}
-            </Text>
-            <Text variant="bodyMedium" style={styles.streamDescription}>
-              {liveStreamData.streamDescription}
-            </Text>
-            <Text variant="bodySmall" style={styles.streamTime}>
-              {liveStreamData.nextStreamDate.toLocaleDateString()} at {liveStreamData.nextStreamDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-            </Text>
-          </View>
-        </LinearGradient>
-      </Card>
-    );
+    return <LiveStreamCard liveStreamData={liveStreamData} timeUntilStream={timeUntilStream} />;
   };
 
   const renderPlaylistsSection = () => (
@@ -357,17 +191,7 @@ const Sermons = () => {
       </View>
 
       {sortedPlaylists.length === 0 ? (
-        <Card style={styles.emptyCard}>
-          <Card.Content style={styles.emptyContent}>
-            <MaterialIcons name="playlist-add" size={48} color="#9E9E9E" style={styles.emptyIcon} />
-            <Text variant="titleMedium" style={styles.emptyTitle}>
-              No Sermon Series Available
-            </Text>
-            <Text variant="bodyMedium" style={styles.emptySubtitle}>
-              Check back later for new sermon series from your church.
-            </Text>
-          </Card.Content>
-        </Card>
+        <EmptyState type="playlists" />
       ) : (
         sortedPlaylists.map(renderPlaylistCard)
       )}
@@ -386,17 +210,7 @@ const Sermons = () => {
       </View>
 
       {sortedSermons.length === 0 ? (
-        <Card style={styles.emptyCard}>
-          <Card.Content style={styles.emptyContent}>
-            <MaterialIcons name="video-library" size={48} color="#9E9E9E" style={styles.emptyIcon} />
-            <Text variant="titleMedium" style={styles.emptyTitle}>
-              No Recent Sermons
-            </Text>
-            <Text variant="bodyMedium" style={styles.emptySubtitle}>
-              Check back later for new sermons from your church.
-            </Text>
-          </Card.Content>
-        </Card>
+        <EmptyState type="sermons" />
       ) : (
         sortedSermons.map(renderSermonCard)
       )}
@@ -438,19 +252,7 @@ const Sermons = () => {
           <View style={styles.content}>
             <MainHeader title="Sermons" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
-            {/* Tab Navigation */}
-            <View style={styles.tabContainer}>
-              <TouchableOpacity style={[styles.tab, activeSection === "playlists" && styles.activeTab]} onPress={() => setActiveSection("playlists")}>
-                <Text variant="labelLarge" style={[styles.tabText, activeSection === "playlists" && styles.activeTabText]}>
-                  Series
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.tab, activeSection === "recent" && styles.activeTab]} onPress={() => setActiveSection("recent")}>
-                <Text variant="labelLarge" style={[styles.tabText, activeSection === "recent" && styles.activeTabText]}>
-                  Recent
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <SermonsTabBar activeSection={activeSection} onTabChange={setActiveSection} />
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               {activeSection === "playlists" && renderPlaylistsSection()}
@@ -471,31 +273,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1
   },
-  tabContainer: {
-    flexDirection: "row",
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 16,
-    alignItems: "center",
-    borderBottomWidth: 2,
-    borderBottomColor: "transparent"
-  },
-  activeTab: {
-    borderBottomColor: "#0D47A1"
-  },
-  tabText: {
-    color: "#9E9E9E",
-    fontWeight: "500"
-  },
-  activeTabText: {
-    color: "#0D47A1",
-    fontWeight: "700"
-  },
   scrollView: {
     flex: 1,
     backgroundColor: "#F6F6F8"
@@ -505,127 +282,6 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 32
   },
-
-  // Hero Card Styles
-  heroCard: {
-    marginBottom: 24,
-    borderRadius: 20,
-    overflow: "hidden",
-    elevation: 6,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8
-  },
-  heroContainer: {
-    position: "relative",
-    aspectRatio: 16 / 9
-  },
-  heroImage: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: "100%",
-    height: "100%"
-  },
-  heroFallback: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    overflow: "hidden"
-  },
-  heroPattern: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.2
-  },
-  heroCircle1: {
-    position: "absolute",
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    top: -50,
-    right: -50
-  },
-  heroCircle2: {
-    position: "absolute",
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "rgba(255,255,255,0.08)",
-    bottom: -40,
-    left: -40
-  },
-  heroCircle3: {
-    position: "absolute",
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: "rgba(255,255,255,0.12)",
-    top: "30%",
-    left: "25%"
-  },
-  heroIcon: {
-    zIndex: 2
-  },
-  heroOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 24,
-    justifyContent: "space-between",
-    flexDirection: "row",
-    alignItems: "flex-end"
-  },
-  heroContent: {
-    flex: 1,
-    marginRight: 16
-  },
-  heroLabel: {
-    color: "#FFFFFF",
-    opacity: 0.9,
-    marginBottom: 8,
-    textTransform: "uppercase",
-    letterSpacing: 1
-  },
-  heroTitle: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-    marginBottom: 8
-  },
-  heroDate: {
-    color: "#FFFFFF",
-    opacity: 0.9,
-    marginBottom: 4
-  },
-  heroDuration: {
-    color: "#FFFFFF",
-    opacity: 0.8
-  },
-  playButton: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: "rgba(21, 101, 192, 0.9)",
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 4,
-    shadowColor: "#0D47A1",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4
-  },
-
-  // Section Styles
   section: {
     flex: 1
   },
@@ -640,253 +296,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 20
   },
-
-  // Playlist Card Styles
-  playlistCard: {
-    marginBottom: 12,
-    borderRadius: 16,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 3,
-    overflow: "hidden"
-  },
-  playlistContent: {
-    position: "relative",
-    aspectRatio: 16 / 9
-  },
-  playlistImageContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0
-  },
-  playlistImage: {
-    width: "100%",
-    height: "100%"
-  },
-  playlistFallback: {
-    justifyContent: "center",
-    alignItems: "center",
-    position: "relative",
-    overflow: "hidden"
-  },
-  playlistPattern: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.3
-  },
-  playlistCircle1: {
-    position: "absolute",
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    top: -20,
-    right: -20
-  },
-  playlistCircle2: {
-    position: "absolute",
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: "rgba(255,255,255,0.08)",
-    bottom: -15,
-    left: -15
-  },
-  playlistIcon: {
-    zIndex: 2
-  },
-  playlistOverlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  playlistInfo: {
-    flex: 1,
-    marginRight: 12
-  },
-  playlistTitle: {
-    color: "#FFFFFF",
-    fontWeight: "600",
-    marginBottom: 4,
-    fontSize: 16
-  },
-  playlistDescription: {
-    color: "#FFFFFF",
-    opacity: 0.9,
-    marginBottom: 4,
-    fontSize: 14
-  },
-  playlistDate: {
-    color: "#FFFFFF",
-    opacity: 0.8,
-    fontSize: 12
-  },
-
-  // Empty State
-  emptyCard: {
-    borderRadius: 16,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 3
-  },
-  emptyContent: {
-    alignItems: "center",
-    padding: 32
-  },
-  emptyIcon: {
-    marginBottom: 16
-  },
-  emptyTitle: {
-    color: "#3c3c3c",
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 8
-  },
-  emptySubtitle: {
-    color: "#9E9E9E",
-    textAlign: "center",
-    lineHeight: 20
-  },
-
-  // Live Stream Styles
-  liveCard: {
-    marginBottom: 24,
-    borderRadius: 20,
-    overflow: "hidden",
-    elevation: 6,
-    shadowColor: "#D32F2F",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8
-  },
-  liveGradient: {
-    padding: 24,
-    alignItems: "center"
-  },
-  liveContent: {
-    alignItems: "center"
-  },
-  liveIndicator: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16
-  },
-  liveDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: "#FFFFFF",
-    marginRight: 8
-  },
-  liveText: {
-    color: "#FFFFFF",
-    fontWeight: "800",
-    letterSpacing: 1
-  },
-  liveTitle: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-    textAlign: "center",
-    marginBottom: 8
-  },
-  liveDescription: {
-    color: "#FFFFFF",
-    opacity: 0.9,
-    textAlign: "center",
-    marginBottom: 20
-  },
-  watchButton: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 25,
-    paddingHorizontal: 24
-  },
-  watchButtonText: {
-    color: "#D32F2F",
-    fontWeight: "700"
-  },
-
-  // Countdown Styles
-  countdownCard: {
-    marginBottom: 24,
-    borderRadius: 20,
-    overflow: "hidden",
-    elevation: 6,
-    shadowColor: "#0D47A1",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8
-  },
-  countdownGradient: {
-    padding: 24,
-    alignItems: "center"
-  },
-  countdownContent: {
-    alignItems: "center"
-  },
-  countdownLabel: {
-    color: "#FFFFFF",
-    fontWeight: "600",
-    marginBottom: 20,
-    textTransform: "uppercase",
-    letterSpacing: 1
-  },
-  countdownTimer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-    gap: 24
-  },
-  timeUnit: {
-    alignItems: "center"
-  },
-  timeNumber: {
-    color: "#FFFFFF",
-    fontWeight: "800",
-    fontSize: 36,
-    marginBottom: 4
-  },
-  timeLabel: {
-    color: "#FFFFFF",
-    opacity: 0.8,
-    fontSize: 12,
-    fontWeight: "600",
-    textTransform: "uppercase"
-  },
-  streamTitle: {
-    color: "#FFFFFF",
-    fontWeight: "700",
-    textAlign: "center",
-    marginBottom: 8
-  },
-  streamDescription: {
-    color: "#FFFFFF",
-    opacity: 0.9,
-    textAlign: "center",
-    marginBottom: 12
-  },
-  streamTime: {
-    color: "#FFFFFF",
-    opacity: 0.8,
-    textAlign: "center",
-    fontSize: 14
-  },
-
-  // Error State
   errorContainer: {
     flex: 1,
     justifyContent: "center",

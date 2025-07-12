@@ -24,7 +24,9 @@ import {
   GroupAboutTab,
   GroupMembersTab,
   GroupCalendarTab,
-  GroupEventModal
+  GroupEventModal,
+  GroupDetailsSkeleton,
+  EventProcessor
 } from "../../../../src/components/group/exports";
 
 dayjs.extend(utc);
@@ -125,105 +127,12 @@ const GroupDetails = () => {
   const hasError = groupDetailsIsError || groupMembersIsError || eventsIsError;
   const errors = [groupDetailsError, groupMembersError, eventsError].filter(Boolean);
 
-  const updateTime = useCallback((data: any) => {
-    if (!data || !Array.isArray(data)) return [];
-
-    try {
-      const tz = new Date().getTimezoneOffset();
-      return data.map((d: EventInterface) => {
-        try {
-          const ev = { ...d };
-          ev.start = ev.start ? new Date(ev.start) : new Date();
-          ev.end = ev.end ? new Date(ev.end) : new Date();
-          ev.start.setMinutes(ev.start.getMinutes() - tz);
-          ev.end.setMinutes(ev.end.getMinutes() - tz);
-          return ev;
-        } catch (error) {
-          console.warn("Error updating time for event:", d.id, error);
-          return d;
-        }
-      });
-    } catch (error) {
-      console.error("Error updating event times:", error);
-      return [];
-    }
-  }, []);
+  const updateTime = useCallback((data: any) => EventProcessor.updateTime(data), []);
 
   const events = useMemo(() => updateTime(eventsData), [eventsData, updateTime]);
 
 
-  const expandEvents = useCallback((allEvents: EventInterface[]) => {
-    if (!allEvents || allEvents.length === 0) return [];
-
-    try {
-      const expandedEvents: EventInterface[] = [];
-      const startRange = dayjs().subtract(3, "months"); // April 2025 (3 months before July)
-      const endRange = dayjs().add(3, "months");     // October 2025 (3 months after July)
-      
-      console.log("Expanding events from", startRange.format("YYYY-MM-DD"), "to", endRange.format("YYYY-MM-DD"));
-
-      // Process limited events for performance
-      const eventsToProcess = allEvents.slice(0, 30);
-      console.log(`Processing ${eventsToProcess.length} of ${allEvents.length} events for performance`);
-
-      eventsToProcess.forEach((event: any) => {
-        try {
-          const ev = { ...event };
-          ev.start = ev.start ? dayjs.utc(ev.start) : undefined;
-          ev.end = ev.end ? dayjs.utc(ev.end) : undefined;
-
-          if (ev.start && ev.end) {
-            if (event.recurrenceRule) {
-              try {
-                const dates = EventHelper.getRange(event, startRange.toDate(), endRange.toDate());
-                // Reduced logging for performance
-                if (dates && dates.length > 10) {
-                  console.log(`Recurring event "${event.title}" generated ${dates.length} instances`);
-                }
-                if (dates && dates.length > 0) {
-                  // Limit recurring instances to prevent performance issues
-                  const limitedDates = dates.length > 25 ? dates.slice(0, 25) : dates;
-                  if (dates.length > 25) {
-                    console.log(`Limited "${event.title}" from ${dates.length} to ${limitedDates.length} instances`);
-                  }
-                  limitedDates.forEach(date => {
-                    // Stop if we have too many total events
-                    if (expandedEvents.length >= 150) return;
-                    
-                    const evInstance = { ...event };
-                    const diff = ev.end.diff(ev.start);
-                    evInstance.start = dayjs(date);
-                    evInstance.end = evInstance.start.add(diff, "ms");
-                    expandedEvents.push(evInstance);
-                  });
-                  EventHelper.removeExcludeDates(expandedEvents);
-                }
-              } catch (recurrenceError) {
-                console.warn("Error processing recurrence rule for event:", event.id, recurrenceError);
-                // Fallback to single event
-                expandedEvents.push(ev);
-              }
-            } else {
-              // For non-recurring events, check if they're in our date range
-              const eventDate = dayjs(ev.start);
-              if (eventDate.isAfter(startRange) && eventDate.isBefore(endRange)) {
-                expandedEvents.push(ev);
-                console.log(`Added non-recurring event: ${event.title} on ${eventDate.format("YYYY-MM-DD")}`);
-              } else {
-                console.log(`Filtered out event: ${event.title} on ${eventDate.format("YYYY-MM-DD")} (outside range)`);
-              }
-            }
-          }
-        } catch (eventError) {
-          console.warn("Error processing event:", event.id, eventError);
-        }
-      });
-      return expandedEvents;
-    } catch (error) {
-      console.error("Error expanding events:", error);
-      return [];
-    }
-  }, []);
+  const expandEvents = useCallback((allEvents: EventInterface[]) => EventProcessor.expandEvents(allEvents), []);
 
   // Event expansion with debugging
   const expandedEvents = useMemo(() => {
@@ -253,42 +162,7 @@ const GroupDetails = () => {
     return expanded.length > 0 ? expanded : simpleEvents;
   }, [events, activeTab, expandEvents]);
 
-  // Optimize marked dates calculation with better performance
-  const markedDates = useMemo(() => {
-    // Only calculate when calendar tab is active and events are loaded
-    if (activeTab !== 3 || !expandedEvents || expandedEvents.length === 0) {
-      console.log("MarkedDates: Not calculating - activeTab:", activeTab, "events:", expandedEvents?.length);
-      return {};
-    }
-
-    console.log("MarkedDates: Calculating for", expandedEvents.length, "events");
-    const marked: any = {};
-
-    try {
-      // Mark only first 30 events for performance
-      expandedEvents.slice(0, 30).forEach(event => {
-        if (!event.start) return;
-
-        const dateString = dayjs(event.start).format("YYYY-MM-DD");
-
-        if (!marked[dateString]) {
-          marked[dateString] = {
-            dots: [],
-            events: []
-          };
-        }
-
-        marked[dateString].dots.push({ color: "#0D47A1" });
-        marked[dateString].events.push(event);
-        marked[dateString].marked = true;
-      });
-    } catch (error) {
-      console.error("Error calculating marked dates:", error);
-    }
-
-    console.log("MarkedDates: Final marked dates:", Object.keys(marked).length);
-    return marked;
-  }, [expandedEvents, activeTab]);
+  const markedDates = useMemo(() => EventProcessor.calculateMarkedDates(expandedEvents, activeTab), [expandedEvents, activeTab]);
 
   const onDayPress = useCallback(
     (day: DateData) => {
@@ -311,37 +185,7 @@ const GroupDetails = () => {
 
           <FlatList
             data={[{ key: "skeleton" }]}
-            renderItem={() => (
-              <View>
-                {/* Skeleton Hero Section */}
-                <View style={styles.heroSection}>
-                  <Card style={styles.heroCard}>
-                    <View style={[styles.heroImageContainer, styles.skeletonHero]}>
-                      <View style={styles.heroOverlay}>
-                        <View style={[styles.skeletonText, { width: "60%", height: 28, marginBottom: 12 }]} />
-                        <View style={styles.heroStats}>
-                          <View style={[styles.skeletonText, { width: 80, height: 20 }]} />
-                        </View>
-                      </View>
-                    </View>
-                  </Card>
-                </View>
-
-                {/* Skeleton Navigation */}
-                <Card style={styles.navigationCard}>
-                  <Card.Content>
-                    <View style={styles.navigationGrid}>
-                      {[1, 2, 3, 4].map(i => (
-                        <View key={i} style={styles.navButton}>
-                          <View style={[styles.skeletonCircle, { width: 40, height: 40, marginBottom: 4 }]} />
-                          <View style={[styles.skeletonText, { width: 50, height: 12 }]} />
-                        </View>
-                      ))}
-                    </View>
-                  </Card.Content>
-                </Card>
-              </View>
-            )}
+            renderItem={() => <GroupDetailsSkeleton />}
             keyExtractor={item => item.key}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.mainContainer}
@@ -507,17 +351,6 @@ const styles = StyleSheet.create({
   tabContent: {
     paddingHorizontal: 16,
     paddingVertical: 16
-  },
-  skeletonHero: {
-    backgroundColor: "#E9ECEF"
-  },
-  skeletonText: {
-    backgroundColor: "#E9ECEF",
-    borderRadius: 4
-  },
-  skeletonCircle: {
-    backgroundColor: "#E9ECEF",
-    borderRadius: 50
   }
 });
 
