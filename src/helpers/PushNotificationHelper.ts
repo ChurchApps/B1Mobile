@@ -56,20 +56,6 @@ export class PushNotificationHelper {
     // }
   }
 
-  static async getDeviceInfo() {
-    const details: Record<string, unknown> = {};
-    details.appName = DeviceInfo.getApplicationName();
-    details.buildId = await DeviceInfo.getBuildId();
-    details.buildNumber = DeviceInfo.getBuildNumber();
-    details.brand = DeviceInfo.getBrand();
-    details.device = await DeviceInfo.getDevice();
-    details.deviceId = DeviceInfo.getDeviceId();
-    details.deviceType = DeviceInfo.getDeviceType();
-    details.hardware = await DeviceInfo.getHardware();
-    details.manufacturer = await DeviceInfo.getManufacturer();
-    details.version = DeviceInfo.getReadableVersion();
-    return details;
-  }
 
   static async requestUserPermission() {
     try {
@@ -196,12 +182,6 @@ export class PushNotificationHelper {
     }
   }
 
-  // Add method to check if we're in a specific chat
-  static isInChat(): boolean {
-    // This should be implemented based on your navigation state
-    // You'll need to track the current chat ID in your navigation state
-    return false; // Placeholder
-  }
 }
 
 export const eventBus = {

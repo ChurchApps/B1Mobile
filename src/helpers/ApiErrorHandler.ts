@@ -76,44 +76,9 @@ export class ApiErrorHandler {
     return "An unexpected error occurred";
   }
 
-  static isNetworkError(error: any): boolean {
-    const message = this.formatErrorMessage(error).toLowerCase();
-    return message.includes("network") || 
-           message.includes("internet") || 
-           message.includes("connection") ||
-           message.includes("timeout");
-  }
-
-  static isAuthError(error: any): boolean {
-    if (error?.raw?.statusCode === 401 || error?.raw?.statusCode === 403) return true;
-    const message = this.formatErrorMessage(error).toLowerCase();
-    return message.includes("unauthorized") || 
-           message.includes("authentication") || 
-           message.includes("permission");
-  }
 
   static showErrorAlert(error: any, title: string = "Error"): void {
     Alert.alert(title, this.formatErrorMessage(error));
   }
 
-  static async retry<T>(
-    apiCall: () => Promise<T>,
-    maxRetries: number = 3,
-    delay: number = 1000
-  ): Promise<T> {
-    let lastError: any;
-    
-    for (let i = 0; i < maxRetries; i++) {
-      try {
-        return await apiCall();
-      } catch (error) {
-        lastError = error;
-        if (i < maxRetries - 1) {
-          await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
-        }
-      }
-    }
-    
-    throw lastError;
-  }
 }

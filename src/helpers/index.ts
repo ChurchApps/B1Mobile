@@ -11,7 +11,6 @@ export { NavigationUtils } from "./NavigationUtils";
 export { PersonHelper } from "./PersonHelper";
 export { queryClient, initializeQueryCache } from "./QueryClient";
 export { SecureStorageHelper } from "./SecureStorageHelper";
-export { StripeHelper } from "./StripeHelper";
 export { UserHelper } from "./UserHelper";
 export { Utilities } from "./Utilities";
 export { useChurchSettings } from "../hooks/useChurchSettings";
