@@ -11,6 +11,7 @@ interface Props {
 interface NotificationData {
   type: string;
   chatId?: string;
+  notificationId?: string;
   [key: string]: unknown;
 }
 
@@ -26,19 +27,37 @@ export const HeaderBell = (props: Props) => {
   const handleNotification = (content: { data?: NotificationData }) => {
     try {
       const state = navigation.getState();
-      if (!state?.routes?.length) return;
-
-      const currentRoute = state.routes[state.index];
-      const params = currentRoute?.params as ChatParams | undefined;
-
-      // Don't increment badge if we're in the relevant chat
-      if (content.data?.type === "chat" && content.data?.chatId && content.data.chatId === params?.chatId) {
-        // Emit event to update chat messages
-        eventBus.emit("updateChatMessages", content.data);
+      if (!state?.routes?.length) {
+        setBadgeCount(prevCount => prevCount + 1);
         return;
       }
+
+      const currentRoute = state.routes[state.index];
+      const routeName = currentRoute?.name;
+      const params = currentRoute?.params as ChatParams | undefined;
+
+      // Don't increment badge if we're viewing the relevant content
+      if (content.data?.type === "chat" && content.data?.chatId) {
+        // If we're in the message screen with the same chat, just update messages
+        if (routeName === "messageScreen" && content.data.chatId === params?.chatId) {
+          eventBus.emit("updateChatMessages", content.data);
+          return;
+        }
+      }
+      
+      // If we're in the notifications screen, don't increment badge for any notifications
+      if (routeName === "notifications") {
+        // Just emit the update event but don't increment badge
+        if (content.data?.type === "chat") {
+          eventBus.emit("updateChatMessages", content.data);
+        }
+        return;
+      }
+
+      // For all other cases, increment the badge
       setBadgeCount(prevCount => prevCount + 1);
-    } catch {
+    } catch (error) {
+      console.error("Error handling notification in HeaderBell:", error);
       // If there's any issue with navigation state, just increment the badge
       setBadgeCount(prevCount => prevCount + 1);
     }
