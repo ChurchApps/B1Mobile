@@ -13,6 +13,7 @@ export { MainHeader } from "./wrapper/MainHeader";
 
 export * from "./donations/exports";
 export * from "./Plans/exports";
+export * from "./group/exports";
 
 // Modals
 export { PaymentMethodModal } from "./modals/PaymentMethodModal";
