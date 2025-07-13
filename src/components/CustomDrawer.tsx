@@ -49,7 +49,7 @@ export function CustomDrawer(props?: any) {
   const updateDrawerList = async () => {
     try {
       let tabs: LinkInterface[] = [];
-      if (currentChurch) {
+      if (currentChurch?.id) {
         const tempTabs = await ApiHelper.getAnonymous("/links/church/" + currentChurch.id + "?category=b1Tab", "ContentApi");
         tempTabs.forEach((tab: LinkInterface) => {
           switch (tab.linkType) {
@@ -87,11 +87,11 @@ export function CustomDrawer(props?: any) {
       showDirectory = false,
       showLessons = false,
       showChums = false,
-      showCheckin,
+      showCheckin = false,
       showSermons = false;
     const uc = useUserStore.getState().currentUserChurch;
 
-    if (currentChurch) {
+    if (currentChurch?.id) {
       const page = await ApiHelper.getAnonymous("/pages/" + currentChurch.id + "/tree?url=/", "ContentApi");
       if (page.url) showWebsite = true;
       const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + currentChurch.id, "GivingApi");

@@ -13,6 +13,11 @@ interface Props {
 }
 
 export const PositionDetails = ({ position, assignment, times, onUpdate }: Props) => {
+  // Early return if required props are null
+  if (!position || !assignment) {
+    return null;
+  }
+
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "accepted":
@@ -58,7 +63,7 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
       const formattedStartDate = formatDate(startDate);
       const formattedEndDate = formatTime(endDate);
       return (
-        <View key={time.id} style={styles.timeItem}>
+        <View key={time?.id || Math.random()} style={styles.timeItem}>
           <MaterialIcons name="access-time" size={16} color="#0D47A1" />
           <View style={styles.timeDetails}>
             <Text style={styles.timeTitle}>{time.displayName}</Text>
@@ -75,12 +80,14 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
   const formatTime = (date: any) => date.format("h:mm A");
 
   const handleAccept = () => {
+    if (!assignment?.id) return;
     ApiHelper.post("/assignments/accept/" + assignment.id, [], "DoingApi").then(() => {
       onUpdate();
     });
   };
 
   const handleDecline = () => {
+    if (!assignment?.id) return;
     ApiHelper.post("/assignments/decline/" + assignment.id, [], "DoingApi").then(() => {
       onUpdate();
     });
@@ -94,7 +101,7 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
   const canRespond = assignment.status === "Unconfirmed" && (times.length === 0 || new Date() < latestTime);
 
   return (
-    <Card key={position.id} style={styles.card} mode="elevated">
+    <Card key={position?.id || Math.random()} style={styles.card} mode="elevated">
       <Card.Content style={styles.cardContent}>
         {/* Position Header */}
         <View style={styles.positionHeader}>

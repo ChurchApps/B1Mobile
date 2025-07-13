@@ -132,7 +132,7 @@ const PlanDetails = () => {
   const myAssignments = useMemo(() => ArrayHelper.getAll(assignments, "personId", currentUserChurch?.person?.id), [assignments, currentUserChurch?.person?.id]);
 
   const getPositionDetails = () =>
-    myAssignments.map(assignment => {
+    myAssignments.filter(assignment => assignment?.id).map(assignment => {
       const position = ArrayHelper.getOne(positions, "id", assignment.positionId);
       const posTimes = times?.filter((time: any) => time?.teams?.indexOf(position?.categoryName) > -1) || [];
       return <PositionDetails key={`position-${assignment.id}`} position={position} assignment={assignment} times={posTimes} onUpdate={loadData} />;
