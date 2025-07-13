@@ -87,7 +87,8 @@
     "react-native-webview": "13.13.5",
     "util": "^0.12.5",
     "wonka": "^6.3.5",
-    "zustand": "^5.0.6"
+    "zustand": "^5.0.6",
+    "expo-av": "~15.1.7"
   },
   "devDependencies": {
     "@babel/core": "^7.27.1",

@@ -224,7 +224,7 @@ export function CustomDrawer(props?: any) {
       <View style={styles.headerContent}>
         {getUserInfo()}
         <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#0D47A1" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#0D47A1" />}>
-          {!currentChurch ? "Find Church" : currentChurch.name || ""}
+          {!currentChurch ? "Find Church" : (currentChurch.name || "Select Church")}
         </Button>
       </View>
     </Surface>
@@ -238,7 +238,7 @@ export function CustomDrawer(props?: any) {
     return (
       <View style={styles.userInfoSection}>
         <View style={styles.userRow}>
-          <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={48} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={48} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />}</View>
+          <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={48} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={48} label={`${user.firstName?.[0] || "U"}${user.lastName?.[0] || "S"}`} />}</View>
           <View style={styles.userTextContainer}>
             <Text variant="titleMedium" numberOfLines={1} style={styles.userName}>
               {`${user.firstName} ${user.lastName}`}

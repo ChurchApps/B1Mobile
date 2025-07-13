@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "873379055173",
+    "project_id": "b1mobile",
+    "storage_bucket": "b1mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:873379055173:android:8dce00e5e50b588be1452c",
+        "android_client_info": {
+          "package_name": "church.b1.mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP-v-oGjbwxiWZ2MH_cgcZXTQxxJfkDbA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
