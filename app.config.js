@@ -33,7 +33,7 @@ module.exports = {
     },
     android: {
       package: "church.b1.mobile",
-      googleServicesFile: "./google-services.json",
+      googleServicesFile: "./config/google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
