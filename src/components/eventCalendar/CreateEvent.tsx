@@ -62,7 +62,15 @@ export default function CreateEvent(props: Props) {
   const [openEndPicker, setOpenEndPicker] = useState(false);
 
   const getDefaultStartDate = () => {
-    if (event.start) return new Date(event.start);
+    if (event.start) {
+      const date = new Date(event.start);
+      console.log('getDefaultStartDate conversion:', {
+        utcString: event.start,
+        localDate: date.toString(),
+        localISO: date.toISOString()
+      });
+      return date;
+    }
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(14, 0, 0, 0); // 2:00 PM
@@ -70,7 +78,15 @@ export default function CreateEvent(props: Props) {
   };
 
   const getDefaultEndDate = () => {
-    if (event.end) return new Date(event.end);
+    if (event.end) {
+      const date = new Date(event.end);
+      console.log('getDefaultEndDate conversion:', {
+        utcString: event.end,
+        localDate: date.toString(),
+        localISO: date.toISOString()
+      });
+      return date;
+    }
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(15, 0, 0, 0); // 3:00 PM
@@ -96,6 +112,16 @@ export default function CreateEvent(props: Props) {
       }
 
       ev.recurrenceRule = rRule;
+      
+      console.log('handleSave - sending event to API:', {
+        id: ev.id,
+        title: ev.title,
+        start: ev.start,
+        end: ev.end,
+        startType: typeof ev.start,
+        endType: typeof ev.end
+      });
+      
       setLoading(true);
       ApiHelper.post("/events", [ev], "ContentApi").then(() => {
         setLoading(false);
@@ -207,12 +233,21 @@ export default function CreateEvent(props: Props) {
 
   const handleChange = (type: string, e: Date) => {
     const env = { ...event };
+    console.log(`handleChange ${type}:`, {
+      selectedDate: e.toString(),
+      selectedUTC: e.toISOString()
+    });
+    
     switch (type) {
       case "start":
-        env.start = DateHelper.toDate(e);
+        // Store as ISO string for API compatibility (UTC)
+        env.start = e.toISOString();
+        setStartDate(e);
         break;
       case "end":
-        env.end = DateHelper.toDate(e);
+        // Store as ISO string for API compatibility (UTC)
+        env.end = e.toISOString();
+        setEndDate(e);
         break;
     }
     setEvent(env);

@@ -48,6 +48,7 @@ const GroupDetails = () => {
   // Refresh events when screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
+      console.log('Screen focused - refreshing events');
       refetchEvents();
       // If we came back with an activeTab parameter, set it
       if (initialActiveTab) {
@@ -123,12 +124,29 @@ const GroupDetails = () => {
     if (activeTab !== 3) {
       return [];
     }
-    return updateTime(eventsData);
+    const processed = updateTime(eventsData);
+    console.log('Events useMemo - processed events:', processed?.length, 'events');
+    if (processed?.length > 0) {
+      console.log('Sample processed event:', {
+        id: processed[0].id,
+        title: processed[0].title,
+        start: processed[0].start
+      });
+    }
+    return processed;
   }, [eventsData, updateTime, activeTab]);
 
 
   const [expandedEvents, setExpandedEvents] = useState<EventInterface[]>([]);
   const [isProcessingEvents, setIsProcessingEvents] = useState(false);
+
+  // Trigger refetch when switching to events tab
+  useEffect(() => {
+    if (activeTab === 3 && currentUserChurch?.jwt) {
+      console.log('Switched to events tab - refetching events');
+      refetchEvents();
+    }
+  }, [activeTab, currentUserChurch?.jwt, refetchEvents]);
 
   // Async event expansion to prevent UI blocking - now month-based
   useEffect(() => {
@@ -143,6 +161,7 @@ const GroupDetails = () => {
     // Process events synchronously for the current month only
     const processEventsSync = () => {
       try {
+        // Force fresh calculation by including timestamp in cache key
         const expanded = EventProcessor.expandEventsForMonth(events, currentMonth);
         setExpandedEvents(expanded);
       } catch (error) {
@@ -155,17 +174,26 @@ const GroupDetails = () => {
 
     // Process immediately for faster response
     processEventsSync();
-  }, [events, activeTab, currentMonth]);
+  }, [events, activeTab, currentMonth, eventsData?.length]); // Add eventsData.length to force recalc on data change
 
-  const markedDates = useMemo(() => 
-    EventProcessor.calculateMarkedDates(expandedEvents, activeTab), 
-    [expandedEvents, activeTab]
-  );
+  const markedDates = useMemo(() => {
+    const marked = EventProcessor.calculateMarkedDates(expandedEvents, activeTab);
+    console.log('markedDates useMemo - expandedEvents count:', expandedEvents?.length);
+    if (expandedEvents?.length > 0) {
+      console.log('markedDates useMemo - sample expanded event:', {
+        id: expandedEvents[0].id,
+        title: expandedEvents[0].title,
+        start: expandedEvents[0].start
+      });
+    }
+    return marked;
+  }, [expandedEvents, activeTab]);
 
   const onDayPress = useCallback(
     (day: DateData) => {
       setSelected(day.dateString);
       const selectedDayEvents = markedDates[day.dateString]?.events || [];
+      console.log('onDayPress - selectedDayEvents for', day.dateString, ':', selectedDayEvents.map(e => ({ id: e.id, title: e.title })));
       if (selectedDayEvents.length !== 0) {
         setShowEventModal(true);
         setSelectedEvents(selectedDayEvents);

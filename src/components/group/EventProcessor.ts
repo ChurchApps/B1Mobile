@@ -6,18 +6,23 @@ export class EventProcessor {
   private static monthCache = new Map<string, { events: EventInterface[]; timestamp: number }>();
   private static CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+  static clearCache(): void {
+    console.log('Clearing EventProcessor cache');
+    this.monthCache.clear();
+  }
+
   static updateTime(data: any): EventInterface[] {
     if (!data || !Array.isArray(data)) return [];
 
     try {
-      const tz = new Date().getTimezoneOffset();
       return data.map((d: EventInterface) => {
         try {
           const ev = { ...d };
+          // API stores times in UTC, convert to local time for display
+          // JavaScript Date constructor automatically handles timezone conversion
+          // when parsing ISO strings, so we don't need manual offset calculation
           ev.start = ev.start ? new Date(ev.start) : new Date();
           ev.end = ev.end ? new Date(ev.end) : new Date();
-          ev.start.setMinutes(ev.start.getMinutes() - tz);
-          ev.end.setMinutes(ev.end.getMinutes() - tz);
           return ev;
         } catch (error) {
           console.warn("Error updating time for event:", d.id, error);
@@ -33,13 +38,20 @@ export class EventProcessor {
   static expandEventsForMonth(allEvents: EventInterface[], monthString: string): EventInterface[] {
     if (!allEvents || allEvents.length === 0) return [];
     
-    // Check cache first
-    const cacheKey = `${monthString}-${allEvents.length}`;
+    // Check cache first - include data hash to ensure fresh calculation when events change
+    const dataHash = allEvents.map(e => `${e.id}-${e.title}-${e.description}-${e.start}-${e.end}-${e.recurrenceRule}-${e.visibility}`).join('|');
+    // Use a more robust hash that includes title/description changes
+    const hashCode = dataHash.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a; // Convert to 32bit integer
+    }, 0);
+    const cacheKey = `${monthString}-${allEvents.length}-${Math.abs(hashCode)}`;
     const cached = this.monthCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
-      console.log(`Cache hit for ${monthString} - returning ${cached.events.length} cached events`);
+      console.log(`Cache hit for ${monthString} - returning ${cached.events.length} cached events (key: ${cacheKey})`);
       return cached.events;
     }
+    console.log(`Cache miss for ${monthString} - calculating events (key: ${cacheKey})`);
     
     const startTime = performance.now();
     
@@ -200,7 +212,7 @@ export class EventProcessor {
       }
       
       const totalTime = performance.now() - startTime;
-      console.log(`Month expansion completed in ${totalTime.toFixed(2)}ms. Found ${expandedEvents.length} events for ${monthString}`);
+      console.log(`Month expansion completed in ${totalTime.toFixed(2)}ms. Found ${expandedEvents.length} events for ${monthString} (key: ${cacheKey})`);
       
       // Cache the result
       this.monthCache.set(cacheKey, {

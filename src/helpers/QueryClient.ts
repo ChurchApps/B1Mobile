@@ -169,6 +169,22 @@ const invalidateRelatedQueries = (endpoint: string) => {
   // Convert endpoint to lowercase for comparison
   const path = endpoint.toLowerCase();
 
+  // Clear EventProcessor cache when events change
+  if (path.includes("/events") || path.includes("/event")) {
+    // Import and clear EventProcessor cache
+    try {
+      import('../components/group/EventProcessor').then(({ EventProcessor }) => {
+        if (EventProcessor?.clearCache) {
+          EventProcessor.clearCache();
+        }
+      }).catch(error => {
+        console.warn('Could not clear EventProcessor cache:', error);
+      });
+    } catch (error) {
+      console.warn('Error importing EventProcessor:', error);
+    }
+  }
+
   // Invalidate specific query patterns based on the API endpoint
   if (path.includes("/groups") || path.includes("/group")) {
     queryClient.invalidateQueries({ queryKey: ["/groups"] });
@@ -178,6 +194,13 @@ const invalidateRelatedQueries = (endpoint: string) => {
   if (path.includes("/events") || path.includes("/event")) {
     queryClient.invalidateQueries({ queryKey: ["/events"] });
     queryClient.invalidateQueries({ queryKey: ["timeline"] });
+    // Invalidate all group events queries
+    queryClient.invalidateQueries({ 
+      predicate: (query) => {
+        const key = query.queryKey[0] as string;
+        return key?.includes('/events/group/');
+      }
+    });
   }
 
   if (path.includes("/plans") || path.includes("/plan")) {
