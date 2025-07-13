@@ -1,18 +1,22 @@
 import { QueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ApiHelper } from "../mobilehelper";
+import { HybridCachePersister } from "./HybridCachePersister";
 
-// Custom persistence utilities
+// Initialize hybrid cache persister for optimized storage
+const hybridPersister = new HybridCachePersister({
+  useSQL: true,
+  maxAsyncStorageSize: 2048, // 2MB limit for AsyncStorage
+  sqliteThreshold: 50 // Use SQLite for entries > 50KB
+});
+
+// Legacy constants - keeping for backward compatibility
 const CACHE_KEY = "REACT_QUERY_CACHE";
 const CACHE_VERSION = "1.0";
-
-// Long-term cache strategy: 30 days retention
 const LONG_TERM_CACHE_TIME = 30 * 24 * 60 * 60 * 1000; // 30 days
-
-// Critical queries that should be persisted more frequently
 const CRITICAL_QUERIES = ['/churches', '/user', '/appearance', '/settings/public'];
 
-// Function to save cache to AsyncStorage
+// Function to save cache using hybrid persister
 const persistCache = async (queryClient: QueryClient, onlyCritical = false) => {
   try {
     const cache = queryClient.getQueryCache();
@@ -51,23 +55,22 @@ const persistCache = async (queryClient: QueryClient, onlyCritical = false) => {
       queries: serializedQueries
     };
 
-    await AsyncStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    // Use hybrid persister for intelligent storage selection
+    await hybridPersister.persistClient(cacheData);
   } catch (error) {
     console.warn("Failed to persist React Query cache:", error);
   }
 };
 
-// Function to restore cache from AsyncStorage
+// Function to restore cache using hybrid persister
 const restoreCache = async (queryClient: QueryClient) => {
   try {
-    const cached = await AsyncStorage.getItem(CACHE_KEY);
-    if (!cached) return;
-
-    const cacheData = JSON.parse(cached);
+    const cacheData = await hybridPersister.restoreClient();
+    if (!cacheData) return;
 
     // Check cache version and age (don't restore if older than 30 days)
     if (cacheData.version !== CACHE_VERSION || Date.now() - cacheData.timestamp > LONG_TERM_CACHE_TIME) {
-      await AsyncStorage.removeItem(CACHE_KEY);
+      await hybridPersister.removeClient();
       return;
     }
 
@@ -90,7 +93,7 @@ const restoreCache = async (queryClient: QueryClient) => {
     });
   } catch (error) {
     console.warn("Failed to restore React Query cache:", error);
-    await AsyncStorage.removeItem(CACHE_KEY);
+    await hybridPersister.removeClient();
   }
 };
 
@@ -151,8 +154,10 @@ export const clearAllCachedData = async () => {
   // Clear React Query cache
   queryClient.clear();
 
-  // Clear persisted cache from AsyncStorage
+  // Clear persisted cache from both storage types
   try {
+    await hybridPersister.removeClient();
+    // Also clear legacy AsyncStorage entries
     await AsyncStorage.removeItem(CACHE_KEY);
   } catch (error) {
     console.warn("Failed to clear persisted cache:", error);
@@ -229,7 +234,18 @@ ApiHelper.delete = async (...args: any[]) => {
   return result;
 };
 
-// Restore cache on initialization
+// Restore cache on initialization with migration support
 export const initializeQueryCache = async () => {
   await restoreCache(queryClient);
+  
+  // Migrate existing AsyncStorage cache to SQLite if needed
+  try {
+    await hybridPersister.migrateToSQLite();
+  } catch (error) {
+    console.warn("Cache migration failed:", error);
+  }
 };
+
+// Export cache management utilities
+export const getCacheStats = () => hybridPersister.getCacheStats();
+export const cleanupCache = () => hybridPersister.cleanupCache();
