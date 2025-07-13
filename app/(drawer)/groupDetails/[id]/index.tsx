@@ -36,7 +36,9 @@ const GroupDetails = () => {
   const { navigateBack } = useNavigation();
   const { id, activeTab: initialActiveTab } = useLocalSearchParams<{ id: string; activeTab?: string }>();
   const [activeTab, setActiveTab] = useState(initialActiveTab ? parseInt(initialActiveTab) : 0);
+
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD")); // Always default to today
+  const [currentMonth, setCurrentMonth] = useState(dayjs().format("YYYY-MM-DD")); // Track current calendar month
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<any>(null);
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
@@ -108,80 +110,57 @@ const GroupDetails = () => {
   });
 
 
+
+
   // Only show full loading if group details is loading (essential data)
   const hasError = groupDetailsIsError || groupMembersIsError || eventsIsError;
   const errors = [groupDetailsError, groupMembersError, eventsError].filter(Boolean);
 
   const updateTime = useCallback((data: any) => EventProcessor.updateTime(data), []);
 
-  const events = useMemo(() => updateTime(eventsData), [eventsData, updateTime]);
+  const events = useMemo(() => {
+    // Only process events when on the Events tab
+    if (activeTab !== 3) {
+      return [];
+    }
+    return updateTime(eventsData);
+  }, [eventsData, updateTime, activeTab]);
 
 
   const [expandedEvents, setExpandedEvents] = useState<EventInterface[]>([]);
   const [isProcessingEvents, setIsProcessingEvents] = useState(false);
 
-  // Async event expansion to prevent UI blocking
+  // Async event expansion to prevent UI blocking - now month-based
   useEffect(() => {
     if (activeTab !== 3 || events.length === 0) {
       setExpandedEvents([]);
+      setIsProcessingEvents(false);
       return;
     }
 
-
     setIsProcessingEvents(true);
 
-    // Process events asynchronously in chunks to prevent UI blocking
-    const processEventsAsync = async () => {
+    // Process events synchronously for the current month only
+    const processEventsSync = () => {
       try {
-        // First, provide immediate fallback events
-        const simpleEvents = events.slice(0, 10).map(event => ({
-          ...event,
-          start: event.start ? dayjs(event.start) : null,
-          end: event.end ? dayjs(event.end) : null
-        }));
-        setExpandedEvents(simpleEvents);
-
-        // Then process the full expansion in the background
-        await new Promise(resolve => setTimeout(resolve, 100)); // Allow UI to render
-        
-        try {
-          // Process events with a timeout
-          const expansionPromise = new Promise<EventInterface[]>((resolve) => {
-            try {
-              const expanded = EventProcessor.expandEvents(events);
-              resolve(expanded);
-            } catch (error) {
-              resolve(simpleEvents); // Fallback to simple events
-            }
-          });
-          
-          const timeoutPromise = new Promise<EventInterface[]>((resolve) => {
-            setTimeout(() => {
-              resolve(simpleEvents); // Fallback to simple events
-            }, 5000);
-          });
-          
-          // Race between expansion and timeout
-          const expanded = await Promise.race([expansionPromise, timeoutPromise]);
-          
-          // Only update if we got results from expansion
-          if (expanded.length > 0) {
-            setExpandedEvents(expanded);
-          }
-        } catch (expansionError) {
-          // Keep simple events as fallback
-        }
+        const expanded = EventProcessor.expandEventsForMonth(events, currentMonth);
+        setExpandedEvents(expanded);
       } catch (error) {
-        // Keep the simple events as fallback
+        console.error('Event expansion failed:', error);
+        setExpandedEvents([]);
       } finally {
         setIsProcessingEvents(false);
       }
     };
 
-    processEventsAsync();
-  }, [events, activeTab]);
+    // Process immediately for faster response
+    processEventsSync();
+  }, [events, activeTab, currentMonth]);
 
-  const markedDates = useMemo(() => EventProcessor.calculateMarkedDates(expandedEvents, activeTab), [expandedEvents, activeTab]);
+  const markedDates = useMemo(() => 
+    EventProcessor.calculateMarkedDates(expandedEvents, activeTab), 
+    [expandedEvents, activeTab]
+  );
 
   const onDayPress = useCallback(
     (day: DateData) => {
@@ -194,6 +173,10 @@ const GroupDetails = () => {
     },
     [markedDates]
   );
+
+  const onMonthChange = useCallback((month: DateData) => {
+    setCurrentMonth(month.dateString);
+  }, []);
 
   // Show minimal loading only for critical group details data
   if (groupDetailsLoading) {
@@ -317,6 +300,7 @@ const GroupDetails = () => {
                         selected={selected}
                         markedDates={markedDates}
                         onDayPress={onDayPress}
+                        onMonthChange={onMonthChange}
                       />
                     )}
                   </View>

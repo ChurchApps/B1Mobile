@@ -13,6 +13,7 @@ interface GroupCalendarTabProps {
   selected: string;
   markedDates: any;
   onDayPress: (day: DateData) => void;
+  onMonthChange?: (month: DateData) => void;
 }
 
 export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({
@@ -21,7 +22,8 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({
   isLoading,
   selected,
   markedDates,
-  onDayPress
+  onDayPress,
+  onMonthChange
 }) => {
   const { theme } = useAppTheme();
 
@@ -72,6 +74,7 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({
         markingType="multi-dot"
         markedDates={markedDates}
         onDayPress={onDayPress}
+        onMonthChange={onMonthChange}
         theme={{
           backgroundColor: theme.colors.surface,
           calendarBackground: theme.colors.surface,
