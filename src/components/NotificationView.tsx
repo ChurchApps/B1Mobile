@@ -50,7 +50,7 @@ export function NotificationTab() {
         if (matchingItem2) {
           merged.push({
             id: commonId,
-            message: item1.conversation.messages[0].content,
+            message: item1?.conversation?.messages?.[0]?.content,
             displayName: matchingItem2.name.display,
             photo: matchingItem2.photo
           });
@@ -217,7 +217,7 @@ export function NotificationTab() {
       <TabView
         navigationState={{ index: 0, routes }}
         renderScene={renderScene}
-        onIndexChange={() => {}}
+        onIndexChange={() => { }}
         swipeEnabled={false}
         renderTabBar={renderTabBar}
         initialLayout={{ width: DimensionHelper.wp(100), height: DimensionHelper.hp(200) }}

@@ -29,6 +29,7 @@
     },
     "ios": {
       "bundleIdentifier": "church.b1.mobile",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "30",
       "supportsTablet": true,
       "requireFullScreen": true,
@@ -81,7 +82,8 @@
         "expo-build-properties",
         {
           "ios": {
-            "deploymentTarget": "15.0"
+            "deploymentTarget": "15.0",
+            "useFrameworks": "static"
           },
           "android": {
             "compileSdkVersion": 34,
@@ -89,7 +91,9 @@
             "minSdkVersion": 24
           }
         }
-      ]
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics"
     ],
     "updates": {
       "enabled": true,

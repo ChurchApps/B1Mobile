@@ -27,14 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>b1mobile</string>
           <string>church.b1.mobile</string>
-        </array>
-      </dict>
-      <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>exp+b1mobile</string>
         </array>
       </dict>
     </array>
@@ -42,6 +35,12 @@
     <string>1</string>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>mailto</string>
+      <string>tel</string>
+      <string>sms</string>
+    </array>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>
@@ -53,6 +52,16 @@
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
+    <key>NSCameraUsageDescription</key>
+    <string>B1 Church needs camera access to allow you to take photos for your profile and share with your church community.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>B1 Church uses your location to help you find nearby church events and connect with local church members.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>B1 Church needs microphone access to allow you to record audio messages and participate in church communications.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>B1 Church needs access to your photos to allow you to upload profile pictures and share images with your church community.</string>
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>B1 Church sends notifications to keep you updated about church events, messages, and important announcements.</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
