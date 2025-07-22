@@ -64,7 +64,18 @@ module.exports = {
             "./assets/sounds/notification.mp3"
           ]
         }
-      ]
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1",
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      "@react-native-firebase/app",
+      // "@react-native-firebase/analytics"
     ],
     extra: {
       ATTENDANCE_API: process.env.ATTENDANCE_API || "https://attendanceapi.churchapps.org",

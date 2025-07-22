@@ -22,16 +22,16 @@ EnvironmentHelper.init();
 
 const SplashScreen = () => {
   const [isInitialized, setIsInitialized] = React.useState(false);
-  
+
   const init = async () => {
     // Prevent multiple initializations
     if (isInitialized) {
       console.log("Splash screen already initialized, skipping...");
       return;
     }
-    
+
     setIsInitialized(true);
-    
+
     try {
       // Parallelize independent initialization tasks
       await Promise.all([
@@ -43,7 +43,7 @@ const SplashScreen = () => {
       // Set up notification listeners (these don't need to be awaited)
       PushNotificationHelper.NotificationListener();
       PushNotificationHelper.NotificationPermissionAndroid();
-      
+
       // Only authentication check needs to be sequential after token loading
       checkUser();
     } catch (error) {
@@ -55,7 +55,7 @@ const SplashScreen = () => {
 
   useEffect(() => {
     ErrorHelper.init();
-    ApiHelper.onError = () => {};
+    ApiHelper.onError = () => { };
     UserHelper.addOpenScreenEvent("Splash Screen");
   }, []);
 
@@ -167,7 +167,7 @@ const SplashScreen = () => {
       <StatusBar hidden={true} />
       <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
         <Video
-          source={require("../assets/B1Loop.webm")}
+          source={require("../assets/B1Loop.mp4")}
           style={{
             width: maxDimension,
             height: maxDimension,
