@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background color -->
+    <item android:drawable="@color/splashscreen_background" />
+    
+    <!-- Logo centered -->
+    <item android:gravity="center">
+        <bitmap android:src="@drawable/splashscreen_logo_white" 
+                android:gravity="center" />
+    </item>
+</layer-list>

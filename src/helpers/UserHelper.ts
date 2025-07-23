@@ -34,22 +34,62 @@ export class UserHelper {
   }
 
   /**
+   * Check if JWT token is valid and not expired
+   */
+  static isTokenValid(jwt: string): boolean {
+    try {
+      const payload = JSON.parse(atob(jwt.split(".")[1]));
+      const now = Math.floor(Date.now() / 1000);
+      return payload.exp > now;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Attempt to refresh JWT token using existing token
+   */
+  static async refreshToken(): Promise<boolean> {
+    try {
+      const currentToken = await SecureStorageHelper.getSecureItem("default_jwt");
+      if (!currentToken || !this.isTokenValid(currentToken)) {
+        return false;
+      }
+
+      const response = await ApiHelper.postAnonymous("/users/refresh", { jwt: currentToken }, "MembershipApi");
+      if (response.jwt) {
+        await SecureStorageHelper.setSecureItem("default_jwt", response.jwt);
+        ApiHelper.setDefaultPermissions(response.jwt);
+        return true;
+      }
+    } catch (error) {
+      console.log("Token refresh failed:", error);
+      return false;
+    }
+    return false;
+  }
+
+  /**
    * Load JWT tokens from secure storage on app initialization
    */
   static async loadSecureTokens(): Promise<void> {
     try {
       const defaultToken = await SecureStorageHelper.getSecureItem("default_jwt");
       if (defaultToken) {
-        ApiHelper.setDefaultPermissions(defaultToken);
+        // Check if token is still valid
+        if (this.isTokenValid(defaultToken)) {
+          ApiHelper.setDefaultPermissions(defaultToken);
+        } else {
+          console.log("Stored JWT token is expired, will attempt refresh during authentication");
+          // Don't set expired token, let authentication handle it
+        }
       }
 
-      // Load API-specific tokens
-      const apiTokens = await SecureStorageHelper.getSecureItem("api_tokens");
-      if (apiTokens) {
-        const tokens = JSON.parse(apiTokens);
-        Object.entries(tokens).forEach(([apiName, tokenData]: [string, any]) => {
-          ApiHelper.setPermissions(apiName, tokenData.jwt, tokenData.permissions || []);
-        });
+      // One-time migration: Remove old api_tokens to prevent SecureStore size warning
+      const hasOldTokens = await SecureStorageHelper.hasSecureItem("api_tokens");
+      if (hasOldTokens) {
+        await SecureStorageHelper.removeSecureItem("api_tokens");
+        console.log("Migrated: Removed old api_tokens from SecureStore");
       }
     } catch (error) {
       console.error("Failed to load secure tokens:", error);
@@ -62,7 +102,6 @@ export class UserHelper {
   static async clearSecureTokens(): Promise<void> {
     try {
       await SecureStorageHelper.removeSecureItem("default_jwt");
-      await SecureStorageHelper.removeSecureItem("api_tokens");
     } catch (error) {
       console.error("Failed to clear secure tokens:", error);
     }

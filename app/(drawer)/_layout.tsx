@@ -1,9 +1,7 @@
 import React from "react";
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Drawer } from "expo-router/drawer";
 
 import { CustomDrawer } from "../../src/components/CustomDrawer";
-import { Constants } from "@/helpers";
 import { ErrorBoundary } from "../../src/components/ErrorBoundary";
 
 export default function DrawerLayout() {
@@ -22,11 +20,11 @@ export default function DrawerLayout() {
         screenOptions={{
           headerShown: false,
           drawerStyle: {
-            width: DimensionHelper.wp(60),
-            height: DimensionHelper.hp(100),
-            backgroundColor: Constants.Colors.app_color
+            width: 280, // Fixed width from style guide
+            backgroundColor: "#F6F6F8" // Background from style guide
           },
-          drawerType: "slide"
+          drawerType: "slide",
+          overlayColor: "rgba(0, 0, 0, 0.5)" // Semi-transparent overlay
         }}
         drawerContent={props => <CustomDrawer {...props} />}></Drawer>
     </ErrorBoundary>

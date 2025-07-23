@@ -1,23 +1,49 @@
 import React from "react";
-import { BlueHeader } from "@/components/BlueHeader";
-import { ArrayHelper, ChurchInterface, Constants, UserHelper } from "../../src/helpers";
+import { ChurchInterface, UserHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/mobilehelper";
 import { ApiHelper } from "../../src/mobilehelper";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Keyboard, TouchableWithoutFeedback, View } from "react-native";
-import { useAppTheme } from "../../src/theme";
-import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
-import RNRestart from "react-native-restart";
-import { Platform } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
+import { Text, Provider as PaperProvider, MD3LightTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
-import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
 import { useUserStore, useRecentChurches, useUserChurches } from "../../src/stores/useUserStore";
+import { Image } from "expo-image";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { 
+  ChurchSearchHero, 
+  ChurchSearchInput, 
+  ChurchListItem, 
+  SearchLoadingIndicator, 
+  GettingStartedHelper, 
+  ChurchSelectionOverlay 
+} from "../../src/components/churchSearch/exports";
+
+const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: "#0D47A1",
+    secondary: "#f0f2f5",
+    surface: "#ffffff",
+    background: "#F6F6F8",
+    onSurface: "#3c3c3c",
+    onBackground: "#3c3c3c",
+    elevation: {
+      level0: "transparent",
+      level1: "#ffffff",
+      level2: "#f8f9fa",
+      level3: "#f0f2f5",
+      level4: "#e9ecef",
+      level5: "#e2e6ea"
+    }
+  }
+};
 
 const ChurchSearch = () => {
-  const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");
+  const [selectingChurch, setSelectingChurch] = useState(false);
   const recentChurches = useRecentChurches();
   const userChurches = useUserChurches();
   const { addRecentChurch, selectChurch } = useUserStore();
@@ -35,10 +61,16 @@ const ChurchSearch = () => {
   useEffect(() => {
     // Utilities.trackEvent("Church Search Screen");
     UserHelper.addOpenScreenEvent("Church Search Screen");
+
+    // Clear image cache on screen load to ensure fresh church logos
+    Image.clearDiskCache();
+    Image.clearMemoryCache();
   }, []);
 
   const churchSelection = async (churchData: ChurchInterface) => {
     try {
+      setSelectingChurch(true);
+
       // Check if user is already a member of this church
       let existing = userChurches.find(uc => uc.church.id === churchData.id);
       if (existing) {
@@ -48,26 +80,31 @@ const ChurchSearch = () => {
       // Add to recent churches
       addRecentChurch(churchData);
 
-      // Clear all cached data when switching churches
-      await clearAllCachedData();
+      // Check if we're switching to a different church
+      const currentChurch = useUserStore.getState().currentUserChurch?.church;
+      const isSwitchingChurch = currentChurch?.id !== churchData.id;
+
+      // Only clear cached data if switching to a different church
+      if (isSwitchingChurch) {
+        await clearAllCachedData();
+      }
 
       // Use the store to select the church
       await selectChurch(churchData);
 
       UserHelper.addAnalyticsEvent("church_selected", {
         id: Date.now(),
-        device: Platform.OS,
         church: churchData.name
       });
 
-      router.navigate("/(drawer)/dashboard");
+      // Navigate to dashboard immediately for better UX
+      router.replace("/(drawer)/dashboard");
 
-      if (Platform.OS === "android") {
-        RNRestart.Restart();
-      }
+      setSelectingChurch(false);
     } catch (err: any) {
       console.error("❌ Church selection error:", err);
       ErrorHelper.logError("church-search", err);
+      setSelectingChurch(false);
     }
   };
 
@@ -75,60 +112,93 @@ const ChurchSearch = () => {
 
   // Remove StoreToRecent - handled by the store now
 
-  const getHeaderView = () => (
-    <View>
-      <BlueHeader />
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <Surface style={{ padding: spacing.md, backgroundColor: theme.colors.background, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
-          <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
-            Find Your Church
-          </Text>
-          <TextInput mode="outlined" label="Church name" placeholder="Church name" value={searchText} onChangeText={setSearchText} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="church" />} />
-          <Button mode="contained" onPress={() => {}} loading={loading} style={{ marginBottom: spacing.md }}>
-            Search
-          </Button>
-          {searchText === "" && (
-            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginTop: spacing.sm }}>
-              {recentChurches.length === 0 ? "No recent churches available." : "Recent Churches"}
-            </Text>
-          )}
-        </Surface>
-      </TouchableWithoutFeedback>
-    </View>
+  const renderChurchItem = ({ item }: { item: ChurchInterface }) => (
+    <ChurchListItem 
+      church={item} 
+      onPress={churchSelection} 
+      isSelecting={selectingChurch} 
+    />
   );
 
+  const displayedChurches = searchText.length < 3 ? recentChurches.slice().reverse() : searchList;
+
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
-      <List.Section>
-        {getHeaderView()}
-        {(searchText === "" ? recentChurches.slice().reverse() : searchList).map((item: any, index: any) => (
-          <List.Item
-            key={item.id || index}
-            title={item.name}
-            left={() => (
-              <OptimizedImage
-                source={(() => {
-                  let churchImage = Constants.Images.ic_church;
-                  if (item.settings && item.settings.length > 0) {
-                    let setting = ArrayHelper.getOne(item.settings, "keyName", "favicon_400x400");
-                    if (!setting) setting = item.settings[0];
-                    churchImage = { uri: setting.value };
-                  }
-                  return churchImage;
-                })()}
-                style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }}
-                placeholder={Constants.Images.ic_church}
-              />
-            )}
-            onPress={() => churchSelection(item)}
-            style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }}
-            titleStyle={{ fontWeight: "500" }}
+    <PaperProvider theme={theme}>
+      <SafeAreaView style={styles.container}>
+        <ChurchSelectionOverlay visible={selectingChurch} />
+        <View style={styles.content}>
+          <ChurchSearchHero />
+
+          <ChurchSearchInput 
+            searchText={searchText} 
+            onSearchTextChange={setSearchText} 
           />
-        ))}
-      </List.Section>
-    </View>
+
+          {loading && <SearchLoadingIndicator />}
+
+          {/* Results Section */}
+          <View style={styles.resultsSection}>
+            {!loading && (
+              <>
+                <View style={styles.sectionHeader}>
+                  <Text variant="titleLarge" style={styles.sectionTitle}>
+                    {searchText.length < 3 ? "Recent Churches" : "Search Results"}
+                  </Text>
+                  {searchText.length < 3 && recentChurches.length === 0 && (
+                    <Text variant="bodyMedium" style={styles.emptyText}>
+                      No recent churches. Search to find your church.
+                    </Text>
+                  )}
+                  {searchText.length >= 3 && displayedChurches.length === 0 && !loading && (
+                    <Text variant="bodyMedium" style={styles.emptyText}>
+                      No churches found. Try a different search term.
+                    </Text>
+                  )}
+                </View>
+
+                {displayedChurches.length > 0 && <FlatList data={displayedChurches} renderItem={renderChurchItem} keyExtractor={item => item.id || item.name || Math.random().toString()} showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent} ItemSeparatorComponent={() => <View style={styles.separator} />} />}
+              </>
+            )}
+          </View>
+
+          {searchText.length < 3 && recentChurches.length === 0 && <GettingStartedHelper />}
+        </View>
+      </SafeAreaView>
+    </PaperProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F6F6F8"
+  },
+  content: {
+    flex: 1
+  },
+  resultsSection: {
+    flex: 1,
+    paddingHorizontal: 16
+  },
+  sectionHeader: {
+    marginBottom: 16
+  },
+  sectionTitle: {
+    color: "#3c3c3c",
+    fontWeight: "700",
+    marginBottom: 8
+  },
+  emptyText: {
+    color: "#9E9E9E",
+    textAlign: "center",
+    fontStyle: "italic"
+  },
+  listContent: {
+    paddingBottom: 32
+  },
+  separator: {
+    height: 12
+  }
+});
 
 export default ChurchSearch;

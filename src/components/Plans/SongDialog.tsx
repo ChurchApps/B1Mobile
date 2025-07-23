@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Linking, ActivityIndicator } from "react-native";
+import { Modal, View, Text, StyleSheet, TouchableOpacity, ScrollView, Linking, ActivityIndicator } from "react-native";
+import { OptimizedImage } from "../OptimizedImage";
 import { ApiHelper } from "../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants } from "../../../src/helpers/Constants";
@@ -86,7 +87,7 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
           ) : songDetail ? (
             <ScrollView contentContainerStyle={styles.content}>
               <Text style={styles.title}>{songDetail.title}</Text>
-              {songDetail.thumbnail ? <Image source={{ uri: songDetail.thumbnail }} style={styles.thumbnail} resizeMode="contain" /> : null}
+              {songDetail.thumbnail ? <OptimizedImage source={{ uri: songDetail.thumbnail }} style={styles.thumbnail} contentFit="contain" priority="normal" /> : null}
               <View style={styles.detailsTable}>
                 {songDetail.artist && (
                   <Text style={styles.detailRow}>

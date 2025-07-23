@@ -1,17 +1,19 @@
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
 import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
-import Icons from "react-native-vector-icons/FontAwesome5";
-import { ArrayHelper, AssignmentInterface, Constants, PlanInterface, PositionInterface } from "../../../src/helpers";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface } from "../../../src/helpers";
 import { router } from "expo-router";
+import { Card } from "react-native-paper";
+import { InlineLoader } from "../common/LoadingComponents";
 
 interface Props {
   plans: PlanInterface[];
   positions: PositionInterface[];
   assignments: AssignmentInterface[];
+  isLoading?: boolean;
 }
-export const ServingTimes = ({ plans, positions, assignments }: Props) => {
+export const ServingTimes = ({ plans, positions, assignments, isLoading = false }: Props) => {
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -38,153 +40,197 @@ export const ServingTimes = ({ plans, positions, assignments }: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icons name="calendar-alt" style={styles.headerIcon} size={DimensionHelper.wp(5.5)} />
+        <MaterialIcons name="schedule" style={styles.headerIcon} size={24} />
         <Text style={styles.headerTitle}>Serving Times</Text>
       </View>
 
-      {servingTimes.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Icons name="calendar-times" size={DimensionHelper.wp(8)} color="#ccc" />
-          <Text style={styles.emptyStateText}>No serving times found</Text>
-        </View>
-      ) : (
-        <View>
-          {servingTimes.map((item, idx) => (
-            <TouchableOpacity key={idx} style={[styles.card, { marginBottom: DimensionHelper.hp(1.5), position: "relative" }]} activeOpacity={0.8} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
-              <View style={[styles.statusBadge, styles.statusBadgeTopRight, { backgroundColor: "#1976d2" }]}>
-                <Text style={{ color: "white", fontSize: 14, fontWeight: "500" }}>{item.status}</Text>
-              </View>
-              <View style={styles.roleBottomRight}>
-                <Icons name="user-tie" size={14} color={Constants.Colors.app_color} style={{ marginRight: 6 }} />
-                <Text style={{ fontSize: 16, color: "#222" }}>{item.position}</Text>
-              </View>
-              <View style={styles.cardContent}>
-                <View style={styles.planInfo}>
-                  <Text style={{ fontSize: 18, fontWeight: "bold", color: "#222" }} numberOfLines={1}>
-                    {item.planName}
-                  </Text>
-                  <Text style={{ fontSize: 16, color: "#222" }}>{dayjs(item.serviceDate).format("YYYY-MM-DD")}</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
+      <Card style={styles.contentCard}>
+        <Card.Content>
+          {isLoading ? (
+            <InlineLoader size="large" text="Loading serving times..." />
+          ) : servingTimes.length === 0 ? (
+            <View style={styles.emptyStateContent}>
+              <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
+              <Text style={styles.emptyStateText}>No serving times found</Text>
+              <Text style={styles.emptyStateSubtext}>Your upcoming assignments will appear here</Text>
+            </View>
+          ) : (
+            <View style={styles.cardsList}>
+              {servingTimes.map((item, idx) => (
+                <Card key={idx} style={styles.servingCard} mode="elevated">
+                  <TouchableOpacity style={styles.cardTouchable} activeOpacity={0.7} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
+                    <Card.Content style={styles.cardContent}>
+                      <View style={styles.cardHeader}>
+                        <View style={styles.planInfo}>
+                          <Text style={styles.planName} numberOfLines={1}>
+                            {item.planName}
+                          </Text>
+                          <View style={styles.dateContainer}>
+                            <MaterialIcons name="event" size={16} color="#0D47A1" style={styles.dateIcon} />
+                            <Text style={styles.dateText}>{dayjs(item.serviceDate).format("MMM DD, YYYY")}</Text>
+                          </View>
+                        </View>
+                        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+                          <Text style={styles.statusText}>{item.status}</Text>
+                        </View>
+                      </View>
+
+                      <View style={styles.roleContainer}>
+                        <MaterialIcons name="assignment-ind" size={18} color="#0D47A1" />
+                        <Text style={styles.roleText}>{item.position}</Text>
+                      </View>
+                    </Card.Content>
+                  </TouchableOpacity>
+                </Card>
+              ))}
+            </View>
+          )}
+        </Card.Content>
+      </Card>
     </View>
   );
 };
 
+const getStatusColor = (status: string) => {
+  switch (status?.toLowerCase()) {
+    case "confirmed":
+      return "#70DC87";
+    case "declined":
+      return "#B0120C";
+    case "pending":
+      return "#FEAA24";
+    default:
+      return "#9E9E9E";
+  }
+};
+
 const styles = StyleSheet.create({
   container: {
-    marginBottom: DimensionHelper.hp(3)
+    marginBottom: 24
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: DimensionHelper.hp(2)
+    marginBottom: 16,
+    paddingLeft: 4
   },
   headerIcon: {
-    color: Constants.Colors.app_color,
-    marginRight: DimensionHelper.wp(2)
+    color: "#0D47A1",
+    marginRight: 8
   },
   headerTitle: {
-    fontSize: DimensionHelper.wp(4.5),
-    fontWeight: "600",
-    color: "#333"
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#3c3c3c"
   },
-  listContent: {
-    gap: DimensionHelper.hp(1.5)
-  },
-  card: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: DimensionHelper.wp(4),
+
+  // Content Card
+  contentCard: {
+    borderRadius: 16,
+    elevation: 2,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
+  },
+  emptyStateContent: {
+    alignItems: "center",
+    padding: 32
+  },
+  emptyStateText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#3c3c3c",
+    marginTop: 16,
+    textAlign: "center"
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: "#9E9E9E",
+    marginTop: 8,
+    textAlign: "center"
+  },
+
+  // Cards List
+  cardsList: {
+    gap: 12
+  },
+  servingCard: {
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
+  },
+  cardTouchable: {
+    borderRadius: 16
   },
   cardContent: {
+    padding: 4
+  },
+
+  // Card Header
+  cardHeader: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 12
   },
   planInfo: {
     flex: 1,
-    marginRight: DimensionHelper.wp(2)
+    marginRight: 12
   },
-  planNameVisible: {
-    fontSize: DimensionHelper.wp(3.8),
-    fontWeight: "600",
-    color: "#222",
-    marginBottom: 4
+  planName: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#3c3c3c",
+    marginBottom: 6
   },
-  dateTextVisible: {
-    fontSize: DimensionHelper.wp(3.2),
-    color: "#333"
-  },
-  roleInfo: {
+  dateContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    marginRight: DimensionHelper.wp(3)
+    alignItems: "center"
   },
-  roleIcon: {
+  dateIcon: {
     marginRight: 6
   },
-  roleTextVisible: {
-    fontSize: DimensionHelper.wp(3.2),
-    color: "#333"
+  dateText: {
+    fontSize: 14,
+    color: "#666",
+    fontWeight: "500"
   },
+
+  // Status Badge
   statusBadge: {
-    paddingHorizontal: DimensionHelper.wp(3),
-    paddingVertical: DimensionHelper.hp(0.5),
-    borderRadius: 12,
-    minWidth: DimensionHelper.wp(20),
-    alignItems: "center"
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    minWidth: 80
   },
   statusText: {
     color: "white",
-    fontSize: DimensionHelper.wp(3),
-    fontWeight: "500"
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase"
   },
-  emptyState: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: DimensionHelper.wp(6),
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginBottom: DimensionHelper.hp(2)
-  },
-  emptyStateText: {
-    fontSize: DimensionHelper.wp(3.5),
-    color: "#666",
-    marginTop: DimensionHelper.hp(2),
-    marginBottom: DimensionHelper.hp(1)
-  },
-  statusBadgeTopRight: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    zIndex: 2
-  },
-  roleBottomRight: {
-    position: "absolute",
-    right: 10,
-    bottom: 10,
+
+  // Role Container
+  roleContainer: {
     flexDirection: "row",
     alignItems: "center",
-    zIndex: 2
+    backgroundColor: "rgba(21, 101, 192, 0.08)",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12
+  },
+  roleText: {
+    fontSize: 14,
+    color: "#0D47A1",
+    fontWeight: "600",
+    marginLeft: 6
   }
 });

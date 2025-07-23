@@ -4,10 +4,6 @@ export interface AnswerInterface {
   questionId?: string;
   formSubmissionId?: string;
 }
-export interface CampusInterface {
-  id?: string;
-  name?: string;
-}
 export interface ContactInfoInterface {
   address1?: string;
   address2?: string;
@@ -42,30 +38,11 @@ export interface GroupInterface {
   trackAttendance?: boolean;
   parentPickup?: boolean;
 }
-export interface GroupMemberInterface {
-  id?: string;
-  personId: string;
-  person?: PersonInterface;
-  groupId: string;
-  group?: GroupInterface;
-}
 export interface GroupServiceTimeInterface {
   id?: string;
   groupId?: string;
   serviceTimeId?: string;
   serviceTime?: ServiceTimeInterface;
-}
-export interface HouseholdInterface {
-  id?: string;
-  name?: string;
-}
-export interface HouseholdMemberInterface {
-  id?: string;
-  householdId?: string;
-  household?: HouseholdInterface;
-  personId?: string;
-  person?: PersonInterface;
-  role?: string;
 }
 export interface NameInterface {
   first?: string;
@@ -73,39 +50,6 @@ export interface NameInterface {
   last?: string;
   nick?: string;
   display?: string;
-}
-export interface NoteInterface {
-  id?: string;
-  churchId?: string;
-  contentType?: string;
-  contentId?: string;
-  noteType?: string;
-  addedBy?: string;
-  contents?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  person?: PersonInterface;
-}
-export interface ReportInterface {
-  id?: string;
-  keyName?: string;
-  title?: string;
-  query?: string;
-  parameters?: string;
-  reportType: string;
-  columns?: ReportColumnInterface[];
-  values?: ReportValueInterface[];
-  results?: Array<Record<string, unknown>>;
-}
-export interface ReportColumnInterface {
-  field?: string;
-  heading?: string;
-  grouped?: boolean;
-  formatType?: string;
-}
-export interface ReportValueInterface {
-  key?: string;
-  value?: unknown;
 }
 export interface PersonInterface {
   id?: string;
@@ -144,20 +88,4 @@ export interface ServiceTimeInterface {
   longName?: string;
   serviceId?: string;
   groups?: GroupInterface[];
-}
-export interface MemberPermissionInterface {
-  id?: string;
-  churchId?: string;
-  memberId?: string;
-  contentType?: string;
-  contentId?: string;
-  action?: string;
-  personName: string;
-}
-export interface FormMemberInterface {
-  person?: PersonInterface;
-  access?: string;
-}
-export interface FormMemberListInterface {
-  members?: FormMemberInterface[];
 }

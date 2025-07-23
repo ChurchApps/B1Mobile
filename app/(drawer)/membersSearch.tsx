@@ -1,22 +1,59 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
 import { router, useNavigation } from "expo-router";
-import { View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import { useAppTheme } from "../../src/theme";
-import { ActivityIndicator, Card, Surface, Text, TextInput } from "react-native-paper";
+import { View, StyleSheet, SectionList } from "react-native";
+import { Surface, Text, TextInput, MD3LightTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
-import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { MemberCard } from "../../src/components/MemberCard";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+
+const theme = {
+  ...MD3LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    primary: "#0D47A1", // Primary Blue from style guide
+    secondary: "#F6F6F8", // Background from style guide
+    surface: "#FFFFFF", // Card Background from style guide
+    background: "#F6F6F8", // Background from style guide
+    onSurface: "#3c3c3c", // Dark Gray from style guide
+    onBackground: "#3c3c3c", // Dark Gray from style guide
+    onSurfaceVariant: "#9E9E9E", // Medium Gray from style guide
+    elevation: {
+      level0: "transparent",
+      level1: "#FFFFFF",
+      level2: "#F6F6F8",
+      level3: "#F0F0F0",
+      level4: "#E9ECEF",
+      level5: "#E2E6EA"
+    }
+  }
+};
+
+interface Member {
+  id: string;
+  name: { display: string; first?: string; last?: string };
+  photo?: string;
+  contactInfo?: {
+    email?: string;
+    homePhone?: string;
+    mobilePhone?: string;
+  };
+}
+
+interface MemberSection {
+  title: string;
+  data: Member[];
+}
 
 const MembersSearch = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");
-  const [searchList, setSearchList] = useState([]);
   const currentUserChurch = useCurrentUserChurch();
 
   // Use react-query for members data with aggressive caching
@@ -29,91 +66,219 @@ const MembersSearch = () => {
   });
 
   useEffect(() => {
-    // Utilities.trackEvent("Member Search Screen");
     UserHelper.addOpenScreenEvent("Member Search Screen");
   }, []);
 
+  // Filter members based on search and remove duplicates
   const filteredMembers = useMemo(() => {
     if (!membersList.length) return [];
-    if (!searchText.trim()) return membersList;
 
-    const searchLower = searchText.toLowerCase();
-    return membersList.filter((item: any) => item.name.display.toLowerCase().includes(searchLower));
+    // Remove duplicates by ID first
+    const uniqueMembers = membersList.filter((member: Member, index: number, self: Member[]) => self.findIndex(m => m.id === member.id) === index);
+
+    // Apply search filter
+    if (searchText.trim()) {
+      const searchLower = searchText.toLowerCase();
+      return uniqueMembers.filter((item: Member) => item.name.display.toLowerCase().includes(searchLower));
+    }
+
+    return uniqueMembers;
   }, [membersList, searchText]);
 
-  useEffect(() => {
-    setSearchList(filteredMembers);
+  // Group members by first letter for section list (sorted by last name)
+  const groupedMembers = useMemo(() => {
+    if (!filteredMembers.length) return [];
+
+    const groups: { [key: string]: Member[] } = {};
+
+    filteredMembers.forEach((member: Member) => {
+      // Extract last name for grouping and sorting
+      const nameParts = member.name.display.trim().split(" ");
+      const lastName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : nameParts[0];
+      const firstLetter = lastName.charAt(0).toUpperCase();
+
+      if (!groups[firstLetter]) {
+        groups[firstLetter] = [];
+      }
+      groups[firstLetter].push(member);
+    });
+
+    // Convert to section list format and sort by last name
+    return Object.keys(groups)
+      .sort()
+      .map(letter => ({
+        title: letter,
+        data: groups[letter].sort((a, b) => {
+          // Extract last names for sorting
+          const aLastName = a.name.display.trim().split(" ").slice(-1)[0];
+          const bLastName = b.name.display.trim().split(" ").slice(-1)[0];
+          const lastNameComparison = aLastName.localeCompare(bLastName);
+
+          // If last names are the same, sort by first name
+          if (lastNameComparison === 0) {
+            return a.name.display.localeCompare(b.name.display);
+          }
+          return lastNameComparison;
+        })
+      }));
   }, [filteredMembers]);
 
   const handleSearchChange = useCallback((text: string) => {
     setSearchText(text);
   }, []);
 
-  const renderMemberItem = useCallback(
-    (item: any) => {
-      const handlePress = () => {
-        router.navigate({
-          pathname: "/(drawer)/memberDetail",
-          params: { member: JSON.stringify(item) }
-        });
-      };
+  const handleMemberPress = useCallback((member: Member) => {
+    router.navigate({
+      pathname: "/(drawer)/memberDetail",
+      params: { member: JSON.stringify(member) }
+    });
+  }, []);
 
-      return (
-        <Card style={{ marginBottom: spacing.sm, borderRadius: theme.roundness, backgroundColor: theme.colors.surface, width: "100%", alignSelf: "center", maxWidth: 700 }} onPress={handlePress}>
-          <Card.Content style={{ flexDirection: "row", alignItems: "center" }}>
-            <OptimizedImage source={item.photo ? { uri: EnvironmentHelper.ContentRoot + item.photo } : Constants.Images.ic_member} style={{ width: 48, height: 48, borderRadius: 24, marginRight: spacing.md }} contentFit="cover" />
-            <Text variant="titleMedium">{item.name.display}</Text>
-          </Card.Content>
-        </Card>
-      );
-    },
-    [spacing.sm, spacing.md, theme.roundness, theme.colors.surface]
+  const renderMemberItem = useCallback(({ item }: { item: Member }) => <MemberCard member={item} onPress={handleMemberPress} size="medium" />, [handleMemberPress]);
+
+  const renderSectionHeader = useCallback(
+    ({ section }: { section: MemberSection }) => (
+      <View style={styles.sectionHeader}>
+        <Text variant="titleMedium" style={styles.sectionTitle}>
+          {section.title}
+        </Text>
+        <View style={styles.sectionDivider} />
+      </View>
+    ),
+    []
   );
 
-  const searchResults = useMemo(() => {
-    if (isLoading) return <ActivityIndicator animating={true} size="large" style={{ margin: spacing.md }} />;
-
-    if (searchList.length === 0) {
-      return (
-        <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, margin: spacing.md }}>
-          No results found
+  const renderEmptyState = useCallback(
+    () => (
+      <View style={styles.emptyState}>
+        <MaterialIcons name="people-outline" size={64} color={theme.colors.onSurfaceVariant} />
+        <Text variant="headlineSmall" style={styles.emptyTitle}>
+          {searchText ? "No members found" : "Directory"}
         </Text>
-      );
-    }
-
-    return (
-      <FlatList
-        data={searchList}
-        renderItem={({ item }) => renderMemberItem(item)}
-        keyExtractor={(item: any) => item.id}
-        contentContainerStyle={{ width: "100%", maxWidth: 700, alignSelf: "center" }}
-        initialNumToRender={12}
-        windowSize={10}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={8}
-        updateCellsBatchingPeriod={100}
-        getItemLayout={(data, index) => ({
-          length: 80, // Estimated height of Card with member item
-          offset: 80 * index,
-          index
-        })}
-      />
-    );
-  }, [isLoading, searchList, spacing.md, theme.colors.onSurfaceVariant, renderMemberItem]);
+        <Text variant="bodyMedium" style={styles.emptySubtitle}>
+          {searchText ? "Try adjusting your search or filter" : "Search for church members by name"}
+        </Text>
+      </View>
+    ),
+    [searchText, theme.colors.onSurfaceVariant]
+  );
 
   return (
-    <Surface style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
-      <MainHeader title="Directory" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: spacing.md }}>
-        <View style={{ width: "100%", maxWidth: 500, alignSelf: "center" }}>
-          <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
-            Find Members
-          </Text>
-          <TextInput mode="outlined" label="Member Name" placeholder="Member Name" value={searchText} onChangeText={handleSearchChange} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface, width: "100%" }} left={<TextInput.Icon icon="account" />} />
-        </View>
-        {searchResults}
-      </View>
-    </Surface>
+    <SafeAreaProvider>
+      <LoadingWrapper loading={isLoading}>
+        <Surface style={styles.container}>
+          <MainHeader title="Directory" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+
+          <View style={styles.content}>
+            {/* Search Header */}
+            <View style={styles.searchSection}>
+              <View style={styles.searchContainer}>
+                <TextInput mode="outlined" label="Search members" placeholder="Enter name..." value={searchText} onChangeText={handleSearchChange} style={styles.searchInput} left={<TextInput.Icon icon="magnify" />} right={searchText ? <TextInput.Icon icon="close" onPress={() => setSearchText("")} /> : undefined} />
+              </View>
+            </View>
+
+            {/* Results */}
+            {groupedMembers.length > 0 ? (
+              <SectionList
+                sections={groupedMembers}
+                renderItem={renderMemberItem}
+                renderSectionHeader={renderSectionHeader}
+                keyExtractor={(item: Member) => item.id}
+                contentContainerStyle={styles.listContent}
+                showsVerticalScrollIndicator={false}
+                stickySectionHeadersEnabled={true}
+                initialNumToRender={10}
+                windowSize={21}
+                removeClippedSubviews={true}
+                maxToRenderPerBatch={5}
+                updateCellsBatchingPeriod={50}
+                getItemLayout={(data, index) => ({ length: 80, offset: 80 * index, index })}
+                onEndReachedThreshold={0.5}
+                maintainVisibleContentPosition={{
+                  minIndexForVisible: 0,
+                  autoscrollToTopThreshold: 10
+                }}
+              />
+            ) : (
+              renderEmptyState()
+            )}
+          </View>
+        </Surface>
+      </LoadingWrapper>
+    </SafeAreaProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F6F6F8" // Background from style guide
+  },
+  content: {
+    flex: 1
+  },
+
+  // Search Section
+  searchSection: {
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0"
+  },
+  searchContainer: {
+    marginBottom: 0
+  },
+  searchInput: {
+    backgroundColor: "#FFFFFF"
+  },
+
+  // List Content
+  listContent: {
+    padding: 16,
+    paddingBottom: 32
+  },
+
+  // Section Headers
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 24,
+    marginBottom: 12
+  },
+  sectionTitle: {
+    color: "#0D47A1",
+    fontWeight: "700",
+    fontSize: 18,
+    minWidth: 32
+  },
+  sectionDivider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#F0F0F0",
+    marginLeft: 16
+  },
+
+  // Empty State
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 32
+  },
+  emptyTitle: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    marginTop: 16,
+    marginBottom: 8,
+    textAlign: "center"
+  },
+  emptySubtitle: {
+    color: "#9E9E9E",
+    textAlign: "center",
+    lineHeight: 20
+  }
+});
+
 export default MembersSearch;

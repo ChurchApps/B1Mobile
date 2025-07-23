@@ -3,7 +3,7 @@ import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod 
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
 import React, { useState } from "react";
 import { Alert, View } from "react-native";
-import { Button, Card, IconButton, Menu, Text, TextInput } from "react-native-paper";
+import { Button, Card, IconButton, Text, TextInput } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 
@@ -24,17 +24,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   const { createPaymentMethod } = useStripe();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
-  const [showTypeMenu, setShowTypeMenu] = useState(false);
-  const [selectedType, setSelectedType] = useState(card.type || "card");
-  const cardTypes = [
-    { label: "Visa", value: "visa" },
-    { label: "Mastercard", value: "mastercard" },
-    { label: "American Express", value: "amex" },
-    { label: "Discover", value: "discover" },
-    { label: "JCB", value: "jcb" },
-    { label: "Diners Club", value: "dinersclub" },
-    { label: "UnionPay", value: "unionpay" }
-  ];
+  const [cardHolderName, setCardHolderName] = useState(person?.name?.display || "");
 
   const handleSave = () => {
     setIsSubmitting(true);
@@ -57,10 +47,8 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
       id: stripePaymentMethod.paymentMethod.id,
       customerId,
       personId: person.id,
-      // email: person.contactInfo.email,
-      // name: person.name.display,
       email: person?.contactInfo?.email,
-      name: person?.name?.display
+      name: cardHolderName || person?.name?.display
     };
     const result = await ApiHelper.post("/paymentmethods/addcard", paymentMethod, "GivingApi");
     if (result?.raw?.message) {
@@ -109,27 +97,8 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
       <Card.Content>
         {!card.id ? (
           <View style={{ marginBottom: spacing.md }}>
-            <TextInput mode="outlined" label="Card Holder Name" value={person?.name?.display} disabled style={{ marginBottom: spacing.sm }} />
+            <TextInput mode="outlined" label="Card Holder Name" value={cardHolderName} onChangeText={setCardHolderName} style={{ marginBottom: spacing.sm }} />
             <CardField postalCodeEnabled={true} placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }} cardStyle={{ backgroundColor: theme.colors.surface, textColor: theme.colors.onSurface }} style={{ height: 50, marginBottom: spacing.sm }} onCardChange={setCardDetails} />
-            <Menu
-              visible={showTypeMenu}
-              onDismiss={() => setShowTypeMenu(false)}
-              anchor={
-                <Button mode="outlined" onPress={() => setShowTypeMenu(true)} style={{ marginBottom: spacing.sm }}>
-                  {cardTypes.find(t => t.value === selectedType)?.label || "Select Card Type"}
-                </Button>
-              }>
-              {cardTypes.map(type => (
-                <Menu.Item
-                  key={type.value}
-                  onPress={() => {
-                    setSelectedType(type.value);
-                    setShowTypeMenu(false);
-                  }}
-                  title={type.label}
-                />
-              ))}
-            </Menu>
           </View>
         ) : (
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.md }}>

@@ -1,31 +1,30 @@
-import { EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { EnvironmentHelper, UserHelper, SecureStorageHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
 import { ErrorHelper } from "../mobilehelper";
 import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
 import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
-import RNRestart from "react-native-restart";
-import { DimensionHelper } from "../helpers/DimensionHelper";
-import { useAppTheme } from "../../src/theme";
-import { Avatar, Button, Card, Divider, List, Surface, Text, TouchableRipple, useTheme } from "react-native-paper";
+import { Avatar, Button, Divider, List, Surface, Text, TouchableRipple } from "react-native-paper";
 import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import type { DrawerNavigationProp } from "@react-navigation/drawer";
 
-export function CustomDrawer() {
-  const { spacing } = useAppTheme();
-  const paperTheme = useTheme();
-  const navigation = useNavigation();
+export function CustomDrawer(props?: any) {
+  // Use the drawer navigation prop if available, otherwise fallback to useNavigation
+  const navigation = props?.navigation || useNavigation<DrawerNavigationProp<any>>();
   // Use hooks instead of local state
   const user = useUser();
   const currentChurch = useCurrentChurch();
   const { setLinks } = useUserStore();
 
   const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     getChurch();
@@ -50,7 +49,7 @@ export function CustomDrawer() {
   const updateDrawerList = async () => {
     try {
       let tabs: LinkInterface[] = [];
-      if (currentChurch) {
+      if (currentChurch?.id) {
         const tempTabs = await ApiHelper.getAnonymous("/links/church/" + currentChurch.id + "?category=b1Tab", "ContentApi");
         tempTabs.forEach((tab: LinkInterface) => {
           switch (tab.linkType) {
@@ -88,14 +87,23 @@ export function CustomDrawer() {
       showDirectory = false,
       showLessons = false,
       showChums = false,
-      showCheckin;
+      showCheckin = false,
+      showSermons = false;
     const uc = useUserStore.getState().currentUserChurch;
 
-    if (currentChurch) {
+    if (currentChurch?.id) {
       const page = await ApiHelper.getAnonymous("/pages/" + currentChurch.id + "/tree?url=/", "ContentApi");
       if (page.url) showWebsite = true;
       const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + currentChurch.id, "GivingApi");
       if (gateways.length > 0) showDonations = true;
+      try {
+        const playlists = await ApiHelper.getAnonymous("/playlists/public/" + currentChurch.id, "ContentApi");
+        if (playlists.length > 0) showSermons = true;
+      } catch (error) {
+        console.error("Error checking for sermons:", error);
+        // Still try to show sermons tab as it might be a temporary error
+        showSermons = true;
+      }
     }
 
     if (uc?.person) {
@@ -127,6 +135,7 @@ export function CustomDrawer() {
     if (showDirectory) specialTabs.push({ linkType: "directory", linkData: "", category: "", text: "Member Directory", icon: "groups", url: "" });
     if (showPlans) specialTabs.push({ linkType: "plans", linkData: "", category: "", text: "Plans", icon: "event", url: "" });
     if (showLessons) specialTabs.push({ linkType: "lessons", linkData: "", category: "", text: "Lessons", icon: "school", url: "" });
+    if (showSermons) specialTabs.push({ linkType: "sermons", linkData: "", category: "", text: "Sermons", icon: "play_circle", url: "" });
     if (showChums) specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Chums", icon: "account_circle", url: "https://app.chums.org/login?jwt=" + uc.jwt + "&churchId=" + uc.church?.id });
     return specialTabs;
   };
@@ -143,21 +152,43 @@ export function CustomDrawer() {
   };
 
   const logoutAction = async () => {
-    // Clear React Query cache and persisted data
-    await clearAllCachedData();
+    try {
+      setIsLoggingOut(true);
+      console.log("Starting logout process...");
 
-    // Use the store's logout method
-    await useUserStore.getState().logout();
+      // Clear React Query cache and persisted data
+      await clearAllCachedData();
 
-    // Clear AsyncStorage (except church data)
-    await AsyncStorage.getAllKeys()
-      .then(keys => AsyncStorage.multiRemove(keys.filter(key => key != "CHURCH_DATA" && key != "user-storage")))
-      .then(() => RNRestart.Restart());
+      // Clear JWT from secure storage
+      try {
+        await SecureStorageHelper.removeSecureItem("default_jwt");
+        console.log("Cleared JWT from secure storage");
+      } catch (error) {
+        console.warn("Failed to clear JWT from secure storage:", error);
+      }
+
+      // Use the store's logout method
+      await useUserStore.getState().logout();
+
+      // Clear AsyncStorage (except church data to preserve church selection)
+      await AsyncStorage.getAllKeys()
+        .then(keys => AsyncStorage.multiRemove(keys.filter(key => key !== "CHURCH_DATA")))
+        .then(() => {
+          console.log("Logout complete, navigating to dashboard");
+          router.replace("/(drawer)/dashboard");
+        });
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Navigate to dashboard even if there were errors
+      router.replace("/(drawer)/dashboard");
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
   const listItem = (topItem: boolean, item: any) => {
     if (item.linkType === "separator") {
-      return <Divider style={{ marginVertical: spacing.sm }} />;
+      return <Divider style={styles.separator} />;
     }
 
     const icon = item.icon ? item.icon.split("_").join("-") : "";
@@ -166,23 +197,36 @@ export function CustomDrawer() {
     return (
       <List.Item
         title={item.text}
-        left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={paperTheme.colors.primary} style={styles.drawerIcon} />)}
+        left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color="#0D47A1" style={styles.drawerIcon} />)}
         onPress={() => {
           NavigationUtils.navigateToScreen(item, currentChurch);
-          navigation.dispatch(DrawerActions.closeDrawer());
+          // Use setTimeout to ensure navigation completes before closing drawer
+          setTimeout(() => {
+            try {
+              if (navigation && typeof navigation.closeDrawer === 'function') {
+                navigation.closeDrawer();
+              } else {
+                navigation.dispatch(DrawerActions.closeDrawer());
+              }
+            } catch (error) {
+              console.warn('Failed to close drawer:', error);
+            }
+          }, 100);
         }}
-        style={[styles.listItem, { paddingLeft: 20 }]}
+        style={styles.listItem}
         titleStyle={styles.listItemText}
       />
     );
   };
 
   const drawerHeaderComponent = () => (
-    <Surface style={styles.headerContainer} elevation={1}>
-      {getUserInfo()}
-      <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={24} color={paperTheme.colors.primary} />}>
-        {!currentChurch ? "Find your church..." : currentChurch.name || ""}
-      </Button>
+    <Surface style={styles.headerContainer} elevation={2}>
+      <View style={styles.headerContent}>
+        {getUserInfo()}
+        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#0D47A1" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#0D47A1" />}>
+          {!currentChurch ? "Find Church" : (currentChurch.name || "Select Church")}
+        </Button>
+      </View>
     </Surface>
   );
 
@@ -190,29 +234,30 @@ export function CustomDrawer() {
     const currentUserChurch = useUserStore.getState().currentUserChurch;
     if (!currentUserChurch?.person || !user) return null;
 
+
     return (
-      <Card style={styles.userCard}>
-        <Card.Content style={styles.userCardContent}>
-          <View style={styles.userInfoContainer}>
-            <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={DimensionHelper.wp(12)} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={DimensionHelper.wp(12)} label={`${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`} />}</View>
-            <View style={styles.userTextContainer}>
-              <Text variant="titleMedium" numberOfLines={2} style={styles.userName}>
-                {`${user.firstName} ${user.lastName}`}
-              </Text>
-              <View style={styles.buttonContainer}>
-                <Button mode="text" onPress={editProfileAction} style={styles.editProfileButton} textColor={paperTheme.colors.primary} icon={() => <MaterialIcons name="edit" size={18} color={paperTheme.colors.primary} />}>
-                  Profile
-                </Button>
-                {user && (
-                  <TouchableRipple style={styles.messageButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
-                    <MaterialCommunityIcons name="email-outline" size={20} color={paperTheme.colors.onSurface} />
-                  </TouchableRipple>
-                )}
-              </View>
+      <View style={styles.userInfoSection}>
+        <View style={styles.userRow}>
+          <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={48} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={48} label={`${user.firstName?.[0] || "U"}${user.lastName?.[0] || "S"}`} />}</View>
+          <View style={styles.userTextContainer}>
+            <Text variant="titleMedium" numberOfLines={1} style={styles.userName}>
+              {`${user.firstName} ${user.lastName}`}
+            </Text>
+            <View style={styles.actionButtons}>
+              <Button mode="text" onPress={editProfileAction} style={styles.profileButton} textColor="#0D47A1" compact icon={() => <MaterialIcons name="edit" size={16} color="#0D47A1" />}>
+                Edit Profile
+              </Button>
+              {user && (
+                <TouchableRipple style={styles.messageIconButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
+                  <>
+                    <MaterialCommunityIcons name="email-outline" size={20} color="#0D47A1" />
+                  </>
+                </TouchableRipple>
+              )}
             </View>
           </View>
-        </Card.Content>
-      </Card>
+        </View>
+      </View>
     );
   };
 
@@ -228,8 +273,8 @@ export function CustomDrawer() {
     const pkg = require("../../package.json");
     return (
       <Surface style={styles.footerContainer} elevation={1}>
-        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color={paperTheme.colors.primary} />}>
-          {user ? "Log out" : "Login"}
+        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />} loading={isLoggingOut} disabled={isLoggingOut}>
+          {isLoggingOut ? "Signing out..." : user ? "Log out" : "Login"}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>
           Version {pkg.version}
@@ -247,7 +292,11 @@ export function CustomDrawer() {
             <Text>Loading navigation...</Text>
           </View>
         ) : (
-          drawerList.map((item, index) => <View key={item.id || index}>{listItem(false, item)}</View>)
+          <View style={styles.menuContainer}>
+            {drawerList.map((item, index) => (
+              <View key={item.id || index}>{listItem(false, item)}</View>
+            ))}
+          </View>
         )}
         {drawerFooterComponent()}
       </ScrollView>
@@ -258,27 +307,26 @@ export function CustomDrawer() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa"
+    backgroundColor: "#F6F6F8" // Background from style guide
   },
   headerContainer: {
-    padding: 16,
-    backgroundColor: "white",
-    marginBottom: 8
+    backgroundColor: "#FFFFFF", // Clean white background
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0"
   },
-  userCard: {
-    marginBottom: 16,
-    backgroundColor: "white"
+  headerContent: {
+    padding: 16
   },
-  userCardContent: {
-    padding: 12
+  userInfoSection: {
+    marginBottom: 16
   },
-  userInfoContainer: {
+  userRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
     gap: 12
   },
   avatarContainer: {
-    marginTop: 4
+    // Avatar styling handled by component
   },
   userTextContainer: {
     flex: 1,
@@ -286,29 +334,45 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: "600",
-    fontSize: 16,
-    lineHeight: 22,
-    marginBottom: 4
+    fontSize: 18, // H3 from style guide
+    lineHeight: 24,
+    marginBottom: 4,
+    color: "#3c3c3c" // Dark gray from style guide
   },
-  buttonContainer: {
+  actionButtons: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8
+    justifyContent: "space-between"
   },
-  editProfileButton: {
+  profileButton: {
     margin: 0,
     padding: 0,
     minWidth: 0,
     height: 32
   },
-  messageButton: {
-    padding: 4
+  messageIconButton: {
+    padding: 8,
+    borderRadius: 24,
+    backgroundColor: "#F6F6F8"
   },
   churchButton: {
+    borderRadius: 8,
+    elevation: 1,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2
+  },
+  menuContainer: {
+    backgroundColor: "#FFFFFF",
     marginTop: 8
   },
   listItem: {
-    paddingVertical: 8
+    minHeight: 48, // Style guide menu item height
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0"
   },
   tabIcon: {
     width: 24,
@@ -319,28 +383,36 @@ const styles = StyleSheet.create({
     flex: 1
   },
   scrollContent: {
-    paddingBottom: 40 // Extra space for footer to be visible
+    flexGrow: 1,
+    paddingBottom: 16 // Reduced padding following 8px grid
   },
   footerContainer: {
     padding: 16,
-    marginTop: 16,
-    backgroundColor: "white",
+    marginTop: "auto", // Push to bottom
+    backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
-    borderTopColor: "#e0e0e0"
+    borderTopColor: "#F0F0F0"
   },
   logoutButton: {
     marginBottom: 8
   },
   versionText: {
     textAlign: "center",
-    color: "#a0d3fc"
+    color: "#9E9E9E" // Medium gray from style guide
   },
   drawerIcon: {
-    marginRight: 8,
+    marginLeft: 0,
+    marginRight: 16, // 16px right margin from style guide
     alignSelf: "center"
   },
   listItemText: {
-    fontSize: 16,
-    fontWeight: "500"
+    fontSize: 16, // Body text from style guide
+    fontWeight: "500",
+    color: "#3c3c3c" // Dark gray from style guide
+  },
+  separator: {
+    marginVertical: 8,
+    backgroundColor: "#F0F0F0",
+    height: 1
   }
 });

@@ -98,17 +98,21 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     paddingVertical: DimensionHelper.hp(1),
-    paddingHorizontal: DimensionHelper.wp(3),
+    paddingHorizontal: DimensionHelper.wp(2),
     borderBottomWidth: 1,
-    borderBottomColor: Constants.Colors.Dark_Gray
+    borderBottomColor: Constants.Colors.Dark_Gray,
+    alignItems: 'flex-start'
   },
   timeText: {
-    width: DimensionHelper.wp(15),
+    width: DimensionHelper.wp(12),
     fontSize: DimensionHelper.wp(3.5),
-    color: Constants.Colors.Dark_Gray
+    color: Constants.Colors.Dark_Gray,
+    textAlign: 'right',
+    marginRight: DimensionHelper.wp(2)
   },
   contentContainer: {
-    flex: 1
+    flex: 1,
+    minWidth: 0
   },
   labelText: {
     fontSize: DimensionHelper.wp(4),

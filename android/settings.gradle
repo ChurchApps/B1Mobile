@@ -38,6 +38,6 @@ expoAutolinking.useExpoVersionCatalog()
 include ':app'
 includeBuild(expoAutolinking.reactNativeGradlePlugin)
 
-// Manually include expo-json-utils since it's required by expo-manifests
+// Manually include expo-json-utils since autolinking may fail
 include ':expo-json-utils'
 project(':expo-json-utils').projectDir = new File(rootProject.projectDir, '../node_modules/expo-json-utils/android')

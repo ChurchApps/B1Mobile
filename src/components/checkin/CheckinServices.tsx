@@ -1,12 +1,13 @@
 import { ApiHelper, CheckinHelper, PersonInterface, UserHelper } from "../../../src/helpers";
-import { ArrayHelper, ErrorHelper } from "../../mobilehelper";
+import { ArrayHelper } from "../../mobilehelper";
 import React, { useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, View, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { useAppTheme } from "../../../src/theme";
-import { List, Text } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface Props {
   onDone: () => void;
@@ -16,9 +17,10 @@ export const CheckinServices = (props: Props) => {
   const { theme, spacing } = useAppTheme();
   const [loading, setLoading] = useState(false);
   const currentUserChurch = useCurrentUserChurch();
+  const screenWidth = Dimensions.get("window").width;
 
   // Use react-query for services
-  const { data: serviceList = [] } = useQuery({
+  const { data: serviceList = [], isLoading: servicesLoading } = useQuery({
     queryKey: ["/services", "AttendanceApi"],
     enabled: !!currentUserChurch?.jwt,
     placeholderData: [],
@@ -30,44 +32,84 @@ export const CheckinServices = (props: Props) => {
     UserHelper.addOpenScreenEvent("ServiceScreen");
   }, []);
 
-  const ServiceSelection = (item: any) => {
+  const ServiceSelection = async (item: any) => {
     setLoading(true);
-    getMemberData(item.id);
+    await getMemberData(item.id);
   };
 
   const getMemberData = async (serviceId: any) => {
-    const personId = UserHelper.currentUserChurch?.person?.id;
+    const personId = currentUserChurch?.person?.id;
+    let householdId = currentUserChurch?.person?.householdId;
+
     if (personId) {
       try {
-        const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
-        CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + person.householdId, "MembershipApi");
-        CheckinHelper.serviceTimes = await ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi");
-        await createHouseholdTree(serviceId);
-        loadExistingAttendance(serviceId);
+        // If no householdId in the user object, fetch the person to get it
+        if (!householdId) {
+          const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
+          householdId = person.householdId;
+        }
+
+        if (!householdId) {
+          householdId = personId;
+        }
+
+        // Step 1: Load service times and groups in parallel (like Chums)
+        const [serviceTimes, groups] = await Promise.all([ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi"), ApiHelper.get("/groups", "MembershipApi")]);
+
+
+        CheckinHelper.serviceTimes = serviceTimes;
+        CheckinHelper.serviceId = serviceId;
+
+        // Step 2: Load household members using the householdId
+        CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + householdId, "MembershipApi");
+
+        // If still no household members, create array with just the current person
+        if (!CheckinHelper.householdMembers || CheckinHelper.householdMembers.length === 0) {
+          const currentPerson = currentUserChurch?.person;
+          if (currentPerson) {
+            CheckinHelper.householdMembers = [currentPerson];
+          }
+        }
+
+        // Step 3: Create group tree
+        const group_tree = createGroupTree(groups);
+        CheckinHelper.groupTree = group_tree;
+
+        // Step 4: Assign service times to each household member
+        CheckinHelper.householdMembers?.forEach((member: any) => {
+          member.serviceTimes = CheckinHelper.serviceTimes;
+        });
+
+        // Step 5: Get people IDs for existing visits check
+        CheckinHelper.peopleIds = ArrayHelper.getIds(CheckinHelper.householdMembers, "id");
+
+        // Step 6: Load existing attendance
+        await loadExistingAttendance(serviceId);
+
       } catch (error) {
         console.error("Error loading member data:", error);
         setLoading(false);
       }
+    } else {
+      setLoading(false);
+      // Could implement anonymous check-in flow here
     }
   };
 
-  const createHouseholdTree = async (serviceId: any) => {
-    CheckinHelper.householdMembers?.forEach((member: any) => {
-      member.serviceTimes = CheckinHelper.serviceTimes;
-    });
-    try {
-      await getGroupListData(serviceId);
-    } catch (error: any) {
-      console.error("SET MEMBER LIST ERROR", error);
-      ErrorHelper.logError("create-household", error);
-    }
-  };
+  // Remove this function as it's now integrated into getMemberData
 
   const loadExistingAttendance = async (serviceId: string) => {
-    setLoading(true);
-    const data = await ApiHelper.get("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + CheckinHelper.peopleIds + "&include=visitSessions", "AttendanceApi");
-    setLoading(false);
-    CheckinHelper.setExistingAttendance(data);
+    try {
+      const peopleIdsString = CheckinHelper.peopleIds.join(",");
+      const data = await ApiHelper.get("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + encodeURIComponent(peopleIdsString) + "&include=visitSessions", "AttendanceApi");
+      CheckinHelper.setExistingAttendance(data);
+    } catch (error) {
+      console.error("Error loading existing attendance:", error);
+    } finally {
+      setLoading(false);
+      // Now that all data is loaded, navigate to the next screen
+      props.onDone();
+    }
   };
 
   const createGroupTree = (groups: any) => {
@@ -84,31 +126,192 @@ export const CheckinServices = (props: Props) => {
     return group_tree;
   };
 
-  const getGroupListData = async (serviceId: any) => {
-    const data = await ApiHelper.get("/groups", "MembershipApi");
-    setLoading(false);
-    try {
-      const group_tree = createGroupTree(data);
-      CheckinHelper.groupTree = group_tree;
-      CheckinHelper.serviceId = serviceId;
-      CheckinHelper.peopleIds = ArrayHelper.getIds(CheckinHelper.householdMembers, "id");
-      props.onDone();
-    } catch (error: any) {
-      console.error("SET MEMBER LIST ERROR", error);
-      ErrorHelper.logError("get-group-list", error);
-    }
-  };
+  // Remove this function as it's now integrated into getMemberData
 
-  const renderGroupItem = (item: any) => <List.Item title={`${item.campus.name} - ${item.name}`} onPress={() => ServiceSelection(item)} style={{ backgroundColor: theme.colors.surface, marginBottom: spacing.xs }} titleStyle={{ color: theme.colors.onSurface }} left={props => <List.Icon {...props} icon="church" />} />;
+  const renderServiceItem = (item: any) => (
+    <TouchableOpacity style={styles.serviceCard} onPress={() => ServiceSelection(item)} activeOpacity={0.7}>
+      <View style={styles.serviceContent}>
+        <View style={styles.serviceIconContainer}>
+          <MaterialIcons name="church" size={28} color="#0D47A1" />
+        </View>
+        <View style={styles.serviceInfo}>
+          <Text variant="titleLarge" style={styles.serviceName}>
+            {item.name}
+          </Text>
+          <Text variant="bodyMedium" style={styles.campusName}>
+            {item.campus.name}
+          </Text>
+        </View>
+        <View style={styles.serviceArrow}>
+          <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <LoadingWrapper loading={loading}>
-      <View>
-        <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>
-          Select a Service
-        </Text>
-        <FlatList data={serviceList} renderItem={({ item }) => renderGroupItem(item)} keyExtractor={(item: any) => item.id} style={{ width: "100%" }} />
+      <View style={styles.container}>
+        {/* Header Section */}
+        <View style={styles.headerSection}>
+          <View style={styles.iconHeaderContainer}>
+            <MaterialIcons name="event" size={48} color="#0D47A1" />
+          </View>
+          <Text variant="headlineLarge" style={styles.headerTitle}>
+            Select Service
+          </Text>
+          <Text variant="bodyLarge" style={styles.headerSubtitle}>
+            Choose which service you're checking in for
+          </Text>
+        </View>
+
+        {/* Services List */}
+        <View style={styles.contentSection}>
+          {servicesLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#0D47A1" />
+              <Text variant="bodyLarge" style={styles.loadingText}>
+                Loading services...
+              </Text>
+            </View>
+          ) : serviceList.length === 0 ? (
+            <Card style={styles.emptyCard}>
+              <View style={styles.emptyContent}>
+                <MaterialIcons name="event-busy" size={64} color="#9E9E9E" />
+                <Text variant="titleMedium" style={styles.emptyTitle}>
+                  No Services Available
+                </Text>
+                <Text variant="bodyMedium" style={styles.emptySubtitle}>
+                  Please check back later or contact your church administrator
+                </Text>
+              </View>
+            </Card>
+          ) : (
+            <FlatList data={serviceList} renderItem={({ item }) => renderServiceItem(item)} keyExtractor={(item: any) => item.id} style={styles.servicesList} contentContainerStyle={styles.servicesContent} showsVerticalScrollIndicator={false} />
+          )}
+        </View>
       </View>
     </LoadingWrapper>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F6F6F8"
+  },
+  headerSection: {
+    backgroundColor: "#FFFFFF",
+    padding: 24,
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+    marginBottom: 16
+  },
+  iconHeaderContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#F6F6F8",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 16
+  },
+  headerTitle: {
+    color: "#3c3c3c",
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 8
+  },
+  headerSubtitle: {
+    color: "#9E9E9E",
+    textAlign: "center",
+    maxWidth: "80%"
+  },
+  contentSection: {
+    flex: 1,
+    paddingHorizontal: 16
+  },
+  servicesList: {
+    flex: 1
+  },
+  servicesContent: {
+    paddingBottom: 24
+  },
+  serviceCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3
+  },
+  serviceContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    minHeight: 72
+  },
+  serviceIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#F6F6F8",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16
+  },
+  serviceInfo: {
+    flex: 1
+  },
+  serviceName: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    marginBottom: 4
+  },
+  campusName: {
+    color: "#0D47A1",
+    fontWeight: "500"
+  },
+  serviceArrow: {
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  emptyCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3
+  },
+  emptyContent: {
+    padding: 32,
+    alignItems: "center"
+  },
+  emptyTitle: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    marginTop: 16,
+    marginBottom: 8,
+    textAlign: "center"
+  },
+  emptySubtitle: {
+    color: "#9E9E9E",
+    textAlign: "center",
+    lineHeight: 20
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 48
+  },
+  loadingText: {
+    color: "#9E9E9E",
+    marginTop: 16
+  }
+});

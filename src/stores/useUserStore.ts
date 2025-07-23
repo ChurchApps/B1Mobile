@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserInterface, ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface, LoginResponseInterface, RolePermissionInterface } from "../helpers/Interfaces";
+import { UserInterface, ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface, LoginResponseInterface } from "../helpers/Interfaces";
 import { ApiHelper } from "../mobilehelper";
 import { SecureStorageHelper } from "../helpers/SecureStorageHelper";
 import { PushNotificationHelper } from "../helpers/PushNotificationHelper";
@@ -20,6 +20,12 @@ interface UserState {
   // Recent churches for quick switching
   recentChurches: ChurchInterface[];
 
+  // Group view tracking
+  groupViewCounts: Record<string, number>;
+
+  // Link view tracking
+  linkViewCounts: Record<string, number>;
+
   // FCM token for push notifications
   fcmToken: string;
 
@@ -30,6 +36,8 @@ interface UserState {
   setLinks: (links: any[]) => void;
   setFcmToken: (token: string) => void;
   addRecentChurch: (church: ChurchInterface) => void;
+  incrementGroupViewCount: (groupId: string) => void;
+  incrementLinkViewCount: (linkId: string) => void;
 
   // Complex actions
   handleLogin: (data: LoginResponseInterface) => Promise<void>;
@@ -57,6 +65,8 @@ export const useUserStore = create<UserState>()(
       churchAppearance: null,
       links: [],
       recentChurches: [],
+      groupViewCounts: {},
+      linkViewCounts: {},
       fcmToken: "",
 
       // Basic setters
@@ -65,25 +75,31 @@ export const useUserStore = create<UserState>()(
       setCurrentUserChurch: async (userChurch, appearance) => {
         set({ currentUserChurch: userChurch });
 
-        // Update church appearance
+        // Progressive: Load appearance in background (non-blocking)
         if (appearance) {
           set({ churchAppearance: appearance });
         } else {
-          // Fallback to API call if appearance not provided
-          try {
-            const fetchedAppearance = await ApiHelper.getAnonymous(`/settings/public/${userChurch.church.id}`, "MembershipApi");
-            set({ churchAppearance: fetchedAppearance });
-          } catch (error) {
-            console.error("Failed to fetch church appearance:", error);
-          }
+          // Load appearance without blocking UI
+          setTimeout(async () => {
+            try {
+              const fetchedAppearance = await ApiHelper.getAnonymous(`/settings/public/${userChurch.church.id}`, "MembershipApi");
+              set({ churchAppearance: fetchedAppearance });
+            } catch (error) {
+              console.error("Failed to fetch church appearance:", error);
+            }
+          }, 0);
         }
 
-        // Load church links
-        await get().loadChurchLinks(userChurch.church.id);
+        // Progressive: Load church links without blocking UI
+        setTimeout(() => {
+          get().loadChurchLinks(userChurch.church.id || "");
+        }, 50);
 
-        // Load person record if user is logged in
+        // Deferred: Load person record after initial render
         if (userChurch.jwt) {
-          await get().loadPersonRecord();
+          setTimeout(() => {
+            get().loadPersonRecord();
+          }, 100);
         }
       },
 
@@ -98,6 +114,28 @@ export const useUserStore = create<UserState>()(
         const filtered = state.recentChurches.filter(c => c.id !== church.id);
         const updated = [church, ...filtered].slice(0, 5); // Keep only 5 recent churches
         set({ recentChurches: updated });
+      },
+
+      incrementGroupViewCount: groupId => {
+        const state = get();
+        const currentCount = state.groupViewCounts[groupId] || 0;
+        set({
+          groupViewCounts: {
+            ...state.groupViewCounts,
+            [groupId]: currentCount + 1
+          }
+        });
+      },
+
+      incrementLinkViewCount: linkId => {
+        const state = get();
+        const currentCount = state.linkViewCounts[linkId] || 0;
+        set({
+          linkViewCounts: {
+            ...state.linkViewCounts,
+            [linkId]: currentCount + 1
+          }
+        });
       },
 
       // Handle login response
@@ -155,16 +193,20 @@ export const useUserStore = create<UserState>()(
         const userChurch = state.userChurches.find(uc => uc.church.id === church.id);
 
         if (userChurch) {
-          // User is logged in and this is one of their churches
-          await get().setCurrentUserChurch(userChurch);
+          // Essential: Set church immediately for fast UI update
           get().addRecentChurch(church);
-
-          // Update API permissions for the new church
+          
+          // Essential: Update API permissions immediately
           ApiHelper.setDefaultPermissions(userChurch.jwt || "");
           userChurch.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
 
-          // Store new JWT tokens
-          await storeSecureTokens(userChurch);
+          // Progressive: Set current church (triggers background loading)
+          await get().setCurrentUserChurch(userChurch);
+
+          // Deferred: Store JWT tokens in background
+          setTimeout(() => {
+            storeSecureTokens(userChurch);
+          }, 200);
         } else {
           // Anonymous church selection (user not logged in to this church)
           await get().setAnonymousChurch(church);
@@ -175,34 +217,37 @@ export const useUserStore = create<UserState>()(
       setAnonymousChurch: async (church: ChurchInterface) => {
         // Create a minimal LoginUserChurchInterface for anonymous browsing
         const anonymousUserChurch: LoginUserChurchInterface = {
+          person: null,
           church: church,
           jwt: "",
           apis: [],
-          permissions: []
+          groups: []
         };
 
-        // Set as current church
+        // Essential: Set church immediately for fast UI update
         set({ currentUserChurch: anonymousUserChurch });
-
-        // Add to recent churches
         get().addRecentChurch(church);
 
-        // Fetch church appearance and links
-        try {
-          const appearance = await ApiHelper.getAnonymous(`/settings/public/${church.id}`, "MembershipApi");
-          set({ churchAppearance: appearance });
-        } catch (error) {
-          console.error("❌ Failed to fetch church appearance:", error);
-        }
+        // Progressive: Fetch church appearance in background
+        setTimeout(async () => {
+          try {
+            const appearance = await ApiHelper.getAnonymous(`/settings/public/${church.id}`, "MembershipApi");
+            set({ churchAppearance: appearance });
+          } catch (error) {
+            console.error("❌ Failed to fetch church appearance:", error);
+          }
+        }, 0);
 
-        // Load church links
-        await get().loadChurchLinks(church.id);
+        // Deferred: Load church links after initial render
+        setTimeout(() => {
+          get().loadChurchLinks(church.id || "");
+        }, 100);
       },
 
       // Load church navigation links
       loadChurchLinks: async (churchId: string) => {
         try {
-          // Get main navigation links
+          // Get main navigation links first
           let tabs: any[] = [];
           const tempTabs = await ApiHelper.getAnonymous(`/links/church/${churchId}?category=b1Tab`, "ContentApi");
 
@@ -222,13 +267,17 @@ export const useUserStore = create<UserState>()(
             }
           });
 
-          // Get special tabs (dynamic feature availability)
-          const specialTabs = await get().getSpecialTabs(churchId);
-
-          const allLinks = tabs.concat(specialTabs);
-
-          // Update links in store
-          set({ links: allLinks });
+          // Load special tabs (feature availability) before updating state
+          try {
+            const specialTabs = await get().getSpecialTabs(churchId);
+            const allLinks = tabs.concat(specialTabs);
+            // Only update state once with complete data
+            set({ links: allLinks });
+          } catch (error) {
+            console.error("❌ Failed to load special tabs:", error);
+            // Set basic tabs only if special tabs fail
+            set({ links: tabs });
+          }
         } catch (error) {
           console.error("❌ Failed to load church links:", error);
           set({ links: [] });
@@ -246,7 +295,8 @@ export const useUserStore = create<UserState>()(
           showDirectory = false,
           showLessons = false,
           showChums = false,
-          showCheckin = false;
+          showCheckin = false,
+          showSermons = false;
 
         const uc = state.currentUserChurch;
 
@@ -258,6 +308,16 @@ export const useUserStore = create<UserState>()(
           // Check for donations
           const gateways = await ApiHelper.getAnonymous(`/gateways/churchId/${churchId}`, "GivingApi");
           if (gateways.length > 0) showDonations = true;
+
+          // Check for sermons
+          try {
+            const playlists = await ApiHelper.getAnonymous(`/playlists/public/${churchId}`, "ContentApi");
+            if (playlists.length > 0) showSermons = true;
+          } catch (error) {
+            console.error("Error checking for sermons in store:", error);
+            // Still show sermons tab - let the sermons screen handle the error
+            showSermons = true;
+          }
         } catch (error) {
           console.error("❌ Error checking church features:", error);
         }
@@ -287,7 +347,7 @@ export const useUserStore = create<UserState>()(
 
           // Check for plans
           try {
-            const plans = await ApiHelper.get("/plans", "AttendanceApi");
+            const plans = await ApiHelper.get("/plans", "DoingApi");
             showPlans = plans.length > 0;
           } catch {
             // Ignore error
@@ -301,6 +361,7 @@ export const useUserStore = create<UserState>()(
         if (showDirectory) specialTabs.push({ linkType: "directory", text: "Directory", icon: "people" });
         if (showPlans) specialTabs.push({ linkType: "plans", text: "Plans", icon: "calendar_today" });
         if (showLessons) specialTabs.push({ linkType: "lessons", text: "Lessons", icon: "local_library" });
+        if (showSermons) specialTabs.push({ linkType: "sermons", text: "Sermons", icon: "play_circle" });
         if (showWebsite) specialTabs.push({ linkType: "website", text: "Website", icon: "language" });
         if (showCheckin) specialTabs.push({ linkType: "checkin", text: "Check-in", icon: "how_to_reg" });
         if (showChums) specialTabs.push({ linkType: "chums", text: "Member Search", icon: "person_search" });
@@ -346,28 +407,44 @@ export const useUserStore = create<UserState>()(
 
       // Logout
       logout: async () => {
+        const state = get();
+        const currentChurch = state.currentUserChurch?.church;
+
         // Clear API permissions
         ApiHelper.setDefaultPermissions("");
 
-        // Clear secure storage
+        // Clear secure storage (only JWT token now)
         await SecureStorageHelper.removeSecureItem("default_jwt");
-        await SecureStorageHelper.removeSecureItem("api_tokens");
 
-        // Clear state
+        // Clear user-specific state but preserve church context
         set({
           user: null,
           churches: [],
           userChurches: [],
-          currentUserChurch: null,
-          churchAppearance: null,
-          links: []
+          currentUserChurch: currentChurch
+            ? {
+                person: null,
+                church: currentChurch,
+                jwt: "",
+                apis: [],
+                groups: []
+              }
+            : null
+          // Keep churchAppearance and links so UI stays consistent
+          // churchAppearance: null,
+          // links: []
         });
+
+        // If we have a current church, reload its public data for anonymous browsing
+        if (currentChurch) {
+          await get().setAnonymousChurch(currentChurch);
+        }
       },
 
       // Load person record for current church
       loadPersonRecord: async () => {
         const state = get();
-        if (state.currentUserChurch && !state.currentUserChurch.person) {
+        if (state.currentUserChurch && (!state.currentUserChurch.person || !state.currentUserChurch.person.name)) {
           try {
             const data: { person: PersonInterface } = await ApiHelper.get(`/people/claim/${state.currentUserChurch.church.id}`, "MembershipApi");
 
@@ -410,6 +487,8 @@ export const useUserStore = create<UserState>()(
         user: state.user,
         currentUserChurch: state.currentUserChurch,
         recentChurches: state.recentChurches,
+        groupViewCounts: state.groupViewCounts,
+        linkViewCounts: state.linkViewCounts,
         fcmToken: state.fcmToken
       })
     }
@@ -419,33 +498,23 @@ export const useUserStore = create<UserState>()(
 // Helper function to store JWT tokens securely
 async function storeSecureTokens(userChurch: LoginUserChurchInterface): Promise<void> {
   try {
-    // Store default JWT token
+    // Only store the main JWT token to avoid SecureStore size limits
     if (userChurch?.jwt) {
       await SecureStorageHelper.setSecureItem("default_jwt", userChurch.jwt);
     }
 
-    // Store API-specific tokens
+    // Set API permissions in memory (they'll be refreshed on app restart)
     if (userChurch?.apis && userChurch.apis.length > 0) {
-      const apiTokens: Record<string, { jwt: string; permissions: RolePermissionInterface[] }> = {};
-
       userChurch.apis.forEach(api => {
         if (api.keyName && api.jwt) {
-          apiTokens[api.keyName] = {
-            jwt: api.jwt,
-            permissions: api.permissions || []
-          };
+          ApiHelper.setPermissions(api.keyName, api.jwt, api.permissions || []);
         }
       });
 
-      // Also store MessagingApi token
+      // Also set MessagingApi token
       if (userChurch.jwt) {
-        apiTokens["MessagingApi"] = {
-          jwt: userChurch.jwt,
-          permissions: []
-        };
+        ApiHelper.setPermissions("MessagingApi", userChurch.jwt, []);
       }
-
-      await SecureStorageHelper.setSecureItem("api_tokens", JSON.stringify(apiTokens));
     }
   } catch (error) {
     console.error("Failed to store secure tokens:", error);
@@ -459,3 +528,7 @@ export const useCurrentUserChurch = () => useUserStore(state => state.currentUse
 export const useChurchAppearance = () => useUserStore(state => state.churchAppearance);
 export const useUserChurches = () => useUserStore(state => state.userChurches);
 export const useRecentChurches = () => useUserStore(state => state.recentChurches);
+export const useGroupViewCounts = () => useUserStore(state => state.groupViewCounts);
+export const useIncrementGroupViewCount = () => useUserStore(state => state.incrementGroupViewCount);
+export const useLinkViewCounts = () => useUserStore(state => state.linkViewCounts);
+export const useIncrementLinkViewCount = () => useUserStore(state => state.incrementLinkViewCount);

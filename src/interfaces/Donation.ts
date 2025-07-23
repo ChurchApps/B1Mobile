@@ -1,12 +1,5 @@
 import { PersonInterface } from "./Membership";
 
-export interface DonationBatchInterface {
-  id?: string;
-  name?: string;
-  batchDate?: Date;
-  donationCount?: number;
-  totalAmount?: number;
-}
 export interface DonationInterface {
   id?: string;
   batchId?: string;
@@ -17,14 +10,6 @@ export interface DonationInterface {
   methodDetails?: string;
   notes?: string;
   person?: PersonInterface;
-  fund?: FundInterface;
-}
-export interface DonationSummaryInterface {
-  week: number;
-  donations?: DonationSummaryDonation[];
-}
-export interface DonationSummaryDonation {
-  totalAmount: number;
   fund?: FundInterface;
 }
 export interface FundInterface {
@@ -52,45 +37,16 @@ export interface StripeCardUpdateInterface {
   cardData: StripeCardDataInterface;
   personId?: string;
 }
-export interface StripeCardDataInterface {
-  card: StripeCardExpirationInterface;
-}
-export interface StripeCardExpirationInterface {
-  exp_month: string;
-  exp_year: string;
-}
-export interface StripeBankAccountInterface {
-  account_holder_name: string;
-  account_holder_type: string;
-  country: string;
-  currency: string;
-  account_number: string;
-  routing_number: string;
-}
 export interface StripeBankAccountUpdateInterface {
   paymentMethodId: string;
   customerId: string;
   personId?: string;
   bankData: StripeBankAccountHolderDataInterface;
 }
-export interface StripeBankAccountHolderDataInterface {
-  account_holder_name: string;
-  account_holder_type: string;
-}
 export interface StripeBankAccountVerifyInterface {
   customerId: string;
   paymentMethodId: string;
   amountData: { amounts: string[] };
-}
-export interface StripePersonDonationInterface {
-  id: string;
-  email: string;
-  name: string;
-}
-export interface StripeFundDonationInterface {
-  id: string;
-  amount: number;
-  name?: string;
 }
 export interface StripeDonationInterface {
   id?: string;
@@ -105,10 +61,6 @@ export interface StripeDonationInterface {
   notes?: string;
   churchId?: string;
   church?: { name?: string; subDomain?: string };
-}
-export interface StripeDonationIntervalInterface {
-  interval: string;
-  interval_count: number;
 }
 export interface SubscriptionInterface {
   id: string;

@@ -1,48 +1,44 @@
+import { designSystem } from "../theme/designSystem";
+
 export class Constants {
   static Colors = {
-    app_color: "#1C75BC",
-    app_color_light: "rgba(28, 116, 188,0.3)",
-    gray_bg: "#F6F6F8",
-    button_bg: "#24B8FE",
-    button_green: "#70DC87",
-    button_red: "#B0120C",
+    // Primary Brand Colors from Design System
+    app_color: designSystem.colors.primary[500], // Main brand color
+    app_color_light: designSystem.colors.secondary[500], // Light Blue
+
+    // Neutral Colors from Design System
+    gray_bg: designSystem.colors.neutral[50], // Background
+    white_color: "#FFFFFF", // Card Background
+    dark_gray: designSystem.colors.neutral[900], // Primary text color
+    medium_gray: designSystem.colors.neutral[500], // Secondary text and icons
+    light_gray: designSystem.colors.neutral[100], // Borders and dividers
+
+    // Status Colors from Design System
+    button_green: designSystem.colors.success[500], // Success Green
+    button_yellow: designSystem.colors.warning[500], // Warning Yellow
+    button_red: designSystem.colors.error[500], // Error Red
+
+    // Legacy colors (to be phased out)
+    button_bg: "#2196F3", // Updated to Bright Blue
     button_dark_green: "#77CC01",
-    button_yellow: "#FAC108",
-    white_color: "#FFFFFF",
-    Dark_Gray: "#808080",
-    Light_Green: "#AFE1AF",
-    Dark_Green: "#2e7d32",
-    Light_Red: "#ffdddd",
-    Black_color: "#000000",
-    Orange_color: "#ed6c02",
-    Active_TabColor: "rgb(25, 118, 210);"
+    Dark_Gray: designSystem.colors.neutral[500], // Updated to Medium Gray
+    Active_TabColor: designSystem.colors.primary[500] // Updated to Primary Blue
   };
 
   static Fonts = {
     RobotoLight: "Roboto-Light",
     RobotoBold: "Roboto-Bold",
-    RobotoBlack: "Roboto-Black",
     RobotoMedium: "Roboto-Medium",
     RobotoRegular: "Roboto-Regular"
   };
 
   static Images = {
-    splash_screen: require("../assets/images/splash.png"),
     ic_menu: require("../assets/images/ic_menu.png"),
     ic_user: require("../assets/images/ic_user.png"),
-    ic_bible: require("../assets/images/ic_bible.png"),
-    ic_preferences: require("../assets/images/ic_preferences.png"),
-    ic_home: require("../assets/images/ic_home.png"),
-    ic_live_stream: require("../assets/images/ic_live_stream.png"),
-    ic_checkin: require("../assets/images/ic_checkin.png"),
     ic_give: require("../assets/images/ic_give.png"),
-    ic_groups: require("../assets/images/ic_groups.png"),
-    ic_getintouch: require("../assets/images/ic_getintouch.png"),
-    ic_search: require("../assets/images/ic_search.png"),
     logoBlue: require("../assets/images/logoBlue.png"),
     logoWhite: require("../assets/images/logoWhite.png"),
     ic_church: require("../assets/images/ic_church.png"),
-    ic_member: require("../assets/images/ic_member.png"),
-    dash_bell: require("../assets/images/dash_bell.png")
+    ic_member: require("../assets/images/ic_member.png")
   };
 }

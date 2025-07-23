@@ -1,17 +1,18 @@
 import React from "react";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useEffect, useState, useCallback, useRef } from "react";
-import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface, UserHelper } from "../../src/helpers";
+import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface } from "../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "../../src/helpers/Interfaces";
 import { eventBus, updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
-import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
+import { useLocalSearchParams, useFocusEffect } from "expo-router";
+import { useNavigation } from "../../src/hooks";
 import { FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform } from "react-native";
 import { useAppTheme } from "../../src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
-import { useUser } from "../../src/stores/useUserStore";
+import { useUser, useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 interface NotificationContent {
   autoDismiss?: boolean;
@@ -37,6 +38,7 @@ const MessageScreen = () => {
   const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
   const details = JSON.parse(userDetails);
   const { theme, spacing } = useAppTheme();
+  const { navigateBack } = useNavigation();
   const [messageText, setMessageText] = useState("");
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
@@ -45,6 +47,7 @@ const MessageScreen = () => {
   const { showActionSheetWithOptions } = useActionSheet();
   const conversationIdRef = useRef<string | undefined>(undefined);
   const user = useUser();
+  const currentUserChurch = useCurrentUserChurch();
 
   // Update ref when conversation changes
   useEffect(() => {
@@ -145,24 +148,27 @@ const MessageScreen = () => {
   );
 
   const loadMembers = () => {
-    ApiHelper.get(`/people/ids?ids=${UserHelper.currentUserChurch.person.id}`, "MembershipApi");
+    if (currentUserChurch?.person?.id) {
+      ApiHelper.get(`/people/ids?ids=${currentUserChurch.person.id}`, "MembershipApi");
+    }
   };
 
   const sendMessageInitiate = () => {
     if (messageText == "") return;
+    if (!currentUserChurch?.person?.id) return;
     if (currentConversation == null || currentConversation == undefined || Object.keys(currentConversation).length == 0) {
       let params = [
         {
           allowAnonymousPosts: false,
           contentType: "privateMessage",
-          contentId: UserHelper.currentUserChurch.person.id,
+          contentId: currentUserChurch.person.id,
           title: user?.firstName + " " + user?.lastName + " Private Message",
           visibility: "hidden"
         }
       ];
       ApiHelper.post("/conversations", params, "MessagingApi").then(async (data: ConversationCreateInterface[]) => {
         if (data != null && data.length > 0 && data[0]?.id) {
-          let params = [{ fromPersonId: UserHelper.currentUserChurch.person.id, toPersonId: details.id, conversationId: data[0]?.id }];
+          let params = [{ fromPersonId: currentUserChurch.person.id, toPersonId: details.id, conversationId: data[0]?.id }];
           ApiHelper.post("/privateMessages", params, "MessagingApi").then((data: PrivateMessagesCreate[]) => {
             if (data != null && data.length > 0 && data[0]?.id) {
               sendMessage(data[0].conversationId);
@@ -213,7 +219,7 @@ const MessageScreen = () => {
 
   const MessageHeader = () => (
     <Surface style={{ flexDirection: "row", alignItems: "center", backgroundColor: theme.colors.primary, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, elevation: 4 }}>
-      <IconButton icon="arrow-left" size={28} iconColor="white" onPress={() => router.navigate("/(drawer)/dashboard")} />
+      <IconButton icon="arrow-left" size={28} iconColor="white" onPress={() => navigateBack()} />
       <Text variant="titleLarge" style={{ color: "white", fontWeight: "600", flex: 1 }}>
         Messages
       </Text>

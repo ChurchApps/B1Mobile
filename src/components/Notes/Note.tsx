@@ -9,8 +9,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
-import { PersonHelper } from "../../../src/helpers/PersonHelper";
+import { PersonHelper } from "../../../src/helpers";
 import { OptimizedImage } from "../OptimizedImage";
+import { Avatar } from "../common/Avatar";
 
 interface NotesInterface {
   message: MessageInterface;
@@ -20,7 +21,7 @@ interface NotesInterface {
 const Note = React.memo(({ message, showEditNote }: NotesInterface) => {
   const displayDuration = useMemo(() => dayjs(message?.timeSent).fromNow(), [message?.timeSent]);
 
-  const photoUrl = useMemo(() => (message?.person?.photo ? PersonHelper.getPhotoUrl(message.person) : null), [message?.person?.photo]);
+  const photoUrl = useMemo(() => (message?.person?.photo && message.person ? PersonHelper.getPhotoUrl(message.person) : null), [message?.person?.photo, message?.person]);
 
   const handleEditPress = useCallback(() => {
     showEditNote(message.id);
@@ -29,7 +30,7 @@ const Note = React.memo(({ message, showEditNote }: NotesInterface) => {
   return (
     <>
       <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70) }]}>
-        <OptimizedImage source={photoUrl ? { uri: photoUrl } : Constants.Images.ic_member} style={[globalStyles.memberListIcon, { width: DimensionHelper.wp(12), height: DimensionHelper.wp(12), borderRadius: 8888 }]} placeholder={Constants.Images.ic_member} />
+        <Avatar size={DimensionHelper.wp(12)} photoUrl={message?.person?.photo} firstName={message?.person?.name?.first} lastName={message?.person?.name?.last} style={globalStyles.memberListIcon} />
         <View style={globalStyles.NoteTextInputView}>
           <View>
             <Text style={globalStyles.name}>{message?.displayName}</Text>

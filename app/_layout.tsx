@@ -9,6 +9,7 @@ import { ThemeProvider } from "../src/theme/ThemeProvider";
 import { UserHelper } from "../src/helpers/UserHelper";
 import { queryClient, initializeQueryCache } from "../src/helpers/QueryClient";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
+import { NotificationNavigationHandler } from "../src/components/NotificationNavigationHandler";
 
 export default function RootLayout() {
   useEffect(() => {
@@ -26,6 +27,7 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <SafeAreaProvider>
+            <NotificationNavigationHandler />
             <Stack screenOptions={{ headerShown: false }} initialRouteName="auth">
               <Stack.Screen name="auth" />
               <Stack.Screen name="index" />

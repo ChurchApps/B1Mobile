@@ -3,7 +3,14 @@ import { PersonInterface } from "./Interfaces";
 
 export class PersonHelper {
   static getPhotoUrl(person: PersonInterface) {
-    if (!person?.photo) return null;
-    else return person?.photo?.startsWith("data:image/png;base64,") ? person.photo : EnvironmentHelper.ContentRoot + person.photo;
+    // Add defensive check for null/undefined person
+    if (!person || !person.photo) return null;
+
+    try {
+      return person.photo.startsWith("data:image/png;base64,") ? person.photo : EnvironmentHelper.ContentRoot + person.photo;
+    } catch (error) {
+      console.warn("Error generating photo URL:", error, person);
+      return null;
+    }
   }
 }

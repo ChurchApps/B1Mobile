@@ -7,7 +7,7 @@ import { useEffect, useState, useMemo } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
 import DropDownPicker from "react-native-dropdown-picker";
-import Icon from "react-native-vector-icons/FontAwesome";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { RRule, Weekday, rrulestr } from "rrule";
 import { globalStyles } from "../../../src/helpers";
 
@@ -214,7 +214,7 @@ export default function RRuleEditor(props: Props) {
               <Text style={styles.dateText} numberOfLines={1}>
                 {dayjs(onEndDate).format("YYYY-MM-DD")}
               </Text>
-              <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setonEndPicker(true)} />
+              <MaterialIcons name={"calendar-today"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setonEndPicker(true)} />
               <DatePicker
                 modal
                 mode="date"

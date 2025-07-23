@@ -1,30 +1,44 @@
 import * as Notifications from "expo-notifications";
-import { DeviceEventEmitter, PermissionsAndroid, Platform } from "react-native";
+import { DeviceEventEmitter, PermissionsAndroid, Platform, AppState } from "react-native";
 import DeviceInfo from "react-native-device-info";
 import * as Device from "expo-device";
-import { CacheHelper } from "./CacheHelper";
+import { useUserStore } from "../stores/useUserStore";
+import { ApiHelper } from "../mobilehelper";
 
-// Track current screen
+// Track current screen and app state
 let currentScreen = "";
+let isAppInForeground = true;
 
 // Function to update current screen
 export const updateCurrentScreen = (screen: string) => {
   currentScreen = screen;
 };
 
+// Initialize app state listener
+AppState.addEventListener('change', (nextAppState) => {
+  isAppInForeground = nextAppState === 'active';
+});
+
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async notification => {
-    const appState = await Notifications.getLastNotificationResponseAsync();
-    const isAppInForeground = appState === null;
     const isInMessageScreen = currentScreen === "/(drawer)/messageScreen";
+    const isInNotificationsScreen = currentScreen === "/(drawer)/notifications";
+    
+    // Check if we're currently viewing the relevant content
+    const notificationData = notification.request.content.data;
+    const isViewingRelevantMessage = notificationData?.type === "chat" && 
+                                    notificationData?.chatId && 
+                                    isInMessageScreen;
 
-    // If app is in foreground, we'll handle it internally
+    // If app is in foreground, handle internally and suppress OS notification
     if (isAppInForeground) {
+      // Always emit the notification event for bell badge updates
       eventBus.emit("notification", notification.request.content);
+      
       return {
-        shouldShowAlert: false,
-        shouldPlaySound: !isInMessageScreen, // Don't play sound if in message screen
+        shouldShowAlert: false, // Never show OS alert when app is in foreground
+        shouldPlaySound: !isViewingRelevantMessage && !isInNotificationsScreen, // Don't play sound if viewing relevant content
         shouldSetBadge: true,
         shouldShowBanner: false,
         shouldShowList: false
@@ -44,32 +58,61 @@ Notifications.setNotificationHandler({
 
 export class PushNotificationHelper {
   static async registerUserDevice() {
-    // TODO: Update to use useUserStore - this needs refactoring to accept user data as parameter
-    // const fcmToken = CacheHelper.fcmToken;
-    // const deviceName = await DeviceInfo.getDeviceName();
-    // const deviceInfo = await PushNotificationHelper.getDeviceInfo();
-    // const currentChurch = UserHelper.currentUserChurch?.church || CacheHelper.church;
-    // const tst: LoginUserChurchInterface[] = UserHelper.userChurches;
-    // const currentData: LoginUserChurchInterface | undefined = tst?.find(value => value.church.id == currentChurch!.id);
-    // if (currentData != null || currentData != undefined) {
-    //   ApiHelper.post("/devices/register", { personId: currentData.person.id, fcmToken, label: deviceName, deviceInfo: JSON.stringify(deviceInfo) }, "MessagingApi");
-    // }
+    try {
+      const userStore = useUserStore.getState();
+      const currentUserChurch = userStore.currentUserChurch;
+      
+      // Only register if user is logged in and has a person record
+      if (!currentUserChurch?.person?.id) {
+        console.log("No user logged in, skipping device registration");
+        return;
+      }
+
+      // Get device information
+      const fcmToken = userStore.fcmToken; // Use Expo push token as fcmToken
+      const deviceName = await DeviceInfo.getDeviceName();
+      const deviceInfo = await PushNotificationHelper.getDeviceInfo();
+
+      if (!fcmToken) {
+        console.log("No FCM token available, skipping device registration");
+        return;
+      }
+
+      // Register device with API
+      await ApiHelper.post("/devices/register", {
+        personId: currentUserChurch.person.id,
+        fcmToken,
+        label: deviceName,
+        deviceInfo: JSON.stringify(deviceInfo)
+      }, "MessagingApi");
+
+      console.log("Device registered successfully for user:", currentUserChurch.person.name);
+    } catch (error) {
+      console.error("Error registering device:", error);
+    }
   }
 
   static async getDeviceInfo() {
-    const details: Record<string, unknown> = {};
-    details.appName = DeviceInfo.getApplicationName();
-    details.buildId = await DeviceInfo.getBuildId();
-    details.buildNumber = DeviceInfo.getBuildNumber();
-    details.brand = DeviceInfo.getBrand();
-    details.device = await DeviceInfo.getDevice();
-    details.deviceId = DeviceInfo.getDeviceId();
-    details.deviceType = DeviceInfo.getDeviceType();
-    details.hardware = await DeviceInfo.getHardware();
-    details.manufacturer = await DeviceInfo.getManufacturer();
-    details.version = DeviceInfo.getReadableVersion();
-    return details;
+    try {
+      return {
+        deviceId: await DeviceInfo.getUniqueId(),
+        deviceName: await DeviceInfo.getDeviceName(),
+        systemName: await DeviceInfo.getSystemName(),
+        systemVersion: await DeviceInfo.getSystemVersion(),
+        model: await DeviceInfo.getModel(),
+        brand: await DeviceInfo.getBrand(),
+        isDevice: Device.isDevice,
+        platform: Platform.OS
+      };
+    } catch (error) {
+      console.error("Error getting device info:", error);
+      return {
+        platform: Platform.OS,
+        isDevice: Device.isDevice
+      };
+    }
   }
+
 
   static async requestUserPermission() {
     try {
@@ -128,7 +171,7 @@ export class PushNotificationHelper {
   }
 
   static async GetFCMToken() {
-    let fcmToken = CacheHelper.fcmToken;
+    let fcmToken = useUserStore.getState().fcmToken;
     if (!fcmToken) {
       try {
         // Get the Expo push token
@@ -138,11 +181,33 @@ export class PushNotificationHelper {
 
         if (token.data) {
           fcmToken = token.data;
-          await CacheHelper.setValue("fcmToken", fcmToken);
+          useUserStore.getState().setFcmToken(fcmToken);
+          
+          // 🚨 TESTING: Log device info for push notification testing
+          console.log("=== PUSH NOTIFICATION TESTING INFO ===");
+          console.log("Expo Push Token:", fcmToken);
+          console.log("EAS Project ID: f72e5911-b8d5-467c-ad9e-423c180e9938");
+          
+          // Get device info
+          const deviceName = await DeviceInfo.getDeviceName();
+          const deviceId = await DeviceInfo.getUniqueId();
+          const currentUser = useUserStore.getState().currentUserChurch;
+          
+          console.log("Device Name:", deviceName);
+          console.log("Device ID:", deviceId);
+          console.log("Current User:", currentUser?.person?.name || "Not logged in");
+          console.log("Current Church:", currentUser?.church?.name || "No church selected");
+          console.log("Person ID:", currentUser?.person?.id || "N/A");
+          console.log("=====================================");
         }
       } catch (error) {
         console.error("Expo push token not created:", error);
       }
+    } else {
+      // Token already exists, log it anyway for testing
+      console.log("=== EXISTING PUSH TOKEN ===");
+      console.log("Expo Push Token:", fcmToken);
+      console.log("==========================");
     }
   }
 
@@ -155,7 +220,7 @@ export class PushNotificationHelper {
         // Emit notification event for internal handling
         eventBus.emit("notification", content);
 
-        // If it's a chat notification and we're in the chat, update the messages
+        // If it's a chat notification, emit chat update event
         if (content.data?.type === "chat") {
           eventBus.emit("chatNotification", content.data);
         }
@@ -168,10 +233,9 @@ export class PushNotificationHelper {
         // Handle navigation based on notification type
         if (content.data?.type === "chat") {
           eventBus.emit("navigateToChat", content.data);
-        } else if (content.data?.type === "message") {
-          eventBus.emit("navigateToMessage", content.data);
+        } else if (content.data?.type === "notification") {
+          eventBus.emit("navigateToNotification", content.data);
         }
-        // Add more navigation types as needed
       });
 
       // Get notification that opened the app
@@ -182,8 +246,8 @@ export class PushNotificationHelper {
         // Handle navigation for app launch from notification
         if (content.data?.type === "chat") {
           eventBus.emit("navigateToChat", content.data);
-        } else if (content.data?.type === "message") {
-          eventBus.emit("navigateToMessage", content.data);
+        } else if (content.data?.type === "notification") {
+          eventBus.emit("navigateToNotification", content.data);
         }
       }
 
@@ -196,12 +260,6 @@ export class PushNotificationHelper {
     }
   }
 
-  // Add method to check if we're in a specific chat
-  static isInChat(): boolean {
-    // This should be implemented based on your navigation state
-    // You'll need to track the current chat ID in your navigation state
-    return false; // Placeholder
-  }
 }
 
 export const eventBus = {

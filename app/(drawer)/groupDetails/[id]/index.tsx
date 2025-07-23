@@ -1,45 +1,62 @@
 import React from "react";
-import { useCallback, useMemo, useState } from "react";
-import { FlatList, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View } from "react-native";
-import { Text, TouchableRipple, Button, Surface, Avatar } from "react-native-paper";
-import { useNavigation, DrawerActions } from "@react-navigation/native";
+import { useCallback, useMemo, useState, useEffect } from "react";
+import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
+import { Text, Button, Surface, Card } from "react-native-paper";
+import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
+import { useNavigation } from "../../../../src/hooks";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useLocalSearchParams } from "expo-router";
-import { Calendar, DateData } from "react-native-calendars";
-import Markdown from "@ronradtke/react-native-markdown-display";
+import { useLocalSearchParams, useFocusEffect } from "expo-router";
+import { DateData } from "react-native-calendars";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useQuery } from "@tanstack/react-query";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { EventInterface } from "../../../../src/mobilehelper";
-import { Constants, EnvironmentHelper } from "../../../../src/helpers";
 import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
-import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
-import Conversations from "../../../../src/components/Notes/Conversations";
-import { EventModal } from "../../../../src/components/eventCalendar/EventModal";
-import CreateEvent from "../../../../src/components/eventCalendar/CreateEvent";
+import GroupChatModal from "../../../../src/components/modals/GroupChatModal";
 import { useAppTheme } from "../../../../src/theme";
-import { OptimizedImage } from "../../../../src/components/OptimizedImage";
 import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
+import { 
+  GroupHeroSection,
+  GroupNavigationTabs,
+  GroupAboutTab,
+  GroupMembersTab,
+  GroupCalendarTab,
+  GroupEventModal,
+  EventProcessor
+} from "../../../../src/components/group/exports";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const TABS = ["Conversations", "Group Members", "Group Calendar"];
-
 const GroupDetails = () => {
   const { theme, spacing } = useAppTheme();
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const [activeTab, setActiveTab] = useState(0);
-  const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD"));
+  const navigation = useReactNavigation<DrawerNavigationProp<any>>();
+  const { navigateBack } = useNavigation();
+  const { id, activeTab: initialActiveTab } = useLocalSearchParams<{ id: string; activeTab?: string }>();
+  const [activeTab, setActiveTab] = useState(initialActiveTab ? parseInt(initialActiveTab) : 0);
+
+  const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD")); // Always default to today
+  const [currentMonth, setCurrentMonth] = useState(dayjs().format("YYYY-MM-DD")); // Track current calendar month
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<any>(null);
-  const [editEvent, setEditEvent] = useState<EventInterface | null>(null);
-  const [showAddEventModal, setShowAddEventModal] = useState<boolean>(false);
+  const [showChatModal, setShowChatModal] = useState<boolean>(false);
 
   const currentUserChurch = useCurrentUserChurch();
+
+  // Refresh events when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('Screen focused - refreshing events');
+      refetchEvents();
+      // If we came back with an activeTab parameter, set it
+      if (initialActiveTab) {
+        setActiveTab(parseInt(initialActiveTab));
+      }
+    }, [refetchEvents, initialActiveTab])
+  );
+
 
   // Use react-query for group details
   const {
@@ -60,7 +77,7 @@ const GroupDetails = () => {
     }
   });
 
-  // Use react-query for group members
+  // Use react-query for group members - load immediately in parallel
   const {
     data: groupMembers = [],
     isLoading: groupMembersLoading,
@@ -68,7 +85,7 @@ const GroupDetails = () => {
     isError: groupMembersIsError
   } = useQuery({
     queryKey: [`/groupmembers?groupId=${id}`, "MembershipApi"],
-    enabled: !!id && !!currentUserChurch?.jwt && !!groupDetails, // Only load after group details
+    enabled: !!id && !!currentUserChurch?.jwt, // Load in parallel with group details
     placeholderData: [],
     staleTime: 5 * 60 * 1000, // 5 minutes - membership changes occasionally
     gcTime: 15 * 60 * 1000, // 15 minutes
@@ -76,7 +93,7 @@ const GroupDetails = () => {
     retryDelay: 1000
   });
 
-  // Use react-query for group events
+  // Use react-query for group events - load only when needed (lazy loading)
   const {
     data: eventsData = [],
     isLoading: eventsLoading,
@@ -85,7 +102,7 @@ const GroupDetails = () => {
     refetch: refetchEvents
   } = useQuery({
     queryKey: [`/events/group/${id}`, "ContentApi"],
-    enabled: !!id && !!currentUserChurch?.jwt && !!groupDetails, // Only load after group details
+    enabled: !!id && !!currentUserChurch?.jwt && activeTab === 3, // Only load when calendar tab is active
     placeholderData: [],
     staleTime: 3 * 60 * 1000, // 3 minutes - events change more frequently
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -93,162 +110,90 @@ const GroupDetails = () => {
     retryDelay: 1000
   });
 
-  const loading = groupDetailsLoading || groupMembersLoading || eventsLoading;
+
+
+
+  // Only show full loading if group details is loading (essential data)
   const hasError = groupDetailsIsError || groupMembersIsError || eventsIsError;
   const errors = [groupDetailsError, groupMembersError, eventsError].filter(Boolean);
 
-  const updateTime = useCallback((data: any) => {
-    if (!data || !Array.isArray(data)) return [];
+  const updateTime = useCallback((data: any) => EventProcessor.updateTime(data), []);
 
-    try {
-      const tz = new Date().getTimezoneOffset();
-      return data.map((d: EventInterface) => {
-        try {
-          const ev = { ...d };
-          ev.start = ev.start ? new Date(ev.start) : new Date();
-          ev.end = ev.end ? new Date(ev.end) : new Date();
-          ev.start.setMinutes(ev.start.getMinutes() - tz);
-          ev.end.setMinutes(ev.end.getMinutes() - tz);
-          return ev;
-        } catch (error) {
-          console.warn("Error updating time for event:", d.id, error);
-          return d;
-        }
-      });
-    } catch (error) {
-      console.error("Error updating event times:", error);
+  const events = useMemo(() => {
+    // Only process events when on the Events tab
+    if (activeTab !== 3) {
       return [];
     }
-  }, []);
+    const processed = updateTime(eventsData);
+    console.log('Events useMemo - processed events:', processed?.length, 'events');
+    if (processed?.length > 0) {
+      console.log('Sample processed event:', {
+        id: processed[0].id,
+        title: processed[0].title,
+        start: processed[0].start
+      });
+    }
+    return processed;
+  }, [eventsData, updateTime, activeTab]);
 
-  const events = useMemo(() => updateTime(eventsData), [eventsData, updateTime]);
 
-  const handleAddEvent = useCallback(
-    (slotInfo: any) => {
+  const [expandedEvents, setExpandedEvents] = useState<EventInterface[]>([]);
+  const [isProcessingEvents, setIsProcessingEvents] = useState(false);
+
+  // Trigger refetch when switching to events tab
+  useEffect(() => {
+    if (activeTab === 3 && currentUserChurch?.jwt) {
+      console.log('Switched to events tab - refetching events');
+      refetchEvents();
+    }
+  }, [activeTab, currentUserChurch?.jwt, refetchEvents]);
+
+  // Async event expansion to prevent UI blocking - now month-based
+  useEffect(() => {
+    if (activeTab !== 3 || events.length === 0) {
+      setExpandedEvents([]);
+      setIsProcessingEvents(false);
+      return;
+    }
+
+    setIsProcessingEvents(true);
+
+    // Process events synchronously for the current month only
+    const processEventsSync = () => {
       try {
-        const startTime = new Date(slotInfo.start);
-        startTime.setHours(12);
-        startTime.setMinutes(0);
-        startTime.setSeconds(0);
-        const endTime = new Date(slotInfo.start);
-        endTime.setHours(13);
-        endTime.setMinutes(0);
-        endTime.setSeconds(0);
-        setEditEvent({ start: startTime, end: endTime, allDay: false, groupId: id, visibility: "public" });
+        // Force fresh calculation by including timestamp in cache key
+        const expanded = EventProcessor.expandEventsForMonth(events, currentMonth);
+        setExpandedEvents(expanded);
       } catch (error) {
-        console.error("Error creating new event:", error);
+        console.error('Event expansion failed:', error);
+        setExpandedEvents([]);
+      } finally {
+        setIsProcessingEvents(false);
       }
-    },
-    [id]
-  );
+    };
 
-  const expandEvents = useCallback((allEvents: EventInterface[]) => {
-    if (!allEvents || allEvents.length === 0) return [];
-
-    try {
-      const expandedEvents: EventInterface[] = [];
-      const startRange = dayjs().subtract(1, "year");
-      const endRange = dayjs().add(1, "year");
-
-      allEvents.forEach((event: any) => {
-        try {
-          const ev = { ...event };
-          ev.start = ev.start ? dayjs.utc(ev.start) : undefined;
-          ev.end = ev.end ? dayjs.utc(ev.end) : undefined;
-
-          if (ev.start && ev.end) {
-            if (event.recurrenceRule) {
-              try {
-                const dates = EventHelper.getRange(event, startRange.toDate(), endRange.toDate());
-                if (dates && dates.length > 0) {
-                  dates.forEach(date => {
-                    const evInstance = { ...event };
-                    const diff = ev.end.diff(ev.start);
-                    evInstance.start = dayjs(date);
-                    evInstance.end = evInstance.start.add(diff, "ms");
-                    expandedEvents.push(evInstance);
-                  });
-                  EventHelper.removeExcludeDates(expandedEvents);
-                }
-              } catch (recurrenceError) {
-                console.warn("Error processing recurrence rule for event:", event.id, recurrenceError);
-                // Fallback to single event
-                expandedEvents.push(ev);
-              }
-            } else {
-              expandedEvents.push(ev);
-            }
-          }
-        } catch (eventError) {
-          console.warn("Error processing event:", event.id, eventError);
-        }
-      });
-      return expandedEvents;
-    } catch (error) {
-      console.error("Error expanding events:", error);
-      return [];
-    }
-  }, []);
-
-  const expandedEvents = useMemo(() => {
-    // Limit processing for performance - only expand events if reasonable amount
-    if (events.length > 100) {
-      console.warn("Large number of events detected, limiting expansion for performance");
-      return events.slice(0, 50); // Limit to first 50 events
-    }
-    return expandEvents(events);
-  }, [events, expandEvents]);
+    // Process immediately for faster response
+    processEventsSync();
+  }, [events, activeTab, currentMonth, eventsData?.length]); // Add eventsData.length to force recalc on data change
 
   const markedDates = useMemo(() => {
-    const marked: any = {};
-
-    if (!expandedEvents || expandedEvents.length === 0) return marked;
-
-    try {
-      expandedEvents.forEach(event => {
-        if (!event.start || !event.end) return;
-
-        try {
-          let currentDate = dayjs(event.start);
-          const endDate = dayjs(event.end);
-          let iterations = 0;
-          const maxIterations = 365; // Prevent infinite loops
-
-          while ((currentDate.isBefore(endDate) || currentDate.isSame(endDate, "day")) && iterations < maxIterations) {
-            const dateString = currentDate.format("YYYY-MM-DD");
-            const dotColor = "#fff";
-
-            marked[dateString] = {
-              ...marked[dateString],
-              dots: [...(marked[dateString]?.dots || []), { color: dotColor }],
-              events: [...(marked[dateString]?.events || []), event],
-              marked: true,
-              textColor: "black",
-              selected: true
-            };
-
-            currentDate = currentDate.add(1, "day");
-            iterations++;
-          }
-
-          if (iterations >= maxIterations) {
-            console.warn("Event marking exceeded max iterations for event:", event.id);
-          }
-        } catch (dateError) {
-          console.warn("Error marking dates for event:", event.id, dateError);
-        }
+    const marked = EventProcessor.calculateMarkedDates(expandedEvents, activeTab);
+    console.log('markedDates useMemo - expandedEvents count:', expandedEvents?.length);
+    if (expandedEvents?.length > 0) {
+      console.log('markedDates useMemo - sample expanded event:', {
+        id: expandedEvents[0].id,
+        title: expandedEvents[0].title,
+        start: expandedEvents[0].start
       });
-    } catch (error) {
-      console.error("Error creating marked dates:", error);
     }
-
     return marked;
-  }, [expandedEvents]);
+  }, [expandedEvents, activeTab]);
 
   const onDayPress = useCallback(
     (day: DateData) => {
       setSelected(day.dateString);
       const selectedDayEvents = markedDates[day.dateString]?.events || [];
+      console.log('onDayPress - selectedDayEvents for', day.dateString, ':', selectedDayEvents.map(e => ({ id: e.id, title: e.title })));
       if (selectedDayEvents.length !== 0) {
         setShowEventModal(true);
         setSelectedEvents(selectedDayEvents);
@@ -257,11 +202,19 @@ const GroupDetails = () => {
     [markedDates]
   );
 
-  // Handle loading and error states
+  const onMonthChange = useCallback((month: DateData) => {
+    setCurrentMonth(month.dateString);
+  }, []);
+
+  // Show minimal loading only for critical group details data
   if (groupDetailsLoading) {
     return (
       <LoadingWrapper loading={true}>
-        <View />
+        <View style={styles.container}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <MainHeader title="Loading..." openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
+          </SafeAreaView>
+        </View>
       </LoadingWrapper>
     );
   }
@@ -280,7 +233,7 @@ const GroupDetails = () => {
           onPress={() => {
             // Refetch all queries
             if (groupDetailsError) refetchEvents();
-            navigation.goBack();
+            navigateBack();
           }}>
           Go Back
         </Button>
@@ -297,7 +250,7 @@ const GroupDetails = () => {
         <Text variant="bodyMedium" style={{ marginBottom: spacing.lg, textAlign: "center", color: theme.colors.onSurfaceVariant }}>
           The requested group could not be found or you don't have permission to view it.
         </Text>
-        <Button mode="contained" onPress={() => navigation.goBack()}>
+        <Button mode="contained" onPress={() => navigateBack()}>
           Go Back
         </Button>
       </Surface>
@@ -315,7 +268,7 @@ const GroupDetails = () => {
         <Text variant="bodyMedium" style={{ marginBottom: spacing.lg, textAlign: "center", color: theme.colors.onSurfaceVariant }}>
           Please login to view group details.
         </Text>
-        <Button mode="contained" onPress={() => navigation.goBack()}>
+        <Button mode="contained" onPress={() => navigateBack()}>
           Go Back
         </Button>
       </Surface>
@@ -328,177 +281,101 @@ const GroupDetails = () => {
   });
 
   return (
-    <LoadingWrapper loading={loading}>
-      <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
+    <>
+      <View style={styles.container}>
         <SafeAreaView style={{ flex: 1 }}>
-          <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
-          <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "position" : "height"} enabled>
-            <Surface style={{ margin: spacing.md, padding: spacing.lg, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
-              {photoUrl ? (
-                <OptimizedImage source={{ uri: photoUrl }} style={{ width: "100%", height: 200, borderRadius: theme.roundness, marginBottom: spacing.md }} contentFit="cover" priority="high" />
-              ) : (
-                <Surface
-                  style={{
-                    height: 200,
-                    width: "100%",
-                    borderRadius: theme.roundness,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: theme.colors.surfaceVariant,
-                    marginBottom: spacing.md
-                  }}>
-                  <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-                    No image available
-                  </Text>
-                </Surface>
-              )}
-              <Markdown>{about}</Markdown>
-            </Surface>
+          <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
 
-            <Surface style={{ margin: spacing.md, padding: spacing.md, borderRadius: theme.roundness, backgroundColor: theme.colors.surface }}>
-              <View style={styles.tabContainer}>
-                {TABS.map((tab, idx) => (
-                  <TouchableRipple
-                    key={tab.toLowerCase().replace(/\s+/g, "-")}
-                    style={[
-                      styles.tab,
-                      activeTab === idx && {
-                        borderBottomWidth: 2,
-                        borderBottomColor: theme.colors.primary
-                      }
-                    ]}
-                    onPress={() => setActiveTab(idx)}>
-                    <Text
-                      variant="labelLarge"
-                      style={{
-                        color: activeTab === idx ? theme.colors.primary : theme.colors.onSurface,
-                        textAlign: "center"
-                      }}
-                      numberOfLines={1}>
-                      {tab}
-                    </Text>
-                  </TouchableRipple>
-                ))}
+          <FlatList
+            data={[{ key: "content" }]}
+            renderItem={() => (
+              <View>
+                {/* Hero Section */}
+                <GroupHeroSection
+                  name={name}
+                  photoUrl={photoUrl}
+                  memberCount={groupMembersLoading ? undefined : groupMembers.length}
+                  isLeader={isLeader}
+                />
+
+                {/* Navigation Buttons */}
+                <GroupNavigationTabs
+                  activeTab={activeTab}
+                  onTabChange={setActiveTab}
+                  onMessagesPress={() => setShowChatModal(true)}
+                />
+
+                {/* Content Display */}
+                <Card style={styles.contentCard}>
+                  {/* Tab Content */}
+                  <View style={styles.tabContent}>
+                    {activeTab === 0 && (
+                      <GroupAboutTab about={about} />
+                    )}
+
+                    {activeTab === 2 && (
+                      <GroupMembersTab 
+                        members={groupMembers} 
+                        isLoading={groupMembersLoading} 
+                      />
+                    )}
+
+                    {activeTab === 3 && (
+                      <GroupCalendarTab
+                        groupId={id || ""}
+                        isLeader={isLeader}
+                        isLoading={isProcessingEvents}
+                        selected={selected}
+                        markedDates={markedDates}
+                        onDayPress={onDayPress}
+                        onMonthChange={onMonthChange}
+                      />
+                    )}
+                  </View>
+                </Card>
               </View>
-
-              {activeTab === 0 && (
-                <View style={{ flex: 1, minHeight: 300 }}>
-                  <Conversations contentType="group" contentId={id} groupId={id} from="GroupDetails" />
-                </View>
-              )}
-              {activeTab === 1 && (
-                <View style={{ flex: 1, backgroundColor: theme.colors.background, borderRadius: theme.roundness, paddingVertical: spacing.sm }}>
-                  <FlatList
-                    data={groupMembers}
-                    renderItem={({ item }) => (
-                      <Surface style={styles.memberCard}>
-                        <Avatar.Image size={48} source={item?.person?.photo ? { uri: EnvironmentHelper.ContentRoot + item.person.photo } : Constants.Images.ic_member} />
-                        <Text variant="titleMedium" style={{ marginLeft: 16, flex: 1 }}>
-                          {item?.person?.name?.display}
-                        </Text>
-                      </Surface>
-                    )}
-                    keyExtractor={(item: any) => item?.id}
-                    ListEmptyComponent={() => (
-                      <Text variant="bodyMedium" style={styles.noMemberText}>
-                        No group members found.
-                      </Text>
-                    )}
-                    contentContainerStyle={{ paddingHorizontal: spacing.md, paddingBottom: spacing.md }}
-                    showsVerticalScrollIndicator={false}
-                  />
-                </View>
-              )}
-              {activeTab === 2 && (
-                <View style={{ flex: 1 }}>
-                  <Surface style={{ padding: spacing.md, flex: 1 }}>
-                    {isLeader && (
-                      <Button
-                        mode="outlined"
-                        icon="calendar-plus"
-                        onPress={() => {
-                          setShowAddEventModal(true);
-                          handleAddEvent({ start: new Date(), end: new Date() });
-                        }}
-                        style={{ marginBottom: spacing.md, alignSelf: "flex-end" }}>
-                        ADD EVENT
-                      </Button>
-                    )}
-                    <Calendar
-                      current={selected}
-                      markingType="multi-dot"
-                      markedDates={markedDates}
-                      onDayPress={onDayPress}
-                      theme={{
-                        textInactiveColor: theme.colors.onSurfaceDisabled,
-                        textSectionTitleDisabledColor: theme.colors.onSurfaceDisabled,
-                        textSectionTitleColor: theme.colors.primary,
-                        arrowColor: theme.colors.primary,
-                        todayTextColor: theme.colors.error,
-                        selectedDayBackgroundColor: theme.colors.primary,
-                        selectedDayTextColor: theme.colors.onPrimary
-                      }}
-                    />
-                  </Surface>
-                </View>
-              )}
-            </Surface>
-          </KeyboardAvoidingView>
+            )}
+            keyExtractor={item => item.key}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.mainContainer}
+          />
         </SafeAreaView>
       </View>
-      {showEventModal && (
-        <EventModal isVisible={showEventModal} close={() => setShowEventModal(false)}>
-          {selectedEvents &&
-            selectedEvents.map((event: EventInterface) => (
-              <View key={event.id}>
-                <Text variant="titleMedium">{event.title}</Text>
-                <Text variant="bodyMedium">{event.description}</Text>
-              </View>
-            ))}
-        </EventModal>
-      )}
-      {showAddEventModal && editEvent && (
-        <CreateEvent
-          event={editEvent}
-          onDone={() => {
-            setShowAddEventModal(false);
-            refetchEvents();
-          }}
-        />
-      )}
-    </LoadingWrapper>
+
+      <GroupEventModal
+        isVisible={showEventModal}
+        onClose={() => setShowEventModal(false)}
+        selectedDate={selected}
+        selectedEvents={selectedEvents}
+        groupId={id || ""}
+        isLeader={isLeader}
+      />
+
+      {/* Group Chat Modal */}
+      <GroupChatModal visible={showChatModal} onDismiss={() => setShowChatModal(false)} groupId={id || ""} groupName={groupDetails?.name || "Group Chat"} />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  tabContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: 8,
-    width: "100%"
-  },
-  tab: {
+  container: {
     flex: 1,
-    paddingVertical: 12,
-    alignItems: "center"
+    backgroundColor: "#F6F6F8"
   },
-  memberCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2
+  mainContainer: {
+    flexGrow: 1,
+    paddingBottom: 24
   },
-  noMemberText: {
-    textAlign: "center",
-    marginTop: 10
+  contentCard: {
+    marginHorizontal: 16,
+    marginBottom: 24,
+    borderRadius: 16,
+    elevation: 3,
+    overflow: "hidden"
+  },
+  tabContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 16
   }
 });
 

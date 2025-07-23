@@ -1,7 +1,7 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { RadioButtonGroup } from "../RadioButton";
 
@@ -26,7 +26,7 @@ export default function EditRecurringModal(props: Props) {
           onPress={() => {
             if (props.setModal) props.setModal(false);
           }}>
-          <Icon name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
+          <MaterialIcons name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
         </TouchableOpacity>
       </View>
       <RadioButtonGroup

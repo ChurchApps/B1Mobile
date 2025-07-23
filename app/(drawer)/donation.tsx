@@ -1,32 +1,36 @@
 import React from "react";
-import { DonationForm } from "../../src/components/donations/DonationForm";
-import { Donations } from "../../src/components/donations/Donations";
-import { PaymentMethods } from "../../src/components/donations/PaymentMethods";
-import { RecurringDonations } from "../../src/components/donations/RecurringDonations";
-import { CacheHelper, UserHelper } from "../../src/helpers";
+import { 
+  EnhancedDonationForm, 
+  EnhancedGivingHistory
+} from "../../src/components/donations/LazyDonationComponents";
+import { GivingOverview, DonationTabBar, ManagePayments } from "../../src/components/donations/sections/exports";
+import { UserHelper } from "@/helpers/UserHelper";
 import { ErrorHelper } from "../../src/mobilehelper";
 import { StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { useIsFocused, useNavigation, DrawerActions } from "@react-navigation/native";
+import { useIsFocused, useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { initStripe } from "@stripe/stripe-react-native";
-import { useEffect, useState } from "react";
-import { Alert, ScrollView, View } from "react-native";
-import { Provider as PaperProvider, Appbar, Text, MD3LightTheme } from "react-native-paper";
+import { useEffect, useState, useMemo } from "react";
+import { Alert, ScrollView, View, StyleSheet } from "react-native";
+import { Provider as PaperProvider, MD3LightTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
-import { useAppTheme } from "../../src/theme";
+import { useDonationFunds } from "../../src/hooks/useStaleWhileRevalidate";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import { MainHeader } from "../../src/components/wrapper/MainHeader";
+import { useNavigation } from "../../src/hooks";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: "#175ec1",
+    primary: "#0D47A1",
     secondary: "#f0f2f5",
     surface: "#ffffff",
-    background: "#f8f9fa",
+    background: "#F6F6F8",
+    onSurface: "#3c3c3c",
+    onBackground: "#3c3c3c",
     elevation: {
       level0: "transparent",
       level1: "#ffffff",
@@ -39,14 +43,22 @@ const theme = {
 };
 
 const Donation = () => {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
-  const { spacing } = useAppTheme();
+  const navigation = useReactNavigation<DrawerNavigationProp<any>>();
+  const { navigateBack } = useNavigation();
   const [customerId, setCustomerId] = useState<string>("");
   const [paymentMethods, setPaymentMethods] = useState<StripePaymentMethod[]>([]);
   const [publishKey, setPublishKey] = useState<string>("");
+  const [activeSection, setActiveSection] = useState<"overview" | "donate" | "manage" | "history">("overview");
   const isFocused = useIsFocused();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
+
+  // Example of stale-while-revalidate for donation funds
+  const { 
+    data: fundsData, 
+    showSkeleton: showFundsSkeleton, 
+    isRevalidating: fundsRevalidating 
+  } = useDonationFunds(currentUserChurch?.church?.id || '');
 
   // Use react-query for gateway data
   const {
@@ -54,8 +66,8 @@ const Donation = () => {
     isLoading: gatewayLoading,
     refetch: refetchGateway
   } = useQuery({
-    queryKey: ["/gateways/churchId/" + CacheHelper.church?.id, "GivingApi"],
-    enabled: !!CacheHelper.church?.id && isFocused,
+    queryKey: ["/gateways/churchId/" + currentUserChurch?.church?.id, "GivingApi"],
+    enabled: !!currentUserChurch?.church?.id && isFocused,
     placeholderData: [],
     staleTime: 10 * 60 * 1000, // 10 minutes - gateway config rarely changes
     gcTime: 30 * 60 * 1000 // 30 minutes
@@ -111,35 +123,77 @@ const Donation = () => {
     }
   };
 
+  // Sample data for demonstration - in real app this would come from API
+  const givingStats = useMemo(
+    () => ({
+      ytd: 2850.0,
+      lastGift: 125.0,
+      totalGifts: 12,
+      lastGiftDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 1 week ago
+    }),
+    []
+  );
+
+  const renderOverviewSection = () => (
+    <GivingOverview 
+      givingStats={givingStats} 
+      onDonatePress={() => setActiveSection("donate")} 
+      onHistoryPress={() => setActiveSection("history")} 
+    />
+  );
+
+  const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />;
+
+  const renderManageSection = () => (
+    <ManagePayments 
+      person={person} 
+      customerId={customerId} 
+      paymentMethods={paymentMethods} 
+      isLoading={areMethodsLoading} 
+      publishKey={publishKey} 
+      loadData={loadData} 
+    />
+  );
+
+  const renderHistorySection = () => <EnhancedGivingHistory customerId={customerId} />;
+
   return (
     <PaperProvider theme={theme}>
-      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.primary }}>
-        <LoadingWrapper loading={areMethodsLoading}>
-          <View style={{ flex: 1 }}>
-            <Appbar.Header style={{ backgroundColor: theme.colors.primary, elevation: 4, shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 3 }} mode="center-aligned">
-              <Appbar.Action icon={() => <MaterialIcons name="menu" size={24} color="#FFFFFF" />} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
-              <Appbar.Content title="Donate" titleStyle={{ color: "white", fontSize: 20, fontWeight: "600" }} />
-              <Appbar.Action icon="arrow-left" onPress={() => navigation.goBack()} color="white" />
-            </Appbar.Header>
-            <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} contentContainerStyle={{ padding: spacing.md }}>
-              {UserHelper.currentUserChurch?.person?.id && <PaymentMethods customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} isLoading={areMethodsLoading} publishKey={publishKey} />}
-              <DonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />
-              {!UserHelper.currentUserChurch?.person?.id ? (
-                <Text variant="bodyMedium" style={{ marginVertical: spacing.md, color: theme.colors.onSurface }}>
-                  Please login to view existing donations
-                </Text>
-              ) : (
-                <>
-                  <RecurringDonations customerId={customerId} paymentMethods={paymentMethods} updatedFunction={loadData} />
-                  <Donations />
-                </>
-              )}
-            </ScrollView>
-          </View>
-        </LoadingWrapper>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.content}>
+          <MainHeader title="Giving" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+
+          <DonationTabBar activeSection={activeSection} onTabChange={setActiveSection} />
+
+          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            {activeSection === "overview" && renderOverviewSection()}
+            {activeSection === "donate" && renderDonateSection()}
+            {activeSection === "manage" && renderManageSection()}
+            {activeSection === "history" && renderHistorySection()}
+          </ScrollView>
+        </View>
       </SafeAreaView>
     </PaperProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F6F6F8"
+  },
+  content: {
+    flex: 1
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: "#F6F6F8"
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: 16,
+    paddingBottom: 32
+  }
+});
 
 export default Donation;

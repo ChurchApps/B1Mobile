@@ -1,13 +1,17 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
-import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants } from "../../../src/helpers";
-import Icons from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
+import { Card, Button } from "react-native-paper";
+import { InlineLoader } from "../common/LoadingComponents";
 
-export const BlockoutDates = () => {
+interface Props {
+  isLoading?: boolean;
+}
+
+export const BlockoutDates = ({ isLoading = false }: Props) => {
   const fadeAnim = new Animated.Value(0);
   const currentUserChurch = useCurrentUserChurch();
 
@@ -20,7 +24,7 @@ export const BlockoutDates = () => {
   }, []);
 
   // Use react-query for blockout dates
-  const { data: blockoutDates = [] } = useQuery({
+  const { data: blockoutDates = [], isLoading: blockoutLoading } = useQuery({
     queryKey: ["/blockoutdates/my", "DoingApi"],
     enabled: !!currentUserChurch?.jwt,
     placeholderData: [],
@@ -31,155 +35,218 @@ export const BlockoutDates = () => {
     }
   });
 
+  const showLoading = isLoading || blockoutLoading;
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Icons name="calendar-times" style={styles.headerIcon} size={DimensionHelper.wp(5.5)} />
+        <MaterialIcons name="event-busy" style={styles.headerIcon} size={24} />
         <Text style={styles.headerTitle}>Blockout Dates</Text>
       </View>
 
-      {blockoutDates.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Icons name="calendar-minus" size={DimensionHelper.wp(8)} color="#ccc" />
-          <Text style={styles.emptyStateText}>No blockout dates set</Text>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => {
-              /* TODO: Add navigation to blockout dates creation */
-            }}>
-            <Icons name="plus" size={14} color="white" style={styles.addButtonIcon} />
-            <Text style={styles.addButtonText}>Add Blockout Date</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View>
+      <Card style={styles.contentCard}>
+        <Card.Content>
+          {showLoading ? (
+            <InlineLoader size="large" text="Loading blockout dates..." />
+          ) : blockoutDates.length === 0 ? (
+            <View style={styles.emptyStateContent}>
+              <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
+              <Text style={styles.emptyStateText}>No blockout dates set</Text>
+              <Text style={styles.emptyStateSubtext}>Block dates when you're unavailable to serve</Text>
+              <Button
+                mode="contained"
+                onPress={() => {
+                  /* TODO: Add navigation to blockout dates creation */
+                }}
+                style={styles.addButton}
+                labelStyle={styles.addButtonText}
+                icon="plus">
+                Add Blockout Date
+              </Button>
+            </View>
+          ) : (
+        <View style={styles.cardsList}>
+          <View style={styles.listHeader}>
+            <Text style={styles.listHeaderText}>
+              {blockoutDates.length} blockout date{blockoutDates.length > 1 ? "s" : ""}
+            </Text>
+            <Button
+              mode="text"
+              onPress={() => {
+                /* TODO: Add navigation to blockout dates creation */
+              }}
+              labelStyle={{ color: "#0D47A1" }}
+              icon="plus">
+              Add New
+            </Button>
+          </View>
+
           {blockoutDates.map((date: any, index: number) => (
-            <View key={index} style={styles.card}>
-              <View style={styles.cardContent}>
-                <View style={styles.dateInfo}>
-                  <Icons name="calendar-day" size={16} color="#1976d2" style={styles.icon} />
-                  <Text style={{ fontSize: 16, color: "#222", fontWeight: "bold" }}>{dayjs(date.startDate).format("YYYY-MM-DD")}</Text>
-                  {date.endDate && date.endDate !== date.startDate && (
-                    <>
-                      <Text style={styles.dateSeparator}>to</Text>
-                      <Text style={{ fontSize: 16, color: "#222", fontWeight: "bold" }}>{dayjs(date.endDate).format("YYYY-MM-DD")}</Text>
-                    </>
+            <Card key={index} style={styles.blockoutCard} mode="elevated">
+              <Card.Content style={styles.cardContent}>
+                <View style={styles.dateSection}>
+                  <View style={styles.dateHeader}>
+                    <MaterialIcons name="event-busy" size={20} color="#B0120C" />
+                    <Text style={styles.dateRange}>
+                      {dayjs(date.startDate).format("MMM DD, YYYY")}
+                      {date.endDate && date.endDate !== date.startDate && ` - ${dayjs(date.endDate).format("MMM DD, YYYY")}`}
+                    </Text>
+                  </View>
+
+                  {date.notes && (
+                    <View style={styles.notesContainer}>
+                      <MaterialIcons name="note" size={16} color="#9E9E9E" />
+                      <Text style={styles.notesText}>{date.notes}</Text>
+                    </View>
                   )}
                 </View>
+
                 <TouchableOpacity
                   style={styles.deleteButton}
                   onPress={() => {
                     /* TODO: Add delete functionality */
                   }}>
-                  <Icons name="trash-alt" size={16} color={Constants.Colors.button_red} />
+                  <MaterialIcons name="delete-outline" size={24} color="#B0120C" />
                 </TouchableOpacity>
-              </View>
-              {date.notes && <Text style={styles.notesText}>{date.notes}</Text>}
-            </View>
+              </Card.Content>
+            </Card>
           ))}
         </View>
-      )}
+          )}
+        </Card.Content>
+      </Card>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: DimensionHelper.hp(3)
+    marginBottom: 24
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: DimensionHelper.hp(2)
+    marginBottom: 16,
+    paddingLeft: 4
   },
   headerIcon: {
-    color: Constants.Colors.app_color,
-    marginRight: DimensionHelper.wp(2)
+    color: "#0D47A1",
+    marginRight: 8
   },
   headerTitle: {
-    fontSize: DimensionHelper.wp(4.5),
-    fontWeight: "600",
-    color: "#333"
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#3c3c3c"
   },
-  emptyState: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: DimensionHelper.wp(6),
-    alignItems: "center",
-    justifyContent: "center",
+
+  // Content Card
+  contentCard: {
+    borderRadius: 16,
+    elevation: 2,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
+  },
+  emptyStateContent: {
+    alignItems: "center",
+    padding: 32
   },
   emptyStateText: {
-    fontSize: DimensionHelper.wp(3.5),
-    color: "#666",
-    marginTop: DimensionHelper.hp(2),
-    marginBottom: DimensionHelper.hp(3)
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#3c3c3c",
+    marginTop: 16,
+    textAlign: "center"
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: "#9E9E9E",
+    marginTop: 8,
+    marginBottom: 24,
+    textAlign: "center"
   },
   addButton: {
-    backgroundColor: Constants.Colors.app_color,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: DimensionHelper.wp(4),
-    paddingVertical: DimensionHelper.hp(1),
-    borderRadius: 20
-  },
-  addButtonIcon: {
-    marginRight: 8
+    backgroundColor: "#0D47A1",
+    borderRadius: 12
   },
   addButtonText: {
     color: "white",
-    fontSize: DimensionHelper.wp(3.2),
+    fontSize: 14,
+    fontWeight: "600"
+  },
+
+  // Cards List
+  cardsList: {
+    gap: 12
+  },
+  listHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+    paddingHorizontal: 4
+  },
+  listHeaderText: {
+    fontSize: 14,
+    color: "#9E9E9E",
     fontWeight: "500"
   },
-  card: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    padding: DimensionHelper.wp(4),
-    marginBottom: DimensionHelper.hp(1.5),
+
+  blockoutCard: {
+    borderRadius: 16,
+    elevation: 2,
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    backgroundColor: "#FFFFFF"
   },
   cardContent: {
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    padding: 4
   },
-  dateInfo: {
+
+  // Date Section
+  dateSection: {
+    flex: 1,
+    marginRight: 12
+  },
+  dateHeader: {
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    marginBottom: 8
   },
-  icon: {
-    marginRight: 8
+  dateRange: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#3c3c3c",
+    marginLeft: 8,
+    flex: 1
   },
-  dateText: {
-    fontSize: DimensionHelper.wp(3.5),
-    color: "#333"
-  },
-  dateSeparator: {
-    fontSize: DimensionHelper.wp(3.2),
-    color: "#666",
-    marginHorizontal: 8
-  },
-  deleteButton: {
-    padding: 8
+
+  // Notes
+  notesContainer: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: "rgba(158, 158, 158, 0.08)",
+    padding: 12,
+    borderRadius: 8
   },
   notesText: {
-    fontSize: DimensionHelper.wp(3.2),
+    fontSize: 14,
     color: "#666",
-    marginTop: 6,
-    marginLeft: 28
+    marginLeft: 8,
+    flex: 1,
+    lineHeight: 18
+  },
+
+  // Delete Button
+  deleteButton: {
+    padding: 8,
+    borderRadius: 8
   }
 });

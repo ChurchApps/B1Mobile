@@ -1,7 +1,6 @@
 import { MD3LightTheme, MD3DarkTheme, configureFonts, useTheme } from "react-native-paper";
-import { Dimensions, Platform } from "react-native";
-
-const { width, height } = Dimensions.get("window");
+import { Platform } from "react-native";
+import { designSystem } from "./designSystem";
 
 // Custom font configuration
 const fontConfig = {
@@ -12,97 +11,24 @@ const fontConfig = {
   })
 };
 
-// Custom colors that extend Paper's theme
+// Custom colors that extend Paper's theme using our design system
 const customColors = {
-  primary: "#1C75BC",
-  secondary: "#5E60CE",
-  error: "#B00020",
+  primary: designSystem.colors.primary[500],
+  secondary: designSystem.colors.secondary[500],
+  error: designSystem.colors.error[500],
   background: "#FFFFFF",
   surface: "#FFFFFF",
-  surfaceVariant: "#F5F5F5",
-  onSurface: "#000000",
-  onSurfaceVariant: "#666666",
-  onSurfaceDisabled: "#999999",
+  surfaceVariant: designSystem.colors.neutral[50],
+  onSurface: designSystem.colors.neutral[900],
+  onSurfaceVariant: designSystem.colors.neutral[500],
+  onSurfaceDisabled: designSystem.colors.neutral[500],
   onPrimary: "#FFFFFF",
-  onBackground: "#000000",
+  onBackground: designSystem.colors.neutral[900],
   onError: "#FFFFFF"
 };
 
-// Custom spacing and dimensions
-export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 48
-};
-
-export const dimensions = {
-  screenWidth: width,
-  screenHeight: height,
-  wp: (percentage: number) => (width * percentage) / 100,
-  hp: (percentage: number) => (height * percentage) / 100
-};
-
 // Custom component styles that can be reused
-export const componentStyles = {
-  surface: {
-    borderRadius: 8,
-    padding: spacing.md,
-    margin: spacing.md
-  },
-  card: {
-    borderRadius: 8,
-    padding: spacing.md,
-    marginVertical: spacing.sm,
-    marginHorizontal: spacing.md
-  },
-  avatar: {
-    size: {
-      small: 40,
-      medium: 48,
-      large: 64
-    }
-  },
-  image: {
-    groupPhoto: {
-      width: "100%" as const,
-      height: 200,
-      borderRadius: 8,
-      marginBottom: spacing.md
-    },
-    profilePhoto: {
-      width: 120,
-      height: 120,
-      borderRadius: 60
-    }
-  },
-  input: {
-    marginVertical: spacing.sm,
-    marginHorizontal: spacing.md
-  },
-  button: {
-    marginVertical: spacing.sm,
-    marginHorizontal: spacing.md
-  },
-  list: {
-    item: {
-      padding: spacing.md,
-      marginVertical: spacing.xs,
-      marginHorizontal: spacing.md,
-      borderRadius: 8
-    }
-  },
-  calendar: {
-    header: {
-      marginBottom: spacing.md
-    },
-    day: {
-      borderRadius: 8
-    }
-  }
-};
+export const componentStyles = {};
 
 // Extend Paper's theme with our custom values
 export const lightTheme = {
@@ -112,7 +38,7 @@ export const lightTheme = {
     ...customColors
   },
   fonts: configureFonts({ config: fontConfig }),
-  roundness: 8
+  roundness: designSystem.borderRadius.md
 };
 
 export const darkTheme = {
@@ -128,7 +54,7 @@ export const darkTheme = {
     onBackground: "#FFFFFF"
   },
   fonts: configureFonts({ config: fontConfig }),
-  roundness: 8
+  roundness: designSystem.borderRadius.md
 };
 
 // Custom hook to use our theme and styles
@@ -136,8 +62,11 @@ export const useAppTheme = () => {
   const theme = useTheme();
   return {
     theme,
-    spacing,
-    dimensions,
-    componentStyles
+    componentStyles,
+    spacing: designSystem.spacing,
+    colors: designSystem.colors,
+    typography: designSystem.typography,
+    borderRadius: designSystem.borderRadius,
+    shadows: designSystem.shadows
   };
 };

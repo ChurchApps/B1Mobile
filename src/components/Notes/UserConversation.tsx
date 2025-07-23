@@ -29,22 +29,47 @@ const UserConversations = ({ conversation, conversationId, createConversation }:
           peopleIds.push(message?.personId);
         }
       });
-      const people = await ApiHelper.get("/people/basic?ids=" + peopleIds.join(","), "MembershipApi");
-      people.reverse();
-      const groupedMessages: { [key: string]: MessageInterface[] } = {};
-      userMessages.forEach((message: any) => {
-        if (!groupedMessages[message?.conversationId]) {
-          groupedMessages[message?.conversationId] = [];
+      try {
+        const people = await ApiHelper.get("/people/basic?ids=" + peopleIds.join(","), "MembershipApi");
+
+        if (Array.isArray(people)) {
+          people.reverse();
+          const groupedMessages: { [key: string]: MessageInterface[] } = {};
+          userMessages.forEach((message: any) => {
+            if (!groupedMessages[message?.conversationId]) {
+              groupedMessages[message?.conversationId] = [];
+            }
+            groupedMessages[message.conversationId].push(message);
+          });
+          conversations = Object.values(groupedMessages).map(messages => ({
+            messages: (messages ?? []).map(msg => {
+              const person = ArrayHelper.getOne(people, "id", msg.personId);
+              return {
+                ...msg,
+                postCount: conversation.postCount,
+                person: person || null // Ensure we don't assign undefined
+              };
+            })
+          }));
         }
-        groupedMessages[message.conversationId].push(message);
-      });
-      conversations = Object.values(groupedMessages).map(messages => ({
-        messages: (messages ?? []).map(msg => ({
-          ...msg,
-          postCount: conversation.postCount,
-          person: ArrayHelper.getOne(people, "id", msg.personId)
-        }))
-      }));
+      } catch (peopleError) {
+        console.warn("Failed to load people data for user conversations:", peopleError);
+        // Continue with messages but without person data
+        const groupedMessages: { [key: string]: MessageInterface[] } = {};
+        userMessages.forEach((message: any) => {
+          if (!groupedMessages[message?.conversationId]) {
+            groupedMessages[message?.conversationId] = [];
+          }
+          groupedMessages[message.conversationId].push(message);
+        });
+        conversations = Object.values(groupedMessages).map(messages => ({
+          messages: (messages ?? []).map(msg => ({
+            ...msg,
+            postCount: conversation.postCount,
+            person: null // No person data available
+          }))
+        }));
+      }
     }
     setConversations(conversations);
     setEditMessageId("");

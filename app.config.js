@@ -2,15 +2,15 @@ module.exports = {
   expo: {
     name: "B1Mobile",
     slug: "B1Mobile",
-    version: "2.0.0",
+    version: "3.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
     scheme: "b1mobile", // For deep linking
     splash: {
-      image: "./assets/splash.png",
+      image: "./src/assets/images/logoWhite.png",
       resizeMode: "contain",
-      backgroundColor: "#ffffff"
+      backgroundColor: "#2196F3"
     },
     assetBundlePatterns: ["**/*"],
     ios: {
@@ -33,7 +33,7 @@ module.exports = {
     },
     android: {
       package: "church.b1.mobile",
-      googleServicesFile: "./google-services.json",
+      googleServicesFile: "./config/google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
@@ -52,7 +52,7 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png"
     },
-    runtimeVersion: "2.0.0",
+    runtimeVersion: "3.0.0",
     plugins: [
       "expo-secure-store",
       [
@@ -64,7 +64,18 @@ module.exports = {
             "./assets/sounds/notification.mp3"
           ]
         }
-      ]
+      ],
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1",
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      "@react-native-firebase/app",
+      // "@react-native-firebase/analytics"
     ],
     extra: {
       ATTENDANCE_API: process.env.ATTENDANCE_API || "https://attendanceapi.churchapps.org",

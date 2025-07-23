@@ -70,19 +70,4 @@ export class SecureStorageHelper {
     return value !== null;
   }
 
-  /**
-   * Migrate existing JWT tokens from AsyncStorage to SecureStore
-   */
-  static async migrateTokensFromAsyncStorage(): Promise<void> {
-    try {
-      // Check for existing user data with JWT tokens
-      const userData = await AsyncStorage.getItem("USER_DATA");
-      if (userData) {
-        // If user data exists, check if we have JWT tokens to migrate
-        // This will be handled by the specific token migration in UserHelper
-      }
-    } catch (error) {
-      console.error("Failed to migrate tokens:", error);
-    }
-  }
 }

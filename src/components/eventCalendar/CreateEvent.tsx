@@ -1,16 +1,24 @@
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
 import { ApiHelper, DateHelper, EventExceptionInterface, EventInterface } from "../../mobilehelper";
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
-import React, { useState } from "react";
-import { ActivityIndicator, Alert, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useState, useRef } from "react";
+import { Alert, StyleSheet, View, ScrollView, SafeAreaView } from "react-native";
 import DatePicker from "react-native-date-picker";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { globalStyles } from "../../../src/helpers";
+import { 
+  Text, 
+  TextInput, 
+  Button, 
+  Switch, 
+  IconButton, 
+  Divider,
+  ActivityIndicator,
+  Appbar
+} from "react-native-paper";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import CheckBox from "../CheckBox";
-import { CustomModal } from "../modals/CustomModal";
 import EditRecurringModal from "./EditRecurringModal";
 import RRuleEditor from "./RRuleEditor";
+
 
 interface Props {
   event: EventInterface;
@@ -18,13 +26,34 @@ interface Props {
 }
 
 export default function CreateEvent(props: Props) {
-  const [event, setEvent] = useState(props.event);
+  const getInitialEvent = () => {
+    const baseEvent = { ...props.event };
+    
+    // Set default dates if not provided
+    if (!baseEvent.start) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(14, 0, 0, 0); // 2:00 PM
+      baseEvent.start = tomorrow.toISOString();
+    }
+    
+    if (!baseEvent.end) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(15, 0, 0, 0); // 3:00 PM
+      baseEvent.end = tomorrow.toISOString();
+    }
+    
+    return baseEvent;
+  };
+
+  const [event, setEvent] = useState(getInitialEvent());
   const [rRule, setRRule] = useState(event.recurrenceRule);
   const [recurrenceModalType, setRecurrenceModalType] = useState("save");
 
-  const [isEnabled, setIsEnabled] = useState(event.visibility === "private");
-  const [title, setTitle] = useState(event.title);
-  const [description, setDescription] = useState(event.description);
+  const [isPrivate, setIsPrivate] = useState(event.visibility === "private");
+  const [title, setTitle] = useState(event.title || "");
+  const [description, setDescription] = useState(event.description || "");
 
   const [allDay, setAllDay] = useState(event.allDay ?? false);
   const [recurring, setRecurring] = useState((event.recurrenceRule?.length ?? 0) > 0);
@@ -32,11 +61,45 @@ export default function CreateEvent(props: Props) {
   const [openStartPicker, setOpenStartPicker] = useState(false);
   const [openEndPicker, setOpenEndPicker] = useState(false);
 
-  const [startDate, setStartDate] = useState(new Date(event.start || Date.now()));
-  const [endDate, setEndDate] = useState(new Date(event.end || Date.now()));
+  const getDefaultStartDate = () => {
+    if (event.start) {
+      const date = new Date(event.start);
+      console.log('getDefaultStartDate conversion:', {
+        utcString: event.start,
+        localDate: date.toString(),
+        localISO: date.toISOString()
+      });
+      return date;
+    }
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(14, 0, 0, 0); // 2:00 PM
+    return tomorrow;
+  };
+
+  const getDefaultEndDate = () => {
+    if (event.end) {
+      const date = new Date(event.end);
+      console.log('getDefaultEndDate conversion:', {
+        utcString: event.end,
+        localDate: date.toString(),
+        localISO: date.toISOString()
+      });
+      return date;
+    }
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(15, 0, 0, 0); // 3:00 PM
+    return tomorrow;
+  };
+
+  const [startDate, setStartDate] = useState(getDefaultStartDate());
+  const [endDate, setEndDate] = useState(getDefaultEndDate());
 
   const [showEventEditModal, setShowEventEditModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
+  
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const handleSave = () => {
     if (props.event.recurrenceRule) setRecurrenceModalType("save");
@@ -49,10 +112,24 @@ export default function CreateEvent(props: Props) {
       }
 
       ev.recurrenceRule = rRule;
+      
+      console.log('handleSave - sending event to API:', {
+        id: ev.id,
+        title: ev.title,
+        start: ev.start,
+        end: ev.end,
+        startType: typeof ev.start,
+        endType: typeof ev.end
+      });
+      
       setLoading(true);
       ApiHelper.post("/events", [ev], "ContentApi").then(() => {
         setLoading(false);
         if (props.onDone) props.onDone();
+      }).catch((error) => {
+        setLoading(false);
+        Alert.alert("Error", "Failed to create event. Please try again.");
+        console.error("Error creating event:", error);
       });
     }
   };
@@ -144,113 +221,38 @@ export default function CreateEvent(props: Props) {
       setRRule(updatedEvent.recurrenceRule);
       return updatedEvent;
     });
+    
+    // Scroll to recurrence rules when enabled
+    if (checked) {
+      setTimeout(() => {
+        // Simple approach: scroll to end since recurrence rules are at the bottom
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }, 200); // Slightly longer delay to ensure the component has rendered
+    }
   };
 
   const handleChange = (type: string, e: Date) => {
     const env = { ...event };
+    console.log(`handleChange ${type}:`, {
+      selectedDate: e.toString(),
+      selectedUTC: e.toISOString()
+    });
+    
     switch (type) {
       case "start":
-        env.start = DateHelper.toDate(e);
+        // Store as ISO string for API compatibility (UTC)
+        env.start = e.toISOString();
+        setStartDate(e);
         break;
       case "end":
-        env.end = DateHelper.toDate(e);
+        // Store as ISO string for API compatibility (UTC)
+        env.end = e.toISOString();
+        setEndDate(e);
         break;
     }
     setEvent(env);
   };
 
-  const getDates = () => {
-    if (event.allDay)
-      return (
-        <>
-          <View style={styles.eventType}>
-            <View style={styles.dateConatiner}>
-              <Text style={styles.dateText} numberOfLines={1}>
-                {dayjs(startDate).format("YYYY-MM-DD")}
-              </Text>
-              <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setOpenStartPicker(true)} />
-              <DatePicker
-                modal
-                open={openStartPicker}
-                date={startDate}
-                onConfirm={date => {
-                  setOpenStartPicker(false);
-                  setStartDate(date);
-                  handleChange("start", date);
-                }}
-                onCancel={() => {
-                  setOpenStartPicker(false);
-                }}
-              />
-            </View>
-            <View style={styles.dateConatiner}>
-              <Text style={styles.dateText} numberOfLines={1}>
-                {dayjs(endDate).format("YYYY-MM-DD")}
-              </Text>
-              <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setOpenEndPicker(true)} />
-              <DatePicker
-                modal
-                open={openEndPicker}
-                date={endDate}
-                onConfirm={date => {
-                  setOpenEndPicker(false);
-                  setEndDate(date);
-                  handleChange("end", date);
-                }}
-                onCancel={() => {
-                  setOpenEndPicker(false);
-                }}
-              />
-            </View>
-          </View>
-        </>
-      );
-    else
-      return (
-        <>
-          <View style={styles.eventType}>
-            <View style={styles.dateConatiner}>
-              <Text style={styles.dateText} numberOfLines={1}>
-                {dayjs(startDate).format("YYYY-MM-DD")}
-              </Text>
-              <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setOpenStartPicker(true)} />
-              <DatePicker
-                modal
-                open={openStartPicker}
-                date={startDate}
-                onConfirm={date => {
-                  setOpenStartPicker(false);
-                  setStartDate(date);
-                  handleChange("start", date);
-                }}
-                onCancel={() => {
-                  setOpenStartPicker(false);
-                }}
-              />
-            </View>
-            <View style={styles.dateConatiner}>
-              <Text style={styles.dateText} numberOfLines={1}>
-                {dayjs(endDate).format("YYYY-MM-DD")}
-              </Text>
-              <Icon name={"calendar-o"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setOpenEndPicker(true)} />
-              <DatePicker
-                modal
-                open={openEndPicker}
-                date={endDate}
-                onConfirm={date => {
-                  setOpenEndPicker(false);
-                  setEndDate(date);
-                  handleChange("end", date);
-                }}
-                onCancel={() => {
-                  setOpenEndPicker(false);
-                }}
-              />
-            </View>
-          </View>
-        </>
-      );
-  };
 
   const handleDelete = async () => {
     if (props.event.recurrenceRule) {
@@ -274,166 +276,324 @@ export default function CreateEvent(props: Props) {
   };
 
   return (
-    <View>
-      <View style={styles.eventType}>
-        <CheckBox
-          onPress={() => {
-            (setAllDay(!allDay), setEvent({ ...event, allDay: !allDay }));
-          }}
-          title="All Day"
-          isChecked={allDay}
-        />
-        <CheckBox
-          onPress={() => {
-            handleToggleRecurring(!recurring);
-          }}
-          title="Recurring"
-          isChecked={recurring}
-        />
-      </View>
-      <View style={styles.dateTextConatiner}>
-        <Text style={styles.labelText}>Start Time</Text>
-        <Text style={styles.labelText}>End Time</Text>
-      </View>
-      {getDates()}
-      <View style={styles.visibilityConatiner}>
-        <Text style={styles.labelText}>Private: </Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={value => {
-            setIsEnabled(value);
-            setEvent(prev => ({
-              ...prev,
-              visibility: value ? "private" : "public"
-            }));
-          }}
-          style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-          value={isEnabled}
-        />
-      </View>
-      {event?.recurrenceRule && event.recurrenceRule.length > 0 && (
-        <RRuleEditor
-          start={event.start || new Date()}
-          rRule={event.recurrenceRule || ""}
-          onChange={(rRule: string) => {
-            setRRule(rRule);
-          }}
-        />
-      )}
-      <Text style={[styles.labelText, { marginTop: DimensionHelper.wp(3.5) }]}>Title</Text>
-      <TextInput
-        style={[
-          globalStyles.textInputStyle,
-          {
-            width: DimensionHelper.wp(88),
-            borderWidth: 1,
-            padding: 10,
-            borderRadius: 10,
-            borderColor: "lightgray",
-            marginTop: DimensionHelper.wp(1)
-          }
-        ]}
-        placeholder={"Title"}
-        autoCapitalize="none"
-        autoCorrect={false}
-        keyboardType="numeric"
-        placeholderTextColor={"lightgray"}
-        value={title}
-        onChangeText={text => {
-          setTitle(text);
-          setEvent(prev => ({ ...prev, title: text }));
-        }}
-      />
-      <Text style={[styles.labelText, { marginTop: DimensionHelper.wp(3.5) }]}>Description</Text>
-      <TextInput
-        style={[
-          globalStyles.textInputStyle,
-          {
-            width: DimensionHelper.wp(88),
-            borderWidth: 1,
-            padding: 10,
-            borderRadius: 10,
-            borderColor: "lightgray",
-            marginTop: DimensionHelper.wp(1),
-            height: DimensionHelper.wp(22)
-          }
-        ]}
-        placeholder={"Description"}
-        autoCapitalize="none"
-        autoCorrect={false}
-        keyboardType="numeric"
-        placeholderTextColor={"lightgray"}
-        value={description}
-        onChangeText={text => {
-          setDescription(text);
-          setEvent(prev => ({ ...prev, description: text }));
-        }}
-        multiline={true}
-        numberOfLines={3}
-      />
-      {!event?.id ? (
-        <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(50) }]} onPress={handleSave}>
-          {loading ? <ActivityIndicator size="small" color="white" animating={loading} /> : <Text style={globalStyles.roundBlueButtonText}>{"Save"}</Text>}
-        </TouchableOpacity>
-      ) : (
-        <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-          <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(40) }]} onPress={handleEditEvent}>
-            <Text style={globalStyles.roundBlueButtonText}>{"Edit"}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[globalStyles.roundBlueButton, { width: DimensionHelper.wp(40) }]} onPress={handleDelete}>
-            <Text style={globalStyles.roundBlueButtonText}>{"Delete"}</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      <CustomModal width={DimensionHelper.wp(85)} isVisible={showEventEditModal} close={() => setShowEventEditModal(false)}>
-        {recurrenceModalType && (
-          <EditRecurringModal
-            action={recurrenceModalType}
-            setModal={setShowEventEditModal}
-            onDone={editType => {
-              recurrenceModalType === "delete" ? handleRecurringDelete(editType) : handleRecurringSave(editType);
-            }}
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <Appbar.Header style={styles.header}>
+        <Appbar.BackAction onPress={() => props.onDone?.()} />
+        <Appbar.Content title={event?.id ? "Edit Event" : "Create Event"} />
+        {event?.id && (
+          <Appbar.Action 
+            icon="delete" 
+            onPress={handleDelete}
           />
         )}
-      </CustomModal>
-    </View>
+      </Appbar.Header>
+
+      {/* Content */}
+      <ScrollView 
+        ref={scrollViewRef}
+        style={styles.scrollView} 
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Title */}
+        <View style={styles.fieldContainer}>
+          <Text variant="titleMedium" style={styles.fieldLabel}>Event Title</Text>
+          <TextInput
+            mode="outlined"
+            placeholder="Enter event title"
+            value={title}
+            onChangeText={text => {
+              setTitle(text);
+              setEvent(prev => ({ ...prev, title: text }));
+            }}
+            style={styles.textInput}
+            error={!title.trim()}
+          />
+        </View>
+
+        {/* Description */}
+        <View style={styles.fieldContainer}>
+          <Text variant="titleMedium" style={styles.fieldLabel}>Description</Text>
+          <TextInput
+            mode="outlined"
+            placeholder="Enter event description (optional)"
+            value={description}
+            onChangeText={text => {
+              setDescription(text);
+              setEvent(prev => ({ ...prev, description: text }));
+            }}
+            multiline
+            numberOfLines={3}
+            style={styles.textInput}
+          />
+        </View>
+
+        {/* Date and Time */}
+        <View style={styles.fieldContainer}>
+          <Text variant="titleMedium" style={styles.fieldLabel}>
+            {allDay ? "Date" : "Date & Time"}
+          </Text>
+          
+          <View style={styles.dateTimeContainer}>
+            <View style={styles.dateTimeRow}>
+              <Text variant="bodyMedium" style={styles.dateTimeLabel}>Start</Text>
+              <Button
+                mode="outlined"
+                onPress={() => setOpenStartPicker(true)}
+                style={styles.dateTimeButton}
+                contentStyle={styles.dateTimeButtonContent}
+              >
+                <MaterialIcons name="event" size={16} color="#0D47A1" />
+                <Text style={styles.dateTimeText}>
+                  {allDay 
+                    ? dayjs(startDate).format("MMM DD, YYYY")
+                    : dayjs(startDate).format("MMM DD, YYYY HH:mm")
+                  }
+                </Text>
+              </Button>
+            </View>
+
+            <View style={styles.dateTimeRow}>
+              <Text variant="bodyMedium" style={styles.dateTimeLabel}>End</Text>
+              <Button
+                mode="outlined"
+                onPress={() => setOpenEndPicker(true)}
+                style={styles.dateTimeButton}
+                contentStyle={styles.dateTimeButtonContent}
+              >
+                <MaterialIcons name="event" size={16} color="#0D47A1" />
+                <Text style={styles.dateTimeText}>
+                  {allDay 
+                    ? dayjs(endDate).format("MMM DD, YYYY")
+                    : dayjs(endDate).format("MMM DD, YYYY HH:mm")
+                  }
+                </Text>
+              </Button>
+            </View>
+          </View>
+        </View>
+
+        {/* Options */}
+        <View style={styles.fieldContainer}>
+          <Text variant="titleMedium" style={styles.fieldLabel}>Options</Text>
+          
+          <View style={styles.optionRow}>
+            <View style={styles.optionInfo}>
+              <Text variant="bodyLarge" style={styles.optionTitle}>All Day Event</Text>
+              <Text variant="bodySmall" style={styles.optionSubtitle}>Event lasts the entire day</Text>
+            </View>
+            <Switch
+              value={allDay}
+              onValueChange={value => {
+                setAllDay(value);
+                setEvent({ ...event, allDay: value });
+              }}
+              color="#0D47A1"
+            />
+          </View>
+
+          <View style={styles.optionRow}>
+            <View style={styles.optionInfo}>
+              <Text variant="bodyLarge" style={styles.optionTitle}>Exclude from Curated Calendars</Text>
+              <Text variant="bodySmall" style={styles.optionSubtitle}>Hide from public event listings</Text>
+            </View>
+            <Switch
+              value={isPrivate}
+              onValueChange={value => {
+                setIsPrivate(value);
+                setEvent(prev => ({
+                  ...prev,
+                  visibility: value ? "private" : "public"
+                }));
+              }}
+              color="#0D47A1"
+            />
+          </View>
+
+          <View style={styles.optionRow}>
+            <View style={styles.optionInfo}>
+              <Text variant="bodyLarge" style={styles.optionTitle}>Recurring Event</Text>
+              <Text variant="bodySmall" style={styles.optionSubtitle}>Event repeats on a schedule</Text>
+            </View>
+            <Switch
+              value={recurring}
+              onValueChange={handleToggleRecurring}
+              color="#0D47A1"
+            />
+          </View>
+        </View>
+
+        {/* Recurrence Rule Editor */}
+        {recurring && (
+          <View style={styles.fieldContainer}>
+            <Text variant="titleMedium" style={styles.fieldLabel}>Recurrence Pattern</Text>
+            <RRuleEditor
+              start={startDate}
+              rRule={rRule || ""}
+              onChange={(rRule: string) => {
+                setRRule(rRule);
+              }}
+            />
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Fixed Bottom Actions - Hide when recurring edit modal is open */}
+      {!showEventEditModal && (
+        <View style={styles.bottomActions}>
+          <Button
+            mode="outlined"
+            onPress={() => props.onDone?.()}
+            style={styles.actionButton}
+          >
+            Cancel
+          </Button>
+          <Button
+            mode="contained"
+            onPress={event?.id ? handleEditEvent : handleSave}
+            loading={loading}
+            disabled={!title.trim() || loading}
+            style={styles.actionButton}
+          >
+            {event?.id ? "Save Changes" : "Create Event"}
+          </Button>
+        </View>
+      )}
+
+      {/* Date Pickers */}
+      <DatePicker
+        modal
+        open={openStartPicker}
+        date={startDate}
+        mode={allDay ? "date" : "datetime"}
+        onConfirm={date => {
+          setOpenStartPicker(false);
+          setStartDate(date);
+          handleChange("start", date);
+        }}
+        onCancel={() => setOpenStartPicker(false)}
+      />
+
+      <DatePicker
+        modal
+        open={openEndPicker}
+        date={endDate}
+        mode={allDay ? "date" : "datetime"}
+        onConfirm={date => {
+          setOpenEndPicker(false);
+          setEndDate(date);
+          handleChange("end", date);
+        }}
+        onCancel={() => setOpenEndPicker(false)}
+      />
+
+      {/* Recurring Event Edit Modal */}
+      {showEventEditModal && recurrenceModalType && (
+        <EditRecurringModal
+          action={recurrenceModalType}
+          setModal={setShowEventEditModal}
+          onDone={editType => {
+            recurrenceModalType === "delete" ? handleRecurringDelete(editType) : handleRecurringSave(editType);
+          }}
+        />
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  eventType: {
-    flexDirection: "row",
-    justifyContent: "space-between"
+  container: {
+    flex: 1,
+    backgroundColor: "#F6F6F8"
   },
-  dateConatiner: {
-    borderWidth: 1,
-    paddingHorizontal: DimensionHelper.wp(2),
-    borderColor: "lightgray",
-    borderRadius: DimensionHelper.wp(2),
-    height: DimensionHelper.wp(12),
-    marginTop: DimensionHelper.wp(2),
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center"
+  header: {
+    backgroundColor: "#FFFFFF",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4
   },
-  dateText: {
-    width: DimensionHelper.wp(25),
-    fontSize: DimensionHelper.wp(3.8)
+  scrollView: {
+    flex: 1
   },
-  labelText: {
-    fontSize: DimensionHelper.wp(4),
-    fontWeight: "600"
+  scrollContent: {
+    padding: 20,
+    paddingBottom: 100
   },
-  dateTextConatiner: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: DimensionHelper.wp(3.5)
+  fieldContainer: {
+    marginVertical: 16
   },
-  visibilityConatiner: {
+  fieldLabel: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    marginBottom: 8
+  },
+  textInput: {
+    backgroundColor: "#FFFFFF"
+  },
+  optionRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: DimensionHelper.wp(3.5)
+    justifyContent: "space-between",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0"
+  },
+  optionInfo: {
+    flex: 1
+  },
+  optionTitle: {
+    color: "#3c3c3c",
+    fontWeight: "500",
+    marginBottom: 2
+  },
+  optionSubtitle: {
+    color: "#9E9E9E"
+  },
+  dateTimeContainer: {
+    marginTop: 8
+  },
+  dateTimeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 12
+  },
+  dateTimeLabel: {
+    color: "#3c3c3c",
+    fontWeight: "500",
+    minWidth: 50
+  },
+  dateTimeButton: {
+    flex: 1,
+    marginLeft: 16
+  },
+  dateTimeButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingVertical: 8
+  },
+  dateTimeText: {
+    color: "#3c3c3c",
+    marginLeft: 8,
+    fontSize: 14
+  },
+  bottomActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    backgroundColor: "#FFFFFF",
+    borderTopWidth: 1,
+    borderTopColor: "#E0E0E0",
+    gap: 12
+  },
+  actionButton: {
+    flex: 1,
+    marginHorizontal: 8
   }
 });

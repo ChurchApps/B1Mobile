@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 import { Loader } from "../Loader";
 
 interface Props {
@@ -22,6 +22,7 @@ export const LoadingWrapper: React.FC<Props> = ({
   const loadingStartTime = useRef<number | null>(null);
   const loadingTimeout = useRef<NodeJS.Timeout | null>(null);
   const thresholdTimeout = useRef<NodeJS.Timeout | null>(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Handle initial loading
@@ -45,6 +46,11 @@ export const LoadingWrapper: React.FC<Props> = ({
       // Set a threshold timeout - only show loader if loading takes longer than threshold
       thresholdTimeout.current = setTimeout(() => {
         setShowLoader(true);
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }).start();
       }, loadingThreshold);
 
       // Set minimum loading time
@@ -66,9 +72,15 @@ export const LoadingWrapper: React.FC<Props> = ({
         const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
 
         loadingTimeout.current = setTimeout(() => {
-          setIsLoading(false);
-          setShowLoader(false);
-          loadingStartTime.current = null;
+          Animated.timing(fadeAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }).start(() => {
+            setIsLoading(false);
+            setShowLoader(false);
+            loadingStartTime.current = null;
+          });
         }, remainingTime);
       } else {
         // If we never showed the loader, just update state immediately
@@ -88,9 +100,11 @@ export const LoadingWrapper: React.FC<Props> = ({
     <View style={styles.container}>
       {children}
       {isLoading && showLoader && (
-        <View style={styles.loaderContainer}>
-          <Loader isLoading={true} />
-        </View>
+        <Animated.View style={[styles.loaderContainer, { opacity: fadeAnim }]}>
+          <View style={styles.loaderCard}>
+            <Loader isLoading={true} />
+          </View>
+        </Animated.View>
       )}
     </View>
   );
@@ -102,9 +116,21 @@ const styles = StyleSheet.create({
   },
   loaderContainer: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    backgroundColor: "rgba(248, 249, 250, 0.8)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 999
+  },
+  loaderCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 24,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    minWidth: 80,
+    alignItems: "center"
   }
 });

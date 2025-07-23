@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { BlueHeader } from "@/components/BlueHeader";
+import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface } from "../../src/helpers";
 import { ErrorHelper } from "../../src/mobilehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
-import { Keyboard, TouchableWithoutFeedback, View, Image } from "react-native";
+import { Keyboard, TouchableWithoutFeedback, View } from "react-native";
+import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
@@ -74,38 +75,38 @@ const SearchMessageUser = () => {
     searchUserApiCall(searchText);
   }, [searchText, searchUserApiCall]);
 
-  const headerView = useMemo(
+  const searchSection = useMemo(
     () => (
-      <View>
-        <BlueHeader navigation={navigation} showMenu={true} />
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <Surface style={{ padding: spacing.md, backgroundColor: theme.colors.background, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
-            <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
-              Search for a person
-            </Text>
-            <TextInput mode="outlined" label="Name" placeholder="Name" value={searchText} onChangeText={handleSearchChange} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
-            <Button mode="contained" onPress={handleSearchPress} loading={loading} style={{ marginBottom: spacing.md }}>
-              Search
-            </Button>
-          </Surface>
-        </TouchableWithoutFeedback>
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <Surface style={{ padding: spacing.md, backgroundColor: theme.colors.background, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
+          <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
+            Search for a person
+          </Text>
+          <TextInput mode="outlined" label="Name" placeholder="Name" value={searchText} onChangeText={handleSearchChange} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
+          <Button mode="contained" onPress={handleSearchPress} loading={loading} style={{ marginBottom: spacing.md }}>
+            Search
+          </Button>
+        </Surface>
+      </TouchableWithoutFeedback>
     ),
-    [navigation, spacing.md, theme.colors.background, theme.colors.surface, theme.roundness, searchText, handleSearchChange, handleSearchPress, loading]
+    [spacing.md, theme.colors.background, theme.colors.surface, theme.roundness, searchText, handleSearchChange, handleSearchPress, loading]
   );
 
   const displayedSearchList = useMemo(() => (searchText === "" ? (searchList.length !== 0 ? searchList : []) : searchList), [searchText, searchList]);
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
-      <List.Section>
-        {headerView}
-        {displayedSearchList.map((item: UserSearchInterface) => (
-          <List.Item key={item.id} title={item.name.display} left={() => (item.photo ? <Image source={{ uri: item.photo }} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} /> : <Image source={Constants.Images.ic_user} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md, tintColor: theme.colors.primary }} />)} onPress={() => userSelection(item)} style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }} titleStyle={{ fontWeight: "500" }} />
-        ))}
-      </List.Section>
-    </View>
+    <>
+      <MainHeader title="Search Messages" openDrawer={() => navigation.openDrawer()} />
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
+        <List.Section>
+          {searchSection}
+          {displayedSearchList.map((item: UserSearchInterface) => (
+            <List.Item key={item.id} title={item.name.display} left={() => (item.photo ? <OptimizedImage source={{ uri: item.photo }} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} contentFit="cover" /> : <OptimizedImage source={Constants.Images.ic_user} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} tintColor={theme.colors.primary} contentFit="cover" />)} onPress={() => userSelection(item)} style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }} titleStyle={{ fontWeight: "500" }} />
+          ))}
+        </List.Section>
+      </View>
+    </>
   );
 };
 export default SearchMessageUser;

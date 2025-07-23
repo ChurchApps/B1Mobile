@@ -101,6 +101,11 @@ export class NavigationUtils {
         }
         break;
       }
+      case "sermons": {
+        UserHelper.addOpenScreenEvent("SermonsScreen");
+        router.push("/(drawer)/sermons");
+        break;
+      }
     }
   }
 

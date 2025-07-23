@@ -1,13 +1,11 @@
 import React, { useCallback, useMemo } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList } from "react-native";
 import { PlanInterface } from "../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants } from "../../../src/helpers/Constants";
 import { globalStyles } from "../../../src/helpers/GlobalStyles";
-import Icons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
-import { PlanItem } from ".";
-import type { PlanItemInterface } from ".";
+import { PlanItem } from "./PlanItem";
+import type { PlanItemInterface } from "./PlanItem";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface Props {
@@ -33,41 +31,21 @@ export const ServiceOrder = (props: Props) => {
   const listData = useMemo(() => planItems || [], [planItems]);
 
   return (
-    <View style={[globalStyles.FlatlistViewStyle, { paddingTop: DimensionHelper.hp(2) }]}>
-      <View style={styles.headerContainer}>
-        <View style={styles.titleContainer}>
-          <Icons name="album" size={DimensionHelper.wp(5.5)} color={Constants.Colors.app_color} />
-          <Text style={[globalStyles.LatestUpdateTextStyle, { paddingLeft: DimensionHelper.wp(3), color: Constants.Colors.app_color }]}>Order of Service</Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => {
-            /* TODO: Implement print functionality */
-          }}
-          style={styles.printButton}>
-          <Icons name="print" size={DimensionHelper.wp(5)} color={Constants.Colors.app_color} />
-        </TouchableOpacity>
-      </View>
+    <View style={[globalStyles.FlatlistViewStyle, styles.serviceOrderContainer]}>
       <View style={styles.contentContainer}>{listData.length > 0 ? <FlatList data={listData} renderItem={renderPlanItem} keyExtractor={keyExtractor} initialNumToRender={5} windowSize={5} removeClippedSubviews={true} maxToRenderPerBatch={3} updateCellsBatchingPeriod={100} showsVerticalScrollIndicator={false} scrollEnabled={false} contentContainerStyle={{ flexGrow: 1 }} /> : null}</View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: DimensionHelper.wp(3),
-    paddingBottom: DimensionHelper.hp(1)
-  },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  printButton: {
-    padding: DimensionHelper.wp(2)
+  serviceOrderContainer: {
+    width: '100%',
+    paddingTop: DimensionHelper.hp(2),
+    marginHorizontal: 0,
+    alignSelf: 'stretch'
   },
   contentContainer: {
-    paddingTop: DimensionHelper.hp(1)
+    paddingTop: DimensionHelper.hp(1),
+    paddingHorizontal: 0
   }
 });
