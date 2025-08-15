@@ -8,7 +8,8 @@ import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
+import { useNavigation as useReactNavigation } from "expo-router";
+import { useNavigation } from "../../src/hooks";
 import { Text, View, StyleSheet } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { useQuery } from "@tanstack/react-query";
@@ -39,8 +40,9 @@ const theme = {
 };
 
 const Plan = () => {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const currentUserChurch = useCurrentUserChurch();
+  const { navigateBack } = useNavigation();
 
   // Use react-query for assignments - this is the starting point
   const { data: assignments = [], isLoading: assignmentsLoading } = useQuery<AssignmentInterface[]>({
@@ -187,7 +189,7 @@ const Plan = () => {
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
         <View style={styles.container}>
-          <MainHeader title="Plans" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+          <MainHeader title="Plans" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
           <View style={styles.contentContainer}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               {renderHeroSection()}

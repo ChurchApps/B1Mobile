@@ -2,8 +2,9 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { DrawerActions } from "@react-navigation/native";
-import { router, useNavigation } from "expo-router";
+import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
+import { router } from "expo-router";
+import { useNavigation } from "../../src/hooks";
 import { View, StyleSheet, SectionList } from "react-native";
 import { Surface, Text, TextInput, MD3LightTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
@@ -52,7 +53,8 @@ interface MemberSection {
 }
 
 const MembersSearch = () => {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const navigation = useReactNavigation<DrawerNavigationProp<any>>();
+  const { navigateBack } = useNavigation();
   const [searchText, setSearchText] = useState("");
   const currentUserChurch = useCurrentUserChurch();
 
@@ -167,7 +169,7 @@ const MembersSearch = () => {
     <SafeAreaProvider>
       <LoadingWrapper loading={isLoading}>
         <Surface style={styles.container}>
-          <MainHeader title="Directory" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+          <MainHeader title="Directory" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
           <View style={styles.content}>
             {/* Search Header */}
