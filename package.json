@@ -11,7 +11,10 @@
     "test": "jest --watchAll",
     "lint": "expo lint",
     "build:android": "eas build --platform android",
-    "build:ios": "eas build --platform ios"
+    "build:ios": "eas build --platform ios",
+    "update:development": "eas update --channel development",
+    "update:preview": "eas update --channel preview", 
+    "update:production": "eas update --channel production"
   },
   "jest": {
     "preset": "jest-expo"

@@ -77,6 +77,9 @@ module.exports = {
       "@react-native-firebase/app",
       // "@react-native-firebase/analytics"
     ],
+    updates: {
+      url: "https://u.expo.dev/f72e5911-b8d5-467c-ad9e-423c180e9938"
+    },
     extra: {
       ATTENDANCE_API: process.env.ATTENDANCE_API || "https://attendanceapi.churchapps.org",
       B1_WEB_ROOT: process.env.B1_WEB_ROOT || "https://{subdomain}.b1.church",
