@@ -2,7 +2,7 @@ module.exports = {
   expo: {
     name: "B1Mobile",
     slug: "B1Mobile",
-    version: "3.0.0",
+    version: "3.1.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -24,11 +24,7 @@ module.exports = {
         NSMicrophoneUsageDescription: "B1 Church needs microphone access to allow you to record audio messages and participate in church communications.",
         NSLocationWhenInUseUsageDescription: "B1 Church uses your location to help you find nearby church events and connect with local church members.",
         NSUserNotificationsUsageDescription: "B1 Church sends notifications to keep you updated about church events, messages, and important announcements.",
-        LSApplicationQueriesSchemes: [
-          "mailto",
-          "tel",
-          "sms"
-        ]
+        LSApplicationQueriesSchemes: ["mailto", "tel", "sms"]
       }
     },
     android: {
@@ -37,7 +33,7 @@ module.exports = {
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
-      },
+      }
       // Uncomment this if you want to be explicit about permissions
       /*
       permissions: [
@@ -52,7 +48,7 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png"
     },
-    runtimeVersion: "3.0.0",
+    runtimeVersion: "3.1.0",
     plugins: [
       "expo-secure-store",
       [
@@ -60,21 +56,19 @@ module.exports = {
         {
           icon: "./assets/images/notification-icon.png",
           color: "#ffffff",
-          sounds: [
-            "./assets/sounds/notification.mp3"
-          ]
+          sounds: ["./assets/sounds/notification.mp3"]
         }
       ],
       [
         "expo-build-properties",
         {
-          "ios": {
-            "deploymentTarget": "15.1",
-            "useFrameworks": "static"
+          ios: {
+            deploymentTarget: "15.1",
+            useFrameworks: "static"
           }
         }
       ],
-      "@react-native-firebase/app",
+      "@react-native-firebase/app"
       // "@react-native-firebase/analytics"
     ],
     updates: {
