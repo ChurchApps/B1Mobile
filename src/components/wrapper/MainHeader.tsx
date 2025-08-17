@@ -12,6 +12,10 @@ interface Props {
   back?: () => void;
   openDrawer?: () => void;
   hideBell?: boolean;
+  rightAction?: {
+    icon: string;
+    onPress: () => void;
+  };
 }
 
 export function MainHeader(props: Props) {
@@ -52,12 +56,20 @@ export function MainHeader(props: Props) {
             </Text>
           </View>
           <View style={styles.rightContainer}>
-            {!props.hideBell && user && (
-              <HeaderBell
-                toggleNotifications={() => {
-                  router.push("/(drawer)/notifications");
-                }}
-              />
+            {props.rightAction ? (
+              <TouchableOpacity
+                style={styles.actionButton}
+                onPress={props.rightAction.onPress}>
+                <MaterialIcons name={props.rightAction.icon as any} size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            ) : (
+              !props.hideBell && user && (
+                <HeaderBell
+                  toggleNotifications={() => {
+                    router.push("/(drawer)/notifications");
+                  }}
+                />
+              )
             )}
           </View>
         </View>
@@ -117,6 +129,12 @@ const createStyles = () =>
     rightContainer: {
       width: 48, // Match left side for balance
       height: 48,
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    actionButton: {
+      width: 44,
+      height: 44,
       justifyContent: "center",
       alignItems: "center"
     }

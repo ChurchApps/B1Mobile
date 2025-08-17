@@ -5,12 +5,12 @@ import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface } fr
 import { MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "../../src/helpers/Interfaces";
 import { eventBus, updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
-import { useLocalSearchParams, useFocusEffect } from "expo-router";
+import { useLocalSearchParams, useFocusEffect, router } from "expo-router";
 import { useNavigation } from "../../src/hooks";
 import { FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme } from "../../src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { useUser, useCurrentUserChurch } from "../../src/stores/useUserStore";
 
@@ -36,7 +36,19 @@ interface NotificationContent {
 
 const MessageScreen = () => {
   const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
-  const details = JSON.parse(userDetails);
+  console.log("Raw userDetails param:", userDetails);
+  const details = userDetails ? JSON.parse(userDetails) : null;
+  console.log("Parsed details:", details);
+
+  // Add early return if no details
+  if (!details || !details.id) {
+    console.error("No user details provided to MessageScreen", { userDetails, details });
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Error: No user details provided</Text>
+      </SafeAreaView>
+    );
+  }
   const { theme, spacing } = useAppTheme();
   const { navigateBack } = useNavigation();
   const [messageText, setMessageText] = useState("");
@@ -61,23 +73,48 @@ const MessageScreen = () => {
   }, []);
 
   const getMessagesList = useCallback((conversationId: string) => {
-    if (!conversationId) return;
-    ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi").then(data => {
-      let conversation: MessageInterface[] = data;
-      conversation.reverse();
-      setMessageList(conversation);
-    });
+    if (!conversationId) {
+      console.log("No conversationId provided to getMessagesList");
+      return;
+    }
+    console.log("Fetching messages for conversation:", conversationId);
+    ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi")
+      .then(data => {
+        console.log("Messages received:", data);
+        if (data && Array.isArray(data)) {
+          let conversation: MessageInterface[] = data;
+          conversation.reverse();
+          setMessageList(conversation);
+        } else {
+          console.log("Invalid messages data:", data);
+          setMessageList([]);
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching messages:", error);
+        setMessageList([]);
+      });
   }, []);
 
   const getConversations = useCallback(() => {
     setLoading(true);
-    ApiHelper.get("/privateMessages/existing/" + details.id, "MessagingApi").then(data => {
-      setCurrentConversation(data);
-      if (Object.keys(data).length != 0 && data.conversationId != undefined) {
-        getMessagesList(data.conversationId);
-      }
-      setLoading(false);
-    });
+    console.log("Getting conversations for user:", details.id);
+    ApiHelper.get("/privateMessages/existing/" + details.id, "MessagingApi")
+      .then(data => {
+        console.log("Conversation data received:", data);
+        setCurrentConversation(data);
+        if (data && Object.keys(data).length != 0 && data.conversationId != undefined) {
+          getMessagesList(data.conversationId);
+        } else {
+          console.log("No existing conversation found");
+          setMessageList([]);
+        }
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error fetching conversations:", error);
+        setLoading(false);
+      });
   }, [details.id, getMessagesList]);
 
   const loadData = useCallback(() => {
@@ -223,6 +260,12 @@ const MessageScreen = () => {
       <Text variant="titleLarge" style={{ color: "white", fontWeight: "600", flex: 1 }}>
         Messages
       </Text>
+      <IconButton
+        icon="account-plus"
+        size={28}
+        iconColor="white"
+        onPress={() => router.push("/(drawer)/searchMessageUser")}
+      />
     </Surface>
   );
 
@@ -243,28 +286,67 @@ const MessageScreen = () => {
     </Surface>
   );
 
-  const messagesView = () => <FlatList inverted data={messageList} style={{ paddingVertical: spacing.md }} renderItem={({ item }) => singleMessageItem(item)} keyExtractor={(item: any) => item.id} contentContainerStyle={{ paddingBottom: spacing.lg }} initialNumToRender={15} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={10} updateCellsBatchingPeriod={100} />;
+  const messagesView = () => {
+    console.log("Rendering messages view with messageList:", messageList);
+    console.log("Message count:", messageList.length);
+
+    if (messageList.length === 0) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: theme.colors.onSurfaceVariant }}>No messages yet</Text>
+        </View>
+      );
+    }
+    //console.log("******************MESSAGELIST:", messageList.length);
+
+    return (
+      <FlatList
+        inverted
+        data={messageList}
+        style={{ flex: 1 }}
+        renderItem={({ item }) => singleMessageItem(item)}
+        keyExtractor={(item: any) => item.id || Math.random().toString()}
+        contentContainerStyle={{
+          paddingVertical: spacing.md,
+          flexGrow: 1,
+          justifyContent: 'flex-end'
+        }}
+        initialNumToRender={15}
+        windowSize={10}
+        removeClippedSubviews={false}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={100}
+      />
+    );
+  };
 
   const singleMessageItem = (item: MessageInterface) => {
-    const isMine = item.personId !== details.id;
+    console.log("Rendering single message item:", item);
+    console.log("Current user person id:", currentUserChurch?.person?.id);
+    // Check if the message is from the current user
+    const isMine = item.personId === currentUserChurch?.person?.id;
+    console.log("Is mine?", isMine, "item.personId:", item.personId, "currentUserChurch.person.id:", currentUserChurch?.person?.id);
+
     return (
       <TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
-        <Surface
-          style={{
-            alignSelf: isMine ? "flex-end" : "flex-start",
-            backgroundColor: isMine ? theme.colors.primary : theme.colors.surface,
-            borderRadius: theme.roundness,
-            marginVertical: 4,
-            marginHorizontal: spacing.md,
-            padding: spacing.sm,
-            maxWidth: "75%",
-            elevation: 2
-          }}>
-          <Text variant="labelSmall" style={{ color: isMine ? "white" : theme.colors.primary, fontWeight: "600", marginBottom: 2 }}>
-            {item.displayName || item.person?.name?.display || "Unknown"}
-          </Text>
-          <Text style={{ color: isMine ? "white" : theme.colors.onSurface }}>{item.content || ""}</Text>
-        </Surface>
+        <View style={{ width: '100%', paddingHorizontal: spacing.sm }}>
+          <Surface
+            style={{
+              alignSelf: isMine ? "flex-end" : "flex-start",
+              backgroundColor: isMine ? theme.colors.primary : theme.colors.surfaceVariant,
+              borderRadius: theme.roundness,
+              marginVertical: 4,
+              padding: spacing.sm,
+              maxWidth: "75%",
+              elevation: 2,
+              minHeight: 40
+            }}>
+            <Text variant="labelSmall" style={{ color: isMine ? "white" : theme.colors.primary, fontWeight: "600", marginBottom: 2 }}>
+              {item.displayName || item.person?.name?.display || "Unknown"}
+            </Text>
+            <Text style={{ color: isMine ? "white" : theme.colors.onSurface }}>{item.content || ""}</Text>
+          </Surface>
+        </View>
       </TouchableWithoutFeedback>
     );
   };

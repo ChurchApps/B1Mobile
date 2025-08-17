@@ -272,7 +272,7 @@ export function NotificationTab() {
     <PaperProvider theme={theme}>
       <View style={styles.container}>
         {isLoading && <Loader isLoading={isLoading} />}
-        <TabView navigationState={{ index: 0, routes }} renderScene={renderScene} onIndexChange={() => {}} swipeEnabled={false} renderTabBar={renderTabBar} initialLayout={{ width: 400 }} />
+        <TabView navigationState={{ index: 0, routes }} renderScene={renderScene} onIndexChange={() => { }} swipeEnabled={false} renderTabBar={renderTabBar} initialLayout={{ width: 400 }} />
       </View>
     </PaperProvider>
   );
