@@ -1,5 +1,6 @@
 dist
 android/app/google-services.json
+.serena
 
 android/.cxx
 .cursor

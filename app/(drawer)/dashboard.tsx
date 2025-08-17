@@ -57,24 +57,35 @@ const Dashboard = () => {
     };
   }, []);
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = useCallback(async () => {
     // Simply set loading state - useEffect will handle when to stop loading
     // based on actual data availability, not arbitrary timeouts
     setLoading(true);
-  };
+    
+    // Trigger actual data loading from the store
+    const store = useUserStore.getState();
+    if (currentChurch?.id) {
+      await store.loadChurchLinks(currentChurch.id);
+    }
+  }, [currentChurch?.id]);
 
   // Stop loading when links are actually available
   useEffect(() => {
     if (links && links.length > 0) {
-      setLoading(false);
+      // Use a small delay to ensure smooth transition
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 100);
+      return () => clearTimeout(timer);
     }
   }, [links]);
 
   useFocusEffect(
     useCallback(() => {
       checkRedirect();
+      // Always call loadDashboardData to refresh data when screen gains focus
       loadDashboardData();
-    }, [])
+    }, [currentChurch?.id, loadDashboardData])
   );
 
   const checkRedirect = useCallback(() => {
