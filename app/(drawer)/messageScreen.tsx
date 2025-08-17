@@ -90,7 +90,7 @@ const MessageScreen = () => {
           setMessageList([]);
         }
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.error("Error fetching messages:", error);
         setMessageList([]);
       });
@@ -99,23 +99,35 @@ const MessageScreen = () => {
   const getConversations = useCallback(() => {
     setLoading(true);
     console.log("Getting conversations for user:", details.id);
-    ApiHelper.get("/privateMessages/existing/" + details.id, "MessagingApi")
-      .then(data => {
-        console.log("Conversation data received:", data);
-        setCurrentConversation(data);
-        if (data && Object.keys(data).length != 0 && data.conversationId != undefined) {
-          getMessagesList(data.conversationId);
+    
+    // Get all private messages and find the conversation with the specific user
+    ApiHelper.get("/privateMessages", "MessagingApi")
+      .then((data: ConversationCheckInterface[]) => {
+        console.log("All private messages received:", data);
+        
+        // Find conversation between current user and the target person
+        const targetConversation = data.find(conversation => 
+          (conversation.fromPersonId === currentUserChurch?.person?.id && conversation.toPersonId === details.id) ||
+          (conversation.toPersonId === currentUserChurch?.person?.id && conversation.fromPersonId === details.id)
+        );
+        
+        console.log("Target conversation found:", targetConversation);
+        
+        if (targetConversation && targetConversation.conversationId) {
+          setCurrentConversation(targetConversation);
+          getMessagesList(targetConversation.conversationId);
         } else {
-          console.log("No existing conversation found");
+          console.log("No existing conversation found between users");
+          setCurrentConversation(undefined);
           setMessageList([]);
         }
         setLoading(false);
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.error("Error fetching conversations:", error);
         setLoading(false);
       });
-  }, [details.id, getMessagesList]);
+  }, [details.id, getMessagesList, currentUserChurch?.person?.id]);
 
   const loadData = useCallback(() => {
     getConversations();
@@ -258,7 +270,7 @@ const MessageScreen = () => {
     <Surface style={{ flexDirection: "row", alignItems: "center", backgroundColor: theme.colors.primary, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, elevation: 4 }}>
       <IconButton icon="arrow-left" size={28} iconColor="white" onPress={() => navigateBack()} />
       <Text variant="titleLarge" style={{ color: "white", fontWeight: "600", flex: 1 }}>
-        Messages
+        {details?.name?.display || details?.DisplayName || "Messages"}
       </Text>
       <IconButton
         icon="account-plus"
