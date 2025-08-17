@@ -2,6 +2,8 @@ import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { Linking, Platform, SafeAreaView, View, Text } from "react-native";
 import WebView from "react-native-webview";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { CacheHelper, globalStyles } from "../../src/helpers";
 import { MainHeader } from "./wrapper/MainHeader";
 import { UserHelper } from "../helpers/UserHelper";
@@ -12,6 +14,7 @@ interface WebsiteScreenProps {
 }
 
 export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
   const webviewRef = useRef<WebView>(null);
@@ -90,7 +93,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
 
   return (
     <SafeAreaView style={globalStyles.homeContainer}>
-      <MainHeader title={title || "Home"} openDrawer={() => router.navigate("/(drawer)/dashboard")} back={() => router.navigate("/(drawer)/dashboard")} />
+      <MainHeader title={title || "Home"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
       <View style={globalStyles.webViewContainer} onLayout={() => setIsLayoutReady(true)}>
         {isLayoutReady && (
           <WebView
