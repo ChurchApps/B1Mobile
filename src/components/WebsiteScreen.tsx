@@ -21,7 +21,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
 
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });
-    if (!CacheHelper.church) router.navigate("/(drawer)/churchSearch");
+    //if (!CacheHelper.church) router.navigate("/(drawer)/churchSearch");
     UserHelper.addOpenScreenEvent("Website Screen", { url });
 
     const timer = setTimeout(() => {
