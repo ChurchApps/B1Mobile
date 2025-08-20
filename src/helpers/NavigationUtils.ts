@@ -17,7 +17,7 @@ export class NavigationUtils {
         router.push({
           pathname: "/(drawer)/stream",
           params: {
-            url: EnvironmentHelper.StreamingLiveRoot.replace("{subdomain}", currentChurch?.subDomain || ""),
+            url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") + "/stream",
             title: item.text
           }
         });

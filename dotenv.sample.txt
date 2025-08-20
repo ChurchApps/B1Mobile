@@ -2,10 +2,11 @@ STAGE=dev
 
 # Apis
 CONTENT_ROOT=https://content.staging.churchapps.org
-MEMBERSHIP_API=https://membershipapi.staging.churchapps.org
-MESSAGING_API=https://messagingapi.staging.churchapps.org
-ATTENDANCE_API=https://attendanceapi.staging.churchapps.org
-GIVING_API=https://givingapi.staging.churchapps.org
-CONTENT_API=https://contentapi.churchapps.org
+MEMBERSHIP_API=https://api.staging.churchapps.org/membership
+MESSAGING_API=https://api.staging.churchapps.org/messaging
+ATTENDANCE_API=https://api.staging.churchapps.org/attendance
+GIVING_API=https://api.staging.churchapps.org/giving
+DOING_API=https://api.staging.churchapps.org/doing
+CONTENT_API=https://api.churchapps.org/content
 
 LESSONS_ROOT=https://staging.lessons.church
