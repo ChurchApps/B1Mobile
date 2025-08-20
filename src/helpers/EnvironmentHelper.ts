@@ -10,7 +10,6 @@ export class EnvironmentHelper {
   public static LessonsRoot = "";
   public static DoingApi = "";
   public static LessonsApi = "";
-  public static StreamingLiveRoot = "";
   public static B1WebRoot = "";
 
   static ContentRoot = "";
@@ -43,31 +42,29 @@ export class EnvironmentHelper {
 
   static initDev = () => {
     const extra = Constants.expoConfig?.extra || {};
-    EnvironmentHelper.MembershipApi = extra.MEMBERSHIP_API || "https://membershipapi.staging.churchapps.org";
-    EnvironmentHelper.MessagingApi = extra.MESSAGING_API || "https://messagingapi.staging.churchapps.org";
-    EnvironmentHelper.AttendanceApi = extra.ATTENDANCE_API || "https://attendanceapi.staging.churchapps.org";
-    EnvironmentHelper.GivingApi = extra.GIVING_API || "https://givingapi.staging.churchapps.org";
+    EnvironmentHelper.MembershipApi = extra.MEMBERSHIP_API || "https://api.staging.churchapps.org/membership";
+    EnvironmentHelper.MessagingApi = extra.MESSAGING_API || "https://api.staging.churchapps.org/messaging";
+    EnvironmentHelper.AttendanceApi = extra.ATTENDANCE_API || "https://api.staging.churchapps.org/attendance";
+    EnvironmentHelper.GivingApi = extra.GIVING_API || "https://api.staging.churchapps.org/giving";
     EnvironmentHelper.LessonsApi = extra.LESSONS_API || "https://api.staging.lessons.church";
-    EnvironmentHelper.DoingApi = extra.DOING_API || "https://doingapi.staging.churchapps.org";
-    EnvironmentHelper.ContentApi = extra.CONTENT_API || "https://contentapi.staging.churchapps.org";
+    EnvironmentHelper.DoingApi = extra.DOING_API || "https://api.staging.churchapps.org/doing";
+    EnvironmentHelper.ContentApi = extra.CONTENT_API || "https://api.staging.churchapps.org/content";
     EnvironmentHelper.ContentRoot = extra.CONTENT_ROOT || "https://content.staging.churchapps.org";
     EnvironmentHelper.LessonsRoot = extra.LESSONS_ROOT || "https://staging.lessons.church";
-    EnvironmentHelper.StreamingLiveRoot = extra.STREAMING_LIVE_ROOT || "https://{subdomain}.staging.streaminglive.church";
     EnvironmentHelper.B1WebRoot = extra.B1_WEB_ROOT || "https://{subdomain}.staging.b1.church";
   };
 
   // NOTE - None of these values are secret
   static initProd = () => {
-    EnvironmentHelper.MembershipApi = "https://membershipapi.churchapps.org";
-    EnvironmentHelper.MessagingApi = "https://messagingapi.churchapps.org";
-    EnvironmentHelper.AttendanceApi = "https://attendanceapi.churchapps.org";
-    EnvironmentHelper.GivingApi = "https://givingapi.churchapps.org";
+    EnvironmentHelper.MembershipApi = "https://api.churchapps.org/membership";
+    EnvironmentHelper.MessagingApi = "https://api.churchapps.org/messaging";
+    EnvironmentHelper.AttendanceApi = "https://api.churchapps.org/attendance";
+    EnvironmentHelper.GivingApi = "https://api.churchapps.org/giving";
     EnvironmentHelper.LessonsApi = "https://api.lessons.church";
-    EnvironmentHelper.DoingApi = "https://doingapi.churchapps.org";
-    EnvironmentHelper.ContentApi = "https://contentapi.churchapps.org";
+    EnvironmentHelper.DoingApi = "https://api.churchapps.org/doing";
+    EnvironmentHelper.ContentApi = "https://api.churchapps.org/content";
     EnvironmentHelper.ContentRoot = "https://content.churchapps.org";
     EnvironmentHelper.LessonsRoot = "https://lessons.church";
-    EnvironmentHelper.StreamingLiveRoot = "https://{subdomain}.streaminglive.church";
     EnvironmentHelper.B1WebRoot = "https://{subdomain}.b1.church";
   };
 }

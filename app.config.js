@@ -75,17 +75,16 @@ module.exports = {
       url: "https://u.expo.dev/f72e5911-b8d5-467c-ad9e-423c180e9938"
     },
     extra: {
-      ATTENDANCE_API: process.env.ATTENDANCE_API || "https://attendanceapi.churchapps.org",
+      ATTENDANCE_API: process.env.ATTENDANCE_API || "https://api.churchapps.org/attendance",
       B1_WEB_ROOT: process.env.B1_WEB_ROOT || "https://{subdomain}.b1.church",
-      CONTENT_API: process.env.CONTENT_API || "https://contentapi.churchapps.org",
+      CONTENT_API: process.env.CONTENT_API || "https://api.churchapps.org/content",
       CONTENT_ROOT: process.env.CONTENT_ROOT || "https://content.churchapps.org",
-      DOING_API: process.env.DOING_API || "https://doingapi.churchapps.org",
-      GIVING_API: process.env.GIVING_API || "https://givingapi.churchapps.org",
+      DOING_API: process.env.DOING_API || "https://api.churchapps.org/doing",
+      GIVING_API: process.env.GIVING_API || "https://api.churchapps.org/giving",
       LESSONS_API: process.env.LESSONS_API || "https://api.lessons.church",
       LESSONS_ROOT: process.env.LESSONS_ROOT || "https://lessons.church",
-      MEMBERSHIP_API: process.env.MEMBERSHIP_API || "https://membershipapi.churchapps.org",
-      MESSAGING_API: process.env.MESSAGING_API || "https://messagingapi.churchapps.org",
-      STREAMING_LIVE_ROOT: process.env.STREAMING_LIVE_ROOT || "https://{subdomain}.streaminglive.church",
+      MEMBERSHIP_API: process.env.MEMBERSHIP_API || "https://api.churchapps.org/membership",
+      MESSAGING_API: process.env.MESSAGING_API || "https://api.churchapps.org/messaging",
       STAGE: process.env.STAGE || "prod",
       eas: {
         projectId: "f72e5911-b8d5-467c-ad9e-423c180e9938"
