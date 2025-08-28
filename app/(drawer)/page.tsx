@@ -1,12 +1,8 @@
 import React from "react";
-import { WebsiteScreen } from "@/components/WebsiteScreen";
-
-import { useLocalSearchParams } from "expo-router";
+import Dashboard from "./dashboard";
 
 const Page = () => {
-  const { url, title } = useLocalSearchParams<{ url: any; title: any }>();
-
-  return <WebsiteScreen url={url} title={title} />;
+  return <Dashboard />
 };
 
 export default Page;

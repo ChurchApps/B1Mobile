@@ -92,7 +92,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   //renderLoading={() => <Loader isLoading={isLoading} />}
 
   return (
-    <SafeAreaView style={globalStyles.homeContainer}>
+    <View style={globalStyles.homeContainer}>
       <MainHeader title={title || "Home"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
       <View style={globalStyles.webViewContainer} onLayout={() => setIsLayoutReady(true)}>
         {isLayoutReady && (
@@ -116,6 +116,6 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
           />
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

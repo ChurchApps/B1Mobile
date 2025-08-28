@@ -1,6 +1,6 @@
 import React from "react";
-import { 
-  EnhancedDonationForm, 
+import {
+  EnhancedDonationForm,
   EnhancedGivingHistory
 } from "../../src/components/donations/LazyDonationComponents";
 import { GivingOverview, DonationTabBar, ManagePayments } from "../../src/components/donations/sections/exports";
@@ -54,10 +54,10 @@ const Donation = () => {
   const person = currentUserChurch?.person;
 
   // Example of stale-while-revalidate for donation funds
-  const { 
-    data: fundsData, 
-    showSkeleton: showFundsSkeleton, 
-    isRevalidating: fundsRevalidating 
+  const {
+    data: fundsData,
+    showSkeleton: showFundsSkeleton,
+    isRevalidating: fundsRevalidating
   } = useDonationFunds(currentUserChurch?.church?.id || '');
 
   // Use react-query for gateway data
@@ -135,23 +135,23 @@ const Donation = () => {
   );
 
   const renderOverviewSection = () => (
-    <GivingOverview 
-      givingStats={givingStats} 
-      onDonatePress={() => setActiveSection("donate")} 
-      onHistoryPress={() => setActiveSection("history")} 
+    <GivingOverview
+      givingStats={givingStats}
+      onDonatePress={() => setActiveSection("donate")}
+      onHistoryPress={() => setActiveSection("history")}
     />
   );
 
   const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />;
 
   const renderManageSection = () => (
-    <ManagePayments 
-      person={person} 
-      customerId={customerId} 
-      paymentMethods={paymentMethods} 
-      isLoading={areMethodsLoading} 
-      publishKey={publishKey} 
-      loadData={loadData} 
+    <ManagePayments
+      person={person}
+      customerId={customerId}
+      paymentMethods={paymentMethods}
+      isLoading={areMethodsLoading}
+      publishKey={publishKey}
+      loadData={loadData}
     />
   );
 
@@ -159,7 +159,7 @@ const Donation = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <View style={styles.content}>
           <MainHeader title="Giving" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
@@ -172,7 +172,7 @@ const Donation = () => {
             {activeSection === "history" && renderHistorySection()}
           </ScrollView>
         </View>
-      </SafeAreaView>
+      </View>
     </PaperProvider>
   );
 };
