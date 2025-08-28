@@ -35,7 +35,7 @@ export function MainHeader(props: Props) {
             style={styles.backButton}
             onPress={() => {
               if (canGoBack) {
-                props.back();
+                props && props.back && props?.back();
               } else {
                 router.replace('page')
               }
@@ -59,7 +59,7 @@ export function MainHeader(props: Props) {
       <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
         <View style={styles.headerContent}>
           {LeftComponent()}
-          <View style={[styles.titleContainer, {left: canGoBack ? -22: 0}]}>
+          <View style={[styles.titleContainer, { left: props.back ? -22 : 0 }]}>
             <Text style={styles.headerTitle} numberOfLines={1}>
               {props.title}
             </Text>
