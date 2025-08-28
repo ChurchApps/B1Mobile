@@ -23,21 +23,27 @@ export function MainHeader(props: Props) {
   const user = useUser();
   const navigation = useNavigation();
 
-  const canGoBack = props.back && navigation.canGoBack()
+  const canGoBack = props.back && navigation.canGoBack();
 
   const styles = createStyles();
 
   const LeftComponent = () => (
     <View style={styles.leftContainer}>
-      {canGoBack && (
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => {
-            if (props.back) props.back();
-          }}>
-          <MaterialIcons name="chevron-left" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-      )}
+      {
+        props.back && (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => {
+              if (canGoBack) {
+                props.back();
+              } else {
+                router.replace('page')
+              }
+            }}>
+            <MaterialIcons name="chevron-left" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        )
+      }
       <TouchableOpacity
         style={styles.menuButton}
         onPress={() => {
