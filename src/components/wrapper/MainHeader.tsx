@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { HeaderBell } from "./HeaderBell";
 import { useUser } from "../../stores/useUserStore";
-import { router } from "expo-router";
+import { router, useNavigation } from "expo-router";
 
 interface Props {
   title: string;
@@ -21,20 +21,29 @@ interface Props {
 export function MainHeader(props: Props) {
   const insets = useSafeAreaInsets();
   const user = useUser();
+  const navigation = useNavigation();
+
+  const canGoBack = props.back && navigation.canGoBack();
 
   const styles = createStyles();
 
   const LeftComponent = () => (
     <View style={styles.leftContainer}>
-      {props.back && (
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => {
-            if (props.back) props.back();
-          }}>
-          <MaterialIcons name="chevron-left" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
-      )}
+      {
+        props.back && (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => {
+              if (canGoBack) {
+                props && props.back && props?.back();
+              } else {
+                router.replace('page')
+              }
+            }}>
+            <MaterialIcons name="chevron-left" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        )
+      }
       <TouchableOpacity
         style={styles.menuButton}
         onPress={() => {
@@ -50,7 +59,7 @@ export function MainHeader(props: Props) {
       <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
         <View style={styles.headerContent}>
           {LeftComponent()}
-          <View style={styles.titleContainer}>
+          <View style={[styles.titleContainer, { left: props.back ? -22 : 0 }]}>
             <Text style={styles.headerTitle} numberOfLines={1}>
               {props.title}
             </Text>

@@ -245,7 +245,7 @@ const Sermons = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <LoadingWrapper loading={isLoading}>
           <View style={styles.content}>
             <MainHeader title="Sermons" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
@@ -258,7 +258,7 @@ const Sermons = () => {
             </ScrollView>
           </View>
         </LoadingWrapper>
-      </SafeAreaView>
+      </View>
     </PaperProvider>
   );
 };

@@ -1,5 +1,13 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { Dimensions, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View
+} from "react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
@@ -36,6 +44,8 @@ const theme = {
 
 const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
   const navigation = useNavigation();
 
   const currentChurch = useCurrentChurch();
@@ -60,13 +70,13 @@ const Dashboard = () => {
   const loadDashboardData = useCallback(async () => {
     // Simply set loading state - useEffect will handle when to stop loading
     // based on actual data availability, not arbitrary timeouts
-    setLoading(true);
-    
+
     // Trigger actual data loading from the store
     const store = useUserStore.getState();
     if (currentChurch?.id) {
       await store.loadChurchLinks(currentChurch.id);
     }
+    setRefreshing(false);
   }, [currentChurch?.id]);
 
   // Stop loading when links are actually available
@@ -80,13 +90,19 @@ const Dashboard = () => {
     }
   }, [links]);
 
-  useFocusEffect(
-    useCallback(() => {
-      checkRedirect();
-      // Always call loadDashboardData to refresh data when screen gains focus
-      loadDashboardData();
-    }, [currentChurch?.id, loadDashboardData])
-  );
+  useEffect(() => {
+    checkRedirect();
+    // Always call loadDashboardData to refresh data when screen gains focus
+    setLoading(true);
+    loadDashboardData();
+  }, [currentChurch?.id, loadDashboardData]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadDashboardData();
+    setRefreshing(false);
+  }, [loadDashboardData]);
+
 
   const checkRedirect = useCallback(() => {
     if (!currentChurch) router.navigate("/(drawer)/churchSearch");
@@ -254,7 +270,14 @@ const Dashboard = () => {
           <View style={styles.container}>
             <MainHeader title="Home" openDrawer={handleDrawerOpen} />
             <View style={styles.contentContainer}>
-              <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+              <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+                refreshControl={
+                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#175ec1" />
+                }
+              >
                 {welcomeSection}
                 {featuredContent}
               </ScrollView>

@@ -1,10 +1,10 @@
 import { router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Linking, Platform, SafeAreaView, View, Text } from "react-native";
+import { Linking, Platform, View, Text } from "react-native";
 import WebView from "react-native-webview";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { CacheHelper, globalStyles } from "../../src/helpers";
+import { globalStyles } from "../../src/helpers";
 import { MainHeader } from "./wrapper/MainHeader";
 import { UserHelper } from "../helpers/UserHelper";
 
@@ -92,7 +92,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   //renderLoading={() => <Loader isLoading={isLoading} />}
 
   return (
-    <SafeAreaView style={globalStyles.homeContainer}>
+    <View style={globalStyles.homeContainer}>
       <MainHeader title={title || "Home"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
       <View style={globalStyles.webViewContainer} onLayout={() => setIsLayoutReady(true)}>
         {isLayoutReady && (
@@ -116,6 +116,6 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
           />
         )}
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
