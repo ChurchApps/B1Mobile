@@ -9,10 +9,13 @@ import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
 import { UserHelper } from "../../src/helpers/UserHelper";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Votd = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [shape, setShape] = React.useState("9x16");
+
+  const insets = useSafeAreaInsets();
 
   const getShape = () => {
     const dim = Dimensions.get("screen");
@@ -47,12 +50,12 @@ const Votd = () => {
   const url = "https://votd.org/v1/" + day.toString() + "/" + shape + ".jpg";
 
   return (
-    <SafeAreaView style={globalStyles.homeContainer}>
+    <View style={[globalStyles.homeContainer, {paddingBottom: insets.bottom}]}>
       <MainHeader title="Verse of the Day" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
       <View style={globalStyles.webViewContainer}>
         <OptimizedImage source={{ uri: url }} style={{ flex: 1 }} contentFit="fill" priority="high" />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 export default Votd;
