@@ -18,7 +18,7 @@ import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrappe
 import GroupChatModal from "../../../../src/components/modals/GroupChatModal";
 import { useAppTheme } from "../../../../src/theme";
 import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
-import { 
+import {
   GroupHeroSection,
   GroupNavigationTabs,
   GroupAboutTab,
@@ -281,6 +281,14 @@ const GroupDetails = () => {
     if (g.id === id && g.leader) isLeader = true;
   });
 
+  const tabs = [
+    { key: "about", label: "About", icon: "information" },
+    { key: "messages", label: "Messages", icon: "chat", onPress: () => setShowChatModal(true) },
+    { key: "members", label: "Members", icon: "account-group" },
+    { key: "events", label: "Events", icon: "calendar" },
+    { key: "Resources", label: "Resources", icon: "file" },
+  ];
+
   return (
     <>
       <View style={[styles.container, (showEventModal || showChatModal) && { display: 'none' }]}>
@@ -303,7 +311,7 @@ const GroupDetails = () => {
                 <GroupNavigationTabs
                   activeTab={activeTab}
                   onTabChange={setActiveTab}
-                  onMessagesPress={() => setShowChatModal(true)}
+                  tabs={tabs}
                 />
 
                 {/* Content Display */}
@@ -315,9 +323,9 @@ const GroupDetails = () => {
                     )}
 
                     {activeTab === 2 && (
-                      <GroupMembersTab 
-                        members={groupMembers} 
-                        isLoading={groupMembersLoading} 
+                      <GroupMembersTab
+                        members={groupMembers}
+                        isLoading={groupMembersLoading}
                       />
                     )}
 
@@ -343,14 +351,14 @@ const GroupDetails = () => {
         </SafeAreaView>
       </View>
 
-      <GroupEventModal
+      {/* <GroupEventModal
         isVisible={showEventModal}
         onClose={() => setShowEventModal(false)}
         selectedDate={selected}
         selectedEvents={selectedEvents}
         groupId={id || ""}
         isLeader={isLeader}
-      />
+      /> */}
 
       {/* Group Chat Modal */}
       <GroupChatModal visible={showChatModal} onDismiss={() => setShowChatModal(false)} groupId={id || ""} groupName={groupDetails?.name || "Group Chat"} />
