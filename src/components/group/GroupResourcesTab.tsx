@@ -5,6 +5,7 @@ import { LinkInterface, Permissions } from "@churchapps/helpers";
 import { ProgressBar, Text } from "react-native-paper";
 import { useCurrentUserChurch } from "../../../src/stores/useUserStore";
 import ResourcesTable from "./section/StorageInfo";
+import { GroupLinkAdd } from "./section/GroupLinkAdd";
 
 interface GroupResourcesTabProps {
   groupId?: string;
@@ -126,6 +127,7 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
   return (
     <ScrollView style={styles.containerScoll}>
       <ResourcesTable files={files} links={links} canEditGroupResources={canEditGroupResources} handleDelete={handleDelete} handleLinkDelete={handleLinkDelete} formatSize={formatSize} />
+      <GroupLinkAdd groupId={groupId || ""} saveCallback={loadData} forGroupLeader={false} />
     </ScrollView>
   );
 };

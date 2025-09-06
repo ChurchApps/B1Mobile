@@ -23,17 +23,23 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text style={[styles.navButtonText]}>{"Added Links"}</Text>
         </View>
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>Name</DataTable.Title>
-            <DataTable.Title numeric>Size</DataTable.Title>
-            <DataTable.Title numeric>Actions</DataTable.Title>
-          </DataTable.Header>
 
-          {/* Link rows */}
-          {links &&
-            links.length > 0 &&
-            links?.map(link => (
+        {links && links.length === 0 && (
+          <View style={{ alignItems: "center", marginTop: 10 }}>
+            <Text style={[styles.navButtonText]}>{"No data"}</Text>
+          </View>
+        )}
+
+        {links && links.length > 0 && (
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title>Name</DataTable.Title>
+              <DataTable.Title numeric>Size</DataTable.Title>
+              <DataTable.Title numeric>Actions</DataTable.Title>
+            </DataTable.Header>
+
+            {/* Link rows */}
+            {links?.map(link => (
               <DataTable.Row key={link.id}>
                 <DataTable.Cell>
                   <Text style={styles.linkText} onPress={() => Linking.openURL(link.url)}>
@@ -47,23 +53,28 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
                 <DataTable.Cell numeric>{canEditGroupResources && <IconButton icon="delete" size={20} onPress={() => handleLinkDelete(link)} accessibilityLabel={`Delete link ${link.text}`} />}</DataTable.Cell>
               </DataTable.Row>
             ))}
-        </DataTable>
+          </DataTable>
+        )}
       </Card>
 
       <Card style={styles.contentCard}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text style={[styles.navButtonText]}>{"Added Files"}</Text>
         </View>
-        <DataTable>
-          <DataTable.Header>
-            <DataTable.Title>Name</DataTable.Title>
-            <DataTable.Title numeric>Size</DataTable.Title>
-            <DataTable.Title numeric>Actions</DataTable.Title>
-          </DataTable.Header>
-          {/* File rows */}
-          {files &&
-            files.length > 0 &&
-            files?.map(file => (
+        {files && files.length === 0 && (
+          <View style={{ alignItems: "center", marginTop: 10 }}>
+            <Text style={[styles.navButtonText]}>{"No data"}</Text>
+          </View>
+        )}
+        {files && files.length > 0 && (
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title>Name</DataTable.Title>
+              <DataTable.Title numeric>Size</DataTable.Title>
+              <DataTable.Title numeric>Actions</DataTable.Title>
+            </DataTable.Header>
+            {/* File rows */}
+            {files?.map(file => (
               <DataTable.Row key={file.id}>
                 <DataTable.Cell>
                   <Text style={styles.linkText} onPress={() => Linking.openURL(file.contentPath)}>
@@ -76,7 +87,8 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
                 <DataTable.Cell numeric>{canEditGroupResources && <IconButton icon="delete" size={20} onPress={() => handleDelete(file)} accessibilityLabel={`Delete file ${file.fileName}`} />}</DataTable.Cell>
               </DataTable.Row>
             ))}
-        </DataTable>
+          </DataTable>
+        )}
       </Card>
     </View>
   );
@@ -84,13 +96,14 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
 
 const styles = StyleSheet.create({
   container: {
-    margin: 0
+    flex: 1
   },
   contentCard: {
     marginHorizontal: 16,
     marginBottom: 24,
     borderRadius: 16,
     padding: 16,
+    paddingHorizontal: 10,
     elevation: 3,
     overflow: "hidden"
   },
@@ -109,7 +122,8 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontWeight: "700",
     fontSize: 18,
-    marginLeft: 10
+    marginLeft: 10,
+    alignItems: "center"
   },
   navButtonAvatar: {
     backgroundColor: "#9E9E9E"
