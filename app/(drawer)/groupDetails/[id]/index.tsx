@@ -27,6 +27,7 @@ import {
   GroupEventModal,
   EventProcessor
 } from "../../../../src/components/group/exports";
+import { GroupResourcesTab } from "@/components/group/GroupResourcesTab";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -315,7 +316,7 @@ const GroupDetails = () => {
                 />
 
                 {/* Content Display */}
-                <Card style={styles.contentCard}>
+                {activeTab !== 4 && <Card style={styles.contentCard}>
                   {/* Tab Content */}
                   <View style={styles.tabContent}>
                     {activeTab === 0 && (
@@ -342,6 +343,12 @@ const GroupDetails = () => {
                     )}
                   </View>
                 </Card>
+                }
+                {activeTab === 4 && (
+                  <GroupResourcesTab
+                    groupId={id || ""}
+                  />
+                )}
               </View>
             )}
             keyExtractor={item => item.key}

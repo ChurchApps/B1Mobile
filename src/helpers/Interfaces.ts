@@ -323,3 +323,34 @@ export interface BlockoutDateInterface {
   startDate?: Date | string;
   endDate?: Date | string;
 }
+export interface FileInterface {
+  id?: string;
+  contentType?: string;
+  contentId?: string;
+  fileName?: string;
+  contentPath?: string;
+  fileType?: string;
+  size?: number;
+  dateModified?: Date;
+  fileContents?: string;
+}
+export interface SongDetailLinkInterface {
+  id?: string;
+  songDetailId?: string;
+  service?: string;
+  serviceKey?: string;
+  url?: string;
+}
+
+export interface File {
+  id: string;
+  fileName: string;
+  contentPath: string;
+  size: number;
+}
+
+export interface LinkItem {
+  id: string;
+  text: string;
+  url: string;
+}
