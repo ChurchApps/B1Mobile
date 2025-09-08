@@ -6,6 +6,8 @@ import { ProgressBar, Text } from "react-native-paper";
 import { useCurrentUserChurch } from "../../../src/stores/useUserStore";
 import ResourcesTable from "./section/StorageInfo";
 import { GroupLinkAdd } from "./section/GroupLinkAdd";
+import { InputBox } from "./section/InputBox";
+import { FileUpload } from "./section/FileUpload";
 
 interface GroupResourcesTabProps {
   groupId?: string;
@@ -99,7 +101,7 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
     return result;
   };
 
-  const StorageInfo = () => {
+  const getStorage = () => {
     const percent = usedSpace / 100000000; // 100 MB fixed limit
 
     return (
@@ -128,6 +130,11 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
     <ScrollView style={styles.containerScoll}>
       <ResourcesTable files={files} links={links} canEditGroupResources={canEditGroupResources} handleDelete={handleDelete} handleLinkDelete={handleLinkDelete} formatSize={formatSize} />
       <GroupLinkAdd groupId={groupId || ""} saveCallback={loadData} forGroupLeader={false} />
+
+      <InputBox headerIcon="file" headerText="Upload">
+        {getStorage()}
+        <FileUpload contentType="group" contentId={groupId || ""} pendingSave={pendingFileSave} saveCallback={handleFileSaved} />
+      </InputBox>
     </ScrollView>
   );
 };
@@ -181,7 +188,8 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: 8,
-    borderRadius: 4
+    borderRadius: 4,
+    backgroundColor: "lightgray"
   },
   percentWrapper: {
     minWidth: 35,
