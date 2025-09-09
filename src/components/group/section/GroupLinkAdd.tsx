@@ -20,6 +20,12 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
 
     if (!text.trim()) newErrors.push("Please enter valid text");
     if (!url.trim()) newErrors.push("Please enter link");
+
+    const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*(\?.*)?(#.*)?$/i;
+    if (url.trim() && !urlPattern.test(url.trim())) {
+      newErrors.push("Please enter a valid URL");
+    }
+
     if (!UserHelper.checkAccess(Permissions.contentApi.content.edit)) newErrors.push("Unauthorized to add links");
 
     if (newErrors.length > 0) {
