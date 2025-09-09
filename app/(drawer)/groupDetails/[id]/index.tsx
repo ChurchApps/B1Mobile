@@ -356,14 +356,14 @@ const GroupDetails = () => {
           />
       </View>
 
-      {/* <GroupEventModal
+      <GroupEventModal
         isVisible={showEventModal}
         onClose={() => setShowEventModal(false)}
         selectedDate={selected}
         selectedEvents={selectedEvents}
         groupId={id || ""}
         isLeader={isLeader}
-      /> */}
+      />
 
       {/* Group Chat Modal */}
       <GroupChatModal visible={showChatModal} onDismiss={() => setShowChatModal(false)} groupId={id || ""} groupName={groupDetails?.name || "Group Chat"} />
