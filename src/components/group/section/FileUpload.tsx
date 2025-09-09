@@ -24,6 +24,7 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
   const [file, setFile] = useState<FileInterface>({} as FileInterface);
   const [uploadedFile, setUploadedFile] = useState<any>(null);
   const [uploadProgress, setUploadProgress] = useState(-1);
+  const [uploadInProgress, setUploadInProgress] = useState<any>(false);
 
   const handlePickFile = async () => {
     try {
@@ -68,11 +69,13 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
       contentId
     };
 
+    setUploadInProgress(true);
     const preUploaded = await preUpload(f);
     if (!preUploaded) {
       const base64 = await convertBase64(uploadedFile.uri);
       f.fileContents = base64 as string;
     }
+    setUploadInProgress(false);
 
     const data: FileInterface[] = await ApiHelper.post("/files", [f], "ContentApi");
     setFile({} as FileInterface);
@@ -118,8 +121,6 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
     });
   };
 
-  console.log(uploadProgress, "uploadProgress", uploadProgress > -1);
-
   useEffect(() => {
     if (pendingSave) {
       if (uploadedFile) handleSave();
@@ -135,8 +136,8 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
       <Button mode="outlined" onPress={handlePickFile}>
         Choose File
       </Button>
-      <Button mode="contained" onPress={handleSave} style={styles.uploadBtn}>
-        Upload
+      <Button mode="contained" onPress={handleSave} style={styles.uploadBtn} disabled={uploadInProgress}>
+        {uploadInProgress ? "Uploading..." : "Upload File"}
       </Button>
     </View>
   );

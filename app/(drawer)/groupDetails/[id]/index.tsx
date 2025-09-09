@@ -293,7 +293,6 @@ const GroupDetails = () => {
   return (
     <>
       <View style={[styles.container, (showEventModal || showChatModal) && { display: 'none' }]}>
-        <SafeAreaView style={{ flex: 1 }}>
           <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
 
           <FlatList
@@ -355,7 +354,6 @@ const GroupDetails = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.mainContainer}
           />
-        </SafeAreaView>
       </View>
 
       {/* <GroupEventModal
