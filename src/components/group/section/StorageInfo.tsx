@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Linking, StyleSheet } from "react-native";
 import { Text, DataTable, IconButton, Card } from "react-native-paper";
-import { FileInterface } from "../../../helpers";
+import { FileInterface, LinkItem } from "../../../helpers";
 
 interface Props {
   files?: FileInterface[];
@@ -12,11 +12,29 @@ interface Props {
   formatSize: (size: number) => string;
 }
 
-const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, handleDelete, handleLinkDelete, formatSize }) => {
-  useEffect(() => {
-    // Any initialization if needed
-  }, []);
+const openSafeURL = async (url: string) => {
+  if (!url) {
+    console.warn("No URL provided");
+    return;
+  }
 
+  const formattedUrl = url.startsWith("http://") || url.startsWith("https://")
+    ? url
+    : `https://${url}`;
+
+  try {
+    const supported = await Linking.canOpenURL(formattedUrl);
+    if (supported) {
+      await Linking.openURL(formattedUrl);
+    } else {
+      console.warn("Cannot open URL:", formattedUrl);
+    }
+  } catch (err) {
+    console.error("Failed to open URL:", err);
+  }
+};
+
+const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, handleDelete, handleLinkDelete, formatSize }) => {
   return (
     <View style={styles.container}>
       <Card style={styles.contentCard}>
@@ -42,7 +60,7 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
             {links?.map(link => (
               <DataTable.Row key={link.id}>
                 <DataTable.Cell>
-                  <Text style={styles.linkText} onPress={() => Linking.openURL(link.url)}>
+                  <Text style={styles.linkText} onPress={() => openSafeURL(link.url)}>
                     {link.text}
                   </Text>
                 </DataTable.Cell>

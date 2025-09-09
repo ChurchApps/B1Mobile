@@ -69,9 +69,9 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
         )}
         <Text style={styles.note}>Link could be of Google Drive, Hosted Lesson PDF, etc.</Text>
 
-        <TextInput style={styles.input} placeholder="Link Text" value={text} onChangeText={setText} accessibilityLabel="Link display text" />
+        <TextInput style={styles.input} autoCapitalize={'none'} placeholder="Link Text" value={text} onChangeText={setText} accessibilityLabel="Link display text" />
 
-        <TextInput style={styles.input} placeholder="Link URL" value={url} onChangeText={setUrl} accessibilityLabel="Link URL" />
+        <TextInput style={styles.input} autoCapitalize={'none'} placeholder="Link URL" value={url} onChangeText={setUrl} accessibilityLabel="Link URL" />
 
         <Button mode="contained" onPress={handleAdd} style={styles.button}>
           Add
