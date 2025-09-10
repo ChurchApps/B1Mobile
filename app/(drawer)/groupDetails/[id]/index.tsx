@@ -18,7 +18,7 @@ import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrappe
 import GroupChatModal from "../../../../src/components/modals/GroupChatModal";
 import { useAppTheme } from "../../../../src/theme";
 import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
-import { 
+import {
   GroupHeroSection,
   GroupNavigationTabs,
   GroupAboutTab,
@@ -27,6 +27,7 @@ import {
   GroupEventModal,
   EventProcessor
 } from "../../../../src/components/group/exports";
+import { GroupResourcesTab } from "@/components/group/GroupResourcesTab";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -281,10 +282,17 @@ const GroupDetails = () => {
     if (g.id === id && g.leader) isLeader = true;
   });
 
+  const tabs = [
+    { key: "about", label: "About", icon: "information" },
+    { key: "messages", label: "Messages", icon: "chat", onPress: () => setShowChatModal(true) },
+    { key: "members", label: "Members", icon: "account-group" },
+    { key: "events", label: "Events", icon: "calendar" },
+    { key: "Resources", label: "Resources", icon: "file" },
+  ];
+
   return (
     <>
       <View style={[styles.container, (showEventModal || showChatModal) && { display: 'none' }]}>
-        <SafeAreaView style={{ flex: 1 }}>
           <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
 
           <FlatList
@@ -303,11 +311,11 @@ const GroupDetails = () => {
                 <GroupNavigationTabs
                   activeTab={activeTab}
                   onTabChange={setActiveTab}
-                  onMessagesPress={() => setShowChatModal(true)}
+                  tabs={tabs}
                 />
 
                 {/* Content Display */}
-                <Card style={styles.contentCard}>
+                {activeTab !== 4 && <Card style={styles.contentCard}>
                   {/* Tab Content */}
                   <View style={styles.tabContent}>
                     {activeTab === 0 && (
@@ -315,9 +323,9 @@ const GroupDetails = () => {
                     )}
 
                     {activeTab === 2 && (
-                      <GroupMembersTab 
-                        members={groupMembers} 
-                        isLoading={groupMembersLoading} 
+                      <GroupMembersTab
+                        members={groupMembers}
+                        isLoading={groupMembersLoading}
                       />
                     )}
 
@@ -334,13 +342,18 @@ const GroupDetails = () => {
                     )}
                   </View>
                 </Card>
+                }
+                {activeTab === 4 && (
+                  <GroupResourcesTab
+                    groupId={id || ""}
+                  />
+                )}
               </View>
             )}
             keyExtractor={item => item.key}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.mainContainer}
           />
-        </SafeAreaView>
       </View>
 
       <GroupEventModal
