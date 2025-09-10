@@ -53,7 +53,7 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
             <DataTable.Header>
               <DataTable.Title>Name</DataTable.Title>
               <DataTable.Title numeric>Size</DataTable.Title>
-              <DataTable.Title numeric>Actions</DataTable.Title>
+              {canEditGroupResources && <DataTable.Title numeric>Actions</DataTable.Title>}
             </DataTable.Header>
 
             {/* Link rows */}
@@ -68,7 +68,7 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
                 {/* <View style={styles.centerCell}>
                 <Text>{"-"}</Text>
               </View> */}
-                <DataTable.Cell numeric>{canEditGroupResources && <IconButton icon="delete" size={20} onPress={() => handleLinkDelete(link)} accessibilityLabel={`Delete link ${link.text}`} />}</DataTable.Cell>
+                {canEditGroupResources && <DataTable.Cell numeric><IconButton icon="delete" size={20} onPress={() => handleLinkDelete(link)} accessibilityLabel={`Delete link ${link.text}`} /></DataTable.Cell>}
               </DataTable.Row>
             ))}
           </DataTable>
