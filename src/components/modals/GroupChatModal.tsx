@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, SafeAreaView, Dimensions } from "react-native";
-import { Portal, Modal, Appbar, Text, TextInput, IconButton, Avatar as PaperAvatar, Surface } from "react-native-paper";
+import { Modal, View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Dimensions } from "react-native";
+import { Appbar, Text, TextInput, IconButton, Avatar as PaperAvatar, Surface } from "react-native-paper";
 import { ApiHelper, ConversationInterface, ArrayHelper } from "../../helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
-import { PersonHelper, Constants } from "../../helpers";
 import { Avatar } from "../common/Avatar";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 dayjs.extend(relativeTime);
 
@@ -32,6 +32,7 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
   const [newMessage, setNewMessage] = useState("");
   const flatListRef = useRef<FlatList>(null);
   const currentUserChurch = useCurrentUserChurch();
+  const insets = useSafeAreaInsets();
 
   // Use react-query for conversations
   const { data: rawConversations = [], refetch: refetchConversations } = useQuery<ConversationInterface[]>({
@@ -164,32 +165,31 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
   );
 
   return (
-    <Portal>
-      <Modal visible={visible} onDismiss={onDismiss} contentContainerStyle={styles.modalContainer}>
-        <SafeAreaView style={styles.container}>
-          {/* Header */}
-          <Appbar.Header style={styles.header}>
-            <Appbar.BackAction onPress={onDismiss} />
-            <Appbar.Content title={groupName} titleStyle={styles.headerTitle} subtitle="Plan: M" subtitleStyle={styles.headerSubtitle} />
-          </Appbar.Header>
+    <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={onDismiss}>
+      {/* Header */}
+      <Appbar.Header>
+        <Appbar.BackAction onPress={onDismiss} />
+        <Appbar.Content title={groupName} />
+      </Appbar.Header>
 
-          {/* Messages */}
-          <KeyboardAvoidingView style={styles.chatContainer} behavior={Platform.OS === "ios" ? "padding" : "height"} keyboardVerticalOffset={90}>
-            <FlatList ref={flatListRef} data={messages} keyExtractor={(item, index) => `${item.id || index}`} renderItem={renderMessage} contentContainerStyle={styles.messagesList} showsVerticalScrollIndicator={false} ListEmptyComponent={renderEmptyState} onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })} />
+      {/* Body */}
+      <KeyboardAvoidingView style={styles.mainContainer} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}>
+        <FlatList ref={flatListRef} data={messages} renderItem={renderMessage} keyExtractor={(item, index) => `${item.id || index}`} contentContainerStyle={styles.messagesList} ListEmptyComponent={renderEmptyState} onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })} />
 
-            {/* Input Bar */}
-            <Surface style={styles.inputBar}>
-              <TextInput mode="outlined" placeholder="Send a message" value={newMessage} onChangeText={setNewMessage} multiline maxLength={500} style={styles.textInput} contentStyle={styles.inputContent} outlineStyle={styles.inputOutline} onSubmitEditing={sendMessage} blurOnSubmit={false} />
-              <IconButton icon="send" size={24} onPress={sendMessage} disabled={!newMessage.trim()} style={[styles.sendButton, newMessage.trim() && styles.sendButtonActive]} iconColor={newMessage.trim() ? "#FFFFFF" : "#9E9E9E"} />
-            </Surface>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      </Modal>
-    </Portal>
+        {/* Input bar */}
+        <Surface style={[styles.inputBar, { paddingBottom: insets.bottom || 8 }]}>
+          <TextInput mode="outlined" placeholder="Send a message" value={newMessage} onChangeText={setNewMessage} multiline maxLength={500} style={styles.textInput} contentStyle={styles.inputContent} outlineStyle={styles.inputOutline} onSubmitEditing={sendMessage} blurOnSubmit={false} />
+          <IconButton icon="send" size={24} onPress={sendMessage} disabled={!newMessage.trim()} style={[styles.sendButton, newMessage.trim() && styles.sendButtonActive]} iconColor={newMessage.trim() ? "#FFFFFF" : "#9E9E9E"} />
+        </Surface>
+      </KeyboardAvoidingView>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1
+  },
   modalContainer: {
     flex: 1,
     margin: 0
@@ -332,11 +332,11 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     maxHeight: 100,
-    backgroundColor: "transparent"
+    backgroundColor: "transparent",
+    paddingBottom: 2
   },
   inputContent: {
     fontSize: 15,
-    lineHeight: 20,
     textAlignVertical: "center"
   },
   inputOutline: {
@@ -355,3 +355,4 @@ const styles = StyleSheet.create({
 });
 
 export default GroupChatModal;
+
