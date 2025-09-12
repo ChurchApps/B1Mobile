@@ -133,7 +133,8 @@ const createStyles = () =>
       fontSize: 20, // H2 from style guide
       fontWeight: Platform.OS === "ios" ? "600" : "500",
       color: "#FFFFFF", // White for contrast on blue background
-      textAlign: "center"
+      textAlign: "center",
+      marginHorizontal: 20
     },
     rightContainer: {
       width: 48, // Match left side for balance

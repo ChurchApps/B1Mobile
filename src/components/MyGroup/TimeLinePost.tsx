@@ -67,15 +67,18 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
     // Implement delete functionality
   }, []);
 
+  const title = item?.item?.postType == "event" || item?.item?.postType == "group" || item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? item?.item?.name : item?.item?.groupName;
   return (
     <View style={globalStyles.FlatlistViewStyle} key={item.index}>
-      <View style={globalStyles.TitleStyle}>
-        <Text style={globalStyles.TitleTextStyle}>{item?.item?.postType == "event" || item?.item?.postType == "group" || item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? item?.item?.name : item?.item?.groupName}</Text>
-      </View>
+      {title && (
+        <View style={globalStyles.TitleStyle}>
+          <Text style={globalStyles.TitleTextStyle}>{title}</Text>
+        </View>
+      )}
 
       {(item?.item?.postType == "event" && item?.item?.photoUrl !== null) || item?.item?.postType == "sermon" || item?.item?.postType == "group" || (item?.item?.postType == "venue" && item?.item?.data?.image != null) ? (
         <View style={globalStyles.ImageMainView}>
-          <View style={globalStyles.ImageView}>{item?.item?.postType == "venue" && item?.item?.data?.image != null ? <OptimizedImage source={{ uri: item?.item?.data?.image }} style={globalStyles.groupImageStyle} contentFit="cover" /> : item?.item?.postType == "sermon" ? <OptimizedImage source={{ uri: item?.item?.data?.thumbnail }} style={globalStyles.groupImageStyle} contentFit="cover" /> : <OptimizedImage source={{ uri: item?.item?.photoUrl }} style={globalStyles.groupImageStyle} contentFit="cover" />}</View>
+          <View style={globalStyles.ImageView}>{item?.item?.postType == "venue" && item?.item?.data?.image != null ? <OptimizedImage source={{ uri: item?.item?.data?.image }} style={globalStyles.groupImageStyle} contentFit="contain" /> : item?.item?.postType == "sermon" ? <OptimizedImage source={{ uri: item?.item?.data?.thumbnail }} style={globalStyles.groupImageStyle} contentFit="cover" /> : <OptimizedImage source={{ uri: item?.item?.photoUrl }} style={globalStyles.groupImageStyle} contentFit="cover" />}</View>
         </View>
       ) : null}
 
