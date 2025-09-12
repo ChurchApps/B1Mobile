@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { router } from "expo-router";
 import { Provider as PaperProvider, Card, Text, MD3LightTheme } from "react-native-paper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useQuery } from "@tanstack/react-query";
@@ -88,10 +87,13 @@ const MyGroups = () => {
 
   const mergedTimelineData = useMemo(() => {
     if (timelineData?.posts?.length && timelineData?.groups?.length && timelineData.posts.length > 0 && timelineData.groups.length > 0) {
-      return timelineData.posts.map(item1 => ({
-        ...item1,
-        ...ArrayHelper.getOne(timelineData.groups, "id", item1.groupId)
-      }));
+      return timelineData.posts.map(item1 => {
+        const value = {
+          ...item1,
+          ...ArrayHelper.getOne(timelineData.groups, "id", item1.groupId)
+        };
+        return { item: value };
+      });
     }
     return [];
   }, [timelineData]);
@@ -197,7 +199,7 @@ const MyGroups = () => {
     const { hero, featured, regular } = sortedGroups;
 
     return (
-      <View style={styles.groupsSection}>
+      <View>
         {/* Hero Section */}
         {hero && <View style={styles.heroSection}>{showGroups(hero, "hero")}</View>}
 
@@ -232,9 +234,16 @@ const MyGroups = () => {
             </View>
           </View>
         )}
+        {mergeData.length > 0 && (
+          <View style={styles.regularSectionTop}>
+            <Text variant="titleLarge" style={styles.sectionTitle}>
+              Latest Updates
+            </Text>
+          </View>
+        )}
       </View>
     );
-  }, [sortedGroups, showGroups]);
+  }, [sortedGroups, showGroups, mergeData]);
 
   return (
     <PaperProvider theme={theme}>
@@ -243,29 +252,7 @@ const MyGroups = () => {
           <View style={styles.container}>
             <MainHeader title="My Groups" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
             <View style={styles.contentContainer}>
-              <FlatList
-                data={mergeData}
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-                scrollEnabled={true}
-                ListHeaderComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>}
-                ListFooterComponent={() =>
-                  mergeData.length > 0 && (
-                    <View style={styles.timelineSeparator}>
-                      <Text variant="titleMedium" style={styles.timelineTitle}>
-                        Recent Activity
-                      </Text>
-                    </View>
-                  )
-                }
-                renderItem={({ item }) => renderItems(item)}
-                keyExtractor={(item: any) => `key-${item.id || Math.random()}`}
-                initialNumToRender={8}
-                windowSize={10}
-                removeClippedSubviews={true}
-                maxToRenderPerBatch={5}
-                updateCellsBatchingPeriod={100}
-              />
+              <FlatList data={mergeData.length > 1 ? mergeData : []} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListHeaderComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={() => `key-${Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
             </View>
           </View>
         </LoadingWrapper>
@@ -285,7 +272,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     flexGrow: 1,
-    paddingBottom: 24
+    paddingBottom: 30
   },
   groupsContainer: {
     paddingHorizontal: 16,
@@ -397,6 +384,9 @@ const styles = StyleSheet.create({
   // Regular Section
   regularSection: {
     marginBottom: 16
+  },
+  regularSectionTop: {
+    marginTop: 8
   },
   regularGroupsList: {
     gap: 12
