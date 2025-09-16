@@ -6,13 +6,13 @@ import { MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "../../src/helpers/Interfaces";
 import { eventBus, updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 import { useLocalSearchParams, useFocusEffect, router } from "expo-router";
-import { useNavigation } from "../../src/hooks";
 import { FlatList, KeyboardAvoidingView, TouchableWithoutFeedback, View, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme } from "../../src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { useUser, useCurrentUserChurch } from "../../src/stores/useUserStore";
+import { useScreenHeader } from "@/hooks/useNavigationHeader";
 
 interface NotificationContent {
   autoDismiss?: boolean;
@@ -44,13 +44,12 @@ const MessageScreen = () => {
   if (!details || !details.id) {
     console.error("No user details provided to MessageScreen", { userDetails, details });
     return (
-      <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>Error: No user details provided</Text>
       </SafeAreaView>
     );
   }
   const { theme, spacing } = useAppTheme();
-  const { navigateBack } = useNavigation();
   const [messageText, setMessageText] = useState("");
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
@@ -68,7 +67,7 @@ const MessageScreen = () => {
 
   // Update screen tracking when component mounts/unmounts
   useEffect(() => {
-    updateCurrentScreen("/(drawer)/messageScreen");
+    updateCurrentScreen("/messageScreenRoot");
     return () => updateCurrentScreen("");
   }, []);
 
@@ -99,20 +98,17 @@ const MessageScreen = () => {
   const getConversations = useCallback(() => {
     setLoading(true);
     console.log("Getting conversations for user:", details.id);
-    
+
     // Get all private messages and find the conversation with the specific user
     ApiHelper.get("/privateMessages", "MessagingApi")
       .then((data: ConversationCheckInterface[]) => {
         console.log("All private messages received:", data);
-        
+
         // Find conversation between current user and the target person
-        const targetConversation = data.find(conversation => 
-          (conversation.fromPersonId === currentUserChurch?.person?.id && conversation.toPersonId === details.id) ||
-          (conversation.toPersonId === currentUserChurch?.person?.id && conversation.fromPersonId === details.id)
-        );
-        
+        const targetConversation = data.find(conversation => (conversation.fromPersonId === currentUserChurch?.person?.id && conversation.toPersonId === details.id) || (conversation.toPersonId === currentUserChurch?.person?.id && conversation.fromPersonId === details.id));
+
         console.log("Target conversation found:", targetConversation);
-        
+
         if (targetConversation && targetConversation.conversationId) {
           setCurrentConversation(targetConversation);
           getMessagesList(targetConversation.conversationId);
@@ -266,20 +262,15 @@ const MessageScreen = () => {
     });
   };
 
-  const MessageHeader = () => (
-    <Surface style={{ flexDirection: "row", alignItems: "center", backgroundColor: theme.colors.primary, paddingVertical: spacing.sm, paddingHorizontal: spacing.md, elevation: 4 }}>
-      <IconButton icon="arrow-left" size={28} iconColor="white" onPress={() => navigateBack()} />
-      <Text variant="titleLarge" style={{ color: "white", fontWeight: "600", flex: 1 }}>
-        {details?.name?.display || details?.DisplayName || "Messages"}
-      </Text>
-      <IconButton
-        icon="account-plus"
-        size={28}
-        iconColor="white"
-        onPress={() => router.push("/(drawer)/searchMessageUser")}
-      />
-    </Surface>
-  );
+  useScreenHeader({
+    title: details?.name?.display,
+    placeholder: details?.DisplayName || "Messages",
+    headerRight: () => (
+      <View>
+        <IconButton icon="account-plus" size={28} iconColor="white" onPress={() => router.push("/searchMessageUserRoot")} />
+      </View>
+    )
+  });
 
   const messageInputView = () => (
     <Surface style={{ flexDirection: "row", alignItems: "center", padding: spacing.sm, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
@@ -304,7 +295,7 @@ const MessageScreen = () => {
 
     if (messageList.length === 0) {
       return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
           <Text style={{ color: theme.colors.onSurfaceVariant }}>No messages yet</Text>
         </View>
       );
@@ -321,7 +312,7 @@ const MessageScreen = () => {
         contentContainerStyle={{
           paddingVertical: spacing.md,
           flexGrow: 1,
-          justifyContent: 'flex-end'
+          justifyContent: "flex-end"
         }}
         initialNumToRender={15}
         windowSize={10}
@@ -341,7 +332,7 @@ const MessageScreen = () => {
 
     return (
       <TouchableWithoutFeedback onLongPress={() => openContextMenu(item)}>
-        <View style={{ width: '100%', paddingHorizontal: spacing.sm }}>
+        <View style={{ width: "100%", paddingHorizontal: spacing.sm }}>
           <Surface
             style={{
               alignSelf: isMine ? "flex-end" : "flex-start",
@@ -380,7 +371,6 @@ const MessageScreen = () => {
   return (
     <LoadingWrapper loading={loading}>
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-        <MessageHeader />
         <View style={{ flex: 1 }}>{messagesView()}</View>
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>{messageInputView()}</KeyboardAvoidingView>
       </SafeAreaView>

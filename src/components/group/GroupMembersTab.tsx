@@ -31,7 +31,7 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({ members, isLoa
       contactInfo: member?.person?.contactInfo
     };
     router.navigate({
-      pathname: "/(drawer)/memberDetail",
+      pathname: "/memberDetailRoot",
       params: { member: JSON.stringify(memberData) }
     });
   };
@@ -64,18 +64,8 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({ members, isLoa
     <View style={styles.membersContainer}>
       {members.map((item: GroupMember) => (
         <Card key={item?.id} style={styles.modernMemberCard}>
-          <TouchableOpacity
-            style={styles.memberCardContent}
-            onPress={() => handleMemberPress(item)}
-          >
-            <Avatar.Image 
-              size={56} 
-              source={
-                item?.person?.photo 
-                  ? { uri: EnvironmentHelper.ContentRoot + item.person.photo } 
-                  : Constants.Images.ic_member
-              } 
-            />
+          <TouchableOpacity style={styles.memberCardContent} onPress={() => handleMemberPress(item)}>
+            <Avatar.Image size={56} source={item?.person?.photo ? { uri: EnvironmentHelper.ContentRoot + item.person.photo } : Constants.Images.ic_member} />
             <View style={styles.memberInfo}>
               <Text variant="titleMedium" style={styles.memberName}>
                 {item?.person?.name?.display}

@@ -1,18 +1,11 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
-import { useNavigation } from "../../src/hooks";
-import { router } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { NotificationTab } from "../../src/components/NotificationView";
 import { UserHelper } from "../../src/helpers";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 
 const Notifications = () => {
-  const navigation = useReactNavigation();
-  const { navigateBack } = useNavigation();
-
   React.useEffect(() => {
     UserHelper.addOpenScreenEvent("Notifications");
     updateCurrentScreen("/(drawer)/notifications");
@@ -21,27 +14,9 @@ const Notifications = () => {
     };
   }, []);
 
-  const handleDrawerOpen = () => {
-    navigation.dispatch(DrawerActions.openDrawer());
-  };
-
-  const handleBack = () => {
-    navigateBack();
-  };
-
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <MainHeader 
-          title="Notifications" 
-          openDrawer={handleDrawerOpen} 
-          back={handleBack} 
-          hideBell={true}
-          rightAction={{
-            icon: "person-add",
-            onPress: () => router.push("/(drawer)/searchMessageUser")
-          }}
-        />
         <View style={styles.contentContainer}>
           <NotificationTab />
         </View>

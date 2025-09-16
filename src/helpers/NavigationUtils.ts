@@ -7,15 +7,16 @@ import { Permissions } from "../mobilehelper";
 import { useUserStore } from "../stores/useUserStore";
 
 export class NavigationUtils {
-  static navigateToScreen(item: LinkInterface, currentChurch?: any) {
+  static navigateToScreen(item: LinkInterface, currentChurch?: any, from?: "home" | "drawer") {
     const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
     const uc = useUserStore.getState().currentUserChurch;
+    const isFromHome = from === "home";
 
     switch (item.linkType) {
       case "stream": {
         UserHelper.addOpenScreenEvent("StreamScreen");
         router.push({
-          pathname: "/(drawer)/stream",
+          pathname: isFromHome ? "streamRoot" : "/(drawer)/stream",
           params: {
             url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") + "/stream",
             title: item.text
@@ -26,7 +27,7 @@ export class NavigationUtils {
       case "lessons": {
         const jwt = uc?.jwt;
         router.push({
-          pathname: "/(drawer)/lessons",
+          pathname: isFromHome ? "lessonRoot" : "/(drawer)/lessons",
           params: {
             url: EnvironmentHelper.LessonsRoot + "/login?jwt=" + jwt + "&returnUrl=/b1/person&churchId=" + currentChurch?.id,
             title: item.text
@@ -37,29 +38,29 @@ export class NavigationUtils {
       case "bible": {
         UserHelper.addOpenScreenEvent("BibleScreen");
         router.push({
-          pathname: "/(drawer)/bible",
+          pathname: isFromHome ? "bibleRoot" : "/(drawer)/bible",
           params: { url: bibleUrl, title: item.text }
         });
         break;
       }
       case "plans": {
         UserHelper.addOpenScreenEvent("PlanScreen");
-        router.push("/(drawer)/plan");
+        router.push(isFromHome ? "planRoot" : "/(drawer)/plan");
         break;
       }
       case "votd": {
         UserHelper.addOpenScreenEvent("VotdScreen");
-        router.push("/(drawer)/votd");
+        router.push(isFromHome ? "votdRoot" : "/(drawer)/votd");
         break;
       }
       case "donation": {
-        this.handleDonationNavigation(currentChurch);
+        this.handleDonationNavigation(isFromHome, currentChurch);
         break;
       }
       case "url": {
         UserHelper.addOpenScreenEvent("WebsiteScreen");
         router.push({
-          pathname: "/(drawer)/websiteUrl",
+          pathname: isFromHome ? "websiteUrlRoot" : "/(drawer)/websiteUrl",
           params: { url: item.url, title: item.text }
         });
         break;
@@ -67,7 +68,7 @@ export class NavigationUtils {
       case "page": {
         UserHelper.addOpenScreenEvent("PageScreen");
         router.push({
-          pathname: "/(drawer)/page",
+          pathname: isFromHome ? "pageRoot" : "/(drawer)/page",
           params: { url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") + item.url, title: item.text }
         });
         break;
@@ -79,7 +80,7 @@ export class NavigationUtils {
           Alert.alert("Alert", "Your account does not have permission to view the member directory. Please contact your church staff to request access.");
         } else {
           UserHelper.addOpenScreenEvent("MembersSearch");
-          router.push("/(drawer)/membersSearch");
+          router.push(isFromHome ? "membersSearchRoot" : "/(drawer)/membersSearch");
         }
         break;
       }
@@ -88,7 +89,7 @@ export class NavigationUtils {
           Alert.alert("Alert", "You must be logged in to access this page.");
         } else {
           UserHelper.addOpenScreenEvent("ServiceScreen");
-          router.push("/(drawer)/service");
+          router.push(isFromHome ? "serviceRoot" : "/(drawer)/service");
         }
         break;
       }
@@ -97,19 +98,19 @@ export class NavigationUtils {
           Alert.alert("Alert", "You must be logged in to access this page.");
         } else {
           UserHelper.addOpenScreenEvent("MyGroups");
-          router.push("/(drawer)/myGroups");
+          router.push(isFromHome ? "/myGroupsRoot" : "/(drawer)/myGroups");
         }
         break;
       }
       case "sermons": {
         UserHelper.addOpenScreenEvent("SermonsScreen");
-        router.push("/(drawer)/sermons");
+        router.push(isFromHome ? "/sermonsRoot" : "/(drawer)/sermons");
         break;
       }
     }
   }
 
-  private static handleDonationNavigation(currentChurch?: any) {
+  private static handleDonationNavigation(isFromHome: boolean, currentChurch?: any) {
     UserHelper.addOpenScreenEvent("DonationScreen");
     const uc = useUserStore.getState().currentUserChurch;
 
@@ -120,7 +121,7 @@ export class NavigationUtils {
       }
       Linking.openURL(url);
     } else {
-      router.push("/(drawer)/donation");
+      router.push(isFromHome ? "donationRoot" : "/(drawer)/donation");
     }
   }
 }

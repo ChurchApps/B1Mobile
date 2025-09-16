@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Linking, Platform, View, Text } from "react-native";
 import WebView from "react-native-webview";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
@@ -18,6 +18,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
   const webviewRef = useRef<WebView>(null);
+  const navigationMain = useNavigation();
 
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });
@@ -30,6 +31,15 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
     return () => clearTimeout(timer);
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      navigationMain &&
+        navigationMain.setOptions({
+          title: title || "Website"
+        });
+    }, [navigationMain, title])
+  );
+
   const handleMessage = () => {
     let newUrl = currentUrl + "&autoPrint=1";
     Linking.openURL(newUrl);
@@ -37,11 +47,11 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
 
   const urlToScreenMapping: { [key: string]: string } = {
     "/donate": "/(drawer)/donation",
-    "/groups/details/": "/(drawer)/groupDetails",
+    "/groups/details/": "/groupDetailsRoot",
     "/my/checkin": "/(drawer)/service",
     "/my/community": "/(drawer)/membersSearch",
-    "/my/community/": "/(drawer)/memberDetail",
-    "/my/groups": "/(drawer)/myGroups",
+    "/my/community/": "/memberDetailRoot",
+    "/my/groups": "/myGroupsRoot",
     "/my/plans": "/(drawer)/plan",
     "/my/plans/": "/(drawer)/planDetails",
     "/votd": "/(drawer)/votd"
@@ -69,7 +79,6 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
         return true;
       }
     }
-
     for (const basePath in urlToScreenMapping) {
       const screenPath = urlToScreenMapping[basePath];
 

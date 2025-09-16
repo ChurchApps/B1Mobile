@@ -9,13 +9,14 @@ import { router, useLocalSearchParams } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 
-import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
-import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
-import { OptimizedImage } from "../../../../src/components/OptimizedImage";
-import { SermonCard } from "../../../../src/components/SermonCard";
-import { UserHelper, DateHelper } from "../../../../src/helpers";
-import { SermonInterface, PlaylistInterface } from "../../../../src/mobilehelper";
-import { useCurrentChurch } from "../../../../src/stores/useUserStore";
+import { MainHeader } from "../../../src/components/wrapper/MainHeader";
+import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
+import { OptimizedImage } from "../../../src/components/OptimizedImage";
+import { SermonCard } from "../../../src/components/SermonCard";
+import { UserHelper, DateHelper } from "../../../src/helpers";
+import { SermonInterface, PlaylistInterface } from "../../../src/mobilehelper";
+import { useCurrentChurch } from "../../../src/stores/useUserStore";
+import { useScreenHeader } from "@/hooks/useNavigationHeader";
 
 const theme = {
   ...MD3LightTheme,
@@ -42,6 +43,8 @@ const PlaylistDetails = () => {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id, title } = useLocalSearchParams<{ id: string; title: string }>();
   const currentChurch = useCurrentChurch();
+
+  useScreenHeader({ title: title, placeholder: "Playlist" });
 
   useEffect(() => {
     UserHelper.addOpenScreenEvent("PlaylistDetailsScreen");
@@ -88,7 +91,7 @@ const PlaylistDetails = () => {
       console.warn("Invalid sermon object:", sermon);
       return;
     }
-    router.push("/(drawer)/sermonDetails/" + sermon.id + "?title=" + encodeURIComponent(sermon.title) + "&playlistTitle=" + encodeURIComponent(title || ""));
+    router.push("/sermonDetails/" + sermon.id + "?title=" + encodeURIComponent(sermon.title) + "&playlistTitle=" + encodeURIComponent(title || ""));
   };
 
   const renderPlaylistHeader = () => {

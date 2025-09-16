@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { Constants, EnvironmentHelper, UserHelper } from "../../src/helpers";
+import { UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
@@ -105,7 +105,7 @@ const MemberDetail = () => {
 
   const handleMessage = useCallback(() => {
     router.navigate({
-      pathname: "/(drawer)/messageScreen",
+      pathname: "/messageScreenRoot",
       params: { userDetails: JSON.stringify(parsedMember) }
     });
   }, [parsedMember]);
@@ -113,7 +113,7 @@ const MemberDetail = () => {
   const handleMemberPress = useCallback((item: Member) => {
     scrollViewRef.current?.scrollTo({ y: 0, animated: false });
     router.navigate({
-      pathname: "/(drawer)/memberDetail",
+      pathname: "/memberDetailRoot",
       params: { member: JSON.stringify(item) }
     });
   }, []);
@@ -134,7 +134,7 @@ const MemberDetail = () => {
             <Card style={styles.heroCard}>
               <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
                 <View style={styles.heroContent}>
-                  <Avatar size={120} photoUrl={parsedMember?.photo} firstName={parsedMember?.name?.display?.split(' ')[0]} lastName={parsedMember?.name?.display?.split(' ').slice(1).join(' ').split(' ')[0]} style={styles.heroAvatar} />
+                  <Avatar size={120} photoUrl={parsedMember?.photo} firstName={parsedMember?.name?.display?.split(" ")[0]} lastName={parsedMember?.name?.display?.split(" ").slice(1).join(" ").split(" ")[0]} style={styles.heroAvatar} />
                   <Text variant="headlineMedium" style={styles.heroName}>
                     {parsedMember?.name?.display}
                   </Text>

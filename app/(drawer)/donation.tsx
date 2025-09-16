@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  EnhancedDonationForm,
-  EnhancedGivingHistory
-} from "../../src/components/donations/LazyDonationComponents";
+import { EnhancedDonationForm, EnhancedGivingHistory } from "../../src/components/donations/LazyDonationComponents";
 import { GivingOverview, DonationTabBar, ManagePayments } from "../../src/components/donations/sections/exports";
 import { UserHelper } from "@/helpers/UserHelper";
 import { ErrorHelper } from "../../src/mobilehelper";
@@ -13,10 +10,8 @@ import { initStripe } from "@stripe/stripe-react-native";
 import { useEffect, useState, useMemo } from "react";
 import { Alert, ScrollView, View, StyleSheet } from "react-native";
 import { Provider as PaperProvider, MD3LightTheme } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "@tanstack/react-query";
 import { useDonationFunds } from "../../src/hooks/useStaleWhileRevalidate";
-import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useNavigation } from "../../src/hooks";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
@@ -54,11 +49,7 @@ const Donation = () => {
   const person = currentUserChurch?.person;
 
   // Example of stale-while-revalidate for donation funds
-  const {
-    data: fundsData,
-    showSkeleton: showFundsSkeleton,
-    isRevalidating: fundsRevalidating
-  } = useDonationFunds(currentUserChurch?.church?.id || '');
+  const { data: fundsData, showSkeleton: showFundsSkeleton, isRevalidating: fundsRevalidating } = useDonationFunds(currentUserChurch?.church?.id || "");
 
   // Use react-query for gateway data
   const {
@@ -134,26 +125,11 @@ const Donation = () => {
     []
   );
 
-  const renderOverviewSection = () => (
-    <GivingOverview
-      givingStats={givingStats}
-      onDonatePress={() => setActiveSection("donate")}
-      onHistoryPress={() => setActiveSection("history")}
-    />
-  );
+  const renderOverviewSection = () => <GivingOverview givingStats={givingStats} onDonatePress={() => setActiveSection("donate")} onHistoryPress={() => setActiveSection("history")} />;
 
   const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />;
 
-  const renderManageSection = () => (
-    <ManagePayments
-      person={person}
-      customerId={customerId}
-      paymentMethods={paymentMethods}
-      isLoading={areMethodsLoading}
-      publishKey={publishKey}
-      loadData={loadData}
-    />
-  );
+  const renderManageSection = () => <ManagePayments person={person} customerId={customerId} paymentMethods={paymentMethods} isLoading={areMethodsLoading} publishKey={publishKey} loadData={loadData} />;
 
   const renderHistorySection = () => <EnhancedGivingHistory customerId={customerId} />;
 

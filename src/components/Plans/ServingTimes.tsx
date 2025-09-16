@@ -58,7 +58,7 @@ export const ServingTimes = ({ plans, positions, assignments, isLoading = false 
             <View style={styles.cardsList}>
               {servingTimes.map((item, idx) => (
                 <Card key={idx} style={styles.servingCard} mode="elevated">
-                  <TouchableOpacity style={styles.cardTouchable} activeOpacity={0.7} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
+                  <TouchableOpacity style={styles.cardTouchable} activeOpacity={0.7} onPress={() => router.push("/planDetails/" + item.planId)}>
                     <Card.Content style={styles.cardContent}>
                       <View style={styles.cardHeader}>
                         <View style={styles.planInfo}>

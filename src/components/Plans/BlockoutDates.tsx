@@ -65,53 +65,53 @@ export const BlockoutDates = ({ isLoading = false }: Props) => {
               </Button>
             </View>
           ) : (
-        <View style={styles.cardsList}>
-          <View style={styles.listHeader}>
-            <Text style={styles.listHeaderText}>
-              {blockoutDates.length} blockout date{blockoutDates.length > 1 ? "s" : ""}
-            </Text>
-            <Button
-              mode="text"
-              onPress={() => {
-                /* TODO: Add navigation to blockout dates creation */
-              }}
-              labelStyle={{ color: "#0D47A1" }}
-              icon="plus">
-              Add New
-            </Button>
-          </View>
-
-          {blockoutDates.map((date: any, index: number) => (
-            <Card key={index} style={styles.blockoutCard} mode="elevated">
-              <Card.Content style={styles.cardContent}>
-                <View style={styles.dateSection}>
-                  <View style={styles.dateHeader}>
-                    <MaterialIcons name="event-busy" size={20} color="#B0120C" />
-                    <Text style={styles.dateRange}>
-                      {dayjs(date.startDate).format("MMM DD, YYYY")}
-                      {date.endDate && date.endDate !== date.startDate && ` - ${dayjs(date.endDate).format("MMM DD, YYYY")}`}
-                    </Text>
-                  </View>
-
-                  {date.notes && (
-                    <View style={styles.notesContainer}>
-                      <MaterialIcons name="note" size={16} color="#9E9E9E" />
-                      <Text style={styles.notesText}>{date.notes}</Text>
-                    </View>
-                  )}
-                </View>
-
-                <TouchableOpacity
-                  style={styles.deleteButton}
+            <View style={styles.cardsList}>
+              <View style={styles.listHeader}>
+                <Text style={styles.listHeaderText}>
+                  {blockoutDates.length} blockout date{blockoutDates.length > 1 ? "s" : ""}
+                </Text>
+                <Button
+                  mode="text"
                   onPress={() => {
-                    /* TODO: Add delete functionality */
-                  }}>
-                  <MaterialIcons name="delete-outline" size={24} color="#B0120C" />
-                </TouchableOpacity>
-              </Card.Content>
-            </Card>
-          ))}
-        </View>
+                    /* TODO: Add navigation to blockout dates creation */
+                  }}
+                  labelStyle={{ color: "#0D47A1" }}
+                  icon="plus">
+                  Add New
+                </Button>
+              </View>
+
+              {blockoutDates.map((date: any, index: number) => (
+                <Card key={index} style={styles.blockoutCard} mode="elevated">
+                  <Card.Content style={styles.cardContent}>
+                    <View style={styles.dateSection}>
+                      <View style={styles.dateHeader}>
+                        <MaterialIcons name="event-busy" size={20} color="#B0120C" />
+                        <Text style={styles.dateRange}>
+                          {dayjs(date.startDate).format("MMM DD, YYYY")}
+                          {date.endDate && date.endDate !== date.startDate && ` - ${dayjs(date.endDate).format("MMM DD, YYYY")}`}
+                        </Text>
+                      </View>
+
+                      {date.notes && (
+                        <View style={styles.notesContainer}>
+                          <MaterialIcons name="note" size={16} color="#9E9E9E" />
+                          <Text style={styles.notesText}>{date.notes}</Text>
+                        </View>
+                      )}
+                    </View>
+
+                    <TouchableOpacity
+                      style={styles.deleteButton}
+                      onPress={() => {
+                        /* TODO: Add delete functionality */
+                      }}>
+                      <MaterialIcons name="delete-outline" size={24} color="#B0120C" />
+                    </TouchableOpacity>
+                  </Card.Content>
+                </Card>
+              ))}
+            </View>
           )}
         </Card.Content>
       </Card>

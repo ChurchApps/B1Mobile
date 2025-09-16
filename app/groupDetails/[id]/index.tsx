@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
 import { Text, Button, Surface, Card } from "react-native-paper";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
-import { useNavigation } from "../../../../src/hooks";
+import { useNavigation } from "../../../src/hooks";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { DateData } from "react-native-calendars";
@@ -12,12 +12,12 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useQuery } from "@tanstack/react-query";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { EventInterface } from "../../../../src/mobilehelper";
-import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
-import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
-import GroupChatModal from "../../../../src/components/modals/GroupChatModal";
-import { useAppTheme } from "../../../../src/theme";
-import { useCurrentUserChurch } from "../../../../src/stores/useUserStore";
+import { EventInterface } from "../../../src/mobilehelper";
+import { MainHeader } from "../../../src/components/wrapper/MainHeader";
+import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
+import GroupChatModal from "../../../src/components/modals/GroupChatModal";
+import { useAppTheme } from "../../../src/theme";
+import { useCurrentUserChurch } from "../../../src/stores/useUserStore";
 import {
   GroupHeroSection,
   GroupNavigationTabs,
@@ -26,8 +26,9 @@ import {
   GroupCalendarTab,
   GroupEventModal,
   EventProcessor
-} from "../../../../src/components/group/exports";
+} from "../../../src/components/group/exports";
 import { GroupResourcesTab } from "@/components/group/GroupResourcesTab";
+import { useScreenHeader } from "@/hooks/useNavigationHeader";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -59,7 +60,6 @@ const GroupDetails = () => {
     }, [refetchEvents, initialActiveTab])
   );
 
-
   // Use react-query for group details
   const {
     data: groupDetails,
@@ -78,6 +78,13 @@ const GroupDetails = () => {
       errorMessage: "Failed to load group details"
     }
   });
+
+  useScreenHeader({
+    title: groupDetails?.name,
+    placeholder: "Group Details",
+    dependencies: [groupDetails], 
+  });
+
 
   // Use react-query for group members - load immediately in parallel
   const {
@@ -111,9 +118,6 @@ const GroupDetails = () => {
     retry: 3,
     retryDelay: 1000
   });
-
-
-
 
   // Only show full loading if group details is loading (essential data)
   const hasError = groupDetailsIsError || groupMembersIsError || eventsIsError;

@@ -16,41 +16,33 @@ interface GroupCalendarTabProps {
   onMonthChange?: (month: DateData) => void;
 }
 
-export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({
-  groupId,
-  isLeader,
-  isLoading,
-  selected,
-  markedDates,
-  onDayPress,
-  onMonthChange
-}) => {
+export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isLeader, isLoading, selected, markedDates, onDayPress, onMonthChange }) => {
   const { theme } = useAppTheme();
 
   const handleAddEvent = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    
+
     const startTime = new Date(tomorrow);
     startTime.setHours(14, 0, 0, 0); // 2:00 PM
-    
+
     const endTime = new Date(tomorrow);
     endTime.setHours(15, 0, 0, 0); // 3:00 PM
-    
-    const newEvent = { 
-      start: startTime, 
+
+    const newEvent = {
+      start: startTime,
       end: endTime,
-      allDay: false, 
-      groupId: groupId, 
+      allDay: false,
+      groupId: groupId,
       visibility: "public",
       title: "",
       description: "",
       recurrenceRule: ""
     };
-    
+
     router.navigate({
-      pathname: "/(drawer)/createEvent",
-      params: { 
+      pathname: "/createEventRoot",
+      params: {
         event: JSON.stringify(newEvent),
         groupId: groupId
       }
@@ -60,12 +52,7 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({
   return (
     <View style={styles.calendarContainer}>
       {isLeader && (
-        <Button
-          mode="contained"
-          icon="calendar-plus"
-          onPress={handleAddEvent}
-          style={styles.addEventButton}
-        >
+        <Button mode="contained" icon="calendar-plus" onPress={handleAddEvent} style={styles.addEventButton}>
           Add Event
         </Button>
       )}
@@ -110,10 +97,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#70DC87"
   },
   loadingOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 80,
     left: 0,
     right: 0,
-    alignItems: 'center'
+    alignItems: "center"
   }
 });

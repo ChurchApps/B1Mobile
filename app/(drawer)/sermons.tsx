@@ -151,7 +151,7 @@ const Sermons = () => {
       console.warn("Invalid playlist object:", playlist);
       return;
     }
-    router.push("/(drawer)/playlistDetails/" + playlist.id + "?title=" + encodeURIComponent(playlist.title));
+    router.push("/playlistDetails/" + playlist.id + "?title=" + encodeURIComponent(playlist.title));
   };
 
   const handleSermonPress = (sermon: SermonInterface) => {
@@ -159,7 +159,7 @@ const Sermons = () => {
       console.warn("Invalid sermon object:", sermon);
       return;
     }
-    router.push("/(drawer)/sermonDetails/" + sermon.id + "?title=" + encodeURIComponent(sermon.title));
+    router.push("/sermonDetails/" + sermon.id + "?title=" + encodeURIComponent(sermon.title));
   };
 
   const renderFeaturedSermon = () => {
@@ -167,15 +167,11 @@ const Sermons = () => {
     return <FeaturedSermon sermon={featuredSermon} onPress={handleSermonPress} />;
   };
 
-  const renderPlaylistCard = (playlist: PlaylistInterface) => {
-    return <PlaylistCard key={playlist.id} playlist={playlist} onPress={handlePlaylistPress} />;
-  };
+  const renderPlaylistCard = (playlist: PlaylistInterface) => <PlaylistCard key={playlist.id} playlist={playlist} onPress={handlePlaylistPress} />;
 
   const renderSermonCard = (sermon: SermonInterface) => <SermonCard key={sermon.id} sermon={sermon} onPress={handleSermonPress} />;
 
-  const renderCountdown = () => {
-    return <LiveStreamCard liveStreamData={liveStreamData} timeUntilStream={timeUntilStream} />;
-  };
+  const renderCountdown = () => <LiveStreamCard liveStreamData={liveStreamData} timeUntilStream={timeUntilStream} />;
 
   const renderPlaylistsSection = () => (
     <View style={styles.section}>
@@ -188,11 +184,7 @@ const Sermons = () => {
         </Text>
       </View>
 
-      {sortedPlaylists.length === 0 ? (
-        <EmptyState type="playlists" />
-      ) : (
-        sortedPlaylists.map(renderPlaylistCard)
-      )}
+      {sortedPlaylists.length === 0 ? <EmptyState type="playlists" /> : sortedPlaylists.map(renderPlaylistCard)}
     </View>
   );
 
@@ -207,11 +199,7 @@ const Sermons = () => {
         </Text>
       </View>
 
-      {sortedSermons.length === 0 ? (
-        <EmptyState type="sermons" />
-      ) : (
-        sortedSermons.map(renderSermonCard)
-      )}
+      {sortedSermons.length === 0 ? <EmptyState type="sermons" /> : sortedSermons.map(renderSermonCard)}
     </View>
   );
 

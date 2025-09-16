@@ -15,27 +15,25 @@ export const updateCurrentScreen = (screen: string) => {
 };
 
 // Initialize app state listener
-AppState.addEventListener('change', (nextAppState) => {
-  isAppInForeground = nextAppState === 'active';
+AppState.addEventListener("change", nextAppState => {
+  isAppInForeground = nextAppState === "active";
 });
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async notification => {
-    const isInMessageScreen = currentScreen === "/(drawer)/messageScreen";
+    const isInMessageScreen = currentScreen === "/messageScreenRoot";
     const isInNotificationsScreen = currentScreen === "/(drawer)/notifications";
-    
+
     // Check if we're currently viewing the relevant content
     const notificationData = notification.request.content.data;
-    const isViewingRelevantMessage = notificationData?.type === "chat" && 
-                                    notificationData?.chatId && 
-                                    isInMessageScreen;
+    const isViewingRelevantMessage = notificationData?.type === "chat" && notificationData?.chatId && isInMessageScreen;
 
     // If app is in foreground, handle internally and suppress OS notification
     if (isAppInForeground) {
       // Always emit the notification event for bell badge updates
       eventBus.emit("notification", notification.request.content);
-      
+
       return {
         shouldShowAlert: false, // Never show OS alert when app is in foreground
         shouldPlaySound: !isViewingRelevantMessage && !isInNotificationsScreen, // Don't play sound if viewing relevant content
@@ -61,7 +59,7 @@ export class PushNotificationHelper {
     try {
       const userStore = useUserStore.getState();
       const currentUserChurch = userStore.currentUserChurch;
-      
+
       // Only register if user is logged in and has a person record
       if (!currentUserChurch?.person?.id) {
         console.log("No user logged in, skipping device registration");
@@ -79,12 +77,16 @@ export class PushNotificationHelper {
       }
 
       // Register device with API
-      await ApiHelper.post("/devices/register", {
-        personId: currentUserChurch.person.id,
-        fcmToken,
-        label: deviceName,
-        deviceInfo: JSON.stringify(deviceInfo)
-      }, "MessagingApi");
+      await ApiHelper.post(
+        "/devices/register",
+        {
+          personId: currentUserChurch.person.id,
+          fcmToken,
+          label: deviceName,
+          deviceInfo: JSON.stringify(deviceInfo)
+        },
+        "MessagingApi"
+      );
 
       console.log("Device registered successfully for user:", currentUserChurch.person.name);
     } catch (error) {
@@ -112,7 +114,6 @@ export class PushNotificationHelper {
       };
     }
   }
-
 
   static async requestUserPermission() {
     try {
@@ -182,17 +183,17 @@ export class PushNotificationHelper {
         if (token.data) {
           fcmToken = token.data;
           useUserStore.getState().setFcmToken(fcmToken);
-          
+
           // 🚨 TESTING: Log device info for push notification testing
           console.log("=== PUSH NOTIFICATION TESTING INFO ===");
           console.log("Expo Push Token:", fcmToken);
           console.log("EAS Project ID: f72e5911-b8d5-467c-ad9e-423c180e9938");
-          
+
           // Get device info
           const deviceName = await DeviceInfo.getDeviceName();
           const deviceId = await DeviceInfo.getUniqueId();
           const currentUser = useUserStore.getState().currentUserChurch;
-          
+
           console.log("Device Name:", deviceName);
           console.log("Device ID:", deviceId);
           console.log("Current User:", currentUser?.person?.name || "Not logged in");
@@ -259,7 +260,6 @@ export class PushNotificationHelper {
       console.error("Error setting up notification listeners:", error);
     }
   }
-
 }
 
 export const eventBus = {
