@@ -15,7 +15,7 @@ export default function AuthLayout() {
     headerStyle: { backgroundColor: "#0D47A1" },
     headerTintColor: "#FFF",
     headerLeft: () => (
-      <TouchableOpacity onPress={navigationBackNormal} style={{ marginLeft: 15 }}>
+      <TouchableOpacity onPress={navigationBackNormal} style={{ marginHorizontal: 10 }}>
         <MaterialIcons name="arrow-back" size={24} color={theme.colors.onPrimary} />
       </TouchableOpacity>
     )

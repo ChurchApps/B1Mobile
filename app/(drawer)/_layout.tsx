@@ -9,9 +9,11 @@ import { useRouter } from "expo-router";
 import { CustomDrawer } from "../../src/components/CustomDrawer";
 import { ErrorBoundary } from "../../src/components/ErrorBoundary";
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
+import { useCurrentUserChurch } from "@/stores/useUserStore";
 
 export default function DrawerLayout() {
   const router = useRouter();
+  const currentChurch = useCurrentUserChurch();
 
   // Helper: get current route name
   const getCurrentRouteName = (state: any) => {
@@ -80,7 +82,14 @@ export default function DrawerLayout() {
         <Drawer.Screen name="plan" options={{ title: "Plans" }} />
         <Drawer.Screen name="sermons" options={{ title: "Sermons" }} />
         <Drawer.Screen name="searchMessageUser" options={{ title: "Search Messages" }} />
-        <Drawer.Screen name="churchSearch" options={{ title: "Church Search", headerRight: () => null }} />
+        <Drawer.Screen
+          name="churchSearch"
+          options={({ navigation }) => ({
+            title: "Church Search",
+            headerRight: () => null,
+            headerLeft: () => (currentChurch ? renderHeaderLeft(navigation, "churchSearch") : null)
+          })}
+        />
       </Drawer>
     </ErrorBoundary>
   );
