@@ -43,7 +43,7 @@ export default function RootLayout() {
   const screens: { name: string; options?: any }[] = [
     { name: "auth" },
     { name: "index", options: { headerShown: false } },
-    { name: "(drawer)", options: { headerShown: false } },
+    { name: "(drawer)", options: { headerShown: false, animation: "none" } },
     { name: "myGroupsRoot", options: { ...defaultHeaderOptions, title: "My Groups", headerBackTitle: "Home" } },
     { name: "groupDetails/[id]/index", options: { ...defaultHeaderOptions, title: "", headerBackTitle: "My Groups" } },
     { name: "notificationsRoot", options: { ...defaultHeaderOptions, title: "Notifications", headerRight: () => <HeaderBell name="person-add" toggleNotifications={() => toggleNotifications("notifications")} /> } },
