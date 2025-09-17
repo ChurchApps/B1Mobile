@@ -36,7 +36,7 @@ dayjs.extend(timezone);
 const GroupDetails = () => {
   const { theme, spacing } = useAppTheme();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
-  const { navigateBack } = useNavigation();
+  const { navigationBackNormal } = useNavigation();
   const { id, activeTab: initialActiveTab } = useLocalSearchParams<{ id: string; activeTab?: string }>();
   const [activeTab, setActiveTab] = useState(initialActiveTab ? parseInt(initialActiveTab) : 0);
 
@@ -218,7 +218,7 @@ const GroupDetails = () => {
       <LoadingWrapper loading={true}>
         <View style={styles.container}>
           <SafeAreaView style={{ flex: 1 }}>
-            <MainHeader title="Loading..." openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
+            <MainHeader title="Loading..." openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigationBackNormal} />
           </SafeAreaView>
         </View>
       </LoadingWrapper>
@@ -239,7 +239,7 @@ const GroupDetails = () => {
           onPress={() => {
             // Refetch all queries
             if (groupDetailsError) refetchEvents();
-            navigateBack();
+            navigationBackNormal();
           }}>
           Go Back
         </Button>
@@ -256,7 +256,7 @@ const GroupDetails = () => {
         <Text variant="bodyMedium" style={{ marginBottom: spacing.lg, textAlign: "center", color: theme.colors.onSurfaceVariant }}>
           The requested group could not be found or you don't have permission to view it.
         </Text>
-        <Button mode="contained" onPress={() => navigateBack()}>
+        <Button mode="contained" onPress={() => navigationBackNormal()}>
           Go Back
         </Button>
       </Surface>
@@ -274,7 +274,7 @@ const GroupDetails = () => {
         <Text variant="bodyMedium" style={{ marginBottom: spacing.lg, textAlign: "center", color: theme.colors.onSurfaceVariant }}>
           Please login to view group details.
         </Text>
-        <Button mode="contained" onPress={() => navigateBack()}>
+        <Button mode="contained" onPress={() => navigationBackNormal()}>
           Go Back
         </Button>
       </Surface>
@@ -297,7 +297,7 @@ const GroupDetails = () => {
   return (
     <>
       <View style={[styles.container, (showEventModal || showChatModal) && { display: 'none' }]}>
-          <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigateBack} />
+          <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigationBackNormal} />
 
           <FlatList
             data={[{ key: "content" }]}
