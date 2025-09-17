@@ -41,7 +41,7 @@ export default function RootLayout() {
 
   // Screens configuration
   const screens: { name: string; options?: any }[] = [
-    { name: "auth" },
+    { name: "auth", options: { headerShown: false } },
     { name: "index", options: { headerShown: false } },
     { name: "(drawer)", options: { headerShown: false, animation: "none" } },
     { name: "myGroupsRoot", options: { ...defaultHeaderOptions, title: "My Groups", headerBackTitle: "Home" } },

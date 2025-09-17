@@ -1,10 +1,10 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Drawer } from "expo-router/drawer";
+import { DrawerActions } from "@react-navigation/native";
 import { View } from "react-native";
-import { useRouter } from "expo-router";
-import { DrawerActions, useNavigation, useNavigationState } from "@react-navigation/native";
-import { IconButton } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { IconButton } from "react-native-paper";
+import { useRouter } from "expo-router";
 
 import { CustomDrawer } from "../../src/components/CustomDrawer";
 import { ErrorBoundary } from "../../src/components/ErrorBoundary";
@@ -12,32 +12,14 @@ import { HeaderBell } from "@/components/wrapper/HeaderBell";
 
 export default function DrawerLayout() {
   const router = useRouter();
-  const navigation = useNavigation();
 
-  const handleDrawerOpen = useCallback(() => {
-    (navigation as any).dispatch(DrawerActions.openDrawer());
-  }, [navigation]);
-
-  // Get the current drawer screen name
-  const currentRouteName = useNavigationState(state => {
-    const route = state.routes[state.index];
-    if (route.state) {
-      const nestedState = route.state as any;
-      const nestedRoute = nestedState.routes[nestedState.index];
-      return nestedRoute.name;
-    }
-    return route.name;
-  });
-
-  // Back or menu button for header
-  const HeaderLeftButton = () => {
-    if (currentRouteName === "dashboard") {
-      return <IconButton icon="menu" size={24} color="#FFF" onPress={handleDrawerOpen} />;
-    }
-    return <MaterialIcons name="arrow-back" size={24} color="#FFF" style={{ marginLeft: 8 }} onPress={() => router.replace("/(drawer)/dashboard")} />;
+  // Helper: get current route name
+  const getCurrentRouteName = (state: any) => {
+    const currentRoute = state.routes[state.index];
+    return currentRoute.state?.routes[currentRoute.state.index]?.name || currentRoute.name;
   };
 
-  // Notification button handler
+  // Notifications handler
   const toggleNotifications = (type?: string) => {
     if (type === "notifications") {
       router.push("/(drawer)/searchMessageUser");
@@ -46,60 +28,59 @@ export default function DrawerLayout() {
     }
   };
 
-  // Drawer screens configuration
-  const screens: { name: string; title: string; customHeaderRight?: () => JSX.Element }[] = [
-    { name: "myGroups", title: "My Groups" },
-    { name: "notifications", title: "Notifications", customHeaderRight: () => <HeaderBell name="person-add" toggleNotifications={() => toggleNotifications("notifications")} /> },
-    { name: "dashboard", title: "Home" },
-    { name: "votd", title: "Verse of the day" },
-    { name: "service", title: "Checkin" },
-    { name: "donation", title: "Donation" },
-    { name: "membersSearch", title: "Directory" },
-    { name: "plan", title: "Plans" },
-    { name: "sermons", title: "Sermons" },
-    { name: "searchMessageUser", title: "Search Messages" }
-  ];
+  // Common header options
+  const commonHeaderOptions = {
+    headerShown: true,
+    headerStyle: { backgroundColor: "#0D47A1" },
+    headerTintColor: "#FFF",
+    drawerStyle: { width: 280, backgroundColor: "#F6F6F8" },
+    drawerType: "slide" as const,
+    overlayColor: "rgba(0, 0, 0, 0.5)"
+  };
+
+  // Header left renderer
+  const renderHeaderLeft = (navigation: any, currentRouteName: string) => {
+    const isDashboard = currentRouteName === "dashboard";
+
+    return (
+      <View style={{ flexDirection: "row", alignItems: "center", paddingLeft: !isDashboard ? 10 : 0 }}>
+        {!isDashboard && <MaterialIcons name="chevron-left" size={27} color="#FFF" onPress={() => router.replace("/(drawer)/dashboard")} />}
+        <IconButton icon="menu" size={27} iconColor="#FFF" onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+      </View>
+    );
+  };
 
   return (
     <ErrorBoundary>
       <Drawer
-        screenOptions={({ navigation, route }) => {
-          // Keep this function exactly as you wrote it
+        screenOptions={({ navigation }) => {
           const state = navigation.getState() as any;
-          const currentRoute = state.routes[state.index];
-          const currentRouteName = currentRoute.state?.routes[currentRoute.state.index]?.name || currentRoute.name;
+          const currentRouteName = getCurrentRouteName(state);
 
           return {
-            headerShown: true,
-            headerStyle: { backgroundColor: "#0D47A1" },
-            headerTintColor: "#FFF",
-            headerLeft: () => {
-              const isDashboard = currentRouteName === "dashboard";
-
-              return (
-                <View style={{ flexDirection: "row", alignItems: "center", paddingLeft: !isDashboard ? 10 : 0 }}>
-                  {!isDashboard && <MaterialIcons name="chevron-left" size={27} color="#FFF" onPress={() => router.replace("/(drawer)/dashboard")} />}
-                  <IconButton icon="menu" size={27} iconColor="#FFF" onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
-                </View>
-              );
-            },
-            headerRight: () => <HeaderBell toggleNotifications={toggleNotifications} />,
-            drawerStyle: { width: 280, backgroundColor: "#F6F6F8" },
-            drawerType: "slide",
-            overlayColor: "rgba(0, 0, 0, 0.5)"
+            ...commonHeaderOptions,
+            headerLeft: () => renderHeaderLeft(navigation, currentRouteName),
+            headerRight: () => <HeaderBell toggleNotifications={toggleNotifications} />
           };
         }}
         drawerContent={props => <CustomDrawer {...props} />}>
-        {screens.map(screen => (
-          <Drawer.Screen
-            key={screen.name}
-            name={screen.name}
-            options={{
-              title: screen.title,
-              headerRight: screen.customHeaderRight ? () => screen.customHeaderRight!() : undefined
-            }}
-          />
-        ))}
+        <Drawer.Screen name="dashboard" options={{ title: "Home" }} />
+        <Drawer.Screen name="myGroups" options={{ title: "My Groups" }} />
+        <Drawer.Screen
+          name="notifications"
+          options={{
+            title: "Notifications",
+            headerRight: () => <HeaderBell name="person-add" toggleNotifications={() => toggleNotifications("notifications")} />
+          }}
+        />
+        <Drawer.Screen name="votd" options={{ title: "Verse of the Day" }} />
+        <Drawer.Screen name="service" options={{ title: "Checkin" }} />
+        <Drawer.Screen name="donation" options={{ title: "Donation" }} />
+        <Drawer.Screen name="membersSearch" options={{ title: "Directory" }} />
+        <Drawer.Screen name="plan" options={{ title: "Plans" }} />
+        <Drawer.Screen name="sermons" options={{ title: "Sermons" }} />
+        <Drawer.Screen name="searchMessageUser" options={{ title: "Search Messages" }} />
+        <Drawer.Screen name="churchSearch" options={{ title: "Church Search", headerRight: () => null }} />
       </Drawer>
     </ErrorBoundary>
   );
