@@ -8,11 +8,12 @@ import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-import { MainHeader } from "../../../../src/components/wrapper/MainHeader";
-import { LoadingWrapper } from "../../../../src/components/wrapper/LoadingWrapper";
-import { VideoPlayer, VideoPreview, SermonInfo, SermonActions } from "../../../../src/components/sermonDetails/exports";
-import { UserHelper } from "../../../../src/helpers";
-import { SermonInterface } from "../../../../src/mobilehelper";
+import { MainHeader } from "../../../src/components/wrapper/MainHeader";
+import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
+import { VideoPlayer, VideoPreview, SermonInfo, SermonActions } from "../../../src/components/sermonDetails/exports";
+import { UserHelper } from "../../../src/helpers";
+import { SermonInterface } from "../../../src/mobilehelper";
+import { useScreenHeader } from "@/hooks/useNavigationHeader";
 
 const theme = {
   ...MD3LightTheme,
@@ -48,6 +49,8 @@ const SermonDetails = () => {
   useEffect(() => {
     UserHelper.addOpenScreenEvent("SermonDetailsScreen");
   }, []);
+
+  useScreenHeader({ title: title, placeholder: "Sermon" });
 
   // Fetch sermon details
   const {
@@ -120,41 +123,19 @@ const SermonDetails = () => {
     ]);
   };
 
-  const renderVideoPlayer = () => (
-    <VideoPlayer videoUrl={videoUrl || ""} visible={showVideo} />
-  );
+  const renderVideoPlayer = () => <VideoPlayer videoUrl={videoUrl || ""} visible={showVideo} />;
 
   const renderVideoPreview = () => {
     if (!sermon) return null;
-    return (
-      <VideoPreview 
-        sermon={sermon} 
-        onPlay={() => setShowVideo(true)} 
-        visible={!showVideo} 
-        formatDuration={formatDuration} 
-      />
-    );
+    return <VideoPreview sermon={sermon} onPlay={() => setShowVideo(true)} visible={!showVideo} formatDuration={formatDuration} />;
   };
 
   const renderSermonInfo = () => {
     if (!sermon) return null;
-    return (
-      <SermonInfo 
-        sermon={sermon} 
-        playlistTitle={playlistTitle} 
-        formatDuration={formatDuration} 
-      />
-    );
+    return <SermonInfo sermon={sermon} playlistTitle={playlistTitle} formatDuration={formatDuration} />;
   };
 
-  const renderActionButtons = () => (
-    <SermonActions 
-      onShare={handleShare} 
-      onExternalLink={handleExternalLink} 
-      onWatchVideo={() => setShowVideo(true)} 
-      showWatchButton={!showVideo} 
-    />
-  );
+  const renderActionButtons = () => <SermonActions onShare={handleShare} onExternalLink={handleExternalLink} onWatchVideo={() => setShowVideo(true)} showWatchButton={!showVideo} />;
 
   if (error) {
     return (
@@ -180,7 +161,7 @@ const SermonDetails = () => {
 
   return (
     <PaperProvider theme={theme}>
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <LoadingWrapper loading={isLoading}>
           <View style={styles.content}>
             <MainHeader title={sermon?.title || title || "Sermon"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
@@ -196,7 +177,7 @@ const SermonDetails = () => {
             {showVideo && <FAB icon={() => <MaterialIcons name="close" size={24} color="#FFFFFF" />} style={styles.fab} onPress={() => setShowVideo(false)} label="Close Video" />}
           </View>
         </LoadingWrapper>
-      </SafeAreaView>
+      </View>
     </PaperProvider>
   );
 };

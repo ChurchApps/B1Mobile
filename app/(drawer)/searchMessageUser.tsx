@@ -57,7 +57,7 @@ const SearchMessageUser = () => {
   const userSelection = useCallback(async (userData: UserSearchInterface) => {
     try {
       router.navigate({
-        pathname: "/messageScreen",
+        pathname: "/messageScreenRoot",
         params: {
           userDetails: JSON.stringify(userData)
         }

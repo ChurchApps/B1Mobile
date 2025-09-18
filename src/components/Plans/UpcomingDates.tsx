@@ -69,45 +69,45 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
               <Text style={styles.emptyStateSubtext}>Your future assignments will appear here</Text>
             </View>
           ) : (
-        <View style={styles.cardsList}>
-          {upcomingDates.map((item, idx) => (
-            <Card key={idx} style={styles.upcomingCard} mode="elevated">
-              <TouchableOpacity style={styles.cardTouchable} activeOpacity={0.7} onPress={() => router.push("/(drawer)/planDetails/" + item.planId)}>
-                <Card.Content style={styles.cardContent}>
-                  <View style={styles.cardHeader}>
-                    <View style={styles.planInfo}>
-                      <Text style={styles.planName} numberOfLines={1}>
-                        {item.planName}
-                      </Text>
-                    </View>
-                    <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-                      <Text style={styles.statusText}>{item.status}</Text>
-                    </View>
-                  </View>
-
-                  <View style={styles.detailsContainer}>
-                    <View style={styles.detailRow}>
-                      <MaterialIcons name="event" size={18} color="#0D47A1" />
-                      <Text style={styles.detailText}>{dayjs(item.serviceDate).format("MMM DD, YYYY")}</Text>
-                    </View>
-
-                    {item.time && (
-                      <View style={styles.detailRow}>
-                        <MaterialIcons name="access-time" size={18} color="#0D47A1" />
-                        <Text style={styles.detailText}>{item.time}</Text>
+            <View style={styles.cardsList}>
+              {upcomingDates.map((item, idx) => (
+                <Card key={idx} style={styles.upcomingCard} mode="elevated">
+                  <TouchableOpacity style={styles.cardTouchable} activeOpacity={0.7} onPress={() => router.push("/planDetails/" + item.planId)}>
+                    <Card.Content style={styles.cardContent}>
+                      <View style={styles.cardHeader}>
+                        <View style={styles.planInfo}>
+                          <Text style={styles.planName} numberOfLines={1}>
+                            {item.planName}
+                          </Text>
+                        </View>
+                        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+                          <Text style={styles.statusText}>{item.status}</Text>
+                        </View>
                       </View>
-                    )}
 
-                    <View style={styles.roleContainer}>
-                      <MaterialIcons name="assignment-ind" size={18} color="#0D47A1" />
-                      <Text style={styles.roleText}>{item.position}</Text>
-                    </View>
-                  </View>
-                </Card.Content>
-              </TouchableOpacity>
-            </Card>
-          ))}
-        </View>
+                      <View style={styles.detailsContainer}>
+                        <View style={styles.detailRow}>
+                          <MaterialIcons name="event" size={18} color="#0D47A1" />
+                          <Text style={styles.detailText}>{dayjs(item.serviceDate).format("MMM DD, YYYY")}</Text>
+                        </View>
+
+                        {item.time && (
+                          <View style={styles.detailRow}>
+                            <MaterialIcons name="access-time" size={18} color="#0D47A1" />
+                            <Text style={styles.detailText}>{item.time}</Text>
+                          </View>
+                        )}
+
+                        <View style={styles.roleContainer}>
+                          <MaterialIcons name="assignment-ind" size={18} color="#0D47A1" />
+                          <Text style={styles.roleText}>{item.position}</Text>
+                        </View>
+                      </View>
+                    </Card.Content>
+                  </TouchableOpacity>
+                </Card>
+              ))}
+            </View>
           )}
         </Card.Content>
       </Card>

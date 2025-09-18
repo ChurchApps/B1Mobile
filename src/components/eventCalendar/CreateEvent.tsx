@@ -1,24 +1,14 @@
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { ApiHelper, DateHelper, EventExceptionInterface, EventInterface } from "../../mobilehelper";
+import { ApiHelper, EventExceptionInterface, EventInterface } from "../../mobilehelper";
 import dayjs from "dayjs";
 import React, { useState, useRef } from "react";
 import { Alert, StyleSheet, View, ScrollView, SafeAreaView } from "react-native";
 import DatePicker from "react-native-date-picker";
-import { 
-  Text, 
-  TextInput, 
-  Button, 
-  Switch, 
-  IconButton, 
-  Divider,
-  ActivityIndicator,
-  Appbar
-} from "react-native-paper";
+import { Text, TextInput, Button, Switch, Appbar } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import CheckBox from "../CheckBox";
 import EditRecurringModal from "./EditRecurringModal";
 import RRuleEditor from "./RRuleEditor";
-
+import { useScreenHeader } from "@/hooks/useNavigationHeader";
 
 interface Props {
   event: EventInterface;
@@ -28,7 +18,7 @@ interface Props {
 export default function CreateEvent(props: Props) {
   const getInitialEvent = () => {
     const baseEvent = { ...props.event };
-    
+
     // Set default dates if not provided
     if (!baseEvent.start) {
       const tomorrow = new Date();
@@ -36,14 +26,14 @@ export default function CreateEvent(props: Props) {
       tomorrow.setHours(14, 0, 0, 0); // 2:00 PM
       baseEvent.start = tomorrow.toISOString();
     }
-    
+
     if (!baseEvent.end) {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(15, 0, 0, 0); // 3:00 PM
       baseEvent.end = tomorrow.toISOString();
     }
-    
+
     return baseEvent;
   };
 
@@ -61,10 +51,22 @@ export default function CreateEvent(props: Props) {
   const [openStartPicker, setOpenStartPicker] = useState(false);
   const [openEndPicker, setOpenEndPicker] = useState(false);
 
+  useScreenHeader({
+    title: event?.id ? "Edit Event" : "Create Event",
+    headerRight: event?.id
+      ? () => (
+        <View>
+          <Appbar.Action icon="delete" onPress={handleDelete} color="white" />
+        </View>
+      )
+      : undefined,
+    dependencies: [event?.id, event?.recurrenceRule] // dynamic dependencies
+  });
+
   const getDefaultStartDate = () => {
     if (event.start) {
       const date = new Date(event.start);
-      console.log('getDefaultStartDate conversion:', {
+      console.log("getDefaultStartDate conversion:", {
         utcString: event.start,
         localDate: date.toString(),
         localISO: date.toISOString()
@@ -80,7 +82,7 @@ export default function CreateEvent(props: Props) {
   const getDefaultEndDate = () => {
     if (event.end) {
       const date = new Date(event.end);
-      console.log('getDefaultEndDate conversion:', {
+      console.log("getDefaultEndDate conversion:", {
         utcString: event.end,
         localDate: date.toString(),
         localISO: date.toISOString()
@@ -98,7 +100,7 @@ export default function CreateEvent(props: Props) {
 
   const [showEventEditModal, setShowEventEditModal] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
-  
+
   const scrollViewRef = useRef<ScrollView>(null);
 
   const handleSave = () => {
@@ -112,8 +114,8 @@ export default function CreateEvent(props: Props) {
       }
 
       ev.recurrenceRule = rRule;
-      
-      console.log('handleSave - sending event to API:', {
+
+      console.log("handleSave - sending event to API:", {
         id: ev.id,
         title: ev.title,
         start: ev.start,
@@ -121,16 +123,19 @@ export default function CreateEvent(props: Props) {
         startType: typeof ev.start,
         endType: typeof ev.end
       });
-      
+
       setLoading(true);
-      ApiHelper.post("/events", [ev], "ContentApi").then(() => {
-        setLoading(false);
-        if (props.onDone) props.onDone();
-      }).catch((error) => {
-        setLoading(false);
-        Alert.alert("Error", "Failed to create event. Please try again.");
-        console.error("Error creating event:", error);
-      });
+      ApiHelper.post("/events", [ev], "ContentApi")
+        .then(() => {
+          setLoading(false);
+          console.log("Event saved successfully");
+          if (props.onDone) props.onDone();
+        })
+        .catch(error => {
+          setLoading(false);
+          Alert.alert("Error", "Failed to create event. Please try again.");
+          console.error("Error creating event:", error);
+        });
     }
   };
 
@@ -221,7 +226,7 @@ export default function CreateEvent(props: Props) {
       setRRule(updatedEvent.recurrenceRule);
       return updatedEvent;
     });
-    
+
     // Scroll to recurrence rules when enabled
     if (checked) {
       setTimeout(() => {
@@ -237,7 +242,7 @@ export default function CreateEvent(props: Props) {
       selectedDate: e.toString(),
       selectedUTC: e.toISOString()
     });
-    
+
     switch (type) {
       case "start":
         // Store as ISO string for API compatibility (UTC)
@@ -253,13 +258,14 @@ export default function CreateEvent(props: Props) {
     setEvent(env);
   };
 
-
   const handleDelete = async () => {
     if (props.event.recurrenceRule) {
+      console.log("Event not deleted");
       setRecurrenceModalType("delete");
       setShowEventEditModal(true);
     } else {
       ApiHelper.delete("/events/" + event.id, "ContentApi").then(() => {
+        console.log("Event deleted successfully");
         if (props.onDone) props.onDone();
       });
     }
@@ -277,28 +283,13 @@ export default function CreateEvent(props: Props) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <Appbar.Header style={styles.header}>
-        <Appbar.BackAction onPress={() => props.onDone?.()} />
-        <Appbar.Content title={event?.id ? "Edit Event" : "Create Event"} />
-        {event?.id && (
-          <Appbar.Action 
-            icon="delete" 
-            onPress={handleDelete}
-          />
-        )}
-      </Appbar.Header>
-
       {/* Content */}
-      <ScrollView 
-        ref={scrollViewRef}
-        style={styles.scrollView} 
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView ref={scrollViewRef} style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Title */}
         <View style={styles.fieldContainer}>
-          <Text variant="titleMedium" style={styles.fieldLabel}>Event Title</Text>
+          <Text variant="titleMedium" style={styles.fieldLabel}>
+            Event Title
+          </Text>
           <TextInput
             mode="outlined"
             placeholder="Enter event title"
@@ -314,7 +305,9 @@ export default function CreateEvent(props: Props) {
 
         {/* Description */}
         <View style={styles.fieldContainer}>
-          <Text variant="titleMedium" style={styles.fieldLabel}>Description</Text>
+          <Text variant="titleMedium" style={styles.fieldLabel}>
+            Description
+          </Text>
           <TextInput
             mode="outlined"
             placeholder="Enter event description (optional)"
@@ -334,41 +327,25 @@ export default function CreateEvent(props: Props) {
           <Text variant="titleMedium" style={styles.fieldLabel}>
             {allDay ? "Date" : "Date & Time"}
           </Text>
-          
+
           <View style={styles.dateTimeContainer}>
             <View style={styles.dateTimeRow}>
-              <Text variant="bodyMedium" style={styles.dateTimeLabel}>Start</Text>
-              <Button
-                mode="outlined"
-                onPress={() => setOpenStartPicker(true)}
-                style={styles.dateTimeButton}
-                contentStyle={styles.dateTimeButtonContent}
-              >
+              <Text variant="bodyMedium" style={styles.dateTimeLabel}>
+                Start
+              </Text>
+              <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
                 <MaterialIcons name="event" size={16} color="#0D47A1" />
-                <Text style={styles.dateTimeText}>
-                  {allDay 
-                    ? dayjs(startDate).format("MMM DD, YYYY")
-                    : dayjs(startDate).format("MMM DD, YYYY HH:mm")
-                  }
-                </Text>
+                <Text style={styles.dateTimeText}>{allDay ? dayjs(startDate).format("MMM DD, YYYY") : dayjs(startDate).format("MMM DD, YYYY HH:mm")}</Text>
               </Button>
             </View>
 
             <View style={styles.dateTimeRow}>
-              <Text variant="bodyMedium" style={styles.dateTimeLabel}>End</Text>
-              <Button
-                mode="outlined"
-                onPress={() => setOpenEndPicker(true)}
-                style={styles.dateTimeButton}
-                contentStyle={styles.dateTimeButtonContent}
-              >
+              <Text variant="bodyMedium" style={styles.dateTimeLabel}>
+                End
+              </Text>
+              <Button mode="outlined" onPress={() => setOpenEndPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
                 <MaterialIcons name="event" size={16} color="#0D47A1" />
-                <Text style={styles.dateTimeText}>
-                  {allDay 
-                    ? dayjs(endDate).format("MMM DD, YYYY")
-                    : dayjs(endDate).format("MMM DD, YYYY HH:mm")
-                  }
-                </Text>
+                <Text style={styles.dateTimeText}>{allDay ? dayjs(endDate).format("MMM DD, YYYY") : dayjs(endDate).format("MMM DD, YYYY HH:mm")}</Text>
               </Button>
             </View>
           </View>
@@ -376,12 +353,17 @@ export default function CreateEvent(props: Props) {
 
         {/* Options */}
         <View style={styles.fieldContainer}>
-          <Text variant="titleMedium" style={styles.fieldLabel}>Options</Text>
-          
+          <Text variant="titleMedium" style={styles.fieldLabel}>
+            {"Options"}
+          </Text>
           <View style={styles.optionRow}>
             <View style={styles.optionInfo}>
-              <Text variant="bodyLarge" style={styles.optionTitle}>All Day Event</Text>
-              <Text variant="bodySmall" style={styles.optionSubtitle}>Event lasts the entire day</Text>
+              <Text variant="bodyLarge" style={styles.optionTitle}>
+                All Day Event
+              </Text>
+              <Text variant="bodySmall" style={styles.optionSubtitle}>
+                Event lasts the entire day
+              </Text>
             </View>
             <Switch
               value={allDay}
@@ -395,8 +377,12 @@ export default function CreateEvent(props: Props) {
 
           <View style={styles.optionRow}>
             <View style={styles.optionInfo}>
-              <Text variant="bodyLarge" style={styles.optionTitle}>Exclude from Curated Calendars</Text>
-              <Text variant="bodySmall" style={styles.optionSubtitle}>Hide from public event listings</Text>
+              <Text variant="bodyLarge" style={styles.optionTitle}>
+                Exclude from Curated Calendars
+              </Text>
+              <Text variant="bodySmall" style={styles.optionSubtitle}>
+                Hide from public event listings
+              </Text>
             </View>
             <Switch
               value={isPrivate}
@@ -413,21 +399,23 @@ export default function CreateEvent(props: Props) {
 
           <View style={styles.optionRow}>
             <View style={styles.optionInfo}>
-              <Text variant="bodyLarge" style={styles.optionTitle}>Recurring Event</Text>
-              <Text variant="bodySmall" style={styles.optionSubtitle}>Event repeats on a schedule</Text>
+              <Text variant="bodyLarge" style={styles.optionTitle}>
+                Recurring Event
+              </Text>
+              <Text variant="bodySmall" style={styles.optionSubtitle}>
+                Event repeats on a schedule
+              </Text>
             </View>
-            <Switch
-              value={recurring}
-              onValueChange={handleToggleRecurring}
-              color="#0D47A1"
-            />
+            <Switch value={recurring} onValueChange={handleToggleRecurring} color="#0D47A1" />
           </View>
         </View>
 
         {/* Recurrence Rule Editor */}
         {recurring && (
           <View style={styles.fieldContainer}>
-            <Text variant="titleMedium" style={styles.fieldLabel}>Recurrence Pattern</Text>
+            <Text variant="titleMedium" style={styles.fieldLabel}>
+              Recurrence Pattern
+            </Text>
             <RRuleEditor
               start={startDate}
               rRule={rRule || ""}
@@ -442,20 +430,10 @@ export default function CreateEvent(props: Props) {
       {/* Fixed Bottom Actions - Hide when recurring edit modal is open */}
       {!showEventEditModal && (
         <View style={styles.bottomActions}>
-          <Button
-            mode="outlined"
-            onPress={() => props.onDone?.()}
-            style={styles.actionButton}
-          >
+          <Button mode="outlined" onPress={() => props.onDone?.()} style={styles.actionButton}>
             Cancel
           </Button>
-          <Button
-            mode="contained"
-            onPress={event?.id ? handleEditEvent : handleSave}
-            loading={loading}
-            disabled={!title.trim() || loading}
-            style={styles.actionButton}
-          >
+          <Button mode="contained" onPress={event?.id ? handleEditEvent : handleSave} loading={loading} disabled={!title.trim() || loading} style={styles.actionButton}>
             {event?.id ? "Save Changes" : "Create Event"}
           </Button>
         </View>

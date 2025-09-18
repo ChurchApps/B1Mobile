@@ -1,4 +1,4 @@
-import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserSearchInterface } from "../../src/helpers";
+import { ApiHelper, ConversationCheckInterface, UserSearchInterface } from "../../src/helpers";
 import { NavigationProps } from "../../src/interfaces";
 import { useNavigation } from "@react-navigation/native";
 import dayjs from "dayjs";
@@ -10,7 +10,6 @@ import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { useQuery } from "@tanstack/react-query";
 import { Loader } from "./Loader";
 import { router } from "expo-router";
-import { OptimizedImage } from "./OptimizedImage";
 import { useCurrentUserChurch } from "../stores/useUserStore";
 import { Avatar } from "./common/Avatar";
 
@@ -90,27 +89,31 @@ export function NotificationTab() {
       return;
     }
     setLoading(true);
-    ApiHelper.get("/privateMessages", "MessagingApi").then((data: ConversationCheckInterface[]) => {
-      if (data && data.length != 0) {
-        setChatList(data);
-      }
-      setLoading(false);
-      let userIdList: string[] = [];
-      if (Object.keys(data).length != 0) {
-        userIdList = data.map(e => (currentUserChurch?.person?.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
-        if (userIdList.length != 0) {
-          ApiHelper.get("/people/basic?ids=" + userIdList.join(","), "MembershipApi").then((userData: UserSearchInterface[]) => {
-            // setLoading(false);
-            for (let i = 0; i < userData.length; i++) {
-              const singleUser: UserSearchInterface = userData[i];
-              const tempConvo: ConversationCheckInterface | undefined = data.find(x => x.fromPersonId == singleUser.id || x.toPersonId == singleUser.id);
-              userData[i].conversationId = tempConvo?.conversationId;
-            }
-            setUserData(userData);
-          });
+    ApiHelper.get("/privateMessages", "MessagingApi")
+      .then((data: ConversationCheckInterface[]) => {
+        if (data && data.length != 0) {
+          setChatList(data);
         }
-      }
-    });
+        setLoading(false);
+        let userIdList: string[] = [];
+        if (Object.keys(data).length != 0) {
+          userIdList = data.map(e => (currentUserChurch?.person?.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
+          if (userIdList.length != 0) {
+            ApiHelper.get("/people/basic?ids=" + userIdList.join(","), "MembershipApi").then((userData: UserSearchInterface[]) => {
+              // setLoading(false);
+              for (let i = 0; i < userData.length; i++) {
+                const singleUser: UserSearchInterface = userData[i];
+                const tempConvo: ConversationCheckInterface | undefined = data.find(x => x.fromPersonId == singleUser.id || x.toPersonId == singleUser.id);
+                userData[i].conversationId = tempConvo?.conversationId;
+              }
+              setUserData(userData);
+            });
+          }
+        }
+      })
+      .catch(err => {
+        setLoading(false);
+      });
   };
 
   const renderChatListItems = (item: any) => {
@@ -120,7 +123,7 @@ export function NotificationTab() {
       photo: item.photo
     };
     return (
-      <Card style={styles.messageCard} mode="elevated" onPress={() => router.push({ pathname: "/(drawer)/messageScreen", params: { userDetails: JSON.stringify(userchatDetails) } })}>
+      <Card style={styles.messageCard} mode="elevated" onPress={() => router.push({ pathname: "/messageScreenRoot", params: { userDetails: JSON.stringify(userchatDetails) } })}>
         <Card.Content style={styles.messageContent}>
           <View style={styles.messageHeader}>
             <View style={styles.avatarContainer}>
@@ -216,7 +219,7 @@ export function NotificationTab() {
             <Text variant="bodyMedium" style={styles.emptySubtitle}>
               Start a conversation with someone from your church
             </Text>
-            <Button mode="contained" onPress={() => router.push("/(drawer)/searchMessageUser")} style={styles.actionButton}>
+            <Button mode="contained" onPress={() => router.push("/searchMessageUserRoot")} style={styles.actionButton}>
               <Text style={styles.actionButtonText}>Find People</Text>
             </Button>
           </View>
@@ -271,8 +274,7 @@ export function NotificationTab() {
   return (
     <PaperProvider theme={theme}>
       <View style={styles.container}>
-        {isLoading && <Loader isLoading={isLoading} />}
-        <TabView navigationState={{ index: 0, routes }} renderScene={renderScene} onIndexChange={() => { }} swipeEnabled={false} renderTabBar={renderTabBar} initialLayout={{ width: 400 }} />
+        <TabView navigationState={{ index: 0, routes }} renderScene={renderScene} onIndexChange={() => {}} swipeEnabled={false} renderTabBar={renderTabBar} initialLayout={{ width: 400 }} />
       </View>
     </PaperProvider>
   );

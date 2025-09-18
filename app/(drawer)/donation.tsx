@@ -1,8 +1,5 @@
 import React from "react";
-import {
-  EnhancedDonationForm,
-  EnhancedGivingHistory
-} from "../../src/components/donations/LazyDonationComponents";
+import { EnhancedDonationForm, EnhancedGivingHistory } from "../../src/components/donations/LazyDonationComponents";
 import { GivingOverview, DonationTabBar, ManagePayments } from "../../src/components/donations/sections/exports";
 import { UserHelper } from "@/helpers/UserHelper";
 import { ErrorHelper } from "../../src/mobilehelper";
@@ -52,11 +49,7 @@ const Donation = () => {
   const person = currentUserChurch?.person;
 
   // Example of stale-while-revalidate for donation funds
-  const {
-    data: fundsData,
-    showSkeleton: showFundsSkeleton,
-    isRevalidating: fundsRevalidating
-  } = useDonationFunds(currentUserChurch?.church?.id || '');
+  const { data: fundsData, showSkeleton: showFundsSkeleton, isRevalidating: fundsRevalidating } = useDonationFunds(currentUserChurch?.church?.id || "");
 
   // Use react-query for gateway data
   const {
@@ -149,26 +142,11 @@ const Donation = () => {
     return { ytd, totalGifts, lastGift, lastGiftDate };
   }, [donationImpactData]);
 
-  const renderOverviewSection = () => (
-    <GivingOverview
-      givingStats={givingStats}
-      onDonatePress={() => setActiveSection("donate")}
-      onHistoryPress={() => setActiveSection("history")}
-    />
-  );
+  const renderOverviewSection = () => <GivingOverview givingStats={givingStats} onDonatePress={() => setActiveSection("donate")} onHistoryPress={() => setActiveSection("history")} />;
 
   const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />;
 
-  const renderManageSection = () => (
-    <ManagePayments
-      person={person}
-      customerId={customerId}
-      paymentMethods={paymentMethods}
-      isLoading={areMethodsLoading}
-      publishKey={publishKey}
-      loadData={loadData}
-    />
-  );
+  const renderManageSection = () => <ManagePayments person={person} customerId={customerId} paymentMethods={paymentMethods} isLoading={areMethodsLoading} publishKey={publishKey} loadData={loadData} />;
 
   const renderHistorySection = () => <EnhancedGivingHistory customerId={customerId} paymentMethods={paymentMethods || []} donationImpactData={donationImpactData || []} donationImpactLoading={donationImpactLoading} />;
 

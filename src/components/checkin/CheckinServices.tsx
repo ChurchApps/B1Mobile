@@ -56,7 +56,6 @@ export const CheckinServices = (props: Props) => {
         // Step 1: Load service times and groups in parallel (like Chums)
         const [serviceTimes, groups] = await Promise.all([ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi"), ApiHelper.get("/groups", "MembershipApi")]);
 
-
         CheckinHelper.serviceTimes = serviceTimes;
         CheckinHelper.serviceId = serviceId;
 
@@ -85,7 +84,6 @@ export const CheckinServices = (props: Props) => {
 
         // Step 6: Load existing attendance
         await loadExistingAttendance(serviceId);
-
       } catch (error) {
         console.error("Error loading member data:", error);
         setLoading(false);
@@ -139,7 +137,7 @@ export const CheckinServices = (props: Props) => {
             {item.name}
           </Text>
           <Text variant="bodyMedium" style={styles.campusName}>
-            {item.campus.name}
+            {item.campus?.name}
           </Text>
         </View>
         <View style={styles.serviceArrow}>

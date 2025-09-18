@@ -14,7 +14,7 @@ interface PlaylistCardProps {
 
 export const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onPress }) => {
   const hasImage = playlist.thumbnail && playlist.thumbnail.trim() !== "";
-  
+
   return (
     <TouchableOpacity onPress={() => onPress(playlist)}>
       <Card style={styles.playlistCard}>

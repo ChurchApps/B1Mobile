@@ -1,12 +1,12 @@
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import React from "react";
-import { Dimensions, SafeAreaView, View } from "react-native";
+import React, { useCallback } from "react";
+import { Dimensions, View } from "react-native";
 // import { Utilities, globalStyles } from '../helpers';
 // import { NavigationProps } from '../interfaces';
 import { globalStyles } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
+import { useFocusEffect, useNavigation } from "expo-router";
 import { UserHelper } from "../../src/helpers/UserHelper";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -16,6 +16,15 @@ const Votd = () => {
   const [shape, setShape] = React.useState("9x16");
 
   const insets = useSafeAreaInsets();
+  const navigationMain = useNavigation();
+
+  useFocusEffect(
+    useCallback(() => {
+      navigationMain.setOptions({
+        title: "Verse of the Day"
+      });
+    }, [navigationMain])
+  );
 
   const getShape = () => {
     const dim = Dimensions.get("screen");
@@ -50,7 +59,7 @@ const Votd = () => {
   const url = "https://votd.org/v1/" + day.toString() + "/" + shape + ".jpg";
 
   return (
-    <View style={[globalStyles.homeContainer, {paddingBottom: insets.bottom}]}>
+    <View style={[globalStyles.homeContainer, { paddingBottom: insets.bottom }]}>
       <MainHeader title="Verse of the Day" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
       <View style={globalStyles.webViewContainer}>
         <OptimizedImage source={{ uri: url }} style={{ flex: 1 }} contentFit="fill" priority="high" />
