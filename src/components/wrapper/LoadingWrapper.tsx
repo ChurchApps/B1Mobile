@@ -50,7 +50,7 @@ export const LoadingWrapper: React.FC<Props> = ({
         Animated.timing(fadeAnim, {
           toValue: 1,
           duration: 200,
-          useNativeDriver: true,
+          useNativeDriver: true
         }).start();
       }, loadingThreshold);
 
@@ -76,7 +76,7 @@ export const LoadingWrapper: React.FC<Props> = ({
           Animated.timing(fadeAnim, {
             toValue: 0,
             duration: 200,
-            useNativeDriver: true,
+            useNativeDriver: true
           }).start(() => {
             runOnJS(() => {
               setIsLoading(false);

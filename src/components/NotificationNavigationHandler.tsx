@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { router } from "expo-router";
 import { eventBus } from "../helpers/PushNotificationHelper";
 
@@ -14,7 +14,7 @@ export const NotificationNavigationHandler = () => {
         if (data?.chatId) {
           // Navigate to message screen with chat ID
           router.push({
-            pathname: "/(drawer)/messageScreen",
+            pathname: "/messageScreenRoot",
             params: {
               chatId: data.chatId
             }

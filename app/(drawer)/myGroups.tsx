@@ -38,7 +38,11 @@ interface Group {
   description?: string;
 }
 
-const MyGroups = () => {
+interface MyGroupsProps {
+  from?: "stack" | "drawer";
+}
+
+const MyGroups = ({ from }: MyGroupsProps) => {
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
   const navigation = useReactNavigation();
   const { navigateBack, router } = useNavigation();

@@ -16,19 +16,12 @@ interface GroupEventModalProps {
   isLeader: boolean;
 }
 
-export const GroupEventModal: React.FC<GroupEventModalProps> = ({
-  isVisible,
-  onClose,
-  selectedDate,
-  selectedEvents,
-  groupId,
-  isLeader
-}) => {
+export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onClose, selectedDate, selectedEvents, groupId, isLeader }) => {
   const handleEditEvent = (event: EventInterface) => {
     onClose();
     router.navigate({
-      pathname: "/(drawer)/createEvent",
-      params: { 
+      pathname: "/createEventRoot",
+      params: {
         event: JSON.stringify(event),
         groupId: groupId
       }
@@ -42,16 +35,11 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({
           <Text variant="headlineSmall" style={styles.eventModalTitle}>
             {dayjs(selectedDate).format("MMMM D, YYYY")} Events
           </Text>
-          <IconButton
-            icon="close"
-            size={24}
-            onPress={onClose}
-            style={styles.eventModalClose}
-          />
+          <IconButton icon="close" size={24} onPress={onClose} style={styles.eventModalClose} />
         </View>
-        
+
         <Divider style={styles.eventModalDivider} />
-        
+
         <View style={styles.eventsContainer}>
           {selectedEvents &&
             selectedEvents.map((event: EventInterface, index: number) => (
@@ -67,36 +55,24 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({
                           Private
                         </Chip>
                       )}
-                      {isLeader && (
-                        <IconButton
-                          icon="pencil"
-                          size={20}
-                          iconColor="#0D47A1"
-                          onPress={() => handleEditEvent(event)}
-                          style={styles.editEventButton}
-                          mode="contained-tonal"
-                        />
-                      )}
+                      {isLeader && <IconButton icon="pencil" size={20} iconColor="#0D47A1" onPress={() => handleEditEvent(event)} style={styles.editEventButton} mode="contained-tonal" />}
                     </View>
                   </View>
-                  
+
                   {event.description && (
                     <Text variant="bodyMedium" style={styles.eventDescription}>
                       {event.description}
                     </Text>
                   )}
-                  
+
                   <View style={styles.eventDetails}>
                     <View style={styles.eventTime}>
                       <MaterialIcons name="access-time" size={16} color="#666" />
                       <Text variant="bodySmall" style={styles.eventTimeText}>
-                        {event.allDay 
-                          ? "All day" 
-                          : `${dayjs(event.start).format("h:mm A")} - ${dayjs(event.end).format("h:mm A")}`
-                        }
+                        {event.allDay ? "All day" : `${dayjs(event.start).format("h:mm A")} - ${dayjs(event.end).format("h:mm A")}`}
                       </Text>
                     </View>
-                    
+
                     {event.recurrenceRule && (
                       <View style={styles.eventRecurrence}>
                         <MaterialIcons name="repeat" size={16} color="#666" />

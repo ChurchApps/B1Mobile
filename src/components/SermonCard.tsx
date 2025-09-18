@@ -49,13 +49,11 @@ export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDur
             </View>
 
             {/* Duration badge */}
-            {showDuration && sermon.duration && (
+            {showDuration && sermon.duration ? (
               <View style={styles.durationBadge}>
-                <Text variant="bodySmall" style={styles.durationText}>
-                  {formatDuration(sermon.duration)}
-                </Text>
+                <Text style={styles.durationText}>{formatDuration(sermon.duration)}</Text>
               </View>
-            )}
+            ) : null}
 
             {/* Text overlay at bottom */}
             <View style={styles.textOverlay}>

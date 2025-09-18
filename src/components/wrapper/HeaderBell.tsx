@@ -3,9 +3,13 @@ import React, { useEffect, useState } from "react";
 import { IconButton } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
 import { useNavigation } from "@react-navigation/native";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { View } from "react-native";
 
 interface Props {
   toggleNotifications: () => void;
+  name?: string;
+  isDetail?: boolean;
 }
 
 interface NotificationData {
@@ -44,7 +48,7 @@ export const HeaderBell = (props: Props) => {
           return;
         }
       }
-      
+
       // If we're in the notifications screen, don't increment badge for any notifications
       if (routeName === "notifications") {
         // Just emit the update event but don't increment badge
@@ -81,5 +85,16 @@ export const HeaderBell = (props: Props) => {
     props.toggleNotifications();
   };
 
-  return <IconButton icon={badgeCount > 0 ? "bell-badge" : "bell"} iconColor={badgeCount > 0 ? theme.colors.error : theme.colors.onPrimary} size={24} onPress={handlePress} style={componentStyles.button} />;
+  if (props?.name) {
+    return (
+      <View style={{ marginRight: props?.isDetail ? -12 : 0 }}>
+        <MaterialIcons name={props.name as any} size={24} onPress={handlePress} style={componentStyles.button} color="#FFFFFF" />
+      </View>
+    );
+  }
+  return (
+    <View style={{ marginRight: props?.isDetail ? -12 : 0 }}>
+      <IconButton icon={badgeCount > 0 ? "bell-badge" : "bell"} iconColor={badgeCount > 0 ? theme.colors.error : theme.colors.onPrimary} size={24} onPress={handlePress} style={componentStyles.button} />
+    </View>
+  );
 };

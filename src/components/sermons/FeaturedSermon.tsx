@@ -44,11 +44,12 @@ export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress 
               <Text variant="bodyMedium" style={styles.heroDate}>
                 {sermon.publishDate ? DateHelper.prettyDate(new Date(sermon.publishDate)) : ""}
               </Text>
-              {sermon.duration && (
+              {(sermon.duration && (
                 <Text variant="bodySmall" style={styles.heroDuration}>
                   {Math.floor(sermon.duration / 60)}:{(sermon.duration % 60).toString().padStart(2, "0")}
                 </Text>
-              )}
+              )) ||
+                null}
             </View>
             <View style={styles.playButton}>
               <MaterialIcons name="play-arrow" size={32} color="#FFFFFF" />

@@ -131,7 +131,7 @@ const MembersSearch = () => {
 
   const handleMemberPress = useCallback((member: Member) => {
     router.navigate({
-      pathname: "/(drawer)/memberDetail",
+      pathname: "/memberDetailRoot",
       params: { member: JSON.stringify(member) }
     });
   }, []);

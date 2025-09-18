@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
 import { Provider as PaperProvider, Card, Text, MD3LightTheme } from "react-native-paper";
@@ -135,7 +135,7 @@ const Dashboard = () => {
     (item: LinkInterface) => {
       const linkId = generateLinkId(item);
       incrementLinkViewCount(linkId);
-      NavigationUtils.navigateToScreen(item, currentChurch);
+      NavigationUtils.navigateToScreen(item, currentChurch, 'home');
     },
     [generateLinkId, incrementLinkViewCount, currentChurch]
   );
