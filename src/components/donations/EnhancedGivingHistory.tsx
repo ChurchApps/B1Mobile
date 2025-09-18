@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, FlatList, Modal, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { Card, Text, Button, Chip, Menu, Divider } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
-import { CurrencyHelper } from "../../helpers";
+import { ApiHelper, CurrencyHelper, DateHelper } from "../../helpers";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
+import { DonationImpact, StripePaymentMethod, SubscriptionInterface } from "@/interfaces";
 
 interface DonationRecord {
   id: string;
@@ -20,141 +21,49 @@ interface DonationRecord {
 
 interface Props {
   customerId: string;
+  paymentMethods: StripePaymentMethod[];
+  donationImpactData: DonationImpact[];
+  donationImpactLoading?: boolean;
 }
 
-export function EnhancedGivingHistory({ customerId }: Props) {
+export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpactData, donationImpactLoading = false }: Props) {
   const currentUserChurch = useCurrentUserChurch();
-  const [selectedPeriod, setSelectedPeriod] = useState<string>("ytd");
+  // console.log("donationImpactData ---------> ", donationImpactData)
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<DonationRecord | null>(null);
   const [selectedRecurring, setSelectedRecurring] = useState<any>(null);
+  const [subscriptions, setSubscriptions] = useState<SubscriptionInterface[]>([]);
+  const [recurringLoading, setRecurringLoading] = useState<boolean>(false);
+  const donations = donationImpactData ?? [];
+  const donationsLoading = donationImpactLoading;
 
-  // Sample data - in real app this would come from API
-  const { data: donations = [], isLoading: donationsLoading } = useQuery<DonationRecord[]>({
+  const { data: donations1 = [], isLoading: donationsLoading1 } = useQuery<DonationRecord[]>({
     queryKey: ["/donations/history", customerId, selectedPeriod],
     enabled: !!customerId && !!currentUserChurch?.person?.id,
-    placeholderData: [
-      {
-        id: "1",
-        amount: 125.0,
-        fees: 3.93,
-        fund: "General Fund",
-        date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        method: "Visa ****4242",
-        status: "completed",
-        recurring: false
-      },
-      {
-        id: "2",
-        amount: 300.0,
-        fees: 9.2,
-        fund: "Building Fund",
-        date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-        method: "Bank ****7890",
-        status: "completed",
-        recurring: true,
-        frequency: "Monthly"
-      },
-      {
-        id: "3",
-        amount: 75.0,
-        fees: 2.48,
-        fund: "Missions",
-        date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000),
-        method: "Visa ****4242",
-        status: "completed",
-        recurring: false
-      }
-    ],
+    placeholderData: [],
     staleTime: 5 * 60 * 1000,
-    queryFn: async () => {
-      // Simulate loading delay for demo purposes
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return [
-        {
-          id: "1",
-          amount: 125.0,
-          fees: 3.93,
-          fund: "General Fund",
-          date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-          method: "Visa ****4242",
-          status: "completed" as const,
-          recurring: false
-        },
-        {
-          id: "2",
-          amount: 300.0,
-          fees: 9.2,
-          fund: "Building Fund",
-          date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-          method: "Bank ****7890",
-          status: "completed" as const,
-          recurring: true,
-          frequency: "Monthly"
-        },
-        {
-          id: "3",
-          amount: 75.0,
-          fees: 2.48,
-          fund: "Missions",
-          date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000),
-          method: "Visa ****4242",
-          status: "completed" as const,
-          recurring: false
-        }
-      ];
-    }
   });
 
-  const { data: recurringDonations = [], isLoading: recurringLoading } = useQuery({
-    queryKey: ["/donations/recurring", customerId],
-    enabled: !!customerId && !!currentUserChurch?.person?.id,
-    placeholderData: [
-      {
-        id: "r1",
-        amount: 300.0,
-        fund: "Building Fund",
-        frequency: "Monthly",
-        nextDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-        method: "Bank ****7890",
-        status: "active"
-      },
-      {
-        id: "r2",
-        amount: 50.0,
-        fund: "General Fund",
-        frequency: "Weekly",
-        nextDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-        method: "Visa ****4242",
-        status: "active"
-      }
-    ],
-    staleTime: 10 * 60 * 1000,
-    queryFn: async () => {
-      // Simulate loading delay for demo purposes
-      await new Promise(resolve => setTimeout(resolve, 800));
-      return [
-        {
-          id: "r1",
-          amount: 300.0,
-          fund: "Building Fund",
-          frequency: "Monthly",
-          nextDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-          method: "Bank ****7890",
-          status: "active"
-        },
-        {
-          id: "r2",
-          amount: 50.0,
-          fund: "General Fund",
-          frequency: "Weekly",
-          nextDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-          method: "Visa ****4242",
-          status: "active"
+  const loadData = () => {
+    if (customerId) {
+      setRecurringLoading(true);
+      ApiHelper.get("/customers/" + customerId + "/subscriptions", "GivingApi").then((subResult: any) => {
+        const subs: SubscriptionInterface[] = [];
+        const requests = subResult.data?.map((s: any) => ApiHelper.get("/subscriptionfunds?subscriptionId=" + s.id, "GivingApi").then((subFunds: any) => {
+          s.funds = subFunds;
+          subs.push(s);
+        }));
+        if (requests) {
+          return Promise.all(requests).then(() => {
+            setSubscriptions(subs);
+          });
         }
-      ];
+      }).finally(() => { setRecurringLoading(false); });
     }
-  });
+  };
+
+  useEffect(loadData, []);
 
   const periods = [
     { label: "Year to Date", value: "ytd" },
@@ -181,20 +90,23 @@ export function EnhancedGivingHistory({ customerId }: Props) {
         return donations;
     }
 
-    return donations.filter(d => d.date >= cutoffDate);
+    return donations.filter((d) => {
+      const donationDate = new Date(d.donationDate);
+      return cutoffDate ? donationDate >= cutoffDate : true;
+    });
   }, [donations, selectedPeriod]);
 
   const givingStats = useMemo(() => {
-    const total = filteredDonations.reduce((sum, d) => sum + d.amount, 0);
-    const fees = filteredDonations.reduce((sum, d) => sum + d.fees, 0);
-    const count = filteredDonations.length;
-    const recurring = filteredDonations.filter(d => d.recurring).length;
+    const total = filteredDonations.reduce((sum, d) => sum + (d.amount || 0), 0);
+    // const fees = filteredDonations.reduce((sum, d: any) => sum + (d.fees || 0), 0);
+    // const count = filteredDonations.length;
+    // const recurring = filteredDonations.filter((d) => d.recurring).length;
 
-    return { total, fees, count, recurring };
+    return { total };
   }, [filteredDonations]);
 
   const getPeriodLabel = (value: string) => periods.find(p => p.value === value)?.label || "Year to Date";
-  
+
   const handleManageRecurring = (item: any) => {
     setSelectedRecurring(item);
   };
@@ -212,60 +124,103 @@ export function EnhancedGivingHistory({ customerId }: Props) {
     }
   };
 
-  const renderTransactionItem = ({ item }: { item: DonationRecord }) => (
-    <TouchableOpacity onPress={() => setSelectedTransaction(item)} style={styles.transactionItem}>
+  const getPaymentMethod = (sub: SubscriptionInterface) => {
+    const pm = paymentMethods.find((pm: StripePaymentMethod) => pm.id === (sub.default_payment_method || sub.default_source));
+    if (!pm) return <Text style={{ color: "red" }}>Not Found</Text>;
+    return `${pm.name} ****${pm.last4 || ""}`;
+  };
+
+  const renderTransactionItem = ({ item }: { item: DonationImpact }) => (
+    <TouchableOpacity
+      // onPress={() => setSelectedTransaction(item)} 
+      style={styles.transactionItem}>
       <View style={styles.transactionIcon}>
-        <MaterialIcons name={item.recurring ? "repeat" : "favorite"} size={24} color="#0D47A1" />
+        <MaterialIcons name="favorite" size={24} color="#0D47A1" />
       </View>
 
       <View style={styles.transactionDetails}>
         <Text variant="titleMedium" style={styles.transactionFund}>
-          {item.fund}
+          {item.fund?.name}
         </Text>
         <Text variant="bodySmall" style={styles.transactionDate}>
-          {item.date.toLocaleDateString()} • {item.method}
+          {DateHelper.prettyDate(new Date(item.donationDate))} • {item.method} - {item.methodDetails}
         </Text>
-        {item.recurring && (
+        {/* {item.recurring && (
           <Chip mode="outlined" compact style={styles.recurringChip} textStyle={styles.recurringChipText}>
             {item.frequency}
           </Chip>
-        )}
+        )} */}
       </View>
 
       <View style={styles.transactionAmount}>
         <Text variant="titleMedium" style={styles.amountText}>
           {CurrencyHelper.formatCurrency(item.amount)}
         </Text>
-        <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.status) }]} />
+        {/* <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.status) }]} /> */}
       </View>
     </TouchableOpacity>
   );
 
-  const renderRecurringItem = ({ item }: { item: any }) => (
-    <Card style={styles.recurringCard}>
-      <Card.Content style={styles.recurringContent}>
-        <View style={styles.recurringIcon}>
-          <MaterialIcons name="autorenew" size={24} color="#0D47A1" />
-        </View>
+  // const renderRecurringItem = ({ item }: { item: any }) => (
+  //   <Card style={styles.recurringCard}>
+  //     <Card.Content style={styles.recurringContent}>
+  //       <View style={styles.recurringIcon}>
+  //         <MaterialIcons name="autorenew" size={24} color="#0D47A1" />
+  //       </View>
 
-        <View style={styles.recurringDetails}>
-          <Text variant="titleMedium" style={styles.recurringFund}>
-            {item.fund}
-          </Text>
-          <Text variant="bodyMedium" style={styles.recurringAmount}>
-            {CurrencyHelper.formatCurrency(item.amount)} • {item.frequency}
-          </Text>
-          <Text variant="bodySmall" style={styles.recurringNext}>
-            Next: {item.nextDate.toLocaleDateString()}
-          </Text>
-        </View>
+  //       <View style={styles.recurringDetails}>
+  //         <Text variant="titleMedium" style={styles.recurringFund}>
+  //           {item.fund}
+  //         </Text>
+  //         <Text variant="bodyMedium" style={styles.recurringAmount}>
+  //           {CurrencyHelper.formatCurrency(item.amount)} • {item.frequency}
+  //         </Text>
+  //         <Text variant="bodySmall" style={styles.recurringNext}>
+  //           Next: {item.nextDate.toLocaleDateString()}
+  //         </Text>
+  //       </View>
 
-        <Button mode="outlined" compact onPress={() => handleManageRecurring(item)} style={styles.manageButton}>
-          Manage
-        </Button>
-      </Card.Content>
-    </Card>
-  );
+  //       <Button mode="outlined" compact onPress={() => handleManageRecurring(item)} style={styles.manageButton}>
+  //         Manage
+  //       </Button>
+  //     </Card.Content>
+  //   </Card>
+  // );
+  const renderRecurringItem = ({ item }: { item: any }) => {
+    const interval = `${item.plan?.interval_count || 1} ${item.plan?.interval || "month"}${(item.plan?.interval_count || 1) > 1 ? "s" : ""}`;
+    const total = (item.plan?.amount || 0) / 100;
+    const startDate = DateHelper.prettyDate(new Date(item.billing_cycle_anchor * 1000));
+
+    return (
+      <Card style={styles.card}>
+        <Card.Content style={styles.row}>
+          <View style={styles.iconWrap}>
+            <MaterialIcons name="autorenew" size={24} color="#0D47A1" />
+          </View>
+
+          <View style={styles.detailsWrap}>
+            {item.funds?.map((fund: any) => (
+              <Text key={fund.id} style={styles.fundText}>
+                {fund.name} — {CurrencyHelper.formatCurrency(fund.amount)}
+              </Text>
+            ))}
+            <Text style={styles.recurringAmount}>Total: {CurrencyHelper.formatCurrency(total)}</Text>
+            <Text style={styles.metaText}>Every {interval}</Text>
+            <Text style={styles.metaText}>{getPaymentMethod(item)}</Text>
+            <Text style={styles.recurringNext}>{startDate}</Text>
+          </View>
+          <Button
+            mode="outlined"
+            compact
+            // onPress={() => handleManageRecurring(item)}
+            style={styles.manageButton}
+          >
+            Manage
+          </Button>
+        </Card.Content>
+      </Card>
+    );
+  };
 
   if (!currentUserChurch?.person?.id) {
     return (
@@ -334,7 +289,7 @@ export function EnhancedGivingHistory({ customerId }: Props) {
                 </Text>
               </View>
 
-              <View style={styles.statsRow}>
+              {/*<View style={styles.statsRow}>
                 <View style={styles.miniStat}>
                   <Text variant="titleLarge" style={styles.miniStatValue}>
                     {givingStats.count}
@@ -361,7 +316,7 @@ export function EnhancedGivingHistory({ customerId }: Props) {
                     Fees Covered
                   </Text>
                 </View>
-              </View>
+              </View>*/}
             </View>
           )}
         </Card.Content>
@@ -383,12 +338,23 @@ export function EnhancedGivingHistory({ customerId }: Props) {
           </Card>
         </View>
       ) : (
-        recurringDonations.length > 0 && (
+        subscriptions.length > 0 && (
           <View style={styles.section}>
             <Text variant="titleMedium" style={styles.sectionTitle}>
               Active Recurring Gifts
             </Text>
-            <FlatList data={recurringDonations} renderItem={renderRecurringItem} keyExtractor={item => item.id} scrollEnabled={false} showsVerticalScrollIndicator={false} />
+            <FlatList
+              data={subscriptions}
+              renderItem={renderRecurringItem}
+              keyExtractor={item => item.id}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              ListEmptyComponent={!recurringLoading ? (
+                <View style={styles.emptyWrap}>
+                  <Text style={styles.emptyTitle}>Not found active recurring gifts</Text>
+                </View>
+              ) : null}
+            />
           </View>
         )
       )}
@@ -407,7 +373,19 @@ export function EnhancedGivingHistory({ customerId }: Props) {
               </Text>
             </Card.Content>
           ) : (
-            <FlatList data={filteredDonations} renderItem={renderTransactionItem} keyExtractor={item => item.id} scrollEnabled={false} showsVerticalScrollIndicator={false} ItemSeparatorComponent={() => <Divider style={styles.divider} />} />
+            <FlatList
+              data={donationImpactData}
+              renderItem={renderTransactionItem}
+              keyExtractor={item => item.id}
+              scrollEnabled={false}
+              showsVerticalScrollIndicator={false}
+              ItemSeparatorComponent={() => <Divider style={styles.divider} />}
+              ListEmptyComponent={!donationsLoading ? (
+                <View style={styles.emptyWrap}>
+                  <Text style={styles.emptyTitle}>Not found recent transactions</Text>
+                </View>
+              ) : null}
+            />
           )}
         </Card>
       </View>
@@ -567,16 +545,16 @@ export function EnhancedGivingHistory({ customerId }: Props) {
                     </View>
 
                     <View style={styles.managementActions}>
-                      <Button 
-                        mode="contained" 
+                      <Button
+                        mode="contained"
                         onPress={() => {
                           Alert.alert(
                             "Stop Recurring Donation",
                             "Are you sure you want to stop this recurring donation? You can always set up a new recurring donation later.",
                             [
                               { text: "Keep Donation", style: "cancel" },
-                              { 
-                                text: "Stop Donation", 
+                              {
+                                text: "Stop Donation",
                                 style: "destructive",
                                 onPress: () => {
                                   setSelectedRecurring(null);
@@ -584,7 +562,7 @@ export function EnhancedGivingHistory({ customerId }: Props) {
                               }
                             ]
                           );
-                        }} 
+                        }}
                         style={styles.stopButton}
                         buttonColor="#B0120C"
                         textColor="#FFFFFF"
@@ -931,5 +909,53 @@ const styles = StyleSheet.create({
     color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
-  }
+  },
+  emptyWrap: {
+    paddingVertical: 40,
+    alignItems: "center",
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#3c3c3c',
+    marginBottom: 6
+  },
+  card: {
+    marginBottom: 12,
+    borderRadius: 12,
+    elevation: 2,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: 'center',
+  },
+  iconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 40 / 2,
+    backgroundColor: "#F6F6F8",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12
+  },
+  detailsWrap: {
+    flex: 1,
+  },
+  fundText: {
+    fontSize: 15,
+    fontWeight: "500",
+  },
+  totalText: {
+    fontSize: 14,
+    fontWeight: "600",
+    marginTop: 4,
+  },
+  metaText: {
+    fontSize: 14,
+    color: "#000",
+  },
+  emptyText: {
+    color: "#777",
+  },
 });

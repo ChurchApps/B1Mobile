@@ -9,7 +9,7 @@ interface GivingStats {
   ytd: number;
   lastGift: number;
   totalGifts: number;
-  lastGiftDate: Date;
+  lastGiftDate: Date | null;
 }
 
 interface GivingOverviewProps {
@@ -62,7 +62,7 @@ export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onD
                 {CurrencyHelper.formatCurrency(givingStats.lastGift)}
               </Text>
               <Text variant="bodySmall" style={styles.activityDate}>
-                {givingStats.lastGiftDate.toLocaleDateString()}
+                {givingStats.lastGiftDate ? givingStats.lastGiftDate.toLocaleDateString() : "No recent gift"}
               </Text>
             </View>
             <TouchableOpacity style={styles.repeatButton} onPress={onDonatePress}>

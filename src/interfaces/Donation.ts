@@ -32,6 +32,13 @@ export interface PaymentMethodInterface {
   email?: string;
   name?: string;
 }
+export interface StripeCardExpirationInterface { exp_month: string, exp_year: string }
+export interface StripeCardDataInterface { card: StripeCardExpirationInterface }
+export interface StripeBankAccountHolderDataInterface { account_holder_name: string, account_holder_type: string }
+export interface StripeDonationIntervalInterface { interval: string, interval_count: number };
+export interface StripePersonDonationInterface { id: string, email: string, name: string };
+export interface StripeFundDonationInterface { id: string, amount: number, name?: string };
+
 export interface StripeCardUpdateInterface {
   paymentMethodId: string;
   cardData: StripeCardDataInterface;
@@ -70,6 +77,115 @@ export interface SubscriptionInterface {
   default_source: string;
   plan: { amount: number; interval: string; interval_count: number };
   customer: string;
+}
+
+export interface DonationImpact {
+  id: string;
+  amount: number;
+  donationDate: string;
+  method: string;
+  methodDetails?: string | null;
+  notes?: string | null;
+  personId: string;
+  fund?: { id: string; name: string; amount?: number };
+};
+
+export interface PaymentCard {
+  id: string;
+  object: "payment_method";
+  allow_redisplay: string;
+  billing_details: {
+    address: {
+      city: string | null;
+      country: string | null;
+      line1: string | null;
+      line2: string | null;
+      postal_code: string | null;
+      state: string | null;
+    };
+    email: string | null;
+    name: string | null;
+    phone: string | null;
+    tax_id: string | null;
+  };
+  card: {
+    brand: string;
+    checks: {
+      address_line1_check: string | null;
+      address_postal_code_check: string | null;
+      cvc_check: string | null;
+    };
+    country: string;
+    display_brand: string;
+    exp_month: number;
+    exp_year: number;
+    fingerprint: string;
+    funding: string;
+    generated_from: any;
+    last4: string;
+    networks: {
+      available: string[];
+      preferred: string | null;
+    };
+    regulated_status: string;
+    three_d_secure_usage: {
+      supported: boolean;
+    };
+    wallet: any;
+  };
+  created: number;
+  customer: string;
+  livemode: boolean;
+  metadata: Record<string, any>;
+  type: "card";
+}
+
+export interface BankAccount {
+  id: string;
+  object: "bank_account";
+  account_holder_name: string;
+  account_holder_type: "individual" | "company";
+  account_type: string | null;
+  bank_name: string;
+  country: string;
+  currency: string;
+  customer: string;
+  fingerprint: string;
+  last4: string;
+  metadata: Record<string, any>;
+  routing_number: string;
+  status: string;
+}
+
+export interface CustomerInfo {
+  id: string;
+  churchId: string;
+  personId: string;
+}
+
+export interface PaymentMethodsResponse {
+  cards: {
+    object: "list";
+    data: PaymentCard[];
+    has_more: boolean;
+    url: string;
+  };
+  banks: {
+    object: "list";
+    data: BankAccount[];
+    has_more: boolean;
+    url: string;
+  };
+  customer: CustomerInfo;
+}
+
+export interface GatewayData {
+  id: string;
+  provider: string;
+  publicKey: string;
+  webhookKey: string;
+  productId: string;
+  payFees: boolean;
 }
 
 export class StripePaymentMethod {

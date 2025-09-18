@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { Loader } from "../Loader";
+import { runOnJS } from "react-native-reanimated";
 
 interface Props {
   children: React.ReactNode;
@@ -77,9 +78,11 @@ export const LoadingWrapper: React.FC<Props> = ({
             duration: 200,
             useNativeDriver: true
           }).start(() => {
-            setIsLoading(false);
-            setShowLoader(false);
-            loadingStartTime.current = null;
+            runOnJS(() => {
+              setIsLoading(false);
+              setShowLoader(false);
+              loadingStartTime.current = null;
+            })();
           });
         }, remainingTime);
       } else {

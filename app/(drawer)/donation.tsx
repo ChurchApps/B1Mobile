@@ -3,7 +3,7 @@ import { EnhancedDonationForm, EnhancedGivingHistory } from "../../src/component
 import { GivingOverview, DonationTabBar, ManagePayments } from "../../src/components/donations/sections/exports";
 import { UserHelper } from "@/helpers/UserHelper";
 import { ErrorHelper } from "../../src/mobilehelper";
-import { StripePaymentMethod } from "../../src/interfaces";
+import { DonationImpact, GatewayData, PaymentMethodsResponse, StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused, useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { initStripe } from "@stripe/stripe-react-native";
@@ -56,7 +56,7 @@ const Donation = () => {
     data: gatewayData,
     isLoading: gatewayLoading,
     refetch: refetchGateway
-  } = useQuery({
+  } = useQuery<GatewayData[]>({
     queryKey: ["/gateways/churchId/" + currentUserChurch?.church?.id, "GivingApi"],
     enabled: !!currentUserChurch?.church?.id && isFocused,
     placeholderData: [],
@@ -69,7 +69,7 @@ const Donation = () => {
     data: paymentMethodsData,
     isLoading: paymentMethodsLoading,
     refetch: refetchPaymentMethods
-  } = useQuery({
+  } = useQuery<PaymentMethodsResponse[]>({
     queryKey: ["/paymentmethods/personid/" + person?.id, "GivingApi"],
     enabled: !!person?.id && !!publishKey && isFocused,
     placeholderData: [],
@@ -77,7 +77,18 @@ const Donation = () => {
     gcTime: 10 * 60 * 1000 // 10 minutes
   });
 
-  const areMethodsLoading = gatewayLoading || paymentMethodsLoading;
+  const {
+    data: donationImpactData = [],
+    isLoading: donationImpactLoading,
+  } = useQuery<DonationImpact[]>({
+    queryKey: ["/donations/my", "GivingApi"],
+    enabled: isFocused,
+    placeholderData: [],
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000
+  });
+
+  const areMethodsLoading = gatewayLoading || paymentMethodsLoading || donationImpactLoading;
 
   useEffect(() => {
     UserHelper.addOpenScreenEvent("Donation Screen");
@@ -114,16 +125,22 @@ const Donation = () => {
     }
   };
 
-  // Sample data for demonstration - in real app this would come from API
-  const givingStats = useMemo(
-    () => ({
-      ytd: 2850.0,
-      lastGift: 125.0,
-      totalGifts: 12,
-      lastGiftDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // 1 week ago
-    }),
-    []
-  );
+  const givingStats = useMemo(() => {
+    const all = (donationImpactData ?? []).slice();
+    all.sort((a, b) => new Date(b.donationDate).getTime() - new Date(a.donationDate).getTime());
+
+    const nowYear = new Date().getFullYear();
+    const ytdItems = all.filter((d) => new Date(d.donationDate).getFullYear() === nowYear);
+
+    const ytd = ytdItems.reduce((sum, d) => sum + (d.amount || 0), 0);
+    const totalGifts = ytdItems.length;
+
+    const lastGiftDonation = all[0];
+    const lastGift = lastGiftDonation?.amount ?? 0;
+    const lastGiftDate = lastGiftDonation ? new Date(lastGiftDonation.donationDate) : null;
+
+    return { ytd, totalGifts, lastGift, lastGiftDate };
+  }, [donationImpactData]);
 
   const renderOverviewSection = () => <GivingOverview givingStats={givingStats} onDonatePress={() => setActiveSection("donate")} onHistoryPress={() => setActiveSection("history")} />;
 
@@ -131,7 +148,7 @@ const Donation = () => {
 
   const renderManageSection = () => <ManagePayments person={person} customerId={customerId} paymentMethods={paymentMethods} isLoading={areMethodsLoading} publishKey={publishKey} loadData={loadData} />;
 
-  const renderHistorySection = () => <EnhancedGivingHistory customerId={customerId} />;
+  const renderHistorySection = () => <EnhancedGivingHistory customerId={customerId} paymentMethods={paymentMethods || []} donationImpactData={donationImpactData || []} donationImpactLoading={donationImpactLoading} />;
 
   return (
     <PaperProvider theme={theme}>
