@@ -213,7 +213,7 @@ const GroupDetails = () => {
   }, []);
 
   // Show minimal loading only for critical group details data
-  if (groupDetailsLoading) {
+  if (groupDetailsLoading || (!groupDetails && !groupDetailsError)) {
     return (
       <LoadingWrapper loading={true}>
         <View style={styles.container}>

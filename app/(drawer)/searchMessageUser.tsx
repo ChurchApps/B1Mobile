@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ApiHelper, Constants, ConversationCheckInterface, UserHelper, UserSearchInterface } from "../../src/helpers";
+import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface } from "../../src/helpers";
 import { ErrorHelper } from "../../src/mobilehelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
-import { Keyboard, TouchableWithoutFeedback, View } from "react-native";
+import { FlatList, Keyboard, TouchableWithoutFeedback, View } from "react-native";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { useAppTheme } from "../../src/theme";
 import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react-native-paper";
@@ -16,6 +16,8 @@ const SearchMessageUser = () => {
   const [searchText, setSearchText] = useState("");
   const [searchList, setSearchList] = useState<UserSearchInterface[]>([]);
   const [loading, setLoading] = useState(false);
+  const [mainLoading, setMainLoading] = useState(false);
+  const [lastSearch, setLastSearch] = useState("");
   const currentUserChurch = useCurrentUserChurch();
 
   useEffect(() => {
@@ -24,15 +26,15 @@ const SearchMessageUser = () => {
   }, []);
 
   const getPreviousConversations = () => {
-    setLoading(true);
+    setMainLoading(true);
     ApiHelper.get("/privateMessages", "MessagingApi").then((data: ConversationCheckInterface[]) => {
-      setLoading(false);
+      setMainLoading(false);
       let userIdList: string[] = [];
       if (Object.keys(data).length != 0) {
         userIdList = data.map(e => (currentUserChurch?.person?.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
         if (userIdList.length != 0) {
           ApiHelper.get("/people/basic?ids=" + userIdList.join(","), "MembershipApi").then((userData: UserSearchInterface[]) => {
-            setLoading(false);
+            setMainLoading(false);
             for (let i = 0; i < userData.length; i++) {
               const singleUser: UserSearchInterface = userData[i];
               const tempConvo: ConversationCheckInterface | undefined = data.find(x => x.fromPersonId == singleUser.id || x.toPersonId == singleUser.id);
@@ -42,15 +44,15 @@ const SearchMessageUser = () => {
           });
         }
       }
-    });
+    }).catch(() => { setMainLoading(false); });
   };
 
-  const searchUserApiCall = useCallback((text: String) => {
+  const searchUserApiCall = useCallback((text: string) => {
     setLoading(true);
+    setLastSearch(text);
     ApiHelper.get("/people/search/?term=" + text, "MembershipApi").then(data => {
       setLoading(false);
       setSearchList(data);
-      if (data.length === 0) alert("No matches found");
     });
   }, []);
 
@@ -98,13 +100,70 @@ const SearchMessageUser = () => {
     <>
       <MainHeader title="Search Messages" openDrawer={() => navigation.openDrawer()} />
       <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-        {loading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
-        <List.Section>
-          {searchSection}
-          {displayedSearchList.map((item: UserSearchInterface) => (
-            <List.Item key={item.id} title={item.name.display} left={() => (item.photo ? <OptimizedImage source={{ uri: item.photo }} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} contentFit="cover" /> : <OptimizedImage source={Constants.Images.ic_user} style={{ width: 40, height: 40, borderRadius: 20, marginRight: spacing.md }} tintColor={theme.colors.primary} contentFit="cover" />)} onPress={() => userSelection(item)} style={{ backgroundColor: theme.colors.surface, marginHorizontal: spacing.md, marginBottom: spacing.xs, borderRadius: theme.roundness, elevation: 1 }} titleStyle={{ fontWeight: "500" }} />
-          ))}
-        </List.Section>
+        {mainLoading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
+        {!mainLoading && (
+    <List.Section style={{ flex: 1 }}>
+      {searchSection}
+
+      <FlatList
+        data={displayedSearchList}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => {
+          const imageUri = item.photo
+            ? item.photo.startsWith("http")
+              ? item.photo
+              : EnvironmentHelper.ContentRoot + item.photo
+            : "";
+
+          return (
+            <List.Item
+              title={item.name.display}
+              left={() =>
+                item.photo ? (
+                  <OptimizedImage
+                    source={{ uri: imageUri }}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      marginRight: spacing.md,
+                    }}
+                    contentFit="cover"
+                  />
+                ) : (
+                  <OptimizedImage
+                    source={Constants.Images.ic_user}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 20,
+                      marginRight: spacing.md,
+                    }}
+                    tintColor={theme.colors.primary}
+                    contentFit="cover"
+                  />
+                )
+              }
+              onPress={() => userSelection(item)}
+              style={{
+                backgroundColor: theme.colors.surface,
+                marginHorizontal: spacing.md,
+                marginBottom: spacing.xs,
+                borderRadius: theme.roundness,
+                elevation: 1,
+              }}
+              titleStyle={{ fontWeight: "500" }}
+            />
+          );
+        }}
+        ListEmptyComponent={
+          <Text style={{ textAlign: "center", marginTop: spacing.lg }}>
+            {searchText !== '' && !loading && searchText === lastSearch ? 'No matches found' : null}
+          </Text>
+        }
+      />
+    </List.Section>
+  )}
       </View>
     </>
   );
