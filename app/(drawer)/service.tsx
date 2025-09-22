@@ -1,5 +1,4 @@
 import React from "react";
-import { CheckinComplete } from "../../src/components/checkin/CheckinComplete";
 import { CheckinGroups } from "../../src/components/checkin/CheckinGroups";
 import { CheckinHousehold } from "../../src/components/checkin/CheckinHousehold";
 import { CheckinServices } from "../../src/components/checkin/CheckinServices";
@@ -14,6 +13,7 @@ import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { useAppTheme } from "../../src/theme";
 import { useChurchAppearance } from "../../src/stores/useUserStore";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
+import { CheckinComplete } from "@/components/checkin/CheckinComplete";
 
 const Service = () => {
   const { theme, spacing } = useAppTheme();
@@ -38,6 +38,18 @@ const Service = () => {
     navigateBack();
   };
 
+  const handleBack = () => {
+    if (step === "Complete") {
+      setStep("Household");
+    } else if (step === "Groups") {
+      setStep("Household");
+    } else if (step === "Household") {
+      setStep("Services");
+    } else {
+      navigateBack();
+    }
+  };
+
   const getBrand = () => {
     if (churchAppearance?.logoLight) return <OptimizedImage source={{ uri: churchAppearance?.logoLight }} style={{ width: "100%", height: DimensionHelper.wp(25) }} contentFit="contain" priority="high" />;
     else return <OptimizedImage source={Constants.Images.logoBlue} style={{ width: "100%", height: DimensionHelper.wp(25) }} contentFit="contain" priority="high" />;
@@ -45,13 +57,13 @@ const Service = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
-      <MainHeader title="Checkin" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+      <MainHeader title="Checkin" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => handleBack()} />
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
-          {step === "Services" && <CheckinServices onDone={() => setStep("Household")} />}
-          {step === "Household" && <CheckinHousehold showGroups={handleShowGroups} onDone={() => setStep("Complete")} />}
-          {step === "Groups" && <CheckinGroups member={groupMember!} time={groupTime!} onDone={() => setStep("Household")} />}
-          {step === "Complete" && <CheckinComplete onDone={clearData} />}
+          {step === "Services" && <CheckinServices onDone={() => setStep("Household")} handleBack={handleBack} />}
+          {step === "Household" && <CheckinHousehold showGroups={handleShowGroups} onDone={() => setStep("Complete")} handleBack={handleBack} />}
+          {step === "Groups" && <CheckinGroups member={groupMember!} time={groupTime!} onDone={() => setStep("Household")} handleBack={handleBack} />}
+          {step === "Complete" && <CheckinComplete onDone={clearData} handleBack={handleBack} />}
         </View>
       </SafeAreaView>
     </View>

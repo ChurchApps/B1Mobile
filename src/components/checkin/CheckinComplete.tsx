@@ -8,6 +8,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 interface Props {
   onDone: () => void;
+  handleBack: () => void;
 }
 
 export const CheckinComplete = (props: Props) => {

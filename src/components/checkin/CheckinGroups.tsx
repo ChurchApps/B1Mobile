@@ -12,6 +12,7 @@ interface Props {
   member: PersonInterface;
   time: ServiceTimeInterface;
   onDone: () => void;
+  handleBack: () => void;
 }
 
 export const CheckinGroups = (props: Props) => {
