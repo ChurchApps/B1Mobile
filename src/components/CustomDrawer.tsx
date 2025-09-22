@@ -338,7 +338,7 @@ export function CustomDrawer(props?: any) {
     let url: string;
     const baseUrl = stage === "prod" 
       ? "https://app.chums.org/login" 
-      : "https://app.staging.chums.org";
+      : "https://app.staging.chums.org/login";
 
     const params = new URLSearchParams({
       returnUrl: "/profile",
