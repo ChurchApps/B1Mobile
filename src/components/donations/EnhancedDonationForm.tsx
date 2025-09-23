@@ -44,6 +44,9 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
   const [lastName, setLastName] = useState("");
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
 
+  // Church data for non-auth users
+  const [churchData, setChurchData] = useState<any>(null);
+
   // Determine church ID for funds query
   const churchId = currentUserChurch?.church?.id || "";
 
@@ -55,6 +58,18 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
     staleTime: 15 * 60 * 1000,
     gcTime: 60 * 60 * 1000
   });
+
+  // Fetch church data for non-auth users (similar to AppHelper)
+  useEffect(() => {
+    if (churchId && !churchData) {
+      ApiHelper.get("/churches/" + churchId, "MembershipApi").then((data: any) => {
+        console.log("🏛️ Fetched church data:", data);
+        setChurchData(data);
+      }).catch(error => {
+        console.error("Failed to fetch church data:", error);
+      });
+    }
+  }, [churchId, churchData]);
 
   // Initialize defaults
   useEffect(() => {
@@ -235,7 +250,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
     await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
 
     const personData = {
-      churchId: CacheHelper.church?.id || "",
+      churchId: churchId || CacheHelper.church?.id || "",
       firstName,
       lastName,
       email
@@ -252,12 +267,13 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
       throw new Error(stripePaymentMethod.error.message);
     }
 
+    // Call addcard to get customerId (like AppHelper does)
     const pm = {
       id: stripePaymentMethod.paymentMethod.id,
       personId: personResult.id,
       email: email,
       name: `${firstName} ${lastName}`,
-      churchId: CacheHelper.church?.id || ""
+      churchId: churchId || CacheHelper.church?.id || ""
     };
 
     const result = await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi");
@@ -266,15 +282,32 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
       throw new Error(result.raw.message);
     }
 
+    // Debug church data
+    console.log("🏛️ Church Data Debug:", {
+      "CacheHelper.church": CacheHelper.church,
+      "currentUserChurch": currentUserChurch,
+      "currentUserChurch?.church": currentUserChurch?.church,
+      "churchData": churchData,
+      "churchId": churchId,
+      "result from addcard": result
+    });
+
+    // Create donation object with data from addcard response
     const updatedDonation = {
       ...donation,
       id: result.paymentMethod.id,
       customerId: result.customerId,
-      type: result.paymentMethod?.type,
+      type: result.paymentMethod?.type || "card",
+      churchId: churchId || CacheHelper.church?.id,
       person: {
-        name: `${firstName} ${lastName}`,
         id: personResult.id,
-        email: email
+        email: email,
+        name: `${firstName} ${lastName}`
+      },
+      church: {
+        name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
+        subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
+        churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
       }
     };
 
@@ -283,6 +316,14 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
 
   const makeDonation = async (donation: StripeDonationInterface) => {
     const endpoint = isRecurring ? "/donate/subscribe/" : "/donate/charge/";
+
+    console.log("🚀 Donation POST Request:", {
+      url: endpoint,
+      fullUrl: `https://api.staging.churchapps.org/giving${endpoint}`,
+      body: donation,
+      isRecurring
+    });
+
     const result = await ApiHelper.post(endpoint, donation, "GivingApi");
 
     if (result?.status === "succeeded" || result?.status === "pending" || result?.status === "active") {
