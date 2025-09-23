@@ -14,10 +14,11 @@ import { DonationComplete } from "./DonationComplete";
 interface Props {
   paymentMethods: StripePaymentMethod[];
   customerId: string;
+  gatewayData?: any[];
   updatedFunction: () => void;
 }
 
-export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
+export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayData, updatedFunction }: Props) {
   const user = useUser();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
@@ -63,7 +64,6 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
   useEffect(() => {
     if (churchId && !churchData) {
       ApiHelper.get("/churches/" + churchId, "MembershipApi").then((data: any) => {
-        console.log("🏛️ Fetched church data:", data);
         setChurchData(data);
       }).catch(error => {
         console.error("Failed to fetch church data:", error);
@@ -204,10 +204,24 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
         }
       };
 
+
       if (!currentUserChurch?.person?.id) {
         await handleGuestDonation(donation);
       } else {
-        await makeDonation(donation);
+        // For authenticated users, add gatewayId and other required fields
+        const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
+        const enhancedDonation = {
+          ...donation,
+          gatewayId: gateway?.id,
+          churchId: churchId || CacheHelper.church?.id,
+          notes: "",
+          church: {
+            name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
+            subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
+            churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
+          }
+        };
+        await makeDonation(enhancedDonation);
       }
     } catch (error) {
       console.error("Donation error:", error);
@@ -282,28 +296,25 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
       throw new Error(result.raw.message);
     }
 
-    // Debug church data
-    console.log("🏛️ Church Data Debug:", {
-      "CacheHelper.church": CacheHelper.church,
-      "currentUserChurch": currentUserChurch,
-      "currentUserChurch?.church": currentUserChurch?.church,
-      "churchData": churchData,
-      "churchId": churchId,
-      "result from addcard": result
-    });
 
     // Create donation object with data from addcard response
+    const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
     const updatedDonation = {
-      ...donation,
-      id: result.paymentMethod.id,
-      customerId: result.customerId,
+      amount: donation.amount,
+      id: result.paymentMethod?.id || "",
+      customerId: result.customerId || "",
       type: result.paymentMethod?.type || "card",
+      gatewayId: gateway?.id, // Add gatewayId as required by API
       churchId: churchId || CacheHelper.church?.id,
       person: {
         id: personResult.id,
         email: email,
         name: `${firstName} ${lastName}`
       },
+      notes: "", // Add notes field like AppHelper
+      funds: donation.funds || [],
+      billing_cycle_anchor: donation.billing_cycle_anchor,
+      interval: donation.interval,
       church: {
         name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
         subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
@@ -316,14 +327,6 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
 
   const makeDonation = async (donation: StripeDonationInterface) => {
     const endpoint = isRecurring ? "/donate/subscribe/" : "/donate/charge/";
-
-    console.log("🚀 Donation POST Request:", {
-      url: endpoint,
-      fullUrl: `https://api.staging.churchapps.org/giving${endpoint}`,
-      body: donation,
-      isRecurring
-    });
-
     const result = await ApiHelper.post(endpoint, donation, "GivingApi");
 
     if (result?.status === "succeeded" || result?.status === "pending" || result?.status === "active") {
