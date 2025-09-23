@@ -69,6 +69,43 @@ export interface StripeDonationInterface {
   churchId?: string;
   church?: { name?: string; subDomain?: string };
 }
+
+export interface MultiGatewayDonationInterface {
+  id: string;
+  type: "card" | "bank" | "paypal";
+  provider: "stripe" | "paypal";
+  customerId?: string;
+  person?: {
+    id?: string;
+    email?: string;
+    name?: string;
+  };
+  amount: number;
+  billing_cycle_anchor?: number;
+  interval?: {
+    interval_count: number;
+    interval: string;
+  };
+  funds?: StripeFundDonationInterface[];
+  notes?: string;
+}
+
+export interface PaymentMethod {
+  id: string;
+  type: "card" | "bank" | "paypal";
+  name: string;
+  last4?: string;
+  email?: string;
+  exp_month?: string;
+  exp_year?: string;
+}
+
+export interface PaymentGateway {
+  id: string;
+  provider: "stripe" | "paypal";
+  publicKey: string;
+  enabled?: boolean;
+}
 export interface SubscriptionInterface {
   id: string;
   funds: [];

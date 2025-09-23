@@ -5,7 +5,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import { ApiHelper, CurrencyHelper } from "../../helpers";
-import { FundInterface, StripeDonationInterface, StripePaymentMethod } from "../../interfaces";
+import { DonationHelper } from "../../helpers/DonationHelper";
+import { FundInterface, StripeDonationInterface, StripePaymentMethod, MultiGatewayDonationInterface, PaymentMethod, PaymentGateway } from "../../interfaces";
 import { useUser, useCurrentUserChurch } from "../../stores/useUserStore";
 import { CacheHelper } from "../../helpers";
 import { DonationComplete } from "./DonationComplete";
@@ -72,7 +73,8 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
   useEffect(() => {
     const calculateFee = async () => {
       const amountNumber = parseFloat(amount || "0");
-      if (amountNumber > 0 && selectedMethod) {
+      if (amountNumber > 0) {
+        // Calculate fee even if selectedMethod is empty (for non-auth users)
         const fee = await getTransactionFee(amountNumber);
         setTransactionFee(fee);
       } else {
@@ -100,12 +102,20 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
   const getTransactionFee = async (amount: number) => {
     if (amount > 0) {
       const selectedPaymentMethod = pm.find(p => p.id === selectedMethod);
-      let dt: string = "";
-      if (selectedPaymentMethod?.type === "card") dt = "creditCard";
-      if (selectedPaymentMethod?.type === "bank") dt = "ach";
-      
+      let requestData: any = { amount };
+
+      if (selectedPaymentMethod?.type === "paypal") {
+        requestData.provider = "paypal";
+      } else {
+        // For non-auth users or when no payment method is selected, default to creditCard
+        const dt = selectedPaymentMethod?.type === "card" ? "creditCard" :
+                   selectedPaymentMethod?.type === "bank" ? "ach" :
+                   "creditCard"; // Default for non-auth users
+        requestData.type = dt;
+      }
+
       try {
-        const response = await ApiHelper.post("/donate/fee?churchId=" + churchId, { type: dt, amount }, "GivingApi");
+        const response = await ApiHelper.post("/donate/fee?churchId=" + churchId, requestData, "GivingApi");
         return response.calculatedFee;
       } catch (error) {
         // Fallback to credit card calculation
