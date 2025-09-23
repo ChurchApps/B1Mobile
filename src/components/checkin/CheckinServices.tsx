@@ -11,6 +11,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 interface Props {
   onDone: () => void;
+  handleBack: () => void;
 }
 
 export const CheckinServices = (props: Props) => {
@@ -18,9 +19,17 @@ export const CheckinServices = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const currentUserChurch = useCurrentUserChurch();
   const screenWidth = Dimensions.get("window").width;
+  const [selectServiceLoading, setSelectServiceLoading] = useState({
+    isLoading: false,
+    campusId: ""
+  });
 
   // Use react-query for services
-  const { data: serviceList = [], isLoading: servicesLoading } = useQuery({
+  const {
+    data: serviceList = [],
+    isLoading: servicesLoading,
+    error: servicesError
+  } = useQuery({
     queryKey: ["/services", "AttendanceApi"],
     enabled: !!currentUserChurch?.jwt,
     placeholderData: [],
@@ -33,7 +42,10 @@ export const CheckinServices = (props: Props) => {
   }, []);
 
   const ServiceSelection = async (item: any) => {
-    setLoading(true);
+    setSelectServiceLoading({
+      isLoading: true,
+      campusId: item?.campusId
+    });
     await getMemberData(item.id);
   };
 
@@ -133,16 +145,22 @@ export const CheckinServices = (props: Props) => {
           <MaterialIcons name="church" size={28} color="#0D47A1" />
         </View>
         <View style={styles.serviceInfo}>
-          <Text variant="titleLarge" style={styles.serviceName}>
-            {item.name}
-          </Text>
-          <Text variant="bodyMedium" style={styles.campusName}>
-            {item.campus?.name}
-          </Text>
+           {item?.name && (
+            <Text variant="titleLarge" style={styles.serviceName}>
+              {item.name}
+            </Text>
+          )}
+
+          {item.campus?.name && (
+            <Text variant="bodyMedium" style={styles.campusName}>
+              {item.campus?.name}
+            </Text>
+          )}
         </View>
         <View style={styles.serviceArrow}>
           <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
         </View>
+        <View style={styles.serviceArrow}>{selectServiceLoading.isLoading && selectServiceLoading.campusId === item.campusId ? <ActivityIndicator /> : <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />}</View>
       </View>
     </TouchableOpacity>
   );
@@ -165,7 +183,7 @@ export const CheckinServices = (props: Props) => {
 
         {/* Services List */}
         <View style={styles.contentSection}>
-          {servicesLoading ? (
+          {servicesLoading || (serviceList?.length === 0 && !servicesError) ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#0D47A1" />
               <Text variant="bodyLarge" style={styles.loadingText}>

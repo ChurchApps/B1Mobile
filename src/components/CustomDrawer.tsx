@@ -5,7 +5,7 @@ import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router, useGlobalSearchParams, useLocalSearchParams, usePathname } from "expo-router";
+import { router, useFocusEffect, useGlobalSearchParams, useLocalSearchParams, usePathname } from "expo-router";
 import { useEffect, useState } from "react";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
 import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
@@ -16,6 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Constants from "expo-constants";
+import { eventBus } from "@/helpers/PushNotificationHelper";
 
 type ItemType = {
   linkType?: string;
@@ -41,7 +42,6 @@ export function CustomDrawer(props?: any) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const { top } = useSafeAreaInsets();
-
   useEffect(() => {
     getChurch();
     updateDrawerList();
@@ -51,6 +51,12 @@ export function CustomDrawer(props?: any) {
     // Also trigger on initial mount
     updateDrawerList();
   }, []);
+  
+  useEffect(() => {
+    eventBus.addListener('do_logout', () => {
+      logoutAction()
+    })
+  }, [])
 
   const checkIsActive = (item: ItemType, pathname: string, params?: ParamsType): boolean => {
     const path = (pathname || "").toLowerCase();
@@ -327,17 +333,26 @@ export function CustomDrawer(props?: any) {
   const editProfileAction = () => {
     const currentUserChurch = useUserStore.getState().currentUserChurch;
     const extra = Constants.expoConfig?.extra || {};
-    let stage = extra.STAGE;
-    let url;
-    if (stage === 'prod') {
-      url = "https://app.chums.org/login?returnUrl=/profile";
-    } else {
-      url = "https://app.staging.chums.org/login?returnUrl=/profile";
-    }
+    const stage = extra.STAGE;
+
+    let url: string;
+    const baseUrl = stage === "prod" 
+      ? "https://app.chums.org/login" 
+      : "https://app.staging.chums.org/login";
+
+    const params = new URLSearchParams({
+      returnUrl: "/profile",
+      hideHeader: "true",
+    });
+
+    url = `${baseUrl}?${params.toString()}`;
 
     if (currentUserChurch?.jwt) url += "&jwt=" + currentUserChurch.jwt;
-    Linking.openURL(url);
-    logoutAction();
+
+    router.push({
+          pathname:"websiteUrlRoot",
+          params: { url, title: "Edit Profile"}
+        });
   };
 
   const drawerFooterComponent = () => {

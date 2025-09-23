@@ -12,12 +12,12 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 interface Props {
   onDone: () => void;
   showGroups: (member: PersonInterface, time: ServiceTimeInterface) => void;
+  handleBack: () => void;
 }
 
 export const CheckinHousehold = (props: Props) => {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
-
 
   const submitAttendance = async () => {
     setLoading(true);
@@ -146,7 +146,10 @@ export const CheckinHousehold = (props: Props) => {
 
         {/* Bottom Action */}
         <View style={styles.bottomSection}>
-          <Button mode="contained" onPress={submitAttendance} style={styles.checkinButton} labelStyle={styles.checkinButtonText} icon="check-circle">
+          <Button mode="contained" onPress={props?.handleBack} style={styles.checkinButton} labelStyle={styles.checkinButtonText}>
+            <MaterialIcons name="arrow-back" size={24} color="#FFF" style={{ marginRight: 8 }} />
+          </Button>
+          <Button mode="contained" onPress={submitAttendance} style={[styles.checkinButton, { flex: 1 }]} labelStyle={styles.checkinButtonText} icon="check-circle">
             Complete Check-in
           </Button>
         </View>
@@ -312,7 +315,10 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0"
+    borderTopColor: "#F0F0F0",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6
   },
   checkinButton: {
     backgroundColor: "#0D47A1",

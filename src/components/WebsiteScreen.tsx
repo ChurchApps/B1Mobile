@@ -1,12 +1,15 @@
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Linking, Platform, View, Text } from "react-native";
+import { Linking, Platform, View, Text, StyleSheet } from "react-native";
 import WebView from "react-native-webview";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
-import { globalStyles } from "../../src/helpers";
+import { ApiHelper, globalStyles, SecureStorageHelper } from "../../src/helpers";
 import { MainHeader } from "./wrapper/MainHeader";
 import { UserHelper } from "../helpers/UserHelper";
+import { eventBus } from "@/helpers/PushNotificationHelper";
+import { useUserStore } from "@/stores/useUserStore";
+import { Loader } from "./Loader";
 
 interface WebsiteScreenProps {
   url: string;
@@ -17,8 +20,10 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const webviewRef = useRef<WebView>(null);
   const navigationMain = useNavigation();
+  const user = useUserStore();
 
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });
@@ -40,9 +45,32 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
     }, [navigationMain, title])
   );
 
-  const handleMessage = () => {
+  const handleMessage = (event: any) => {
+    const message = JSON.parse(event.nativeEvent.data);
+
+    if (message.event === "profile_updated") {
+      manageUserUpdate();
+      return;
+    }
+
+    if (message.event === "profile_deleted") {
+      eventBus.emit("do_logout");
+      return;
+    }
+
     let newUrl = currentUrl + "&autoPrint=1";
     Linking.openURL(newUrl);
+  };
+
+  const manageUserUpdate = async () => {
+    setIsLoading(true);
+    // Attempt to re-authenticate with JWT
+    const data = await ApiHelper.postAnonymous("/users/login", { jwt: await SecureStorageHelper.getSecureItem("default_jwt") }, "MembershipApi");
+    if (data.user != null) {
+      await user.handleLogin(data);
+    }
+    setIsLoading(false);
+    navigation.goBack();
   };
 
   const urlToScreenMapping: { [key: string]: string } = {
@@ -98,8 +126,6 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
     return true;
   };
 
-  //renderLoading={() => <Loader isLoading={isLoading} />}
-
   return (
     <View style={globalStyles.homeContainer}>
       <MainHeader title={title || "Home"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
@@ -125,6 +151,11 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
           />
         )}
       </View>
+      {isLoading && (
+        <View style={StyleSheet.absoluteFill}>
+          <Loader isLoading={isLoading} />
+        </View>
+      )}
     </View>
   );
 }
