@@ -1,11 +1,13 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { View, StyleSheet, TouchableOpacity, FlatList, Modal, ScrollView, Alert, ActivityIndicator } from "react-native";
-import { Card, Text, Button, Chip, Menu, Divider } from "react-native-paper";
+import { Card, Text, Button, Menu, Divider } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useQuery } from "@tanstack/react-query";
-import { ApiHelper, CurrencyHelper, DateHelper } from "../../helpers";
+import { ApiHelper, CurrencyHelper, DateHelper, globalStyles } from "../../helpers";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { DonationImpact, StripePaymentMethod, SubscriptionInterface } from "@/interfaces";
+import DropDownPicker from "react-native-dropdown-picker";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
+import { DonationHelper } from "@churchapps/helpers";
 
 interface DonationRecord {
   id: string;
@@ -26,24 +28,34 @@ interface Props {
   donationImpactLoading?: boolean;
 }
 
+const intervalTypes = [
+  { label: "Weekly", value: "one_week" },
+  { label: "Bi-Weekly", value: "two_week" },
+  { label: "Monthly", value: "one_month" },
+  { label: "Quarterly", value: "three_month" },
+  { label: "Annually", value: "one_year" }
+];
+
 export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpactData, donationImpactLoading = false }: Props) {
   const currentUserChurch = useCurrentUserChurch();
-  // console.log("donationImpactData ---------> ", donationImpactData)
   const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<DonationRecord | null>(null);
-  const [selectedRecurring, setSelectedRecurring] = useState<any>(null);
+  const [selectedRecurring, setSelectedRecurring] = useState<SubscriptionInterface | null>(null);
   const [subscriptions, setSubscriptions] = useState<SubscriptionInterface[]>([]);
   const [recurringLoading, setRecurringLoading] = useState<boolean>(false);
   const donations = donationImpactData ?? [];
   const donationsLoading = donationImpactLoading;
-
-  const { data: donations1 = [], isLoading: donationsLoading1 } = useQuery<DonationRecord[]>({
-    queryKey: ["/donations/history", customerId, selectedPeriod],
-    enabled: !!customerId && !!currentUserChurch?.person?.id,
-    placeholderData: [],
-    staleTime: 5 * 60 * 1000,
-  });
+  const [isPaymentMethodDropDownOpen, setIsPaymentMethodDropDownOpen] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState(paymentMethods.length > 0 ? paymentMethods[0].id : null);
+  const [paymentMethodItems, setPaymentMethodItems] = useState<any>([]);
+  const [selectedInterval, setSelectedInterval] = useState<string>("one_week");
+  const [intervalOpen, setIntervalOpen] = useState(false);
+  const [intervalValue, setIntervalValue] = useState<string | null>("one_week");
+  const [intervalItems, setIntervalItems] = useState(
+    intervalTypes.map(i => ({ label: i.label, value: i.value }))
+  );
+  const [loadingAction, setLoadingAction] = useState<null | "delete" | "save">(null);
 
   const loadData = () => {
     if (customerId) {
@@ -64,6 +76,33 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
   };
 
   useEffect(loadData, []);
+
+  useEffect(() => {
+    if (paymentMethods.length > 0) {
+      const items = paymentMethods.map((method: any) => ({
+        label: method.name + " ****" + method.last4,
+        value: method.id,
+      }));
+      setPaymentMethodItems(items as any);
+
+      if (!selectedMethod) {
+        setSelectedMethod(paymentMethods[0].id);
+      }
+    }
+  }, [paymentMethods]);
+
+  useEffect(() => setIntervalValue(selectedInterval), [selectedInterval]);
+
+  const handlePaymentMethodChange = (methodId: string) => {
+    setSelectedMethod(methodId);
+    const pm = paymentMethods.find(pm => pm.id === methodId);
+    if (pm) {
+      const updated = { ...selectedRecurring } as SubscriptionInterface;
+      updated.default_payment_method = pm.type === "card" ? methodId : "";
+      updated.default_source = pm.type === "bank" ? methodId : "";
+      setSelectedRecurring(updated);
+    }
+  };
 
   const periods = [
     { label: "Year to Date", value: "ytd" },
@@ -107,8 +146,33 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
   const getPeriodLabel = (value: string) => periods.find(p => p.value === value)?.label || "Year to Date";
 
-  const handleManageRecurring = (item: any) => {
+  const handleManageRecurring = (item: SubscriptionInterface) => {
     setSelectedRecurring(item);
+    const currentPaymentMethod = item?.default_payment_method || item?.default_source || null;
+    if (currentPaymentMethod) {
+      const methodExists = paymentMethods.some(method => method.id === currentPaymentMethod);
+      if (methodExists) setSelectedMethod(currentPaymentMethod);
+      else setSelectedMethod(paymentMethods?.length > 0 ? paymentMethods[0]?.id : null);
+    } else setSelectedMethod(paymentMethods?.length > 0 ? paymentMethods[0]?.id : null);
+
+    if (item?.plan) {
+      const keyName = DonationHelper.getIntervalKeyName(
+        item?.plan?.interval_count || 1,
+        item?.plan?.interval || "month"
+      );
+      const intervalExists = intervalTypes.some(interval => interval.value === keyName);
+
+      if (intervalExists) {
+        setSelectedInterval(keyName);
+        setIntervalValue(keyName);
+      } else {
+        setSelectedInterval("one_week");
+        setIntervalValue("one_week");
+      }
+    } else {
+      setSelectedInterval("one_week");
+      setIntervalValue("one_week");
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -130,6 +194,71 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     return `${pm.name} ****${pm.last4 || ""}`;
   };
 
+  const handleDelete = async () => {
+    if (!selectedRecurring) {
+      Alert.alert("Error", "No subscription selected");
+      return;
+    }
+
+    Alert.alert(
+      "Confirm Delete",
+      "Are you sure you wish to delete this recurring donation?",
+      [{ text: "Cancel", style: "cancel" }, {
+        text: "Delete", style: "destructive",
+        onPress: async () => {
+          try {
+            setLoadingAction("delete");
+            if (!selectedRecurring) return;
+            const promises = [];
+            promises.push(ApiHelper.delete("/subscriptions/" + selectedRecurring.id, "GivingApi"));
+            promises.push(ApiHelper.delete("/subscriptionfunds/subscription/" + selectedRecurring.id, "GivingApi"));
+            await Promise.all(promises);
+
+            setSelectedRecurring(null);
+
+            Alert.alert("Success", "Recurring donation cancelled.");
+            loadData();
+          } catch (error) {
+            Alert.alert("Error", "Failed to delete subscription. Please try again.");
+          } finally {
+            setLoadingAction(null);
+          }
+        }
+      }
+      ]
+    );
+  };
+
+  // Save function implementation (adapted from web version)
+  const handleSave = async () => {
+    if (!selectedRecurring) {
+      Alert.alert("Error", "No donation selected");
+      return;
+    }
+
+    try {
+      setLoadingAction("save");
+      const sub = { ...selectedRecurring } as SubscriptionInterface;
+      const pmFound = paymentMethods.find((pm: StripePaymentMethod) => pm.id === selectedMethod);
+      if (!pmFound) {
+        const pm = paymentMethods[0];
+        if (pm) {
+          sub.default_payment_method = pm.type === "card" ? (pm.id || "") : "";
+          sub.default_source = pm.type === "bank" ? (pm.id || "") : "";
+        }
+      }
+      await ApiHelper.post("/subscriptions", [sub], "GivingApi")
+      setSelectedRecurring(null);
+
+      Alert.alert("Success", "Recurring donation updated.");
+      loadData();
+    } catch (error) {
+      Alert.alert("Error", "Failed to update donation. Please try again.");
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
   const renderTransactionItem = ({ item }: { item: DonationImpact }) => (
     <TouchableOpacity
       // onPress={() => setSelectedTransaction(item)} 
@@ -145,11 +274,6 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
         <Text variant="bodySmall" style={styles.transactionDate}>
           {DateHelper.prettyDate(new Date(item.donationDate))} • {item.method} - {item.methodDetails}
         </Text>
-        {/* {item.recurring && (
-          <Chip mode="outlined" compact style={styles.recurringChip} textStyle={styles.recurringChipText}>
-            {item.frequency}
-          </Chip>
-        )} */}
       </View>
 
       <View style={styles.transactionAmount}>
@@ -161,31 +285,6 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     </TouchableOpacity>
   );
 
-  // const renderRecurringItem = ({ item }: { item: any }) => (
-  //   <Card style={styles.recurringCard}>
-  //     <Card.Content style={styles.recurringContent}>
-  //       <View style={styles.recurringIcon}>
-  //         <MaterialIcons name="autorenew" size={24} color="#0D47A1" />
-  //       </View>
-
-  //       <View style={styles.recurringDetails}>
-  //         <Text variant="titleMedium" style={styles.recurringFund}>
-  //           {item.fund}
-  //         </Text>
-  //         <Text variant="bodyMedium" style={styles.recurringAmount}>
-  //           {CurrencyHelper.formatCurrency(item.amount)} • {item.frequency}
-  //         </Text>
-  //         <Text variant="bodySmall" style={styles.recurringNext}>
-  //           Next: {item.nextDate.toLocaleDateString()}
-  //         </Text>
-  //       </View>
-
-  //       <Button mode="outlined" compact onPress={() => handleManageRecurring(item)} style={styles.manageButton}>
-  //         Manage
-  //       </Button>
-  //     </Card.Content>
-  //   </Card>
-  // );
   const renderRecurringItem = ({ item }: { item: any }) => {
     const interval = `${item.plan?.interval_count || 1} ${item.plan?.interval || "month"}${(item.plan?.interval_count || 1) > 1 ? "s" : ""}`;
     const total = (item.plan?.amount || 0) / 100;
@@ -212,7 +311,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
           <Button
             mode="outlined"
             compact
-            // onPress={() => handleManageRecurring(item)}
+            onPress={() => handleManageRecurring(item)}
             style={styles.manageButton}
           >
             Manage
@@ -288,35 +387,6 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                   Total Given
                 </Text>
               </View>
-
-              {/*<View style={styles.statsRow}>
-                <View style={styles.miniStat}>
-                  <Text variant="titleLarge" style={styles.miniStatValue}>
-                    {givingStats.count}
-                  </Text>
-                  <Text variant="bodySmall" style={styles.miniStatLabel}>
-                    Gifts
-                  </Text>
-                </View>
-
-                <View style={styles.miniStat}>
-                  <Text variant="titleLarge" style={styles.miniStatValue}>
-                    {givingStats.recurring}
-                  </Text>
-                  <Text variant="bodySmall" style={styles.miniStatLabel}>
-                    Recurring
-                  </Text>
-                </View>
-
-                <View style={styles.miniStat}>
-                  <Text variant="titleLarge" style={styles.miniStatValue}>
-                    {CurrencyHelper.formatCurrency(givingStats.fees)}
-                  </Text>
-                  <Text variant="bodySmall" style={styles.miniStatLabel}>
-                    Fees Covered
-                  </Text>
-                </View>
-              </View>*/}
             </View>
           )}
         </Card.Content>
@@ -492,92 +562,116 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
       </Modal>
 
       {/* Recurring Donation Management Modal */}
-      <Modal visible={selectedRecurring !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSelectedRecurring(null)}>
+      <Modal transparent={true} visible={selectedRecurring !== null} animationType="slide" onRequestClose={() => setSelectedRecurring(null)}>
         <View style={styles.modalContainer}>
-          <ScrollView style={styles.modalScrollView} contentContainerStyle={styles.modalContent}>
-            <Card style={styles.detailModal}>
-              <Card.Content>
-                <View style={styles.detailHeader}>
-                  <Text variant="titleLarge" style={styles.detailTitle}>
-                    Manage Recurring Donation
-                  </Text>
-                  <TouchableOpacity onPress={() => setSelectedRecurring(null)}>
-                    <MaterialIcons name="close" size={24} color="#9E9E9E" />
-                  </TouchableOpacity>
-                </View>
+          <Card style={styles.detailModal}>
+            <Card.Content>
+              <View style={styles.detailHeader}>
+                <Text variant="titleLarge" style={styles.detailTitle}>
+                  Manage Recurring Donation
+                </Text>
+                <TouchableOpacity onPress={() => setSelectedRecurring(null)}>
+                  <MaterialIcons name="close" size={24} color="#9E9E9E" />
+                </TouchableOpacity>
+              </View>
 
-                {selectedRecurring && (
-                  <>
-                    <View style={styles.detailAmount}>
-                      <Text variant="displayMedium" style={styles.detailAmountText}>
-                        {CurrencyHelper.formatCurrency(selectedRecurring.amount)}
-                      </Text>
-                      <Text variant="titleMedium" style={styles.recurringFreqText}>
-                        {selectedRecurring.frequency}
-                      </Text>
-                    </View>
+              {selectedRecurring && (
+                <>
+                  <View style={styles.recurringInfo}>
+                    <Text variant="bodyMedium" style={styles.detailLabel}>
+                      Payment Method
+                    </Text>
+                    <DropDownPicker
+                      listMode="FLATLIST"
+                      open={isPaymentMethodDropDownOpen}
+                      value={selectedMethod}
+                      items={paymentMethodItems}
+                      setOpen={setIsPaymentMethodDropDownOpen}
+                      setValue={setSelectedMethod}
+                      setItems={setPaymentMethodItems}
+                      onChangeValue={(value) => {
+                        handlePaymentMethodChange(value as string);
+                      }}
+                      containerStyle={{ marginTop: DimensionHelper.wp(1) }}
+                      style={{ borderColor: "#E5E7EB" }}
+                      labelStyle={globalStyles.labelStyle}
+                      dropDownContainerStyle={styles.dropdownStyle}
+                      scrollViewProps={{ scrollEnabled: true }}
+                      dropDownDirection="AUTO"
+                      zIndex={3000}
+                      zIndexInverse={1000}
+                    />
+                    <Text variant="bodyMedium" style={styles.detailLabel}>
+                      Frequency
+                    </Text>
+                    <DropDownPicker
+                      listMode="FLATLIST"
+                      open={intervalOpen}
+                      value={intervalValue}
+                      items={intervalItems}
+                      setOpen={setIntervalOpen}
+                      setValue={setIntervalValue}
+                      setItems={setIntervalItems}
+                      onChangeValue={(v) => {
+                        if (typeof v === "string") {
+                          setSelectedInterval(v);
+                          setIntervalValue(v);
+                          if (selectedRecurring?.plan) {
+                            const inter = DonationHelper.getInterval(v);
+                            const updated = { ...selectedRecurring };
+                            updated.plan.interval_count = inter.interval_count;
+                            updated.plan.interval = inter.interval;
+                            setSelectedRecurring(updated);
+                          }
+                        }
+                      }}
+                      containerStyle={{ marginTop: DimensionHelper.wp(1) }}
+                      style={{ borderColor: "#E5E7EB" }}
+                      labelStyle={globalStyles.labelStyle}
+                      dropDownContainerStyle={styles.dropdownStyle}
+                      scrollViewProps={{ scrollEnabled: true }}
+                      dropDownDirection="AUTO"
+                      zIndex={2000}
+                      zIndexInverse={2000}
+                    />
+                  </View>
 
-                    <View style={styles.recurringInfo}>
-                      <View style={styles.detailRow}>
-                        <Text variant="bodyMedium" style={styles.detailLabel}>
-                          Fund
-                        </Text>
-                        <Text variant="bodyMedium" style={styles.detailValue}>
-                          {selectedRecurring.fund}
-                        </Text>
-                      </View>
-                      <View style={styles.detailRow}>
-                        <Text variant="bodyMedium" style={styles.detailLabel}>
-                          Next Payment
-                        </Text>
-                        <Text variant="bodyMedium" style={styles.detailValue}>
-                          {selectedRecurring.nextDate?.toLocaleDateString()}
-                        </Text>
-                      </View>
-                      <View style={styles.detailRow}>
-                        <Text variant="bodyMedium" style={styles.detailLabel}>
-                          Payment Method
-                        </Text>
-                        <Text variant="bodyMedium" style={styles.detailValue}>
-                          {selectedRecurring.method}
-                        </Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.managementActions}>
-                      <Button
-                        mode="contained"
-                        onPress={() => {
-                          Alert.alert(
-                            "Stop Recurring Donation",
-                            "Are you sure you want to stop this recurring donation? You can always set up a new recurring donation later.",
-                            [
-                              { text: "Keep Donation", style: "cancel" },
-                              {
-                                text: "Stop Donation",
-                                style: "destructive",
-                                onPress: () => {
-                                  setSelectedRecurring(null);
-                                }
-                              }
-                            ]
-                          );
-                        }}
-                        style={styles.stopButton}
-                        buttonColor="#B0120C"
-                        textColor="#FFFFFF"
-                      >
-                        Stop Recurring Donation
-                      </Button>
-                    </View>
-                  </>
-                )}
-              </Card.Content>
-            </Card>
-          </ScrollView>
+                  <View style={styles.managementActions}>
+                    <Button
+                      mode="text"
+                      style={styles.stopButton}
+                      textColor="#ed6c02"
+                      onPress={() => setSelectedRecurring(null)}
+                    >
+                      CANCEL
+                    </Button>
+                    <Button
+                      mode="outlined"
+                      style={[styles.stopButton, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#d32f2f80' }]}
+                      textColor="#d32f2f"
+                      onPress={handleDelete}
+                      loading={loadingAction !== null}
+                    >
+                      {loadingAction === "delete" ? "DELETING..." : "DELETE"}
+                    </Button>
+                    <Button
+                      mode="contained"
+                      style={styles.stopButton}
+                      buttonColor="#1976d2"
+                      textColor="#FFFFFF"
+                      onPress={handleSave}
+                      loading={loadingAction !== null}
+                    >
+                      {loadingAction === "save" ? "SAVING..." : "SAVE"}
+                    </Button>
+                  </View>
+                </>
+              )}
+            </Card.Content>
+          </Card>
         </View>
-      </Modal>
-    </View>
+      </Modal >
+    </View >
   );
 }
 
@@ -759,11 +853,11 @@ const styles = StyleSheet.create({
   divider: {
     marginHorizontal: 16
   },
-
-  // Detail Modal
   modalContainer: {
     flex: 1,
-    backgroundColor: "#F6F6F8"
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    paddingHorizontal: 16,
   },
   modalScrollView: {
     flex: 1
@@ -771,6 +865,7 @@ const styles = StyleSheet.create({
   modalContent: {
     padding: 16,
     paddingTop: 50 // Safe area
+
   },
   detailModal: {
     borderRadius: 20,
@@ -779,7 +874,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#FFFFFF",
   },
   detailHeader: {
     flexDirection: "row",
@@ -858,11 +953,13 @@ const styles = StyleSheet.create({
     gap: 8
   },
   managementActions: {
-    marginTop: 16
+    marginTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   stopButton: {
-    borderRadius: 12,
-    paddingVertical: 4
+    borderRadius: 8,
+    paddingVertical: 2
   },
 
   // Loading States
@@ -958,4 +1055,14 @@ const styles = StyleSheet.create({
   emptyText: {
     color: "#777",
   },
+  dropdownStyle: {
+    backgroundColor: "#fff",
+    borderColor: "#E5E7EB",
+    overflow: "hidden",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  }
 });
