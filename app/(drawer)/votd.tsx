@@ -1,6 +1,8 @@
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import React, { useCallback } from "react";
 import { Dimensions, View, ActivityIndicator } from "react-native";
+// import { Utilities, globalStyles } from '../helpers';
+// import { NavigationProps } from '../interfaces';
 import { globalStyles } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";

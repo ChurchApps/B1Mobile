@@ -23,7 +23,6 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
   const webviewRef = useRef<WebView>(null);
   const navigationMain = useNavigation();
-
   const user = useUserStore();
 
   useEffect(() => {
