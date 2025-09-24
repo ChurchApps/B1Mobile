@@ -16,6 +16,7 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
+      buildNumber: "50",
       googleServicesFile: "./config/GoogleService-Info.plist",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,

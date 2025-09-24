@@ -44,3 +44,17 @@ If you'd like to set up the project locally, see our [development guide](https:/
 2. Increment the version number in app.config.js, package.json, android/app/build.gradle and ios/B1Mobile/Info.plist
 3. Run `npm run build:android` to generate a Google Play release
 4. Run `npm run build:ios` to generate an iOS release
+
+## iOS Versioning and Submission
+
+To avoid App Store rejections after the Expo eject, keep the native project in sync before each iOS release.
+
+1. Update `expo.version` and `expo.ios.buildNumber` in `app.config.js` (and bump `package.json` if needed).
+2. Mirror those values into the native project:
+   - Set `CFBundleShortVersionString` and `CFBundleVersion` in `ios/B1Mobile/Info.plist`.
+   - Update `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `ios/B1Mobile.xcodeproj/project.pbxproj`.
+3. Commit the changes so the release history is tracked.
+4. Run `eas build --platform ios --profile production` and wait for the build to finish.
+5. Submit with `eas submit --platform ios --profile production` (or use the Expo dashboard).
+6. If App Store Connect reports a duplicate version/build, repeat the steps with higher numbers and rebuild.
+
