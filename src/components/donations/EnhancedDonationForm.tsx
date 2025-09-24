@@ -5,7 +5,8 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import { ApiHelper, CurrencyHelper } from "../../helpers";
-import { FundInterface, StripeDonationInterface, StripePaymentMethod } from "../../interfaces";
+import { DonationHelper } from "../../helpers/DonationHelper";
+import { FundInterface, StripeDonationInterface, StripePaymentMethod, MultiGatewayDonationInterface, PaymentMethod, PaymentGateway } from "../../interfaces";
 import { useUser, useCurrentUserChurch } from "../../stores/useUserStore";
 import { CacheHelper } from "../../helpers";
 import { DonationComplete } from "./DonationComplete";
@@ -13,10 +14,11 @@ import { DonationComplete } from "./DonationComplete";
 interface Props {
   paymentMethods: StripePaymentMethod[];
   customerId: string;
+  gatewayData?: any[];
   updatedFunction: () => void;
 }
 
-export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
+export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayData, updatedFunction }: Props) {
   const user = useUser();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
@@ -43,6 +45,9 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
   const [lastName, setLastName] = useState("");
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
 
+  // Church data for non-auth users
+  const [churchData, setChurchData] = useState<any>(null);
+
   // Determine church ID for funds query
   const churchId = currentUserChurch?.church?.id || "";
 
@@ -54,6 +59,17 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
     staleTime: 15 * 60 * 1000,
     gcTime: 60 * 60 * 1000
   });
+
+  // Fetch church data for non-auth users (similar to AppHelper)
+  useEffect(() => {
+    if (churchId && !churchData) {
+      ApiHelper.get("/churches/" + churchId, "MembershipApi").then((data: any) => {
+        setChurchData(data);
+      }).catch(error => {
+        console.error("Failed to fetch church data:", error);
+      });
+    }
+  }, [churchId, churchData]);
 
   // Initialize defaults
   useEffect(() => {
@@ -72,7 +88,8 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
   useEffect(() => {
     const calculateFee = async () => {
       const amountNumber = parseFloat(amount || "0");
-      if (amountNumber > 0 && selectedMethod) {
+      if (amountNumber > 0) {
+        // Calculate fee even if selectedMethod is empty (for non-auth users)
         const fee = await getTransactionFee(amountNumber);
         setTransactionFee(fee);
       } else {
@@ -100,12 +117,20 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
   const getTransactionFee = async (amount: number) => {
     if (amount > 0) {
       const selectedPaymentMethod = pm.find(p => p.id === selectedMethod);
-      let dt: string = "";
-      if (selectedPaymentMethod?.type === "card") dt = "creditCard";
-      if (selectedPaymentMethod?.type === "bank") dt = "ach";
-      
+      let requestData: any = { amount };
+
+      if (selectedPaymentMethod?.type === "paypal") {
+        requestData.provider = "paypal";
+      } else {
+        // For non-auth users or when no payment method is selected, default to creditCard
+        const dt = selectedPaymentMethod?.type === "card" ? "creditCard" :
+                   selectedPaymentMethod?.type === "bank" ? "ach" :
+                   "creditCard"; // Default for non-auth users
+        requestData.type = dt;
+      }
+
       try {
-        const response = await ApiHelper.post("/donate/fee?churchId=" + churchId, { type: dt, amount }, "GivingApi");
+        const response = await ApiHelper.post("/donate/fee?churchId=" + churchId, requestData, "GivingApi");
         return response.calculatedFee;
       } catch (error) {
         // Fallback to credit card calculation
@@ -179,10 +204,24 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
         }
       };
 
+
       if (!currentUserChurch?.person?.id) {
         await handleGuestDonation(donation);
       } else {
-        await makeDonation(donation);
+        // For authenticated users, add gatewayId and other required fields
+        const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
+        const enhancedDonation = {
+          ...donation,
+          gatewayId: gateway?.id,
+          churchId: churchId || CacheHelper.church?.id,
+          notes: "",
+          church: {
+            name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
+            subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
+            churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
+          }
+        };
+        await makeDonation(enhancedDonation);
       }
     } catch (error) {
       console.error("Donation error:", error);
@@ -225,7 +264,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
     await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
 
     const personData = {
-      churchId: CacheHelper.church?.id || "",
+      churchId: churchId || CacheHelper.church?.id || "",
       firstName,
       lastName,
       email
@@ -242,12 +281,13 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
       throw new Error(stripePaymentMethod.error.message);
     }
 
+    // Call addcard to get customerId (like AppHelper does)
     const pm = {
       id: stripePaymentMethod.paymentMethod.id,
       personId: personResult.id,
       email: email,
       name: `${firstName} ${lastName}`,
-      churchId: CacheHelper.church?.id || ""
+      churchId: churchId || CacheHelper.church?.id || ""
     };
 
     const result = await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi");
@@ -256,15 +296,29 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, updatedFu
       throw new Error(result.raw.message);
     }
 
+
+    // Create donation object with data from addcard response
+    const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
     const updatedDonation = {
-      ...donation,
-      id: result.paymentMethod.id,
-      customerId: result.customerId,
-      type: result.paymentMethod?.type,
+      amount: donation.amount,
+      id: result.paymentMethod?.id || "",
+      customerId: result.customerId || "",
+      type: result.paymentMethod?.type || "card",
+      gatewayId: gateway?.id, // Add gatewayId as required by API
+      churchId: churchId || CacheHelper.church?.id,
       person: {
-        name: `${firstName} ${lastName}`,
         id: personResult.id,
-        email: email
+        email: email,
+        name: `${firstName} ${lastName}`
+      },
+      notes: "", // Add notes field like AppHelper
+      funds: donation.funds || [],
+      billing_cycle_anchor: donation.billing_cycle_anchor,
+      interval: donation.interval,
+      church: {
+        name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
+        subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
+        churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
       }
     };
 

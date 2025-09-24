@@ -1,5 +1,6 @@
 import { ApiHelper, CurrencyHelper, UserHelper, UserInterface } from "../../../src/helpers";
-import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod } from "../../../src/interfaces";
+import { DonationHelper } from "../../../src/helpers/DonationHelper";
+import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod, MultiGatewayDonationInterface, PaymentMethod, PaymentGateway } from "../../../src/interfaces";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
@@ -103,7 +104,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setDonationType("");
   };
 
-  const handleFundDonationsChange = (fd: FundDonationInterface[]) => {
+  const handleFundDonationsChange = async (fd: FundDonationInterface[]) => {
     setFundDonations(fd);
     let totalAmount = 0;
     let selectedFunds: any = [];
@@ -116,9 +117,10 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     d.amount = totalAmount;
     d.funds = selectedFunds;
     setDonation(d);
-    // setTotal(totalAmount);
-    setTotal(calculateTotalWithFees(totalAmount, isChecked));
-    setTransactionFee(getTransactionFee(totalAmount));
+
+    const fee = await getTransactionFee(totalAmount);
+    setTransactionFee(fee);
+    setTotal(calculateTotalWithFees(totalAmount, isChecked, fee));
   };
 
   const makeDonation = async () => {
@@ -251,15 +253,35 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     setDonation(donationsCopy);
   };
 
-  const calculateTotalWithFees = (baseAmount: number, isChecked: boolean) => {
-    const feeAmount = isChecked ? getTransactionFee(baseAmount) : 0;
+  const calculateTotalWithFees = (baseAmount: number, isChecked: boolean, fee: number = 0) => {
+    const feeAmount = isChecked ? fee : 0;
     return baseAmount + feeAmount;
   };
 
-  const getTransactionFee = (amount: number) => {
-    const fixedFee = 0.3;
-    const fixedPercent = 0.029;
-    return Math.round(((amount + fixedFee) / (1 - fixedPercent) - amount) * 100) / 100;
+  const getTransactionFee = async (amount: number) => {
+    if (amount > 0) {
+      const selectedPaymentMethod = pm.find(p => p.id === selectedMethod);
+      let requestData: any = { amount };
+
+      if (selectedPaymentMethod?.type === "paypal") {
+        requestData.provider = "paypal";
+      } else {
+        const dt = selectedPaymentMethod?.type === "card" ? "creditCard" : "ach";
+        requestData.type = dt;
+      }
+
+      try {
+        const response = await ApiHelper.post("/donate/fee?churchId=" + currentUserChurch?.church?.id, requestData, "GivingApi");
+        return response.calculatedFee;
+      } catch (error) {
+        // Fallback to credit card calculation
+        const fixedFee = 0.3;
+        const fixedPercent = 0.029;
+        return Math.round(((amount + fixedFee) / (1 - fixedPercent) - amount) * 100) / 100;
+      }
+    } else {
+      return 0;
+    }
   };
 
   const getMethodLabel = (method: StripePaymentMethod) => {
@@ -347,7 +369,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                 status={isChecked ? "checked" : "unchecked"}
                 onPress={() => {
                   setIsChecked(!isChecked);
-                  setTotal(calculateTotalWithFees(donation.amount || 0, !isChecked));
+                  setTotal(calculateTotalWithFees(donation.amount || 0, !isChecked, transactionFee));
                 }}
               />
               {transactionFee > 0 && (

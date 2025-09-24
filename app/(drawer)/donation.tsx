@@ -64,12 +64,23 @@ const Donation = () => {
     gcTime: 30 * 60 * 1000 // 30 minutes
   });
 
-  // Use react-query for payment methods
+  // Get customer ID first (like AppHelper with fallback)
+  const {
+    data: customerData,
+    isLoading: customerLoading,
+  } = useQuery<any>({
+    queryKey: ["/customers?personId=" + person?.id, "GivingApi"],
+    enabled: !!person?.id && isFocused,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000
+  });
+
+  // Use react-query for payment methods (using personId endpoint that works)
   const {
     data: paymentMethodsData,
     isLoading: paymentMethodsLoading,
     refetch: refetchPaymentMethods
-  } = useQuery<PaymentMethodsResponse[]>({
+  } = useQuery<StripePaymentMethod[]>({
     queryKey: ["/paymentmethods/personid/" + person?.id, "GivingApi"],
     enabled: !!person?.id && !!publishKey && isFocused,
     placeholderData: [],
@@ -88,7 +99,7 @@ const Donation = () => {
     gcTime: 10 * 60 * 1000
   });
 
-  const areMethodsLoading = gatewayLoading || paymentMethodsLoading || donationImpactLoading;
+  const areMethodsLoading = gatewayLoading || customerLoading || paymentMethodsLoading || donationImpactLoading;
 
   useEffect(() => {
     UserHelper.addOpenScreenEvent("Donation Screen");
@@ -102,19 +113,27 @@ const Donation = () => {
   }, [gatewayData]);
 
   useEffect(() => {
-    if (paymentMethodsData) {
-      if (!paymentMethodsData.length) {
-        setPaymentMethods([]);
-        setCustomerId("");
-      } else {
-        const cards = paymentMethodsData[0].cards.data.map((card: any) => new StripePaymentMethod(card));
-        const banks = paymentMethodsData[0].banks.data.map((bank: any) => new StripePaymentMethod(bank));
-        const methods = cards.concat(banks);
-        setCustomerId(paymentMethodsData[0].customer.id);
-        setPaymentMethods(methods);
-      }
+    console.log("💳 Payment Methods Debug:", {
+      paymentMethodsData,
+      customerData,
+      person: person?.id
+    });
+
+    if (paymentMethodsData && Array.isArray(paymentMethodsData) && paymentMethodsData.length > 0) {
+      // Handle direct array format from API
+      const methods = paymentMethodsData.map((item: any) => new StripePaymentMethod(item));
+
+      // Set customerId from first payment method (most reliable)
+      setCustomerId(paymentMethodsData[0]?.customerId || "");
+      setPaymentMethods(methods);
+    } else if (customerData && (!paymentMethodsData || paymentMethodsData.length === 0)) {
+      // Fallback: use customer data if no payment methods data
+      const cust = Array.isArray(customerData) ? customerData[0] : customerData;
+      const cid = cust?.id || cust?.customerId || '';
+      setCustomerId(cid);
+      setPaymentMethods([]); // No payment methods available
     }
-  }, [paymentMethodsData]);
+  }, [paymentMethodsData, customerData]);
 
   const loadData = async () => {
     try {
@@ -144,7 +163,7 @@ const Donation = () => {
 
   const renderOverviewSection = () => <GivingOverview givingStats={givingStats} onDonatePress={() => setActiveSection("donate")} onHistoryPress={() => setActiveSection("history")} />;
 
-  const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} updatedFunction={loadData} />;
+  const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} gatewayData={gatewayData} updatedFunction={loadData} />;
 
   const renderManageSection = () => <ManagePayments person={person} customerId={customerId} paymentMethods={paymentMethods} isLoading={areMethodsLoading} publishKey={publishKey} loadData={loadData} />;
 
