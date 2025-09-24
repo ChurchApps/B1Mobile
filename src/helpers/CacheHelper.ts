@@ -1,6 +1,13 @@
+type Church = {
+  id: string;
+  subDomain: string;
+  name?: string;
+};
+
 export class CacheHelper {
   // CacheHelper is now deprecated - all state is managed in useUserStore
   // This class remains only for backward compatibility during migration
+  static church?: Church;
 
   static setValue = async () => {
     // No-op for now - will be removed in future update
