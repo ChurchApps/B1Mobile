@@ -650,7 +650,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       style={[styles.stopButton, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#d32f2f80' }]}
                       textColor="#d32f2f"
                       onPress={handleDelete}
-                      loading={loadingAction !== null}
+                      loading={loadingAction === "delete"}
                     >
                       {loadingAction === "delete" ? "DELETING..." : "DELETE"}
                     </Button>
@@ -660,7 +660,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       buttonColor="#1976d2"
                       textColor="#FFFFFF"
                       onPress={handleSave}
-                      loading={loadingAction !== null}
+                      loading={loadingAction === "save"}
                     >
                       {loadingAction === "save" ? "SAVING..." : "SAVE"}
                     </Button>

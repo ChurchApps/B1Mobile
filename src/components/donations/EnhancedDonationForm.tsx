@@ -6,10 +6,13 @@ import { useQuery } from "@tanstack/react-query";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import { ApiHelper, CurrencyHelper } from "../../helpers";
 import { DonationHelper } from "../../helpers/DonationHelper";
-import { FundInterface, StripeDonationInterface, StripePaymentMethod, MultiGatewayDonationInterface, PaymentMethod, PaymentGateway } from "../../interfaces";
+import { FundInterface, StripeDonationInterface, StripePaymentMethod, PaymentGateway } from "../../interfaces";
 import { useUser, useCurrentUserChurch } from "../../stores/useUserStore";
 import { CacheHelper } from "../../helpers";
 import { DonationComplete } from "./DonationComplete";
+import DatePicker from "react-native-date-picker";
+import dayjs from "dayjs";
+import { DimensionHelper } from "@/helpers/DimensionHelper";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -32,7 +35,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
   const [coverFees, setCoverFees] = useState<boolean>(false);
   const [transactionFee, setTransactionFee] = useState<number>(0);
   const [showComplete, setShowComplete] = useState<boolean>(false);
-  const [completionData, setCompletionData] = useState<{amount: string, isRecurring: boolean, interval: string}>({amount: "", isRecurring: false, interval: ""});
+  const [completionData, setCompletionData] = useState<{ amount: string, isRecurring: boolean, interval: string }>({ amount: "", isRecurring: false, interval: "" });
 
   // Menu visibility
   const [showFundMenu, setShowFundMenu] = useState(false);
@@ -44,6 +47,8 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
+  const [openStartPicker, setOpenStartPicker] = useState(false);
+  const [startDate, setStartDate] = useState(new Date());
 
   // Church data for non-auth users
   const [churchData, setChurchData] = useState<any>(null);
@@ -65,7 +70,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
     if (churchId && !churchData) {
       ApiHelper.get("/churches/" + churchId, "MembershipApi").then((data: any) => {
         setChurchData(data);
-      }).catch(error => {
+      }).catch((error: any) => {
         console.error("Failed to fetch church data:", error);
       });
     }
@@ -124,8 +129,8 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       } else {
         // For non-auth users or when no payment method is selected, default to creditCard
         const dt = selectedPaymentMethod?.type === "card" ? "creditCard" :
-                   selectedPaymentMethod?.type === "bank" ? "ach" :
-                   "creditCard"; // Default for non-auth users
+          selectedPaymentMethod?.type === "bank" ? "ach" :
+            "creditCard"; // Default for non-auth users
         requestData.type = dt;
       }
 
@@ -192,12 +197,12 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
             name: selectedFundObj?.name || ""
           }
         ],
-        billing_cycle_anchor: +new Date(),
+        billing_cycle_anchor: Number(startDate) || +new Date(),
         interval: isRecurring
           ? {
-              interval_count: getIntervalCount(selectedInterval),
-              interval: getIntervalType(selectedInterval)
-            }
+            interval_count: getIntervalCount(selectedInterval),
+            interval: getIntervalType(selectedInterval)
+          }
           : undefined,
         church: {
           subDomain: CacheHelper.church?.subDomain || ""
@@ -336,7 +341,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         isRecurring: isRecurring,
         interval: selectedInterval
       });
-      
+
       // Reset form
       setAmount("");
       setIsRecurring(false);
@@ -344,7 +349,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       setEmail("");
       setFirstName("");
       setLastName("");
-      
+
       // Show completion screen
       setShowComplete(true);
     } else if (result?.raw?.message) {
@@ -440,31 +445,52 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
 
           {isRecurring && (
             <View style={styles.intervalSection}>
-              <Text variant="titleSmall" style={styles.intervalLabel}>
-                Frequency
-              </Text>
-              <Menu
-                visible={showIntervalMenu}
-                onDismiss={() => setShowIntervalMenu(false)}
-                anchor={
-                  <TouchableOpacity style={styles.selector} onPress={() => setShowIntervalMenu(true)}>
-                    <Text variant="bodyLarge" style={styles.selectorText}>
-                      {getIntervalLabel(selectedInterval)}
-                    </Text>
-                    <MaterialIcons name="expand-more" size={24} color="#9E9E9E" />
-                  </TouchableOpacity>
-                }>
-                {intervalTypes.map(interval => (
-                  <Menu.Item
-                    key={interval.value}
-                    onPress={() => {
-                      setSelectedInterval(interval.value);
-                      setShowIntervalMenu(false);
-                    }}
-                    title={interval.label}
-                  />
-                ))}
-              </Menu>
+              <View style={{ width: DimensionHelper.wp(35) }}>
+                <Text variant="titleSmall" style={styles.intervalLabel}>
+                  Frequency
+                </Text>
+                <Menu
+                  visible={showIntervalMenu}
+                  onDismiss={() => setShowIntervalMenu(false)}
+                  anchor={
+                    <TouchableOpacity style={styles.selector} onPress={() => setShowIntervalMenu(true)}>
+                      <Text variant="bodyLarge" style={styles.selectorText}>
+                        {getIntervalLabel(selectedInterval)}
+                      </Text>
+                      <MaterialIcons name="expand-more" size={24} color="#9E9E9E" />
+                    </TouchableOpacity>
+                  }>
+                  {intervalTypes.map(interval => (
+                    <Menu.Item
+                      key={interval.value}
+                      onPress={() => {
+                        setSelectedInterval(interval.value);
+                        setShowIntervalMenu(false);
+                      }}
+                      title={interval.label}
+                    />
+                  ))}
+                </Menu>
+              </View>
+              <View style={{ width: DimensionHelper.wp(35) }}>
+                <Text variant="titleSmall" style={styles.intervalLabel}>
+                  Start Date
+                </Text>
+                <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton}>
+                  <Text style={styles.dateTimeText}>{dayjs(startDate).format("MMM DD, YYYY")}</Text>
+                </Button>
+                <DatePicker
+                  modal
+                  open={openStartPicker}
+                  date={startDate}
+                  mode={"date"}
+                  onConfirm={date => {
+                    setOpenStartPicker(false);
+                    setStartDate(date);
+                  }}
+                  onCancel={() => setOpenStartPicker(false)}
+                />
+              </View>
             </View>
           )}
         </Card.Content>
@@ -663,7 +689,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0"
+    borderTopColor: "#F0F0F0",
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   intervalLabel: {
     color: "#3c3c3c",
@@ -700,5 +728,18 @@ const styles = StyleSheet.create({
   giveButtonText: {
     fontWeight: "700",
     fontSize: 18
-  }
+  },
+  dateTimeButton: {
+    alignItems: "center",
+    justifyContent: 'center',
+    paddingVertical: 8,
+    backgroundColor: "#F6F6F8",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E0E0E0"
+  },
+  dateTimeText: {
+    color: "#3c3c3c",
+    fontSize: 14,
+  },
 });
