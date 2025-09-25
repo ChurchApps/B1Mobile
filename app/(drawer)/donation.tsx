@@ -47,6 +47,7 @@ const Donation = () => {
   const isFocused = useIsFocused();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
+  const [selectedRepeatDonation, setSelectedRepeatDonation] = useState<{ amount: string; fundId?: string; } | null>(null);
 
   // Example of stale-while-revalidate for donation funds
   const { data: fundsData, showSkeleton: showFundsSkeleton, isRevalidating: fundsRevalidating } = useDonationFunds(currentUserChurch?.church?.id || "");
@@ -91,6 +92,7 @@ const Donation = () => {
   const {
     data: donationImpactData = [],
     isLoading: donationImpactLoading,
+    refetch: refetchDonation
   } = useQuery<DonationImpact[]>({
     queryKey: ["/donations/my", "GivingApi"],
     enabled: isFocused,
@@ -137,7 +139,7 @@ const Donation = () => {
 
   const loadData = async () => {
     try {
-      await Promise.all([refetchGateway(), refetchPaymentMethods()]);
+      await Promise.all([refetchGateway(), refetchPaymentMethods(), refetchDonation()]);
     } catch (err: any) {
       Alert.alert("Failed to fetch payment methods", err.message);
       ErrorHelper.logError("load-donations", err);
@@ -161,9 +163,21 @@ const Donation = () => {
     return { ytd, totalGifts, lastGift, lastGiftDate };
   }, [donationImpactData]);
 
-  const renderOverviewSection = () => <GivingOverview givingStats={givingStats} onDonatePress={() => setActiveSection("donate")} onHistoryPress={() => setActiveSection("history")} />;
+  const handleRepeatDonation = () => {
+    if (!givingStats.lastGift) return;
 
-  const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} gatewayData={gatewayData} updatedFunction={loadData} />;
+    const repeatDonation: { amount: string; fundId?: string } = {
+      amount: String(donationImpactData[0]?.amount),
+      fundId: donationImpactData[0]?.fund?.id,
+    }
+    setSelectedRepeatDonation(repeatDonation);
+
+    setActiveSection('donate');
+  };
+
+  const renderOverviewSection = () => <GivingOverview givingStats={givingStats} onDonatePress={handleRepeatDonation} onHistoryPress={() => setActiveSection("history")} />;
+
+  const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} gatewayData={gatewayData} updatedFunction={loadData} initialDonation={selectedRepeatDonation} />;
 
   const renderManageSection = () => <ManagePayments person={person} customerId={customerId} paymentMethods={paymentMethods} isLoading={areMethodsLoading} publishKey={publishKey} loadData={loadData} />;
 
