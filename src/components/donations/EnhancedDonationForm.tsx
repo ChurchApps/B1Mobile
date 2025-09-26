@@ -19,17 +19,21 @@ interface Props {
   customerId: string;
   gatewayData?: any[];
   updatedFunction: () => void;
+  initialDonation?: {
+    amount: string;
+    fundId: string;
+  };
 }
 
-export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayData, updatedFunction }: Props) {
+export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayData, updatedFunction, initialDonation }: Props) {
   const user = useUser();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
 
   // Form state
-  const [amount, setAmount] = useState<string>("");
+  const [amount, setAmount] = useState<string>(initialDonation?.amount || "");
   const [isRecurring, setIsRecurring] = useState<boolean>(false);
-  const [selectedFund, setSelectedFund] = useState<string>("");
+  const [selectedFund, setSelectedFund] = useState<string>(initialDonation?.fundId || "");
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [selectedInterval, setSelectedInterval] = useState<string>("one_month");
   const [coverFees, setCoverFees] = useState<boolean>(false);
