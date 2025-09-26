@@ -341,7 +341,7 @@ export function CustomDrawer(props?: any) {
       : "https://app.staging.chums.org/login";
 
     const params = new URLSearchParams({
-      returnUrl: "/profile",
+      returnUrl: "/profile?hideHeader=true",
       hideHeader: "true",
     });
 
