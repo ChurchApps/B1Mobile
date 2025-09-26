@@ -5,6 +5,7 @@ import { useAppTheme } from "../../../src/theme";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { View } from "react-native";
+import { useUser } from "@/stores/useUserStore";
 
 interface Props {
   toggleNotifications: () => void;
@@ -25,6 +26,7 @@ interface ChatParams {
 
 export const HeaderBell = (props: Props) => {
   const { theme, componentStyles } = useAppTheme();
+  const user = useUser();
   const [badgeCount, setBadgeCount] = useState(0);
   const navigation = useNavigation();
 
@@ -84,6 +86,8 @@ export const HeaderBell = (props: Props) => {
     eventBus.emit("notificationRead");
     props.toggleNotifications();
   };
+
+  if (!user) return null;
 
   if (props?.name) {
     return (

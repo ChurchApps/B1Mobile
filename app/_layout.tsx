@@ -10,6 +10,7 @@ import { queryClient, initializeQueryCache } from "../src/helpers/QueryClient";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { NotificationNavigationHandler } from "../src/components/NotificationNavigationHandler";
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
+import { StatusBar } from "react-native";
 
 export default function RootLayout() {
   const router = useRouter();
@@ -71,6 +72,7 @@ export default function RootLayout() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
+          <StatusBar barStyle={"light-content"} />
           <SafeAreaProvider>
             <NotificationNavigationHandler />
             <Stack screenOptions={{ headerShown: true }} initialRouteName="auth">
