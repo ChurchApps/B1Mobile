@@ -145,7 +145,7 @@ export const CheckinServices = (props: Props) => {
           <MaterialIcons name="church" size={28} color="#0D47A1" />
         </View>
         <View style={styles.serviceInfo}>
-           {item?.name && (
+          {item?.name && (
             <Text variant="titleLarge" style={styles.serviceName}>
               {item.name}
             </Text>
@@ -156,9 +156,6 @@ export const CheckinServices = (props: Props) => {
               {item.campus?.name}
             </Text>
           )}
-        </View>
-        <View style={styles.serviceArrow}>
-          <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
         </View>
         <View style={styles.serviceArrow}>{selectServiceLoading.isLoading && selectServiceLoading.campusId === item.campusId ? <ActivityIndicator /> : <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />}</View>
       </View>

@@ -78,7 +78,7 @@ export class PushNotificationHelper {
 
       // Register device with API
       await ApiHelper.post(
-        "/devices/register",
+        "/devices/enroll",
         {
           personId: currentUserChurch.person.id,
           fcmToken,

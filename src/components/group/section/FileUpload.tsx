@@ -1,6 +1,5 @@
-"use client";
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import { Button, ProgressBar } from "react-native-paper";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
@@ -11,32 +10,25 @@ type Props = {
   saveCallback: (file: FileInterface) => void;
   contentType: string;
   contentId: string;
+  cancelCallback?: () => void;
 };
 
-type DocumentResult = {
-  type: "success" | "cancel";
-  uri: string;
-  name: string;
-  size?: number;
-};
-
-export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, contentType, contentId }) => {
+export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, contentType, contentId, cancelCallback }) => {
   const [file, setFile] = useState<FileInterface>({} as FileInterface);
   const [uploadedFile, setUploadedFile] = useState<any>(null);
   const [uploadProgress, setUploadProgress] = useState(-1);
-  const [uploadInProgress, setUploadInProgress] = useState<any>(false);
+  const [uploadInProgress, setUploadInProgress] = useState(false);
 
   const handlePickFile = async () => {
     try {
       const res = await DocumentPicker.getDocumentAsync({
-        type: "*/*", // allow all file types
+        type: "*/*",
         copyToCacheDirectory: true,
         multiple: false
       });
 
       if (!res.canceled && res.assets.length > 0) {
-        const file = res.assets[0]; // the picked file
-        setUploadedFile(file);
+        setUploadedFile(res?.assets[0]);
       } else {
         console.log("User canceled the picker");
       }
@@ -111,10 +103,8 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
       headers: { "Content-Type": "multipart/form-data" },
       onUploadProgress: progressEvent => {
         if (progressEvent.total) {
-          // check if total exists
           let percent = Math.round((100 * progressEvent.loaded) / progressEvent.total);
-          percent = Math.min(percent, 100); // ensure it doesn't exceed 100
-          console.log(percent);
+          percent = Math.min(percent, 100);
           setUploadProgress(percent);
         }
       }
@@ -128,17 +118,37 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
     }
   }, [pendingSave]);
 
+  const handleCancel = () => {
+    if (uploadInProgress) {
+      Alert.alert("Cancel Upload", "Upload is in progress. Are you sure you want to cancel?", [{ text: "No" }, { text: "Yes", onPress: () => resetUpload() }]);
+    } else {
+      resetUpload();
+    }
+  };
+
+  const resetUpload = () => {
+    setUploadedFile(null);
+    setUploadProgress(-1);
+    setUploadInProgress(false);
+    cancelCallback?.();
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{`File ${uploadedFile?.name || ""}`}</Text>
       {uploadProgress > -1 && <ProgressBar progress={uploadProgress / 100} style={styles.progress} />}
-      {file?.fileName && <Text>{file.fileName}</Text>}
-      <Button mode="outlined" onPress={handlePickFile}>
+      <Button mode="outlined" onPress={handlePickFile} disabled={uploadInProgress}>
         Choose File
       </Button>
-      <Button mode="contained" onPress={handleSave} style={styles.uploadBtn} disabled={uploadInProgress}>
+      <Button mode="contained" onPress={handleSave} style={styles.uploadBtn} disabled={uploadInProgress || !uploadedFile}>
         {uploadInProgress ? "Uploading..." : "Upload File"}
       </Button>
+
+      {(uploadedFile || uploadInProgress) && (
+        <Button mode="text" onPress={handleCancel} disabled={!uploadedFile && !uploadInProgress} style={styles.cancelBtn}>
+          Cancel
+        </Button>
+      )}
     </View>
   );
 };
@@ -158,5 +168,8 @@ const styles = StyleSheet.create({
   },
   uploadBtn: {
     marginTop: 8
+  },
+  cancelBtn: {
+    marginTop: 4
   }
 });
