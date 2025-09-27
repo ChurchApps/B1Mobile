@@ -36,7 +36,7 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
 
   // Use react-query for conversations
   const { data: rawConversations = [], refetch: refetchConversations } = useQuery<ConversationInterface[]>({
-    queryKey: [`/conversations/group/${groupId}`, "MessagingApi"],
+    queryKey: [`/conversations/messages/group/${groupId}`, "MessagingApi"],
     enabled: !!groupId && !!currentUserChurch?.jwt && visible,
     placeholderData: [],
     staleTime: 0,
@@ -355,4 +355,3 @@ const styles = StyleSheet.create({
 });
 
 export default GroupChatModal;
-
