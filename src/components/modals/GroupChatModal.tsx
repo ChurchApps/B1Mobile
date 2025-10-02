@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal, View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Dimensions, ActivityIndicator, RefreshControl, StatusBar, TouchableOpacity, Pressable } from "react-native";
-import { Appbar, Text, TextInput, IconButton, Avatar as PaperAvatar, Surface } from "react-native-paper";
+import { Appbar, Text, IconButton, Avatar as PaperAvatar, Surface } from "react-native-paper";
 import { ApiHelper, ConversationInterface, ArrayHelper } from "../../helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { useQuery } from "@tanstack/react-query";
-import { useCurrentUserChurch } from "../../stores/useUserStore";
+import { useCurrentChurch, useCurrentUserChurch } from "../../stores/useUserStore";
 import { Avatar } from "../common/Avatar";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { TextInput as PaperTextInput } from "react-native-paper";
 
 dayjs.extend(relativeTime);
 const { width: screenWidth } = Dimensions.get("window");
@@ -37,10 +39,13 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
   const [hasMore, setHasMore] = useState(true);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
   const [actionModalVisible, setActionModalVisible] = useState(false);
+  const [editingMessage, setEditingMessage] = useState<ChatMessage | null>(null);
   const isSelectionMode = selectedMessages.length > 0;
   const flatListRef = useRef<FlatList>(null);
   const currentUserChurch = useCurrentUserChurch();
   const insets = useSafeAreaInsets();
+  const currentChurch = useCurrentChurch();
+  const inputRef = useRef<React.ComponentRef<typeof PaperTextInput>>(null);
 
   const { data: rawConversations = [], refetch } = useQuery<ConversationInterface[]>({
     queryKey: [`/conversations/messages/group/${groupId}`, page, PAGE_SIZE, "MessagingApi"],
@@ -111,49 +116,93 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
     if (!loadingMore && hasMore && messages?.length > 0) loadMessages(page + 1);
   };
 
-  const sendMessage = async () => {
-    if (!newMessage.trim()) return;
+  const deleteMessage = async () => {
+    try {
+      const res: ConversationInterface[] = await ApiHelper.delete(`/messages/${currentChurch?.id}/${selectedMessages[0]}`, "MessagingApi");
+      console.log(JSON.stringify(res), "---------");
+    } catch (err) {
+    } finally {
+    }
+  };
 
+  const sendMessage = async () => {
+  if (!newMessage.trim()) return;
+
+  const trimmedMessage = newMessage.trim();
     const tempId = "temp-" + Date.now();
-    const optimisticMsg: ChatMessage = {
+  let optimisticMsg: ChatMessage;
+
+  if (editingMessage) {
+    // Update existing message
+    optimisticMsg = { ...editingMessage, content: trimmedMessage };
+    setMessages(prev =>
+      prev.map(item => (item.id === editingMessage.id ? optimisticMsg : item))
+    );
+    setEditingMessage(null);
+    setNewMessage("");
+  } else {
+    // Create new message
+    optimisticMsg = {
       id: tempId,
       conversationId: rawConversations[0]?.id || "tempConv",
-      content: newMessage.trim(),
+      content: trimmedMessage,
       personId: currentUserChurch?.person?.id!,
       displayName: currentUserChurch?.person?.name?.display || "",
       timeSent: new Date().toISOString(),
       isOwn: true,
-      person: currentUserChurch?.person
+      person: currentUserChurch?.person,
     };
 
     setMessages(prev => [optimisticMsg, ...prev]);
-    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
     setNewMessage("");
+  }
 
-    try {
-      let conversationId = rawConversations[0]?.id;
-      if (!conversationId) {
-        const conv = {
-          groupId,
-          allowAnonymousPosts: false,
-          contentType: "group",
-          contentId: groupId,
-          title: `${groupName} Chat`,
-          visibility: "hidden"
-        };
-        const result: ConversationInterface[] = await ApiHelper.post("/conversations", [conv], "MessagingApi");
-        conversationId = result[0].id;
-      }
+  // Scroll to top
+  flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
 
-      const payload = { conversationId, content: optimisticMsg.content, personId: optimisticMsg.personId };
-      const savedMsg = await ApiHelper.post("/messages", [payload], "MessagingApi");
+  try {
+    // Ensure conversation exists
+    let conversationId = rawConversations[0]?.id;
+    if (!conversationId) {
+      const conv = {
+        groupId,
+        allowAnonymousPosts: false,
+        contentType: "group",
+        contentId: groupId,
+        title: `${groupName} Chat`,
+        visibility: "hidden",
+      };
+      const result: ConversationInterface[] = await ApiHelper.post(
+        "/conversations",
+        [conv],
+        "MessagingApi"
+      );
+      conversationId = result[0].id;
+    }
 
-      setMessages(prev => prev.map(m => (m.id === tempId ? { ...m, ...savedMsg[0] } : m)));
-    } catch (err) {
-      console.error("Failed to send message:", err);
+    const payload = {
+      conversationId,
+      content: optimisticMsg.content,
+      personId: optimisticMsg.personId,
+      id: editingMessage ? editingMessage.id : "",
+    };
+
+    const savedMsg = await ApiHelper.post("/messages", [payload], "MessagingApi");
+
+    // Replace temporary message with saved message
+    setMessages(prev =>
+      prev.map(m => (m.id === tempId ? { ...m, ...savedMsg[0] } : m))
+    );
+  } catch (err) {
+    console.error("Failed to send message:", err);
+
+    // Remove temporary message on failure
+    if (!editingMessage) {
       setMessages(prev => prev.filter(m => m.id !== tempId));
     }
-  };
+  }
+};
+
 
   const canEditMessage = (msg?: ChatMessage) => {
     if (!msg) return false;
@@ -188,9 +237,21 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
   const formatRelative = (time: string | Date) => {
     const diffMinutes = dayjs().diff(dayjs(time), "minute");
 
-    if (diffMinutes < 60) return `${diffMinutes}m`; // under 1h
-    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h`; // under 24h
-    return `${Math.floor(diffMinutes / 1440)}d`; // days
+    if (diffMinutes === 0) return "now";
+    if (diffMinutes < 60) return `${diffMinutes}m`;
+    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h`;
+    return `${Math.floor(diffMinutes / 1440)}d`;
+  };
+
+  const scrollToMessage = (messageId: string) => {
+    const index = messages.findIndex(m => m.id === messageId);
+    if (index !== -1 && flatListRef.current) {
+      flatListRef.current.scrollToIndex({
+        index,
+        animated: true,
+        viewPosition: 0.05
+      });
+    }
   };
 
   const renderMessage = ({ item, index }: { item: ChatMessage; index: number }) => {
@@ -199,10 +260,16 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
     const showAvatar = !isNextFromSame;
     const showName = !isPrevFromSame && !item.isOwn;
     const isSelected = selectedMessages.includes(item.id);
+    const isBeingEdited = editingMessage?.id === item.id;
 
     return (
       <TouchableOpacity
-        style={[styles.messageContainer, item.isOwn && styles.ownMessageContainer, isSelected && { backgroundColor: "#E3F2FD", borderRadius: 10 }]}
+        style={[
+          styles.messageContainer,
+          item.isOwn && styles.ownMessageContainer,
+          isSelected && { backgroundColor: "#E3F2FD", borderRadius: 10 },
+          editingMessage && !isBeingEdited && { opacity: 0.5 } // gray out other messages
+        ]}
         onLongPress={() => handleLongPress(item)}
         onPress={() => handlePress(item)}
         activeOpacity={0.7}>
@@ -215,7 +282,9 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
         <View style={[styles.messageBubble, item.isOwn ? styles.ownBubble : styles.otherBubble]}>
           {showName && <Text style={styles.senderName}>{item.person?.name?.display || item.displayName}</Text>}
           <View style={styles.messageContentContainer}>
-            <Text style={[styles.messageText, item.isOwn && styles.ownMessageText]}>{item.content}</Text>
+            <Text style={[styles.messageText, item.isOwn && styles.ownMessageText]}>
+              {item.content} {item.edited && <Text style={{ fontSize: 10, color: "#888" }}>(edited)</Text>}
+            </Text>
             <Text style={[styles.timestamp, item.isOwn && styles.ownTimestamp]}>{formatRelative(item.timeSent)}</Text>
           </View>
         </View>
@@ -269,9 +338,21 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
           ListEmptyComponent={renderEmptyState}
           // refreshControl={<RefreshControl refreshing={loadingMore} tintColor="#175ec1" />}
         />
+
         <Surface style={[styles.inputBar, { paddingBottom: insets.bottom || 8 }]}>
-          <TextInput
+          {editingMessage && (
+            <IconButton
+              icon="close"
+              size={24}
+              onPress={() => {
+                setEditingMessage(null);
+                setNewMessage("");
+              }}
+            />
+          )}
+          <PaperTextInput
             mode="outlined"
+            ref={inputRef}
             placeholder="Send a message"
             value={newMessage}
             onChangeText={setNewMessage}
@@ -294,30 +375,39 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
         </Surface>
       </KeyboardAvoidingView>
 
-      <Modal transparent visible={actionModalVisible} animationType="fade" onRequestClose={closeModal}>
+      <Modal transparent visible={actionModalVisible} animationType="slide" onRequestClose={closeModal}>
         <Pressable style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.3)" }} onPress={closeModal}>
           <View
             style={{
               position: "absolute",
-              top: 100,
+              bottom: 100,
               left: 0,
               right: 0,
               backgroundColor: "#fff",
               padding: 16,
               borderRadius: 12,
-              marginHorizontal: 40
+              marginHorizontal: 40,
+              gap: 14
             }}>
             {selectedMessages.length === 1 && canEditMessage(messages.find(m => m.id === selectedMessages[0])!) && (
-              <TouchableOpacity style={{ padding: 12 }}>
+              <TouchableOpacity
+                style={{ paddingHorizontal: 12 }}
+                onPress={() => {
+                  const msgToEdit = messages.find(m => m.id === selectedMessages[0]);
+                  if (msgToEdit) {
+                    setEditingMessage(msgToEdit);
+                    setNewMessage(msgToEdit.content);
+                    closeModal();
+                    setTimeout(() => {
+                      inputRef.current?.focus();
+                      scrollToMessage(msgToEdit.id);
+                    }, 100);
+                  }
+                }}>
                 <Text style={{ fontSize: 16 }}>Edit</Text>
               </TouchableOpacity>
             )}
-
-            <TouchableOpacity style={{ padding: 12 }}>
-              <Text style={{ fontSize: 16 }}>Copy</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={{ padding: 12 }}>
+            <TouchableOpacity style={{ paddingHorizontal: 12 }} onPress={deleteMessage}>
               <Text style={{ fontSize: 16, color: "red" }}>Delete</Text>
             </TouchableOpacity>
           </View>
@@ -497,6 +587,34 @@ const styles = StyleSheet.create({
   },
   sendButtonActive: {
     backgroundColor: "#0D47A1"
+  },
+  editBar: {
+    width: "100%",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: "#f0f0f0",
+    borderTopWidth: 1,
+    borderTopColor: "#ccc",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  editBarContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flex: 1
+  },
+  editingText: {
+    flex: 1,
+    fontSize: 14,
+    color: "#333",
+    marginRight: 12
+  },
+  cancelEdit: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#0D47A1"
   }
 });
 
