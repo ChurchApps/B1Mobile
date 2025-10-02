@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Modal, View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Dimensions } from "react-native";
+import { Modal, View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Dimensions, ActivityIndicator, RefreshControl, StatusBar, TouchableOpacity, Pressable } from "react-native";
 import { Appbar, Text, TextInput, IconButton, Avatar as PaperAvatar, Surface } from "react-native-paper";
 import { ApiHelper, ConversationInterface, ArrayHelper } from "../../helpers";
 import { MessageInterface } from "@churchapps/helpers";
@@ -11,7 +11,6 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 dayjs.extend(relativeTime);
-
 const { width: screenWidth } = Dimensions.get("window");
 
 interface GroupChatModalProps {
@@ -22,93 +21,116 @@ interface GroupChatModalProps {
 }
 
 interface ChatMessage extends MessageInterface {
+  id: string;
   person?: any;
   reactions?: any[];
   isOwn?: boolean;
 }
 
+const PAGE_SIZE = 20;
+
 const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, groupId, groupName }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
+  const [actionModalVisible, setActionModalVisible] = useState(false);
+  const isSelectionMode = selectedMessages.length > 0;
   const flatListRef = useRef<FlatList>(null);
   const currentUserChurch = useCurrentUserChurch();
   const insets = useSafeAreaInsets();
 
-  // Use react-query for conversations
-  const { data: rawConversations = [], refetch: refetchConversations } = useQuery<ConversationInterface[]>({
-    queryKey: [`/conversations/messages/group/${groupId}`, "MessagingApi"],
+  const { data: rawConversations = [], refetch } = useQuery<ConversationInterface[]>({
+    queryKey: [`/conversations/messages/group/${groupId}`, page, PAGE_SIZE, "MessagingApi"],
     enabled: !!groupId && !!currentUserChurch?.jwt && visible,
     placeholderData: [],
     staleTime: 0,
-    gcTime: 3 * 60 * 1000
+    gcTime: 3 * 60 * 1000,
+    queryFn: async () => {
+      const res: ConversationInterface[] = await ApiHelper.get(`/conversations/messages/group/${groupId}?page=${page}&limit=${PAGE_SIZE}`, "MessagingApi");
+      return res;
+    }
   });
 
   useEffect(() => {
-    if (rawConversations.length > 0 && visible) {
-      loadMessages();
+    if (visible) {
+      loadMessages(1, true);
     }
-  }, [rawConversations, visible]);
+  }, [visible]);
 
-  const loadMessages = async () => {
+  const loadMessages = async (pageNumber = 1, reset = false) => {
+    if (!groupId || loadingMore) return;
+
     try {
-      const allMessages: ChatMessage[] = [];
+      setLoadingMore(true);
+      const res: ConversationInterface[] = await ApiHelper.get(`/conversations/messages/group/${groupId}?page=${pageNumber}&limit=${PAGE_SIZE}`, "MessagingApi");
+
+      if (!res || res.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      const newMessages: ChatMessage[] = [];
       const peopleIds: string[] = [];
 
-      // Extract all messages from conversations
-      rawConversations.forEach(conversation => {
-        if (conversation.messages && conversation.messages.length > 0) {
-          conversation.messages.forEach((message: any) => {
-            if (message && message.personId) {
-              allMessages.push({
-                ...message,
-                isOwn: message.personId === currentUserChurch?.person?.id
-              });
-              if (peopleIds.indexOf(message.personId) === -1) {
-                peopleIds.push(message.personId);
-              }
-            }
+      res.forEach(conv => {
+        conv.messages?.forEach((msg: ChatMessage) => {
+          newMessages.push({
+            ...msg,
+            isOwn: msg.personId === currentUserChurch?.person?.id
           });
-        }
+          if (msg.personId && !peopleIds.includes(msg.personId)) peopleIds.push(msg.personId);
+        });
       });
 
-      // Load people data with error handling
       if (peopleIds.length > 0) {
         try {
           const people = await ApiHelper.get("/people/basic?ids=" + peopleIds.join(","), "MembershipApi");
-
-          if (Array.isArray(people)) {
-            // Attach person data to messages with safety checks
-            allMessages.forEach(message => {
-              if (message.personId) {
-                const person = ArrayHelper.getOne(people, "id", message.personId);
-                message.person = person || null; // Ensure we don't assign undefined
-              }
-            });
-          }
-        } catch (peopleError) {
-          console.warn("Failed to load people data:", peopleError);
-          // Continue without person data - messages will show without avatars
+          newMessages.forEach(msg => {
+            msg.person = people ? ArrayHelper.getOne(people, "id", msg.personId) : null;
+          });
+        } catch (err) {
+          console.warn("Failed to load people data:", err);
         }
       }
 
-      // Sort by time
-      allMessages.sort((a, b) => new Date(a.timeSent || 0).getTime() - new Date(b.timeSent || 0).getTime());
-      setMessages(allMessages);
+      newMessages.sort((a, b) => new Date(b.timeSent).getTime() - new Date(a.timeSent).getTime());
 
-      // Scroll to bottom
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    } catch (error) {
-      console.error("Error loading messages:", error);
+      setMessages(prev => (reset ? newMessages : [...prev, ...newMessages]));
+      setPage(pageNumber);
+    } catch (err) {
+      console.error("Error loading messages:", err);
+    } finally {
+      setLoadingMore(false);
     }
+  };
+
+  const handleLoadMore = () => {
+    if (!loadingMore && hasMore && messages?.length > 0) loadMessages(page + 1);
   };
 
   const sendMessage = async () => {
     if (!newMessage.trim()) return;
 
+    const tempId = "temp-" + Date.now();
+    const optimisticMsg: ChatMessage = {
+      id: tempId,
+      conversationId: rawConversations[0]?.id || "tempConv",
+      content: newMessage.trim(),
+      personId: currentUserChurch?.person?.id!,
+      displayName: currentUserChurch?.person?.name?.display || "",
+      timeSent: new Date().toISOString(),
+      isOwn: true,
+      person: currentUserChurch?.person
+    };
+
+    setMessages(prev => [optimisticMsg, ...prev]);
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+    setNewMessage("");
+
     try {
-      // Find or create conversation
       let conversationId = rawConversations[0]?.id;
       if (!conversationId) {
         const conv = {
@@ -123,18 +145,52 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
         conversationId = result[0].id;
       }
 
-      const message = {
-        conversationId,
-        content: newMessage.trim(),
-        personId: currentUserChurch?.person?.id
-      };
+      const payload = { conversationId, content: optimisticMsg.content, personId: optimisticMsg.personId };
+      const savedMsg = await ApiHelper.post("/messages", [payload], "MessagingApi");
 
-      await ApiHelper.post("/messages", [message], "MessagingApi");
-      setNewMessage("");
-      refetchConversations();
-    } catch (error) {
-      console.error("Error sending message:", error);
+      setMessages(prev => prev.map(m => (m.id === tempId ? { ...m, ...savedMsg[0] } : m)));
+    } catch (err) {
+      console.error("Failed to send message:", err);
+      setMessages(prev => prev.filter(m => m.id !== tempId));
     }
+  };
+
+  const canEditMessage = (msg?: ChatMessage) => {
+    if (!msg) return false;
+    return dayjs().diff(dayjs(msg.timeSent), "minute") < 15;
+  };
+
+  const toggleSelectMessage = (msgId: string) => {
+    setSelectedMessages(prev => (prev.includes(msgId) ? prev.filter(id => id !== msgId) : [...prev, msgId]));
+  };
+
+  const handleLongPress = (msg: ChatMessage) => {
+    if (!isSelectionMode) {
+      setSelectedMessages([msg.id]);
+    } else if (!selectedMessages.includes(msg.id)) {
+      setSelectedMessages(prev => [...prev, msg.id]);
+    }
+    setActionModalVisible(true);
+  };
+
+  const handlePress = (msg: ChatMessage) => {
+    if (isSelectionMode) {
+      toggleSelectMessage(msg.id);
+    } else {
+    }
+  };
+
+  const closeModal = () => {
+    setActionModalVisible(false);
+    setSelectedMessages([]);
+  };
+
+  const formatRelative = (time: string | Date) => {
+    const diffMinutes = dayjs().diff(dayjs(time), "minute");
+
+    if (diffMinutes < 60) return `${diffMinutes}m`; // under 1h
+    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h`; // under 24h
+    return `${Math.floor(diffMinutes / 1440)}d`; // days
   };
 
   const renderMessage = ({ item, index }: { item: ChatMessage; index: number }) => {
@@ -142,46 +198,131 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
     const isPrevFromSame = index > 0 && messages[index - 1]?.personId === item.personId;
     const showAvatar = !isNextFromSame;
     const showName = !isPrevFromSame && !item.isOwn;
+    const isSelected = selectedMessages.includes(item.id);
 
     return (
-      <View style={[styles.messageContainer, item.isOwn && styles.ownMessageContainer]}>
-        {!item.isOwn && <View style={styles.avatarContainer}>{showAvatar ? <Avatar size={32} photoUrl={item.person?.photo} firstName={item.person?.name?.first} lastName={item.person?.name?.last} /> : <View style={styles.avatarSpacer} />}</View>}
+      <TouchableOpacity
+        style={[styles.messageContainer, item.isOwn && styles.ownMessageContainer, isSelected && { backgroundColor: "#E3F2FD", borderRadius: 10 }]}
+        onLongPress={() => handleLongPress(item)}
+        onPress={() => handlePress(item)}
+        activeOpacity={0.7}>
+        {!item.isOwn && (
+          <View style={styles.avatarContainer}>
+            {showAvatar ? <Avatar size={32} photoUrl={item.person?.photo} firstName={item.person?.name?.first} lastName={item.person?.name?.last} /> : <View style={styles.avatarSpacer} />}
+          </View>
+        )}
 
         <View style={[styles.messageBubble, item.isOwn ? styles.ownBubble : styles.otherBubble]}>
           {showName && <Text style={styles.senderName}>{item.person?.name?.display || item.displayName}</Text>}
-          <Text style={[styles.messageText, item.isOwn && styles.ownMessageText]}>{item.content}</Text>
-          <Text style={[styles.timestamp, item.isOwn && styles.ownTimestamp]}>{dayjs(item.timeSent).format("h:mm A")}</Text>
+          <View style={styles.messageContentContainer}>
+            <Text style={[styles.messageText, item.isOwn && styles.ownMessageText]}>{item.content}</Text>
+            <Text style={[styles.timestamp, item.isOwn && styles.ownTimestamp]}>{formatRelative(item.timeSent)}</Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
   const renderEmptyState = () => (
-    <View style={styles.emptyState}>
-      <PaperAvatar.Icon size={64} icon="chat-outline" style={styles.emptyIcon} />
-      <Text style={styles.emptyTitle}>Start the conversation</Text>
-      <Text style={styles.emptySubtitle}>Be the first to share something with the group</Text>
-    </View>
+    <>
+      {!loadingMore && (
+        <View style={styles.emptyState}>
+          <PaperAvatar.Icon size={64} icon="chat-outline" style={styles.emptyIcon} />
+          <Text style={styles.emptyTitle}>Start the conversation</Text>
+          <Text style={styles.emptySubtitle}>Be the first to share something with the group</Text>
+        </View>
+      )}
+    </>
   );
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={onDismiss}>
-      {/* Header */}
+      <StatusBar barStyle={"dark-content"} />
       <Appbar.Header>
-        <Appbar.BackAction onPress={onDismiss} />
+        <Appbar.BackAction
+          onPress={() => {
+            setMessages([]);
+            setNewMessage("");
+            setPage(1);
+            setLoadingMore(false);
+            setHasMore(true);
+            setSelectedMessages([]);
+            setActionModalVisible(false);
+            StatusBar.setBarStyle("light-content");
+            onDismiss();
+          }}
+        />
         <Appbar.Content title={groupName} />
       </Appbar.Header>
 
-      {/* Body */}
       <KeyboardAvoidingView style={styles.mainContainer} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}>
-        <FlatList ref={flatListRef} data={messages} renderItem={renderMessage} keyExtractor={(item, index) => `${item.id || index}`} contentContainerStyle={styles.messagesList} ListEmptyComponent={renderEmptyState} onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })} />
-
-        {/* Input bar */}
+        {loadingMore && <ActivityIndicator size="small" color="#175ec1" />}
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={item => item.id}
+          inverted={messages?.length > 0}
+          onEndReachedThreshold={0.1}
+          onEndReached={handleLoadMore}
+          contentContainerStyle={styles.messagesList}
+          ListEmptyComponent={renderEmptyState}
+          // refreshControl={<RefreshControl refreshing={loadingMore} tintColor="#175ec1" />}
+        />
         <Surface style={[styles.inputBar, { paddingBottom: insets.bottom || 8 }]}>
-          <TextInput mode="outlined" placeholder="Send a message" value={newMessage} onChangeText={setNewMessage} multiline maxLength={500} style={styles.textInput} contentStyle={styles.inputContent} outlineStyle={styles.inputOutline} onSubmitEditing={sendMessage} blurOnSubmit={false} />
-          <IconButton icon="send" size={24} onPress={sendMessage} disabled={!newMessage.trim()} style={[styles.sendButton, newMessage.trim() && styles.sendButtonActive]} iconColor={newMessage.trim() ? "#FFFFFF" : "#9E9E9E"} />
+          <TextInput
+            mode="outlined"
+            placeholder="Send a message"
+            value={newMessage}
+            onChangeText={setNewMessage}
+            multiline
+            maxLength={500}
+            style={styles.textInput}
+            contentStyle={styles.inputContent}
+            outlineStyle={styles.inputOutline}
+            onSubmitEditing={sendMessage}
+            blurOnSubmit={false}
+          />
+          <IconButton
+            icon="send"
+            size={24}
+            onPress={sendMessage}
+            disabled={!newMessage.trim()}
+            style={[styles.sendButton, newMessage.trim() && styles.sendButtonActive]}
+            iconColor={newMessage.trim() ? "#FFFFFF" : "#9E9E9E"}
+          />
         </Surface>
       </KeyboardAvoidingView>
+
+      <Modal transparent visible={actionModalVisible} animationType="fade" onRequestClose={closeModal}>
+        <Pressable style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.3)" }} onPress={closeModal}>
+          <View
+            style={{
+              position: "absolute",
+              top: 100,
+              left: 0,
+              right: 0,
+              backgroundColor: "#fff",
+              padding: 16,
+              borderRadius: 12,
+              marginHorizontal: 40
+            }}>
+            {selectedMessages.length === 1 && canEditMessage(messages.find(m => m.id === selectedMessages[0])!) && (
+              <TouchableOpacity style={{ padding: 12 }}>
+                <Text style={{ fontSize: 16 }}>Edit</Text>
+              </TouchableOpacity>
+            )}
+
+            <TouchableOpacity style={{ padding: 12 }}>
+              <Text style={{ fontSize: 16 }}>Copy</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{ padding: 12 }}>
+              <Text style={{ fontSize: 16, color: "red" }}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      </Modal>
     </Modal>
   );
 };
@@ -229,6 +370,11 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     alignItems: "flex-end"
   },
+  messageContentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12
+  },
   ownMessageContainer: {
     flexDirection: "row-reverse"
   },
@@ -261,7 +407,7 @@ const styles = StyleSheet.create({
   senderName: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#0D47A1",
+    color: "#FFFFFF",
     marginBottom: 2
   },
   messageText: {
@@ -273,10 +419,10 @@ const styles = StyleSheet.create({
     color: "#FFFFFF"
   },
   timestamp: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#9E9E9E",
-    marginTop: 4,
-    alignSelf: "flex-end"
+    marginTop: 4
+    // alignSelf: "flex-end"
   },
   ownTimestamp: {
     color: "rgba(255, 255, 255, 0.7)"
