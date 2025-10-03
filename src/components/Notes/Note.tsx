@@ -4,8 +4,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 import React, { useMemo, useCallback } from "react";
-import { Text, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { Text, View, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";

@@ -116,10 +116,14 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
     if (!loadingMore && hasMore && messages?.length > 0) loadMessages(page + 1);
   };
 
-  const deleteMessage = async () => {
+  const deleteMessage = async (obj: ChatMessage) => {
     try {
-      const res: ConversationInterface[] = await ApiHelper.delete(`/messages/${currentChurch?.id}/${selectedMessages[0]}`, "MessagingApi");
-      console.log(JSON.stringify(res), "---------");
+      setMessages(prev =>
+        prev.filter(item => item.id !== obj.id)
+      );
+      setEditingMessage(null);
+      setNewMessage("");
+      await ApiHelper.delete(`/messages/${currentChurch?.id}/${editingMessage?.id}`, "MessagingApi");
     } catch (err) {
     } finally {
     }
@@ -407,7 +411,15 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
                 <Text style={{ fontSize: 16 }}>Edit</Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={{ paddingHorizontal: 12 }} onPress={deleteMessage}>
+            <TouchableOpacity style={{ paddingHorizontal: 12 }}
+              onPress={() => {
+                const msgToEdit = messages.find(m => m.id === selectedMessages[0]);
+                if (msgToEdit) {
+                  setEditingMessage(msgToEdit);
+                  closeModal();
+                  deleteMessage(msgToEdit)
+                }
+              }}>
               <Text style={{ fontSize: 16, color: "red" }}>Delete</Text>
             </TouchableOpacity>
           </View>
