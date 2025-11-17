@@ -1,4 +1,5 @@
 export { ApiHelper, ArrayHelper } from "../mobilehelper";
+export { AppLifecycleManager } from "./AppLifecycleManager";
 export { CacheHelper } from "./CacheHelper";
 export { CheckinHelper } from "./CheckinHelper";
 export { Constants } from "./Constants";

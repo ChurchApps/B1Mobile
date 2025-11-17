@@ -11,6 +11,7 @@ import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { NotificationNavigationHandler } from "../src/components/NotificationNavigationHandler";
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
 import { StatusBar } from "react-native";
+import { AppLifecycleManager } from "../src/helpers/AppLifecycleManager";
 
 export default function RootLayout() {
   const router = useRouter();
@@ -20,8 +21,10 @@ export default function RootLayout() {
       await initializeFirebase();
       await UserHelper.loadSecureTokens();
       await initializeQueryCache();
+      AppLifecycleManager.initialize();
     };
     setupApp();
+    return () => AppLifecycleManager.cleanup();
   }, []);
 
   const toggleNotifications = (type?: string) => {
