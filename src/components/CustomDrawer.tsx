@@ -266,7 +266,7 @@ export function CustomDrawer(props?: any) {
     return (
       <List.Item
         title={item.text}
-        left={() => (topItem ? <Image source={item.image} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={isActive ? "#FFF" : "#0D47A1"} style={styles.drawerIcon} />)}
+        left={() => (topItem ? <Image source={{ uri: item.photo }} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={isActive ? "#FFF" : "#0D47A1"} style={styles.drawerIcon} />)}
         onPress={() => {
           NavigationUtils.navigateToScreen(item, currentChurch);
           // Use setTimeout to ensure navigation completes before closing drawer
@@ -380,7 +380,7 @@ export function CustomDrawer(props?: any) {
         ) : (
           <View style={styles.menuContainer}>
             {drawerList.map((item, index) => (
-              <View key={item.id || index}>{listItem(false, item)}</View>
+              <View key={item.id || index}>{listItem(!!(item as any).photo, item)}</View>
             ))}
           </View>
         )}
