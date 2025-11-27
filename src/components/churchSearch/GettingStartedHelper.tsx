@@ -2,17 +2,20 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useTranslation } from "react-i18next";
 
 export const GettingStartedHelper: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.helperSection}>
       <View style={styles.helperContent}>
         <MaterialIcons name="info-outline" size={32} color="#9E9E9E" style={styles.helperIcon} />
         <Text variant="titleMedium" style={styles.helperTitle}>
-          Getting Started
+          {t("churchSearch.gettingStarted")}
         </Text>
         <Text variant="bodyMedium" style={styles.helperText}>
-          Search for your church by name, city, or zip code to get connected.
+          {t("churchSearch.gettingStartedHelp")}
         </Text>
       </View>
     </View>

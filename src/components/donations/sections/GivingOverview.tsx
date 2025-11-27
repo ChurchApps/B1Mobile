@@ -4,6 +4,7 @@ import { Text, Card, Button } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { CurrencyHelper } from "../../../helpers/CurrencyHelper";
+import { useTranslation } from "react-i18next";
 
 interface GivingStats {
   ytd: number;
@@ -19,6 +20,8 @@ interface GivingOverviewProps {
 }
 
 export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onDonatePress, onHistoryPress }) => {
+  const { t } = useTranslation();
+
   return (
     <>
       {/* Hero Stats Card */}
@@ -26,13 +29,13 @@ export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onD
         <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
           <View style={styles.heroContent}>
             <Text variant="headlineSmall" style={styles.heroTitle}>
-              Your Giving Impact
+              {t("donations.yourGivingImpact")}
             </Text>
             <Text variant="displaySmall" style={styles.heroAmount}>
               {CurrencyHelper.formatCurrency(givingStats.ytd)}
             </Text>
             <Text variant="bodyMedium" style={styles.heroSubtitle}>
-              Total this year • {givingStats.totalGifts} gifts
+              {t("donations.totalThisYear")} • {givingStats.totalGifts} {t("donations.gifts")}
             </Text>
           </View>
         </LinearGradient>
@@ -42,10 +45,10 @@ export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onD
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text variant="titleLarge" style={styles.sectionTitle}>
-            Recent Activity
+            {t("donations.recentActivity")}
           </Text>
           <Button mode="text" onPress={onHistoryPress} labelStyle={{ color: "#0D47A1" }}>
-            View All
+            {t("common.viewAll")}
           </Button>
         </View>
 
@@ -56,18 +59,18 @@ export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onD
             </View>
             <View style={styles.activityDetails}>
               <Text variant="titleMedium" style={styles.activityTitle}>
-                Last Gift
+                {t("donations.lastGift")}
               </Text>
               <Text variant="bodyMedium" style={styles.activityAmount}>
                 {CurrencyHelper.formatCurrency(givingStats.lastGift)}
               </Text>
               <Text variant="bodySmall" style={styles.activityDate}>
-                {givingStats.lastGiftDate ? givingStats.lastGiftDate.toLocaleDateString() : "No recent gift"}
+                {givingStats.lastGiftDate ? givingStats.lastGiftDate.toLocaleDateString() : t("donations.noRecentGift")}
               </Text>
             </View>
             <TouchableOpacity style={styles.repeatButton} onPress={onDonatePress}>
               <Text variant="labelMedium" style={styles.repeatButtonText}>
-                Repeat
+                {t("donations.repeat")}
               </Text>
             </TouchableOpacity>
           </Card.Content>
@@ -79,13 +82,13 @@ export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onD
         <Card.Content style={styles.ctaContent}>
           <MaterialIcons name="volunteer-activism" size={48} color="#0D47A1" style={styles.ctaIcon} />
           <Text variant="titleLarge" style={styles.ctaTitle}>
-            Make a Difference Today
+            {t("donations.makeDifferenceToday")}
           </Text>
           <Text variant="bodyMedium" style={styles.ctaSubtitle}>
-            Your generosity helps our church community thrive and grow.
+            {t("donations.generosityHelps")}
           </Text>
           <Button mode="contained" onPress={onDonatePress} style={styles.ctaButton} labelStyle={styles.ctaButtonText}>
-            Give Now
+            {t("donations.giveNow")}
           </Button>
         </Card.Content>
       </Card>

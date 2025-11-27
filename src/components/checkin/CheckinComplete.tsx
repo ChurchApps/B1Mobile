@@ -5,6 +5,7 @@ import { useAppTheme } from "../../../src/theme";
 import { Text } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   onDone: () => void;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const CheckinComplete = (props: Props) => {
+  const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const screenWidth = Dimensions.get("window").width;
 
@@ -36,13 +38,13 @@ export const CheckinComplete = (props: Props) => {
           {/* Success Message */}
           <View style={styles.messageContainer}>
             <Text variant="headlineLarge" style={styles.successTitle}>
-              Check-in Complete!
+              {t("checkin.checkinComplete")}
             </Text>
             <Text variant="bodyLarge" style={styles.successSubtitle}>
-              You have been successfully checked in.
+              {t("checkin.successfullyCheckedIn")}
             </Text>
             <Text variant="bodyMedium" style={styles.successDetails}>
-              Thank you for being part of our church community.
+              {t("checkin.thankYouCommunity")}
             </Text>
           </View>
 

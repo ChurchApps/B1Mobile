@@ -13,6 +13,7 @@ import { DonationComplete } from "./DonationComplete";
 import DatePicker from "react-native-date-picker";
 import dayjs from "dayjs";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayData, updatedFunction, initialDonation }: Props) {
+  const { t } = useTranslation();
   const user = useUser();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
@@ -109,10 +111,10 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
   }, [amount, selectedMethod]);
 
   const intervalTypes = [
-    { label: "Weekly", value: "one_week" },
-    { label: "Monthly", value: "one_month" },
-    { label: "Quarterly", value: "three_month" },
-    { label: "Annually", value: "one_year" }
+    { label: t("donations.weekly"), value: "one_week" },
+    { label: t("donations.monthly"), value: "one_month" },
+    { label: t("donations.quarterly"), value: "three_month" },
+    { label: t("donations.annually"), value: "one_year" }
   ];
 
   const calculateTotal = () => {
@@ -153,18 +155,18 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
   };
 
   const getMethodLabel = (method: StripePaymentMethod) => {
-    if (!method) return "Select Payment Method";
-    return `${method.name} ending in ${method.last4}`;
+    if (!method) return t("donations.selectPaymentMethod");
+    return `${method.name} ${t("donations.endingIn")} ${method.last4}`;
   };
 
   const getFundLabel = (fundId: string) => {
     const fund = funds.find(f => f.id === fundId);
-    return fund ? fund.name : "Select Fund";
+    return fund ? fund.name : t("donations.selectPaymentMethod");
   };
 
   const getIntervalLabel = (value: string) => {
     const interval = intervalTypes.find(i => i.value === value);
-    return interval ? interval.label : "Monthly";
+    return interval ? interval.label : t("donations.monthly");
   };
 
   const handleGive = async () => {
@@ -172,12 +174,12 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       const donationAmount = parseFloat(amount);
 
       if (!donationAmount || donationAmount < 0.5) {
-        Alert.alert("Invalid Amount", "Donation amount must be at least $0.50");
+        Alert.alert(t("common.alert"), t("donations.minAmount"));
         return;
       }
 
       if (!selectedFund) {
-        Alert.alert("Select Fund", "Please select a fund for your donation");
+        Alert.alert(t("common.alert"), t("donations.selectPaymentMethod"));
         return;
       }
 
@@ -234,7 +236,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       }
     } catch (error) {
       console.error("Donation error:", error);
-      Alert.alert("Error", "Failed to process donation. Please try again.");
+      Alert.alert(t("common.error"), t("donations.failed"));
     }
   };
 
@@ -380,7 +382,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       {/* Amount Input */}
       <View style={styles.amountSection}>
         <Text variant="titleMedium" style={styles.amountLabel}>
-          Gift Amount
+          {t("donations.donate")}
         </Text>
         <TextInput mode="outlined" value={amount} onChangeText={setAmount} keyboardType="numeric" style={styles.amountInput} contentStyle={styles.amountInputText} placeholder="0.00" left={<TextInput.Icon icon={() => <Text style={styles.dollarSign}>$</Text>} />} outlineStyle={styles.amountInputOutline} onFocus={() => { if (amount === "0.00" || amount === "0" || parseFloat(amount || "0") === 0) setAmount(""); }} />
       </View>
@@ -390,12 +392,12 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         <Card style={styles.guestCard}>
           <Card.Content>
             <Text variant="titleMedium" style={styles.guestTitle}>
-              Your Information
+              {t("auth.email")}
             </Text>
-            <TextInput mode="outlined" label="Email" value={email} onChangeText={setEmail} style={styles.guestInput} />
+            <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} style={styles.guestInput} />
             <View style={styles.nameRow}>
-              <TextInput mode="outlined" label="First Name" value={firstName} onChangeText={setFirstName} style={[styles.guestInput, styles.nameInput]} />
-              <TextInput mode="outlined" label="Last Name" value={lastName} onChangeText={setLastName} style={[styles.guestInput, styles.nameInput]} />
+              <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} style={[styles.guestInput, styles.nameInput]} />
+              <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} style={[styles.guestInput, styles.nameInput]} />
             </View>
           </Card.Content>
         </Card>
@@ -405,7 +407,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       <Card style={styles.sectionCard}>
         <Card.Content>
           <Text variant="titleMedium" style={styles.sectionTitle}>
-            Give To
+            {t("donations.donate")}
           </Text>
           <Menu
             visible={showFundMenu}
@@ -438,10 +440,10 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
           <View style={styles.switchRow}>
             <View style={styles.switchContent}>
               <Text variant="titleMedium" style={styles.switchTitle}>
-                Make this recurring
+                {t("donations.recurring")}
               </Text>
               <Text variant="bodyMedium" style={styles.switchSubtitle}>
-                Set up automatic giving
+                {t("donations.donate")}
               </Text>
             </View>
             <Switch value={isRecurring} onValueChange={setIsRecurring} thumbColor={isRecurring ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
@@ -451,7 +453,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
             <View style={styles.intervalSection}>
               <View style={{ width: DimensionHelper.wp(35) }}>
                 <Text variant="titleSmall" style={styles.intervalLabel}>
-                  Frequency
+                  {t("donations.selectInterval")}
                 </Text>
                 <Menu
                   visible={showIntervalMenu}
@@ -504,7 +506,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       <Card style={styles.sectionCard}>
         <Card.Content>
           <Text variant="titleMedium" style={styles.sectionTitle}>
-            Payment Method
+            {t("donations.selectPaymentMethod")}
           </Text>
 
           {pm.length > 0 ? (
@@ -554,10 +556,10 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
           <View style={styles.switchRow}>
             <View style={styles.switchContent}>
               <Text variant="titleMedium" style={styles.switchTitle}>
-                Cover transaction fees
+                {t("donations.coverFees")}
               </Text>
               <Text variant="bodyMedium" style={styles.switchSubtitle}>
-                Add {CurrencyHelper.formatCurrency(transactionFee)} to cover processing costs
+                {t("donations.transactionFee", { amount: CurrencyHelper.formatCurrency(transactionFee) })}
               </Text>
             </View>
             <Switch value={coverFees} onValueChange={setCoverFees} thumbColor={coverFees ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
@@ -568,13 +570,13 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       {/* Total */}
       <View style={styles.totalSection}>
         <Text variant="headlineSmall" style={styles.totalLabel}>
-          Total: {CurrencyHelper.formatCurrency(calculateTotal())}
+          {t("donations.total", { amount: CurrencyHelper.formatCurrency(calculateTotal()) })}
         </Text>
       </View>
 
       {/* Give Button */}
       <Button mode="contained" onPress={handleGive} style={styles.giveButton} labelStyle={styles.giveButtonText} disabled={!amount || parseFloat(amount) < 0.5} buttonColor="#0D47A1" textColor="#FFFFFF">
-        {isRecurring ? `Give ${CurrencyHelper.formatCurrency(calculateTotal())} ${getIntervalLabel(selectedInterval)}` : `Give ${CurrencyHelper.formatCurrency(calculateTotal())}`}
+        {isRecurring ? `${t("donations.giveNow")} ${CurrencyHelper.formatCurrency(calculateTotal())} ${getIntervalLabel(selectedInterval)}` : `${t("donations.giveNow")} ${CurrencyHelper.formatCurrency(calculateTotal())}`}
       </Button>
     </View>
   );

@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Card, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 export interface LiveStreamData {
   isLive: boolean;
@@ -23,6 +24,8 @@ interface LiveStreamCardProps {
 }
 
 export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, timeUntilStream, onWatchLive }) => {
+  const { t } = useTranslation();
+
   if (liveStreamData.isLive) {
     return (
       <Card style={styles.liveCard}>
@@ -31,7 +34,7 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
             <View style={styles.liveIndicator}>
               <View style={styles.liveDot} />
               <Text variant="titleMedium" style={styles.liveText}>
-                LIVE NOW
+                {t("sermons.liveNow")}
               </Text>
             </View>
             <Text variant="headlineSmall" style={styles.liveTitle}>
@@ -46,7 +49,7 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
               labelStyle={styles.watchButtonText}
               icon="play-circle"
               onPress={onWatchLive || (() => {})}>
-              Watch Live
+              {t("sermons.watchLive")}
             </Button>
           </View>
         </LinearGradient>
@@ -59,7 +62,7 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
       <LinearGradient colors={["#0D47A1", "#1976D2"]} style={styles.countdownGradient}>
         <View style={styles.countdownContent}>
           <Text variant="titleMedium" style={styles.countdownLabel}>
-            Next Service In
+            {t("sermons.nextServiceIn")}
           </Text>
           <View style={styles.countdownTimer}>
             {timeUntilStream.days > 0 && (
@@ -68,7 +71,7 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
                   {timeUntilStream.days}
                 </Text>
                 <Text variant="bodyMedium" style={styles.timeLabel}>
-                  {timeUntilStream.days === 1 ? "Day" : "Days"}
+                  {timeUntilStream.days === 1 ? t("sermons.day") : t("sermons.days")}
                 </Text>
               </View>
             )}
@@ -77,7 +80,7 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
                 {timeUntilStream.hours}
               </Text>
               <Text variant="bodyMedium" style={styles.timeLabel}>
-                {timeUntilStream.hours === 1 ? "Hour" : "Hours"}
+                {timeUntilStream.hours === 1 ? t("sermons.hour") : t("sermons.hours")}
               </Text>
             </View>
             <View style={styles.timeUnit}>
@@ -85,7 +88,7 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
                 {timeUntilStream.minutes}
               </Text>
               <Text variant="bodyMedium" style={styles.timeLabel}>
-                {timeUntilStream.minutes === 1 ? "Minute" : "Minutes"}
+                {timeUntilStream.minutes === 1 ? t("sermons.minute") : t("sermons.minutes")}
               </Text>
             </View>
           </View>

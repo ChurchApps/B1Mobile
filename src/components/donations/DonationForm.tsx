@@ -10,6 +10,7 @@ import { useAppTheme } from "../../../src/theme";
 import { PreviewModal } from "../modals/PreviewModal";
 import { FundDonations } from "./FundDonations";
 import { useUser, useCurrentUserChurch } from "../../../src/stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }: Props) {
+  const { t } = useTranslation();
   const { spacing } = useAppTheme();
   const theme = useTheme();
   const user = useUser();
@@ -59,11 +61,11 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   }, [funds, fundDonations.length]);
 
   const intervalTypes = [
-    { label: "Weekly", value: "one_week" },
-    { label: "Bi-Weekly", value: "two_week" },
-    { label: "Monthly", value: "one_month" },
-    { label: "Quarterly", value: "three_month" },
-    { label: "Annually", value: "one_year" }
+    { label: t("donations.weekly"), value: "one_week" },
+    { label: t("donations.biWeekly"), value: "two_week" },
+    { label: t("donations.monthly"), value: "one_month" },
+    { label: t("donations.quarterly"), value: "three_month" },
+    { label: t("donations.annually"), value: "one_year" }
   ];
 
   const initDonation: StripeDonationInterface = {
@@ -87,7 +89,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
   const handleSave = () => {
     if (donation.amount && donation.amount < 0.5) {
-      Alert.alert("Donation amount must be greater than $0.50");
+      Alert.alert(t("donations.minAmount"));
     } else {
       if (!currentUserChurch?.person?.id) {
         donation.person = {
@@ -209,11 +211,11 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       setFirstName("");
       setLastName("");
       setIsChecked(false);
-      Alert.alert("Thank you for your donation.", _message, [{ text: "OK", onPress: () => updatedFunction() }]);
+      Alert.alert(t("donations.thankYou"), _message, [{ text: "OK", onPress: () => updatedFunction() }]);
     }
     if (results?.raw?.message) {
       setShowPreviewModal(false);
-      Alert.alert("Failed to make a donation", results?.raw?.message);
+      Alert.alert(t("donations.failed"), results?.raw?.message);
     }
   };
 
@@ -286,17 +288,17 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
   const getMethodLabel = (method: StripePaymentMethod) => {
     if (!method) return "";
-    return `${method.name} ending in ${method.last4}`;
+    return `${method.name} ${t("donations.endingIn")} ${method.last4}`;
   };
 
   return (
     <Card style={{ marginBottom: spacing.md }}>
-      <Card.Title title="Make a Donation" titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="gift" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
+      <Card.Title title={t("donations.makeaDonation")} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="gift" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
       <Card.Content>
         <RadioButton.Group onValueChange={value => setDonationType(value)} value={donationType}>
           <View style={{ flexDirection: "row", marginBottom: spacing.md }}>
-            <RadioButton.Item label="One Time" value="once" />
-            <RadioButton.Item label="Recurring" value="recurring" />
+            <RadioButton.Item label={t("donations.oneTime")} value="once" />
+            <RadioButton.Item label={t("donations.recurring")} value="recurring" />
           </View>
         </RadioButton.Group>
 
@@ -304,9 +306,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
           <>
             {!currentUserChurch?.person?.id && (
               <View style={{ marginBottom: spacing.md }}>
-                <TextInput mode="outlined" label="Email" value={email} onChangeText={setEmail} style={{ marginBottom: spacing.sm }} />
-                <TextInput mode="outlined" label="First Name" value={firstName} onChangeText={setFirstName} style={{ marginBottom: spacing.sm }} />
-                <TextInput mode="outlined" label="Last Name" value={lastName} onChangeText={setLastName} style={{ marginBottom: spacing.sm }} />
+                <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} style={{ marginBottom: spacing.sm }} />
+                <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} style={{ marginBottom: spacing.sm }} />
+                <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} style={{ marginBottom: spacing.sm }} />
               </View>
             )}
 
@@ -317,7 +319,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                   onDismiss={() => setShowMethodMenu(false)}
                   anchor={
                     <Button mode="outlined" onPress={() => setShowMethodMenu(true)} style={{ marginBottom: spacing.sm }}>
-                      {selectedMethod ? getMethodLabel(pm.find(m => m.id === selectedMethod)!) : "Select Payment Method"}
+                      {selectedMethod ? getMethodLabel(pm.find(m => m.id === selectedMethod)!) : t("donations.selectPaymentMethod")}
                     </Button>
                   }>
                   {pm.map(method => (
@@ -343,7 +345,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                   onDismiss={() => setShowIntervalMenu(false)}
                   anchor={
                     <Button mode="outlined" onPress={() => setShowIntervalMenu(true)} style={{ marginBottom: spacing.sm }}>
-                      {intervalTypes.find(i => i.value === selectedInterval)?.label || "Select Interval"}
+                      {intervalTypes.find(i => i.value === selectedInterval)?.label || t("donations.selectInterval")}
                     </Button>
                   }>
                   {intervalTypes.map(interval => (
@@ -365,7 +367,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
 
             <View style={{ marginTop: spacing.md }}>
               <Checkbox.Item
-                label="Cover transaction fees"
+                label={t("donations.coverFees")}
                 status={isChecked ? "checked" : "unchecked"}
                 onPress={() => {
                   setIsChecked(!isChecked);
@@ -374,21 +376,21 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
               />
               {transactionFee > 0 && (
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, marginTop: spacing.xs }}>
-                  Transaction fee: {CurrencyHelper.formatCurrency(transactionFee)}
+                  {t("donations.transactionFee", { amount: CurrencyHelper.formatCurrency(transactionFee) })}
                 </Text>
               )}
             </View>
 
             <View style={{ marginTop: spacing.md }}>
-              <Text variant="titleMedium">Total: {CurrencyHelper.formatCurrency(total)}</Text>
+              <Text variant="titleMedium">{t("donations.total", { amount: CurrencyHelper.formatCurrency(total) })}</Text>
             </View>
 
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: spacing.lg }}>
               <Button mode="outlined" onPress={handleCancel} style={{ flex: 1, marginRight: spacing.sm }}>
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button mode="contained" onPress={handleSave} style={{ flex: 1, marginLeft: spacing.sm }}>
-                Continue
+                {t("common.continue")}
               </Button>
             </View>
           </>

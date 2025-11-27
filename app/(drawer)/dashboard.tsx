@@ -22,6 +22,7 @@ import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 import { useUserStore, useCurrentChurch, useChurchAppearance, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -43,6 +44,7 @@ const theme = {
 };
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const [isLoading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -181,7 +183,7 @@ const Dashboard = () => {
                     {featuredItems[0].text}
                   </Text>
                   <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                    Tap to explore
+                    {t("common.tapToExplore")}
                   </Text>
                 </View>
               </View>
@@ -193,7 +195,7 @@ const Dashboard = () => {
         {featuredItems.length > 1 && (
           <View style={styles.featuredSection}>
             <Text variant="titleLarge" style={styles.sectionTitle}>
-              Featured
+              {t("common.featured")}
             </Text>
             <View style={styles.featuredGrid}>
               {featuredItems.slice(1, 3).map(item => (
@@ -216,7 +218,7 @@ const Dashboard = () => {
         {otherItems.length > 0 && (
           <View style={styles.quickActionsSection}>
             <Text variant="titleLarge" style={styles.sectionTitle}>
-              Quick Actions
+              {t("common.quickActions")}
             </Text>
             <View style={styles.quickActionsGrid}>
               {otherItems.map(item => (
@@ -241,7 +243,7 @@ const Dashboard = () => {
       <View style={styles.welcomeSection}>
         <View style={styles.welcomeContent}>
           <Text variant="headlineMedium" style={styles.welcomeTitle}>
-            Welcome to
+            {t("dashboard.welcomeTo")}
           </Text>
           {churchAppearance?.logoLight ? (
             <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.churchLogo} contentFit="contain" priority="high" />
@@ -251,12 +253,12 @@ const Dashboard = () => {
             </Text>
           )}
           <Text variant="bodyLarge" style={styles.welcomeSubtitle}>
-            Stay connected with your church community
+            {t("dashboard.stayConnected")}
           </Text>
         </View>
       </View>
     ),
-    [churchAppearance?.logoLight, currentChurch?.name]
+    [churchAppearance?.logoLight, currentChurch?.name, t]
   );
 
   const handleDrawerOpen = useCallback(() => {
@@ -268,7 +270,7 @@ const Dashboard = () => {
       <SafeAreaProvider>
         <LoadingWrapper loading={isLoading}>
           <View style={styles.container}>
-            <MainHeader title="Home" openDrawer={handleDrawerOpen} />
+            <MainHeader title={t("dashboard.home")} openDrawer={handleDrawerOpen} />
             <View style={styles.contentContainer}>
               <ScrollView
                 style={styles.scrollView}

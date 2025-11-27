@@ -10,8 +10,10 @@ import { CustomDrawer } from "../../src/components/CustomDrawer";
 import { ErrorBoundary } from "../../src/components/ErrorBoundary";
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
 import { useCurrentUserChurch } from "@/stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 export default function DrawerLayout() {
+  const { t } = useTranslation();
   const router = useRouter();
   const currentChurch = useCurrentUserChurch();
 
@@ -66,26 +68,26 @@ export default function DrawerLayout() {
           };
         }}
         drawerContent={props => <CustomDrawer {...props} />}>
-        <Drawer.Screen name="dashboard" options={{ title: "Home" }} />
-        <Drawer.Screen name="myGroups" options={{ title: "My Groups" }} />
+        <Drawer.Screen name="dashboard" options={{ title: t("navigation.home") }} />
+        <Drawer.Screen name="myGroups" options={{ title: t("navigation.myGroups") }} />
         <Drawer.Screen
           name="notifications"
           options={{
-            title: "Notifications",
+            title: t("navigation.notifications"),
             headerRight: () => <HeaderBell name="person-add" toggleNotifications={() => toggleNotifications("notifications")} />
           }}
         />
-        <Drawer.Screen name="votd" options={{ title: "Verse of the Day" }} />
-        <Drawer.Screen name="service" options={{ title: "Checkin" }} />
-        <Drawer.Screen name="donation" options={{ title: "Donation" }} />
-        <Drawer.Screen name="membersSearch" options={{ title: "Directory" }} />
-        <Drawer.Screen name="plan" options={{ title: "Plans" }} />
-        <Drawer.Screen name="sermons" options={{ title: "Sermons" }} />
-        <Drawer.Screen name="searchMessageUser" options={{ title: "Search Messages" }} />
+        <Drawer.Screen name="votd" options={{ title: t("navigation.verseOfTheDay") }} />
+        <Drawer.Screen name="service" options={{ title: t("checkin.checkin") }} />
+        <Drawer.Screen name="donation" options={{ title: t("donations.giving") }} />
+        <Drawer.Screen name="membersSearch" options={{ title: t("navigation.directory") }} />
+        <Drawer.Screen name="plan" options={{ title: t("plans.plans") }} />
+        <Drawer.Screen name="sermons" options={{ title: t("sermons.sermons") }} />
+        <Drawer.Screen name="searchMessageUser" options={{ title: t("navigation.searchMessages") }} />
         <Drawer.Screen
           name="churchSearch"
           options={({ navigation }) => ({
-            title: "Church Search",
+            title: t("navigation.churchSearch"),
             headerRight: () => null,
             headerLeft: () => (currentChurch ? renderHeaderLeft(navigation, "churchSearch") : null)
           })}

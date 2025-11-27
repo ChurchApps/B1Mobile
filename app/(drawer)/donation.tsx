@@ -15,6 +15,7 @@ import { useDonationFunds } from "../../src/hooks/useStaleWhileRevalidate";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useNavigation } from "../../src/hooks";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -38,6 +39,7 @@ const theme = {
 };
 
 const Donation = () => {
+  const { t } = useTranslation();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack } = useNavigation();
   const [customerId, setCustomerId] = useState<string>("");
@@ -141,7 +143,7 @@ const Donation = () => {
     try {
       await Promise.all([refetchGateway(), refetchPaymentMethods(), refetchDonation()]);
     } catch (err: any) {
-      Alert.alert("Failed to fetch payment methods", err.message);
+      Alert.alert(t("donations.failedPaymentMethods"), err.message);
       ErrorHelper.logError("load-donations", err);
     }
   };
@@ -187,7 +189,7 @@ const Donation = () => {
     <PaperProvider theme={theme}>
       <View style={styles.container}>
         <View style={styles.content}>
-          <MainHeader title="Giving" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+          <MainHeader title={t("donations.giving")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
           <DonationTabBar activeSection={activeSection} onTabChange={setActiveSection} />
 

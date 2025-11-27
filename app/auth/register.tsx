@@ -5,8 +5,10 @@ import { useState } from "react";
 import { Alert, SafeAreaView } from "react-native";
 import { Button, Text, TextInput, Surface } from "react-native-paper";
 import { useAppTheme } from "../../src/theme";
+import { useTranslation } from "react-i18next";
 
 const Register = () => {
+  const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
@@ -19,13 +21,13 @@ const Register = () => {
       /*
       const data = await ApiHelper.post("/users/register", { email, firstName, lastName }, "MembershipApi");
       if (data.email != null) setRegistered(true);
-      else Alert.alert("Alert", "User already exists.");
+      else Alert.alert(t("common.alert"), "User already exists.");
       */
     } catch (error: any) {
       if (error.message && error.message.includes("user already exists")) {
-        Alert.alert("Error", "This user already exists. Please log in with your username and password.");
+        Alert.alert(t("common.error"), t("auth.userExists"));
       } else {
-        Alert.alert("Error", error.message || "Failed to register user");
+        Alert.alert(t("common.error"), error.message || t("common.error"));
       }
     } finally {
       setLoading(false);
@@ -37,17 +39,17 @@ const Register = () => {
     if (email != "") {
       let emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
-        Alert.alert("Alert", "Please enter valid email.");
+        Alert.alert(t("common.alert"), t("auth.invalidEmail"));
         result = false;
       } else if (firstName === "") {
-        Alert.alert("Alert", "Please enter first name.");
+        Alert.alert(t("common.alert"), t("auth.enterFirstName"));
         result = false;
       } else if (lastName === "") {
-        Alert.alert("Alert", "Please enter last name.");
+        Alert.alert(t("common.alert"), t("auth.enterLastName"));
         result = false;
       }
     } else {
-      Alert.alert("Alert", "Please enter email.");
+      Alert.alert(t("common.alert"), t("auth.enterEmail"));
       result = false;
     }
     return result;
@@ -56,24 +58,24 @@ const Register = () => {
   const getForm = () => (
     <>
       <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>
-        Register an Account
+        {t("auth.registerAccount")}
       </Text>
 
-      <TextInput mode="outlined" label="First name" value={firstName} onChangeText={setFirstName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
+      <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
 
-      <TextInput mode="outlined" label="Last name" value={lastName} onChangeText={setLastName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
+      <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
 
-      <TextInput mode="outlined" label="Email" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="email" />} />
+      <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="email" />} />
 
       <Text variant="bodySmall" style={{ marginBottom: spacing.md }}>
-        By clicking on Register, I confirm that I have read the{" "}
+        {t("auth.privacyConfirm")}{" "}
         <Text variant="bodySmall" style={{ color: theme.colors.primary }} onPress={() => router.navigate("/auth/privacy")}>
-          privacy policy.
+          {t("auth.privacyPolicy").toLowerCase()}.
         </Text>
       </Text>
 
       <Button mode="contained" onPress={() => validateDetails() && registerApiCall()} loading={loading} style={{ marginBottom: spacing.md }}>
-        Register
+        {t("auth.register")}
       </Button>
     </>
   );

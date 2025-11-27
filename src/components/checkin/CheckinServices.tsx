@@ -8,6 +8,7 @@ import { Card, Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   onDone: () => void;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export const CheckinServices = (props: Props) => {
+  const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const [loading, setLoading] = useState(false);
   const currentUserChurch = useCurrentUserChurch();
@@ -171,10 +173,10 @@ export const CheckinServices = (props: Props) => {
             <MaterialIcons name="event" size={48} color="#0D47A1" />
           </View>
           <Text variant="headlineLarge" style={styles.headerTitle}>
-            Select Service
+            {t("checkin.selectService")}
           </Text>
           <Text variant="bodyLarge" style={styles.headerSubtitle}>
-            Choose which service you're checking in for
+            {t("checkin.chooseService")}
           </Text>
         </View>
 
@@ -184,7 +186,7 @@ export const CheckinServices = (props: Props) => {
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#0D47A1" />
               <Text variant="bodyLarge" style={styles.loadingText}>
-                Loading services...
+                {t("checkin.loadingServices")}
               </Text>
             </View>
           ) : serviceList.length === 0 ? (
@@ -192,10 +194,10 @@ export const CheckinServices = (props: Props) => {
               <View style={styles.emptyContent}>
                 <MaterialIcons name="event-busy" size={64} color="#9E9E9E" />
                 <Text variant="titleMedium" style={styles.emptyTitle}>
-                  No Services Available
+                  {t("checkin.noServicesAvailable")}
                 </Text>
                 <Text variant="bodyMedium" style={styles.emptySubtitle}>
-                  Please check back later or contact your church administrator
+                  {t("checkin.noServicesMessage")}
                 </Text>
               </View>
             </Card>

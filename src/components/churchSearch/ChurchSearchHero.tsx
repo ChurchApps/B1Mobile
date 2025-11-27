@@ -4,8 +4,11 @@ import { Text, Card } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
+import { useTranslation } from "react-i18next";
 
 export const ChurchSearchHero: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.heroSection}>
       <Card style={styles.heroCard}>
@@ -20,9 +23,9 @@ export const ChurchSearchHero: React.FC = () => {
               color="#FFFFFF"
               style={styles.heroIcon}
             />
-            <Text style={styles.heroTitle}>Find Your Church</Text>
+            <Text style={styles.heroTitle}>{t("churchSearch.findYourChurch")}</Text>
             <Text style={styles.heroSubtitle}>
-              Connect with your church community today
+              {t("churchSearch.connectWithCommunity")}
             </Text>
           </View>
         </LinearGradient>

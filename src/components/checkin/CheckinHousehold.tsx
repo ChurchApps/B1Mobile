@@ -8,6 +8,7 @@ import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { Button, Divider, Card, Text, Chip } from "react-native-paper";
 import { Avatar } from "../common/Avatar";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   onDone: () => void;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export const CheckinHousehold = (props: Props) => {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -68,7 +70,7 @@ export const CheckinHousehold = (props: Props) => {
                   ))}
                 {item.serviceTimes.filter((time: any) => time.selectedGroup).length === 0 && (
                   <Text variant="bodyMedium" style={styles.noSelectionText}>
-                    Tap to select groups
+                    {t("checkin.tapToSelectGroups")}
                   </Text>
                 )}
               </View>
@@ -95,12 +97,12 @@ export const CheckinHousehold = (props: Props) => {
                     {item_time.name}
                   </Text>
                   <Text variant="bodyMedium" style={styles.selectedGroupText}>
-                    {item_time.selectedGroup ? item_time.selectedGroup.name : "No group selected"}
+                    {item_time.selectedGroup ? item_time.selectedGroup.name : t("checkin.noGroupSelected")}
                   </Text>
                 </View>
               </View>
               <Button mode={item_time.selectedGroup ? "contained" : "outlined"} onPress={() => !item_time.selection && props.showGroups(item, item_time)} style={[styles.selectGroupButton, item_time.selectedGroup && styles.selectedGroupButton]} labelStyle={[styles.selectGroupButtonText, item_time.selectedGroup && styles.selectedGroupButtonText]} disabled={item_time.selection}>
-                {item_time.selectedGroup ? "Change" : "Select Group"}
+                {item_time.selectedGroup ? t("checkin.change") : t("checkin.selectGroup")}
               </Button>
             </View>
           ))}
@@ -118,10 +120,10 @@ export const CheckinHousehold = (props: Props) => {
             <MaterialIcons name="people" size={48} color="#0D47A1" />
           </View>
           <Text variant="headlineLarge" style={styles.headerTitle}>
-            Household Members
+            {t("checkin.householdMembers")}
           </Text>
           <Text variant="bodyLarge" style={styles.headerSubtitle}>
-            Select groups for each family member
+            {t("checkin.selectGroupsForFamily")}
           </Text>
         </View>
 
@@ -132,10 +134,10 @@ export const CheckinHousehold = (props: Props) => {
               <View style={styles.emptyContent}>
                 <MaterialIcons name="person-off" size={64} color="#9E9E9E" />
                 <Text variant="titleMedium" style={styles.emptyTitle}>
-                  No Household Members Found
+                  {t("checkin.noHouseholdMembers")}
                 </Text>
                 <Text variant="bodyMedium" style={styles.emptySubtitle}>
-                  Please ensure you are logged in and have household members registered.
+                  {t("checkin.noHouseholdMembersMessage")}
                 </Text>
               </View>
             </Card>
@@ -150,7 +152,7 @@ export const CheckinHousehold = (props: Props) => {
             <MaterialIcons name="arrow-back" size={24} color="#FFF" style={{ marginRight: 8 }} />
           </Button>
           <Button mode="contained" onPress={submitAttendance} style={[styles.checkinButton, { flex: 1 }]} labelStyle={styles.checkinButtonText} icon="check-circle">
-            Complete Check-in
+            {t("checkin.completeCheckin")}
           </Button>
         </View>
       </View>

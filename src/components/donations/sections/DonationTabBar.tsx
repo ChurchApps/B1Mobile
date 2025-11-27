@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
+import { useTranslation } from "react-i18next";
 
 type TabSection = "overview" | "donate" | "manage" | "history";
 
@@ -10,11 +11,13 @@ interface DonationTabBarProps {
 }
 
 export const DonationTabBar: React.FC<DonationTabBarProps> = ({ activeSection, onTabChange }) => {
+  const { t } = useTranslation();
+
   const tabs: { key: TabSection; label: string }[] = [
-    { key: "overview", label: "Overview" },
-    { key: "donate", label: "Give" },
-    { key: "manage", label: "Manage" },
-    { key: "history", label: "History" }
+    { key: "overview", label: t("donations.overview") },
+    { key: "donate", label: t("donations.donate") },
+    { key: "manage", label: t("donations.manage") },
+    { key: "history", label: t("donations.history") }
   ];
 
   return (

@@ -15,9 +15,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 import { Provider as PaperProvider, Card, MD3LightTheme } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { InlineLoader } from "../../src/components/common/LoadingComponents";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -39,6 +39,7 @@ const theme = {
 };
 
 const Plan = () => {
+  const { t } = useTranslation();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const currentUserChurch = useCurrentUserChurch();
   const { navigateBack } = useNavigation();
@@ -118,19 +119,19 @@ const Plan = () => {
     <Card style={styles.heroCard}>
       {isLoading ? (
         <Card.Content style={styles.loadingHeroContent}>
-          <InlineLoader size="large" text="Loading your schedule..." />
+          <InlineLoader size="large" text={t("plans.loadingSchedule")} />
         </Card.Content>
       ) : (
         <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
           <View style={styles.heroContent}>
             <MaterialIcons name="assignment" size={48} color="white" style={styles.heroIcon} />
-            <Text style={styles.heroTitle}>Your Serving Schedule</Text>
+            <Text style={styles.heroTitle}>{t("plans.yourServingSchedule")}</Text>
             <Text style={styles.heroSubtitle}>
-              {planStats.confirmed} confirmed • {planStats.pending} pending
+              {planStats.confirmed} {t("plans.confirmed")} • {planStats.pending} {t("plans.pending")}
             </Text>
             {planStats.nextPlan && (
               <View style={styles.nextPlanContainer}>
-                <Text style={styles.nextPlanLabel}>Next Service:</Text>
+                <Text style={styles.nextPlanLabel}>{t("plans.nextService")}</Text>
                 <Text style={styles.nextPlanDate}>{new Date(planStats.nextPlan.serviceDate).toLocaleDateString()}</Text>
               </View>
             )}
@@ -146,11 +147,11 @@ const Plan = () => {
         <Card.Content style={styles.statContent}>
           <MaterialIcons name="assignment" size={32} color="#2196F3" />
           {isLoading ? (
-            <InlineLoader text="Loading..." />
+            <InlineLoader text={t("common.loading")} />
           ) : (
             <>
               <Text style={styles.statNumber}>{planStats.requested}</Text>
-              <Text style={styles.statLabel}>Requested</Text>
+              <Text style={styles.statLabel}>{t("plans.requested")}</Text>
             </>
           )}
         </Card.Content>
@@ -159,11 +160,11 @@ const Plan = () => {
         <Card.Content style={styles.statContent}>
           <MaterialIcons name="event-available" size={32} color="#70DC87" />
           {isLoading ? (
-            <InlineLoader text="Loading..." />
+            <InlineLoader text={t("common.loading")} />
           ) : (
             <>
               <Text style={styles.statNumber}>{planStats.confirmed}</Text>
-              <Text style={styles.statLabel}>Confirmed</Text>
+              <Text style={styles.statLabel}>{t("plans.confirmed")}</Text>
             </>
           )}
         </Card.Content>
@@ -172,11 +173,11 @@ const Plan = () => {
         <Card.Content style={styles.statContent}>
           <MaterialIcons name="schedule" size={32} color="#FEAA24" />
           {isLoading ? (
-            <InlineLoader text="Loading..." />
+            <InlineLoader text={t("common.loading")} />
           ) : (
             <>
               <Text style={styles.statNumber}>{planStats.pending}</Text>
-              <Text style={styles.statLabel}>Pending</Text>
+              <Text style={styles.statLabel}>{t("plans.pending")}</Text>
             </>
           )}
         </Card.Content>
@@ -188,7 +189,7 @@ const Plan = () => {
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
         <View style={styles.container}>
-          <MainHeader title="Plans" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+          <MainHeader title={t("plans.plans")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
           <View style={styles.contentContainer}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               {renderHeroSection()}
