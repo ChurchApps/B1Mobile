@@ -2,7 +2,7 @@
 
 # B1 Mobile
 
-> **B1 Mobile** is the mobile app companion to the [B1.church](https://github.com/ChurchApps/B1Mobile) app. It runs on both iOS and Android and provides the same features as the web version including online giving, self-check-in for attendance, live streaming of services, and an interactive member directory. Visit [B1.church](https://b1.church/) to learn more.
+> **B1 Mobile** is the mobile app companion to the [B1.church](https://github.com/ChurchApps/B1App) app. It runs on both iOS and Android and provides the same features as the web version including online giving, self-check-in for attendance, live streaming of services, and an interactive member directory. Visit [B1.church](https://b1.church/) to learn more.
 
 ## Preview
 
