@@ -1,7 +1,7 @@
 import React from "react";
 import { ChurchInterface, UserHelper } from "../../src/helpers";
-import { ErrorHelper } from "../../src/mobilehelper";
-import { ApiHelper } from "../../src/mobilehelper";
+import { ErrorHelper } from "../../src/helpers/ErrorHelper";
+import { ApiHelper } from "@churchapps/helpers";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";

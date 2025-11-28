@@ -14,7 +14,7 @@ import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { SermonCard } from "../../src/components/SermonCard";
 import { FeaturedSermon, PlaylistCard, LiveStreamCard, EmptyState, SermonsTabBar, type LiveStreamData } from "../../src/components/sermons/exports";
 import { UserHelper } from "../../src/helpers";
-import { PlaylistInterface, SermonInterface } from "../../src/mobilehelper";
+import { PlaylistInterface, SermonInterface } from "@churchapps/helpers";
 import { useCurrentChurch } from "../../src/stores/useUserStore";
 
 const theme = {

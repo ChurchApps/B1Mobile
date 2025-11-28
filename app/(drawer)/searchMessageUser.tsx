@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface } from "../../src/helpers";
-import { ErrorHelper } from "../../src/mobilehelper";
+import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { FlatList, Keyboard, TouchableWithoutFeedback, View } from "react-native";

@@ -12,7 +12,7 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { useQuery } from "@tanstack/react-query";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { EventInterface } from "../../../src/mobilehelper";
+import { EventInterface } from "@churchapps/helpers";
 import { MainHeader } from "../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import GroupChatModal from "../../../src/components/modals/GroupChatModal";

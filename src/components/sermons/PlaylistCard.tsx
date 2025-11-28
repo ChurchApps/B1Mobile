@@ -5,7 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "../OptimizedImage";
 import { DateHelper } from "../../helpers";
-import { PlaylistInterface } from "../../mobilehelper";
+import { PlaylistInterface } from "@churchapps/helpers";
 
 interface PlaylistCardProps {
   playlist: PlaylistInterface;

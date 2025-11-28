@@ -5,7 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "../OptimizedImage";
 import { DateHelper } from "../../helpers";
-import { SermonInterface } from "../../mobilehelper";
+import { SermonInterface } from "@churchapps/helpers";
 
 interface FeaturedSermonProps {
   sermon: SermonInterface;

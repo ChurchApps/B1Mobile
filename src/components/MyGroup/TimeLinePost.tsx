@@ -1,4 +1,4 @@
-import { ConversationInterface } from "../../mobilehelper";
+import { ConversationInterface } from "../../helpers/Interfaces";
 import dayjs from "dayjs";
 import React, { useMemo, useCallback } from "react";
 import { Text, View } from "react-native";

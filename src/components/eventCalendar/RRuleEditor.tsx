@@ -1,6 +1,6 @@
 import * as React from "react";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { DateHelper } from "../../mobilehelper";
+import { DateHelper } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
 import { useEffect, useState, useMemo } from "react";

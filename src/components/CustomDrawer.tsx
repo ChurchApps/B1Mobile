@@ -1,7 +1,7 @@
 import { EnvironmentHelper, UserHelper, SecureStorageHelper, LoginUserChurchInterface } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
-import { ErrorHelper } from "../mobilehelper";
-import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
+import { ErrorHelper } from "../helpers/ErrorHelper";
+import { ApiHelper, LinkInterface, Permissions } from "@churchapps/helpers";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";

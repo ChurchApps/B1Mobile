@@ -2,7 +2,7 @@ import React from "react";
 import { EnhancedDonationForm, EnhancedGivingHistory } from "../../src/components/donations/LazyDonationComponents";
 import { GivingOverview, DonationTabBar, ManagePayments } from "../../src/components/donations/sections/exports";
 import { UserHelper } from "@/helpers/UserHelper";
-import { ErrorHelper } from "../../src/mobilehelper";
+import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { DonationImpact, GatewayData, PaymentMethodsResponse, StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused, useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";

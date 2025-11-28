@@ -13,7 +13,7 @@ import { MainHeader } from "../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { VideoPlayer, VideoPreview, SermonInfo, SermonActions } from "../../../src/components/sermonDetails/exports";
 import { UserHelper } from "../../../src/helpers";
-import { SermonInterface } from "../../../src/mobilehelper";
+import { SermonInterface } from "@churchapps/helpers";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
 
 const theme = {

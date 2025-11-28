@@ -1,5 +1,5 @@
 import { AppState, AppStateStatus } from "react-native";
-import { ApiHelper } from "../mobilehelper";
+import { ApiHelper } from "@churchapps/helpers";
 import { SecureStorageHelper } from "./SecureStorageHelper";
 import { UserHelper } from "./UserHelper";
 import { useUserStore } from "../stores/useUserStore";

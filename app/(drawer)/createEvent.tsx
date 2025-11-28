@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import CreateEvent from "../../src/components/eventCalendar/CreateEvent";
-import { EventInterface } from "../../src/mobilehelper";
+import { EventInterface } from "@churchapps/helpers";
 
 export default function CreateEventScreen() {
   const { event: eventParam, groupId } = useLocalSearchParams();

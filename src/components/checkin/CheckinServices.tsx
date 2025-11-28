@@ -1,5 +1,5 @@
 import { ApiHelper, CheckinHelper, PersonInterface, UserHelper } from "../../../src/helpers";
-import { ArrayHelper } from "../../mobilehelper";
+import { ArrayHelper } from "@churchapps/helpers";
 import React, { useEffect, useState } from "react";
 import { FlatList, View, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";

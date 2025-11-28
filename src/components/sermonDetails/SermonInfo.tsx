@@ -2,7 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Card } from "react-native-paper";
 import { DateHelper } from "../../helpers";
-import { SermonInterface } from "../../mobilehelper";
+import { SermonInterface } from "@churchapps/helpers";
 
 interface SermonInfoProps {
   sermon: SermonInterface;

@@ -3,7 +3,7 @@ import { router } from "expo-router";
 import { EnvironmentHelper } from "./EnvironmentHelper";
 import { UserHelper } from "./UserHelper";
 import { LinkInterface } from "./Interfaces";
-import { Permissions } from "../mobilehelper";
+import { Permissions } from "@churchapps/helpers";
 import { useUserStore } from "../stores/useUserStore";
 
 export class NavigationUtils {

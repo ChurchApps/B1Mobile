@@ -1,7 +1,7 @@
 import { ApiHelper } from "@/helpers/index";
 import { CheckinHelper } from "@/helpers/CheckinHelper";
 import { PersonInterface, ServiceTimeInterface } from "@/helpers/Interfaces";
-import { ErrorHelper } from "../../mobilehelper";
+import { ErrorHelper } from "../../helpers/ErrorHelper";
 import React, { useState } from "react";
 import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";

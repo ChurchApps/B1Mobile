@@ -15,7 +15,7 @@ import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { OptimizedImage } from "../../../src/components/OptimizedImage";
 import { SermonCard } from "../../../src/components/SermonCard";
 import { UserHelper, DateHelper } from "../../../src/helpers";
-import { SermonInterface, PlaylistInterface } from "../../../src/mobilehelper";
+import { SermonInterface, PlaylistInterface } from "@churchapps/helpers";
 import { useCurrentChurch } from "../../../src/stores/useUserStore";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
 

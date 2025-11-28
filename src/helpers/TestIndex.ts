@@ -1,4 +1,4 @@
-export { ErrorHelper } from "../mobilehelper/ErrorHelper";
+export { ErrorHelper } from "./ErrorHelper";
 export * from "./Interfaces";
 export * from "./PushNotificationHelper";
 //export * from "../mobilehelper/Utils"
