@@ -9,6 +9,7 @@ import { useUserStore, useCurrentChurch, useChurchAppearance } from "../../src/s
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -32,6 +33,7 @@ const theme = {
 };
 
 const Login = () => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,18 +47,18 @@ const Login = () => {
     if (email != "") {
       let emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
-        Alert.alert("Alert", "Please enter valid email.");
+        Alert.alert(t("common.alert"), t("auth.invalidEmail"));
         return false;
       } else {
         if (password != "") {
           return true;
         } else {
-          Alert.alert("Alert", "Please enter password.");
+          Alert.alert(t("common.alert"), t("auth.enterPassword"));
           return false;
         }
       }
     } else {
-      Alert.alert("Alert", "Please enter email.");
+      Alert.alert(t("common.alert"), t("auth.enterEmail"));
       return false;
     }
   };
@@ -72,12 +74,12 @@ const Login = () => {
           router.replace("/(drawer)/dashboard");
         } else {
           setLoading(false);
-          Alert.alert("Alert", "Invalid login");
+          Alert.alert(t("common.alert"), t("auth.invalidLogin"));
         }
       })
       .catch(() => {
         setLoading(false);
-        Alert.alert("Alert", "Invalid login");
+        Alert.alert(t("common.alert"), t("auth.invalidLogin"));
       });
   };
 
@@ -104,20 +106,20 @@ const Login = () => {
                             <MaterialIcons name="church" size={48} color="#FFFFFF" style={styles.heroIcon} />
                           )}
                           <Text variant="headlineMedium" style={styles.heroTitle}>
-                            Welcome Back
+                            {t("auth.welcomeBack")}
                           </Text>
                           <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                            Sign in to {currentChurch.name}
+                            {t("auth.signInTo", { churchName: currentChurch.name })}
                           </Text>
                         </>
                       ) : (
                         <>
                           <OptimizedImage source={require("../../src/assets/images/logoWhite.png")} style={styles.b1Logo} contentFit="contain" priority="high" />
                           <Text variant="headlineMedium" style={styles.heroTitle}>
-                            Welcome to B1
+                            {t("auth.welcomeToB1")}
                           </Text>
                           <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                            Sign in to access your church community
+                            {t("auth.signInToAccess")}
                           </Text>
                         </>
                       )}
@@ -133,8 +135,8 @@ const Login = () => {
                     <View style={styles.inputContainer}>
                       <TextInput
                         mode="outlined"
-                        label="Email Address"
-                        placeholder="Enter your email"
+                        label={t("auth.emailLabel")}
+                        placeholder={t("auth.emailPlaceholder")}
                         value={email}
                         onChangeText={setEmail}
                         autoCapitalize="none"
@@ -152,8 +154,8 @@ const Login = () => {
 
                       <TextInput
                         mode="outlined"
-                        label="Password"
-                        placeholder="Enter your password"
+                        label={t("auth.passwordLabel")}
+                        placeholder={t("auth.passwordPlaceholder")}
                         value={password}
                         onChangeText={setPassword}
                         secureTextEntry={!showPassword}
@@ -173,19 +175,19 @@ const Login = () => {
 
                     <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => Linking.openURL(forgotLink)}>
                       <Text variant="bodyMedium" style={styles.forgotPasswordText}>
-                        Forgot your password?
+                        {t("auth.forgotPassword")}
                       </Text>
                     </TouchableOpacity>
 
                     <Button mode="contained" onPress={() => validateDetails() && loginApiCall()} loading={loading} style={styles.loginButton} labelStyle={styles.loginButtonText} disabled={loading}>
-                      Sign In
+                      {t("auth.signIn")}
                     </Button>
 
                     <View style={styles.privacySection}>
                       <Text variant="bodySmall" style={styles.privacyText}>
-                        By signing in, you agree to our{" "}
+                        {t("auth.privacyConsent")}{" "}
                         <Text variant="bodySmall" style={styles.privacyLink} onPress={() => router.navigate("/auth/privacy")}>
-                          Privacy Policy
+                          {t("auth.privacyPolicy")}
                         </Text>
                       </Text>
                     </View>
@@ -200,13 +202,13 @@ const Login = () => {
                     <Card.Content style={styles.helpContent}>
                       <MaterialIcons name="help-outline" size={32} color="#9E9E9E" style={styles.helpIcon} />
                       <Text variant="titleMedium" style={styles.helpTitle}>
-                        New to B1?
+                        {t("auth.newToB1")}
                       </Text>
                       <Text variant="bodyMedium" style={styles.helpText}>
-                        First, find and select your church, then create your account or sign in.
+                        {t("auth.findChurchFirst")}
                       </Text>
                       <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.helpButton} labelStyle={styles.helpButtonText}>
-                        Find Your Church
+                        {t("auth.findYourChurch")}
                       </Button>
                     </Card.Content>
                   </Card>

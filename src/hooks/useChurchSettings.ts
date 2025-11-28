@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { ApiHelper } from "../mobilehelper";
+import { ApiHelper } from "@churchapps/helpers";
 
 export const useChurchSettings = (churchId?: string) =>
   useQuery({

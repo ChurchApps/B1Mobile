@@ -1,6 +1,6 @@
 import { QueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ApiHelper } from "../mobilehelper";
+import { ApiHelper } from "@churchapps/helpers";
 import { HybridCachePersister } from "./HybridCachePersister";
 
 // Initialize hybrid cache persister for optimized storage

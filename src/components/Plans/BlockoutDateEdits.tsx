@@ -1,4 +1,4 @@
-import { ApiHelper } from "../../mobilehelper";
+import { ApiHelper } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import dayjs from "dayjs";
 import React, { useState } from "react";

@@ -1,4 +1,4 @@
-import { ApiHelper } from "../mobilehelper";
+import { ApiHelper } from "@churchapps/helpers";
 import { Platform } from "react-native";
 import { logAnalyticsEvent } from "../config/firebase";
 import { SecureStorageHelper } from "./SecureStorageHelper";

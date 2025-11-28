@@ -5,6 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { PaymentMethods } from "../LazyDonationComponents";
 import { StripePaymentMethod } from "../../../interfaces";
 import { UserInterface } from "../../../interfaces";
+import { useTranslation } from "react-i18next";
 
 interface ManagePaymentsProps {
   person: UserInterface | undefined;
@@ -15,24 +16,26 @@ interface ManagePaymentsProps {
   loadData: () => Promise<void>;
 }
 
-export const ManagePayments: React.FC<ManagePaymentsProps> = ({ 
-  person, 
-  customerId, 
-  paymentMethods, 
-  isLoading, 
-  publishKey, 
-  loadData 
+export const ManagePayments: React.FC<ManagePaymentsProps> = ({
+  person,
+  customerId,
+  paymentMethods,
+  isLoading,
+  publishKey,
+  loadData
 }) => {
+  const { t } = useTranslation();
+
   if (!person?.id) {
     return (
       <Card style={styles.loginPromptCard}>
         <Card.Content style={styles.loginPromptContent}>
           <MaterialIcons name="login" size={48} color="#9E9E9E" style={styles.loginPromptIcon} />
           <Text variant="titleMedium" style={styles.loginPromptTitle}>
-            Please login to manage payment methods
+            {t("auth.signIn")}
           </Text>
           <Text variant="bodyMedium" style={styles.loginPromptSubtitle}>
-            Save your payment information for faster, more convenient giving.
+            {t("donations.manage")}
           </Text>
         </Card.Content>
       </Card>

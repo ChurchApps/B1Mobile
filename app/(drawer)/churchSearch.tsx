@@ -1,7 +1,7 @@
 import React from "react";
 import { ChurchInterface, UserHelper } from "../../src/helpers";
-import { ErrorHelper } from "../../src/mobilehelper";
-import { ApiHelper } from "../../src/mobilehelper";
+import { ErrorHelper } from "../../src/helpers/ErrorHelper";
+import { ApiHelper } from "@churchapps/helpers";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
@@ -11,14 +11,15 @@ import { clearAllCachedData } from "../../src/helpers/QueryClient";
 import { useUserStore, useRecentChurches, useUserChurches } from "../../src/stores/useUserStore";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { 
-  ChurchSearchHero, 
-  ChurchSearchInput, 
-  ChurchListItem, 
-  SearchLoadingIndicator, 
-  GettingStartedHelper, 
-  ChurchSelectionOverlay 
+import {
+  ChurchSearchHero,
+  ChurchSearchInput,
+  ChurchListItem,
+  SearchLoadingIndicator,
+  GettingStartedHelper,
+  ChurchSelectionOverlay
 } from "../../src/components/churchSearch/exports";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -42,6 +43,7 @@ const theme = {
 };
 
 const ChurchSearch = () => {
+  const { t } = useTranslation();
   const [searchText, setSearchText] = useState("");
   const [selectingChurch, setSelectingChurch] = useState(false);
   const recentChurches = useRecentChurches();
@@ -142,16 +144,16 @@ const ChurchSearch = () => {
               <>
                 <View style={styles.sectionHeader}>
                   <Text variant="titleLarge" style={styles.sectionTitle}>
-                    {searchText.length < 3 ? "Recent Churches" : "Search Results"}
+                    {searchText.length < 3 ? t("churchSearch.recentChurches") : t("churchSearch.searchResults")}
                   </Text>
                   {searchText.length < 3 && recentChurches.length === 0 && (
                     <Text variant="bodyMedium" style={styles.emptyText}>
-                      No recent churches. Search to find your church.
+                      {t("churchSearch.noRecentChurches")}
                     </Text>
                   )}
                   {searchText.length >= 3 && displayedChurches.length === 0 && !loading && (
                     <Text variant="bodyMedium" style={styles.emptyText}>
-                      No churches found. Try a different search term.
+                      {t("churchSearch.noChurchesFound")}
                     </Text>
                   )}
                 </View>

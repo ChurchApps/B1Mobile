@@ -8,6 +8,7 @@ import { DonationImpact, StripePaymentMethod, SubscriptionInterface } from "@/in
 import DropDownPicker from "react-native-dropdown-picker";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { DonationHelper } from "@churchapps/helpers";
+import { useTranslation } from "react-i18next";
 
 interface DonationRecord {
   id: string;
@@ -28,16 +29,17 @@ interface Props {
   donationImpactLoading?: boolean;
 }
 
-const intervalTypes = [
-  { label: "Weekly", value: "one_week" },
-  { label: "Bi-Weekly", value: "two_week" },
-  { label: "Monthly", value: "one_month" },
-  { label: "Quarterly", value: "three_month" },
-  { label: "Annually", value: "one_year" }
-];
-
 export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpactData, donationImpactLoading = false }: Props) {
+  const { t } = useTranslation();
   const currentUserChurch = useCurrentUserChurch();
+
+  const intervalTypes = [
+    { label: t("donations.weekly"), value: "one_week" },
+    { label: t("donations.biWeekly"), value: "two_week" },
+    { label: t("donations.monthly"), value: "one_month" },
+    { label: t("donations.quarterly"), value: "three_month" },
+    { label: t("donations.annually"), value: "one_year" }
+  ];
   const [selectedPeriod, setSelectedPeriod] = useState<string>("all");
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<DonationRecord | null>(null);
@@ -105,10 +107,10 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
   };
 
   const periods = [
-    { label: "Year to Date", value: "ytd" },
-    { label: "Last 30 Days", value: "30d" },
-    { label: "Last 90 Days", value: "90d" },
-    { label: "All Time", value: "all" }
+    { label: t("donations.totalThisYear"), value: "ytd" },
+    { label: t("common.loading"), value: "30d" },
+    { label: t("common.loading"), value: "90d" },
+    { label: t("common.viewAll"), value: "all" }
   ];
 
   const filteredDonations = useMemo(() => {
@@ -196,15 +198,15 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
   const handleDelete = async () => {
     if (!selectedRecurring) {
-      Alert.alert("Error", "No subscription selected");
+      Alert.alert(t("common.error"), t("donations.failed"));
       return;
     }
 
     Alert.alert(
-      "Confirm Delete",
-      "Are you sure you wish to delete this recurring donation?",
-      [{ text: "Cancel", style: "cancel" }, {
-        text: "Delete", style: "destructive",
+      t("common.alert"),
+      t("donations.failed"),
+      [{ text: t("common.cancel"), style: "cancel" }, {
+        text: t("common.delete"), style: "destructive",
         onPress: async () => {
           try {
             setLoadingAction("delete");
@@ -216,10 +218,10 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
             setSelectedRecurring(null);
 
-            Alert.alert("Success", "Recurring donation cancelled.");
+            Alert.alert(t("donations.thankYou"), t("donations.thankYou"));
             loadData();
           } catch (error) {
-            Alert.alert("Error", "Failed to delete subscription. Please try again.");
+            Alert.alert(t("common.error"), t("donations.failed"));
           } finally {
             setLoadingAction(null);
           }
@@ -232,7 +234,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
   // Save function implementation (adapted from web version)
   const handleSave = async () => {
     if (!selectedRecurring) {
-      Alert.alert("Error", "No donation selected");
+      Alert.alert(t("common.error"), t("donations.failed"));
       return;
     }
 
@@ -250,10 +252,10 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
       await ApiHelper.post("/subscriptions", [sub], "GivingApi")
       setSelectedRecurring(null);
 
-      Alert.alert("Success", "Recurring donation updated.");
+      Alert.alert(t("donations.thankYou"), t("donations.thankYou"));
       loadData();
     } catch (error) {
-      Alert.alert("Error", "Failed to update donation. Please try again.");
+      Alert.alert(t("common.error"), t("donations.failed"));
     } finally {
       setLoadingAction(null);
     }
@@ -314,7 +316,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
             onPress={() => handleManageRecurring(item)}
             style={styles.manageButton}
           >
-            Manage
+            {t("donations.manage")}
           </Button>
         </Card.Content>
       </Card>
@@ -327,10 +329,10 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
         <Card.Content style={styles.loginPromptContent}>
           <MaterialIcons name="login" size={48} color="#9E9E9E" style={styles.loginPromptIcon} />
           <Text variant="titleMedium" style={styles.loginPromptTitle}>
-            Please login to view your giving history
+            {t("auth.signIn")}
           </Text>
           <Text variant="bodyMedium" style={styles.loginPromptSubtitle}>
-            Access your donation records, recurring gifts, and giving statements.
+            {t("donations.history")}
           </Text>
         </Card.Content>
       </Card>
@@ -344,7 +346,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
         <Card.Content>
           <View style={styles.summaryHeader}>
             <Text variant="titleLarge" style={styles.summaryTitle}>
-              Giving Summary
+              {t("donations.giving")}
             </Text>
             <Menu
               visible={showPeriodMenu}
@@ -374,7 +376,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#0D47A1" />
               <Text variant="bodyMedium" style={styles.loadingText}>
-                Loading giving summary...
+                {t("common.loading")}
               </Text>
             </View>
           ) : (
@@ -384,7 +386,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                   {CurrencyHelper.formatCurrency(givingStats.total)}
                 </Text>
                 <Text variant="bodyMedium" style={styles.statLabel}>
-                  Total Given
+                  {t("donations.totalThisYear")}
                 </Text>
               </View>
             </View>
@@ -396,13 +398,13 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
       {recurringLoading ? (
         <View style={styles.section}>
           <Text variant="titleMedium" style={styles.sectionTitle}>
-            Active Recurring Gifts
+            {t("donations.recurring")}
           </Text>
           <Card style={styles.loadingCard}>
             <Card.Content style={styles.loadingCardContent}>
               <ActivityIndicator size="small" color="#0D47A1" />
               <Text variant="bodyMedium" style={styles.loadingText}>
-                Loading recurring donations...
+                {t("common.loading")}
               </Text>
             </Card.Content>
           </Card>
@@ -411,7 +413,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
         subscriptions.length > 0 && (
           <View style={styles.section}>
             <Text variant="titleMedium" style={styles.sectionTitle}>
-              Active Recurring Gifts
+              {t("donations.recurring")}
             </Text>
             <FlatList
               data={subscriptions}
@@ -432,14 +434,14 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
       {/* Transaction History */}
       <View style={styles.section}>
         <Text variant="titleMedium" style={styles.sectionTitle}>
-          Recent Transactions
+          {t("donations.recentActivity")}
         </Text>
         <Card style={styles.transactionsCard}>
           {donationsLoading ? (
             <Card.Content style={styles.loadingCardContent}>
               <ActivityIndicator size="small" color="#0D47A1" />
               <Text variant="bodyMedium" style={styles.loadingText}>
-                Loading transactions...
+                {t("common.loading")}
               </Text>
             </Card.Content>
           ) : (
@@ -468,7 +470,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
               <Card.Content>
                 <View style={styles.detailHeader}>
                   <Text variant="titleLarge" style={styles.detailTitle}>
-                    Transaction Details
+                    {t("donations.history")}
                   </Text>
                   <TouchableOpacity onPress={() => setSelectedTransaction(null)}>
                     <MaterialIcons name="close" size={24} color="#9E9E9E" />
@@ -568,18 +570,18 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
             <Card.Content>
               <View style={styles.detailHeader}>
                 <Text variant="titleLarge" style={styles.detailTitle}>
-                  Manage Recurring Donation
+                  {t("donations.manage")}
                 </Text>
                 <TouchableOpacity onPress={() => setSelectedRecurring(null)}>
                   <MaterialIcons name="close" size={24} color="#9E9E9E" />
-                </TouchableOpacity>
+                  </TouchableOpacity>
               </View>
 
               {selectedRecurring && (
                 <>
                   <View style={styles.recurringInfo}>
                     <Text variant="bodyMedium" style={styles.detailLabel}>
-                      Payment Method
+                      {t("donations.selectPaymentMethod")}
                     </Text>
                     <DropDownPicker
                       listMode="FLATLIST"
@@ -602,7 +604,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       zIndexInverse={1000}
                     />
                     <Text variant="bodyMedium" style={styles.detailLabel}>
-                      Frequency
+                      {t("donations.selectInterval")}
                     </Text>
                     <DropDownPicker
                       listMode="FLATLIST"
@@ -643,7 +645,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       textColor="#ed6c02"
                       onPress={() => setSelectedRecurring(null)}
                     >
-                      CANCEL
+                      {t("common.cancel").toUpperCase()}
                     </Button>
                     <Button
                       mode="outlined"
@@ -652,7 +654,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       onPress={handleDelete}
                       loading={loadingAction === "delete"}
                     >
-                      {loadingAction === "delete" ? "DELETING..." : "DELETE"}
+                      {loadingAction === "delete" ? t("common.loading").toUpperCase() : t("common.delete").toUpperCase()}
                     </Button>
                     <Button
                       mode="contained"
@@ -662,7 +664,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       onPress={handleSave}
                       loading={loadingAction === "save"}
                     >
-                      {loadingAction === "save" ? "SAVING..." : "SAVE"}
+                      {loadingAction === "save" ? t("common.loading").toUpperCase() : t("common.save").toUpperCase()}
                     </Button>
                   </View>
                 </>

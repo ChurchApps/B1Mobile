@@ -5,10 +5,12 @@ import { TouchableOpacity } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAppTheme } from "@/theme";
 import { useNavigation } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 export default function AuthLayout() {
   const { theme } = useAppTheme();
   const { navigationBackNormal } = useNavigation();
+  const { t } = useTranslation();
 
   // Common header style for all screens
   const commonHeaderOptions = {
@@ -28,24 +30,24 @@ export default function AuthLayout() {
           name="login"
           options={{
             ...commonHeaderOptions,
-            headerTitle: "Login",
-            headerBackTitle: "Back"
+            headerTitle: t("drawer.login"),
+            headerBackTitle: t("common.back")
           }}
         />
         <Stack.Screen
           name="register"
           options={{
             ...commonHeaderOptions,
-            headerTitle: "Register",
-            headerBackTitle: "Back"
+            headerTitle: t("auth.register"),
+            headerBackTitle: t("common.back")
           }}
         />
         <Stack.Screen
           name="privacy"
           options={{
             ...commonHeaderOptions,
-            headerTitle: "Privacy Policy",
-            headerBackTitle: "Back"
+            headerTitle: t("auth.privacyPolicy"),
+            headerBackTitle: t("common.back")
           }}
         />
       </Stack>

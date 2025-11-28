@@ -3,7 +3,7 @@ import { DeviceEventEmitter, PermissionsAndroid, Platform, AppState } from "reac
 import DeviceInfo from "react-native-device-info";
 import * as Device from "expo-device";
 import { useUserStore } from "../stores/useUserStore";
-import { ApiHelper } from "../mobilehelper";
+import { ApiHelper } from "@churchapps/helpers";
 
 // Track current screen and app state
 let currentScreen = "";

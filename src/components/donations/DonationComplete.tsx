@@ -5,6 +5,7 @@ import { useAppTheme } from "../../theme";
 import { Text } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   onDone: () => void;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export const DonationComplete = (props: Props) => {
+  const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const screenWidth = Dimensions.get("window").width;
 
@@ -27,11 +29,11 @@ export const DonationComplete = (props: Props) => {
   const getRecurringText = () => {
     if (!props.isRecurring) return "";
     switch (props.interval) {
-      case "one_week": return "weekly";
-      case "one_month": return "monthly";
-      case "three_month": return "quarterly";
-      case "one_year": return "annually";
-      default: return "monthly";
+      case "one_week": return t("donations.weekly");
+      case "one_month": return t("donations.monthly");
+      case "three_month": return t("donations.quarterly");
+      case "one_year": return t("donations.annually");
+      default: return t("donations.monthly");
     }
   };
 
@@ -49,16 +51,16 @@ export const DonationComplete = (props: Props) => {
           {/* Success Message */}
           <View style={styles.messageContainer}>
             <Text variant="headlineLarge" style={styles.successTitle}>
-              Thank You!
+              {t("donations.thankYou")}
             </Text>
             <Text variant="titleLarge" style={styles.successAmount}>
               {props.amount} {props.isRecurring ? getRecurringText() : ""}
             </Text>
             <Text variant="bodyLarge" style={styles.successSubtitle}>
-              Your {props.isRecurring ? "recurring " : ""}donation has been processed successfully.
+              {t("donations.thankYou")}
             </Text>
             <Text variant="bodyMedium" style={styles.successDetails}>
-              Your generosity helps us continue our mission and serve our community.
+              {t("donations.generosityHelps")}
             </Text>
           </View>
 

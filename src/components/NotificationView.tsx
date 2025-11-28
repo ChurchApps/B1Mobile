@@ -12,6 +12,7 @@ import { Loader } from "./Loader";
 import { router } from "expo-router";
 import { useCurrentUserChurch } from "../stores/useUserStore";
 import { Avatar } from "./common/Avatar";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -33,6 +34,7 @@ const theme = {
 };
 
 export function NotificationTab() {
+  const { t } = useTranslation();
   const navigation: NavigationProps = useNavigation();
   const currentUserChurch = useCurrentUserChurch();
 
@@ -41,10 +43,10 @@ export function NotificationTab() {
   const [UserData, setUserData] = useState<UserSearchInterface[]>([]);
   const [mergeData, setMergedData] = useState<Array<Record<string, unknown>>>([]);
 
-  const [routes] = React.useState([
-    { key: "first", title: "Messages" },
-    { key: "second", title: "Notifications" }
-  ]);
+  const routes = [
+    { key: "first", title: t("messages.messages") },
+    { key: "second", title: t("notifications.notifications") }
+  ];
 
   // Use react-query for notifications
   const { data: NotificationData = [] } = useQuery<Array<Record<string, unknown>>>({
@@ -167,10 +169,10 @@ export function NotificationTab() {
 
     const getTimeDisplay = () => {
       if (dayDiff === 0) {
-        if (timeDifference === 0) return "now";
+        if (timeDifference === 0) return t("notifications.now");
         return `${timeDifference}h`;
       } else if (dayDiff === 1) {
-        return "yesterday";
+        return t("notifications.yesterday");
       } else if (dayDiff < 7) {
         return `${dayDiff}d`;
       } else {
@@ -214,13 +216,13 @@ export function NotificationTab() {
           <View style={styles.emptyState}>
             <MaterialIcons name="message" size={64} color="#E0E0E0" />
             <Text variant="headlineSmall" style={styles.emptyTitle}>
-              No messages yet
+              {t("notifications.noMessagesYet")}
             </Text>
             <Text variant="bodyMedium" style={styles.emptySubtitle}>
-              Start a conversation with someone from your church
+              {t("notifications.startConversation")}
             </Text>
             <Button mode="contained" onPress={() => router.push("/searchMessageUserRoot")} style={styles.actionButton}>
-              <Text style={styles.actionButtonText}>Find People</Text>
+              <Text style={styles.actionButtonText}>{t("notifications.findPeople")}</Text>
             </Button>
           </View>
         </ScrollView>
@@ -239,10 +241,10 @@ export function NotificationTab() {
           <View style={styles.emptyState}>
             <MaterialIcons name="notifications" size={64} color="#E0E0E0" />
             <Text variant="headlineSmall" style={styles.emptyTitle}>
-              No notifications yet
+              {t("notifications.noNotificationsYet")}
             </Text>
             <Text variant="bodyMedium" style={styles.emptySubtitle}>
-              We'll notify you when something new arrives
+              {t("notifications.wellNotifyYou")}
             </Text>
           </View>
         </ScrollView>

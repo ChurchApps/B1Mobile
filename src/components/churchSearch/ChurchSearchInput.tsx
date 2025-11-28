@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { TextInput, Card, Button } from "react-native-paper";
+import { useTranslation } from "react-i18next";
 
 interface ChurchSearchInputProps {
   searchText: string;
@@ -8,14 +9,16 @@ interface ChurchSearchInputProps {
 }
 
 export const ChurchSearchInput: React.FC<ChurchSearchInputProps> = ({ searchText, onSearchTextChange }) => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.searchSection}>
       <Card style={styles.searchCard}>
         <Card.Content style={styles.searchContent}>
           <TextInput
             mode="outlined"
-            label="Church name, city, or zip"
-            placeholder="Search for your church"
+            label={t("churchSearch.searchLabel")}
+            placeholder={t("churchSearch.searchPlaceholder")}
             value={searchText}
             onChangeText={onSearchTextChange}
             style={styles.searchInput}
@@ -28,12 +31,12 @@ export const ChurchSearchInput: React.FC<ChurchSearchInputProps> = ({ searchText
             }}
           />
           {searchText.length > 0 && (
-            <Button 
-              mode="text" 
-              onPress={() => onSearchTextChange("")} 
-              style={styles.clearButton} 
+            <Button
+              mode="text"
+              onPress={() => onSearchTextChange("")}
+              style={styles.clearButton}
               labelStyle={styles.clearButtonText}>
-              Clear Search
+              {t("churchSearch.clearSearch")}
             </Button>
           )}
         </Card.Content>

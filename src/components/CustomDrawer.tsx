@@ -1,7 +1,7 @@
 import { EnvironmentHelper, UserHelper, SecureStorageHelper, LoginUserChurchInterface } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
-import { ErrorHelper } from "../mobilehelper";
-import { ApiHelper, LinkInterface, Permissions } from "../mobilehelper";
+import { ErrorHelper } from "../helpers/ErrorHelper";
+import { ApiHelper, LinkInterface, Permissions } from "@churchapps/helpers";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,6 +17,7 @@ import type { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { eventBus } from "@/helpers/PushNotificationHelper";
+import { useTranslation } from "react-i18next";
 
 type ItemType = {
   linkType?: string;
@@ -29,6 +30,7 @@ type ParamsType = {
 };
 
 export function CustomDrawer(props?: any) {
+  const { t } = useTranslation();
   // Use the drawer navigation prop if available, otherwise fallback to useNavigation
   const navigation = props?.navigation || useNavigation<DrawerNavigationProp<any>>();
   // Use hooks instead of local state
@@ -195,14 +197,14 @@ export function CustomDrawer(props?: any) {
       showMyGroups = uc?.groups?.length > 0;
     }
     specialTabs.push({ linkType: "separator", linkData: "", category: "", text: "", icon: "", url: "" });
-    if (showWebsite) specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Website", icon: "home", url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") });
-    if (showMyGroups) specialTabs.push({ linkType: "groups", linkData: "", category: "", text: "My Groups", icon: "group", url: "" });
-    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData: "", category: "", text: "Check In", icon: "check_box", url: "" });
-    if (showDonations) specialTabs.push({ linkType: "donation", linkData: "", category: "", text: "Donate", icon: "volunteer_activism", url: "" });
-    if (showDirectory) specialTabs.push({ linkType: "directory", linkData: "", category: "", text: "Member Directory", icon: "groups", url: "" });
-    if (showPlans) specialTabs.push({ linkType: "plans", linkData: "", category: "", text: "Plans", icon: "event", url: "" });
-    if (showLessons) specialTabs.push({ linkType: "lessons", linkData: "", category: "", text: "Lessons", icon: "school", url: "" });
-    if (showSermons) specialTabs.push({ linkType: "sermons", linkData: "", category: "", text: "Sermons", icon: "play_circle", url: "" });
+    if (showWebsite) specialTabs.push({ linkType: "url", linkData: "", category: "", text: t("navigation.website"), icon: "home", url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") });
+    if (showMyGroups) specialTabs.push({ linkType: "groups", linkData: "", category: "", text: t("navigation.myGroups"), icon: "group", url: "" });
+    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData: "", category: "", text: t("navigation.checkIn"), icon: "check_box", url: "" });
+    if (showDonations) specialTabs.push({ linkType: "donation", linkData: "", category: "", text: t("navigation.donation"), icon: "volunteer_activism", url: "" });
+    if (showDirectory) specialTabs.push({ linkType: "directory", linkData: "", category: "", text: t("navigation.memberDirectory"), icon: "groups", url: "" });
+    if (showPlans) specialTabs.push({ linkType: "plans", linkData: "", category: "", text: t("navigation.plans"), icon: "event", url: "" });
+    if (showLessons) specialTabs.push({ linkType: "lessons", linkData: "", category: "", text: t("navigation.lessons"), icon: "school", url: "" });
+    if (showSermons) specialTabs.push({ linkType: "sermons", linkData: "", category: "", text: t("navigation.sermons"), icon: "play_circle", url: "" });
     if (showChums) specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Chums", icon: "account_circle", url: getChumsLoginUrl(uc) });
     return specialTabs;
   };
@@ -293,7 +295,7 @@ export function CustomDrawer(props?: any) {
       <View style={styles.headerContent}>
         {getUserInfo()}
         <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#0D47A1" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#0D47A1" />}>
-          {!currentChurch ? "Find Church" : (currentChurch.name || "Select Church")}
+          {!currentChurch ? t("churchSearch.findChurch") : (currentChurch.name || t("churchSearch.selectChurch"))}
         </Button>
       </View>
     </Surface>
@@ -314,7 +316,7 @@ export function CustomDrawer(props?: any) {
             </Text>
             <View style={styles.actionButtons}>
               <Button mode="text" onPress={editProfileAction} labelStyle={styles.profileLabel} style={styles.profileButton} textColor="#0D47A1" compact icon={() => <MaterialIcons name="edit" size={16} color="#0D47A1" />}>
-                Edit Profile
+                {t("navigation.editProfile")}
               </Button>
               {user && (
                 <TouchableRipple style={styles.messageIconButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
@@ -351,7 +353,7 @@ export function CustomDrawer(props?: any) {
 
     router.push({
           pathname:"websiteUrlRoot",
-          params: { url, title: "Edit Profile"}
+          params: { url, title: t("navigation.editProfile")}
         });
   };
 
@@ -360,7 +362,7 @@ export function CustomDrawer(props?: any) {
     return (
       <Surface style={styles.footerContainer} elevation={1}>
         <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />} loading={isLoggingOut} disasbled={isLoggingOut}>
-          {isLoggingOut ? "Signing out..." : user ? "Log out" : "Login"}
+          {isLoggingOut ? t("drawer.signingOut") : user ? t("drawer.logout") : t("drawer.login")}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>
           Version {pkg.version}
@@ -375,7 +377,7 @@ export function CustomDrawer(props?: any) {
         {drawerHeaderComponent()}
         {drawerList.length === 0 ? (
           <View style={{ padding: 20 }}>
-            <Text>Loading navigation...</Text>
+            <Text>{t("navigation.loadingNavigation")}</Text>
           </View>
         ) : (
           <View style={styles.menuContainer}>

@@ -14,8 +14,10 @@ import { useAppTheme } from "../../src/theme";
 import { useChurchAppearance } from "../../src/stores/useUserStore";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { CheckinComplete } from "@/components/checkin/CheckinComplete";
+import { useTranslation } from "react-i18next";
 
 const Service = () => {
+  const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack } = useNavigation();
@@ -57,7 +59,7 @@ const Service = () => {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.surfaceVariant }}>
-      <MainHeader title="Checkin" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => handleBack()} />
+      <MainHeader title={t("checkin.checkin")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => handleBack()} />
       <SafeAreaView style={{ flex: 1 }}>
         <View style={{ flex: 1 }}>
           {step === "Services" && <CheckinServices onDone={() => setStep("Household")} handleBack={handleBack} />}

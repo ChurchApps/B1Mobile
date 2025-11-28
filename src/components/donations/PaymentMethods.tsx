@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ApiHelper, UserHelper } from "../../../src/helpers";
-import { ErrorHelper } from "../../mobilehelper";
+import { ErrorHelper } from "../../helpers/ErrorHelper";
 import { Permissions, StripePaymentMethod } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
 import { Alert, View } from "react-native";

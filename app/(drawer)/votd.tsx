@@ -10,8 +10,10 @@ import { useFocusEffect, useNavigation } from "expo-router";
 import { UserHelper } from "../../src/helpers/UserHelper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import OptimizedImage from "@/components/OptimizedImage";
+import { useTranslation } from "react-i18next";
 
 const Votd = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [shape, setShape] = React.useState("9x16");
   const [loading, setLoading] = React.useState(true);
@@ -21,8 +23,8 @@ const Votd = () => {
 
   useFocusEffect(
     useCallback(() => {
-      navigationMain.setOptions({ title: "Verse of the Day" });
-    }, [navigationMain])
+      navigationMain.setOptions({ title: t("navigation.verseOfTheDay") });
+    }, [navigationMain, t])
   );
 
   const getShape = () => {
@@ -56,7 +58,7 @@ const Votd = () => {
 
   return (
     <View style={[globalStyles.homeContainer, { paddingBottom: insets.bottom }]}>
-      <MainHeader title="Verse of the Day" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+      <MainHeader title={t("navigation.verseOfTheDay")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
 
       <View style={globalStyles.webViewContainer}>
         {loading && <ActivityIndicator size="small" color="#000" style={{ position: "absolute", top: "50%", left: "50%" }} />}

@@ -7,13 +7,14 @@ import { useNavigation as useReactNavigation, DrawerActions } from "@react-navig
 import { useQuery } from "@tanstack/react-query";
 import { useNavigation } from "../../src/hooks";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useTranslation } from "react-i18next";
 
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { SermonCard } from "../../src/components/SermonCard";
 import { FeaturedSermon, PlaylistCard, LiveStreamCard, EmptyState, SermonsTabBar, type LiveStreamData } from "../../src/components/sermons/exports";
 import { UserHelper } from "../../src/helpers";
-import { PlaylistInterface, SermonInterface } from "../../src/mobilehelper";
+import { PlaylistInterface, SermonInterface } from "@churchapps/helpers";
 import { useCurrentChurch } from "../../src/stores/useUserStore";
 
 const theme = {
@@ -38,6 +39,7 @@ const theme = {
 };
 
 const Sermons = () => {
+  const { t } = useTranslation();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack, router } = useNavigation();
   const [activeSection, setActiveSection] = useState<"playlists" | "recent">("playlists");
@@ -180,7 +182,7 @@ const Sermons = () => {
 
       <View style={styles.sectionHeader}>
         <Text variant="titleLarge" style={styles.sectionTitle}>
-          Sermon Series
+          {t("sermons.sermonSeries")}
         </Text>
       </View>
 
@@ -195,7 +197,7 @@ const Sermons = () => {
 
       <View style={styles.sectionHeader}>
         <Text variant="titleLarge" style={styles.sectionTitle}>
-          Recent Sermons
+          {t("sermons.recentSermons")}
         </Text>
       </View>
 
@@ -208,14 +210,14 @@ const Sermons = () => {
     return (
       <PaperProvider theme={theme}>
         <SafeAreaView style={styles.container}>
-          <MainHeader title="Sermons" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+          <MainHeader title={t("sermons.sermons")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
           <View style={styles.errorContainer}>
             <MaterialIcons name="error-outline" size={48} color="#B0120C" />
             <Text variant="titleMedium" style={styles.errorTitle}>
-              Unable to Load Sermons
+              {t("sermons.unableToLoad")}
             </Text>
             <Text variant="bodyMedium" style={styles.errorMessage}>
-              Please check your connection and try again.
+              {t("sermons.checkConnection")}
             </Text>
             {__DEV__ && (
               <Text variant="bodySmall" style={[styles.errorMessage, { marginTop: 8 }]}>
@@ -223,7 +225,7 @@ const Sermons = () => {
               </Text>
             )}
             <Button mode="contained" onPress={() => navigateBack()} style={styles.errorButton}>
-              Go Back
+              {t("sermons.goBack")}
             </Button>
           </View>
         </SafeAreaView>
@@ -236,7 +238,7 @@ const Sermons = () => {
       <View style={styles.container}>
         <LoadingWrapper loading={isLoading}>
           <View style={styles.content}>
-            <MainHeader title="Sermons" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+            <MainHeader title={t("sermons.sermons")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
             <SermonsTabBar activeSection={activeSection} onTabChange={setActiveSection} />
 

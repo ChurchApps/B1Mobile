@@ -5,7 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import dayjs from "dayjs";
 import { EventModal } from "../eventCalendar/EventModal";
-import { EventInterface } from "../../mobilehelper";
+import { EventInterface } from "@churchapps/helpers";
 
 interface GroupEventModalProps {
   isVisible: boolean;

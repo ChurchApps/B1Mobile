@@ -7,12 +7,13 @@ import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useTranslation } from "react-i18next";
 
 import { MainHeader } from "../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { VideoPlayer, VideoPreview, SermonInfo, SermonActions } from "../../../src/components/sermonDetails/exports";
 import { UserHelper } from "../../../src/helpers";
-import { SermonInterface } from "../../../src/mobilehelper";
+import { SermonInterface } from "@churchapps/helpers";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
 
 const theme = {
@@ -37,6 +38,7 @@ const theme = {
 };
 
 const SermonDetails = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id, title, playlistTitle } = useLocalSearchParams<{
     id: string;
@@ -50,7 +52,7 @@ const SermonDetails = () => {
     UserHelper.addOpenScreenEvent("SermonDetailsScreen");
   }, []);
 
-  useScreenHeader({ title: title, placeholder: "Sermon" });
+  useScreenHeader({ title: title, placeholder: t("sermons.sermon") });
 
   // Fetch sermon details
   const {
@@ -114,10 +116,10 @@ const SermonDetails = () => {
   const handleExternalLink = () => {
     if (!videoUrl) return;
 
-    Alert.alert("Open in Browser", "Would you like to open this sermon in your web browser?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("common.openInBrowser"), t("sermons.openInBrowserPrompt"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Open",
+        text: t("common.open"),
         onPress: () => Linking.openURL(videoUrl)
       }
     ]);
@@ -141,7 +143,7 @@ const SermonDetails = () => {
     return (
       <PaperProvider theme={theme}>
         <SafeAreaView style={styles.container}>
-          <MainHeader title={title || "Sermon"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
+          <MainHeader title={title || t("sermons.sermon")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
           <View style={styles.errorContainer}>
             <MaterialIcons name="error-outline" size={48} color="#B0120C" />
             <Text variant="titleMedium" style={styles.errorTitle}>
@@ -164,7 +166,7 @@ const SermonDetails = () => {
       <View style={styles.container}>
         <LoadingWrapper loading={isLoading}>
           <View style={styles.content}>
-            <MainHeader title={sermon?.title || title || "Sermon"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
+            <MainHeader title={sermon?.title || title || t("sermons.sermon")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               {renderVideoPreview()}
@@ -174,7 +176,7 @@ const SermonDetails = () => {
             </ScrollView>
 
             {/* Floating Action Button for video toggle */}
-            {showVideo && <FAB icon={() => <MaterialIcons name="close" size={24} color="#FFFFFF" />} style={styles.fab} onPress={() => setShowVideo(false)} label="Close Video" />}
+            {showVideo && <FAB icon={() => <MaterialIcons name="close" size={24} color="#FFFFFF" />} style={styles.fab} onPress={() => setShowVideo(false)} label={t("sermons.closeVideo")} />}
           </View>
         </LoadingWrapper>
       </View>

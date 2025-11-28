@@ -1,12 +1,13 @@
 import { CheckinHelper } from "@/helpers/CheckinHelper";
 import { PersonInterface, ServiceTimeInterface } from "@/helpers/Interfaces";
 import { UserHelper } from "@/helpers/UserHelper";
-import { ArrayHelper } from "../../mobilehelper";
+import { ArrayHelper } from "@churchapps/helpers";
 import React, { useEffect, useState } from "react";
 import { FlatList, View, StyleSheet, Dimensions, TouchableOpacity } from "react-native";
 import { useAppTheme } from "../../../src/theme";
 import { Button, Divider, Card, Text } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   member: PersonInterface;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export const CheckinGroups = (props: Props) => {
+  const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const [selected, setSelected] = useState(null);
   const screenWidth = Dimensions.get("window").width;
@@ -80,7 +82,7 @@ export const CheckinGroups = (props: Props) => {
           <MaterialIcons name="groups" size={48} color="#0D47A1" />
         </View>
         <Text variant="headlineLarge" style={styles.headerTitle}>
-          Select Group
+          {t("checkin.selectGroup")}
         </Text>
         <Text variant="bodyLarge" style={styles.headerSubtitle}>
           Choose a group for {props.member.name.display}
@@ -99,10 +101,10 @@ export const CheckinGroups = (props: Props) => {
             <View style={styles.emptyContent}>
               <MaterialIcons name="group-off" size={64} color="#9E9E9E" />
               <Text variant="titleMedium" style={styles.emptyTitle}>
-                No Groups Available
+                {t("checkin.noServicesAvailable")}
               </Text>
               <Text variant="bodyMedium" style={styles.emptySubtitle}>
-                There are no groups configured for this service
+                {t("checkin.noServicesMessage")}
               </Text>
             </View>
           </Card>

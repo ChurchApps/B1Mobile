@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { EventInterface } from "../../mobilehelper";
+import { EventInterface } from "@churchapps/helpers";
 
 export class EventProcessor {
   private static monthCache = new Map<string, { events: EventInterface[]; timestamp: number }>();

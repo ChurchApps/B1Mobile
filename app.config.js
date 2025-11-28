@@ -51,6 +51,14 @@ module.exports = {
     },
     runtimeVersion: "3.2.0",
     plugins: [
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "b1-mobile",
+          "organization": "churchapps"
+        }
+      ],
       "expo-secure-store",
       [
         "expo-notifications",

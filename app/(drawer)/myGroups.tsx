@@ -11,6 +11,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useUser, useGroupViewCounts, useIncrementGroupViewCount } from "../../src/stores/useUserStore";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "../../src/hooks";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -38,11 +39,8 @@ interface Group {
   description?: string;
 }
 
-interface MyGroupsProps {
-  from?: "stack" | "drawer";
-}
-
-const MyGroups = ({ from }: MyGroupsProps) => {
+const MyGroups = () => {
+  const { t } = useTranslation();
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
   const navigation = useReactNavigation();
   const { navigateBack, router } = useNavigation();
@@ -128,7 +126,7 @@ const MyGroups = ({ from }: MyGroupsProps) => {
                   {item.name}
                 </Text>
                 <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                  Tap to explore
+                  {t("common.tapToExplore")}
                 </Text>
               </View>
             </View>
@@ -164,7 +162,7 @@ const MyGroups = ({ from }: MyGroupsProps) => {
                 {item.name}
               </Text>
               <Text variant="bodySmall" style={styles.regularGroupSubtitle}>
-                Tap to explore
+                {t("common.tapToExplore")}
               </Text>
             </View>
           </View>
@@ -211,7 +209,7 @@ const MyGroups = ({ from }: MyGroupsProps) => {
         {featured.length > 0 && (
           <View style={styles.featuredSection}>
             <Text variant="titleLarge" style={styles.sectionTitle}>
-              Featured
+              {t("common.featured")}
             </Text>
             <View style={styles.featuredGrid}>
               {featured.map(item => (
@@ -227,7 +225,7 @@ const MyGroups = ({ from }: MyGroupsProps) => {
         {regular.length > 0 && (
           <View style={styles.regularSection}>
             <Text variant="titleLarge" style={styles.sectionTitle}>
-              Other Groups
+              {t("groups.otherGroups")}
             </Text>
             <View style={styles.regularGroupsList}>
               {regular.map(item => (
@@ -241,7 +239,7 @@ const MyGroups = ({ from }: MyGroupsProps) => {
         {mergeData.length > 0 && (
           <View style={styles.regularSectionTop}>
             <Text variant="titleLarge" style={styles.sectionTitle}>
-              Latest Updates
+              {t("groups.latestUpdates")}
             </Text>
           </View>
         )}
@@ -254,7 +252,7 @@ const MyGroups = ({ from }: MyGroupsProps) => {
       <SafeAreaProvider>
         <LoadingWrapper loading={loading}>
           <View style={styles.container}>
-            <MainHeader title="My Groups" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+            <MainHeader title={t("groups.myGroups")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
             <View style={styles.contentContainer}>
               <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListHeaderComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={() => `key-${Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
             </View>

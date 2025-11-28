@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { ApiHelper, Constants, ConversationCheckInterface, EnvironmentHelper, UserHelper, UserSearchInterface } from "../../src/helpers";
-import { ErrorHelper } from "../../src/mobilehelper";
+import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { router, useNavigation } from "expo-router";
 import { FlatList, Keyboard, TouchableWithoutFeedback, View } from "react-native";
@@ -11,6 +12,7 @@ import { ActivityIndicator, Button, List, Surface, Text, TextInput } from "react
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 
 const SearchMessageUser = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { theme, spacing } = useAppTheme();
   const [searchText, setSearchText] = useState("");
@@ -84,7 +86,7 @@ const SearchMessageUser = () => {
           <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
             Search for a person
           </Text>
-          <TextInput mode="outlined" label="Name" placeholder="Name" value={searchText} onChangeText={handleSearchChange} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
+          <TextInput mode="outlined" label={t("common.name")} placeholder={t("common.name")} value={searchText} onChangeText={handleSearchChange} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
           <Button mode="contained" onPress={handleSearchPress} loading={loading} style={{ marginBottom: spacing.md }}>
             Search
           </Button>
@@ -98,7 +100,7 @@ const SearchMessageUser = () => {
 
   return (
     <>
-      <MainHeader title="Search Messages" openDrawer={() => navigation.openDrawer()} />
+      <MainHeader title={t("navigation.searchMessages")} openDrawer={() => navigation.openDrawer()} />
       <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         {mainLoading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
         {!mainLoading && (

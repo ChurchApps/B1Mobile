@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserInterface, ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface, LoginResponseInterface } from "../helpers/Interfaces";
-import { ApiHelper } from "../mobilehelper";
+import { ApiHelper } from "@churchapps/helpers";
 import { SecureStorageHelper } from "../helpers/SecureStorageHelper";
 import { PushNotificationHelper } from "../helpers/PushNotificationHelper";
 import { Platform } from "react-native";

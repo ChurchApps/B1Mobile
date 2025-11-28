@@ -13,6 +13,7 @@ import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -53,6 +54,7 @@ interface MemberSection {
 }
 
 const MembersSearch = () => {
+  const { t } = useTranslation();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack } = useNavigation();
   const [searchText, setSearchText] = useState("");
@@ -155,27 +157,27 @@ const MembersSearch = () => {
       <View style={styles.emptyState}>
         <MaterialIcons name="people-outline" size={64} color={theme.colors.onSurfaceVariant} />
         <Text variant="headlineSmall" style={styles.emptyTitle}>
-          {searchText ? "No members found" : "Directory"}
+          {searchText ? t("members.noMembersFound") : t("navigation.directory")}
         </Text>
         <Text variant="bodyMedium" style={styles.emptySubtitle}>
-          {searchText ? "Try adjusting your search or filter" : "Search for church members by name"}
+          {searchText ? t("members.tryAdjusting") : t("members.searchForMembers")}
         </Text>
       </View>
     ),
-    [searchText, theme.colors.onSurfaceVariant]
+    [searchText, theme.colors.onSurfaceVariant, t]
   );
 
   return (
     <SafeAreaProvider>
       <LoadingWrapper loading={isLoading}>
         <Surface style={styles.container}>
-          <MainHeader title="Directory" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+          <MainHeader title={t("navigation.directory")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
           <View style={styles.content}>
             {/* Search Header */}
             <View style={styles.searchSection}>
               <View style={styles.searchContainer}>
-                <TextInput mode="outlined" label="Search members" placeholder="Enter name..." value={searchText} onChangeText={handleSearchChange} style={styles.searchInput} left={<TextInput.Icon icon="magnify" />} right={searchText ? <TextInput.Icon icon="close" onPress={() => setSearchText("")} /> : undefined} />
+                <TextInput mode="outlined" label={t("members.searchMembers")} placeholder={t("members.enterName")} value={searchText} onChangeText={handleSearchChange} style={styles.searchInput} left={<TextInput.Icon icon="magnify" />} right={searchText ? <TextInput.Icon icon="close" onPress={() => setSearchText("")} /> : undefined} />
               </View>
             </View>
 
