@@ -16,6 +16,7 @@ import { useCurrentUserChurch } from "../../../src/stores/useUserStore";
 import { Provider as PaperProvider, Card, MD3LightTheme } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -37,6 +38,7 @@ const theme = {
 };
 
 const PlanDetails = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams<{ id: string }>();
   const planId = id;
@@ -113,7 +115,7 @@ const PlanDetails = () => {
   useEffect(() => {
     if (planError) {
       console.error("Error loading Plan Details data:", planError);
-      setErrorMessage("No Data found for given Plan id");
+      setErrorMessage(t("plans.noDataFound"));
     }
   }, [planError]);
 
@@ -223,7 +225,7 @@ const PlanDetails = () => {
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
         <View style={styles.container}>
-          <MainHeader title="Plan Details" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+          <MainHeader title={t("navigation.planDetails")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
 
           {/* Tab Navigation */}
           <View style={styles.tabContainer}>

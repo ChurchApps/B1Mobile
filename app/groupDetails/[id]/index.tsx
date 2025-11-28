@@ -29,11 +29,13 @@ import {
 } from "../../../src/components/group/exports";
 import { GroupResourcesTab } from "@/components/group/GroupResourcesTab";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
+import { useTranslation } from "react-i18next";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
 const GroupDetails = () => {
+  const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigationBackNormal } = useNavigation();
@@ -75,14 +77,14 @@ const GroupDetails = () => {
     retry: 3,
     retryDelay: 1000,
     meta: {
-      errorMessage: "Failed to load group details"
+      errorMessage: t("groups.failedToLoad")
     }
   });
 
   useScreenHeader({
     title: groupDetails?.name,
-    placeholder: "Group Details",
-    dependencies: [groupDetails], 
+    placeholder: t("groups.groupDetails"),
+    dependencies: [groupDetails],
   });
 
 
@@ -287,11 +289,11 @@ const GroupDetails = () => {
   });
 
   const tabs = [
-    { key: "about", label: "About", icon: "information" },
-    { key: "messages", label: "Messages", icon: "chat", onPress: () => setShowChatModal(true) },
-    { key: "members", label: "Members", icon: "account-group" },
-    { key: "events", label: "Events", icon: "calendar" },
-    { key: "Resources", label: "Resources", icon: "file" },
+    { key: "about", label: t("common.about"), icon: "information" },
+    { key: "messages", label: t("messages.messages"), icon: "chat", onPress: () => setShowChatModal(true) },
+    { key: "members", label: t("checkin.householdMembers"), icon: "account-group" },
+    { key: "events", label: t("events.createEvent"), icon: "calendar" },
+    { key: "Resources", label: t("common.resources"), icon: "file" },
   ];
 
   return (
@@ -370,7 +372,7 @@ const GroupDetails = () => {
       />
 
       {/* Group Chat Modal */}
-      <GroupChatModal visible={showChatModal} onDismiss={() => setShowChatModal(false)} groupId={id || ""} groupName={groupDetails?.name || "Group Chat"} />
+      <GroupChatModal visible={showChatModal} onDismiss={() => setShowChatModal(false)} groupId={id || ""} groupName={groupDetails?.name || t("groups.groupChat")} />
     </>
   );
 };

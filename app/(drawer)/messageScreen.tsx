@@ -13,6 +13,7 @@ import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { useUser, useCurrentUserChurch } from "../../src/stores/useUserStore";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
+import { useTranslation } from "react-i18next";
 
 interface NotificationContent {
   autoDismiss?: boolean;
@@ -35,6 +36,7 @@ interface NotificationContent {
 }
 
 const MessageScreen = () => {
+  const { t } = useTranslation();
   const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
   console.log("Raw userDetails param:", userDetails);
   const details = userDetails ? JSON.parse(userDetails) : null;
@@ -264,7 +266,7 @@ const MessageScreen = () => {
 
   useScreenHeader({
     title: details?.name?.display,
-    placeholder: details?.DisplayName || "Messages",
+    placeholder: details?.DisplayName || t("messages.messages"),
     headerRight: () => (
       <View>
         <IconButton icon="account-plus" size={28} iconColor="white" onPress={() => router.push("/searchMessageUserRoot")} />
@@ -277,7 +279,7 @@ const MessageScreen = () => {
       <TextInput
         style={{ flex: 1, backgroundColor: theme.colors.surface }}
         mode="outlined"
-        placeholder={"Enter message"}
+        placeholder={t("messages.enterMessage")}
         value={messageText}
         onChangeText={text => {
           if (text == "") setEditingMessage(null);
@@ -345,7 +347,7 @@ const MessageScreen = () => {
               minHeight: 40
             }}>
             <Text variant="labelSmall" style={{ color: isMine ? "white" : theme.colors.primary, fontWeight: "600", marginBottom: 2 }}>
-              {item.displayName || item.person?.name?.display || "Unknown"}
+              {item.displayName || item.person?.name?.display || t("common.unknown")}
             </Text>
             <Text style={{ color: isMine ? "white" : theme.colors.onSurface }}>{item.content || ""}</Text>
           </Surface>
@@ -355,7 +357,7 @@ const MessageScreen = () => {
   };
 
   const openContextMenu = (item: MessageInterface) => {
-    const options = ["Edit", "Delete", "Cancel"];
+    const options = [t("common.edit"), t("common.delete"), t("common.cancel")];
     const destructiveButtonIndex = 0;
     const cancelButtonIndex = 2;
     showActionSheetWithOptions({ options, cancelButtonIndex, destructiveButtonIndex }, (selectedIndex?: number) => {

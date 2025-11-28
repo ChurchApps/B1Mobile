@@ -16,7 +16,15 @@
     "viewAll": "View All",
     "tapToExplore": "Tap to explore",
     "featured": "Featured",
-    "quickActions": "Quick Actions"
+    "quickActions": "Quick Actions",
+    "oops": "Oops!",
+    "notAvailable": "Not Available",
+    "open": "Open",
+    "name": "Name",
+    "unknown": "Unknown",
+    "about": "About",
+    "resources": "Resources",
+    "openInBrowser": "Open in Browser"
   },
   "auth": {
     "welcomeBack": "Welcome Back",
@@ -126,7 +134,10 @@
   "groups": {
     "myGroups": "My Groups",
     "otherGroups": "Other Groups",
-    "latestUpdates": "Latest Updates"
+    "latestUpdates": "Latest Updates",
+    "groupDetails": "Group Details",
+    "groupChat": "Group Chat",
+    "failedToLoad": "Failed to load group details"
   },
   "plans": {
     "plans": "Plans",
@@ -135,7 +146,8 @@
     "pending": "pending",
     "nextService": "Next Service:",
     "requested": "Requested",
-    "loadingSchedule": "Loading your schedule..."
+    "loadingSchedule": "Loading your schedule...",
+    "noDataFound": "No Data found for given Plan id"
   },
   "navigation": {
     "home": "Home",
@@ -178,18 +190,27 @@
   },
   "messages": {
     "messages": "Messages",
-    "searchMessages": "Search Messages"
+    "searchMessages": "Search Messages",
+    "enterMessage": "Enter message"
   },
   "members": {
     "memberDetails": "Member Details",
+    "members": "Members",
     "searchMembers": "Search members",
     "enterName": "Enter name...",
     "noMembersFound": "No members found",
     "tryAdjusting": "Try adjusting your search or filter",
-    "searchForMembers": "Search for church members by name"
+    "searchForMembers": "Search for church members by name",
+    "householdMember": "Household Member",
+    "emailNotAvailable": "Email address is not available for this member.",
+    "phoneNotAvailable": "Phone number is not available for this member.",
+    "addressNotAvailable": "Address is not available for this member.",
+    "mobilePhone": "Mobile Phone",
+    "phoneNumber": "Phone Number"
   },
   "events": {
-    "createEvent": "Create Event"
+    "createEvent": "Create Event",
+    "events": "Events"
   },
   "bible": {
     "bible": "Bible"
@@ -209,7 +230,12 @@
     "hour": "Hour",
     "hours": "Hours",
     "minute": "Minute",
-    "minutes": "Minutes"
+    "minutes": "Minutes",
+    "sermon": "Sermon",
+    "playlist": "Playlist",
+    "closeVideo": "Close Video",
+    "openInBrowserPrompt": "Would you like to open this sermon in your web browser?",
+    "untitledSeries": "Untitled Series"
   },
   "lessons": {
     "lessons": "Lessons"

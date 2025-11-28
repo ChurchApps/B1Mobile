@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { router, useLocalSearchParams } from "expo-router";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 import { MainHeader } from "../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
@@ -40,11 +41,12 @@ const theme = {
 };
 
 const PlaylistDetails = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id, title } = useLocalSearchParams<{ id: string; title: string }>();
   const currentChurch = useCurrentChurch();
 
-  useScreenHeader({ title: title, placeholder: "Playlist" });
+  useScreenHeader({ title: title, placeholder: t("sermons.playlist") });
 
   useEffect(() => {
     UserHelper.addOpenScreenEvent("PlaylistDetailsScreen");
@@ -121,7 +123,7 @@ const PlaylistDetails = () => {
                 Sermon Series
               </Text>
               <Text variant="headlineSmall" style={styles.headerTitle}>
-                {playlist.title || "Untitled Series"}
+                {playlist.title || t("sermons.untitledSeries")}
               </Text>
               {playlist.description && (
                 <Text variant="bodyMedium" style={styles.headerDescription}>
@@ -165,7 +167,7 @@ const PlaylistDetails = () => {
     return (
       <PaperProvider theme={theme}>
         <SafeAreaView style={styles.container}>
-          <MainHeader title={title || "Playlist"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
+          <MainHeader title={title || t("sermons.playlist")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
           <View style={styles.errorContainer}>
             <MaterialIcons name="error-outline" size={48} color="#B0120C" />
             <Text variant="titleMedium" style={styles.errorTitle}>
@@ -185,7 +187,7 @@ const PlaylistDetails = () => {
       <SafeAreaView style={styles.container}>
         <LoadingWrapper loading={isLoading}>
           <View style={styles.content}>
-            <MainHeader title={title || "Playlist"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
+            <MainHeader title={title || t("sermons.playlist")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
 
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               {renderPlaylistHeader()}

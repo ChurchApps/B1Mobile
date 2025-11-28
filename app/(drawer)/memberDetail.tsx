@@ -14,6 +14,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 const theme = {
   ...MD3LightTheme,
@@ -57,6 +58,7 @@ interface Member {
 }
 
 const MemberDetail = () => {
+  const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { member } = useLocalSearchParams<{ member: any }>();
   const parsedMember: Member = JSON.parse(member);
@@ -82,26 +84,26 @@ const MemberDetail = () => {
     if (email) {
       Linking.openURL(`mailto:${email}`);
     } else {
-      Alert.alert("Not Available", "Email address is not available for this member.");
+      Alert.alert(t("common.notAvailable"), t("members.emailNotAvailable"));
     }
-  }, []);
+  }, [t]);
 
   const handleCall = useCallback((phone?: string) => {
     if (phone) {
       Linking.openURL(`tel:${phone}`);
     } else {
-      Alert.alert("Not Available", "Phone number is not available for this member.");
+      Alert.alert(t("common.notAvailable"), t("members.phoneNotAvailable"));
     }
-  }, []);
+  }, [t]);
 
   const handleAddress = useCallback(() => {
     if (memberinfo?.address1) {
       const address = encodeURIComponent(`${memberinfo.address1}, ${memberinfo.city || ""} ${memberinfo.state || ""} ${memberinfo.zip || ""}`);
       Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${address}`);
     } else {
-      Alert.alert("Not Available", "Address is not available for this member.");
+      Alert.alert(t("common.notAvailable"), t("members.addressNotAvailable"));
     }
-  }, [memberinfo]);
+  }, [memberinfo, t]);
 
   const handleMessage = useCallback(() => {
     router.navigate({
@@ -118,7 +120,7 @@ const MemberDetail = () => {
     });
   }, []);
 
-  const renderHouseholdMember = useCallback(({ item }: { item: Member }) => <MemberCard member={item} onPress={handleMemberPress} subtitle="Household Member" size="medium" />, [handleMemberPress]);
+  const renderHouseholdMember = useCallback(({ item }: { item: Member }) => <MemberCard member={item} onPress={handleMemberPress} subtitle={t("members.householdMember")} size="medium" />, [handleMemberPress, t]);
 
   const primaryPhone = memberinfo?.mobilePhone || memberinfo?.homePhone;
   const hasContactInfo = memberinfo?.email || primaryPhone || memberinfo?.address1;
@@ -127,7 +129,7 @@ const MemberDetail = () => {
     <SafeAreaProvider>
       <LoadingWrapper loading={isLoading}>
         <Surface style={styles.container}>
-          <MainHeader title="Member Details" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+          <MainHeader title={t("members.memberDetails")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
 
           <ScrollView ref={scrollViewRef} style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             {/* Hero Section */}
@@ -215,7 +217,7 @@ const MemberDetail = () => {
                       </View>
                       <View style={styles.contactDetails}>
                         <Text variant="bodySmall" style={styles.contactLabel}>
-                          {memberinfo?.mobilePhone ? "Mobile Phone" : "Phone Number"}
+                          {memberinfo?.mobilePhone ? t("members.mobilePhone") : t("members.phoneNumber")}
                         </Text>
                         <Text variant="titleMedium" style={styles.contactValue}>
                           {primaryPhone}

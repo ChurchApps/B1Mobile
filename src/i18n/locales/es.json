@@ -16,7 +16,15 @@
     "viewAll": "Ver Todo",
     "tapToExplore": "Toca para explorar",
     "featured": "Destacados",
-    "quickActions": "Acciones Rapidas"
+    "quickActions": "Acciones Rapidas",
+    "oops": "Ups!",
+    "notAvailable": "No Disponible",
+    "open": "Abrir",
+    "name": "Nombre",
+    "unknown": "Desconocido",
+    "about": "Acerca de",
+    "resources": "Recursos",
+    "openInBrowser": "Abrir en Navegador"
   },
   "auth": {
     "welcomeBack": "Bienvenido de Nuevo",
@@ -126,7 +134,10 @@
   "groups": {
     "myGroups": "Mis Grupos",
     "otherGroups": "Otros Grupos",
-    "latestUpdates": "Ultimas Actualizaciones"
+    "latestUpdates": "Ultimas Actualizaciones",
+    "groupDetails": "Detalles del Grupo",
+    "groupChat": "Chat del Grupo",
+    "failedToLoad": "Error al cargar los detalles del grupo"
   },
   "plans": {
     "plans": "Planes",
@@ -135,7 +146,8 @@
     "pending": "pendiente",
     "nextService": "Proximo Servicio:",
     "requested": "Solicitado",
-    "loadingSchedule": "Cargando tu horario..."
+    "loadingSchedule": "Cargando tu horario...",
+    "noDataFound": "No se encontraron datos para el Plan indicado"
   },
   "navigation": {
     "home": "Inicio",
@@ -178,18 +190,27 @@
   },
   "messages": {
     "messages": "Mensajes",
-    "searchMessages": "Buscar Mensajes"
+    "searchMessages": "Buscar Mensajes",
+    "enterMessage": "Escribe un mensaje"
   },
   "members": {
     "memberDetails": "Detalles del Miembro",
+    "members": "Miembros",
     "searchMembers": "Buscar miembros",
     "enterName": "Ingresa el nombre...",
     "noMembersFound": "No se encontraron miembros",
     "tryAdjusting": "Intenta ajustar tu busqueda o filtro",
-    "searchForMembers": "Buscar miembros de la iglesia por nombre"
+    "searchForMembers": "Buscar miembros de la iglesia por nombre",
+    "householdMember": "Miembro del Hogar",
+    "emailNotAvailable": "El correo electronico no esta disponible para este miembro.",
+    "phoneNotAvailable": "El numero de telefono no esta disponible para este miembro.",
+    "addressNotAvailable": "La direccion no esta disponible para este miembro.",
+    "mobilePhone": "Telefono Movil",
+    "phoneNumber": "Numero de Telefono"
   },
   "events": {
-    "createEvent": "Crear Evento"
+    "createEvent": "Crear Evento",
+    "events": "Eventos"
   },
   "bible": {
     "bible": "Biblia"
@@ -209,7 +230,12 @@
     "hour": "Hora",
     "hours": "Horas",
     "minute": "Minuto",
-    "minutes": "Minutos"
+    "minutes": "Minutos",
+    "sermon": "Sermon",
+    "playlist": "Lista de Reproduccion",
+    "closeVideo": "Cerrar Video",
+    "openInBrowserPrompt": "Deseas abrir este sermon en tu navegador web?",
+    "untitledSeries": "Serie sin Titulo"
   },
   "lessons": {
     "lessons": "Lecciones"
