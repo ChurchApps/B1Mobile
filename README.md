@@ -41,7 +41,12 @@ If you'd like to set up the project locally, see our [development guide](https:/
 ## Release build
 
 1. Hardcode stage to prod EnvironmentHelper.ts
-2. Increment the version number in app.config.js, package.json, android/app/build.gradle and ios/B1Mobile/Info.plist
+2. Increment the version number in these files:
+   - `package.json` - `version`
+   - `app.config.js` - `version` and `runtimeVersion`
+   - `android/app/build.gradle` - `versionCode` (increment integer) and `versionName`
+   - `ios/B1Mobile/Info.plist` - `CFBundleShortVersionString` and `CFBundleVersion`
+   - `ios/B1Mobile.xcodeproj/project.pbxproj` - `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` (both Debug and Release configs)
 3. Run `npm run build:android` to generate a Google Play release
 4. Run `npm run build:ios` to generate an iOS release
 
