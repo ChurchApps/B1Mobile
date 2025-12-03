@@ -32,6 +32,12 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   };
 
   const createCard = async () => {
+    if (!person?.id) {
+      Alert.alert("Error", "User information is not available. Please log in again.");
+      setIsSubmitting(false);
+      return;
+    }
+
     const stripePaymentMethod = await createPaymentMethod({
       paymentMethodType: "Card",
       ...cardDetails
@@ -61,6 +67,12 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   };
 
   const updateCard = async () => {
+    if (!person?.id) {
+      Alert.alert("Error", "User information is not available. Please log in again.");
+      setIsSubmitting(false);
+      return;
+    }
+
     if (!month || !year) {
       setIsSubmitting(false);
       Alert.alert("Cannot be left blank", "Expiration year & month cannot be left blank");

@@ -90,6 +90,12 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
   };
 
   const updateBank = async () => {
+    if (!person?.id) {
+      Alert.alert("Error", "User information is not available. Please log in again.");
+      setIsSubmitting(false);
+      return;
+    }
+
     if (!name) {
       setIsSubmitting(false);
       Alert.alert("Required", "Please enter account holder name");
@@ -118,6 +124,12 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
   };
 
   const createBank = async () => {
+    if (!person?.id || !person?.contactInfo?.email || !person?.name?.display) {
+      Alert.alert("Error", "User information is incomplete. Please log in again.");
+      setIsSubmitting(false);
+      return;
+    }
+
     if (!routingNumber || !accountNumber) {
       setIsSubmitting(false);
       Alert.alert("Cannot be left blank", "Account number & Routing number are required!");
