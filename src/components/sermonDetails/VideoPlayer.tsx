@@ -14,15 +14,18 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, visible }) =
   return (
     <Card style={styles.videoCard}>
       <View style={styles.videoContainer}>
-        <WebView 
-          source={{ uri: videoUrl }} 
-          style={styles.webView} 
-          allowsFullscreenVideo 
-          mediaPlaybackRequiresUserAction={false} 
-          javaScriptEnabled 
-          domStorageEnabled 
-          startInLoadingState 
-          scalesPageToFit 
+        <WebView
+          source={{
+            uri: videoUrl,
+            headers: { Referer: "https://b1.church/" }
+          }}
+          style={styles.webView}
+          allowsFullscreenVideo
+          mediaPlaybackRequiresUserAction={false}
+          javaScriptEnabled
+          domStorageEnabled
+          startInLoadingState
+          scalesPageToFit
         />
       </View>
     </Card>
