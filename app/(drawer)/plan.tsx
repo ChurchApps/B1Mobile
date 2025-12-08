@@ -88,10 +88,10 @@ const Plan = () => {
 
   const isLoading = assignmentsLoading || positionsLoading || plansLoading || timesLoading;
 
-  // Filter plans to only show upcoming ones
+  // Filter for upcoming plans (used for hero stats only)
   const upcomingPlans = useMemo(() => plans.filter(p => p.serviceDate && new Date(p.serviceDate) >= new Date()), [plans]);
 
-  // Filter assignments to only those for upcoming plans
+  // Filter assignments for upcoming plans only (used for hero stats only)
   const upcomingAssignments = useMemo(() => {
     const upcomingPlanIds = upcomingPlans.map(p => p.id);
     return assignments.filter(a => {
@@ -100,12 +100,12 @@ const Plan = () => {
     });
   }, [assignments, positions, upcomingPlans]);
 
-  // Statistics for summary cards
+  // Statistics for summary cards (upcoming only)
   const planStats = useMemo(() => {
     const requestedCount = upcomingAssignments.length;
     const confirmedCount = upcomingAssignments.filter(a => a.status === "Confirmed" || a.status === "Accepted").length;
     const pendingCount = upcomingAssignments.filter(a => !a.status || a.status === "Unconfirmed" || a.status === "Pending").length;
-    const nextPlan = upcomingPlans.sort((a, b) => new Date(a.serviceDate!).getTime() - new Date(b.serviceDate!).getTime())[0];
+    const nextPlan = [...upcomingPlans].sort((a, b) => new Date(a.serviceDate!).getTime() - new Date(b.serviceDate!).getTime())[0];
 
     return {
       requested: requestedCount,
@@ -194,8 +194,8 @@ const Plan = () => {
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               {renderHeroSection()}
               {renderStatsCards()}
-              <ServingTimes assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} isLoading={isLoading} />
-              <UpcomingDates assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} times={times} isLoading={isLoading} />
+              <ServingTimes assignments={assignments} positions={positions} plans={plans} isLoading={isLoading} />
+              <UpcomingDates assignments={assignments} positions={positions} plans={plans} times={times} isLoading={isLoading} />
               <BlockoutDates isLoading={isLoading} />
             </ScrollView>
           </View>
