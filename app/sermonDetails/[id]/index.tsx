@@ -12,9 +12,10 @@ import { useTranslation } from "react-i18next";
 import { MainHeader } from "../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { VideoPlayer, VideoPreview, SermonInfo, SermonActions } from "../../../src/components/sermonDetails/exports";
-import { UserHelper } from "../../../src/helpers";
+import { UserHelper, EnvironmentHelper } from "../../../src/helpers";
 import { SermonInterface } from "@churchapps/helpers";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
+import { useCurrentChurch } from "../../../src/stores/useUserStore";
 
 const theme = {
   ...MD3LightTheme,
@@ -40,6 +41,7 @@ const theme = {
 const SermonDetails = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const currentChurch = useCurrentChurch();
   const { id, title, playlistTitle } = useLocalSearchParams<{
     id: string;
     title: string;
@@ -54,27 +56,28 @@ const SermonDetails = () => {
 
   useScreenHeader({ title: title, placeholder: t("sermons.sermon") });
 
-  // Fetch sermon details
+  // Fetch sermon from the public sermons list (uses cached data)
   const {
     data: sermon,
     isLoading,
     error
   } = useQuery({
-    queryKey: ["/sermons/" + id, "ContentApi"],
-    enabled: !!id,
+    queryKey: ["/sermons/public/" + currentChurch?.id, "ContentApi"],
+    enabled: !!id && !!currentChurch?.id,
     staleTime: 15 * 60 * 1000, // 15 minutes
     gcTime: 60 * 60 * 1000, // 1 hour
-    select: (data: any) => {
-      // Validate sermon data
-      if (!data || !data.id || !data.title) {
-        return null;
-      }
-      return data as SermonInterface;
+    select: (data: any[]) => {
+      // Find the sermon by ID from the list
+      if (!data || !Array.isArray(data)) return null;
+      const found = data.find((s: any) => s.id === id);
+      if (!found || !found.id || !found.title) return null;
+      return found as SermonInterface;
     }
   });
 
-  // Generate video URL based on video type and data
+  // Generate embed video URL for WebView player
   const videoUrl = useMemo(() => {
+    console.log("Sermon data:", JSON.stringify(sermon, null, 2));
     if (!sermon?.videoData || !sermon?.videoType) return null;
 
     switch (sermon.videoType) {
@@ -91,6 +94,24 @@ const SermonDetails = () => {
     }
   }, [sermon]);
 
+  // Generate external URL for opening in browser (non-embed format)
+  const externalUrl = useMemo(() => {
+    if (!sermon?.videoData || !sermon?.videoType) return null;
+
+    switch (sermon.videoType) {
+      case "youtube":
+        return `https://www.youtube.com/watch?v=${sermon.videoData}`;
+      case "youtube_channel":
+        return `https://www.youtube.com/channel/${sermon.videoData}/live`;
+      case "vimeo":
+        return `https://vimeo.com/${sermon.videoData}`;
+      case "facebook":
+        return `https://www.facebook.com/video.php?v=${sermon.videoData}`;
+      default:
+        return sermon.videoData; // Custom URL
+    }
+  }, [sermon]);
+
   const formatDuration = (seconds?: number) => {
     if (!seconds) return "";
     const mins = Math.floor(seconds / 60);
@@ -102,7 +123,7 @@ const SermonDetails = () => {
     if (!sermon) return;
 
     try {
-      const shareUrl = videoUrl || `https://church.app/sermon/${sermon.id}`;
+      const shareUrl = externalUrl || EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") + "/sermons";
       await Share.share({
         message: `Check out this sermon: "${sermon.title}" ${shareUrl}`,
         url: shareUrl,
@@ -114,13 +135,13 @@ const SermonDetails = () => {
   };
 
   const handleExternalLink = () => {
-    if (!videoUrl) return;
+    if (!externalUrl) return;
 
     Alert.alert(t("common.openInBrowser"), t("sermons.openInBrowserPrompt"), [
       { text: t("common.cancel"), style: "cancel" },
       {
         text: t("common.open"),
-        onPress: () => Linking.openURL(videoUrl)
+        onPress: () => Linking.openURL(externalUrl)
       }
     ]);
   };

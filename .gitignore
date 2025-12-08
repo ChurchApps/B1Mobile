@@ -3,6 +3,7 @@ android/app/google-services.json
 .serena
 .expo
 claude.md
+devices.json
 
 android/.cxx
 .cursor
