@@ -48,11 +48,13 @@ export class UserHelper {
 
   /**
    * Attempt to refresh JWT token using existing token
+   * Note: The token may be expired - the server will validate and issue a new one
+   * if the refresh is still allowed (within refresh window)
    */
   static async refreshToken(): Promise<boolean> {
     try {
       const currentToken = await SecureStorageHelper.getSecureItem("default_jwt");
-      if (!currentToken || !this.isTokenValid(currentToken)) {
+      if (!currentToken) {
         return false;
       }
 
