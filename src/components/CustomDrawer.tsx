@@ -1,14 +1,13 @@
-import { EnvironmentHelper, UserHelper, SecureStorageHelper, LoginUserChurchInterface } from "../../src/helpers";
+import { EnvironmentHelper, SecureStorageHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
-import { ErrorHelper } from "../helpers/ErrorHelper";
-import { ApiHelper, LinkInterface, Permissions } from "@churchapps/helpers";
+import { LinkInterface } from "@churchapps/helpers";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router, useFocusEffect, useGlobalSearchParams, useLocalSearchParams, usePathname } from "expo-router";
+import { router, useGlobalSearchParams, usePathname } from "expo-router";
 import { useEffect, useState } from "react";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
-import { Image, Linking, ScrollView, StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Avatar, Button, Divider, List, Surface, Text, TouchableRipple } from "react-native-paper";
 import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
 import { DrawerActions } from "@react-navigation/native";
@@ -36,24 +35,22 @@ export function CustomDrawer(props?: any) {
   // Use hooks instead of local state
   const user = useUser();
   const currentChurch = useCurrentChurch();
-  const { setLinks } = useUserStore();
+  const links = useUserStore(state => state.links);
+  const loadChurchLinks = useUserStore(state => state.loadChurchLinks);
   const pathname = usePathname();
   const params = useGlobalSearchParams();
 
-  const [drawerList, setDrawerList] = useState<LinkInterface[]>([]);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const { top } = useSafeAreaInsets();
-  useEffect(() => {
-    getChurch();
-    updateDrawerList();
-  }, [currentChurch]);
 
   useEffect(() => {
-    // Also trigger on initial mount
-    updateDrawerList();
-  }, []);
-  
+    // Reload links when church changes
+    if (currentChurch?.id) {
+      loadChurchLinks(currentChurch.id);
+    }
+  }, [currentChurch?.id]);
+
   useEffect(() => {
     eventBus.addListener('do_logout', () => {
       logoutAction()
@@ -90,134 +87,6 @@ export function CustomDrawer(props?: any) {
     }
 
     return false;
-  };
-
-
-  const getChurch = async () => {
-    try {
-      if (currentChurch !== null) {
-        getMemberData();
-      }
-    } catch (e: any) {
-      ErrorHelper.logError("custom-drawer", e);
-    }
-  };
-
-  const getChumsLoginUrl = (uc: LoginUserChurchInterface) => {
-    const extra = Constants.expoConfig?.extra || {};
-    const stage = extra.STAGE;
-
-    const baseUrl =
-      stage === "prod"
-        ? "https://app.chums.org"
-        : "https://app.staging.chums.org";
-
-    return `${baseUrl}/login?jwt=${uc.jwt}&churchId=${uc.church?.id}`;
-  };
-
-  const updateDrawerList = async () => {
-    try {
-      let tabs: LinkInterface[] = [];
-      if (currentChurch?.id) {
-        const tempTabs = await ApiHelper.getAnonymous("/links/church/" + currentChurch.id + "?category=b1Tab", "ContentApi");
-        tempTabs.forEach((tab: LinkInterface) => {
-          switch (tab.linkType) {
-            case "groups":
-            case "donation":
-            case "directory":
-            case "plans":
-            case "lessons":
-            case "website":
-            case "checkin":
-              break;
-            default:
-              tabs.push(tab);
-              break;
-          }
-        });
-      }
-
-      let specialTabs = await getSpecialTabs();
-      const data = tabs.concat(specialTabs);
-
-      setDrawerList(data);
-      setLinks(data);
-    } catch (error) {
-      console.error("Error updating drawer list:", error);
-    }
-  };
-
-  const getSpecialTabs = async () => {
-    let specialTabs: LinkInterface[] = [];
-    let showWebsite = false,
-      showDonations = false,
-      showMyGroups = false,
-      showPlans = false,
-      showDirectory = false,
-      showLessons = false,
-      showChums = false,
-      showCheckin = false,
-      showSermons = false;
-    const uc = useUserStore.getState().currentUserChurch;
-
-    if (currentChurch?.id) {
-      const page = await ApiHelper.getAnonymous("/pages/" + currentChurch.id + "/tree?url=/", "ContentApi");
-      if (page.url) showWebsite = true;
-      const gateways = await ApiHelper.getAnonymous("/gateways/churchId/" + currentChurch.id, "GivingApi");
-      if (gateways.length > 0) showDonations = true;
-      try {
-        const playlists = await ApiHelper.getAnonymous("/playlists/public/" + currentChurch.id, "ContentApi");
-        if (playlists.length > 0) showSermons = true;
-      } catch (error) {
-        console.error("Error checking for sermons:", error);
-        // Still try to show sermons tab as it might be a temporary error
-        showSermons = true;
-      }
-    }
-
-    if (uc?.person) {
-      try {
-        const classrooms = await ApiHelper.get("/classrooms/person", "LessonsApi");
-        showLessons = classrooms.length > 0;
-      } catch {
-        //do nothing
-      }
-      try {
-        const campuses = await ApiHelper.get("/campuses", "AttendanceApi");
-        showCheckin = campuses.length > 0;
-      } catch {
-        //do nothing
-      }
-      showChums = UserHelper.checkAccess(Permissions.membershipApi.people.edit);
-      const memberStatus = uc.person?.membershipStatus?.toLowerCase();
-      showDirectory = memberStatus === "member" || memberStatus === "staff";
-      uc.groups.forEach(group => {
-        if (group.tags.indexOf("team") > -1) showPlans = true;
-      });
-      showMyGroups = uc?.groups?.length > 0;
-    }
-    specialTabs.push({ linkType: "separator", linkData: "", category: "", text: "", icon: "", url: "" });
-    if (showWebsite) specialTabs.push({ linkType: "url", linkData: "", category: "", text: t("navigation.website"), icon: "home", url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") });
-    if (showMyGroups) specialTabs.push({ linkType: "groups", linkData: "", category: "", text: t("navigation.myGroups"), icon: "group", url: "" });
-    if (showCheckin) specialTabs.push({ linkType: "checkin", linkData: "", category: "", text: t("navigation.checkIn"), icon: "check_box", url: "" });
-    if (showDonations) specialTabs.push({ linkType: "donation", linkData: "", category: "", text: t("navigation.donation"), icon: "volunteer_activism", url: "" });
-    if (showDirectory) specialTabs.push({ linkType: "directory", linkData: "", category: "", text: t("navigation.memberDirectory"), icon: "groups", url: "" });
-    if (showPlans) specialTabs.push({ linkType: "plans", linkData: "", category: "", text: t("navigation.plans"), icon: "event", url: "" });
-    if (showLessons) specialTabs.push({ linkType: "lessons", linkData: "", category: "", text: t("navigation.lessons"), icon: "school", url: "" });
-    if (showSermons) specialTabs.push({ linkType: "sermons", linkData: "", category: "", text: t("navigation.sermons"), icon: "play_circle", url: "" });
-    if (showChums) specialTabs.push({ linkType: "url", linkData: "", category: "", text: "Chums", icon: "account_circle", url: getChumsLoginUrl(uc) });
-    return specialTabs;
-  };
-
-  const getMemberData = async () => {
-    /*
-    if (personId) {
-      try {
-        await ApiHelper.get("/people/" + personId, "MembershipApi");
-      } catch (e) {
-        ErrorHelper.logError(e);
-      }
-    }*/
   };
 
   const logoutAction = async () => {
@@ -375,13 +244,13 @@ export function CustomDrawer(props?: any) {
     <View style={[styles.container, { paddingTop: top }]}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {drawerHeaderComponent()}
-        {drawerList.length === 0 ? (
+        {links.length === 0 ? (
           <View style={{ padding: 20 }}>
             <Text>{t("navigation.loadingNavigation")}</Text>
           </View>
         ) : (
           <View style={styles.menuContainer}>
-            {drawerList.map((item, index) => (
+            {links.map((item, index) => (
               <View key={item.id || index}>{listItem(!!(item as any).photo, item)}</View>
             ))}
           </View>

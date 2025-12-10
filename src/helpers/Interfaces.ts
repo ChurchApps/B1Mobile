@@ -20,6 +20,8 @@ export interface LinkInterface {
   linkData: string;
   icon: string;
   photo?: string;
+  visibility?: "everyone" | "visitors" | "members" | "staff" | "groups" | "team";
+  groupIds?: string;
 }
 
 export interface ApiInterface {

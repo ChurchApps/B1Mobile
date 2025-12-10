@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserInterface, ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface, LoginResponseInterface } from "../helpers/Interfaces";
+import { UserInterface, ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface, LoginResponseInterface, LinkInterface } from "../helpers/Interfaces";
 import { ApiHelper } from "@churchapps/helpers";
 import { SecureStorageHelper } from "../helpers/SecureStorageHelper";
 import { PushNotificationHelper } from "../helpers/PushNotificationHelper";
@@ -44,7 +44,6 @@ interface UserState {
   selectChurch: (church: ChurchInterface) => Promise<void>;
   setAnonymousChurch: (church: ChurchInterface) => Promise<void>;
   loadChurchLinks: (churchId: string) => Promise<void>;
-  getSpecialTabs: (churchId: string) => Promise<any[]>;
   initializeFromPersistence: () => Promise<void>;
   logout: () => Promise<void>;
   loadPersonRecord: () => Promise<void>;
@@ -158,7 +157,12 @@ export const useUserStore = create<UserState>()(
           churches: churches
         });
 
-        // Set current user church
+        // Set API permissions BEFORE setCurrentUserChurch (which triggers loadChurchLinks)
+        ApiHelper.setDefaultPermissions(currentChurch?.jwt || "");
+        currentChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
+        ApiHelper.setPermissions("MessagingApi", currentChurch?.jwt || "", []);
+
+        // Set current user church (triggers loadChurchLinks which needs API permissions)
         if (currentChurch) {
           await get().setCurrentUserChurch(currentChurch);
         }
@@ -169,11 +173,6 @@ export const useUserStore = create<UserState>()(
           device: Platform.OS,
           church: currentChurch.church.name
         });
-
-        // Set API permissions
-        ApiHelper.setDefaultPermissions(currentChurch?.jwt || "");
-        currentChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
-        ApiHelper.setPermissions("MessagingApi", currentChurch?.jwt || "", []);
 
         // Store JWT tokens securely
         await storeSecureTokens(currentChurch);
@@ -247,126 +246,37 @@ export const useUserStore = create<UserState>()(
       // Load church navigation links
       loadChurchLinks: async (churchId: string) => {
         try {
-          // Get main navigation links first
-          let tabs: any[] = [];
-          const tempTabs = await ApiHelper.getAnonymous(`/links/church/${churchId}?category=b1Tab`, "ContentApi");
+          const state = get();
+          let links: any[];
 
-          tempTabs.forEach((tab: any) => {
-            switch (tab.linkType) {
-              case "groups":
-              case "donation":
-              case "directory":
-              case "plans":
-              case "lessons":
-              case "website":
-              case "checkin":
-                break;
-              default:
-                tabs.push(tab);
-                break;
+          // Use authenticated endpoint if user is logged in
+          // ApiHelper uses the church JWT set by setDefaultPermissions
+          if (state.currentUserChurch?.jwt) {
+            try {
+              const fetchedLinks = await ApiHelper.get(`/links/church/${churchId}/filtered?category=b1Tab`, "ContentApi");
+              // Filter "team" visibility client-side (group tags aren't in JWT)
+              const userGroupTags = state.currentUserChurch.groups?.flatMap((g: any) => g.tags?.split(",") || []) || [];
+              links = fetchedLinks.filter((link: any) => {
+                if (link.visibility === "team") return userGroupTags.includes("team");
+                return true;
+              });
+            } catch (authError) {
+              // Fall back to anonymous if authenticated call fails
+              console.warn("Authenticated links call failed, falling back to anonymous:", authError);
+              const allLinks = await ApiHelper.getAnonymous(`/links/church/${churchId}?category=b1Tab`, "ContentApi");
+              links = allLinks.filter((link: any) => !link.visibility || link.visibility === "everyone");
             }
-          });
-
-          // Load special tabs (feature availability) before updating state
-          try {
-            const specialTabs = await get().getSpecialTabs(churchId);
-            const allLinks = tabs.concat(specialTabs);
-            // Only update state once with complete data
-            set({ links: allLinks });
-          } catch (error) {
-            console.error("❌ Failed to load special tabs:", error);
-            // Set basic tabs only if special tabs fail
-            set({ links: tabs });
+          } else {
+            const allLinks = await ApiHelper.getAnonymous(`/links/church/${churchId}?category=b1Tab`, "ContentApi");
+            // Filter client-side for anonymous users (only "everyone" visibility)
+            links = allLinks.filter((link: any) => !link.visibility || link.visibility === "everyone");
           }
+
+          set({ links });
         } catch (error) {
           console.error("❌ Failed to load church links:", error);
           set({ links: [] });
         }
-      },
-
-      // Get special navigation tabs based on church features
-      getSpecialTabs: async (churchId: string) => {
-        const state = get();
-        let specialTabs: any[] = [];
-        let showWebsite = false,
-          showDonations = false,
-          showMyGroups = false,
-          showPlans = false,
-          showDirectory = false,
-          showLessons = false,
-          showChums = false,
-          showCheckin = false,
-          showSermons = false;
-
-        const uc = state.currentUserChurch;
-
-        try {
-          // Check for website
-          const page = await ApiHelper.getAnonymous(`/pages/${churchId}/tree?url=/`, "ContentApi");
-          if (page.url) showWebsite = true;
-
-          // Check for donations
-          const gateways = await ApiHelper.getAnonymous(`/gateways/churchId/${churchId}`, "GivingApi");
-          if (gateways.length > 0) showDonations = true;
-
-          // Check for sermons
-          try {
-            const playlists = await ApiHelper.getAnonymous(`/playlists/public/${churchId}`, "ContentApi");
-            if (playlists.length > 0) showSermons = true;
-          } catch (error) {
-            console.error("Error checking for sermons in store:", error);
-            // Still show sermons tab - let the sermons screen handle the error
-            showSermons = true;
-          }
-        } catch (error) {
-          console.error("❌ Error checking church features:", error);
-        }
-
-        // User-specific features (only if logged in)
-        if (uc?.person) {
-          try {
-            const classrooms = await ApiHelper.get("/classrooms/person", "LessonsApi");
-            showLessons = classrooms.length > 0;
-          } catch {
-            // Ignore error
-          }
-          try {
-            const campuses = await ApiHelper.get("/campuses", "AttendanceApi");
-            showCheckin = campuses.length > 0;
-          } catch {
-            // Ignore error
-          }
-          showChums = state.checkAccess({ api: "MembershipApi", contentType: "people", action: "edit" });
-          const memberStatus = uc.person?.membershipStatus?.toLowerCase();
-          showDirectory = memberStatus === "member" || memberStatus === "staff";
-
-          // Check for groups
-          if (uc.groups && uc.groups.length > 0) {
-            showMyGroups = true;
-          }
-
-          // Check for plans
-          try {
-            const plans = await ApiHelper.get("/plans", "DoingApi");
-            showPlans = plans.length > 0;
-          } catch {
-            // Ignore error
-          }
-        }
-
-        // Build special tabs array
-
-        if (showMyGroups) specialTabs.push({ linkType: "groups", text: "My Groups", icon: "groups" });
-        if (showDonations) specialTabs.push({ linkType: "donation", text: "Giving", icon: "volunteer_activism" });
-        if (showDirectory) specialTabs.push({ linkType: "directory", text: "Directory", icon: "people" });
-        if (showPlans) specialTabs.push({ linkType: "plans", text: "Plans", icon: "calendar_today" });
-        if (showLessons) specialTabs.push({ linkType: "lessons", text: "Lessons", icon: "local_library" });
-        if (showSermons) specialTabs.push({ linkType: "sermons", text: "Sermons", icon: "play_circle" });
-        if (showWebsite) specialTabs.push({ linkType: "website", text: "Website", icon: "language" });
-        if (showCheckin) specialTabs.push({ linkType: "checkin", text: "Check-in", icon: "how_to_reg" });
-        if (showChums) specialTabs.push({ linkType: "chums", text: "Member Search", icon: "person_search" });
-
-        return specialTabs;
       },
 
       // Initialize app from persisted data

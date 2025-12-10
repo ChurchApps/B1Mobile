@@ -155,7 +155,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   };
 
   const saveCard = async (user: UserInterface, person: PersonInterface) => {
-    if (\!person?.id || \!person?.name?.display) {
+    if (!person?.id || !person?.name?.display) {
       Alert.alert("Error", "User information is incomplete. Please log in again.");
       return;
     }
