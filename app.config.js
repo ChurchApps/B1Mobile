@@ -2,7 +2,7 @@ module.exports = {
   expo: {
     name: "B1Mobile",
     slug: "B1Mobile",
-    version: "3.3.0",
+    version: "3.4.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -16,7 +16,7 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
-      buildNumber: "51",
+      buildNumber: "52",
       googleServicesFile: "./config/GoogleService-Info.plist",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
@@ -49,7 +49,7 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png"
     },
-    runtimeVersion: "3.3.0",
+    runtimeVersion: "3.4.0",
     plugins: [
       [
         "@sentry/react-native/expo",
