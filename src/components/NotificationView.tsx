@@ -68,10 +68,10 @@ export function NotificationTab() {
         if (matchingItem2) {
           merged.push({
             id: commonId,
-            message: item1.conversation.messages?.[0]?.content || "",
-            displayName: matchingItem2.name.display,
-            firstName: matchingItem2.name.first,
-            lastName: matchingItem2.name.last,
+            message: item1.conversation?.messages?.[0]?.content || "",
+            displayName: matchingItem2.name?.display || "",
+            firstName: matchingItem2.name?.first || "",
+            lastName: matchingItem2.name?.last || "",
             photo: matchingItem2.photo
           });
         }
@@ -101,19 +101,23 @@ export function NotificationTab() {
         if (Object.keys(data).length != 0) {
           userIdList = data.map(e => (currentUserChurch?.person?.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
           if (userIdList.length != 0) {
-            ApiHelper.get("/people/basic?ids=" + userIdList.join(","), "MembershipApi").then((userData: UserSearchInterface[]) => {
-              // setLoading(false);
-              for (let i = 0; i < userData.length; i++) {
-                const singleUser: UserSearchInterface = userData[i];
-                const tempConvo: ConversationCheckInterface | undefined = data.find(x => x.fromPersonId == singleUser.id || x.toPersonId == singleUser.id);
-                userData[i].conversationId = tempConvo?.conversationId;
-              }
-              setUserData(userData);
-            });
+            ApiHelper.get("/people/basic?ids=" + userIdList.join(","), "MembershipApi")
+              .then((userData: UserSearchInterface[]) => {
+                for (let i = 0; i < userData.length; i++) {
+                  const singleUser: UserSearchInterface = userData[i];
+                  const tempConvo: ConversationCheckInterface | undefined = data.find(x => x.fromPersonId == singleUser.id || x.toPersonId == singleUser.id);
+                  userData[i].conversationId = tempConvo?.conversationId;
+                }
+                setUserData(userData);
+              })
+              .catch(error => {
+                console.error("Error fetching user data:", error);
+              });
           }
         }
       })
       .catch(err => {
+        console.error("Error fetching private messages:", err);
         setLoading(false);
       });
   };

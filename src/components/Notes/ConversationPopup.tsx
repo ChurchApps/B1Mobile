@@ -64,6 +64,9 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
     };
     const result: ConversationInterface[] = await ApiHelper.post("/conversations", [conv], "MessagingApi");
 
+    if (!result || result.length === 0) {
+      throw new Error("Failed to create conversation");
+    }
     const cId = result[0].id;
     return cId;
   };

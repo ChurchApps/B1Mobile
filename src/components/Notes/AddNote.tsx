@@ -18,9 +18,13 @@ export function AddNote({ ...props }: Props) {
   const [errors, setErrors] = React.useState<string[]>([]);
   useEffect(() => {
     if (props.messageId)
-      ApiHelper.get(`/messages/${props.messageId}`, "MessagingApi").then(n => {
-        setMessage(n);
-      });
+      ApiHelper.get(`/messages/${props.messageId}`, "MessagingApi")
+        .then(n => {
+          setMessage(n);
+        })
+        .catch(error => {
+          console.error("Error fetching message:", error);
+        });
     else setMessage({ conversationId: props.conversationId, content: "" });
     return () => {
       setMessage(null);

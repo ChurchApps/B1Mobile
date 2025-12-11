@@ -140,80 +140,83 @@ export default function CreateEvent(props: Props) {
   };
 
   const handleRecurringSave = async (editType: string) => {
-    switch (editType) {
-      case "this":
-        {
-          const exception: EventExceptionInterface = { eventId: event.id, exceptionDate: event.start };
-          ApiHelper.post("/eventExceptions", [exception], "ContentApi").then(() => {
+    try {
+      switch (editType) {
+        case "this":
+          {
+            const exception: EventExceptionInterface = { eventId: event.id, exceptionDate: event.start };
+            await ApiHelper.post("/eventExceptions", [exception], "ContentApi");
             const oneEv = { ...event };
             oneEv.id = undefined;
             oneEv.recurrenceRule = undefined;
-            ApiHelper.post("/events", [oneEv], "ContentApi").then(() => {
-              if (props.onDone) props.onDone();
-              setShowEventEditModal(false);
-            });
-          });
-        }
-        break;
-      case "future":
-        {
-          const newEvent = { ...event };
-          newEvent.id = undefined;
-          newEvent.recurrenceRule = rRule;
+            await ApiHelper.post("/events", [oneEv], "ContentApi");
+            if (props.onDone) props.onDone();
+            setShowEventEditModal(false);
+          }
+          break;
+        case "future":
+          {
+            const newEvent = { ...event };
+            newEvent.id = undefined;
+            newEvent.recurrenceRule = rRule;
 
-          const originalEv = await ApiHelper.get("/events/" + props.event.id, "ContentApi");
-          const rrule = EventHelper.getFullRRule(originalEv);
-          rrule.options.until = newEvent.start ? new Date(newEvent.start) : new Date();
-          EventHelper.cleanRule(rrule.options);
-          originalEv.recurrenceRule = EventHelper.getPartialRRuleString(rrule.options);
-          ApiHelper.post("/events", [originalEv, newEvent], "ContentApi").then(() => {
+            const originalEv = await ApiHelper.get("/events/" + props.event.id, "ContentApi");
+            const rrule = EventHelper.getFullRRule(originalEv);
+            rrule.options.until = newEvent.start ? new Date(newEvent.start) : new Date();
+            EventHelper.cleanRule(rrule.options);
+            originalEv.recurrenceRule = EventHelper.getPartialRRuleString(rrule.options);
+            await ApiHelper.post("/events", [originalEv, newEvent], "ContentApi");
             if (props.onDone) props.onDone();
             setShowEventEditModal(false);
-          });
-        }
-        break;
-      case "all":
-        {
-          const allEv = { ...event };
-          allEv.recurrenceRule = rRule;
-          ApiHelper.post("/events", [allEv], "ContentApi").then(() => {
+          }
+          break;
+        case "all":
+          {
+            const allEv = { ...event };
+            allEv.recurrenceRule = rRule;
+            await ApiHelper.post("/events", [allEv], "ContentApi");
             if (props.onDone) props.onDone();
             setShowEventEditModal(false);
-          });
-        }
-        break;
+          }
+          break;
+      }
+    } catch (error) {
+      console.error("Error saving recurring event:", error);
+      Alert.alert("Error", "Failed to save event. Please try again.");
     }
   };
 
-  const handleRecurringDelete = (editType: string) => {
-    switch (editType) {
-      case "this": {
-        const exception: EventExceptionInterface = { eventId: event.id, exceptionDate: event.start };
-        ApiHelper.post("/eventExceptions", [exception], "ContentApi").then(() => {
+  const handleRecurringDelete = async (editType: string) => {
+    try {
+      switch (editType) {
+        case "this": {
+          const exception: EventExceptionInterface = { eventId: event.id, exceptionDate: event.start };
+          await ApiHelper.post("/eventExceptions", [exception], "ContentApi");
           if (props.onDone) props.onDone();
           setShowEventEditModal(false);
-        });
-        break;
-      }
-      case "future": {
-        const ev = { ...event };
-        const rrule = EventHelper.getFullRRule(ev);
-        rrule.options.until = ev.start ? new Date(ev.start) : new Date();
-        ev.start = props.event.start; //Keep the original start date, not this instance's start date
-        event.recurrenceRule = EventHelper.getPartialRRuleString(rrule.options);
-        ApiHelper.post("/events", [event], "ContentApi").then(() => {
+          break;
+        }
+        case "future": {
+          const ev = { ...event };
+          const rrule = EventHelper.getFullRRule(ev);
+          rrule.options.until = ev.start ? new Date(ev.start) : new Date();
+          ev.start = props.event.start; //Keep the original start date, not this instance's start date
+          event.recurrenceRule = EventHelper.getPartialRRuleString(rrule.options);
+          await ApiHelper.post("/events", [event], "ContentApi");
           if (props.onDone) props.onDone();
           setShowEventEditModal(false);
-        });
-        break;
-      }
-      case "all": {
-        ApiHelper.delete("/events/" + event.id, "ContentApi").then(() => {
+          break;
+        }
+        case "all": {
+          await ApiHelper.delete("/events/" + event.id, "ContentApi");
           if (props.onDone) props.onDone();
           setShowEventEditModal(false);
-        });
-        break;
+          break;
+        }
       }
+    } catch (error) {
+      console.error("Error deleting recurring event:", error);
+      Alert.alert("Error", "Failed to delete event. Please try again.");
     }
   };
 
@@ -264,10 +267,15 @@ export default function CreateEvent(props: Props) {
       setRecurrenceModalType("delete");
       setShowEventEditModal(true);
     } else {
-      ApiHelper.delete("/events/" + event.id, "ContentApi").then(() => {
-        console.log("Event deleted successfully");
-        if (props.onDone) props.onDone();
-      });
+      ApiHelper.delete("/events/" + event.id, "ContentApi")
+        .then(() => {
+          console.log("Event deleted successfully");
+          if (props.onDone) props.onDone();
+        })
+        .catch(error => {
+          console.error("Error deleting event:", error);
+          Alert.alert("Error", "Failed to delete event. Please try again.");
+        });
     }
   };
 

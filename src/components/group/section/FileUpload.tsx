@@ -46,6 +46,10 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
           reader.readAsDataURL(blob);
           reader.onload = () => resolve(reader.result);
           reader.onerror = error => reject(error);
+        })
+        .catch(error => {
+          console.error("Error converting file to base64:", error);
+          reject(error);
         });
     });
 
@@ -61,19 +65,26 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
       contentId
     };
 
-    setUploadInProgress(true);
-    const preUploaded = await preUpload(f);
-    if (!preUploaded) {
-      const base64 = await convertBase64(uploadedFile.uri);
-      f.fileContents = base64 as string;
-    }
-    setUploadInProgress(false);
+    try {
+      setUploadInProgress(true);
+      const preUploaded = await preUpload(f);
+      if (!preUploaded) {
+        const base64 = await convertBase64(uploadedFile.uri);
+        f.fileContents = base64 as string;
+      }
+      setUploadInProgress(false);
 
-    const data: FileInterface[] = await ApiHelper.post("/files", [f], "ContentApi");
-    setFile({} as FileInterface);
-    setUploadedFile(null);
-    setUploadProgress(-1);
-    saveCallback(data[0]);
+      const data: FileInterface[] = await ApiHelper.post("/files", [f], "ContentApi");
+      setFile({} as FileInterface);
+      setUploadedFile(null);
+      setUploadProgress(-1);
+      saveCallback(data[0]);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setUploadInProgress(false);
+      setUploadProgress(-1);
+      Alert.alert("Upload Error", "Failed to upload file. Please try again.");
+    }
   };
 
   const preUpload = async (f: FileInterface) => {
@@ -99,16 +110,22 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
       name: uploadedFile.name
     } as any);
 
-    await axios.post(presigned.url, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-      onUploadProgress: progressEvent => {
-        if (progressEvent.total) {
-          let percent = Math.round((100 * progressEvent.loaded) / progressEvent.total);
-          percent = Math.min(percent, 100);
-          setUploadProgress(percent);
+    try {
+      await axios.post(presigned.url, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        timeout: 60000, // 60 second timeout
+        onUploadProgress: progressEvent => {
+          if (progressEvent.total) {
+            let percent = Math.round((100 * progressEvent.loaded) / progressEvent.total);
+            percent = Math.min(percent, 100);
+            setUploadProgress(percent);
+          }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error("Error uploading to presigned URL:", error);
+      throw error;
+    }
   };
 
   useEffect(() => {

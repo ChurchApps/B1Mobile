@@ -48,7 +48,15 @@ export const CheckinServices = (props: Props) => {
       isLoading: true,
       campusId: item?.campusId
     });
-    await getMemberData(item.id);
+    try {
+      await getMemberData(item.id);
+    } catch (error) {
+      console.error("Error selecting service:", error);
+      setSelectServiceLoading({
+        isLoading: false,
+        campusId: ""
+      });
+    }
   };
 
   const getMemberData = async (serviceId: any) => {
@@ -101,9 +109,17 @@ export const CheckinServices = (props: Props) => {
       } catch (error) {
         console.error("Error loading member data:", error);
         setLoading(false);
+        setSelectServiceLoading({
+          isLoading: false,
+          campusId: ""
+        });
       }
     } else {
       setLoading(false);
+      setSelectServiceLoading({
+        isLoading: false,
+        campusId: ""
+      });
       // Could implement anonymous check-in flow here
     }
   };

@@ -36,13 +36,17 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
         console.error("Error fetching messages:", error);
       });
 
-    ApiHelper.get("/links?category=groupLink", "ContentApi").then((data: LinkInterface[]) => {
-      const result: LinkInterface[] = [];
-      data?.forEach(l => {
-        if (l.linkData === groupId) result.push(l);
+    ApiHelper.get("/links?category=groupLink", "ContentApi")
+      .then((data: LinkInterface[]) => {
+        const result: LinkInterface[] = [];
+        data?.forEach(l => {
+          if (l.linkData === groupId) result.push(l);
+        });
+        setLinks(result);
+      })
+      .catch((error: any) => {
+        console.error("Error fetching group links:", error);
       });
-      setLinks(result);
-    });
   }, []);
 
   const handleDelete = async (file: FileInterface) => {

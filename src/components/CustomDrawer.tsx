@@ -52,9 +52,14 @@ export function CustomDrawer(props?: any) {
   }, [currentChurch?.id]);
 
   useEffect(() => {
-    eventBus.addListener('do_logout', () => {
-      logoutAction()
-    })
+    const handleLogout = () => {
+      logoutAction();
+    };
+    eventBus.addListener('do_logout', handleLogout);
+
+    return () => {
+      eventBus.removeListener('do_logout');
+    };
   }, [])
 
   const checkIsActive = (item: ItemType, pathname: string, params?: ParamsType): boolean => {

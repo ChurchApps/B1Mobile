@@ -81,16 +81,24 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
 
   const handleAccept = () => {
     if (!assignment?.id) return;
-    ApiHelper.post("/assignments/accept/" + assignment.id, [], "DoingApi").then(() => {
-      onUpdate();
-    });
+    ApiHelper.post("/assignments/accept/" + assignment.id, [], "DoingApi")
+      .then(() => {
+        onUpdate();
+      })
+      .catch(error => {
+        console.error("Error accepting assignment:", error);
+      });
   };
 
   const handleDecline = () => {
     if (!assignment?.id) return;
-    ApiHelper.post("/assignments/decline/" + assignment.id, [], "DoingApi").then(() => {
-      onUpdate();
-    });
+    ApiHelper.post("/assignments/decline/" + assignment.id, [], "DoingApi")
+      .then(() => {
+        onUpdate();
+      })
+      .catch(error => {
+        console.error("Error declining assignment:", error);
+      });
   };
 
   let latestTime = new Date();

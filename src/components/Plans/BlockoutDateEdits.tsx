@@ -35,17 +35,25 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
 
   const onPressSaveButton = () => {
     if (validate())
-      ApiHelper.post("/blockoutDates", [BlockoutDate], "DoingApi").then(() => {
-        onClose();
-        onUpdate();
-      });
+      ApiHelper.post("/blockoutDates", [BlockoutDate], "DoingApi")
+        .then(() => {
+          onClose();
+          onUpdate();
+        })
+        .catch(error => {
+          console.error("Error saving blockout date:", error);
+        });
     else return;
   };
   const onPressDeleteButton = (id: number) => {
-    ApiHelper.delete("/blockoutDates/" + id, "DoingApi").then(() => {
-      onClose();
-      onUpdate();
-    });
+    ApiHelper.delete("/blockoutDates/" + id, "DoingApi")
+      .then(() => {
+        onClose();
+        onUpdate();
+      })
+      .catch(error => {
+        console.error("Error deleting blockout date:", error);
+      });
   };
 
   return (
