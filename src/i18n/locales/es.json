@@ -54,7 +54,9 @@
     "privacyConfirm": "Al hacer clic en Registrarse, confirmo que he leido la",
     "userExists": "Este usuario ya existe. Por favor inicia sesion con tu usuario y contrasena.",
     "enterFirstName": "Por favor ingresa tu nombre.",
-    "enterLastName": "Por favor ingresa tu apellido."
+    "enterLastName": "Por favor ingresa tu apellido.",
+    "noAccount": "¿No tienes una cuenta?",
+    "registrationSuccess": "¡Registro exitoso! Por favor revisa tu correo electrónico para las instrucciones de inicio de sesión."
   },
   "churchSearch": {
     "findYourChurch": "Encuentra Tu Iglesia",

@@ -54,7 +54,9 @@
     "privacyConfirm": "By clicking on Register, I confirm that I have read the",
     "userExists": "This user already exists. Please log in with your username and password.",
     "enterFirstName": "Please enter first name.",
-    "enterLastName": "Please enter last name."
+    "enterLastName": "Please enter last name.",
+    "noAccount": "Don't have an account?",
+    "registrationSuccess": "Registration successful! Please check your email for login instructions."
   },
   "churchSearch": {
     "findYourChurch": "Find Your Church",

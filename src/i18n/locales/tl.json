@@ -54,7 +54,9 @@
     "privacyConfirm": "Sa pag-click sa Magrehistro, kinukumpirma ko na nabasa ko ang",
     "userExists": "Ang user na ito ay umiiral na. Mangyaring mag-log in gamit ang iyong username at password.",
     "enterFirstName": "Mangyaring maglagay ng pangalan.",
-    "enterLastName": "Mangyaring maglagay ng apelyido."
+    "enterLastName": "Mangyaring maglagay ng apelyido.",
+    "noAccount": "Wala ka pang account?",
+    "registrationSuccess": "Matagumpay ang pagpaparehistro! Mangyaring suriin ang iyong email para sa mga tagubilin sa pag-login."
   },
   "churchSearch": {
     "findYourChurch": "Hanapin ang Iyong Simbahan",

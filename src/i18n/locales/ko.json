@@ -54,7 +54,9 @@
     "privacyConfirm": "등록을 클릭하면 다음을 읽었음을 확인합니다",
     "userExists": "이 사용자는 이미 존재합니다. 사용자 이름과 비밀번호로 로그인하세요.",
     "enterFirstName": "이름을 입력하세요.",
-    "enterLastName": "성을 입력하세요."
+    "enterLastName": "성을 입력하세요.",
+    "noAccount": "계정이 없으신가요?",
+    "registrationSuccess": "등록 완료! 로그인 안내를 위해 이메일을 확인해주세요."
   },
   "churchSearch": {
     "findYourChurch": "교회 찾기",

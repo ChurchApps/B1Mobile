@@ -54,7 +54,9 @@
     "privacyConfirm": "Ved å klikke på Registrer bekrefter jeg at jeg har lest",
     "userExists": "Denne brukeren finnes allerede. Vennligst logg inn med brukernavn og passord.",
     "enterFirstName": "Vennligst oppgi fornavn.",
-    "enterLastName": "Vennligst oppgi etternavn."
+    "enterLastName": "Vennligst oppgi etternavn.",
+    "noAccount": "Har du ikke en konto?",
+    "registrationSuccess": "Registrering vellykket! Sjekk e-posten din for påloggingsinstruksjoner."
   },
   "churchSearch": {
     "findYourChurch": "Finn din kirke",

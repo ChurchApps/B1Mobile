@@ -54,7 +54,9 @@
     "privacyConfirm": "Ao clicar em Registrar, confirmo que li a",
     "userExists": "Este usuário já existe. Por favor, faça login com seu nome de usuário e senha.",
     "enterFirstName": "Por favor, digite o primeiro nome.",
-    "enterLastName": "Por favor, digite o sobrenome."
+    "enterLastName": "Por favor, digite o sobrenome.",
+    "noAccount": "Não tem uma conta?",
+    "registrationSuccess": "Registro realizado com sucesso! Por favor, verifique seu e-mail para as instruções de login."
   },
   "churchSearch": {
     "findYourChurch": "Encontre Sua Igreja",

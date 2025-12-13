@@ -54,7 +54,9 @@
     "privacyConfirm": "En cliquant sur S'inscrire, je confirme avoir lu la",
     "userExists": "Cet utilisateur existe déjà. Veuillez vous connecter avec votre nom d'utilisateur et votre mot de passe.",
     "enterFirstName": "Veuillez entrer votre prénom.",
-    "enterLastName": "Veuillez entrer votre nom de famille."
+    "enterLastName": "Veuillez entrer votre nom de famille.",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "registrationSuccess": "Inscription réussie ! Veuillez vérifier votre e-mail pour les instructions de connexion."
   },
   "churchSearch": {
     "findYourChurch": "Trouvez votre église",

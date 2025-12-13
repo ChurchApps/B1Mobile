@@ -54,7 +54,9 @@
     "privacyConfirm": "点击注册即表示我已阅读",
     "userExists": "此用户已存在。请使用您的用户名和密码登录。",
     "enterFirstName": "请输入名。",
-    "enterLastName": "请输入姓。"
+    "enterLastName": "请输入姓。",
+    "noAccount": "还没有账户？",
+    "registrationSuccess": "注册成功！请查看您的邮箱获取登录说明。"
   },
   "churchSearch": {
     "findYourChurch": "查找您的教会",

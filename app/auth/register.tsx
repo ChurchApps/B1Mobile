@@ -1,5 +1,6 @@
 import React from "react";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import { ApiHelper } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, SafeAreaView } from "react-native";
@@ -18,11 +19,14 @@ const Register = () => {
   const registerApiCall = async () => {
     setLoading(true);
     try {
-      /*
-      const data = await ApiHelper.post("/users/register", { email, firstName, lastName }, "MembershipApi");
-      if (data.email != null) setRegistered(true);
-      else Alert.alert(t("common.alert"), "User already exists.");
-      */
+      const data = await ApiHelper.postAnonymous("/users/register", { email, firstName, lastName }, "MembershipApi");
+      if (data.email != null) {
+        Alert.alert(t("common.alert"), t("auth.registrationSuccess"), [
+          { text: "OK", onPress: () => router.navigate("/auth/login") }
+        ]);
+      } else {
+        Alert.alert(t("common.error"), t("auth.userExists"));
+      }
     } catch (error: any) {
       if (error.message && error.message.includes("user already exists")) {
         Alert.alert(t("common.error"), t("auth.userExists"));

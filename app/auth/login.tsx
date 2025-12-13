@@ -191,6 +191,15 @@ const Login = () => {
                         </Text>
                       </Text>
                     </View>
+
+                    <View style={styles.registerSection}>
+                      <Text variant="bodyMedium" style={styles.registerText}>
+                        {t("auth.noAccount")}{" "}
+                        <Text variant="bodyMedium" style={styles.registerLink} onPress={() => router.navigate("/auth/register")}>
+                          {t("auth.register")}
+                        </Text>
+                      </Text>
+                    </View>
                   </Card.Content>
                 </Card>
               </View>
@@ -356,6 +365,18 @@ const styles = StyleSheet.create({
   privacyLink: {
     color: "#0D47A1",
     fontWeight: "500"
+  },
+  registerSection: {
+    alignItems: "center",
+    marginTop: 16
+  },
+  registerText: {
+    color: "#3c3c3c",
+    textAlign: "center"
+  },
+  registerLink: {
+    color: "#0D47A1",
+    fontWeight: "600"
   },
 
   // Help Section
