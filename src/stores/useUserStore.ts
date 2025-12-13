@@ -354,22 +354,27 @@ export const useUserStore = create<UserState>()(
       // Load person record for current church
       loadPersonRecord: async () => {
         const state = get();
-        if (state.currentUserChurch && (!state.currentUserChurch.person || !state.currentUserChurch.person.name)) {
-          try {
-            const data: { person: PersonInterface } = await ApiHelper.get(`/people/claim/${state.currentUserChurch.church.id}`, "MembershipApi");
+        if (state.currentUserChurch) {
+          // Only fetch person data if we don't have it yet
+          if (!state.currentUserChurch.person || !state.currentUserChurch.person.name) {
+            try {
+              const data: { person: PersonInterface } = await ApiHelper.get(`/people/claim/${state.currentUserChurch.church.id}`, "MembershipApi");
 
-            // Update the current user church with person data
-            set({
-              currentUserChurch: {
-                ...state.currentUserChurch,
-                person: data.person
-              }
-            });
+              // Update the current user church with person data
+              set({
+                currentUserChurch: {
+                  ...state.currentUserChurch,
+                  person: data.person
+                }
+              });
+            } catch (error) {
+              console.error("Failed to load person record:", error);
+            }
+          }
 
-            // Register for push notifications
+          // Always register for push notifications when we have a logged-in user
+          if (state.currentUserChurch.person?.id) {
             PushNotificationHelper.registerUserDevice();
-          } catch (error) {
-            console.error("Failed to load person record:", error);
           }
         }
       },

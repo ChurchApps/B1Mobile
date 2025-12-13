@@ -2,7 +2,7 @@ import React from "react";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { ApiHelper, ConversationCheckInterface, ConversationCreateInterface } from "../../src/helpers";
-import { MessageInterface } from "@churchapps/helpers";
+import { ArrayHelper, MessageInterface } from "@churchapps/helpers";
 import { PrivateMessagesCreate } from "../../src/helpers/Interfaces";
 import { eventBus, updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 import { useLocalSearchParams, useFocusEffect, router } from "expo-router";
@@ -73,28 +73,35 @@ const MessageScreen = () => {
     return () => updateCurrentScreen("");
   }, []);
 
-  const getMessagesList = useCallback((conversationId: string) => {
+  const getMessagesList = useCallback(async (conversationId: string) => {
     if (!conversationId) {
       console.log("No conversationId provided to getMessagesList");
       return;
     }
     console.log("Fetching messages for conversation:", conversationId);
-    ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi")
-      .then(data => {
-        console.log("Messages received:", data);
-        if (data && Array.isArray(data)) {
-          let conversation: MessageInterface[] = data;
-          conversation.reverse();
-          setMessageList(conversation);
-        } else {
-          console.log("Invalid messages data:", data);
-          setMessageList([]);
+    try {
+      const data = await ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi");
+      console.log("Messages received:", data);
+      if (data && Array.isArray(data)) {
+        let messages: MessageInterface[] = data;
+        // Fetch person data to populate displayName
+        if (messages.length > 0) {
+          const peopleIds = ArrayHelper.getIds(messages, "personId");
+          const people = await ApiHelper.get("/people/basic?ids=" + peopleIds.join(","), "MembershipApi");
+          messages.forEach(m => {
+            m.person = ArrayHelper.getOne(people, "id", m.personId);
+          });
         }
-      })
-      .catch((error: any) => {
-        console.error("Error fetching messages:", error);
+        messages.reverse();
+        setMessageList(messages);
+      } else {
+        console.log("Invalid messages data:", data);
         setMessageList([]);
-      });
+      }
+    } catch (error: any) {
+      console.error("Error fetching messages:", error);
+      setMessageList([]);
+    }
   }, []);
 
   const getConversations = useCallback(() => {
