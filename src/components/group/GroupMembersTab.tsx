@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { Text, Card, Avatar, IconButton } from "react-native-paper";
+import { Text, Card, Avatar, IconButton, Button } from "react-native-paper";
 import { router } from "expo-router";
 import { Constants, EnvironmentHelper } from "../../helpers";
 import { InlineLoader } from "../common/LoadingComponents";
+import { GroupAttendanceModal } from "./GroupAttendanceModal";
 
 interface GroupMember {
   id: string;
@@ -19,9 +20,18 @@ interface GroupMember {
 interface GroupMembersTabProps {
   members: GroupMember[];
   isLoading: boolean;
+  isLeader?: boolean;
+  groupId?: string;
 }
 
-export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({ members, isLoading }) => {
+export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
+  members,
+  isLoading,
+  isLeader = false,
+  groupId
+}) => {
+  const [showAttendanceModal, setShowAttendanceModal] = useState(false);
+
   const handleMemberPress = (member: GroupMember) => {
     const memberData = {
       id: member?.person?.id,
@@ -47,6 +57,18 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({ members, isLoa
   if (members.length === 0) {
     return (
       <View style={styles.membersContainer}>
+        {/* Take Attendance Button for Leaders */}
+        {isLeader && groupId && (
+          <Button
+            mode="contained"
+            icon="clipboard-check-outline"
+            onPress={() => setShowAttendanceModal(true)}
+            style={styles.attendanceButton}
+          >
+            Take Attendance
+          </Button>
+        )}
+
         <View style={styles.emptyState}>
           <Avatar.Icon size={64} icon="account-group" style={styles.emptyIcon} />
           <Text variant="titleMedium" style={styles.emptyTitle}>
@@ -56,12 +78,34 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({ members, isLoa
             Members will appear here when they join
           </Text>
         </View>
+
+        {/* Attendance Modal */}
+        {isLeader && groupId && (
+          <GroupAttendanceModal
+            visible={showAttendanceModal}
+            onDismiss={() => setShowAttendanceModal(false)}
+            groupId={groupId}
+            members={members}
+          />
+        )}
       </View>
     );
   }
 
   return (
     <View style={styles.membersContainer}>
+      {/* Take Attendance Button for Leaders */}
+      {isLeader && groupId && (
+        <Button
+          mode="contained"
+          icon="clipboard-check-outline"
+          onPress={() => setShowAttendanceModal(true)}
+          style={styles.attendanceButton}
+        >
+          Take Attendance
+        </Button>
+      )}
+
       {members.map((item: GroupMember) => (
         <Card key={item?.id} style={styles.modernMemberCard}>
           <TouchableOpacity style={styles.memberCardContent} onPress={() => handleMemberPress(item)}>
@@ -78,6 +122,16 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({ members, isLoa
           </TouchableOpacity>
         </Card>
       ))}
+
+      {/* Attendance Modal */}
+      {isLeader && groupId && (
+        <GroupAttendanceModal
+          visible={showAttendanceModal}
+          onDismiss={() => setShowAttendanceModal(false)}
+          groupId={groupId}
+          members={members}
+        />
+      )}
     </View>
   );
 };
@@ -85,6 +139,10 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({ members, isLoa
 const styles = StyleSheet.create({
   membersContainer: {
     minHeight: 200
+  },
+  attendanceButton: {
+    marginBottom: 16,
+    borderRadius: 8
   },
   modernMemberCard: {
     borderRadius: 12,

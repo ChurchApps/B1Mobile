@@ -291,7 +291,7 @@ const GroupDetails = () => {
   const tabs = [
     { key: "about", label: t("common.about"), icon: "information" },
     { key: "messages", label: t("messages.messages"), icon: "chat", onPress: () => setShowChatModal(true) },
-    { key: "members", label: t("checkin.householdMembers"), icon: "account-group" },
+    { key: "members", label: t("members.members"), icon: "account-group" },
     { key: "events", label: t("events.createEvent"), icon: "calendar" },
     { key: "Resources", label: t("common.resources"), icon: "file" },
   ];
@@ -332,6 +332,8 @@ const GroupDetails = () => {
                       <GroupMembersTab
                         members={groupMembers}
                         isLoading={groupMembersLoading}
+                        isLeader={isLeader}
+                        groupId={id}
                       />
                     )}
 
