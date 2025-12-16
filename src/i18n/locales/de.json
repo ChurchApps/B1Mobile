@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "Einchecken",
+    "attendance": "Anwesenheit",
     "selectService": "Gottesdienst auswählen",
     "chooseService": "Wählen Sie, für welchen Gottesdienst Sie einchecken",
     "loadingServices": "Gottesdienste werden geladen...",

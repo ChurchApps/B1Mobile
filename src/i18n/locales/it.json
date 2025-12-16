@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "Check-in",
+    "attendance": "Presenze",
     "selectService": "Seleziona Servizio",
     "chooseService": "Scegli per quale servizio stai effettuando il check-in",
     "loadingServices": "Caricamento servizi...",

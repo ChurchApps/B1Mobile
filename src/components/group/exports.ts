@@ -5,4 +5,4 @@ export { GroupMembersTab } from "./GroupMembersTab";
 export { GroupCalendarTab } from "./GroupCalendarTab";
 export { GroupEventModal } from "./GroupEventModal";
 export { EventProcessor } from "./EventProcessor";
-export { GroupAttendanceModal } from "./GroupAttendanceModal";
+export { GroupAttendanceTab } from "./GroupAttendanceTab";

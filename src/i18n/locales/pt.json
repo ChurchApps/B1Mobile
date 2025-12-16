@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "Check-in",
+    "attendance": "Presença",
     "selectService": "Selecionar Culto",
     "chooseService": "Escolha para qual culto você está fazendo check-in",
     "loadingServices": "Carregando cultos...",

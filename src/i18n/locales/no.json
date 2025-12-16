@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "Innsjekking",
+    "attendance": "Oppmøte",
     "selectService": "Velg gudstjeneste",
     "chooseService": "Velg hvilken gudstjeneste du sjekker inn til",
     "loadingServices": "Laster gudstjenester...",

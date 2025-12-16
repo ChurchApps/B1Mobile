@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "Checkin",
+    "attendance": "Attendance",
     "selectService": "Pumili ng Service",
     "chooseService": "Piliin kung aling service ka mag-che-check in",
     "loadingServices": "Kumakarga ang mga service...",

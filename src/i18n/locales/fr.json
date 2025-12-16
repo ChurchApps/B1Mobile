@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "Enregistrement",
+    "attendance": "Présence",
     "selectService": "Sélectionner le service",
     "chooseService": "Choisissez le service pour lequel vous vous enregistrez",
     "loadingServices": "Chargement des services...",

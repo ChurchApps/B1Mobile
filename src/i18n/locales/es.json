@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "Registro",
+    "attendance": "Asistencia",
     "selectService": "Seleccionar Servicio",
     "chooseService": "Elige el servicio en el que te estas registrando",
     "loadingServices": "Cargando servicios...",

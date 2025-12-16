@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "签到",
+    "attendance": "出勤",
     "selectService": "选择聚会",
     "chooseService": "选择您要签到的聚会",
     "loadingServices": "正在加载聚会...",

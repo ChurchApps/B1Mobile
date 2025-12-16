@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity, Keyboard, Platform } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View, StyleSheet, FlatList, TouchableOpacity, Keyboard } from "react-native";
 import { Text, Button, IconButton, Avatar, Checkbox, ActivityIndicator, Divider, TextInput } from "react-native-paper";
-import Modal from "react-native-modal";
 import DatePicker from "react-native-date-picker";
 import dayjs from "dayjs";
 import { ApiHelper } from "@churchapps/helpers";
@@ -42,9 +40,7 @@ interface GroupMember {
   };
 }
 
-interface GroupAttendanceModalProps {
-  visible: boolean;
-  onDismiss: () => void;
+interface GroupAttendanceTabProps {
   groupId: string;
   members: GroupMember[];
 }
@@ -60,14 +56,11 @@ interface AttendancePerson {
   isMember: boolean;
 }
 
-export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
-  visible,
-  onDismiss,
+export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
   groupId,
   members
 }) => {
   const currentUserChurch = useCurrentUserChurch();
-  const insets = useSafeAreaInsets();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -78,6 +71,7 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Additional people (non-members) added to attendance
   const [additionalPeople, setAdditionalPeople] = useState<PersonInterface[]>([]);
@@ -98,7 +92,7 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
     }));
 
     const additionalAsPeople: AttendancePerson[] = additionalPeople
-      .filter(p => !members.some(m => m.person.id === p.id)) // Exclude if already a member
+      .filter(p => !members.some(m => m.person.id === p.id))
       .map(p => ({
         id: p.id,
         name: p.name,
@@ -109,29 +103,19 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
     return [...memberPeople, ...additionalAsPeople];
   }, [members, additionalPeople]);
 
-  // Load sessions when modal opens
+  // Load sessions on mount
   useEffect(() => {
-    if (visible && currentUserChurch?.jwt && groupId) {
+    if (currentUserChurch?.jwt && groupId) {
       loadSessions();
     }
-  }, [visible, currentUserChurch?.jwt, groupId]);
+  }, [currentUserChurch?.jwt, groupId]);
 
-  // Load attendance when date changes
+  // Load attendance when date or sessions change
   useEffect(() => {
-    if (visible && sessions.length >= 0) {
+    if (sessions.length >= 0 && groupId) {
       loadAttendanceForDate();
     }
-  }, [selectedDate, sessions]);
-
-  // Reset state when modal closes
-  useEffect(() => {
-    if (!visible) {
-      setShowSearch(false);
-      setSearchText("");
-      setSearchResults([]);
-      setAdditionalPeople([]);
-    }
-  }, [visible]);
+  }, [selectedDate, sessions, groupId]);
 
   const loadSessions = async () => {
     try {
@@ -145,10 +129,10 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
   const loadAttendanceForDate = async () => {
     setIsLoading(true);
     setError(null);
+    setSuccessMessage(null);
 
     const dateStr = dayjs(selectedDate).format("YYYY-MM-DD");
 
-    // Find existing session for this date
     const existingSession = sessions.find(s => {
       const sessionDateStr = dayjs(s.sessionDate).format("YYYY-MM-DD");
       return sessionDateStr === dateStr;
@@ -163,7 +147,6 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
           "AttendanceApi"
         );
 
-        // Build attendance map from visit sessions
         const attendanceMap: AttendanceState = {};
         const personIds: string[] = [];
 
@@ -174,12 +157,10 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
           }
         });
 
-        // Find non-members who have attendance records
         const memberIds = members.map(m => m.person.id);
         const nonMemberIds = personIds.filter(id => !memberIds.includes(id));
 
         if (nonMemberIds.length > 0) {
-          // Fetch details for non-member attendees
           const nonMemberDetails = await ApiHelper.get(
             `/people/ids?ids=${nonMemberIds.join(",")}`,
             "MembershipApi"
@@ -198,7 +179,6 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
         setAdditionalPeople([]);
       }
     } else {
-      // No session exists for this date, start fresh
       setAttendance({});
       setOriginalAttendance({});
       setAdditionalPeople([]);
@@ -235,7 +215,6 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
     return Object.values(attendance).filter(Boolean).length;
   }, [attendance]);
 
-  // Search functionality
   const handleSearch = async () => {
     if (!searchText.trim()) return;
 
@@ -256,7 +235,6 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
   };
 
   const addPersonToAttendance = (person: PersonInterface) => {
-    // Add to additional people if not already there and not a member
     const isAlreadyAdded = additionalPeople.some(p => p.id === person.id);
     const isMember = members.some(m => m.person.id === person.id);
 
@@ -264,13 +242,11 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
       setAdditionalPeople(prev => [...prev, person]);
     }
 
-    // Mark as present
     setAttendance(prev => ({
       ...prev,
       [person.id]: true
     }));
 
-    // Clear search
     setSearchText("");
     setSearchResults([]);
     setShowSearch(false);
@@ -279,11 +255,11 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
   const handleSave = async () => {
     setIsSaving(true);
     setError(null);
+    setSuccessMessage(null);
 
     try {
       let sessionId = currentSession?.id;
 
-      // Create session if it doesn't exist (without serviceTimeId - it's optional)
       if (!sessionId) {
         const newSession: SessionInterface = {
           groupId: groupId,
@@ -294,7 +270,6 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
         if (createdSessions && createdSessions.length > 0) {
           sessionId = createdSessions[0].id;
           setCurrentSession(createdSessions[0]);
-          // Add to local sessions list
           setSessions(prev => [...prev, createdSessions[0]]);
         }
       }
@@ -303,7 +278,6 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
         throw new Error("Failed to create session");
       }
 
-      // Determine which people to add and remove
       const toAdd: string[] = [];
       const toRemove: string[] = [];
 
@@ -319,7 +293,6 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
         }
       });
 
-      // Add new attendance records using /visitsessions/log (B1Admin pattern)
       for (const personId of toAdd) {
         const visit = {
           checkinTime: new Date(),
@@ -329,7 +302,6 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
         await ApiHelper.post("/visitsessions/log", visit, "AttendanceApi");
       }
 
-      // Remove attendance records
       for (const personId of toRemove) {
         await ApiHelper.delete(
           `/visitsessions?sessionId=${sessionId}&personId=${personId}`,
@@ -337,10 +309,11 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
         );
       }
 
-      // Update original attendance to match current
       setOriginalAttendance({ ...attendance });
+      setSuccessMessage("Attendance saved successfully!");
 
-      onDismiss();
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       console.error("Failed to save attendance:", err);
       setError("Failed to save attendance. Please try again.");
@@ -349,7 +322,7 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
     }
   };
 
-  const renderPersonItem = useCallback(({ item }: { item: AttendancePerson }) => {
+  const renderPersonItem = ({ item }: { item: AttendancePerson }) => {
     const isPresent = attendance[item.id] || false;
 
     return (
@@ -359,14 +332,14 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
         activeOpacity={0.7}
       >
         <Avatar.Image
-          size={48}
+          size={44}
           source={item.photo
             ? { uri: EnvironmentHelper.ContentRoot + item.photo }
             : Constants.Images.ic_member
           }
         />
         <View style={styles.memberInfo}>
-          <Text variant="titleMedium" style={styles.memberName}>
+          <Text variant="bodyLarge" style={styles.memberName}>
             {item.name?.display}
           </Text>
           <Text variant="bodySmall" style={[styles.statusText, isPresent && styles.presentText]}>
@@ -377,11 +350,11 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
         <Checkbox
           status={isPresent ? "checked" : "unchecked"}
           onPress={() => toggleMember(item.id)}
-          color="#4CAF50"
+          color="#2563EB"
         />
       </TouchableOpacity>
     );
-  }, [attendance, toggleMember]);
+  };
 
   const renderSearchResult = ({ item }: { item: PersonInterface }) => {
     const isAlreadyInList = allPeople.some(p => p.id === item.id);
@@ -393,19 +366,19 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
         activeOpacity={isAlreadyInList ? 1 : 0.7}
       >
         <Avatar.Image
-          size={40}
+          size={36}
           source={item.photo
             ? { uri: EnvironmentHelper.ContentRoot + item.photo }
             : Constants.Images.ic_member
           }
         />
         <View style={styles.searchResultInfo}>
-          <Text variant="bodyLarge" style={styles.searchResultName}>
+          <Text variant="bodyMedium" style={styles.searchResultName}>
             {item.name?.display}
           </Text>
         </View>
         {!isAlreadyInList && (
-          <IconButton icon="plus" size={20} iconColor="#4CAF50" />
+          <IconButton icon="plus" size={18} iconColor="#2563EB" />
         )}
         {isAlreadyInList && (
           <Text style={styles.alreadyAddedText}>Added</Text>
@@ -415,231 +388,205 @@ export const GroupAttendanceModal: React.FC<GroupAttendanceModalProps> = ({
   };
 
   return (
-    <Modal
-      isVisible={visible}
-      onBackdropPress={onDismiss}
-      backdropOpacity={0.5}
-      useNativeDriverForBackdrop={true}
-      animationIn="slideInUp"
-      animationOut="slideOutDown"
-      style={styles.modal}
-      propagateSwipe={true}
-      coverScreen={true}
-    >
-      <View style={[styles.container, { paddingTop: insets.top }]}>
-        {/* Header */}
-        <View style={styles.header}>
-          <IconButton icon="arrow-left" size={24} onPress={onDismiss} />
-          <Text variant="titleLarge" style={styles.title}>
-            Attendance for {dayjs(selectedDate).format("MMM D, YYYY")}
-          </Text>
-          <View style={{ width: 48 }} />
-        </View>
+    <View style={styles.container}>
+      {/* Date Selection */}
+      <TouchableOpacity
+        style={styles.dateButton}
+        onPress={() => setShowDatePicker(true)}
+      >
+        <IconButton icon="calendar" size={20} iconColor="#2563EB" style={styles.dateIcon} />
+        <Text style={styles.dateButtonText}>
+          {dayjs(selectedDate).format("MMMM D, YYYY")}
+        </Text>
+        <IconButton icon="chevron-down" size={18} iconColor="#6B7280" />
+      </TouchableOpacity>
 
-        {/* Date Selection */}
-        <View style={styles.selectionSection}>
-          <TouchableOpacity
-            style={styles.dateButton}
-            onPress={() => setShowDatePicker(true)}
-          >
-            <IconButton icon="calendar" size={20} />
-            <Text style={styles.dateButtonText}>
-              {dayjs(selectedDate).format("MMMM D, YYYY")}
-            </Text>
-          </TouchableOpacity>
+      <DatePicker
+        modal
+        open={showDatePicker}
+        date={selectedDate}
+        mode="date"
+        maximumDate={new Date()}
+        onConfirm={handleDateConfirm}
+        onCancel={() => setShowDatePicker(false)}
+        title="Select Date"
+      />
 
-          <DatePicker
-            modal
-            open={showDatePicker}
-            date={selectedDate}
-            mode="date"
-            maximumDate={new Date()}
-            onConfirm={handleDateConfirm}
-            onCancel={() => setShowDatePicker(false)}
-            title="Select Date"
-          />
-        </View>
-
-        <Divider />
-
-        {/* Stats and Actions */}
-        <View style={styles.statsSection}>
-          <Text style={styles.statsText}>
-            {presentCount} of {allPeople.length} present
-          </Text>
-          <View style={styles.actionButtons}>
-            <Button
-              mode="text"
-              compact
-              onPress={selectAll}
-              disabled={isLoading || isSaving}
-            >
-              All
-            </Button>
-            <Button
-              mode="text"
-              compact
-              onPress={deselectAll}
-              disabled={isLoading || isSaving}
-            >
-              None
-            </Button>
-            <Button
-              mode="text"
-              compact
-              icon="account-plus"
-              onPress={() => setShowSearch(!showSearch)}
-              disabled={isLoading || isSaving}
-            >
-              Add
-            </Button>
-          </View>
-        </View>
-
-        {/* Search Section */}
-        {showSearch && (
-          <View style={styles.searchSection}>
-            <View style={styles.searchInputRow}>
-              <TextInput
-                mode="outlined"
-                placeholder="Search for a person..."
-                value={searchText}
-                onChangeText={setSearchText}
-                style={styles.searchInput}
-                dense
-                onSubmitEditing={handleSearch}
-              />
-              <Button
-                mode="contained"
-                onPress={handleSearch}
-                loading={isSearching}
-                disabled={isSearching || !searchText.trim()}
-                compact
-                style={styles.searchButton}
-              >
-                Search
-              </Button>
-            </View>
-
-            {searchResults.length > 0 && (
-              <FlatList
-                data={searchResults}
-                renderItem={renderSearchResult}
-                keyExtractor={(item) => item.id}
-                style={styles.searchResultsList}
-                showsVerticalScrollIndicator={false}
-              />
-            )}
-
-            {searchResults.length === 0 && searchText && !isSearching && (
-              <Text style={styles.noResultsText}>No results found</Text>
-            )}
-          </View>
-        )}
-
-        <Divider />
-
-        {/* Member List */}
-        {isLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" />
-            <Text style={styles.loadingText}>Loading attendance...</Text>
-          </View>
-        ) : allPeople.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>No members in this group yet.</Text>
-            <Text style={styles.emptySubtext}>Use "Add" to search for people to add.</Text>
-          </View>
-        ) : (
-          <FlatList
-            data={allPeople}
-            renderItem={renderPersonItem}
-            keyExtractor={(item) => item.id}
-            style={styles.memberList}
-            contentContainerStyle={styles.memberListContent}
-            showsVerticalScrollIndicator={false}
-          />
-        )}
-
-        {error && (
-          <Text style={styles.errorText}>{error}</Text>
-        )}
-
-        {/* Footer */}
-        <View style={[styles.footer, { paddingBottom: 16 + insets.bottom }]}>
+      {/* Stats and Actions */}
+      <View style={styles.statsSection}>
+        <Text style={styles.statsText}>
+          {presentCount} of {allPeople.length} present
+        </Text>
+        <View style={styles.actionButtons}>
           <Button
-            mode="contained"
-            onPress={handleSave}
-            style={styles.saveButton}
-            loading={isSaving}
+            mode="text"
+            compact
+            onPress={selectAll}
             disabled={isLoading || isSaving}
+            labelStyle={styles.actionButtonLabel}
           >
-            Save Attendance
+            All
+          </Button>
+          <Button
+            mode="text"
+            compact
+            onPress={deselectAll}
+            disabled={isLoading || isSaving}
+            labelStyle={styles.actionButtonLabel}
+          >
+            None
+          </Button>
+          <Button
+            mode="text"
+            compact
+            icon="account-plus"
+            onPress={() => setShowSearch(!showSearch)}
+            disabled={isLoading || isSaving}
+            labelStyle={styles.actionButtonLabel}
+          >
+            Add
           </Button>
         </View>
       </View>
-    </Modal>
+
+      {/* Search Section */}
+      {showSearch && (
+        <View style={styles.searchSection}>
+          <View style={styles.searchInputRow}>
+            <TextInput
+              mode="outlined"
+              placeholder="Search for a person..."
+              value={searchText}
+              onChangeText={setSearchText}
+              style={styles.searchInput}
+              dense
+              onSubmitEditing={handleSearch}
+              outlineColor="#E5E7EB"
+              activeOutlineColor="#2563EB"
+            />
+            <Button
+              mode="contained"
+              onPress={handleSearch}
+              loading={isSearching}
+              disabled={isSearching || !searchText.trim()}
+              compact
+              style={styles.searchButton}
+              buttonColor="#2563EB"
+            >
+              Search
+            </Button>
+          </View>
+
+          {searchResults.length > 0 && (
+            <FlatList
+              data={searchResults}
+              renderItem={renderSearchResult}
+              keyExtractor={(item) => item.id}
+              style={styles.searchResultsList}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
+
+          {searchResults.length === 0 && searchText && !isSearching && (
+            <Text style={styles.noResultsText}>No results found</Text>
+          )}
+        </View>
+      )}
+
+      <Divider style={styles.divider} />
+
+      {/* Member List */}
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2563EB" />
+          <Text style={styles.loadingText}>Loading attendance...</Text>
+        </View>
+      ) : allPeople.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Avatar.Icon size={56} icon="account-group" style={styles.emptyIcon} />
+          <Text style={styles.emptyText}>No members in this group yet.</Text>
+          <Text style={styles.emptySubtext}>Use "Add" to search for people.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={allPeople}
+          renderItem={renderPersonItem}
+          keyExtractor={(item) => item.id}
+          style={styles.memberList}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
+        />
+      )}
+
+      {/* Messages */}
+      {error && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      )}
+
+      {successMessage && (
+        <View style={styles.successContainer}>
+          <Text style={styles.successText}>{successMessage}</Text>
+        </View>
+      )}
+
+      {/* Save Button */}
+      <Button
+        mode="contained"
+        onPress={handleSave}
+        style={styles.saveButton}
+        loading={isSaving}
+        disabled={isLoading || isSaving}
+        buttonColor="#2563EB"
+      >
+        Save Attendance
+      </Button>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  modal: {
-    margin: 0,
-    justifyContent: "flex-end"
-  },
   container: {
-    backgroundColor: "#FFFFFF",
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    height: "100%"
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingRight: 16,
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0"
-  },
-  title: {
-    fontWeight: "600",
-    color: "#3c3c3c",
-    flex: 1,
-    textAlign: "center"
-  },
-  selectionSection: {
-    padding: 16
+    minHeight: 200
   },
   dateButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F6F6F8",
-    borderRadius: 8,
-    paddingRight: 16
+    backgroundColor: "#F3F4F6",
+    borderRadius: 10,
+    paddingVertical: 4,
+    paddingRight: 4,
+    marginBottom: 12
+  },
+  dateIcon: {
+    margin: 0
   },
   dateButtonText: {
-    fontSize: 16,
-    color: "#3c3c3c"
+    flex: 1,
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#1F2937"
   },
   statsSection: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 8
+    marginBottom: 8
   },
   statsText: {
-    fontSize: 14,
-    color: "#666",
+    fontSize: 13,
+    color: "#6B7280",
     fontWeight: "500"
   },
   actionButtons: {
     flexDirection: "row"
   },
+  actionButtonLabel: {
+    fontSize: 13
+  },
   searchSection: {
-    paddingHorizontal: 16,
-    paddingBottom: 12
+    marginBottom: 12
   },
   searchInputRow: {
     flexDirection: "row",
@@ -648,19 +595,21 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: "#FFFFFF"
+    backgroundColor: "#FFFFFF",
+    height: 40
   },
   searchButton: {
-    marginTop: 6
+    marginTop: 6,
+    borderRadius: 8
   },
   searchResultsList: {
-    maxHeight: 150,
+    maxHeight: 140,
     marginTop: 8
   },
   searchResultCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F6F6F8",
+    backgroundColor: "#F9FAFB",
     borderRadius: 8,
     padding: 8,
     marginBottom: 4
@@ -670,96 +619,105 @@ const styles = StyleSheet.create({
   },
   searchResultInfo: {
     flex: 1,
-    marginLeft: 12
+    marginLeft: 10
   },
   searchResultName: {
-    color: "#3c3c3c"
+    color: "#1F2937"
   },
   alreadyAddedText: {
-    color: "#9E9E9E",
+    color: "#9CA3AF",
     fontSize: 12,
     marginRight: 8
   },
   noResultsText: {
     textAlign: "center",
-    color: "#9E9E9E",
-    marginTop: 12
+    color: "#9CA3AF",
+    marginTop: 12,
+    fontSize: 13
+  },
+  divider: {
+    marginVertical: 12,
+    backgroundColor: "#E5E7EB"
   },
   memberList: {
-    flex: 1
-  },
-  memberListContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 16
+    marginBottom: 16
   },
   memberCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: "#E8E8E8",
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2
+    backgroundColor: "#F9FAFB",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 6
   },
   memberInfo: {
     flex: 1,
     marginLeft: 12
   },
   memberName: {
-    color: "#3c3c3c",
-    fontWeight: "600"
+    color: "#1F2937",
+    fontWeight: "500"
   },
   statusText: {
-    color: "#9E9E9E",
-    marginTop: 2
+    color: "#9CA3AF",
+    marginTop: 1
   },
   presentText: {
-    color: "#4CAF50"
+    color: "#10B981"
   },
   loadingContainer: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 60
+    paddingVertical: 40
   },
   loadingText: {
     marginTop: 12,
-    color: "#666"
+    color: "#6B7280"
   },
   emptyContainer: {
-    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 60
+    paddingVertical: 32
+  },
+  emptyIcon: {
+    backgroundColor: "#F3F4F6",
+    marginBottom: 12
   },
   emptyText: {
-    color: "#666",
-    textAlign: "center"
+    color: "#6B7280",
+    textAlign: "center",
+    fontWeight: "500"
   },
   emptySubtext: {
-    color: "#9E9E9E",
+    color: "#9CA3AF",
     textAlign: "center",
-    marginTop: 8,
-    fontSize: 12
+    marginTop: 4,
+    fontSize: 13
+  },
+  errorContainer: {
+    backgroundColor: "#FEE2E2",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12
   },
   errorText: {
-    color: "#D32F2F",
+    color: "#DC2626",
     textAlign: "center",
-    paddingHorizontal: 16,
-    marginBottom: 8
+    fontSize: 13
   },
-  footer: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#E0E0E0"
+  successContainer: {
+    backgroundColor: "#D1FAE5",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12
+  },
+  successText: {
+    color: "#059669",
+    textAlign: "center",
+    fontSize: 13
   },
   saveButton: {
-    borderRadius: 8
+    borderRadius: 10,
+    marginTop: 4
   }
 });

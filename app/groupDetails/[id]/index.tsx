@@ -25,7 +25,8 @@ import {
   GroupMembersTab,
   GroupCalendarTab,
   GroupEventModal,
-  EventProcessor
+  EventProcessor,
+  GroupAttendanceTab
 } from "../../../src/components/group/exports";
 import { GroupResourcesTab } from "@/components/group/GroupResourcesTab";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
@@ -113,7 +114,7 @@ const GroupDetails = () => {
     refetch: refetchEvents
   } = useQuery({
     queryKey: [`/events/group/${id}`, "ContentApi"],
-    enabled: !!id && !!currentUserChurch?.jwt && activeTab === 3, // Only load when calendar tab is active
+    enabled: !!id && !!currentUserChurch?.jwt && activeTab === 4, // Only load when calendar tab is active
     placeholderData: [],
     staleTime: 3 * 60 * 1000, // 3 minutes - events change more frequently
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -129,7 +130,7 @@ const GroupDetails = () => {
 
   const events = useMemo(() => {
     // Only process events when on the Events tab
-    if (activeTab !== 3) {
+    if (activeTab !== 4) {
       return [];
     }
     const processed = updateTime(eventsData);
@@ -150,7 +151,7 @@ const GroupDetails = () => {
 
   // Trigger refetch when switching to events tab
   useEffect(() => {
-    if (activeTab === 3 && currentUserChurch?.jwt) {
+    if (activeTab === 4 && currentUserChurch?.jwt) {
       console.log('Switched to events tab - refetching events');
       refetchEvents();
     }
@@ -158,7 +159,7 @@ const GroupDetails = () => {
 
   // Async event expansion to prevent UI blocking - now month-based
   useEffect(() => {
-    if (activeTab !== 3 || events.length === 0) {
+    if (activeTab !== 4 || events.length === 0) {
       setExpandedEvents([]);
       setIsProcessingEvents(false);
       return;
@@ -289,11 +290,12 @@ const GroupDetails = () => {
   });
 
   const tabs = [
-    { key: "about", label: t("common.about"), icon: "information" },
-    { key: "messages", label: t("messages.messages"), icon: "chat", onPress: () => setShowChatModal(true) },
-    { key: "members", label: t("members.members"), icon: "account-group" },
-    { key: "events", label: t("events.createEvent"), icon: "calendar" },
-    { key: "Resources", label: t("common.resources"), icon: "file" },
+    { key: "about", label: t("common.about"), icon: "information-outline" },
+    { key: "messages", label: t("messages.messages"), icon: "chat-outline", onPress: () => setShowChatModal(true) },
+    { key: "members", label: t("members.members"), icon: "account-group-outline" },
+    { key: "attendance", label: t("checkin.attendance"), icon: "clipboard-check-outline", leaderOnly: true },
+    { key: "events", label: t("events.events"), icon: "calendar-outline" },
+    { key: "resources", label: t("common.resources"), icon: "file-document-outline" },
   ];
 
   return (
@@ -318,10 +320,11 @@ const GroupDetails = () => {
                   activeTab={activeTab}
                   onTabChange={setActiveTab}
                   tabs={tabs}
+                  isLeader={isLeader}
                 />
 
                 {/* Content Display */}
-                {activeTab !== 4 && <Card style={styles.contentCard}>
+                {activeTab !== 5 && <Card style={styles.contentCard}>
                   {/* Tab Content */}
                   <View style={styles.tabContent}>
                     {activeTab === 0 && (
@@ -332,12 +335,17 @@ const GroupDetails = () => {
                       <GroupMembersTab
                         members={groupMembers}
                         isLoading={groupMembersLoading}
-                        isLeader={isLeader}
-                        groupId={id}
                       />
                     )}
 
-                    {activeTab === 3 && (
+                    {activeTab === 3 && isLeader && (
+                      <GroupAttendanceTab
+                        groupId={id || ""}
+                        members={groupMembers}
+                      />
+                    )}
+
+                    {activeTab === 4 && (
                       <GroupCalendarTab
                         groupId={id || ""}
                         isLeader={isLeader}
@@ -351,7 +359,7 @@ const GroupDetails = () => {
                   </View>
                 </Card>
                 }
-                {activeTab === 4 && (
+                {activeTab === 5 && (
                   <GroupResourcesTab
                     groupId={id || ""}
                   />

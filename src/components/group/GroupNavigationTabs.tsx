@@ -1,12 +1,14 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, TouchableOpacity, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from "react-native";
-import { Text, Card, Avatar } from "react-native-paper";
+import { View, TouchableOpacity, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions, Animated } from "react-native";
+import { Text } from "react-native-paper";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface TabItem {
   key: string;
   label: string;
   icon: string;
   onPress?: () => void;
+  leaderOnly?: boolean;
 }
 
 interface GroupNavigationTabsProps {
@@ -14,29 +16,32 @@ interface GroupNavigationTabsProps {
   onTabChange: (tab: number) => void;
   tabs: TabItem[];
   tabWidth?: number;
+  isLeader?: boolean;
 }
 
-export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({ activeTab, onTabChange, tabs, tabWidth = 80 }) => {
+export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
+  activeTab,
+  onTabChange,
+  tabs,
+  tabWidth = 64,
+  isLeader = false
+}) => {
   const scrollRef = useRef<ScrollView>(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(false);
+  const [showLeftGradient, setShowLeftGradient] = useState(false);
+  const [showRightGradient, setShowRightGradient] = useState(false);
+
+  // Filter tabs based on leader status
+  const visibleTabs = tabs.filter(tab => !tab.leaderOnly || isLeader);
 
   useEffect(() => {
-    // check if content is overflowed
-    setShowRightArrow(tabs.length * tabWidth > Dimensions.get("window").width);
-  }, [tabs.length, tabWidth]);
+    const screenWidth = Dimensions.get("window").width - 32; // Account for margins
+    setShowRightGradient(visibleTabs.length * tabWidth > screenWidth);
+  }, [visibleTabs.length, tabWidth]);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
-    setShowLeftArrow(contentOffset.x > 5);
-    setShowRightArrow(contentOffset.x + layoutMeasurement.width < contentSize.width - 5);
-  };
-
-  const scrollBy = (direction: "left" | "right") => {
-    scrollRef.current?.scrollTo({
-      x: direction === "left" ? Math.max((scrollRef.current as any)?.contentOffsetX - tabWidth * 2, 0) : ((scrollRef.current as any)?.contentOffsetX || 0) + tabWidth * 2,
-      animated: true
-    });
+    setShowLeftGradient(contentOffset.x > 5);
+    setShowRightGradient(contentOffset.x + layoutMeasurement.width < contentSize.width - 5);
   };
 
   const scrollToActiveTab = (index: number) => {
@@ -45,126 +50,162 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({ active
     scrollRef.current?.scrollTo({ x: Math.max(scrollOffset, 0), animated: true });
   };
 
+  // Find the actual index in the original tabs array for a visible tab
+  const getOriginalIndex = (visibleIndex: number): number => {
+    const visibleTab = visibleTabs[visibleIndex];
+    return tabs.findIndex(t => t.key === visibleTab.key);
+  };
+
+  // Find the visible index for the current active tab
+  const getVisibleActiveIndex = (): number => {
+    const activeTabKey = tabs[activeTab]?.key;
+    return visibleTabs.findIndex(t => t.key === activeTabKey);
+  };
+
+  const visibleActiveIndex = getVisibleActiveIndex();
+
   return (
     <View style={styles.container}>
-      <Card style={styles.navigationCard}>
-        <Card.Content style={styles.cardContent}>
-          <ScrollView ref={scrollRef} horizontal showsHorizontalScrollIndicator={false} onScroll={handleScroll} scrollEventThrottle={16} contentContainerStyle={styles.scrollContainer}>
-            {tabs.map((tab, index) => (
+      <View style={styles.tabBar}>
+        <ScrollView
+          ref={scrollRef}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          {visibleTabs.map((tab, index) => {
+            const isActive = index === visibleActiveIndex;
+            const originalIndex = getOriginalIndex(index);
+
+            return (
               <TouchableOpacity
                 key={tab.key}
-                style={[styles.navButton, activeTab === index && styles.activeNavButton, { width: tabWidth }]}
+                style={[styles.tab, { width: tabWidth }]}
                 onPress={() => {
-                  if (tab.onPress) tab.onPress();
-                  else {
-                    onTabChange(index);
+                  if (tab.onPress) {
+                    tab.onPress();
+                  } else {
+                    onTabChange(originalIndex);
                     scrollToActiveTab(index);
                   }
-                }}>
-                <View style={styles.navButtonIcon}>
-                  <Avatar.Icon size={40} icon={tab.icon} style={[styles.navButtonAvatar, activeTab === index && styles.activeNavButtonAvatar]} />
+                }}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
+                  <MaterialCommunityIcons
+                    name={tab.icon as any}
+                    size={22}
+                    color={isActive ? "#FFFFFF" : "#6B7280"}
+                  />
                 </View>
-                <Text style={[styles.navButtonText, activeTab === index && styles.activeNavButtonText]}>{tab.label}</Text>
+                <Text
+                  style={[styles.label, isActive && styles.activeLabel]}
+                  numberOfLines={1}
+                >
+                  {tab.label}
+                </Text>
+                {isActive && <View style={styles.activeIndicator} />}
               </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </Card.Content>
-      </Card>
+            );
+          })}
+        </ScrollView>
 
-      {/* Absolute Left Arrow */}
-      {showLeftArrow && (
-        <TouchableOpacity style={[styles.arrowButton, styles.leftArrow]} onPress={() => scrollBy("left")}>
-          <Text style={styles.arrowText}>{"<"}</Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Absolute Right Arrow */}
-      {showRightArrow && (
-        <TouchableOpacity style={[styles.arrowButton, styles.rightArrow]} onPress={() => scrollBy("right")}>
-          <Text style={styles.arrowText}>{">"}</Text>
-        </TouchableOpacity>
-      )}
+        {/* Gradient fade indicators */}
+        {showLeftGradient && (
+          <View style={[styles.gradientOverlay, styles.leftGradient]} pointerEvents="none" />
+        )}
+        {showRightGradient && (
+          <View style={[styles.gradientOverlay, styles.rightGradient]} pointerEvents="none" />
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16
-  },
-  navigationCard: {
+    marginBottom: 16,
     marginHorizontal: 16,
-    borderRadius: 16,
-    elevation: 3
   },
-  cardContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    position: "relative"
+  tabBar: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+    position: "relative",
+    overflow: "hidden",
   },
   scrollContainer: {
     flexDirection: "row",
-    alignItems: "center"
-  },
-  navButton: {
     alignItems: "center",
-    paddingVertical: 8,
     paddingHorizontal: 4,
-    borderRadius: 12,
-    backgroundColor: "#F6F6F8",
-    marginHorizontal: 4
   },
-  activeNavButton: {
-    backgroundColor: "#E3F2FD",
-    borderWidth: 2,
-    borderColor: "#0D47A1"
-  },
-  navButtonIcon: {
-    marginBottom: 4
-  },
-  navButtonAvatar: {
-    backgroundColor: "#9E9E9E"
-  },
-  activeNavButtonAvatar: {
-    backgroundColor: "#0D47A1"
-  },
-  navButtonText: {
-    color: "#9E9E9E",
-    textAlign: "center",
-    fontWeight: "500",
-    fontSize: 11,
-    lineHeight: 12
-  },
-  activeNavButtonText: {
-    color: "#0D47A1",
-    fontWeight: "700",
-    fontSize: 11,
-    lineHeight: 12
-  },
-  arrowButton: {
-    width: 50,
-    height: "100%",
-    position: "absolute",
-    justifyContent: "center",
+  tab: {
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.7)", // optional overlay
-    borderRadius: 25
+    justifyContent: "center",
+    paddingVertical: 4,
+    position: "relative",
   },
-  leftArrow: {
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "#F3F4F6",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 6,
+  },
+  activeIconContainer: {
+    backgroundColor: "#2563EB",
+    shadowColor: "#2563EB",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  label: {
+    fontSize: 11,
+    fontWeight: "500",
+    color: "#6B7280",
+    textAlign: "center",
+    letterSpacing: -0.2,
+  },
+  activeLabel: {
+    color: "#2563EB",
+    fontWeight: "700",
+  },
+  activeIndicator: {
+    position: "absolute",
+    bottom: 0,
+    width: 20,
+    height: 3,
+    backgroundColor: "#2563EB",
+    borderRadius: 1.5,
+  },
+  gradientOverlay: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    width: 32,
+    zIndex: 10,
+  },
+  leftGradient: {
     left: 0,
-    top: 0,
-    bottom: 0,
-    marginLeft: 8
+    backgroundColor: "rgba(255,255,255,0.9)",
+    borderTopLeftRadius: 16,
+    borderBottomLeftRadius: 16,
   },
-  rightArrow: {
+  rightGradient: {
     right: 0,
-    top: 0,
-    bottom: 0,
-    marginRight: 8
+    backgroundColor: "rgba(255,255,255,0.9)",
+    borderTopRightRadius: 16,
+    borderBottomRightRadius: 16,
   },
-  arrowText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#0D47A1"
-  }
 });

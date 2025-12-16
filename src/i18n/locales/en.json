@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "Checkin",
+    "attendance": "Attendance",
     "selectService": "Select Service",
     "chooseService": "Choose which service you're checking in for",
     "loadingServices": "Loading services...",

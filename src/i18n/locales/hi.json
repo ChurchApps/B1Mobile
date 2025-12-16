@@ -115,6 +115,7 @@
   },
   "checkin": {
     "checkin": "चेक-इन",
+    "attendance": "उपस्थिति",
     "selectService": "सेवा चुनें",
     "chooseService": "चुनें कि आप किस सेवा के लिए चेक-इन कर रहे हैं",
     "loadingServices": "सेवाएं लोड हो रही हैं...",
