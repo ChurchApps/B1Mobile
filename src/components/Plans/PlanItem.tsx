@@ -9,8 +9,9 @@ export interface PlanItemInterface {
   label: string;
   description?: string;
   seconds: number;
-  itemType: "header" | "song" | "arrangementKey" | "item";
+  itemType: "header" | "song" | "arrangementKey" | "item" | "action";
   relatedId?: string;
+  link?: string;
   children?: PlanItemInterface[];
 }
 
@@ -82,6 +83,7 @@ export const PlanItem = React.memo((props: Props) => {
       case "arrangementKey":
         return getSongRow();
       case "item":
+      case "action":
         return getItemRow();
       default:
         return null;

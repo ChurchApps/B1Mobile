@@ -291,6 +291,8 @@ export interface PlanInterface {
   name?: string;
   serviceDate?: Date;
   notes?: string;
+  contentType?: string;
+  contentId?: string;
 }
 export interface PositionInterface {
   id?: string;
