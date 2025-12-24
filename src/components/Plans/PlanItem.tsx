@@ -3,13 +3,14 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants } from "../../../src/helpers/Constants";
 import { SongDialog } from "./SongDialog";
+import { AddOnDialog } from "./AddOnDialog";
 
 export interface PlanItemInterface {
   id: string;
   label: string;
   description?: string;
   seconds: number;
-  itemType: "header" | "song" | "arrangementKey" | "item" | "action";
+  itemType: "header" | "song" | "arrangementKey" | "item" | "action" | "addOn";
   relatedId?: string;
   link?: string;
   children?: PlanItemInterface[];
@@ -22,6 +23,7 @@ interface Props {
 
 export const PlanItem = React.memo((props: Props) => {
   const [showSongDetails, setShowSongDetails] = React.useState(false);
+  const [showAddOnDetails, setShowAddOnDetails] = React.useState(false);
 
   const itemContainerStyle = useMemo(() => [styles.itemContainer, props.isLast && { borderBottomWidth: 0 }], [props.isLast]);
 
@@ -42,6 +44,14 @@ export const PlanItem = React.memo((props: Props) => {
 
   const handleSongClose = useCallback(() => {
     setShowSongDetails(false);
+  }, []);
+
+  const handleAddOnPress = useCallback(() => {
+    setShowAddOnDetails(true);
+  }, []);
+
+  const handleAddOnClose = useCallback(() => {
+    setShowAddOnDetails(false);
   }, []);
 
   const getHeaderRow = useCallback(() => <View style={styles.headerContainer}>{renderedChildren}</View>, [renderedChildren]);
@@ -75,6 +85,26 @@ export const PlanItem = React.memo((props: Props) => {
     [itemContainerStyle, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleSongPress, handleSongClose, showSongDetails]
   );
 
+  const getAddOnRow = useCallback(
+    () => (
+      <View style={itemContainerStyle}>
+        <Text style={styles.timeText}>{formattedTime}</Text>
+        <View style={styles.contentContainer}>
+          {props.planItem.relatedId ? (
+            <TouchableOpacity onPress={handleAddOnPress}>
+              <Text style={[styles.labelText, styles.songLink]}>{props.planItem.label}</Text>
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.labelText}>{props.planItem.label}</Text>
+          )}
+          <Text style={styles.descriptionText}>{props.planItem.description || " "}</Text>
+        </View>
+        {showAddOnDetails && <AddOnDialog addOnId={props.planItem.relatedId} addOnName={props.planItem.label} onClose={handleAddOnClose} />}
+      </View>
+    ),
+    [itemContainerStyle, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleAddOnPress, handleAddOnClose, showAddOnDetails]
+  );
+
   const planItemContent = useMemo(() => {
     switch (props.planItem.itemType) {
       case "header":
@@ -82,13 +112,15 @@ export const PlanItem = React.memo((props: Props) => {
       case "song":
       case "arrangementKey":
         return getSongRow();
+      case "addOn":
+        return getAddOnRow();
       case "item":
       case "action":
         return getItemRow();
       default:
         return null;
     }
-  }, [props.planItem.itemType, getHeaderRow, getSongRow, getItemRow]);
+  }, [props.planItem.itemType, getHeaderRow, getSongRow, getAddOnRow, getItemRow]);
 
   return <>{planItemContent}</>;
 });

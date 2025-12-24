@@ -5,6 +5,7 @@ import { Constants } from "../../../src/helpers/Constants";
 import type { PlanItemInterface } from "./PlanItem";
 import { ActionDialog } from "./ActionDialog";
 import { LessonDialog } from "./LessonDialog";
+import { AddOnDialog } from "./AddOnDialog";
 
 interface Props {
   lessonItems: PlanItemInterface[];
@@ -16,6 +17,8 @@ export const LessonPreview = React.memo((props: Props) => {
   const [actionName, setActionName] = useState<string>("");
   const [lessonSectionId, setLessonSectionId] = useState<string | null>(null);
   const [sectionName, setSectionName] = useState<string>("");
+  const [addOnId, setAddOnId] = useState<string | null>(null);
+  const [addOnName, setAddOnName] = useState<string>("");
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -47,6 +50,13 @@ export const LessonPreview = React.memo((props: Props) => {
     }
   }, []);
 
+  const handleAddOnClick = useCallback((item: PlanItemInterface) => {
+    if (item.relatedId) {
+      setAddOnId(item.relatedId);
+      setAddOnName(item.label || "");
+    }
+  }, []);
+
   const renderPreviewItem = (item: PlanItemInterface, isChild: boolean = false) => {
     if (item.itemType === "header") {
       const sectionDuration = getSectionDuration(item);
@@ -65,13 +75,20 @@ export const LessonPreview = React.memo((props: Props) => {
 
     const isAction = item.itemType === "action" && item.relatedId;
     const isLessonSection = item.itemType === "item" && item.relatedId;
-    const isClickable = isAction || isLessonSection;
+    const isAddOn = item.itemType === "addOn" && item.relatedId;
+    const isClickable = isAction || isLessonSection || isAddOn;
+
+    const handleClick = () => {
+      if (isAction) handleActionClick(item);
+      else if (isAddOn) handleAddOnClick(item);
+      else handleSectionClick(item);
+    };
 
     return (
       <View key={item.id} style={[styles.itemRow, isChild && styles.childItem]}>
         <View style={styles.itemContent}>
           {isClickable ? (
-            <TouchableOpacity onPress={() => isAction ? handleActionClick(item) : handleSectionClick(item)}>
+            <TouchableOpacity onPress={handleClick}>
               <Text style={styles.itemLabelLink}>{item.label}</Text>
             </TouchableOpacity>
           ) : (
@@ -98,6 +115,7 @@ export const LessonPreview = React.memo((props: Props) => {
       </View>
       {actionId && <ActionDialog actionId={actionId} actionName={actionName} onClose={() => setActionId(null)} />}
       {lessonSectionId && <LessonDialog sectionId={lessonSectionId} sectionName={sectionName} onClose={() => setLessonSectionId(null)} />}
+      {addOnId && <AddOnDialog addOnId={addOnId} addOnName={addOnName} onClose={() => setAddOnId(null)} />}
     </>
   );
 });
