@@ -2,18 +2,21 @@ import React from "react";
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { WebView } from "react-native-webview";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants } from "../../../src/helpers/Constants";
+import { Constants, ExternalVenueRefInterface } from "../../../src/helpers";
 import { EnvironmentHelper } from "../../../src/helpers/EnvironmentHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 
 interface Props {
   actionId: string;
   actionName?: string;
+  externalRef?: ExternalVenueRefInterface | null;
   onClose: () => void;
 }
 
-export const ActionDialog = ({ actionId, actionName, onClose }: Props) => {
-  const iframeUrl = `${EnvironmentHelper.LessonsRoot}/embed/action/${actionId}`;
+export const ActionDialog = ({ actionId, actionName, externalRef, onClose }: Props) => {
+  const iframeUrl = externalRef
+    ? `${EnvironmentHelper.LessonsRoot}/embed/external/${externalRef.externalProviderId}/action/${actionId}`
+    : `${EnvironmentHelper.LessonsRoot}/embed/action/${actionId}`;
 
   return (
     <Modal visible={!!actionId} animationType="slide" transparent={true} onRequestClose={onClose}>

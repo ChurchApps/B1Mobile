@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants } from "../../../src/helpers/Constants";
+import { Constants, ExternalVenueRefInterface } from "../../../src/helpers";
 import type { PlanItemInterface } from "./PlanItem";
 import { ActionDialog } from "./ActionDialog";
 import { LessonDialog } from "./LessonDialog";
@@ -10,6 +10,7 @@ import { AddOnDialog } from "./AddOnDialog";
 interface Props {
   lessonItems: PlanItemInterface[];
   venueName: string;
+  externalRef?: ExternalVenueRefInterface | null;
 }
 
 export const LessonPreview = React.memo((props: Props) => {
@@ -113,9 +114,9 @@ export const LessonPreview = React.memo((props: Props) => {
           {props.lessonItems.map((item) => renderPreviewItem(item))}
         </View>
       </View>
-      {actionId && <ActionDialog actionId={actionId} actionName={actionName} onClose={() => setActionId(null)} />}
-      {lessonSectionId && <LessonDialog sectionId={lessonSectionId} sectionName={sectionName} onClose={() => setLessonSectionId(null)} />}
-      {addOnId && <AddOnDialog addOnId={addOnId} addOnName={addOnName} onClose={() => setAddOnId(null)} />}
+      {actionId && <ActionDialog actionId={actionId} actionName={actionName} externalRef={props.externalRef} onClose={() => setActionId(null)} />}
+      {lessonSectionId && <LessonDialog sectionId={lessonSectionId} sectionName={sectionName} externalRef={props.externalRef} onClose={() => setLessonSectionId(null)} />}
+      {addOnId && <AddOnDialog addOnId={addOnId} addOnName={addOnName} externalRef={props.externalRef} onClose={() => setAddOnId(null)} />}
     </>
   );
 });

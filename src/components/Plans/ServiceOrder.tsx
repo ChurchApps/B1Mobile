@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { PlanInterface, ApiHelper } from "../../../src/helpers";
+import { PlanInterface, ApiHelper, ExternalVenueRefInterface } from "../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { globalStyles } from "../../../src/helpers/GlobalStyles";
 import { useQuery } from "@tanstack/react-query";
@@ -21,7 +21,19 @@ interface LessonPreviewResponse {
 export const ServiceOrder = (props: Props) => {
   const currentUserChurch = useCurrentUserChurch();
 
-  const hasAssociatedLesson = props.plan?.contentType === "venue" && !!props.plan?.contentId;
+  const hasAssociatedLesson = (props.plan?.contentType === "venue" || props.plan?.contentType === "externalVenue") && !!props.plan?.contentId;
+  const isExternalVenue = props.plan?.contentType === "externalVenue";
+
+  const getExternalRef = (): ExternalVenueRefInterface | null => {
+    if (!isExternalVenue || !props.plan?.contentId) return null;
+    try {
+      return JSON.parse(props.plan.contentId);
+    } catch {
+      return null;
+    }
+  };
+
+  const externalRef = getExternalRef();
 
   // Use react-query for plan items
   const { data: planItems = [] } = useQuery<PlanItemInterface[]>({
@@ -34,10 +46,17 @@ export const ServiceOrder = (props: Props) => {
 
   // Use react-query for lesson preview items (only when no plan items exist)
   const { data: lessonPreviewData } = useQuery<LessonPreviewResponse>({
-    queryKey: [`/venues/public/planItems/${props.plan?.contentId}`, "LessonsApi"],
+    queryKey: isExternalVenue && externalRef
+      ? [`/externalProviders/${externalRef.externalProviderId}/venue/${externalRef.venueId}/planItems`, "LessonsApi"]
+      : [`/venues/public/planItems/${props.plan?.contentId}`, "LessonsApi"],
     queryFn: async () => {
-      const response = await ApiHelper.getAnonymous(`/venues/public/planItems/${props.plan?.contentId}`, "LessonsApi");
-      return response;
+      if (isExternalVenue && externalRef) {
+        return await ApiHelper.getAnonymous(
+          `/externalProviders/${externalRef.externalProviderId}/venue/${externalRef.venueId}/planItems`,
+          "LessonsApi"
+        );
+      }
+      return await ApiHelper.getAnonymous(`/venues/public/planItems/${props.plan?.contentId}`, "LessonsApi");
     },
     enabled: hasAssociatedLesson && planItems.length === 0,
     staleTime: 15 * 60 * 1000,
@@ -54,7 +73,7 @@ export const ServiceOrder = (props: Props) => {
 
   const renderContent = () => {
     if (showPreviewMode) {
-      return <LessonPreview lessonItems={lessonPreviewData!.items} venueName={lessonPreviewData!.venueName} />;
+      return <LessonPreview lessonItems={lessonPreviewData!.items} venueName={lessonPreviewData!.venueName} externalRef={externalRef} />;
     }
     if (listData.length > 0) {
       return <FlatList data={listData} renderItem={renderPlanItem} keyExtractor={keyExtractor} initialNumToRender={5} windowSize={5} removeClippedSubviews={true} maxToRenderPerBatch={3} updateCellsBatchingPeriod={100} showsVerticalScrollIndicator={false} scrollEnabled={false} contentContainerStyle={{ flexGrow: 1 }} />;

@@ -294,6 +294,14 @@ export interface PlanInterface {
   contentType?: string;
   contentId?: string;
 }
+
+export interface ExternalVenueRefInterface {
+  externalProviderId: string;
+  programId: string;
+  studyId: string;
+  lessonId: string;
+  venueId: string;
+}
 export interface PositionInterface {
   id?: string;
   churchId?: string;
