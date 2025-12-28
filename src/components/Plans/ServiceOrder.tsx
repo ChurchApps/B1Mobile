@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { type PlanInterface, type PlanItemInterface, LessonsContentProvider } from "@churchapps/helpers";
+import { type PlanInterface, type PlanItemInterface, type VenuePlanItemsResponseInterface, LessonsContentProvider } from "@churchapps/helpers";
 import { ApiHelper } from "../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { globalStyles } from "../../../src/helpers/GlobalStyles";
@@ -13,9 +13,9 @@ interface Props {
   plan: PlanInterface;
 }
 
-interface LessonPreviewResponse {
-  venueName: string;
-  items: PlanItemInterface[];
+// Extended interface for planItems with startTime
+interface PlanItemWithStartTime extends PlanItemInterface {
+  startTime: number;
 }
 
 export const ServiceOrder = (props: Props) => {
@@ -40,7 +40,7 @@ export const ServiceOrder = (props: Props) => {
   });
 
   // Use react-query for lesson preview items (only when no plan items exist)
-  const { data: lessonPreviewData } = useQuery<LessonPreviewResponse>({
+  const { data: lessonPreviewData } = useQuery<VenuePlanItemsResponseInterface>({
     queryKey: ["lessonPreview", props.plan?.id, props.plan?.contentType, props.plan?.contentId],
     queryFn: fetchVenuePlanItems,
     enabled: hasAssociatedLesson && planItems.length === 0,
@@ -50,18 +50,25 @@ export const ServiceOrder = (props: Props) => {
 
   const showPreviewMode = hasAssociatedLesson && planItems.length === 0 && (lessonPreviewData?.items?.length ?? 0) > 0;
 
-  const renderPlanItem = useCallback(({ item: planItem, index }: { item: PlanItemInterface; index: number }) => <PlanItem planItem={planItem} isLast={index === planItems.length - 1} />, [planItems.length]);
+  const planItemsWithStartTime = useMemo(() => {
+    let cumulativeTime = 0;
+    return planItems.map((pi) => {
+      const startTime = cumulativeTime;
+      cumulativeTime += pi.seconds || 0;
+      return { ...pi, startTime };
+    });
+  }, [planItems]);
 
-  const keyExtractor = useCallback((item: PlanItemInterface) => item.id?.toString() || "", []);
+  const renderPlanItem = useCallback(({ item: planItem, index }: { item: PlanItemWithStartTime; index: number }) => <PlanItem planItem={planItem} isLast={index === planItems.length - 1} startTime={planItem.startTime} />, [planItems.length]);
 
-  const listData = useMemo(() => planItems || [], [planItems]);
+  const keyExtractor = useCallback((item: PlanItemWithStartTime) => item.id?.toString() || "", []);
 
   const renderContent = () => {
-    if (showPreviewMode) {
-      return <LessonPreview lessonItems={lessonPreviewData!.items} venueName={lessonPreviewData!.venueName} externalRef={externalRef} />;
+    if (showPreviewMode && lessonPreviewData?.items && lessonPreviewData?.venueName) {
+      return <LessonPreview lessonItems={lessonPreviewData.items} venueName={lessonPreviewData.venueName} externalRef={externalRef} />;
     }
-    if (listData.length > 0) {
-      return <FlatList data={listData} renderItem={renderPlanItem} keyExtractor={keyExtractor} initialNumToRender={5} windowSize={5} removeClippedSubviews={true} maxToRenderPerBatch={3} updateCellsBatchingPeriod={100} showsVerticalScrollIndicator={false} scrollEnabled={false} contentContainerStyle={{ flexGrow: 1 }} />;
+    if (planItemsWithStartTime.length > 0) {
+      return <FlatList data={planItemsWithStartTime} renderItem={renderPlanItem} keyExtractor={keyExtractor} initialNumToRender={5} windowSize={5} removeClippedSubviews={true} maxToRenderPerBatch={3} updateCellsBatchingPeriod={100} showsVerticalScrollIndicator={false} scrollEnabled={false} contentContainerStyle={{ flexGrow: 1 }} />;
     }
     return null;
   };
