@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { PlanInterface, ApiHelper, ExternalVenueRefInterface } from "../../../src/helpers";
+import { type PlanInterface, type PlanItemInterface, LessonsContentProvider } from "@churchapps/helpers";
+import { ApiHelper } from "../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { globalStyles } from "../../../src/helpers/GlobalStyles";
 import { useQuery } from "@tanstack/react-query";
 import { PlanItem } from "./PlanItem";
-import type { PlanItemInterface } from "./PlanItem";
 import { LessonPreview } from "./LessonPreview";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 
@@ -21,19 +21,14 @@ interface LessonPreviewResponse {
 export const ServiceOrder = (props: Props) => {
   const currentUserChurch = useCurrentUserChurch();
 
-  const hasAssociatedLesson = (props.plan?.contentType === "venue" || props.plan?.contentType === "externalVenue") && !!props.plan?.contentId;
-  const isExternalVenue = props.plan?.contentType === "externalVenue";
+  // Use LessonsContentProvider from helpers
+  const lessonsProvider = useMemo(() => new LessonsContentProvider(), []);
+  const hasAssociatedLesson = lessonsProvider.hasAssociatedLesson(props.plan);
+  const externalRef = lessonsProvider.getExternalRef(props.plan);
 
-  const getExternalRef = (): ExternalVenueRefInterface | null => {
-    if (!isExternalVenue || !props.plan?.contentId) return null;
-    try {
-      return JSON.parse(props.plan.contentId);
-    } catch {
-      return null;
-    }
-  };
-
-  const externalRef = getExternalRef();
+  const fetchVenuePlanItems = useCallback(async () => {
+    return await lessonsProvider.fetchVenuePlanItems(props.plan);
+  }, [lessonsProvider, props.plan]);
 
   // Use react-query for plan items
   const { data: planItems = [] } = useQuery<PlanItemInterface[]>({
@@ -46,18 +41,8 @@ export const ServiceOrder = (props: Props) => {
 
   // Use react-query for lesson preview items (only when no plan items exist)
   const { data: lessonPreviewData } = useQuery<LessonPreviewResponse>({
-    queryKey: isExternalVenue && externalRef
-      ? [`/externalProviders/${externalRef.externalProviderId}/venue/${externalRef.venueId}/planItems`, "LessonsApi"]
-      : [`/venues/public/planItems/${props.plan?.contentId}`, "LessonsApi"],
-    queryFn: async () => {
-      if (isExternalVenue && externalRef) {
-        return await ApiHelper.getAnonymous(
-          `/externalProviders/${externalRef.externalProviderId}/venue/${externalRef.venueId}/planItems`,
-          "LessonsApi"
-        );
-      }
-      return await ApiHelper.getAnonymous(`/venues/public/planItems/${props.plan?.contentId}`, "LessonsApi");
-    },
+    queryKey: ["lessonPreview", props.plan?.id, props.plan?.contentType, props.plan?.contentId],
+    queryFn: fetchVenuePlanItems,
     enabled: hasAssociatedLesson && planItems.length === 0,
     staleTime: 15 * 60 * 1000,
     gcTime: 60 * 60 * 1000
