@@ -74,9 +74,9 @@ export const LessonPreview = React.memo((props: Props) => {
       );
     }
 
-    const isAction = item.itemType === "action" && item.relatedId;
+    const isAction = item.itemType === "lessonAction" && item.relatedId;
     const isLessonSection = item.itemType === "item" && item.relatedId;
-    const isAddOn = item.itemType === "addOn" && item.relatedId;
+    const isAddOn = item.itemType === "lessonAddOn" && item.relatedId;
     const isClickable = isAction || isLessonSection || isAddOn;
 
     const handleClick = () => {

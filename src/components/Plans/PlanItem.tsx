@@ -202,9 +202,9 @@ export const PlanItem = React.memo((props: Props) => {
       case "song":
       case "arrangementKey":
         return getSongRow();
-      case "action":
+      case "lessonAction":
         return getActionRow();
-      case "addOn":
+      case "lessonAddOn":
         return getAddOnRow();
       case "lessonSection":
         return getLessonSectionRow();
