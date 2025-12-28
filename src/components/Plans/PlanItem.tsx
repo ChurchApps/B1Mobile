@@ -195,9 +195,8 @@ export const PlanItem = React.memo((props: Props) => {
       case "lessonSection":
         return getLessonSectionRow();
       case "item":
-        return getItemRow();
       default:
-        return null;
+        return getItemRow();
     }
   }, [props.planItem.itemType, getHeaderRow, getSongRow, getActionRow, getAddOnRow, getLessonSectionRow, getItemRow]);
 
