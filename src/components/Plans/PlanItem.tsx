@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { type PlanItemInterface } from "@churchapps/helpers";
+import { type PlanItemInterface, PlanHelper } from "@churchapps/helpers";
 export type { PlanItemInterface };
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants } from "../../../src/helpers/Constants";
@@ -24,23 +24,9 @@ export const PlanItem = React.memo((props: Props) => {
 
   const itemContainerStyle = useMemo(() => [styles.itemContainer, props.isLast && { borderBottomWidth: 0 }], [props.isLast]);
 
-  const formatTime = useCallback((seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
-  }, []);
+  const formattedTime = useMemo(() => PlanHelper.formatTime(props.planItem.seconds || 0), [props.planItem.seconds]);
 
-  const formattedTime = useMemo(() => formatTime(props.planItem.seconds || 0), [props.planItem.seconds, formatTime]);
-
-  const formattedStartTime = useMemo(() => formatTime(props.startTime || 0), [props.startTime, formatTime]);
-
-  const getSectionDuration = useCallback((planItem: PlanItemInterface) => {
-    let result = 0;
-    planItem.children?.forEach((c) => {
-      result += c.seconds || 0;
-    });
-    return result;
-  }, []);
+  const formattedStartTime = useMemo(() => PlanHelper.formatTime(props.startTime || 0), [props.startTime]);
 
   const renderedChildren = useMemo(() => {
     if (!props.planItem.children?.length) return null;
@@ -62,7 +48,7 @@ export const PlanItem = React.memo((props: Props) => {
   const handleLessonClose = useCallback(() => setShowLessonDetails(false), []);
 
   const getHeaderRow = useCallback(() => {
-    const sectionDuration = getSectionDuration(props.planItem);
+    const sectionDuration = PlanHelper.getSectionDuration(props.planItem);
     return (
       <View style={styles.headerContainer}>
         <View style={styles.headerRow}>
@@ -70,14 +56,14 @@ export const PlanItem = React.memo((props: Props) => {
           {sectionDuration > 0 && (
             <View style={styles.durationContainer}>
               <MaterialIcons name="schedule" size={14} color="#999" />
-              <Text style={styles.durationText}>{formatTime(sectionDuration)}</Text>
+              <Text style={styles.durationText}>{PlanHelper.formatTime(sectionDuration)}</Text>
             </View>
           )}
         </View>
         {renderedChildren}
       </View>
     );
-  }, [props.planItem, renderedChildren, getSectionDuration, formatTime]);
+  }, [props.planItem, renderedChildren]);
 
   const getItemRow = useCallback(
     () => (

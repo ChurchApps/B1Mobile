@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { PlanHelper } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants, ExternalVenueRefInterface } from "../../../src/helpers";
 import type { PlanItemInterface } from "./PlanItem";
@@ -20,22 +21,6 @@ export const LessonPreview = React.memo((props: Props) => {
   const [sectionName, setSectionName] = useState<string>("");
   const [addOnId, setAddOnId] = useState<string | null>(null);
   const [addOnName, setAddOnName] = useState<string>("");
-
-  const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
-  };
-
-  const getSectionDuration = (section: PlanItemInterface): number => {
-    let totalSeconds = 0;
-    section.children?.forEach((child) => {
-      if (child.seconds) {
-        totalSeconds += child.seconds;
-      }
-    });
-    return totalSeconds;
-  };
 
   const handleActionClick = useCallback((item: PlanItemInterface) => {
     if (item.relatedId) {
@@ -60,13 +45,13 @@ export const LessonPreview = React.memo((props: Props) => {
 
   const renderPreviewItem = (item: PlanItemInterface, isChild: boolean = false) => {
     if (item.itemType === "header") {
-      const sectionDuration = getSectionDuration(item);
+      const sectionDuration = PlanHelper.getSectionDuration(item);
       return (
         <View key={item.id} style={styles.headerSection}>
           <View style={styles.headerRow}>
             <Text style={styles.headerLabel}>{item.label}</Text>
             {sectionDuration > 0 && (
-              <Text style={styles.headerTime}>{formatTime(sectionDuration)}</Text>
+              <Text style={styles.headerTime}>{PlanHelper.formatTime(sectionDuration)}</Text>
             )}
           </View>
           {item.children?.map((child) => renderPreviewItem(child, true))}
@@ -99,8 +84,8 @@ export const LessonPreview = React.memo((props: Props) => {
             <Text style={styles.itemDescription}>{item.description}</Text>
           ) : null}
         </View>
-        {item.seconds > 0 && (
-          <Text style={styles.itemTime}>{formatTime(item.seconds)}</Text>
+        {(item.seconds ?? 0) > 0 && (
+          <Text style={styles.itemTime}>{PlanHelper.formatTime(item.seconds ?? 0)}</Text>
         )}
       </View>
     );
