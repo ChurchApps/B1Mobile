@@ -39,10 +39,23 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
 
   const convertBase64 = (uri: string) =>
     new Promise((resolve, reject) => {
+      if (!uri) {
+        reject(new Error("Invalid file URI"));
+        return;
+      }
+
       const reader = new FileReader();
       fetch(uri)
-        .then(res => res.blob())
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Failed to fetch file: ${res.status}`);
+          }
+          return res.blob();
+        })
         .then(blob => {
+          if (!blob || blob.size === 0) {
+            throw new Error("The specified blob is invalid or empty");
+          }
           reader.readAsDataURL(blob);
           reader.onload = () => resolve(reader.result);
           reader.onerror = error => reject(error);

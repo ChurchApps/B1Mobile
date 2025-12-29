@@ -42,7 +42,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [showMethodMenu, setShowMethodMenu] = useState(false);
 
   // Determine church ID for funds query
-  const churchId = !currentUserChurch ? currentUserChurch?.church?.id || "" : !currentUserChurch.person?.id ? (currentUserChurch.church.id ?? "") : currentUserChurch?.church?.id || "";
+  const churchId = currentUserChurch?.church?.id || "";
 
   // Use react-query for funds
   const { data: funds = [] } = useQuery<FundInterface[]>({
@@ -69,13 +69,13 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   ];
 
   const initDonation: StripeDonationInterface = {
-    id: pm[0]?.id,
-    type: pm[0]?.type,
-    customerId: customerId,
+    id: pm?.[0]?.id || "",
+    type: pm?.[0]?.type || "card",
+    customerId: customerId || "",
     person: {
       id: person?.id || "",
       email: user?.email || "",
-      name: user?.firstName + " " + user?.lastName
+      name: (user?.firstName || "") + " " + (user?.lastName || "")
     },
     amount: 0,
     billing_cycle_anchor: +new Date(),

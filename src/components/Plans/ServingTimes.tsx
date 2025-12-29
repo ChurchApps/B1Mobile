@@ -29,9 +29,20 @@ export const ServingTimes = ({ plans, positions, assignments, isLoading = false 
 
     const data: any = [];
     assignments.forEach(assignment => {
-      const position = positions.find(p => p.id === assignment.positionId);
-      const plan = plans.find(p => p?.id === position?.planId);
-      if (position && plan) data.push({ assignmentId: assignment?.id, planId: plan?.id, planName: plan?.name, serviceDate: plan.serviceDate, position: position?.name, status: assignment.status || "Unconfirmed" });
+      if (!assignment?.positionId) return;
+      const position = positions.find(p => p?.id === assignment.positionId);
+      if (!position?.planId) return;
+      const plan = plans.find(p => p?.id === position.planId);
+      if (position && plan && plan.id) {
+        data.push({
+          assignmentId: assignment?.id || "",
+          planId: plan.id,
+          planName: plan?.name || "Unnamed Plan",
+          serviceDate: plan.serviceDate,
+          position: position?.name || "Unknown Position",
+          status: assignment.status || "Unconfirmed"
+        });
+      }
     });
     ArrayHelper.sortBy(data, "serviceDate", true);
     return data;

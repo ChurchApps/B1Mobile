@@ -27,22 +27,24 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
   }, []);
 
   const upcomingDates = useMemo(() => {
-    if (!assignments || !positions || !plans || !times) return [];
+    if (!assignments?.length || !positions?.length || !plans?.length) return [];
 
     const data: any = [];
     assignments.forEach(assignment => {
-      const position = positions.find(p => p.id === assignment.positionId);
-      const plan = plans.find(p => p?.id === position?.planId);
-      const time = times.find(t => t.planId === plan?.id);
+      if (!assignment?.positionId) return;
+      const position = positions.find(p => p?.id === assignment.positionId);
+      if (!position?.planId) return;
+      const plan = plans.find(p => p?.id === position.planId);
+      const time = times?.find(t => t?.planId === plan?.id);
 
-      if (position && plan && time) {
+      if (position && plan && plan.id) {
         data.push({
-          assignmentId: assignment?.id,
-          planId: plan?.id,
-          planName: plan?.name,
+          assignmentId: assignment?.id || "",
+          planId: plan.id,
+          planName: plan?.name || "Unnamed Plan",
           serviceDate: plan.serviceDate,
-          position: position?.name,
-          time: time?.displayName,
+          position: position?.name || "Unknown Position",
+          time: time?.displayName || "",
           status: assignment.status || "Unconfirmed"
         });
       }
