@@ -1,7 +1,7 @@
 {
   "name": "B1Mobile",
   "main": "expo-router/entry",
-  "version": "3.4.3",
+  "version": "3.4.5",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",

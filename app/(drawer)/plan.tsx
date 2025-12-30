@@ -158,7 +158,7 @@ const Plan = () => {
       </Card>
       <Card style={styles.statCard}>
         <Card.Content style={styles.statContent}>
-          <MaterialIcons name="event-available" size={32} color="#70DC87" />
+          <MaterialIcons name="event-available" size={32} color="#388E3C" />
           {isLoading ? (
             <InlineLoader text={t("common.loading")} />
           ) : (

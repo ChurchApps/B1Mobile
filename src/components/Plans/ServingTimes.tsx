@@ -104,8 +104,9 @@ export const ServingTimes = ({ plans, positions, assignments, isLoading = false 
 
 const getStatusColor = (status: string) => {
   switch (status?.toLowerCase()) {
+    case "accepted":
     case "confirmed":
-      return "#70DC87";
+      return "#388E3C";
     case "declined":
       return "#B0120C";
     case "pending":

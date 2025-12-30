@@ -22,7 +22,7 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
     switch (status?.toLowerCase()) {
       case "accepted":
       case "confirmed":
-        return "#70DC87";
+        return "#388E3C";
       case "declined":
         return "#B0120C";
       default:
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   },
   acceptButton: {
     flex: 1,
-    backgroundColor: "#0D47A1",
+    backgroundColor: "#388E3C",
     borderRadius: 8
   },
   acceptButtonText: {
