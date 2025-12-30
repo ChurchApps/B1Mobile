@@ -4,6 +4,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import DatePicker from "react-native-date-picker";
+import { useTranslation } from "react-i18next";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { Card, Button } from "react-native-paper";
 import { InlineLoader } from "../common/LoadingComponents";
@@ -19,6 +20,7 @@ interface BlockoutDate {
 }
 
 export const BlockoutDates = () => {
+  const { t } = useTranslation();
   const fadeAnim = new Animated.Value(0);
   const currentUserChurch = useCurrentUserChurch();
 
@@ -48,10 +50,10 @@ export const BlockoutDates = () => {
   const upcomingBlockoutDates = blockoutDates.filter((date: BlockoutDate) => dayjs(date.endDate).isAfter(today) || dayjs(date.endDate).isSame(today, "day"));
 
   const deleteBlockout = (id: string) => {
-    Alert.alert("Delete Blockout", "Are you sure you want to delete this blockout date?", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(t("plans.deleteBlockout"), t("plans.deleteBlockoutConfirm"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Delete",
+        text: t("common.delete"),
         style: "destructive",
         onPress: async () => {
           try {
@@ -81,16 +83,16 @@ export const BlockoutDates = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <MaterialIcons name="event-busy" style={styles.headerIcon} size={24} />
-        <Text style={styles.headerTitle}>Blockout Dates</Text>
+        <Text style={styles.headerTitle}>{t("plans.blockoutDates")}</Text>
       </View>
 
       <Card style={styles.contentCard}>
         <Card.Content>
           {showLoading ? (
-            <InlineLoader size="large" text="Loading blockout dates..." />
+            <InlineLoader size="large" text={t("plans.loadingBlockoutDates")} />
           ) : showForm ? (
             <View>
-              <Text style={styles.formLabel}>Start Date</Text>
+              <Text style={styles.formLabel}>{t("plans.startDate")}</Text>
               <TouchableOpacity style={styles.input} onPress={() => setOpenStartPicker(true)}>
                 <Text>{dayjs(startDate).format("YYYY-MM-DD")}</Text>
               </TouchableOpacity>
@@ -106,7 +108,7 @@ export const BlockoutDates = () => {
                 onCancel={() => setOpenStartPicker(false)}
               />
 
-              <Text style={styles.formLabel}>End Date</Text>
+              <Text style={styles.formLabel}>{t("plans.endDate")}</Text>
               <TouchableOpacity style={styles.input} onPress={() => setOpenEndPicker(true)}>
                 <Text>{dayjs(endDate).format("YYYY-MM-DD")}</Text>
               </TouchableOpacity>
@@ -124,31 +126,30 @@ export const BlockoutDates = () => {
 
               <View style={styles.formButtons}>
                 <Button mode="contained" onPress={saveBlockout}>
-                  Save
+                  {t("common.save")}
                 </Button>
                 <Button mode="outlined" onPress={() => setShowForm(false)}>
-                  Cancel
+                  {t("common.cancel")}
                 </Button>
               </View>
             </View>
           ) : upcomingBlockoutDates.length === 0 ? (
             <View style={styles.emptyStateContent}>
               <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-              <Text style={styles.emptyStateText}>No blockout dates set</Text>
-              <Text style={styles.emptyStateSubtext}>Block dates when you're unavailable to serve</Text>
+              <Text style={styles.emptyStateText}>{t("plans.noBlockoutDatesSet")}</Text>
+              <Text style={styles.emptyStateSubtext}>{t("plans.blockDatesUnavailable")}</Text>
               <Button mode="contained" onPress={() => setShowForm(true)} style={styles.addButton} labelStyle={styles.addButtonText} icon="plus">
-                Add Blockout Date
+                {t("plans.addBlockoutDate")}
               </Button>
             </View>
           ) : (
             <View style={styles.cardsList}>
               <View style={styles.listHeader}>
                 <Text style={styles.listHeaderText}>
-                  {upcomingBlockoutDates.length} blockout date
-                  {upcomingBlockoutDates.length > 1 ? "s" : ""}
+                  {t("plans.blockoutDateCount", { count: upcomingBlockoutDates.length })}
                 </Text>
                 <Button mode="text" onPress={() => setShowForm(true)} labelStyle={{ color: "#0D47A1" }} icon="plus">
-                  Add New
+                  {t("plans.addNew")}
                 </Button>
               </View>
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal, View, StyleSheet, FlatList, KeyboardAvoidingView, Platform, Dimensions, ActivityIndicator, RefreshControl, StatusBar, TouchableOpacity, Pressable } from "react-native";
 import { Appbar, Text, IconButton, Avatar as PaperAvatar, Surface } from "react-native-paper";
+import { useTranslation } from "react-i18next";
 import { ApiHelper, ConversationInterface, ArrayHelper } from "../../helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { useQuery } from "@tanstack/react-query";
@@ -32,6 +33,7 @@ interface ChatMessage extends MessageInterface {
 const PAGE_SIZE = 20;
 
 const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, groupId, groupName }) => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [page, setPage] = useState(1);
@@ -301,8 +303,8 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
       {!loadingMore && (
         <View style={styles.emptyState}>
           <PaperAvatar.Icon size={64} icon="chat-outline" style={styles.emptyIcon} />
-          <Text style={styles.emptyTitle}>Start the conversation</Text>
-          <Text style={styles.emptySubtitle}>Be the first to share something with the group</Text>
+          <Text style={styles.emptyTitle}>{t("groups.startConversation")}</Text>
+          <Text style={styles.emptySubtitle}>{t("groups.beFirstToShare")}</Text>
         </View>
       )}
     </>
@@ -357,7 +359,7 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
           <PaperTextInput
             mode="outlined"
             ref={inputRef}
-            placeholder="Send a message"
+            placeholder={t("groups.sendMessage")}
             value={newMessage}
             onChangeText={setNewMessage}
             multiline

@@ -4,8 +4,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { RadioButtonGroup } from "../RadioButton";
+import { useTranslation } from "react-i18next";
 
-const options = ["Just this date", "This and all following dates", "All dates"];
 const values = ["this", "future", "all"];
 
 interface Props {
@@ -15,13 +15,16 @@ interface Props {
 }
 
 export default function EditRecurringModal(props: Props) {
+  const { t } = useTranslation();
   const [selectedOption, setSelectedOption] = useState(values[0]);
   const [editType, setEditType] = useState(values[0]);
+
+  const options = [t("events.justThisDate"), t("events.thisAndFollowing"), t("events.allDates")];
 
   return (
     <View>
       <View style={styles.labelContainer}>
-        <Text style={styles.labelText}>{props.action === "delete" ? "Delete" : "Edit"} Recurring Events</Text>
+        <Text style={styles.labelText}>{props.action === "delete" ? t("events.deleteRecurringEvents") : t("events.editRecurringEvents")}</Text>
         <TouchableOpacity
           onPress={() => {
             if (props.setModal) props.setModal(false);
@@ -44,7 +47,7 @@ export default function EditRecurringModal(props: Props) {
           onPress={() => {
             if (props.onDone) props.onDone(editType);
           }}>
-          <Text style={styles.buttonsText}>SAVE</Text>
+          <Text style={styles.buttonsText}>{t("common.save").toUpperCase()}</Text>
         </TouchableOpacity>
       </View>
     </View>

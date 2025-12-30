@@ -9,6 +9,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import EditRecurringModal from "./EditRecurringModal";
 import RRuleEditor from "./RRuleEditor";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   event: EventInterface;
@@ -16,6 +17,8 @@ interface Props {
 }
 
 export default function CreateEvent(props: Props) {
+  const { t } = useTranslation();
+
   const getInitialEvent = () => {
     const baseEvent = { ...props.event };
 
@@ -52,7 +55,7 @@ export default function CreateEvent(props: Props) {
   const [openEndPicker, setOpenEndPicker] = useState(false);
 
   useScreenHeader({
-    title: event?.id ? "Edit Event" : "Create Event",
+    title: event?.id ? t("events.editEvent") : t("events.createEvent"),
     headerRight: event?.id
       ? () => (
         <View>
@@ -109,7 +112,7 @@ export default function CreateEvent(props: Props) {
       const ev = { ...event };
 
       if (!ev.title || ev.title === "") {
-        Alert.alert("Please enter a title");
+        Alert.alert(t("events.enterTitle"));
         return;
       }
 
@@ -133,7 +136,7 @@ export default function CreateEvent(props: Props) {
         })
         .catch(error => {
           setLoading(false);
-          Alert.alert("Error", "Failed to create event. Please try again.");
+          Alert.alert(t("donations.error"), t("events.failedToCreateEvent"));
           console.error("Error creating event:", error);
         });
     }
@@ -182,7 +185,7 @@ export default function CreateEvent(props: Props) {
       }
     } catch (error) {
       console.error("Error saving recurring event:", error);
-      Alert.alert("Error", "Failed to save event. Please try again.");
+      Alert.alert(t("donations.error"), t("events.failedToSaveEvent"));
     }
   };
 
@@ -216,7 +219,7 @@ export default function CreateEvent(props: Props) {
       }
     } catch (error) {
       console.error("Error deleting recurring event:", error);
-      Alert.alert("Error", "Failed to delete event. Please try again.");
+      Alert.alert(t("donations.error"), t("events.failedToDeleteEvent"));
     }
   };
 
@@ -274,7 +277,7 @@ export default function CreateEvent(props: Props) {
         })
         .catch(error => {
           console.error("Error deleting event:", error);
-          Alert.alert("Error", "Failed to delete event. Please try again.");
+          Alert.alert(t("donations.error"), t("events.failedToDeleteEvent"));
         });
     }
   };
@@ -296,11 +299,11 @@ export default function CreateEvent(props: Props) {
         {/* Title */}
         <View style={styles.fieldContainer}>
           <Text variant="titleMedium" style={styles.fieldLabel}>
-            Event Title
+            {t("events.eventTitle")}
           </Text>
           <TextInput
             mode="outlined"
-            placeholder="Enter event title"
+            placeholder={t("events.enterEventTitle")}
             value={title}
             onChangeText={text => {
               setTitle(text);
@@ -314,11 +317,11 @@ export default function CreateEvent(props: Props) {
         {/* Description */}
         <View style={styles.fieldContainer}>
           <Text variant="titleMedium" style={styles.fieldLabel}>
-            Description
+            {t("events.description")}
           </Text>
           <TextInput
             mode="outlined"
-            placeholder="Enter event description (optional)"
+            placeholder={t("events.enterEventDescription")}
             value={description}
             onChangeText={text => {
               setDescription(text);
@@ -333,13 +336,13 @@ export default function CreateEvent(props: Props) {
         {/* Date and Time */}
         <View style={styles.fieldContainer}>
           <Text variant="titleMedium" style={styles.fieldLabel}>
-            {allDay ? "Date" : "Date & Time"}
+            {allDay ? t("events.date") : t("events.dateTime")}
           </Text>
 
           <View style={styles.dateTimeContainer}>
             <View style={styles.dateTimeRow}>
               <Text variant="bodyMedium" style={styles.dateTimeLabel}>
-                Start
+                {t("events.start")}
               </Text>
               <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
                 <MaterialIcons name="event" size={16} color="#0D47A1" />
@@ -349,7 +352,7 @@ export default function CreateEvent(props: Props) {
 
             <View style={styles.dateTimeRow}>
               <Text variant="bodyMedium" style={styles.dateTimeLabel}>
-                End
+                {t("events.end")}
               </Text>
               <Button mode="outlined" onPress={() => setOpenEndPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
                 <MaterialIcons name="event" size={16} color="#0D47A1" />
@@ -362,15 +365,15 @@ export default function CreateEvent(props: Props) {
         {/* Options */}
         <View style={styles.fieldContainer}>
           <Text variant="titleMedium" style={styles.fieldLabel}>
-            {"Options"}
+            {t("events.options")}
           </Text>
           <View style={styles.optionRow}>
             <View style={styles.optionInfo}>
               <Text variant="bodyLarge" style={styles.optionTitle}>
-                All Day Event
+                {t("events.allDayEvent")}
               </Text>
               <Text variant="bodySmall" style={styles.optionSubtitle}>
-                Event lasts the entire day
+                {t("events.eventLastsEntireDay")}
               </Text>
             </View>
             <Switch
@@ -386,10 +389,10 @@ export default function CreateEvent(props: Props) {
           <View style={styles.optionRow}>
             <View style={styles.optionInfo}>
               <Text variant="bodyLarge" style={styles.optionTitle}>
-                Exclude from Curated Calendars
+                {t("events.excludeFromCuratedCalendars")}
               </Text>
               <Text variant="bodySmall" style={styles.optionSubtitle}>
-                Hide from public event listings
+                {t("events.hideFromPublicListings")}
               </Text>
             </View>
             <Switch
@@ -408,10 +411,10 @@ export default function CreateEvent(props: Props) {
           <View style={styles.optionRow}>
             <View style={styles.optionInfo}>
               <Text variant="bodyLarge" style={styles.optionTitle}>
-                Recurring Event
+                {t("events.recurringEvent")}
               </Text>
               <Text variant="bodySmall" style={styles.optionSubtitle}>
-                Event repeats on a schedule
+                {t("events.eventRepeatsOnSchedule")}
               </Text>
             </View>
             <Switch value={recurring} onValueChange={handleToggleRecurring} color="#0D47A1" />
@@ -422,7 +425,7 @@ export default function CreateEvent(props: Props) {
         {recurring && (
           <View style={styles.fieldContainer}>
             <Text variant="titleMedium" style={styles.fieldLabel}>
-              Recurrence Pattern
+              {t("events.recurrencePattern")}
             </Text>
             <RRuleEditor
               start={startDate}
@@ -439,10 +442,10 @@ export default function CreateEvent(props: Props) {
       {!showEventEditModal && (
         <View style={styles.bottomActions}>
           <Button mode="outlined" onPress={() => props.onDone?.()} style={styles.actionButton}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button mode="contained" onPress={event?.id ? handleEditEvent : handleSave} loading={loading} disabled={!title.trim() || loading} style={styles.actionButton}>
-            {event?.id ? "Save Changes" : "Create Event"}
+            {event?.id ? t("events.saveChanges") : t("events.createEvent")}
           </Button>
         </View>
       )}

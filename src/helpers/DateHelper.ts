@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { ErrorHelper } from "./ErrorHelper";
 
 export class DateHelper {
@@ -7,8 +6,8 @@ export class DateHelper {
     if (date !== undefined && date !== null) {
       try {
         result = new Date(date).toISOString().split("T")[0];
-      } catch {
-        ErrorHelper.logError();
+      } catch (e) {
+        ErrorHelper.logError("DateHelper", "formatHtml5Date: " + String(e));
       }
     }
     return result;
@@ -16,14 +15,30 @@ export class DateHelper {
 
   static prettyDate(date: Date) {
     if (date === undefined || date === null) return "";
-    return this.formatDateTime(date, "MMM D, YYYY");
+    try {
+      return new Date(date).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    } catch (e) {
+      ErrorHelper.logError("DateHelper", "prettyDate: " + String(e));
+      return "";
+    }
   }
 
-  private static formatDateTime(date: Date, format: string) {
+  static prettyDateTime(date: Date) {
+    if (date === undefined || date === null) return "";
     try {
-      return dayjs(date).format(format);
-    } catch {
-      ErrorHelper.logError();
+      return new Date(date).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" });
+    } catch (e) {
+      ErrorHelper.logError("DateHelper", "prettyDateTime: " + String(e));
+      return "";
+    }
+  }
+
+  static prettyTime(date: Date) {
+    if (date === undefined || date === null) return "";
+    try {
+      return new Date(date).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    } catch (e) {
+      ErrorHelper.logError("DateHelper", "prettyTime: " + String(e));
       return "";
     }
   }

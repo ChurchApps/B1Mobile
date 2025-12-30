@@ -192,7 +192,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
   const getPaymentMethod = (sub: SubscriptionInterface) => {
     const pm = paymentMethods.find((pm: StripePaymentMethod) => pm.id === (sub.default_payment_method || sub.default_source));
-    if (!pm) return <Text style={{ color: "red" }}>Not Found</Text>;
+    if (!pm) return <Text style={{ color: "red" }}>{t("donations.notFound")}</Text>;
     return `${pm.name} ****${pm.last4 || ""}`;
   };
 
@@ -305,8 +305,8 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                 {fund.name} — {CurrencyHelper.formatCurrency(fund.amount)}
               </Text>
             ))}
-            <Text style={styles.recurringAmount}>Total: {CurrencyHelper.formatCurrency(total)}</Text>
-            <Text style={styles.metaText}>Every {interval}</Text>
+            <Text style={styles.recurringAmount}>{t("donations.totalLabel")}: {CurrencyHelper.formatCurrency(total)}</Text>
+            <Text style={styles.metaText}>{t("donations.every")} {interval}</Text>
             <Text style={styles.metaText}>{getPaymentMethod(item)}</Text>
             <Text style={styles.recurringNext}>{startDate}</Text>
           </View>
@@ -423,7 +423,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
               showsVerticalScrollIndicator={false}
               ListEmptyComponent={!recurringLoading ? (
                 <View style={styles.emptyWrap}>
-                  <Text style={styles.emptyTitle}>Not found active recurring gifts</Text>
+                  <Text style={styles.emptyTitle}>{t("donations.noActiveRecurringGifts")}</Text>
                 </View>
               ) : null}
             />
@@ -454,7 +454,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
               ItemSeparatorComponent={() => <Divider style={styles.divider} />}
               ListEmptyComponent={!donationsLoading ? (
                 <View style={styles.emptyWrap}>
-                  <Text style={styles.emptyTitle}>Not found recent transactions</Text>
+                  <Text style={styles.emptyTitle}>{t("donations.noRecentTransactions")}</Text>
                 </View>
               ) : null}
             />
@@ -494,7 +494,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                     <View style={styles.detailBreakdown}>
                       <View style={styles.detailRow}>
                         <Text variant="bodyMedium" style={styles.detailLabel}>
-                          Gift Amount
+                          {t("donations.giftAmount")}
                         </Text>
                         <Text variant="bodyMedium" style={styles.detailValue}>
                           {CurrencyHelper.formatCurrency(selectedTransaction.amount - selectedTransaction.fees)}
@@ -502,7 +502,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       </View>
                       <View style={styles.detailRow}>
                         <Text variant="bodyMedium" style={styles.detailLabel}>
-                          Processing Fee
+                          {t("donations.processingFee")}
                         </Text>
                         <Text variant="bodyMedium" style={styles.detailValue}>
                           {CurrencyHelper.formatCurrency(selectedTransaction.fees)}
@@ -511,7 +511,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       <Divider style={styles.detailDivider} />
                       <View style={styles.detailRow}>
                         <Text variant="titleMedium" style={styles.detailTotalLabel}>
-                          Total
+                          {t("donations.totalLabel")}
                         </Text>
                         <Text variant="titleMedium" style={styles.detailTotalValue}>
                           {CurrencyHelper.formatCurrency(selectedTransaction.amount)}
@@ -522,7 +522,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                     <View style={styles.detailInfo}>
                       <View style={styles.detailRow}>
                         <Text variant="bodyMedium" style={styles.detailLabel}>
-                          Fund
+                          {t("donations.fund")}
                         </Text>
                         <Text variant="bodyMedium" style={styles.detailValue}>
                           {selectedTransaction.fund}
@@ -530,15 +530,15 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       </View>
                       <View style={styles.detailRow}>
                         <Text variant="bodyMedium" style={styles.detailLabel}>
-                          Date
+                          {t("donations.date")}
                         </Text>
                         <Text variant="bodyMedium" style={styles.detailValue}>
-                          {selectedTransaction.date.toLocaleDateString()}
+                          {DateHelper.prettyDate(selectedTransaction.date)}
                         </Text>
                       </View>
                       <View style={styles.detailRow}>
                         <Text variant="bodyMedium" style={styles.detailLabel}>
-                          Method
+                          {t("donations.method")}
                         </Text>
                         <Text variant="bodyMedium" style={styles.detailValue}>
                           {selectedTransaction.method}
@@ -547,7 +547,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                       {selectedTransaction.recurring && (
                         <View style={styles.detailRow}>
                           <Text variant="bodyMedium" style={styles.detailLabel}>
-                            Frequency
+                            {t("donations.frequency")}
                           </Text>
                           <Text variant="bodyMedium" style={styles.detailValue}>
                             {selectedTransaction.frequency}

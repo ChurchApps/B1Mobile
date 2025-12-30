@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CurrencyHelper, DateHelper } from "../../../src/helpers";
 import { DonationInterface } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
@@ -9,6 +10,7 @@ import { useAppTheme } from "../../../src/theme";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 export function Donations() {
+  const { t } = useTranslation();
   const [showDonationModal, setShowDonationModal] = useState<boolean>(false);
   const [selectedDonation, setSelectedDonation] = useState<DonationInterface>({});
   const isFocused = useIsFocused();
@@ -76,7 +78,7 @@ export function Donations() {
       />
     ) : (
       <Text variant="bodyLarge" style={{ padding: spacing.md, textAlign: "center" }}>
-        Donations will appear once a donation has been entered.
+        {t("donations.noDonationsYet")}
       </Text>
     );
 
@@ -94,22 +96,22 @@ export function Donations() {
             maxHeight: "80%"
           }}>
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: spacing.md }}>
-            <Text variant="titleLarge">Donation Details</Text>
+            <Text variant="titleLarge">{t("donations.donationDetails")}</Text>
             <IconButton icon="close" size={24} onPress={() => setShowDonationModal(false)} />
           </View>
           <ScrollView>
             <List.Section>
-              <List.Item title="Date" description={DateHelper.prettyDate(new Date(selectedDonation.donationDate || ""))} />
-              <List.Item title="Method" description={`${selectedDonation.method} - ${selectedDonation.methodDetails}`} />
-              <List.Item title="Fund" description={selectedDonation.fund?.name} />
-              <List.Item title="Amount" description={CurrencyHelper.formatCurrency(selectedDonation.fund?.amount || 0)} />
+              <List.Item title={t("donations.date")} description={DateHelper.prettyDate(new Date(selectedDonation.donationDate || ""))} />
+              <List.Item title={t("donations.method")} description={`${selectedDonation.method} - ${selectedDonation.methodDetails}`} />
+              <List.Item title={t("donations.fund")} description={selectedDonation.fund?.name} />
+              <List.Item title={t("donations.amount")} description={CurrencyHelper.formatCurrency(selectedDonation.fund?.amount || 0)} />
             </List.Section>
           </ScrollView>
         </Modal>
       </Portal>
 
       <Card>
-        <Card.Title title="Donations" titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="history" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
+        <Card.Title title={t("donations.donations")} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="history" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
         <Card.Content>{isLoading ? <ActivityIndicator size="large" style={{ margin: spacing.md }} /> : content}</Card.Content>
       </Card>
     </>

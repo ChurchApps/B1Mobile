@@ -6,6 +6,7 @@ import { Alert, View } from "react-native";
 import { Button, Card, IconButton, Text, TextInput } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   setMode: (mode: "display" | "edit") => void;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function CardForm({ setMode, card, customerId, updatedFunction, handleDelete }: Props) {
+  const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -33,7 +35,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
 
   const createCard = async () => {
     if (!person?.id) {
-      Alert.alert("Error", "User information is not available. Please log in again.");
+      Alert.alert(t("donations.error"), t("donations.userInfoNotAvailable"));
       setIsSubmitting(false);
       return;
     }
@@ -44,7 +46,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
     });
 
     if (stripePaymentMethod.error) {
-      Alert.alert("Failed", stripePaymentMethod.error.message);
+      Alert.alert(t("donations.failed"), stripePaymentMethod.error.message);
       setIsSubmitting(false);
       return;
     }
@@ -58,7 +60,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
     };
     const result = await ApiHelper.post("/paymentmethods/addcard", paymentMethod, "GivingApi");
     if (result?.raw?.message) {
-      Alert.alert("Failed to create payment method: ", result?.raw?.message);
+      Alert.alert(t("donations.failedToCreatePaymentMethod"), result?.raw?.message);
     } else {
       setMode("display");
       await updatedFunction();
@@ -68,14 +70,14 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
 
   const updateCard = async () => {
     if (!person?.id) {
-      Alert.alert("Error", "User information is not available. Please log in again.");
+      Alert.alert(t("donations.error"), t("donations.userInfoNotAvailable"));
       setIsSubmitting(false);
       return;
     }
 
     if (!month || !year) {
       setIsSubmitting(false);
-      Alert.alert("Cannot be left blank", "Expiration year & month cannot be left blank");
+      Alert.alert(t("donations.cannotBeLeftBlank"), t("donations.expirationCannotBeBlank"));
       return;
     }
 
@@ -87,7 +89,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
 
     const result = await ApiHelper.post("/paymentmethods/updatecard", payload, "GivingApi");
     if (result?.raw?.message) {
-      Alert.alert("Update failed", result.raw.message);
+      Alert.alert(t("donations.updateFailed"), result.raw.message);
     } else {
       setMonth("");
       setYear("");
@@ -99,23 +101,23 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
 
   const informationalText = !card.id && (
     <Text variant="bodySmall" style={{ marginVertical: spacing.md, textAlign: "center" }}>
-      Credit cards will be charged immediately for one-time donations. For recurring donations, your card will be charged on the date you select.
+      {t("donations.creditCardChargeInfo")}
     </Text>
   );
 
   return (
     <Card style={{ marginBottom: spacing.md }}>
-      <Card.Title title={card.id ? "Edit Card" : "Add New Card"} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
+      <Card.Title title={card.id ? t("donations.editCard") : t("donations.addNewCard")} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
       <Card.Content>
         {!card.id ? (
           <View style={{ marginBottom: spacing.md }}>
-            <TextInput mode="outlined" label="Card Holder Name" value={cardHolderName} onChangeText={setCardHolderName} style={{ marginBottom: spacing.sm }} />
+            <TextInput mode="outlined" label={t("donations.cardHolderName")} value={cardHolderName} onChangeText={setCardHolderName} style={{ marginBottom: spacing.sm }} />
             <CardField postalCodeEnabled={true} placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }} cardStyle={{ backgroundColor: theme.colors.surface, textColor: theme.colors.onSurface }} style={{ height: 50, marginBottom: spacing.sm }} onCardChange={setCardDetails} />
           </View>
         ) : (
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.md }}>
-            <TextInput mode="outlined" label="Expiration Month" value={month} onChangeText={setMonth} keyboardType="number-pad" maxLength={2} style={{ flex: 1, marginRight: spacing.sm }} />
-            <TextInput mode="outlined" label="Expiration Year" value={year} onChangeText={setYear} keyboardType="number-pad" maxLength={2} style={{ flex: 1, marginLeft: spacing.sm }} />
+            <TextInput mode="outlined" label={t("donations.expirationMonth")} value={month} onChangeText={setMonth} keyboardType="number-pad" maxLength={2} style={{ flex: 1, marginRight: spacing.sm }} />
+            <TextInput mode="outlined" label={t("donations.expirationYear")} value={year} onChangeText={setYear} keyboardType="number-pad" maxLength={2} style={{ flex: 1, marginLeft: spacing.sm }} />
           </View>
         )}
 
@@ -124,14 +126,14 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: spacing.md }}>
           {card.id && (
             <Button mode="outlined" onPress={handleDelete} style={{ flex: 1, marginRight: spacing.sm }}>
-              Delete
+              {t("common.delete")}
             </Button>
           )}
           <Button mode="outlined" onPress={() => setMode("display")} style={{ flex: card.id ? 1 : 1, marginRight: card.id ? spacing.sm : 0 }}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button mode="contained" onPress={handleSave} loading={isSubmitting} style={{ flex: 1, marginLeft: card.id ? spacing.sm : spacing.sm }}>
-            Save
+            {t("common.save")}
           </Button>
         </View>
       </Card.Content>

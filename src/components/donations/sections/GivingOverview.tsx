@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, Card, Button } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
-import { CurrencyHelper } from "../../../helpers/CurrencyHelper";
+import { CurrencyHelper, DateHelper } from "../../../helpers";
 import { useTranslation } from "react-i18next";
 
 interface GivingStats {
@@ -65,7 +65,7 @@ export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onD
                 {CurrencyHelper.formatCurrency(givingStats.lastGift)}
               </Text>
               <Text variant="bodySmall" style={styles.activityDate}>
-                {givingStats.lastGiftDate ? givingStats.lastGiftDate.toLocaleDateString() : t("donations.noRecentGift")}
+                {givingStats.lastGiftDate ? DateHelper.prettyDate(givingStats.lastGiftDate) : t("donations.noRecentGift")}
               </Text>
             </View>
             <TouchableOpacity style={styles.repeatButton} onPress={onDonatePress}>

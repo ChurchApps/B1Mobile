@@ -3,6 +3,7 @@ import { View, StyleSheet, Text, Alert } from "react-native";
 import { Button, ProgressBar } from "react-native-paper";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import { ApiHelper, FileInterface } from "../../../helpers";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, contentType, contentId, cancelCallback }) => {
+  const { t } = useTranslation();
   const [file, setFile] = useState<FileInterface>({} as FileInterface);
   const [uploadedFile, setUploadedFile] = useState<any>(null);
   const [uploadProgress, setUploadProgress] = useState(-1);
@@ -96,7 +98,7 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
       console.error("Error uploading file:", error);
       setUploadInProgress(false);
       setUploadProgress(-1);
-      Alert.alert("Upload Error", "Failed to upload file. Please try again.");
+      Alert.alert(t("groups.uploadError"), t("groups.uploadErrorMessage"));
     }
   };
 
@@ -150,7 +152,7 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
 
   const handleCancel = () => {
     if (uploadInProgress) {
-      Alert.alert("Cancel Upload", "Upload is in progress. Are you sure you want to cancel?", [{ text: "No" }, { text: "Yes", onPress: () => resetUpload() }]);
+      Alert.alert(t("groups.cancelUpload"), t("groups.cancelUploadMessage"), [{ text: t("common.no") }, { text: t("common.yes"), onPress: () => resetUpload() }]);
     } else {
       resetUpload();
     }

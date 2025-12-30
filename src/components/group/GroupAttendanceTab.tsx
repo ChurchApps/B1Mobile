@@ -3,6 +3,7 @@ import { View, StyleSheet, FlatList, TouchableOpacity, Keyboard } from "react-na
 import { Text, Button, IconButton, Avatar, Checkbox, ActivityIndicator, Divider, TextInput } from "react-native-paper";
 import DatePicker from "react-native-date-picker";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 import { ApiHelper } from "@churchapps/helpers";
 import { Constants, EnvironmentHelper } from "../../helpers";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
@@ -60,6 +61,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
   groupId,
   members
 }) => {
+  const { t } = useTranslation();
   const currentUserChurch = useCurrentUserChurch();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -455,7 +457,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
           <View style={styles.searchInputRow}>
             <TextInput
               mode="outlined"
-              placeholder="Search for a person..."
+              placeholder={t("groups.searchForPerson")}
               value={searchText}
               onChangeText={setSearchText}
               style={styles.searchInput}
@@ -499,13 +501,13 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
       {isLoading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#2563EB" />
-          <Text style={styles.loadingText}>Loading attendance...</Text>
+          <Text style={styles.loadingText}>{t("groups.loadingAttendance")}</Text>
         </View>
       ) : allPeople.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Avatar.Icon size={56} icon="account-group" style={styles.emptyIcon} />
-          <Text style={styles.emptyText}>No members in this group yet.</Text>
-          <Text style={styles.emptySubtext}>Use "Add" to search for people.</Text>
+          <Text style={styles.emptyText}>{t("groups.noMembersYet")}</Text>
+          <Text style={styles.emptySubtext}>{t("groups.useAddToSearch")}</Text>
         </View>
       ) : (
         <FlatList

@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Constants } from "../helpers";
+import i18n from "../i18n";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -39,10 +40,10 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
       return (
         <View style={styles.container}>
-          <Text style={styles.title}>Something went wrong</Text>
-          <Text style={styles.message}>{this.state.error?.message || "An unexpected error occurred"}</Text>
+          <Text style={styles.title}>{i18n.t("common.somethingWentWrong")}</Text>
+          <Text style={styles.message}>{this.state.error?.message || i18n.t("common.unexpectedError")}</Text>
           <TouchableOpacity style={styles.button} onPress={this.retry}>
-            <Text style={styles.buttonText}>Try Again</Text>
+            <Text style={styles.buttonText}>{i18n.t("common.tryAgain")}</Text>
           </TouchableOpacity>
         </View>
       );
