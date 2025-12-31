@@ -228,12 +228,13 @@ const Plan = () => {
                   {renderHeroSection()}
                   {renderStatsCards()}
                   <ServingTimes assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} isLoading={isLoading} />
-                  <UpcomingDates assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} times={times} isLoading={isLoading} />
+                  {/* <UpcomingDates assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} times={times} isLoading={isLoading} /> */}
                   <BlockoutDates />
                 </>
               )}
               {activeSection === "past" && (
-                <UpcomingDates assignments={pastAssignments} positions={pastPositions} plans={pastPlans} times={pastTimes} isLoading={isLoading} isPast={true} />
+                // <UpcomingDates assignments={pastAssignments} positions={pastPositions} plans={pastPlans} times={pastTimes} isLoading={isLoading} isPast={true} />
+                null
               )}
             </ScrollView>
           </View>
