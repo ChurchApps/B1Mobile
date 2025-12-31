@@ -16,6 +16,22 @@ interface Props {
   isLoading?: boolean;
 }
 
+const getTranslatedStatus = (status: string, t: (key: string) => string): string => {
+  switch (status?.toLowerCase()) {
+    case "accepted":
+      return t("plans.accepted");
+    case "confirmed":
+      return t("plans.confirmed");
+    case "declined":
+      return t("plans.declined");
+    case "pending":
+      return t("plans.pendingResponse");
+    case "unconfirmed":
+    default:
+      return t("plans.unconfirmed");
+  }
+};
+
 export const UpcomingDates = ({ plans, positions, assignments, times, isLoading = false }: Props) => {
   const { t } = useTranslation();
   const fadeAnim = new Animated.Value(0);
@@ -85,7 +101,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
                           </Text>
                         </View>
                         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-                          <Text style={styles.statusText}>{item.status}</Text>
+                          <Text style={styles.statusText}>{getTranslatedStatus(item.status, t)}</Text>
                         </View>
                       </View>
 
