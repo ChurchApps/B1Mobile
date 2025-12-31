@@ -369,7 +369,11 @@
     "loadingTeams": "टीमें लोड हो रही हैं...",
     "startDateRequired": "प्रारंभ तारीख आवश्यक है।",
     "endDateRequired": "समाप्ति तारीख आवश्यक है।",
-    "startBeforeEnd": "प्रारंभ तारीख समाप्ति तारीख से पहले होनी चाहिए।"
+    "startBeforeEnd": "प्रारंभ तारीख समाप्ति तारीख से पहले होनी चाहिए।",
+    "upcoming": "आगामी",
+    "past": "बीते हुए",
+    "noPastDatesFound": "कोई पिछली तारीखें नहीं मिलीं",
+    "pastAssignments": "आपके पिछले असाइनमेंट यहां दिखाई देंगे"
   },
   "navigation": {
     "home": "होम",

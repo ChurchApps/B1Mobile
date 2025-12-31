@@ -369,7 +369,11 @@
     "loadingTeams": "Cargando equipos...",
     "startDateRequired": "Se requiere fecha de inicio.",
     "endDateRequired": "Se requiere fecha de fin.",
-    "startBeforeEnd": "La fecha de inicio debe ser anterior a la fecha de fin."
+    "startBeforeEnd": "La fecha de inicio debe ser anterior a la fecha de fin.",
+    "upcoming": "Próximos",
+    "past": "Pasados",
+    "noPastDatesFound": "No se encontraron fechas pasadas",
+    "pastAssignments": "Tus asignaciones pasadas aparecerán aquí"
   },
   "navigation": {
     "home": "Inicio",

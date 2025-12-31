@@ -369,7 +369,11 @@
     "loadingTeams": "Teams werden geladen...",
     "startDateRequired": "Startdatum ist erforderlich.",
     "endDateRequired": "Enddatum ist erforderlich.",
-    "startBeforeEnd": "Startdatum muss vor dem Enddatum liegen."
+    "startBeforeEnd": "Startdatum muss vor dem Enddatum liegen.",
+    "upcoming": "Bevorstehend",
+    "past": "Vergangen",
+    "noPastDatesFound": "Keine vergangenen Termine gefunden",
+    "pastAssignments": "Ihre vergangenen Einsätze werden hier angezeigt"
   },
   "navigation": {
     "home": "Startseite",

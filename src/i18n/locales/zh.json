@@ -369,7 +369,11 @@
     "loadingTeams": "正在加载团队...",
     "startDateRequired": "开始日期必填。",
     "endDateRequired": "结束日期必填。",
-    "startBeforeEnd": "开始日期必须早于结束日期。"
+    "startBeforeEnd": "开始日期必须早于结束日期。",
+    "upcoming": "即将到来",
+    "past": "过去",
+    "noPastDatesFound": "未找到过去的日期",
+    "pastAssignments": "您过去的任务将显示在这里"
   },
   "navigation": {
     "home": "首页",

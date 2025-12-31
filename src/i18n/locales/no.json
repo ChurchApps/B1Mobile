@@ -369,7 +369,11 @@
     "loadingTeams": "Laster team...",
     "startDateRequired": "Startdato er påkrevd.",
     "endDateRequired": "Sluttdato er påkrevd.",
-    "startBeforeEnd": "Startdato må være før sluttdato."
+    "startBeforeEnd": "Startdato må være før sluttdato.",
+    "upcoming": "Kommende",
+    "past": "Tidligere",
+    "noPastDatesFound": "Ingen tidligere datoer funnet",
+    "pastAssignments": "Dine tidligere oppgaver vil vises her"
   },
   "navigation": {
     "home": "Hjem",

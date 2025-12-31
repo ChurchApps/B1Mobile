@@ -369,7 +369,11 @@
     "loadingTeams": "Kumakarga ang mga team...",
     "startDateRequired": "Kinakailangan ang petsa ng pagsisimula.",
     "endDateRequired": "Kinakailangan ang petsa ng pagtatapos.",
-    "startBeforeEnd": "Ang petsa ng pagsisimula ay dapat bago ang petsa ng pagtatapos."
+    "startBeforeEnd": "Ang petsa ng pagsisimula ay dapat bago ang petsa ng pagtatapos.",
+    "upcoming": "Paparating",
+    "past": "Nakaraan",
+    "noPastDatesFound": "Walang nahanap na nakaraang petsa",
+    "pastAssignments": "Ang iyong mga nakaraang takdang-aralin ay lalabas dito"
   },
   "navigation": {
     "home": "Home",

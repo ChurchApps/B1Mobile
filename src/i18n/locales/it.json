@@ -369,7 +369,11 @@
     "loadingTeams": "Caricamento team...",
     "startDateRequired": "Data di inizio obbligatoria.",
     "endDateRequired": "Data di fine obbligatoria.",
-    "startBeforeEnd": "La data di inizio deve essere precedente alla data di fine."
+    "startBeforeEnd": "La data di inizio deve essere precedente alla data di fine.",
+    "upcoming": "In arrivo",
+    "past": "Passati",
+    "noPastDatesFound": "Nessuna data passata trovata",
+    "pastAssignments": "I tuoi incarichi passati appariranno qui"
   },
   "navigation": {
     "home": "Home",

@@ -369,7 +369,11 @@
     "loadingTeams": "Loading teams...",
     "startDateRequired": "Start date is required.",
     "endDateRequired": "End date is required.",
-    "startBeforeEnd": "Start date must be before end date."
+    "startBeforeEnd": "Start date must be before end date.",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "noPastDatesFound": "No past dates found",
+    "pastAssignments": "Your past assignments will appear here"
   },
   "navigation": {
     "home": "Home",

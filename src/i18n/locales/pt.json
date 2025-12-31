@@ -369,7 +369,11 @@
     "loadingTeams": "Carregando equipes...",
     "startDateRequired": "Data de início é obrigatória.",
     "endDateRequired": "Data de término é obrigatória.",
-    "startBeforeEnd": "A data de início deve ser anterior à data de término."
+    "startBeforeEnd": "A data de início deve ser anterior à data de término.",
+    "upcoming": "Próximos",
+    "past": "Passados",
+    "noPastDatesFound": "Nenhuma data passada encontrada",
+    "pastAssignments": "Suas atribuições passadas aparecerão aqui"
   },
   "navigation": {
     "home": "Início",

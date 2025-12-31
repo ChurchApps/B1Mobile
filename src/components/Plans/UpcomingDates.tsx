@@ -14,6 +14,7 @@ interface Props {
   assignments: AssignmentInterface[];
   times: TimeInterface[];
   isLoading?: boolean;
+  isPast?: boolean;
 }
 
 const getTranslatedStatus = (status: string, t: (key: string) => string): string => {
@@ -32,7 +33,7 @@ const getTranslatedStatus = (status: string, t: (key: string) => string): string
   }
 };
 
-export const UpcomingDates = ({ plans, positions, assignments, times, isLoading = false }: Props) => {
+export const UpcomingDates = ({ plans, positions, assignments, times, isLoading = false, isPast = false }: Props) => {
   const { t } = useTranslation();
   const fadeAnim = new Animated.Value(0);
 
@@ -67,15 +68,16 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
         });
       }
     });
-    ArrayHelper.sortBy(data, "serviceDate", true);
+    // For upcoming: ascending (soonest first), for past: descending (most recent first)
+    ArrayHelper.sortBy(data, "serviceDate", !isPast);
     return data;
-  }, [assignments, positions, plans, times]);
+  }, [assignments, positions, plans, times, isPast]);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialIcons name="schedule" style={styles.headerIcon} size={24} />
-        <Text style={styles.headerTitle}>{t("plans.upcomingDates")}</Text>
+        <MaterialIcons name={isPast ? "history" : "schedule"} style={styles.headerIcon} size={24} />
+        <Text style={styles.headerTitle}>{isPast ? t("plans.past") : t("plans.upcomingDates")}</Text>
       </View>
 
       <Card style={styles.contentCard}>
@@ -85,8 +87,8 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
           ) : upcomingDates.length === 0 ? (
             <View style={styles.emptyStateContent}>
               <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-              <Text style={styles.emptyStateText}>{t("plans.noUpcomingDatesFound")}</Text>
-              <Text style={styles.emptyStateSubtext}>{t("plans.upcomingAssignments")}</Text>
+              <Text style={styles.emptyStateText}>{isPast ? t("plans.noPastDatesFound") : t("plans.noUpcomingDatesFound")}</Text>
+              <Text style={styles.emptyStateSubtext}>{isPast ? t("plans.pastAssignments") : t("plans.upcomingAssignments")}</Text>
             </View>
           ) : (
             <View style={styles.cardsList}>

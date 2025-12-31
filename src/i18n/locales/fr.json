@@ -369,7 +369,11 @@
     "loadingTeams": "Chargement des équipes...",
     "startDateRequired": "La date de début est requise.",
     "endDateRequired": "La date de fin est requise.",
-    "startBeforeEnd": "La date de début doit précéder la date de fin."
+    "startBeforeEnd": "La date de début doit précéder la date de fin.",
+    "upcoming": "À venir",
+    "past": "Passés",
+    "noPastDatesFound": "Aucune date passée trouvée",
+    "pastAssignments": "Vos affectations passées apparaîtront ici"
   },
   "navigation": {
     "home": "Accueil",
