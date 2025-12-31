@@ -88,7 +88,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
     <Card style={styles.messageCard}>
       <Card.Content style={styles.messageContent}>
         <Notes item={item} message={item.messages[0]} idx={idx} showReplyBox={showReplyBox} handleReply={handleReply} />
-        {idx === showReplyBox && <RenderNewConversation placeholder={"Reply ..."} type="reply" message={item.messages[0]} />}
+        {idx === showReplyBox && <RenderNewConversation placeholder={t("messages.reply")} type="reply" message={item.messages[0]} />}
         <View style={styles.repliesContainer}>{getNotes(item)}</View>
       </Card.Content>
     </Card>
@@ -110,7 +110,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
       <View style={styles.header}>
         <Avatar.Icon size={32} icon="chat" style={styles.headerIcon} />
         <Text variant="titleMedium" style={styles.headerTitle}>
-          Group Chat
+          {t("groups.groupChat")}
         </Text>
         <Text variant="bodySmall" style={styles.headerSubtitle}>
           {conversations.length} conversation{conversations.length !== 1 ? "s" : ""}
@@ -135,7 +135,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
       </View>
 
       {/* Input */}
-      <RenderNewConversation placeholder={"Type your message..."} type="new" />
+      <RenderNewConversation placeholder={t("messages.typeYourMessage")} type="new" />
     </View>
   );
 };

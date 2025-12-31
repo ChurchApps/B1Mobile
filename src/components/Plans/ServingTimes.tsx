@@ -6,6 +6,7 @@ import { ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface } fr
 import { router } from "expo-router";
 import { Card } from "react-native-paper";
 import { InlineLoader } from "../common/LoadingComponents";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   plans: PlanInterface[];
@@ -14,6 +15,7 @@ interface Props {
   isLoading?: boolean;
 }
 export const ServingTimes = ({ plans, positions, assignments, isLoading = false }: Props) => {
+  const { t } = useTranslation();
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -37,10 +39,10 @@ export const ServingTimes = ({ plans, positions, assignments, isLoading = false 
         data.push({
           assignmentId: assignment?.id || "",
           planId: plan.id,
-          planName: plan?.name || "Unnamed Plan",
+          planName: plan?.name || t("plans.unnamedPlan"),
           serviceDate: plan.serviceDate,
-          position: position?.name || "Unknown Position",
-          status: assignment.status || "Unconfirmed"
+          position: position?.name || t("plans.unknownPosition"),
+          status: assignment.status || t("plans.unconfirmed")
         });
       }
     });
@@ -52,18 +54,18 @@ export const ServingTimes = ({ plans, positions, assignments, isLoading = false 
     <View style={styles.container}>
       <View style={styles.header}>
         <MaterialIcons name="schedule" style={styles.headerIcon} size={24} />
-        <Text style={styles.headerTitle}>Serving Times</Text>
+        <Text style={styles.headerTitle}>{t("plans.servingTimes")}</Text>
       </View>
 
       <Card style={styles.contentCard}>
         <Card.Content>
           {isLoading ? (
-            <InlineLoader size="large" text="Loading serving times..." />
+            <InlineLoader size="large" text={t("plans.loadingServingTimes")} />
           ) : servingTimes.length === 0 ? (
             <View style={styles.emptyStateContent}>
               <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-              <Text style={styles.emptyStateText}>No serving times found</Text>
-              <Text style={styles.emptyStateSubtext}>Your upcoming assignments will appear here</Text>
+              <Text style={styles.emptyStateText}>{t("plans.noServingTimesFound")}</Text>
+              <Text style={styles.emptyStateSubtext}>{t("plans.upcomingAssignments")}</Text>
             </View>
           ) : (
             <View style={styles.cardsList}>

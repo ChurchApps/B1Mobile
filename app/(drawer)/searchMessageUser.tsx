@@ -84,16 +84,16 @@ const SearchMessageUser = () => {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <Surface style={{ padding: spacing.md, backgroundColor: theme.colors.background, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
           <Text variant="headlineSmall" style={{ marginBottom: spacing.md }}>
-            Search for a person
+            {t("messages.searchForAPerson")}
           </Text>
           <TextInput mode="outlined" label={t("common.name")} placeholder={t("common.name")} value={searchText} onChangeText={handleSearchChange} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
           <Button mode="contained" onPress={handleSearchPress} loading={loading} style={{ marginBottom: spacing.md }}>
-            Search
+            {t("common.search")}
           </Button>
         </Surface>
       </TouchableWithoutFeedback>
     ),
-    [spacing.md, theme.colors.background, theme.colors.surface, theme.roundness, searchText, handleSearchChange, handleSearchPress, loading]
+    [spacing.md, theme.colors.background, theme.colors.surface, theme.roundness, searchText, handleSearchChange, handleSearchPress, loading, t]
   );
 
   const displayedSearchList = useMemo(() => (searchText === "" ? (searchList.length !== 0 ? searchList : []) : searchList), [searchText, searchList]);
@@ -160,7 +160,7 @@ const SearchMessageUser = () => {
         }}
         ListEmptyComponent={
           <Text style={{ textAlign: "center", marginTop: spacing.lg }}>
-            {searchText !== '' && !loading && searchText === lastSearch ? 'No matches found' : null}
+            {searchText !== '' && !loading && searchText === lastSearch ? t("common.noMatchesFound") : null}
           </Text>
         }
       />

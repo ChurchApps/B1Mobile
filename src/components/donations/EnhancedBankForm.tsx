@@ -18,15 +18,16 @@ interface Props {
   showVerifyForm: boolean;
 }
 
-const accountTypes = [
-  { label: "Individual", value: "individual" },
-  { label: "Company", value: "company" }
+const getAccountTypes = (t: (key: string) => string) => [
+  { label: t("donations.individual"), value: "individual" },
+  { label: t("donations.company"), value: "company" }
 ];
 
 export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, handleDelete, showVerifyForm }: Props) {
   const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showAccountTypeMenu, setShowAccountTypeMenu] = useState<boolean>(false);
+  const accountTypes = getAccountTypes(t);
   const [selectedType, setSelectedType] = useState(bank.account_holder_type || accountTypes[0].value);
   const [name, setName] = useState<string>(bank.account_holder_name || "");
   const [accountNumber, setAccountNumber] = useState<string>("");
@@ -75,7 +76,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
     }
   };
 
-  const getAccountTypeLabel = (value: string) => accountTypes.find(type => type.value === value)?.label || "Individual";
+  const getAccountTypeLabel = (value: string) => accountTypes.find(type => type.value === value)?.label || t("donations.individual");
 
   const handleSave = () => {
     setIsSubmitting(true);

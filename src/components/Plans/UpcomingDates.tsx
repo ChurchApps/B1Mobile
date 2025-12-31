@@ -6,6 +6,7 @@ import { ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface, Tim
 import { router } from "expo-router";
 import { Card } from "react-native-paper";
 import { InlineLoader } from "../common/LoadingComponents";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   plans: PlanInterface[];
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export const UpcomingDates = ({ plans, positions, assignments, times, isLoading = false }: Props) => {
+  const { t } = useTranslation();
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -41,11 +43,11 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
         data.push({
           assignmentId: assignment?.id || "",
           planId: plan.id,
-          planName: plan?.name || "Unnamed Plan",
+          planName: plan?.name || t("plans.unnamedPlan"),
           serviceDate: plan.serviceDate,
-          position: position?.name || "Unknown Position",
+          position: position?.name || t("plans.unknownPosition"),
           time: time?.displayName || "",
-          status: assignment.status || "Unconfirmed"
+          status: assignment.status || t("plans.unconfirmed")
         });
       }
     });
@@ -57,18 +59,18 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
     <View style={styles.container}>
       <View style={styles.header}>
         <MaterialIcons name="schedule" style={styles.headerIcon} size={24} />
-        <Text style={styles.headerTitle}>Upcoming Dates</Text>
+        <Text style={styles.headerTitle}>{t("plans.upcomingDates")}</Text>
       </View>
 
       <Card style={styles.contentCard}>
         <Card.Content>
           {isLoading ? (
-            <InlineLoader size="large" text="Loading upcoming dates..." />
+            <InlineLoader size="large" text={t("plans.loadingUpcomingDates")} />
           ) : upcomingDates.length === 0 ? (
             <View style={styles.emptyStateContent}>
               <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-              <Text style={styles.emptyStateText}>No upcoming dates found</Text>
-              <Text style={styles.emptyStateSubtext}>Your future assignments will appear here</Text>
+              <Text style={styles.emptyStateText}>{t("plans.noUpcomingDatesFound")}</Text>
+              <Text style={styles.emptyStateSubtext}>{t("plans.upcomingAssignments")}</Text>
             </View>
           ) : (
             <View style={styles.cardsList}>

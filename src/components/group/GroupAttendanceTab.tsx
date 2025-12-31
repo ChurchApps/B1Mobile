@@ -312,13 +312,13 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
       }
 
       setOriginalAttendance({ ...attendance });
-      setSuccessMessage("Attendance saved successfully!");
+      setSuccessMessage(t("groups.attendanceSaved"));
 
       // Clear success message after 3 seconds
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       console.error("Failed to save attendance:", err);
-      setError("Failed to save attendance. Please try again.");
+      setError(t("groups.failedToSaveAttendance"));
     } finally {
       setIsSaving(false);
     }
@@ -345,8 +345,8 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
             {item.name?.display}
           </Text>
           <Text variant="bodySmall" style={[styles.statusText, isPresent && styles.presentText]}>
-            {isPresent ? "Present" : "Absent"}
-            {!item.isMember && " (Guest)"}
+            {isPresent ? t("groups.present") : t("groups.absent")}
+            {!item.isMember && ` (${t("groups.guest")})`}
           </Text>
         </View>
         <Checkbox
@@ -383,7 +383,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
           <IconButton icon="plus" size={18} iconColor="#2563EB" />
         )}
         {isAlreadyInList && (
-          <Text style={styles.alreadyAddedText}>Added</Text>
+          <Text style={styles.alreadyAddedText}>{t("common.added")}</Text>
         )}
       </TouchableOpacity>
     );
@@ -411,13 +411,13 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
         maximumDate={new Date()}
         onConfirm={handleDateConfirm}
         onCancel={() => setShowDatePicker(false)}
-        title="Select Date"
+        title={t("common.selectDate")}
       />
 
       {/* Stats and Actions */}
       <View style={styles.statsSection}>
         <Text style={styles.statsText}>
-          {presentCount} of {allPeople.length} present
+          {t("groups.presentCount", { present: presentCount, total: allPeople.length })}
         </Text>
         <View style={styles.actionButtons}>
           <Button
@@ -427,7 +427,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
             disabled={isLoading || isSaving}
             labelStyle={styles.actionButtonLabel}
           >
-            All
+            {t("common.all")}
           </Button>
           <Button
             mode="text"
@@ -436,7 +436,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
             disabled={isLoading || isSaving}
             labelStyle={styles.actionButtonLabel}
           >
-            None
+            {t("common.none")}
           </Button>
           <Button
             mode="text"
@@ -446,7 +446,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
             disabled={isLoading || isSaving}
             labelStyle={styles.actionButtonLabel}
           >
-            Add
+            {t("common.add")}
           </Button>
         </View>
       </View>
@@ -475,7 +475,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
               style={styles.searchButton}
               buttonColor="#2563EB"
             >
-              Search
+              {t("common.search")}
             </Button>
           </View>
 
@@ -490,7 +490,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
           )}
 
           {searchResults.length === 0 && searchText && !isSearching && (
-            <Text style={styles.noResultsText}>No results found</Text>
+            <Text style={styles.noResultsText}>{t("common.noResultsFound")}</Text>
           )}
         </View>
       )}
@@ -542,7 +542,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
         disabled={isLoading || isSaving}
         buttonColor="#2563EB"
       >
-        Save Attendance
+        {t("groups.saveAttendance")}
       </Button>
     </View>
   );

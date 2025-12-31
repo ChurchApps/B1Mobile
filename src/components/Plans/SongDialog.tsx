@@ -6,6 +6,7 @@ import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants } from "../../../src/helpers/Constants";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { useTranslation } from "react-i18next";
 
 interface SongDetail {
   id?: string;
@@ -41,6 +42,7 @@ interface Props {
 }
 
 export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [songDetail, setSongDetail] = useState<SongDetail | null>(null);
   const [arrangement, setArrangement] = useState<Arrangement | null>(null);
@@ -91,56 +93,56 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
               <View style={styles.detailsTable}>
                 {songDetail.artist && (
                   <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Artist: </Text>
+                    <Text style={styles.detailLabel}>{t("songs.artist")}: </Text>
                     {songDetail.artist}
                   </Text>
                 )}
                 {songDetail.album && (
                   <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Album: </Text>
+                    <Text style={styles.detailLabel}>{t("songs.album")}: </Text>
                     {songDetail.album}
                   </Text>
                 )}
                 {songDetail.language && (
                   <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Language: </Text>
+                    <Text style={styles.detailLabel}>{t("songs.language")}: </Text>
                     {songDetail.language}
                   </Text>
                 )}
                 {songDetail.bpm && (
                   <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>BPM: </Text>
+                    <Text style={styles.detailLabel}>{t("songs.bpm")}: </Text>
                     {songDetail.bpm}
                   </Text>
                 )}
                 {songDetail.keySignature && (
                   <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Key: </Text>
+                    <Text style={styles.detailLabel}>{t("songs.key")}: </Text>
                     {songDetail.keySignature}
                   </Text>
                 )}
                 {songDetail.tones && (
                   <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Keys: </Text>
+                    <Text style={styles.detailLabel}>{t("songs.keys")}: </Text>
                     {songDetail.tones}
                   </Text>
                 )}
                 {songDetail.meter && (
                   <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Meter: </Text>
+                    <Text style={styles.detailLabel}>{t("songs.meter")}: </Text>
                     {songDetail.meter}
                   </Text>
                 )}
                 {songDetail.seconds && (
                   <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Length: </Text>
+                    <Text style={styles.detailLabel}>{t("songs.length")}: </Text>
                     {Math.floor(songDetail.seconds / 60)}:{(songDetail.seconds % 60).toString().padStart(2, "0")}
                   </Text>
                 )}
               </View>
               {externalLinks.length > 0 && (
                 <View style={styles.linksSection}>
-                  <Text style={styles.linksTitle}>External Links</Text>
+                  <Text style={styles.linksTitle}>{t("songs.externalLinks")}</Text>
                   {externalLinks.map((l, i) => (
                     <TouchableOpacity key={l.id || i} onPress={() => Linking.openURL(l.url)} style={styles.linkRow}>
                       {getServiceIcon(l.service)}
@@ -150,20 +152,20 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
                   {songDetail?.praiseChartsId && (
                     <TouchableOpacity key="praisecharts" onPress={() => Linking.openURL(`https://www.praisecharts.com/songs/details/${songDetail.praiseChartsId}?XID=churchapps`)} style={styles.linkRow}>
                       {getServiceIcon("PraiseCharts")}
-                      <Text style={styles.link}>PraiseCharts</Text>
+                      <Text style={styles.link}>{t("songs.praiseCharts")}</Text>
                     </TouchableOpacity>
                   )}
                 </View>
               )}
               {arrangement?.lyrics ? (
                 <View style={styles.lyricsSection}>
-                  <Text style={styles.lyricsTitle}>Lyrics</Text>
+                  <Text style={styles.lyricsTitle}>{t("songs.lyrics")}</Text>
                   <Text style={styles.lyrics}>{arrangement.lyrics}</Text>
                 </View>
               ) : null}
               {links.length > 0 && (
                 <View style={styles.linksSection}>
-                  <Text style={styles.linksTitle}>Links</Text>
+                  <Text style={styles.linksTitle}>{t("songs.links")}</Text>
                   {links.map((l, i) => (
                     <TouchableOpacity key={l.id || i} onPress={() => Linking.openURL(l.url)}>
                       <Text style={styles.link}>{l.text || l.service || l.url}</Text>
@@ -173,7 +175,7 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
               )}
             </ScrollView>
           ) : (
-            <Text style={styles.errorText}>Song details not found.</Text>
+            <Text style={styles.errorText}>{t("songs.songDetailsNotFound")}</Text>
           )}
         </View>
       </View>

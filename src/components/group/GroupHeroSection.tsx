@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Card, Chip } from "react-native-paper";
 import { OptimizedImage } from "../OptimizedImage";
+import { useTranslation } from "react-i18next";
 
 interface GroupHeroSectionProps {
   name: string;
@@ -16,6 +17,7 @@ export const GroupHeroSection: React.FC<GroupHeroSectionProps> = ({
   memberCount,
   isLeader
 }) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.heroSection}>
       {photoUrl ? (
@@ -28,11 +30,11 @@ export const GroupHeroSection: React.FC<GroupHeroSectionProps> = ({
               </Text>
               <View style={styles.heroStats}>
                 <Chip icon="account-group" style={styles.statsChip}>
-                  {memberCount} members
+                  {memberCount} {t("groups.members")}
                 </Chip>
                 {isLeader && (
                   <Chip icon="crown" style={[styles.statsChip, styles.leaderChip]}>
-                    Leader
+                    {t("groups.leader")}
                   </Chip>
                 )}
               </View>
@@ -48,11 +50,11 @@ export const GroupHeroSection: React.FC<GroupHeroSectionProps> = ({
               </Text>
               <View style={styles.heroStats}>
                 <Chip icon="account-group" style={styles.statsChip}>
-                  {memberCount} members
+                  {memberCount} {t("groups.members")}
                 </Chip>
                 {isLeader && (
                   <Chip icon="crown" style={[styles.statsChip, styles.leaderChip]}>
-                    Leader
+                    {t("groups.leader")}
                   </Chip>
                 )}
               </View>

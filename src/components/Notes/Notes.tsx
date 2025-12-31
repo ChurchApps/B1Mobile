@@ -9,6 +9,7 @@ import { MessageInterface } from "@churchapps/helpers";
 import { PersonHelper } from "../../../src/helpers";
 import { Chip } from "react-native-paper";
 import { Avatar } from "../common/Avatar";
+import { useTranslation } from "react-i18next";
 
 interface NotesInterface {
   item: any;
@@ -19,6 +20,7 @@ interface NotesInterface {
 }
 
 const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface) => {
+  const { t } = useTranslation();
   const displayDuration = dayjs(message?.timeSent).fromNow();
   const isEdited = message.timeUpdated && message.timeUpdated !== message.timeSent;
   const replyCount = item?.postCount ? item.postCount - 1 : 0;
@@ -35,7 +37,7 @@ const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface
             <Text style={styles.timestamp}>{displayDuration}</Text>
             {isEdited && (
               <Chip icon="pencil" textStyle={styles.editedChip} style={styles.editedChipContainer}>
-                edited
+                {t("messages.edited")}
               </Chip>
             )}
           </View>
@@ -45,12 +47,12 @@ const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface
           {/* Action Row */}
           <View style={styles.actionRow}>
             <TouchableOpacity style={[styles.replyButton, showReplyBox === idx && styles.replyButtonActive]} onPress={() => (showReplyBox === idx ? handleReply(null) : handleReply(idx))}>
-              <Text style={[styles.replyText, showReplyBox === idx && styles.replyTextActive]}>{showReplyBox === idx ? "Cancel" : "Reply"}</Text>
+              <Text style={[styles.replyText, showReplyBox === idx && styles.replyTextActive]}>{showReplyBox === idx ? t("common.cancel") : t("messages.reply")}</Text>
             </TouchableOpacity>
 
             {replyCount > 0 && (
               <Chip icon="chat-outline" textStyle={styles.replyCountText} style={styles.replyCountChip}>
-                {replyCount} {replyCount === 1 ? "reply" : "replies"}
+                {t("messages.replyCount", { count: replyCount })}
               </Chip>
             )}
           </View>

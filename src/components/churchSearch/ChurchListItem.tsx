@@ -5,6 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { OptimizedImage } from "../OptimizedImage";
 import { ArrayHelper, Constants } from "../../helpers";
 import { ChurchInterface } from "../../helpers";
+import { useTranslation } from "react-i18next";
 
 interface ChurchListItemProps {
   church: ChurchInterface;
@@ -13,6 +14,7 @@ interface ChurchListItemProps {
 }
 
 export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress, isSelecting }) => {
+  const { t } = useTranslation();
   const churchImage = (() => {
     // Default to B1 logo
     let image = Constants.Images.logoBlue;
@@ -47,7 +49,7 @@ export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress,
             {church.name}
           </Text>
           <Text variant="bodySmall" style={styles.churchSubtitle}>
-            {isSelecting ? "Connecting..." : "Tap to connect"}
+            {isSelecting ? t("churchSearch.connecting") : t("churchSearch.tapToConnect")}
           </Text>
         </View>
         {isSelecting ? (

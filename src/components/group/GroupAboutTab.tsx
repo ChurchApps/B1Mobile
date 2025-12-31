@@ -2,12 +2,14 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Avatar } from "react-native-paper";
 import Markdown from "@ronradtke/react-native-markdown-display";
+import { useTranslation } from "react-i18next";
 
 interface GroupAboutTabProps {
   about?: string;
 }
 
 export const GroupAboutTab: React.FC<GroupAboutTabProps> = ({ about }) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.aboutContainer}>
       {about ? (
@@ -16,10 +18,10 @@ export const GroupAboutTab: React.FC<GroupAboutTabProps> = ({ about }) => {
         <View style={styles.emptyState}>
           <Avatar.Icon size={64} icon="information" style={styles.emptyIcon} />
           <Text variant="titleMedium" style={styles.emptyTitle}>
-            No description available
+            {t("groups.noDescriptionAvailable")}
           </Text>
           <Text variant="bodyMedium" style={styles.emptySubtitle}>
-            Group details will appear here when added
+            {t("groups.groupDetailsWillAppear")}
           </Text>
         </View>
       )}

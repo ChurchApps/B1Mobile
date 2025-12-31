@@ -8,6 +8,7 @@ import UserConversations from "../Notes/UserConversation";
 import { Menu, IconButton } from "react-native-paper";
 import { OptimizedImage } from "../OptimizedImage";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   item: { item: TimelinePostInterface; index: number };
@@ -16,6 +17,7 @@ interface Props {
 }
 
 const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
+  const { t } = useTranslation();
   const currentUserChurch = useCurrentUserChurch();
 
   const dateCalculations = useMemo(() => {
@@ -108,9 +110,9 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
           <View style={globalStyles.TitleView}>
             <View style={globalStyles.mainTitleView}>
               <Text>
-                <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}>Conversation for the</Text>
+                <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}>{t("notes.conversationFor")}</Text>
                 <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}> {item?.item?.name}</Text>
-                <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> group</Text>
+                <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> {t("notes.group")}</Text>
               </Text>
             </View>
             <Text style={[globalStyles.eventTextStyle, { textAlign: "right" }]}>{timeDifference >= 24 ? `${dayDiff}d` : timeDifference >= 1 ? `${timeDifference}h` : `${MinDifference}m`}</Text>
@@ -130,9 +132,9 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
         <View style={globalStyles.PostTitleViewStyle}>
           <Text>
             <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.createdByLabel}</Text>
-            <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> has requested this from </Text>
+            <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> {t("notes.hasRequestedFrom")} </Text>
             <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.assignedToLabel}</Text>
-            <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> on behalf of </Text>
+            <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> {t("notes.onBehalfOf")} </Text>
             <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.associatedWithLabel}</Text>
           </Text>
         </View>
@@ -152,14 +154,14 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
               setShowMenu(false);
               handleEdit();
             }}
-            title="Edit"
+            title={t("common.edit")}
           />
           <Menu.Item
             onPress={() => {
               setShowMenu(false);
               handleDelete();
             }}
-            title="Delete"
+            title={t("common.delete")}
           />
         </Menu>
       )}

@@ -3,6 +3,7 @@ import { View, StyleSheet, TextInput, Text, Alert } from "react-native";
 import { Button, Card, HelperText } from "react-native-paper";
 import { ApiHelper, UserHelper } from "../../../../src/helpers";
 import { Permissions, LinkInterface } from "@churchapps/helpers";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   groupId: string;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupLeader = false }) => {
+  const { t } = useTranslation();
   const [text, setText] = useState("");
   const [url, setUrl] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
@@ -18,15 +20,15 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
   const handleAdd = async () => {
     const newErrors: string[] = [];
 
-    if (!text.trim()) newErrors.push("Please enter valid text");
-    if (!url.trim()) newErrors.push("Please enter link");
+    if (!text.trim()) newErrors.push(t("groups.enterValidText"));
+    if (!url.trim()) newErrors.push(t("groups.enterLink"));
 
     const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/[\w-]*)*(\?.*)?(#.*)?$/i;
     if (url.trim() && !urlPattern.test(url.trim())) {
-      newErrors.push("Please enter a valid URL");
+      newErrors.push(t("groups.enterValidUrl"));
     }
 
-    if (!UserHelper.checkAccess(Permissions.contentApi.content.edit)) newErrors.push("Unauthorized to add links");
+    if (!UserHelper.checkAccess(Permissions.contentApi.content.edit)) newErrors.push(t("groups.unauthorizedToAddLinks"));
 
     if (newErrors.length > 0) {
       setErrors(newErrors);
@@ -47,7 +49,7 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
     try {
       const response = await ApiHelper.post("/links", [link], "ContentApi");
       if (response?.raw?.message) {
-        Alert.alert("Error", response.raw.message);
+        Alert.alert(t("donations.error"), response.raw.message);
       } else {
         setText("");
         setUrl("");
@@ -55,7 +57,7 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
         if (saveCallback) saveCallback();
       }
     } catch (err) {
-      Alert.alert("Error", "Failed to add link. Please try again.");
+      Alert.alert(t("donations.error"), t("groups.failedToAddLink"));
       console.error(err);
     }
   };
@@ -63,7 +65,7 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
   return (
     <View style={styles.container}>
       <Card style={styles.contentCard}>
-        <Text style={styles.header}>Add Links</Text>
+        <Text style={styles.header}>{t("groups.addLinks")}</Text>
         {errors.length > 0 && (
           <View style={styles.errorContainer}>
             {errors.map((err, idx) => (
@@ -73,14 +75,14 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
             ))}
           </View>
         )}
-        <Text style={styles.note}>Link could be of Google Drive, Hosted Lesson PDF, etc.</Text>
+        <Text style={styles.note}>{t("groups.linkNote")}</Text>
 
-        <TextInput style={styles.input} autoCapitalize={'none'} placeholder="Link Text" value={text} onChangeText={setText} accessibilityLabel="Link display text" />
+        <TextInput style={styles.input} autoCapitalize={'none'} placeholder={t("groups.linkText")} value={text} onChangeText={setText} accessibilityLabel="Link display text" />
 
-        <TextInput style={styles.input} autoCapitalize={'none'} placeholder="Link URL" value={url} onChangeText={setUrl} accessibilityLabel="Link URL" />
+        <TextInput style={styles.input} autoCapitalize={'none'} placeholder={t("groups.linkUrl")} value={url} onChangeText={setUrl} accessibilityLabel="Link URL" />
 
         <Button mode="contained" onPress={handleAdd} style={styles.button}>
-          Add
+          {t("common.add")}
         </Button>
       </Card>
     </View>

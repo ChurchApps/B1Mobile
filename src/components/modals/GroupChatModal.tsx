@@ -410,7 +410,7 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
                     }, 100);
                   }
                 }}>
-                <Text style={{ fontSize: 16 }}>Edit</Text>
+                <Text style={{ fontSize: 16 }}>{t("common.edit")}</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity style={{ paddingHorizontal: 12 }}
@@ -422,7 +422,7 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
                   deleteMessage(msgToEdit)
                 }
               }}>
-              <Text style={{ fontSize: 16, color: "red" }}>Delete</Text>
+              <Text style={{ fontSize: 16, color: "red" }}>{t("common.delete")}</Text>
             </TouchableOpacity>
           </View>
         </Pressable>
