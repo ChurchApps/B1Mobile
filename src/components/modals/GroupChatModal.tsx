@@ -7,13 +7,10 @@ import { MessageInterface } from "@churchapps/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentChurch, useCurrentUserChurch } from "../../stores/useUserStore";
 import { Avatar } from "../common/Avatar";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "../../helpers/dayjsConfig";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { TextInput as PaperTextInput } from "react-native-paper";
-
-dayjs.extend(relativeTime);
 const { width: screenWidth } = Dimensions.get("window");
 
 interface GroupChatModalProps {

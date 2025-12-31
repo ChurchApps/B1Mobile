@@ -1,5 +1,5 @@
 import { EventHelper, ApiHelper, EventExceptionInterface, EventInterface } from "@churchapps/helpers";
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import React, { useState, useRef } from "react";
 import { Alert, StyleSheet, View, ScrollView, SafeAreaView } from "react-native";
 import DatePicker from "react-native-date-picker";
@@ -345,7 +345,7 @@ export default function CreateEvent(props: Props) {
               </Text>
               <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
                 <MaterialIcons name="event" size={16} color="#0D47A1" />
-                <Text style={styles.dateTimeText}>{allDay ? dayjs(startDate).format("MMM DD, YYYY") : dayjs(startDate).format("MMM DD, YYYY HH:mm")}</Text>
+                <Text style={styles.dateTimeText}>{allDay ? dayjs(startDate).format("ll") : dayjs(startDate).format("lll")}</Text>
               </Button>
             </View>
 
@@ -355,7 +355,7 @@ export default function CreateEvent(props: Props) {
               </Text>
               <Button mode="outlined" onPress={() => setOpenEndPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
                 <MaterialIcons name="event" size={16} color="#0D47A1" />
-                <Text style={styles.dateTimeText}>{allDay ? dayjs(endDate).format("MMM DD, YYYY") : dayjs(endDate).format("MMM DD, YYYY HH:mm")}</Text>
+                <Text style={styles.dateTimeText}>{allDay ? dayjs(endDate).format("ll") : dayjs(endDate).format("lll")}</Text>
               </Button>
             </View>
           </View>

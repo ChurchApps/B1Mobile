@@ -18,6 +18,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { InlineLoader } from "../../src/components/common/LoadingComponents";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
+import dayjs from "../../src/helpers/dayjsConfig";
 
 const theme = {
   ...MD3LightTheme,
@@ -132,7 +133,7 @@ const Plan = () => {
             {planStats.nextPlan && (
               <View style={styles.nextPlanContainer}>
                 <Text style={styles.nextPlanLabel}>{t("plans.nextService")}</Text>
-                <Text style={styles.nextPlanDate}>{new Date(planStats.nextPlan.serviceDate).toLocaleDateString()}</Text>
+                <Text style={styles.nextPlanDate}>{dayjs(planStats.nextPlan.serviceDate).format("ll")}</Text>
               </View>
             )}
           </View>

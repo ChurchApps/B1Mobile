@@ -11,7 +11,7 @@ import { useUser, useCurrentUserChurch } from "../../stores/useUserStore";
 import { CacheHelper } from "../../helpers";
 import { DonationComplete } from "./DonationComplete";
 import DatePicker from "react-native-date-picker";
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useTranslation } from "react-i18next";
 
@@ -483,7 +483,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
                   Start Date
                 </Text>
                 <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton}>
-                  <Text style={styles.dateTimeText}>{dayjs(startDate).format("MMM DD, YYYY")}</Text>
+                  <Text style={styles.dateTimeText}>{dayjs(startDate).format("ll")}</Text>
                 </Button>
                 <DatePicker
                   modal

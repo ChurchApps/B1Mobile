@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { View, StyleSheet, FlatList, TouchableOpacity, Keyboard } from "react-native";
 import { Text, Button, IconButton, Avatar, Checkbox, ActivityIndicator, Divider, TextInput } from "react-native-paper";
 import DatePicker from "react-native-date-picker";
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import { useTranslation } from "react-i18next";
 import { ApiHelper } from "@churchapps/helpers";
 import { Constants, EnvironmentHelper } from "../../helpers";
@@ -398,7 +398,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
       >
         <IconButton icon="calendar" size={20} iconColor="#2563EB" style={styles.dateIcon} />
         <Text style={styles.dateButtonText}>
-          {dayjs(selectedDate).format("MMMM D, YYYY")}
+          {dayjs(selectedDate).format("LL")}
         </Text>
         <IconButton icon="chevron-down" size={18} iconColor="#6B7280" />
       </TouchableOpacity>

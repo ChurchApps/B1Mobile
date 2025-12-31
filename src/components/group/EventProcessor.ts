@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import { EventHelper, EventInterface } from "@churchapps/helpers";
 
 export class EventProcessor {

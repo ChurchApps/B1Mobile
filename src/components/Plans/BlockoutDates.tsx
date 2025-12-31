@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Animated, Alert } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import DatePicker from "react-native-date-picker";
 import { useTranslation } from "react-i18next";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
@@ -160,8 +160,8 @@ export const BlockoutDates = () => {
                       <View style={styles.dateHeader}>
                         <MaterialIcons name="event-busy" size={20} color="#B0120C" />
                         <Text style={styles.dateRange}>
-                          {dayjs(date.startDate).format("MMM DD, YYYY")}
-                          {date.endDate && date.endDate !== date.startDate && ` - ${dayjs(date.endDate).format("MMM DD, YYYY")}`}
+                          {dayjs(date.startDate).format("ll")}
+                          {date.endDate && date.endDate !== date.startDate && ` - ${dayjs(date.endDate).format("ll")}`}
                         </Text>
                       </View>
 

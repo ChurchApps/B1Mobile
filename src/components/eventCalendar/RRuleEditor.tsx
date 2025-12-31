@@ -1,7 +1,7 @@
 import * as React from "react";
 import { EventHelper, DateHelper } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import { useEffect, useState, useMemo } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
@@ -213,7 +213,7 @@ export default function RRuleEditor(props: Props) {
             <Text style={styles.labelText}>{t("events.endDate")}</Text>
             <View style={styles.dateConatiner}>
               <Text style={styles.dateText} numberOfLines={1}>
-                {dayjs(onEndDate).format("YYYY-MM-DD")}
+                {dayjs(onEndDate).format("L")}
               </Text>
               <MaterialIcons name={"calendar-today"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setonEndPicker(true)} />
               <DatePicker

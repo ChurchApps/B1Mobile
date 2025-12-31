@@ -1,7 +1,4 @@
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-
-dayjs.extend(relativeTime);
+import dayjs from "../../helpers/dayjsConfig";
 import React from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { Constants } from "../../../src/helpers";

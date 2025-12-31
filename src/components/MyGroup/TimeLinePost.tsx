@@ -1,5 +1,5 @@
 import { ConversationInterface } from "../../helpers/Interfaces";
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import React, { useMemo, useCallback } from "react";
 import { Text, View } from "react-native";
 import { ApiHelper, globalStyles } from "../../../src/helpers";
@@ -28,7 +28,7 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
     const timeDifference = endDate.diff(startDate, "hours");
     const MinDifference = endDate.diff(startDate, "minute");
     const dayDiff = endDate.diff(startDate, "days");
-    const formattedDate = dayjs(date).format("MMM D, YYYY h:mm A");
+    const formattedDate = dayjs(date).format("lll");
 
     return {
       date,

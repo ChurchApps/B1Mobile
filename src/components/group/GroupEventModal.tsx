@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Text, Card, Chip, IconButton, Divider } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import { EventModal } from "../eventCalendar/EventModal";
 import { EventInterface } from "@churchapps/helpers";
 
@@ -33,7 +33,7 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onC
       <View style={styles.eventModalContent}>
         <View style={styles.eventModalHeader}>
           <Text variant="headlineSmall" style={styles.eventModalTitle}>
-            {dayjs(selectedDate).format("MMMM D, YYYY")} Events
+            {dayjs(selectedDate).format("LL")}
           </Text>
           <IconButton icon="close" size={24} onPress={onClose} style={styles.eventModalClose} />
         </View>
@@ -69,7 +69,7 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onC
                     <View style={styles.eventTime}>
                       <MaterialIcons name="access-time" size={16} color="#666" />
                       <Text variant="bodySmall" style={styles.eventTimeText}>
-                        {event.allDay ? "All day" : `${dayjs(event.start).format("h:mm A")} - ${dayjs(event.end).format("h:mm A")}`}
+                        {event.allDay ? "All day" : `${dayjs(event.start).format("LT")} - ${dayjs(event.end).format("LT")}`}
                       </Text>
                     </View>
 

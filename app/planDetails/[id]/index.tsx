@@ -17,6 +17,7 @@ import { Provider as PaperProvider, Card, MD3LightTheme } from "react-native-pap
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
+import dayjs from "../../../src/helpers/dayjsConfig";
 
 const theme = {
   ...MD3LightTheme,
@@ -153,7 +154,7 @@ const PlanDetails = () => {
             <View style={styles.overviewHeroContent}>
               <MaterialIcons name="assignment" size={48} color="white" style={styles.overviewHeroIcon} />
               <Text style={styles.overviewHeroTitle}>{plan.name}</Text>
-              <Text style={styles.overviewHeroDate}>{plan.serviceDate ? new Date(plan.serviceDate).toLocaleDateString() : "TBD"}</Text>
+              <Text style={styles.overviewHeroDate}>{plan.serviceDate ? dayjs(plan.serviceDate).format("ll") : t("common.tbd")}</Text>
             </View>
           </LinearGradient>
         ) : (

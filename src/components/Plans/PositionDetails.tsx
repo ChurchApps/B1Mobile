@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -79,8 +79,8 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
     });
   };
 
-  const formatDate = (date: any) => date.format("MMM DD, YYYY h:mm A");
-  const formatTime = (date: any) => date.format("h:mm A");
+  const formatDate = (date: any) => date.format("lll");
+  const formatTime = (date: any) => date.format("LT");
 
   const handleAccept = () => {
     if (!assignment?.id) return;

@@ -1,7 +1,7 @@
 import { ApiHelper, ConversationCheckInterface, UserSearchInterface } from "../../src/helpers";
 import { NavigationProps } from "../../src/interfaces";
 import { useNavigation } from "@react-navigation/native";
-import dayjs from "dayjs";
+import dayjs from "../helpers/dayjsConfig";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View, ScrollView } from "react-native";
 import { Provider as PaperProvider, Card, Text, MD3LightTheme, Chip, Button } from "react-native-paper";
@@ -180,7 +180,7 @@ export function NotificationTab() {
       } else if (dayDiff < 7) {
         return `${dayDiff}d`;
       } else {
-        return endDate.format("MMM D");
+        return endDate.format("ll");
       }
     };
 
