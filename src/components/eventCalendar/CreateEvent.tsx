@@ -1,5 +1,4 @@
-import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { ApiHelper, EventExceptionInterface, EventInterface } from "@churchapps/helpers";
+import { EventHelper, ApiHelper, EventExceptionInterface, EventInterface } from "@churchapps/helpers";
 import dayjs from "dayjs";
 import React, { useState, useRef } from "react";
 import { Alert, StyleSheet, View, ScrollView, SafeAreaView } from "react-native";
