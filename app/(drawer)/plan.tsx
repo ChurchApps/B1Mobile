@@ -233,8 +233,7 @@ const Plan = () => {
                 </>
               )}
               {activeSection === "past" && (
-                // <UpcomingDates assignments={pastAssignments} positions={pastPositions} plans={pastPlans} times={pastTimes} isLoading={isLoading} isPast={true} />
-                null
+                <UpcomingDates assignments={pastAssignments} positions={pastPositions} plans={pastPlans} times={pastTimes} isLoading={isLoading} isPast={true} />
               )}
             </ScrollView>
           </View>

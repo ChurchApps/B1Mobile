@@ -62,7 +62,7 @@ export const ServingTimes = ({ plans, positions, assignments, isLoading = false 
         });
       }
     });
-    ArrayHelper.sortBy(data, "serviceDate", true);
+    ArrayHelper.sortBy(data, "serviceDate", false);
     return data;
   }, [assignments, positions, plans]);
 

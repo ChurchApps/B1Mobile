@@ -69,7 +69,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
       }
     });
     // For upcoming: ascending (soonest first), for past: descending (most recent first)
-    ArrayHelper.sortBy(data, "serviceDate", !isPast);
+    ArrayHelper.sortBy(data, "serviceDate", isPast);
     return data;
   }, [assignments, positions, plans, times, isPast]);
 
