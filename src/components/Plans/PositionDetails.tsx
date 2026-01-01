@@ -1,9 +1,10 @@
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ApiHelper, PositionInterface, TimeInterface } from "../../../src/helpers";
 import { Card, Button } from "react-native-paper";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   position: PositionInterface;
@@ -13,6 +14,8 @@ interface Props {
 }
 
 export const PositionDetails = ({ position, assignment, times, onUpdate }: Props) => {
+  const { t } = useTranslation();
+
   // Early return if required props are null
   if (!position || !assignment) {
     return null;
@@ -45,13 +48,13 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
   const getStatusText = (status: string) => {
     switch (status?.toLowerCase()) {
       case "accepted":
-        return "Accepted";
+        return t("plans.accepted");
       case "declined":
-        return "Declined";
+        return t("plans.declined");
       case "confirmed":
-        return "Confirmed";
+        return t("plans.confirmed");
       default:
-        return "Pending Response";
+        return t("plans.pendingResponse");
     }
   };
 
@@ -76,8 +79,8 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
     });
   };
 
-  const formatDate = (date: any) => date.format("MMM DD, YYYY h:mm A");
-  const formatTime = (date: any) => date.format("h:mm A");
+  const formatDate = (date: any) => date.format("lll");
+  const formatTime = (date: any) => date.format("LT");
 
   const handleAccept = () => {
     if (!assignment?.id) return;
@@ -126,7 +129,7 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
         {/* Times Section */}
         {times.length > 0 && (
           <View style={styles.timesSection}>
-            <Text style={styles.sectionTitle}>Service Times</Text>
+            <Text style={styles.sectionTitle}>{t("plans.serviceTimes")}</Text>
             <View style={styles.timesList}>{getTimes()}</View>
           </View>
         )}
@@ -135,10 +138,10 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
         {canRespond && (
           <View style={styles.actionsContainer}>
             <Button mode="outlined" onPress={handleDecline} style={styles.declineButton} labelStyle={styles.declineButtonText} icon="close">
-              Decline
+              {t("plans.decline")}
             </Button>
             <Button mode="contained" onPress={handleAccept} style={styles.acceptButton} labelStyle={styles.acceptButtonText} icon="check">
-              Accept
+              {t("plans.accept")}
             </Button>
           </View>
         )}

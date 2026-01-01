@@ -7,6 +7,7 @@ import Notes from "./Notes";
 import { TextInput, Text, Avatar, Card } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
 import { useUser } from "../../stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 interface NewConversation {
   placeholder: string;
@@ -16,6 +17,7 @@ interface NewConversation {
 
 const ConversationPopup = ({ conversations, loadConversations, groupId }: any) => {
   const { theme } = useAppTheme();
+  const { t } = useTranslation();
   const [newMessage] = useState<MessageInterface>();
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
   const textRef = React.useRef("");
@@ -86,7 +88,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
     <Card style={styles.messageCard}>
       <Card.Content style={styles.messageContent}>
         <Notes item={item} message={item.messages[0]} idx={idx} showReplyBox={showReplyBox} handleReply={handleReply} />
-        {idx === showReplyBox && <RenderNewConversation placeholder={"Reply ..."} type="reply" message={item.messages[0]} />}
+        {idx === showReplyBox && <RenderNewConversation placeholder={t("messages.reply")} type="reply" message={item.messages[0]} />}
         <View style={styles.repliesContainer}>{getNotes(item)}</View>
       </Card.Content>
     </Card>
@@ -108,7 +110,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
       <View style={styles.header}>
         <Avatar.Icon size={32} icon="chat" style={styles.headerIcon} />
         <Text variant="titleMedium" style={styles.headerTitle}>
-          Group Chat
+          {t("groups.groupChat")}
         </Text>
         <Text variant="bodySmall" style={styles.headerSubtitle}>
           {conversations.length} conversation{conversations.length !== 1 ? "s" : ""}
@@ -123,17 +125,17 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
           <View style={styles.emptyState}>
             <Avatar.Icon size={64} icon="chat-outline" style={styles.emptyIcon} />
             <Text variant="titleMedium" style={styles.emptyTitle}>
-              No messages yet
+              {t("groups.noMessagesYet")}
             </Text>
             <Text variant="bodyMedium" style={styles.emptySubtitle}>
-              Start a conversation to connect with your group
+              {t("groups.startConversationToConnect")}
             </Text>
           </View>
         )}
       </View>
 
       {/* Input */}
-      <RenderNewConversation placeholder={"Type your message..."} type="new" />
+      <RenderNewConversation placeholder={t("messages.typeYourMessage")} type="new" />
     </View>
   );
 };

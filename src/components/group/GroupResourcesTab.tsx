@@ -8,12 +8,14 @@ import ResourcesTable from "./section/StorageInfo";
 import { GroupLinkAdd } from "./section/GroupLinkAdd";
 import { InputBox } from "./section/InputBox";
 import { FileUpload } from "./section/FileUpload";
+import { useTranslation } from "react-i18next";
 
 interface GroupResourcesTabProps {
   groupId?: string;
 }
 
 export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId }) => {
+  const { t } = useTranslation();
   const [files, setFiles] = useState<FileInterface[]>(null);
   const [links, setLinks] = useState<LinkInterface[]>(null);
   const [pendingFileSave, setPendingFileSave] = useState(false);
@@ -50,13 +52,13 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
   }, []);
 
   const handleDelete = async (file: FileInterface) => {
-    Alert.alert("Are you sure you wish to delete '" + file.fileName + "?", "", [
+    Alert.alert(t("groups.confirmDeleteFile", { name: file.fileName }), "", [
       {
-        text: "Cancel",
+        text: t("common.cancel"),
         style: "cancel"
       },
       {
-        text: "Delete",
+        text: t("common.delete"),
         onPress: async () => {
           try {
             await ApiHelper.delete("/files/" + file.id, "ContentApi");
@@ -70,13 +72,13 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
   };
 
   const handleLinkDelete = async (link: LinkInterface) => {
-    Alert.alert("Are you sure you wish to delete '" + link.text + "?", "", [
+    Alert.alert(t("groups.confirmDeleteLink", { name: link.text }), "", [
       {
-        text: "Cancel",
+        text: t("common.cancel"),
         style: "cancel"
       },
       {
-        text: "Delete",
+        text: t("common.delete"),
         onPress: async () => {
           try {
             await ApiHelper.delete("/links/" + link.id, "ContentApi");
@@ -110,7 +112,7 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
 
     return (
       <View style={styles.container}>
-        <Text>Used space: {formatSize(usedSpace)} / 100MB</Text>
+        <Text>{t("groups.usedSpace", { used: formatSize(usedSpace), total: "100MB" })}</Text>
         <View style={styles.progressContainer}>
           <View style={styles.progressBarWrapper}>
             <ProgressBar progress={percent} color="#0D47A1" style={styles.progressBar} />
@@ -135,7 +137,7 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
       <ResourcesTable files={files} links={links} canEditGroupResources={canEditGroupResources} handleDelete={handleDelete} handleLinkDelete={handleLinkDelete} formatSize={formatSize} />
       <GroupLinkAdd groupId={groupId || ""} saveCallback={loadData} forGroupLeader={false} />
 
-      <InputBox headerIcon="file" headerText="Upload">
+      <InputBox headerIcon="file" headerText={t("groups.upload")}>
         {getStorage()}
         <FileUpload contentType="group" contentId={groupId || ""} pendingSave={pendingFileSave} saveCallback={handleFileSaved} />
       </InputBox>

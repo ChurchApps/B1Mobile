@@ -45,7 +45,7 @@ export const CheckinGroups = (props: Props) => {
             <MaterialIcons name="folder" size={24} color="#0D47A1" />
           </View>
           <Text variant="titleMedium" style={styles.categoryName}>
-            {item.name || "General Groups"}
+            {item.name || t("checkin.generalGroups")}
           </Text>
           <View style={styles.expandIcon}>
             <MaterialIcons name={selected === item.key ? "expand-less" : "expand-more"} size={24} color="#9E9E9E" />
@@ -114,7 +114,7 @@ export const CheckinGroups = (props: Props) => {
       {/* Bottom Actions */}
       <View style={styles.bottomSection}>
         <Button mode="outlined" onPress={() => selectGroup(null)} style={styles.skipButton} labelStyle={styles.skipButtonText} icon="close">
-          No Group
+          {t("groups.noGroup")}
         </Button>
       </View>
     </View>

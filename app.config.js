@@ -2,7 +2,7 @@ module.exports = {
   expo: {
     name: "B1Mobile",
     slug: "B1Mobile",
-    version: "3.4.0",
+    version: "3.5.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -49,7 +49,7 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png"
     },
-    runtimeVersion: "3.4.0",
+    runtimeVersion: "3.5.0",
     plugins: [
       [
         "@sentry/react-native/expo",

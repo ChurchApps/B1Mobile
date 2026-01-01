@@ -3,6 +3,7 @@ import { View, StyleSheet, Alert, ScrollView } from "react-native";
 import { Card, Text, TextInput, Button, Menu, Banner, Divider } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { TouchableOpacity } from "react-native";
+import { useTranslation } from "react-i18next";
 import { ApiHelper } from "../../helpers";
 import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../interfaces";
 import { useStripe } from "@stripe/stripe-react-native";
@@ -17,14 +18,16 @@ interface Props {
   showVerifyForm: boolean;
 }
 
-const accountTypes = [
-  { label: "Individual", value: "individual" },
-  { label: "Company", value: "company" }
+const getAccountTypes = (t: (key: string) => string) => [
+  { label: t("donations.individual"), value: "individual" },
+  { label: t("donations.company"), value: "company" }
 ];
 
 export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, handleDelete, showVerifyForm }: Props) {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [showAccountTypeMenu, setShowAccountTypeMenu] = useState<boolean>(false);
+  const accountTypes = getAccountTypes(t);
   const [selectedType, setSelectedType] = useState(bank.account_holder_type || accountTypes[0].value);
   const [name, setName] = useState<string>(bank.account_holder_name || "");
   const [accountNumber, setAccountNumber] = useState<string>("");
@@ -73,7 +76,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
     }
   };
 
-  const getAccountTypeLabel = (value: string) => accountTypes.find(type => type.value === value)?.label || "Individual";
+  const getAccountTypeLabel = (value: string) => accountTypes.find(type => type.value === value)?.label || t("donations.individual");
 
   const handleSave = () => {
     setIsSubmitting(true);
@@ -91,7 +94,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
   const updateBank = async () => {
     if (!name.trim()) {
       setIsSubmitting(false);
-      Alert.alert("Required Field", "Please enter the account holder name");
+      Alert.alert(t("donations.requiredField"), t("donations.enterAccountHolderName"));
       return;
     }
 
@@ -108,14 +111,14 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
     try {
       const response = await ApiHelper.post("/paymentmethods/updatebank", payload, "GivingApi");
       if (response?.raw?.message) {
-        Alert.alert("Error", response.raw.message);
+        Alert.alert(t("donations.error"), response.raw.message);
       } else {
-        Alert.alert("Success", "Bank account updated successfully");
+        Alert.alert(t("donations.success"), t("donations.bankAccountUpdated"));
         setMode("display");
         await updatedFunction();
       }
     } catch {
-      Alert.alert("Error", "Failed to update bank account");
+      Alert.alert(t("donations.error"), t("donations.failedUpdateBank"));
     }
 
     setIsSubmitting(false);
@@ -124,19 +127,19 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
   const createBank = async () => {
     if (!routingNumber || !accountNumber || !name.trim()) {
       setIsSubmitting(false);
-      Alert.alert("Required Fields", "Please fill in all required fields");
+      Alert.alert(t("donations.requiredFields"), t("donations.fillAllRequiredFields"));
       return;
     }
 
     if (!validateRoutingNumber(routingNumber)) {
       setIsSubmitting(false);
-      Alert.alert("Invalid Routing Number", "Please enter a valid 9-digit routing number");
+      Alert.alert(t("donations.invalidRoutingNumber"), t("donations.validRoutingNumber"));
       return;
     }
 
     if (!validateAccountNumber(accountNumber)) {
       setIsSubmitting(false);
-      Alert.alert("Invalid Account Number", "Please enter a valid account number (4-17 digits)");
+      Alert.alert(t("donations.invalidAccountNumber"), t("donations.validAccountNumber"));
       return;
     }
 
@@ -154,7 +157,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
       });
 
       if (tokenResult.error) {
-        Alert.alert("Error", tokenResult.error.message);
+        Alert.alert(t("donations.error"), tokenResult.error.message);
         setIsSubmitting(false);
         return;
       }
@@ -169,14 +172,14 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
 
       const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi");
       if (result?.raw?.message) {
-        Alert.alert("Error", result.raw.message);
+        Alert.alert(t("donations.error"), result.raw.message);
       } else {
-        Alert.alert("Success", "Bank account added successfully! You'll receive verification deposits in 1-3 business days.");
+        Alert.alert(t("donations.success"), t("donations.bankAccountAdded"));
         setMode("display");
         await updatedFunction();
       }
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to create bank account");
+      Alert.alert(t("donations.error"), error.message || t("donations.failedCreateBank"));
     }
 
     setIsSubmitting(false);
@@ -185,7 +188,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
   const verifyBank = async () => {
     if (!firstDeposit || !secondDeposit) {
       setIsSubmitting(false);
-      Alert.alert("Required", "Please enter both deposit amounts");
+      Alert.alert(t("donations.required"), t("donations.enterBothDepositAmounts"));
       return;
     }
 
@@ -198,21 +201,21 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
     try {
       const response = await ApiHelper.post("/paymentmethods/verifyBank", verifyPayload, "GivingApi");
       if (response?.raw?.message) {
-        Alert.alert("Error", response.raw.message);
+        Alert.alert(t("donations.error"), response.raw.message);
       } else {
-        Alert.alert("Success", "Bank account verified successfully!");
+        Alert.alert(t("donations.success"), t("donations.bankAccountVerified"));
         setMode("display");
         await updatedFunction();
       }
     } catch {
-      Alert.alert("Error", "Failed to verify bank account");
+      Alert.alert(t("donations.error"), t("donations.failedVerifyBank"));
     }
 
     setIsSubmitting(false);
   };
 
   const isEditing = !!bank.id;
-  const title = isEditing ? `${bank.name?.toUpperCase()} ****${bank.last4}` : "Add Bank Account";
+  const title = isEditing ? `${bank.name?.toUpperCase()} ****${bank.last4}` : t("donations.addBankAccount");
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -235,11 +238,11 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
               <View style={styles.instructionsHeader}>
                 <MaterialIcons name="verified-user" size={48} color="#0D47A1" />
                 <Text variant="titleLarge" style={styles.instructionsTitle}>
-                  Verify Your Account
+                  {t("donations.verifyYourAccount")}
                 </Text>
               </View>
               <Text variant="bodyLarge" style={styles.instructionsText}>
-                Enter the two small deposit amounts you received in your bank account to complete verification.
+                {t("donations.verifyInstructions")}
               </Text>
             </Card.Content>
           </Card>
@@ -248,15 +251,15 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
           <Card style={styles.formCard}>
             <Card.Content>
               <Text variant="titleMedium" style={styles.sectionTitle}>
-                Deposit Amounts
+                {t("donations.depositAmounts")}
               </Text>
 
               <View style={styles.depositRow}>
                 <View style={styles.depositField}>
-                  <TextInput mode="outlined" label="First Deposit" value={firstDeposit} onChangeText={setFirstDeposit} keyboardType="decimal-pad" style={styles.depositInput} left={<TextInput.Icon icon={() => <Text style={styles.dollarSign}>$</Text>} />} />
+                  <TextInput mode="outlined" label={t("donations.firstDeposit")} value={firstDeposit} onChangeText={setFirstDeposit} keyboardType="decimal-pad" style={styles.depositInput} left={<TextInput.Icon icon={() => <Text style={styles.dollarSign}>$</Text>} />} />
                 </View>
                 <View style={styles.depositField}>
-                  <TextInput mode="outlined" label="Second Deposit" value={secondDeposit} onChangeText={setSecondDeposit} keyboardType="decimal-pad" style={styles.depositInput} left={<TextInput.Icon icon={() => <Text style={styles.dollarSign}>$</Text>} />} />
+                  <TextInput mode="outlined" label={t("donations.secondDeposit")} value={secondDeposit} onChangeText={setSecondDeposit} keyboardType="decimal-pad" style={styles.depositInput} left={<TextInput.Icon icon={() => <Text style={styles.dollarSign}>$</Text>} />} />
                 </View>
               </View>
             </Card.Content>
@@ -268,7 +271,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
           {!isEditing && (
             <Banner visible={true} icon={({ size }) => <MaterialIcons name="info" size={size} color="#0D47A1" />} style={styles.infoBanner}>
               <Text variant="bodyMedium" style={styles.bannerText}>
-                Bank accounts require verification. You'll receive two small deposits in 1-3 business days to complete setup.
+                {t("donations.bankVerificationInfo")}
               </Text>
             </Banner>
           )}
@@ -277,13 +280,13 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
           <Card style={styles.formCard}>
             <Card.Content>
               <Text variant="titleMedium" style={styles.sectionTitle}>
-                Account Holder Information
+                {t("donations.accountHolderInfo")}
               </Text>
 
-              <TextInput mode="outlined" label="Account Holder Name *" value={name} onChangeText={setName} style={styles.input} placeholder="Enter full name as it appears on account" />
+              <TextInput mode="outlined" label={t("donations.accountHolderName")} value={name} onChangeText={setName} style={styles.input} placeholder={t("donations.enterFullName")} />
 
               <Text variant="titleSmall" style={styles.fieldLabel}>
-                Account Type *
+                {t("donations.accountType")}
               </Text>
               <Menu
                 visible={showAccountTypeMenu}
@@ -316,19 +319,19 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
               <Card.Content>
                 <View style={styles.sectionHeader}>
                   <Text variant="titleMedium" style={styles.sectionTitle}>
-                    Bank Account Details
+                    {t("donations.bankAccountDetails")}
                   </Text>
                   <TouchableOpacity style={styles.toggleButton} onPress={() => setShowBankDetails(!showBankDetails)}>
                     <MaterialIcons name={showBankDetails ? "visibility-off" : "visibility"} size={20} color="#0D47A1" />
                     <Text variant="labelMedium" style={styles.toggleText}>
-                      {showBankDetails ? "Hide" : "Show"}
+                      {showBankDetails ? t("donations.hide") : t("donations.show")}
                     </Text>
                   </TouchableOpacity>
                 </View>
 
-                <TextInput mode="outlined" label="Routing Number *" value={formatRoutingNumber(routingNumber)} onChangeText={handleRoutingNumberChange} keyboardType="number-pad" style={styles.input} placeholder="123-456-789" maxLength={11} secureTextEntry={!showBankDetails} />
+                <TextInput mode="outlined" label={t("donations.routingNumber")} value={formatRoutingNumber(routingNumber)} onChangeText={handleRoutingNumberChange} keyboardType="number-pad" style={styles.input} placeholder="123-456-789" maxLength={11} secureTextEntry={!showBankDetails} />
 
-                <TextInput mode="outlined" label="Account Number *" value={accountNumber} onChangeText={handleAccountNumberChange} keyboardType="number-pad" style={styles.input} placeholder="Enter account number" maxLength={17} secureTextEntry={!showBankDetails} />
+                <TextInput mode="outlined" label={t("donations.accountNumber")} value={accountNumber} onChangeText={handleAccountNumberChange} keyboardType="number-pad" style={styles.input} placeholder={t("donations.enterAccountNumber")} maxLength={17} secureTextEntry={!showBankDetails} />
 
               </Card.Content>
             </Card>
@@ -340,11 +343,11 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
       {/* Action Buttons */}
       <View style={styles.actionButtons}>
         <Button mode="outlined" onPress={() => setMode("display")} style={styles.cancelButton} labelStyle={styles.cancelButtonText}>
-          Cancel
+          {t("common.cancel")}
         </Button>
 
         <Button mode="contained" onPress={handleSave} loading={isSubmitting} disabled={isSubmitting} style={styles.saveButton} labelStyle={styles.saveButtonText} buttonColor="#0D47A1">
-          {showVerifyForm ? "Verify Account" : isEditing ? "Update Account" : "Add Account"}
+          {showVerifyForm ? t("donations.verifyAccount") : isEditing ? t("donations.updateAccount") : t("donations.addAccount")}
         </Button>
       </View>
 
@@ -353,7 +356,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
         <>
           <Divider style={styles.divider} />
           <Button mode="text" onPress={handleDelete} style={styles.deleteButton} labelStyle={styles.deleteButtonText} icon="delete">
-            Remove Bank Account
+            {t("donations.removeBankAccount")}
           </Button>
         </>
       )}

@@ -1,5 +1,6 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { BlockoutDates } from "../../src/components/Plans/BlockoutDates";
+import { PlansTabBar } from "../../src/components/Plans/PlansTabBar";
 import { ServingTimes } from "../../src/components/Plans/ServingTimes";
 import { UpcomingDates } from "../../src/components/Plans/UpcomingDates";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
@@ -18,6 +19,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { InlineLoader } from "../../src/components/common/LoadingComponents";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
+import dayjs from "../../src/helpers/dayjsConfig";
 
 const theme = {
   ...MD3LightTheme,
@@ -43,6 +45,7 @@ const Plan = () => {
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const currentUserChurch = useCurrentUserChurch();
   const { navigateBack } = useNavigation();
+  const [activeSection, setActiveSection] = useState<"upcoming" | "past">("upcoming");
 
   // Use react-query for assignments - this is the starting point
   const { data: assignments = [], isLoading: assignmentsLoading } = useQuery<AssignmentInterface[]>({
@@ -88,10 +91,16 @@ const Plan = () => {
 
   const isLoading = assignmentsLoading || positionsLoading || plansLoading || timesLoading;
 
-  // Filter for upcoming plans (used for hero stats only)
-  const upcomingPlans = useMemo(() => plans.filter(p => p.serviceDate && new Date(p.serviceDate) >= new Date()), [plans]);
+  // Get start of today for consistent filtering (includes events from earlier today in "upcoming")
+  const startOfToday = useMemo(() => dayjs().startOf("day").toDate(), []);
 
-  // Filter assignments for upcoming plans only (used for hero stats only)
+  // Filter for upcoming plans (serviceDate >= start of today)
+  const upcomingPlans = useMemo(() => plans.filter(p => p.serviceDate && new Date(p.serviceDate) >= startOfToday), [plans, startOfToday]);
+
+  // Filter for past plans (serviceDate < start of today)
+  const pastPlans = useMemo(() => plans.filter(p => p.serviceDate && new Date(p.serviceDate) < startOfToday), [plans, startOfToday]);
+
+  // Filter assignments for upcoming plans only (used for hero stats)
   const upcomingAssignments = useMemo(() => {
     const upcomingPlanIds = upcomingPlans.map(p => p.id);
     return assignments.filter(a => {
@@ -99,6 +108,27 @@ const Plan = () => {
       return position && upcomingPlanIds.includes(position.planId);
     });
   }, [assignments, positions, upcomingPlans]);
+
+  // Filter assignments for past plans
+  const pastAssignments = useMemo(() => {
+    const pastPlanIds = pastPlans.map(p => p.id);
+    return assignments.filter(a => {
+      const position = positions.find(p => p.id === a.positionId);
+      return position && pastPlanIds.includes(position.planId);
+    });
+  }, [assignments, positions, pastPlans]);
+
+  // Filter positions for past plans
+  const pastPositions = useMemo(() => {
+    const pastPlanIds = pastPlans.map(p => p.id);
+    return positions.filter(p => pastPlanIds.includes(p.planId));
+  }, [positions, pastPlans]);
+
+  // Filter times for past plans
+  const pastTimes = useMemo(() => {
+    const pastPlanIds = pastPlans.map(p => p.id);
+    return times.filter(t => pastPlanIds.includes(t.planId));
+  }, [times, pastPlans]);
 
   // Statistics for summary cards (upcoming only)
   const planStats = useMemo(() => {
@@ -132,7 +162,7 @@ const Plan = () => {
             {planStats.nextPlan && (
               <View style={styles.nextPlanContainer}>
                 <Text style={styles.nextPlanLabel}>{t("plans.nextService")}</Text>
-                <Text style={styles.nextPlanDate}>{new Date(planStats.nextPlan.serviceDate).toLocaleDateString()}</Text>
+                <Text style={styles.nextPlanDate}>{dayjs(planStats.nextPlan.serviceDate).format("ll")}</Text>
               </View>
             )}
           </View>
@@ -190,13 +220,21 @@ const Plan = () => {
       <SafeAreaProvider>
         <View style={styles.container}>
           <MainHeader title={t("plans.plans")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+          <PlansTabBar activeSection={activeSection} onTabChange={setActiveSection} />
           <View style={styles.contentContainer}>
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              {renderHeroSection()}
-              {renderStatsCards()}
-              <ServingTimes assignments={assignments} positions={positions} plans={plans} isLoading={isLoading} />
-              <UpcomingDates assignments={assignments} positions={positions} plans={plans} times={times} isLoading={isLoading} />
-              <BlockoutDates isLoading={isLoading} />
+              {activeSection === "upcoming" && (
+                <>
+                  {renderHeroSection()}
+                  {renderStatsCards()}
+                  <ServingTimes assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} isLoading={isLoading} />
+                  {/* <UpcomingDates assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} times={times} isLoading={isLoading} /> */}
+                  <BlockoutDates />
+                </>
+              )}
+              {activeSection === "past" && (
+                <UpcomingDates assignments={pastAssignments} positions={pastPositions} plans={pastPlans} times={pastTimes} isLoading={isLoading} isPast={true} />
+              )}
             </ScrollView>
           </View>
         </View>

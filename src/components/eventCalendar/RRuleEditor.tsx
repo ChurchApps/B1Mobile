@@ -1,8 +1,7 @@
 import * as React from "react";
-import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { DateHelper } from "@churchapps/helpers";
+import { EventHelper, DateHelper } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import { useEffect, useState, useMemo } from "react";
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import DatePicker from "react-native-date-picker";
@@ -10,6 +9,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { RRule, Weekday, rrulestr } from "rrule";
 import { globalStyles } from "../../../src/helpers";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   start: Date;
@@ -18,6 +18,7 @@ interface Props {
 }
 
 export default function RRuleEditor(props: Props) {
+  const { t } = useTranslation();
   const initialOptions = props.rRule?.length > 0 ? rrulestr(props.rRule).options : new RRule({ dtstart: props.start }).options;
   initialOptions.byhour = [];
   initialOptions.byminute = [];
@@ -29,18 +30,18 @@ export default function RRuleEditor(props: Props) {
   const [isFrequencyDropDownOpen, setIsFrequencyDropDownOpen] = useState(false);
   const [selectFrequency, setSelectFrequency] = useState(rRuleOptions.freq.toString());
   const [frequencyItems, setFrequencyItems] = useState([
-    { label: "Day", value: RRule.DAILY.toString() },
-    { label: "Week", value: RRule.WEEKLY.toString() },
-    { label: "Month", value: RRule.MONTHLY.toString() }
+    { label: t("events.day"), value: RRule.DAILY.toString() },
+    { label: t("events.week"), value: RRule.WEEKLY.toString() },
+    { label: t("events.month"), value: RRule.MONTHLY.toString() }
   ]);
   const [isFrequencyOnDropDownOpen, setIsFrequencyOnDropDownOpen] = useState(false);
 
   const [isEndsDropDownOpen, setIsEndsDropDownOpen] = useState(false);
   const [selectEnds, setSelectEnds] = useState(rRuleOptions.count ? "count" : rRuleOptions.until ? "until" : "never");
   const [endsItems, setEndsItems] = useState([
-    { label: "Never", value: "never" },
-    { label: "On", value: "until" },
-    { label: "After", value: "count" }
+    { label: t("events.never"), value: "never" },
+    { label: t("events.on"), value: "until" },
+    { label: t("events.after"), value: "count" }
   ]);
 
   const [onEndDate, setOnEndDate] = useState(rRuleOptions.until || new Date());
@@ -118,20 +119,20 @@ export default function RRuleEditor(props: Props) {
         result = (
           <>
             <View style={styles.buttonGroup}>
-              {getDayButton(RRule.SU, "S")}
-              {getDayButton(RRule.MO, "M")}
-              {getDayButton(RRule.TU, "T")}
-              {getDayButton(RRule.WE, "W")}
-              {getDayButton(RRule.TH, "T")}
-              {getDayButton(RRule.FR, "F")}
-              {getDayButton(RRule.SA, "S")}
+              {getDayButton(RRule.SU, t("events.sunAbbr"))}
+              {getDayButton(RRule.MO, t("events.monAbbr"))}
+              {getDayButton(RRule.TU, t("events.tueAbbr"))}
+              {getDayButton(RRule.WE, t("events.wedAbbr"))}
+              {getDayButton(RRule.TH, t("events.thuAbbr"))}
+              {getDayButton(RRule.FR, t("events.friAbbr"))}
+              {getDayButton(RRule.SA, t("events.satAbbr"))}
             </View>
           </>
         );
         break;
       case RRule.MONTHLY.toString(): {
-        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const ordinals = ["first", "second", "third", "fourth", "last"];
+        const daysOfWeek = [t("events.sunday"), t("events.monday"), t("events.tuesday"), t("events.wednesday"), t("events.thursday"), t("events.friday"), t("events.saturday")];
+        const ordinals = [t("events.first"), t("events.second"), t("events.third"), t("events.fourth"), t("events.last")];
         // const dayOfMonth = props.start.getDate() || 1;
         // const dayOfWeek = props.start.getDay() || 0;
         const startDate = new Date(props.start);
@@ -141,15 +142,15 @@ export default function RRuleEditor(props: Props) {
         result = (
           <>
             <View>
-              <Text style={styles.label}>On</Text>
+              <Text style={styles.label}>{t("events.on")}</Text>
               <DropDownPicker
                 listMode="MODAL"
                 open={isFrequencyOnDropDownOpen}
                 value={rRuleOptions.bymonthday?.length > 0 ? "monthDay" : "nthWeekday"}
                 items={[
-                  { label: `Monthly on day ${dayOfMonth}`, value: "monthDay" },
+                  { label: t("events.monthlyOnDay", { day: dayOfMonth }), value: "monthDay" },
                   {
-                    label: `Monthly on the ${ordinals[ordinal]} ${daysOfWeek[dayOfWeek]}`,
+                    label: t("events.monthlyOnThe", { nthOrdinal: ordinals[ordinal], weekday: daysOfWeek[dayOfWeek] }),
                     value: "nthWeekday"
                   }
                 ]}
@@ -209,10 +210,10 @@ export default function RRuleEditor(props: Props) {
       case "until":
         result = (
           <>
-            <Text style={styles.labelText}>End Date</Text>
+            <Text style={styles.labelText}>{t("events.endDate")}</Text>
             <View style={styles.dateConatiner}>
               <Text style={styles.dateText} numberOfLines={1}>
-                {dayjs(onEndDate).format("YYYY-MM-DD")}
+                {dayjs(onEndDate).format("L")}
               </Text>
               <MaterialIcons name={"calendar-today"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} onPress={() => setonEndPicker(true)} />
               <DatePicker
@@ -236,7 +237,7 @@ export default function RRuleEditor(props: Props) {
       case "count":
         result = (
           <>
-            <Text style={styles.labelText}>Occurances</Text>
+            <Text style={styles.labelText}>{t("events.occurrences")}</Text>
             <TextInput
               style={[
                 globalStyles.textInputStyle,
@@ -249,7 +250,7 @@ export default function RRuleEditor(props: Props) {
                   marginTop: DimensionHelper.wp(1)
                 }
               ]}
-              placeholder={"Occurances"}
+              placeholder={t("events.occurrences")}
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="numeric"
@@ -274,7 +275,7 @@ export default function RRuleEditor(props: Props) {
 
   return (
     <View>
-      <Text style={styles.labelText}>Interval</Text>
+      <Text style={styles.labelText}>{t("events.interval")}</Text>
       <TextInput
         style={[
           globalStyles.textInputStyle,
@@ -287,7 +288,7 @@ export default function RRuleEditor(props: Props) {
             marginTop: DimensionHelper.wp(1)
           }
         ]}
-        placeholder={"Interval"}
+        placeholder={t("events.interval")}
         autoCapitalize="none"
         autoCorrect={false}
         keyboardType="numeric"
@@ -297,7 +298,7 @@ export default function RRuleEditor(props: Props) {
           (setInterval(text), handleChange("interval", text));
         }}
       />
-      <Text style={styles.labelText}>Frequency</Text>
+      <Text style={styles.labelText}>{t("events.frequency")}</Text>
       <DropDownPicker
         listMode="MODAL"
         open={isFrequencyDropDownOpen}
@@ -321,7 +322,7 @@ export default function RRuleEditor(props: Props) {
         dropDownDirection="BOTTOM"
       />
       {getFreqFollowUp()}
-      <Text style={styles.labelText}>Ends</Text>
+      <Text style={styles.labelText}>{t("events.ends")}</Text>
       <DropDownPicker
         listMode="MODAL"
         open={isEndsDropDownOpen}

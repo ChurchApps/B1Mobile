@@ -7,12 +7,15 @@ import { useNavigation } from "../../../src/hooks";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { DateData } from "react-native-calendars";
-import dayjs from "dayjs";
+import dayjs from "../../../src/helpers/dayjsConfig";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
+
+// Extend the configured dayjs with timezone and utc plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
 import { useQuery } from "@tanstack/react-query";
-import { EventHelper } from "@churchapps/helpers/src/EventHelper";
-import { EventInterface } from "@churchapps/helpers";
+import { EventHelper, EventInterface } from "@churchapps/helpers";
 import { MainHeader } from "../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import GroupChatModal from "../../../src/components/modals/GroupChatModal";
@@ -31,9 +34,6 @@ import {
 import { GroupResourcesTab } from "@/components/group/GroupResourcesTab";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
 import { useTranslation } from "react-i18next";
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 const GroupDetails = () => {
   const { t } = useTranslation();

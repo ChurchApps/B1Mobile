@@ -4,6 +4,7 @@ import { Linking, Platform, View, Text, StyleSheet } from "react-native";
 import WebView from "react-native-webview";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import { useTranslation } from "react-i18next";
 import { ApiHelper, globalStyles, SecureStorageHelper } from "../../src/helpers";
 import { MainHeader } from "./wrapper/MainHeader";
 import { UserHelper } from "../helpers/UserHelper";
@@ -17,6 +18,7 @@ interface WebsiteScreenProps {
 }
 
 export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
+  const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
@@ -137,7 +139,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
             onMessage={handleMessage}
             renderError={() => (
               <View>
-                <Text>Oops, something went wrong. Retrying...</Text>
+                <Text>{t("common.errorRetrying")}</Text>
               </View>
             )}
             userAgent={Platform.OS === "ios" ? "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148" : undefined}

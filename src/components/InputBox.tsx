@@ -1,6 +1,7 @@
 import { Constants, globalStyles } from "../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function InputBox({ title, headerIcon, children, cancelFunction, deleteFunction, saveFunction, isSubmitting = false }: Props) {
+  const { t } = useTranslation();
   let buttons: React.ReactElement[] = [];
 
   const widthClass = deleteFunction ? DimensionHelper.wp(33.33) : DimensionHelper.wp(50);
@@ -26,7 +28,7 @@ export function InputBox({ title, headerIcon, children, cancelFunction, deleteFu
         }}
         disabled={isSubmitting}
         key="cancel">
-        <Text style={globalStyles.previewBtnText}>Cancel</Text>
+        <Text style={globalStyles.previewBtnText}>{t("common.cancel")}</Text>
       </TouchableOpacity>
     );
   }
@@ -38,14 +40,14 @@ export function InputBox({ title, headerIcon, children, cancelFunction, deleteFu
           deleteFunction();
         }}
         disabled={isSubmitting}>
-        <Text style={globalStyles.previewBtnText}>Delete</Text>
+        <Text style={globalStyles.previewBtnText}>{t("common.delete")}</Text>
       </TouchableOpacity>
     );
   }
   if (saveFunction) {
     buttons.push(
       <TouchableOpacity style={{ ...globalStyles.actionButtons, backgroundColor: Constants.Colors.button_dark_green, width: widthClass }} onPress={() => saveFunction()} disabled={isSubmitting}>
-        {isSubmitting ? <ActivityIndicator size="small" color="gray" animating={isSubmitting} /> : <Text style={globalStyles.previewBtnText}>Save</Text>}
+        {isSubmitting ? <ActivityIndicator size="small" color="gray" animating={isSubmitting} /> : <Text style={globalStyles.previewBtnText}>{t("common.save")}</Text>}
       </TouchableOpacity>
     );
   }

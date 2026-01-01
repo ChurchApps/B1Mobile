@@ -47,7 +47,7 @@ const MessageScreen = () => {
     console.error("No user details provided to MessageScreen", { userDetails, details });
     return (
       <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Error: No user details provided</Text>
+        <Text>{t("messages.errorNoUserDetails")}</Text>
       </SafeAreaView>
     );
   }
@@ -305,7 +305,7 @@ const MessageScreen = () => {
     if (messageList.length === 0) {
       return (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <Text style={{ color: theme.colors.onSurfaceVariant }}>No messages yet</Text>
+          <Text style={{ color: theme.colors.onSurfaceVariant }}>{t("messages.noMessagesYet")}</Text>
         </View>
       );
     }

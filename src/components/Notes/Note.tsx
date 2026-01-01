@@ -1,8 +1,5 @@
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-
-dayjs.extend(relativeTime);
+import dayjs from "../../helpers/dayjsConfig";
 import React, { useMemo, useCallback } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";

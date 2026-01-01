@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from "../../helpers/dayjsConfig";
 import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -6,6 +6,7 @@ import { ArrayHelper, AssignmentInterface, PlanInterface, PositionInterface, Tim
 import { router } from "expo-router";
 import { Card } from "react-native-paper";
 import { InlineLoader } from "../common/LoadingComponents";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   plans: PlanInterface[];
@@ -13,9 +14,27 @@ interface Props {
   assignments: AssignmentInterface[];
   times: TimeInterface[];
   isLoading?: boolean;
+  isPast?: boolean;
 }
 
-export const UpcomingDates = ({ plans, positions, assignments, times, isLoading = false }: Props) => {
+const getTranslatedStatus = (status: string, t: (key: string) => string): string => {
+  switch (status?.toLowerCase()) {
+    case "accepted":
+      return t("plans.accepted");
+    case "confirmed":
+      return t("plans.confirmed");
+    case "declined":
+      return t("plans.declined");
+    case "pending":
+      return t("plans.pendingResponse");
+    case "unconfirmed":
+    default:
+      return t("plans.unconfirmed");
+  }
+};
+
+export const UpcomingDates = ({ plans, positions, assignments, times, isLoading = false, isPast = false }: Props) => {
+  const { t } = useTranslation();
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -41,34 +60,35 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
         data.push({
           assignmentId: assignment?.id || "",
           planId: plan.id,
-          planName: plan?.name || "Unnamed Plan",
+          planName: plan?.name || t("plans.unnamedPlan"),
           serviceDate: plan.serviceDate,
-          position: position?.name || "Unknown Position",
+          position: position?.name || t("plans.unknownPosition"),
           time: time?.displayName || "",
-          status: assignment.status || "Unconfirmed"
+          status: assignment.status || t("plans.unconfirmed")
         });
       }
     });
-    ArrayHelper.sortBy(data, "serviceDate", true);
+    // For upcoming: ascending (soonest first), for past: descending (most recent first)
+    ArrayHelper.sortBy(data, "serviceDate", isPast);
     return data;
-  }, [assignments, positions, plans, times]);
+  }, [assignments, positions, plans, times, isPast]);
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialIcons name="schedule" style={styles.headerIcon} size={24} />
-        <Text style={styles.headerTitle}>Upcoming Dates</Text>
+        <MaterialIcons name={isPast ? "history" : "schedule"} style={styles.headerIcon} size={24} />
+        <Text style={styles.headerTitle}>{isPast ? t("plans.past") : t("plans.upcomingDates")}</Text>
       </View>
 
       <Card style={styles.contentCard}>
         <Card.Content>
           {isLoading ? (
-            <InlineLoader size="large" text="Loading upcoming dates..." />
+            <InlineLoader size="large" text={t("plans.loadingUpcomingDates")} />
           ) : upcomingDates.length === 0 ? (
             <View style={styles.emptyStateContent}>
               <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-              <Text style={styles.emptyStateText}>No upcoming dates found</Text>
-              <Text style={styles.emptyStateSubtext}>Your future assignments will appear here</Text>
+              <Text style={styles.emptyStateText}>{isPast ? t("plans.noPastDatesFound") : t("plans.noUpcomingDatesFound")}</Text>
+              <Text style={styles.emptyStateSubtext}>{isPast ? t("plans.pastAssignments") : t("plans.upcomingAssignments")}</Text>
             </View>
           ) : (
             <View style={styles.cardsList}>
@@ -83,14 +103,14 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
                           </Text>
                         </View>
                         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-                          <Text style={styles.statusText}>{item.status}</Text>
+                          <Text style={styles.statusText}>{getTranslatedStatus(item.status, t)}</Text>
                         </View>
                       </View>
 
                       <View style={styles.detailsContainer}>
                         <View style={styles.detailRow}>
                           <MaterialIcons name="event" size={18} color="#0D47A1" />
-                          <Text style={styles.detailText}>{dayjs(item.serviceDate).format("MMM DD, YYYY")}</Text>
+                          <Text style={styles.detailText}>{dayjs(item.serviceDate).format("ll")}</Text>
                         </View>
 
                         {item.time && (

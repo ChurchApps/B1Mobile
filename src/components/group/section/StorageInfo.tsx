@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Linking, StyleSheet } from "react-native";
 import { Text, DataTable, IconButton, Card } from "react-native-paper";
 import { FileInterface, LinkItem } from "../../../helpers";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   files?: FileInterface[];
@@ -35,25 +36,26 @@ const openSafeURL = async (url: string) => {
 };
 
 const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, handleDelete, handleLinkDelete, formatSize }) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <Card style={styles.contentCard}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={[styles.navButtonText]}>{"Added Links"}</Text>
+          <Text style={[styles.navButtonText]}>{t("groups.addedLinks")}</Text>
         </View>
 
         {links && links.length === 0 && (
           <View style={{ alignItems: "center", marginTop: 10 }}>
-            <Text style={[styles.navButtonText]}>{"No data"}</Text>
+            <Text style={[styles.navButtonText]}>{t("groups.noData")}</Text>
           </View>
         )}
 
         {links && links.length > 0 && (
           <DataTable>
             <DataTable.Header>
-              <DataTable.Title>Name</DataTable.Title>
-              <DataTable.Title numeric>Size</DataTable.Title>
-              {canEditGroupResources && <DataTable.Title numeric>Actions</DataTable.Title>}
+              <DataTable.Title>{t("common.name")}</DataTable.Title>
+              <DataTable.Title numeric>{t("common.size")}</DataTable.Title>
+              {canEditGroupResources && <DataTable.Title numeric>{t("common.actions")}</DataTable.Title>}
             </DataTable.Header>
 
             {/* Link rows */}
@@ -77,19 +79,19 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
 
       <Card style={styles.contentCard}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={[styles.navButtonText]}>{"Added Files"}</Text>
+          <Text style={[styles.navButtonText]}>{t("groups.addedFiles")}</Text>
         </View>
         {files && files.length === 0 && (
           <View style={{ alignItems: "center", marginTop: 10 }}>
-            <Text style={[styles.navButtonText]}>{"No data"}</Text>
+            <Text style={[styles.navButtonText]}>{t("groups.noData")}</Text>
           </View>
         )}
         {files && files.length > 0 && (
           <DataTable>
             <DataTable.Header>
-              <DataTable.Title>Name</DataTable.Title>
-              <DataTable.Title numeric>Size</DataTable.Title>
-              <DataTable.Title numeric>Actions</DataTable.Title>
+              <DataTable.Title>{t("common.name")}</DataTable.Title>
+              <DataTable.Title numeric>{t("common.size")}</DataTable.Title>
+              <DataTable.Title numeric>{t("common.actions")}</DataTable.Title>
             </DataTable.Header>
             {/* File rows */}
             {files?.map(file => (

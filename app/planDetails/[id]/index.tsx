@@ -17,6 +17,7 @@ import { Provider as PaperProvider, Card, MD3LightTheme } from "react-native-pap
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
+import dayjs from "../../../src/helpers/dayjsConfig";
 
 const theme = {
   ...MD3LightTheme,
@@ -146,20 +147,20 @@ const PlanDetails = () => {
       <Card style={styles.overviewHeroCard}>
         {planLoading ? (
           <Card.Content style={styles.loadingCardContent}>
-            <InlineLoader size="large" text="Loading plan details..." />
+            <InlineLoader size="large" text={t("plans.loadingPlanDetails")} />
           </Card.Content>
         ) : plan ? (
           <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.overviewHeroGradient}>
             <View style={styles.overviewHeroContent}>
               <MaterialIcons name="assignment" size={48} color="white" style={styles.overviewHeroIcon} />
               <Text style={styles.overviewHeroTitle}>{plan.name}</Text>
-              <Text style={styles.overviewHeroDate}>{plan.serviceDate ? new Date(plan.serviceDate).toLocaleDateString() : "TBD"}</Text>
+              <Text style={styles.overviewHeroDate}>{plan.serviceDate ? dayjs(plan.serviceDate).format("ll") : t("common.tbd")}</Text>
             </View>
           </LinearGradient>
         ) : (
           <Card.Content style={styles.loadingCardContent}>
             <MaterialIcons name="error-outline" size={48} color="#9E9E9E" />
-            <Text style={styles.errorCardText}>Plan not found</Text>
+            <Text style={styles.errorCardText}>{t("plans.planNotFound")}</Text>
           </Card.Content>
         )}
       </Card>
@@ -168,7 +169,7 @@ const PlanDetails = () => {
       <View style={styles.myPositionsSection}>
         <View style={styles.myPositionsHeader}>
           <MaterialIcons name="assignment-ind" size={24} color="#0D47A1" />
-          <Text style={styles.myPositionsTitle}>My Assignments</Text>
+          <Text style={styles.myPositionsTitle}>{t("plans.myAssignments")}</Text>
           {!assignmentsLoading && (
             <View style={styles.assignmentCount}>
               <Text style={styles.assignmentCountText}>{myAssignments.length}</Text>
@@ -179,7 +180,7 @@ const PlanDetails = () => {
         {assignmentsLoading || positionsLoading || timesLoading ? (
           <Card style={styles.loadingCard}>
             <Card.Content style={styles.loadingCardContent}>
-              <InlineLoader size="large" text="Loading assignments..." />
+              <InlineLoader size="large" text={t("plans.loadingAssignments")} />
             </Card.Content>
           </Card>
         ) : myAssignments.length > 0 ? (
@@ -188,8 +189,8 @@ const PlanDetails = () => {
           <Card style={styles.noAssignmentsCard}>
             <Card.Content style={styles.noAssignmentsContent}>
               <MaterialIcons name="assignment-late" size={48} color="#9E9E9E" />
-              <Text style={styles.noAssignmentsText}>No assignments for this plan</Text>
-              <Text style={styles.noAssignmentsSubtext}>Check with your team leader if you expected to be assigned</Text>
+              <Text style={styles.noAssignmentsText}>{t("plans.noAssignmentsForPlan")}</Text>
+              <Text style={styles.noAssignmentsSubtext}>{t("plans.checkWithTeamLeader")}</Text>
             </Card.Content>
           </Card>
         )}
@@ -200,14 +201,14 @@ const PlanDetails = () => {
         <Card.Content>
           <View style={styles.overviewNotesHeader}>
             <MaterialIcons name="note" size={24} color="#0D47A1" />
-            <Text style={styles.overviewNotesTitle}>Plan Notes</Text>
+            <Text style={styles.overviewNotesTitle}>{t("plans.planNotes")}</Text>
           </View>
           {planLoading ? (
-            <InlineLoader text="Loading notes..." />
+            <InlineLoader text={t("plans.loadingNotes")} />
           ) : plan?.notes ? (
             <Text style={styles.overviewNotesText}>{plan.notes.replace(/\n/g, " ")}</Text>
           ) : (
-            <Text style={styles.noNotesText}>No notes available for this plan</Text>
+            <Text style={styles.noNotesText}>{t("plans.noNotesAvailable")}</Text>
           )}
         </Card.Content>
       </Card>
@@ -217,7 +218,7 @@ const PlanDetails = () => {
   const renderLoadingIndicator = () => (
     <View style={styles.loadingContainer}>
       <ActivityIndicator size="large" color="#0D47A1" />
-      <Text style={styles.loadingText}>Loading plan details...</Text>
+      <Text style={styles.loadingText}>{t("plans.loadingPlanDetails")}</Text>
     </View>
   );
 
@@ -230,13 +231,13 @@ const PlanDetails = () => {
           {/* Tab Navigation */}
           <View style={styles.tabContainer}>
             <TouchableOpacity style={[styles.tab, selectedTab === "overview" && styles.activeTab]} onPress={() => setSelectedTab("overview")}>
-              <Text style={[styles.tabText, selectedTab === "overview" && styles.activeTabText]}>Overview</Text>
+              <Text style={[styles.tabText, selectedTab === "overview" && styles.activeTabText]}>{t("plans.overview")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.tab, selectedTab === "serviceOrder" && styles.activeTab]} onPress={() => setSelectedTab("serviceOrder")}>
-              <Text style={[styles.tabText, selectedTab === "serviceOrder" && styles.activeTabText]}>Service Order</Text>
+              <Text style={[styles.tabText, selectedTab === "serviceOrder" && styles.activeTabText]}>{t("plans.serviceOrder")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.tab, selectedTab === "teams" && styles.activeTab]} onPress={() => setSelectedTab("teams")}>
-              <Text style={[styles.tabText, selectedTab === "teams" && styles.activeTabText]}>Teams</Text>
+              <Text style={[styles.tabText, selectedTab === "teams" && styles.activeTabText]}>{t("plans.teams")}</Text>
             </TouchableOpacity>
           </View>
 
@@ -254,14 +255,14 @@ const PlanDetails = () => {
                     <Card.Content>
                       <View style={styles.sectionHeader}>
                         <MaterialIcons name="format-list-numbered" size={24} color="#0D47A1" />
-                        <Text style={styles.sectionTitle}>Service Order</Text>
+                        <Text style={styles.sectionTitle}>{t("plans.serviceOrder")}</Text>
                       </View>
                       {planLoading ? (
-                        <InlineLoader size="large" text="Loading service order..." />
+                        <InlineLoader size="large" text={t("plans.loadingServiceOrder")} />
                       ) : plan ? (
                         <ServiceOrder plan={plan} />
                       ) : (
-                        <Text style={styles.noDataText}>Service order not available</Text>
+                        <Text style={styles.noDataText}>{t("plans.serviceOrderNotAvailable")}</Text>
                       )}
                     </Card.Content>
                   </Card>
@@ -272,7 +273,7 @@ const PlanDetails = () => {
                   {assignmentsLoading || positionsLoading || peopleLoading ? (
                     <Card style={styles.loadingCard}>
                       <Card.Content style={styles.loadingCardContent}>
-                        <InlineLoader size="large" text="Loading teams..." />
+                        <InlineLoader size="large" text={t("plans.loadingTeams")} />
                       </Card.Content>
                     </Card>
                   ) : (

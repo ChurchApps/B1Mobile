@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Text, Card, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
+import { DateHelper } from "../../helpers";
 
 export interface LiveStreamData {
   isLive: boolean;
@@ -99,7 +100,7 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
             {liveStreamData.streamDescription}
           </Text>
           <Text variant="bodySmall" style={styles.streamTime}>
-            {liveStreamData.nextStreamDate.toLocaleDateString()} at {liveStreamData.nextStreamDate.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            {DateHelper.prettyDate(liveStreamData.nextStreamDate)} at {DateHelper.prettyTime(liveStreamData.nextStreamDate)}
           </Text>
         </View>
       </LinearGradient>

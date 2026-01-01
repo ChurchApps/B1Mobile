@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from "./dayjsConfig";
 import { ErrorHelper } from "./ErrorHelper";
 
 export class DateHelper {
@@ -7,23 +7,64 @@ export class DateHelper {
     if (date !== undefined && date !== null) {
       try {
         result = new Date(date).toISOString().split("T")[0];
-      } catch {
-        ErrorHelper.logError();
+      } catch (e) {
+        ErrorHelper.logError("DateHelper", "formatHtml5Date: " + String(e));
       }
     }
     return result;
   }
 
+  // Localized short date format: "Dec 30, 2025" (en) or "30 déc. 2025" (fr)
   static prettyDate(date: Date) {
     if (date === undefined || date === null) return "";
-    return this.formatDateTime(date, "MMM D, YYYY");
+    try {
+      return dayjs(date).format("ll");
+    } catch (e) {
+      ErrorHelper.logError("DateHelper", "prettyDate: " + String(e));
+      return "";
+    }
   }
 
-  private static formatDateTime(date: Date, format: string) {
+  // Localized date with time: "Dec 30, 2025 2:30 PM" (en) or "30 déc. 2025 14:30" (fr)
+  static prettyDateTime(date: Date) {
+    if (date === undefined || date === null) return "";
     try {
-      return dayjs(date).format(format);
-    } catch {
-      ErrorHelper.logError();
+      return dayjs(date).format("lll");
+    } catch (e) {
+      ErrorHelper.logError("DateHelper", "prettyDateTime: " + String(e));
+      return "";
+    }
+  }
+
+  // Localized time: "2:30 PM" (en) or "14:30" (fr)
+  static prettyTime(date: Date) {
+    if (date === undefined || date === null) return "";
+    try {
+      return dayjs(date).format("LT");
+    } catch (e) {
+      ErrorHelper.logError("DateHelper", "prettyTime: " + String(e));
+      return "";
+    }
+  }
+
+  // Localized full date: "December 30, 2025" (en) or "30 décembre 2025" (fr)
+  static prettyFullDate(date: Date) {
+    if (date === undefined || date === null) return "";
+    try {
+      return dayjs(date).format("LL");
+    } catch (e) {
+      ErrorHelper.logError("DateHelper", "prettyFullDate: " + String(e));
+      return "";
+    }
+  }
+
+  // Localized relative time: "2 hours ago" (en) or "il y a 2 heures" (fr)
+  static relativeTime(date: Date) {
+    if (date === undefined || date === null) return "";
+    try {
+      return dayjs(date).fromNow();
+    } catch (e) {
+      ErrorHelper.logError("DateHelper", "relativeTime: " + String(e));
       return "";
     }
   }

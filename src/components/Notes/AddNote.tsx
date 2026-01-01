@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableOpacity, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ApiHelper, Constants, globalStyles } from "../../../src/helpers";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   messageId?: any;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export function AddNote({ ...props }: Props) {
+  const { t } = useTranslation();
   const [message, setMessage] = useState<MessageInterface | null>();
   const [errors, setErrors] = React.useState<string[]>([]);
   useEffect(() => {
@@ -40,7 +42,7 @@ export function AddNote({ ...props }: Props) {
 
   const validate = () => {
     const result: string[] = [];
-    if (!message?.content?.trim()) result.push("Please enter a note.");
+    if (!message?.content?.trim()) result.push(t("messages.enterNote"));
     setErrors(result);
     return result.length === 0;
   };
@@ -106,7 +108,7 @@ export function AddNote({ ...props }: Props) {
           onSubmitEditing={() => Keyboard.dismiss()}
           numberOfLines={4}
           value={message?.content}
-          placeholder={"Add a note"}
+          placeholder={t("messages.addNote")}
         />
         <View
           style={{

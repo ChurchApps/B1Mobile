@@ -141,7 +141,7 @@ const MemberDetail = () => {
                     {parsedMember?.name?.display}
                   </Text>
                   <Text variant="bodyMedium" style={styles.heroSubtitle}>
-                    Church Member
+                    {t("members.churchMember")}
                   </Text>
                 </View>
               </LinearGradient>
@@ -155,7 +155,7 @@ const MemberDetail = () => {
                     <MaterialIcons name="message" size={24} color="#FFFFFF" />
                   </View>
                   <Text variant="labelMedium" style={styles.quickActionText}>
-                    Message
+                    {t("members.message")}
                   </Text>
                 </TouchableOpacity>
 
@@ -165,7 +165,7 @@ const MemberDetail = () => {
                       <MaterialIcons name="phone" size={24} color="#FFFFFF" />
                     </View>
                     <Text variant="labelMedium" style={styles.quickActionText}>
-                      Call
+                      {t("members.call")}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -176,7 +176,7 @@ const MemberDetail = () => {
                       <MaterialIcons name="email" size={24} color="#FFFFFF" />
                     </View>
                     <Text variant="labelMedium" style={styles.quickActionText}>
-                      Email
+                      {t("members.email")}
                     </Text>
                   </TouchableOpacity>
                 )}
@@ -187,7 +187,7 @@ const MemberDetail = () => {
             {hasContactInfo && (
               <View style={styles.section}>
                 <Text variant="titleLarge" style={styles.sectionTitle}>
-                  Contact Information
+                  {t("members.contactInformation")}
                 </Text>
 
                 {memberinfo?.email && (
@@ -198,7 +198,7 @@ const MemberDetail = () => {
                       </View>
                       <View style={styles.contactDetails}>
                         <Text variant="bodySmall" style={styles.contactLabel}>
-                          Email Address
+                          {t("members.emailAddress")}
                         </Text>
                         <Text variant="titleMedium" style={styles.contactValue}>
                           {memberinfo.email}
@@ -236,7 +236,7 @@ const MemberDetail = () => {
                       </View>
                       <View style={styles.contactDetails}>
                         <Text variant="bodySmall" style={styles.contactLabel}>
-                          Address
+                          {t("members.address")}
                         </Text>
                         <Text variant="titleMedium" style={styles.contactValue} numberOfLines={2}>
                           {memberinfo.address1}
@@ -259,7 +259,7 @@ const MemberDetail = () => {
             {householdList.length > 0 && (
               <View style={styles.section}>
                 <Text variant="titleLarge" style={styles.sectionTitle}>
-                  Household Members
+                  {t("members.householdMembers")}
                 </Text>
                 {householdList.map((item: Member) => (
                   <View key={item.id}>{renderHouseholdMember({ item })}</View>

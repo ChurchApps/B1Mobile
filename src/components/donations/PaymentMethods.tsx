@@ -9,6 +9,7 @@ import { useAppTheme } from "../../../src/theme";
 import { EnhancedPaymentMethodModal } from "../modals/EnhancedPaymentMethodModal";
 import { EnhancedBankForm } from "./EnhancedBankForm";
 import { CardForm } from "./CardForm";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   customerId: string;
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function PaymentMethods({ customerId, paymentMethods, updatedFunction, isLoading }: Props) {
+  const { t } = useTranslation();
   const { spacing } = useAppTheme();
   const theme = useTheme();
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -41,21 +43,21 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   };
 
   const handleDelete = () => {
-    Alert.alert("Are you sure?", "This will permanently delete this payment method", [
+    Alert.alert(t("donations.deleteMethodConfirmTitle"), t("donations.deleteMethodConfirmMessage"), [
       {
-        text: "Cancel",
+        text: t("common.cancel"),
         onPress: () => {},
         style: "cancel"
       },
       {
-        text: "OK",
+        text: t("common.ok"),
         onPress: async () => {
           try {
             await ApiHelper.delete("/paymentmethods/" + editPaymentMethod.id + "/" + customerId, "GivingApi");
             setMode("display");
             await updatedFunction();
           } catch (err: any) {
-            Alert.alert("Error in deleting the method");
+            Alert.alert(t("donations.deleteMethodError"));
             ErrorHelper.logError("payment-method-delete", err);
           }
         }
@@ -78,8 +80,8 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   const getMethodTitle = (method: StripePaymentMethod) => `${method.name} ending in ${method.last4}`;
 
   const getMethodDescription = (method: StripePaymentMethod) => {
-    if (method.status === "new") return "Verification required";
-    return method.type === "card" ? "Credit Card" : "Bank Account";
+    if (method.status === "new") return t("donations.verificationRequired");
+    return method.type === "card" ? t("donations.creditCard") : t("donations.bankAccount");
   };
 
   const renderPaymentMethod = ({ item }: { item: StripePaymentMethod }) => (
@@ -91,7 +93,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {item?.status === "new" && (
             <Button mode="text" onPress={() => handleEdit(item, true)} style={{ marginRight: spacing.xs }}>
-              Verify
+              {t("donations.verify")}
             </Button>
           )}
           {UserHelper.checkAccess(Permissions.givingApi.settings.edit) && <IconButton icon="pencil" size={20} onPress={() => handleEdit(item)} />}
@@ -103,7 +105,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   const content =
     mode === "display" ? (
       <Card style={{ marginBottom: spacing.md }}>
-        <Card.Title title="Payment Methods" titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} right={props => UserHelper.checkAccess(Permissions.givingApi.settings.edit) && <IconButton {...props} icon="plus" size={24} iconColor={theme.colors.primary} onPress={() => setShowModal(true)} style={{ margin: 0 }} />} />
+        <Card.Title title={t("donations.paymentMethods")} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} right={props => UserHelper.checkAccess(Permissions.givingApi.settings.edit) && <IconButton {...props} icon="plus" size={24} iconColor={theme.colors.primary} onPress={() => setShowModal(true)} style={{ margin: 0 }} />} />
         <Card.Content>
           {isLoading ? (
             <ActivityIndicator size="large" style={{ margin: spacing.md }} color={theme.colors.primary} />
@@ -119,7 +121,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
                 <>
                   <Divider style={{ marginVertical: spacing.sm }} />
                   <Button mode="outlined" onPress={() => setShowModal(true)} icon="plus" style={{ marginTop: spacing.sm }}>
-                    Add Payment Method
+                    {t("donations.addPaymentMethod")}
                   </Button>
                 </>
               )}
@@ -127,11 +129,11 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
           ) : (
             <View style={{ alignItems: "center", marginVertical: spacing.md }}>
               <Text variant="bodyMedium" style={{ textAlign: "center", marginBottom: spacing.md }}>
-                No payment methods added yet.
+                {t("donations.noPaymentMethods")}
               </Text>
               {UserHelper.checkAccess(Permissions.givingApi.settings.edit) && (
                 <Button mode="contained" onPress={() => setShowModal(true)} icon="plus">
-                  Add Your First Payment Method
+                  {t("donations.addFirstPaymentMethod")}
                 </Button>
               )}
             </View>

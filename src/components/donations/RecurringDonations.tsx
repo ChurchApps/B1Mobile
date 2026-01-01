@@ -10,6 +10,7 @@ import { useAppTheme } from "../../../src/theme";
 import { CustomModal } from "../modals/CustomModal";
 import { DimensionHelper } from "../../../src/helpers/DimensionHelper";
 import { useUser } from "../../../src/stores/useUserStore";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   customerId: string;
@@ -21,18 +22,19 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   const { spacing } = useAppTheme();
   const theme = useTheme();
   const user = useUser();
+  const { t } = useTranslation();
   const [subscriptions, setSubscriptions] = React.useState<SubscriptionInterface[]>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedSubscription, setSelectedSubscription] = useState<SubscriptionInterface>({} as SubscriptionInterface);
   const [showMethodMenu, setShowMethodMenu] = useState<boolean>(false);
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [showIntervalMenu, setShowIntervalMenu] = useState<boolean>(false);
-  const [intervalTypes] = useState<{ label: string; value: string }[]>([
-    { label: "Day(s)", value: "day" },
-    { label: "Week(s)", value: "week" },
-    { label: "Month(s)", value: "month" },
-    { label: "Year(s)", value: "year" }
-  ]);
+  const intervalTypes = [
+    { label: t("donations.intervalDays"), value: "day" },
+    { label: t("donations.intervalWeeks"), value: "week" },
+    { label: t("donations.intervalMonths"), value: "month" },
+    { label: t("donations.intervalYears"), value: "year" }
+  ];
   const [selectedInterval, setSelectedInterval] = useState<string>("");
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
@@ -74,10 +76,10 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
 
   const getMethodLabel = (methodId: string) => {
     const method = pm.find(m => m.id === methodId);
-    return method ? `${method.name} ending in ${method.last4}` : "Select Payment Method";
+    return method ? `${method.name} ${t("donations.endingIn")} ${method.last4}` : t("donations.selectPaymentMethod");
   };
 
-  const getIntervalLabel = (interval: string) => intervalTypes.find(i => i.value === interval)?.label || "Select Interval";
+  const getIntervalLabel = (interval: string) => intervalTypes.find(i => i.value === interval)?.label || t("donations.selectInterval");
 
   const renderSubscription = (sub: SubscriptionInterface) => {
     const total = CurrencyHelper.formatCurrency(sub.plan.amount / 100);
@@ -87,7 +89,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
       <List.Item
         key={sub.id}
         title={`${total} / ${interval}`}
-        description={`Started ${DateHelper.prettyDate(new Date(sub.billing_cycle_anchor * 1000))}`}
+        description={`${t("donations.started")} ${DateHelper.prettyDate(new Date(sub.billing_cycle_anchor * 1000))}`}
         left={props => <List.Icon {...props} icon="calendar-repeat" />}
         right={props => (
           <IconButton
@@ -106,14 +108,14 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   };
 
   const handleDelete = () => {
-    Alert.alert("Are you sure?", "This will permanently delete and stop the recurring payments", [
+    Alert.alert(t("donations.deleteMethodConfirmTitle"), t("donations.deleteRecurringConfirmMessage"), [
       {
-        text: "Cancel",
+        text: t("common.cancel"),
         onPress: () => {},
         style: "cancel"
       },
       {
-        text: "OK",
+        text: t("common.ok"),
         onPress: async () => {
           try {
             setIsDeleting(true);
@@ -127,7 +129,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
             // React Query will automatically refetch data
           } catch (err: any) {
             setIsDeleting(false);
-            Alert.alert("Error in deleting the method");
+            Alert.alert(t("donations.deleteMethodError"));
             ErrorHelper.logError("Delete-recurring-payment", err);
           }
         }
@@ -147,7 +149,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
       ))}
       <Divider style={{ marginVertical: spacing.xs }} />
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text variant="titleMedium">Total</Text>
+        <Text variant="titleMedium">{t("donations.totalLabel")}</Text>
         <Text variant="titleMedium">{CurrencyHelper.formatCurrency(subscription?.plan?.amount / 100)}</Text>
       </View>
     </View>
@@ -155,7 +157,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
 
   const content = (
     <Card style={{ marginBottom: spacing.md }}>
-      <Card.Title title="Recurring Donations" titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="repeat" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
+      <Card.Title title={t("donations.recurringDonations")} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="repeat" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
       <Card.Content>
         {isLoading ? (
           <ActivityIndicator size="large" style={{ margin: spacing.md }} color={theme.colors.primary} />
@@ -170,7 +172,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
           </>
         ) : (
           <Text variant="bodyMedium" style={{ textAlign: "center", marginVertical: spacing.md }}>
-            No recurring donations.
+            {t("donations.noRecurringDonations")}
           </Text>
         )}
       </Card.Content>
@@ -179,7 +181,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
         <CustomModal isVisible={showModal} close={() => setShowModal(false)} width={DimensionHelper.wp(85)}>
           <View style={{ padding: spacing.md }}>
             <Text variant="titleLarge" style={{ marginBottom: spacing.md }}>
-              Edit Recurring Donation
+              {t("donations.editRecurringDonation")}
             </Text>
             <Menu
               visible={showMethodMenu}
@@ -196,7 +198,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
                     setSelectedMethod(method.id);
                     setShowMethodMenu(false);
                   }}
-                  title={`${method.name} ending in ${method.last4}`}
+                  title={`${method.name} ${t("donations.endingIn")} ${method.last4}`}
                 />
               ))}
             </Menu>
@@ -225,10 +227,10 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
 
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: spacing.md }}>
               <Button mode="outlined" onPress={handleDelete} loading={isDeleting} style={{ flex: 1, marginRight: spacing.sm }}>
-                Delete
+                {t("common.delete")}
               </Button>
               <Button mode="contained" onPress={() => setShowModal(false)} style={{ flex: 1, marginLeft: spacing.sm }}>
-                Close
+                {t("common.close")}
               </Button>
             </View>
           </View>

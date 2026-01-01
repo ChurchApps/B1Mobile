@@ -2,6 +2,7 @@ import React from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { Text, Card, Avatar, IconButton } from "react-native-paper";
 import { router } from "expo-router";
+import { useTranslation } from "react-i18next";
 import { Constants, EnvironmentHelper } from "../../helpers";
 import { InlineLoader } from "../common/LoadingComponents";
 
@@ -25,6 +26,8 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
   members,
   isLoading
 }) => {
+  const { t } = useTranslation();
+
   const handleMemberPress = (member: GroupMember) => {
     const memberData = {
       id: member?.person?.id,
@@ -42,7 +45,7 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
   if (isLoading) {
     return (
       <View style={styles.membersContainer}>
-        <InlineLoader size="large" text="Loading members..." />
+        <InlineLoader size="large" text={t("groups.loadingMembers")} />
       </View>
     );
   }
@@ -53,10 +56,10 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
         <View style={styles.emptyState}>
           <Avatar.Icon size={64} icon="account-group" style={styles.emptyIcon} />
           <Text variant="titleMedium" style={styles.emptyTitle}>
-            No members found
+            {t("groups.noMembersFound")}
           </Text>
           <Text variant="bodyMedium" style={styles.emptySubtitle}>
-            Members will appear here when they join
+            {t("groups.membersWillAppear")}
           </Text>
         </View>
       </View>
@@ -74,7 +77,7 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
                 {item?.person?.name?.display}
               </Text>
               <Text variant="bodySmall" style={styles.memberRole}>
-                Group Member
+                {t("groups.groupMember")}
               </Text>
             </View>
             <IconButton icon="chevron-right" size={20} iconColor="#9E9E9E" />

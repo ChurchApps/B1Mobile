@@ -1,5 +1,6 @@
 export { BlockoutDateEdits } from "./BlockoutDateEdits";
 export { BlockoutDates } from "./BlockoutDates";
+export { PlansTabBar } from "./PlansTabBar";
 export { PositionDetails } from "./PositionDetails";
 export { ServingTimes } from "./ServingTimes";
 export { Teams } from "./Teams";
