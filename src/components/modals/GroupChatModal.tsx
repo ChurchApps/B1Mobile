@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
   senderName: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#FFFFFF",
+    color: "#0D47A1",
     marginBottom: 2
   },
   messageText: {
