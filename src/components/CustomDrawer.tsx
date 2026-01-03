@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Constants from "expo-constants";
 import { eventBus } from "@/helpers/PushNotificationHelper";
 import { useTranslation } from "react-i18next";
+import pkg from "../../package.json";
 
 type ItemType = {
   linkType?: string;
@@ -232,7 +233,6 @@ export function CustomDrawer(props?: any) {
   };
 
   const drawerFooterComponent = () => {
-    const pkg = require("../../package.json");
     return (
       <Surface style={styles.footerContainer} elevation={1}>
         <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />} loading={isLoggingOut} disasbled={isLoggingOut}>

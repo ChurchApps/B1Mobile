@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { FlatList, RefreshControl, View, Text, ActivityIndicator, StyleProp, ViewStyle, ListRenderItem } from "react-native";
+import { FlatList, RefreshControl, View, Text, ActivityIndicator, StyleProp, ViewStyle, ListRenderItem, TouchableOpacity } from "react-native";
 import { Constants } from "../../helpers";
 
 interface DataListProps<T> {
@@ -124,7 +124,6 @@ export const Card: React.FC<CardProps> = ({ children, onPress, style, padding = 
   };
 
   if (onPress) {
-    const TouchableOpacity = require("react-native").TouchableOpacity;
     return (
       <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={[cardStyle, style]}>
         {children}

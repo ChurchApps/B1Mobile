@@ -1,7 +1,8 @@
 import React from "react";
-import { View, ActivityIndicator, Text, StyleProp, ViewStyle } from "react-native";
+import { View, ActivityIndicator, Text, StyleProp, ViewStyle, TouchableOpacity } from "react-native";
 import { Constants } from "../../helpers";
 import { CommonStyles } from "../../theme/CommonStyles";
+import { Button } from "./Button";
 
 interface LoadingOverlayProps {
   visible: boolean;
@@ -110,8 +111,6 @@ export const LoadingButton: React.FC<LoadingButtonProps> = ({
   variant = "primary",
   style
 }) => {
-  const Button = require("./Button").Button;
-  
   return (
     <Button
       onPress={onPress}
@@ -149,5 +148,3 @@ export const InlineLoader: React.FC<InlineLoaderProps> = ({
     </View>
   );
 };
-
-const TouchableOpacity = require("react-native").TouchableOpacity;
