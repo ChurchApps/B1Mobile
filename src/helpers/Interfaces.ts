@@ -180,6 +180,7 @@ export interface PersonInterface {
   householdRole?: string;
   userId?: string;
   formSubmissions?: [FormSubmissionInterface];
+  optedOut?: boolean;
 }
 export interface ServiceInterface {
   id?: string;

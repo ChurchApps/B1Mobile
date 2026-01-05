@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Alert } from "react-native";
-import { Text, Card, Button } from "react-native-paper";
+import { Text, Card, Button, Switch } from "react-native-paper";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiHelper } from "@churchapps/helpers";
 import { VisibilityPreferenceInterface } from "../../interfaces";
@@ -28,6 +28,9 @@ export const VisibilitySettings: React.FC = () => {
   const [hasChanges, setHasChanges] = useState(false);
   const [originalPrefs, setOriginalPrefs] = useState<VisibilityPreferenceInterface | null>(null);
 
+  const [optedOut, setOptedOut] = useState(false);
+  const [originalOptedOut, setOriginalOptedOut] = useState(false);
+
   const visibilityOptions = [
     { label: t("profileEdit.everyone"), value: "everyone" as VisibilityOption },
     { label: t("profileEdit.membersOnly"), value: "members" as VisibilityOption },
@@ -51,14 +54,23 @@ export const VisibilitySettings: React.FC = () => {
   }, [preferences]);
 
   useEffect(() => {
+    if (currentUserChurch?.person) {
+      const personOptedOut = currentUserChurch.person.optedOut || false;
+      setOptedOut(personOptedOut);
+      setOriginalOptedOut(personOptedOut);
+    }
+  }, [currentUserChurch?.person]);
+
+  useEffect(() => {
     if (originalPrefs) {
-      const changed =
+      const prefsChanged =
         address !== (originalPrefs.address || "members") ||
         phoneNumber !== (originalPrefs.phoneNumber || "members") ||
         email !== (originalPrefs.email || "members");
-      setHasChanges(changed);
+      const optedOutChanged = optedOut !== originalOptedOut;
+      setHasChanges(prefsChanged || optedOutChanged);
     }
-  }, [address, phoneNumber, email, originalPrefs]);
+  }, [address, phoneNumber, email, originalPrefs, optedOut, originalOptedOut]);
 
   const saveMutation = useMutation({
     mutationFn: async (prefs: VisibilityPreferenceInterface) => {
@@ -66,8 +78,6 @@ export const VisibilitySettings: React.FC = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/visibilityPreferences/my"] });
-      Alert.alert(t("common.success"), t("profileEdit.visibilitySaved"));
-      setHasChanges(false);
       setOriginalPrefs({ ...originalPrefs, address, phoneNumber, email });
     },
     onError: (error: any) => {
@@ -75,13 +85,46 @@ export const VisibilitySettings: React.FC = () => {
     }
   });
 
-  const handleSave = () => {
-    saveMutation.mutate({
-      ...preferences,
-      address,
-      phoneNumber,
-      email
-    });
+  const optedOutMutation = useMutation({
+    mutationFn: async (newOptedOut: boolean) => {
+      return ApiHelper.post("/users/updateOptedOut", { personId: currentUserChurch?.person?.id, optedOut: newOptedOut }, "MembershipApi");
+    },
+    onSuccess: () => {
+      setOriginalOptedOut(optedOut);
+    },
+    onError: (error: any) => {
+      Alert.alert(t("common.error"), error.message || t("profileEdit.visibilitySaveError"));
+    }
+  });
+
+  const handleSave = async () => {
+    const promises: Promise<any>[] = [];
+
+    const prefsChanged =
+      address !== (originalPrefs?.address || "members") ||
+      phoneNumber !== (originalPrefs?.phoneNumber || "members") ||
+      email !== (originalPrefs?.email || "members");
+
+    if (prefsChanged) {
+      promises.push(saveMutation.mutateAsync({
+        ...preferences,
+        address,
+        phoneNumber,
+        email
+      }));
+    }
+
+    if (optedOut !== originalOptedOut) {
+      promises.push(optedOutMutation.mutateAsync(optedOut));
+    }
+
+    try {
+      await Promise.all(promises);
+      Alert.alert(t("common.success"), t("profileEdit.visibilitySaved"));
+      setHasChanges(false);
+    } catch {
+      // Error already handled by individual mutations
+    }
   };
 
   return (
@@ -99,6 +142,18 @@ export const VisibilitySettings: React.FC = () => {
             <Text variant="bodyMedium" style={styles.description}>
               {t("profileEdit.visibilityDescription")}
             </Text>
+
+            {/* Hide from Directory */}
+            <View style={styles.switchContainer}>
+              <Text variant="bodyMedium" style={styles.switchLabel}>
+                {t("profileEdit.hideFromDirectory")}
+              </Text>
+              <Switch
+                value={optedOut}
+                onValueChange={setOptedOut}
+                color="#0D47A1"
+              />
+            </View>
 
             {/* Address Visibility */}
             <View style={[styles.dropdownContainer, { zIndex: 3000 }]}>
@@ -170,8 +225,8 @@ export const VisibilitySettings: React.FC = () => {
               <Button
                 mode="contained"
                 onPress={handleSave}
-                loading={saveMutation.isPending}
-                disabled={saveMutation.isPending}
+                loading={saveMutation.isPending || optedOutMutation.isPending}
+                disabled={saveMutation.isPending || optedOutMutation.isPending}
                 style={styles.saveButton}>
                 {t("common.save")}
               </Button>
@@ -243,6 +298,19 @@ const styles = StyleSheet.create({
   description: {
     color: "#9E9E9E",
     marginBottom: 20
+  },
+  switchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#F0F0F0",
+    marginBottom: 20
+  },
+  switchLabel: {
+    color: "#3c3c3c",
+    flex: 1
   },
   dropdownContainer: {
     marginBottom: 20

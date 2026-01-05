@@ -4,3 +4,4 @@ export * from "./ProfileEditForm";
 export * from "./HouseholdEdit";
 export * from "./VisibilitySettings";
 export * from "./PendingChangesView";
+export * from "./AccountSettings";

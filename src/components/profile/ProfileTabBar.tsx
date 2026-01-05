@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 
-export type ProfileTabSection = "profile" | "household" | "visibility";
+export type ProfileTabSection = "profile" | "household" | "account" | "visibility";
 
 interface ProfileTabBarProps {
   activeSection: ProfileTabSection;
@@ -17,6 +17,7 @@ export const ProfileTabBar: React.FC<ProfileTabBarProps> = ({ activeSection, onT
   const tabs: { key: ProfileTabSection; label: string }[] = [
     { key: "profile", label: t("profileEdit.profile") },
     { key: "household", label: t("profileEdit.household") },
+    { key: "account", label: t("profileEdit.account") },
     { key: "visibility", label: t("profileEdit.visibility") }
   ];
 

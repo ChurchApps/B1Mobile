@@ -15,7 +15,8 @@ import {
   ProfileEditForm,
   HouseholdEdit,
   VisibilitySettings,
-  PendingChangesView
+  PendingChangesView,
+  AccountSettings
 } from "../../src/components/profile";
 import {
   PersonInterface,
@@ -249,6 +250,8 @@ const ProfileEdit = () => {
             onFamilyMembersChange={setPendingFamilyMembers}
           />
         );
+      case "account":
+        return <AccountSettings />;
       case "visibility":
         return <VisibilitySettings />;
       default:

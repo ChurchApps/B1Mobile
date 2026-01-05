@@ -1,7 +1,5 @@
 import { EnvironmentHelper, SecureStorageHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
-import { LinkInterface } from "@churchapps/helpers";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useGlobalSearchParams, usePathname } from "expo-router";
@@ -14,7 +12,6 @@ import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import type { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Constants from "expo-constants";
 import { eventBus } from "@/helpers/PushNotificationHelper";
 import { useTranslation } from "react-i18next";
 import pkg from "../../package.json";
@@ -42,7 +39,6 @@ export function CustomDrawer(props?: any) {
   const params = useGlobalSearchParams();
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const { top } = useSafeAreaInsets();
 
@@ -190,75 +186,18 @@ export function CustomDrawer(props?: any) {
             <Text variant="titleMedium" numberOfLines={1} style={styles.userName}>
               {`${user.firstName} ${user.lastName}`}
             </Text>
-            <View style={styles.actionButtons}>
-              <TouchableRipple
-                style={styles.profileDropdownButton}
-                onPress={() => setShowProfileMenu(!showProfileMenu)}>
-                <View style={styles.profileDropdownContent}>
-                  <MaterialIcons name="edit" size={16} color="#0D47A1" />
-                  <Text style={styles.profileDropdownText}>{t("navigation.editProfile")}</Text>
-                  <MaterialIcons
-                    name={showProfileMenu ? "expand-less" : "expand-more"}
-                    size={18}
-                    color="#0D47A1"
-                  />
-                </View>
-              </TouchableRipple>
-              {user && (
-                <TouchableRipple style={styles.messageIconButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
-                  <>
-                    <MaterialCommunityIcons name="email-outline" size={20} color="#0D47A1" />
-                  </>
-                </TouchableRipple>
-              )}
-            </View>
+            <TouchableRipple
+              style={styles.profileButton}
+              onPress={editDirectoryListingAction}>
+              <View style={styles.profileButtonContent}>
+                <MaterialIcons name="edit" size={16} color="#0D47A1" />
+                <Text style={styles.profileButtonText}>{t("navigation.editProfile")}</Text>
+              </View>
+            </TouchableRipple>
           </View>
         </View>
-        {showProfileMenu && (
-          <View style={styles.profileSubmenu}>
-            <TouchableRipple style={styles.submenuItem} onPress={editLoginInfoAction}>
-              <View style={styles.submenuItemContent}>
-                <MaterialIcons name="lock" size={18} color="#0D47A1" />
-                <Text style={styles.submenuItemText}>{t("profileEdit.loginInformation")}</Text>
-              </View>
-            </TouchableRipple>
-            <TouchableRipple style={styles.submenuItem} onPress={editDirectoryListingAction}>
-              <View style={styles.submenuItemContent}>
-                <MaterialIcons name="person" size={18} color="#0D47A1" />
-                <Text style={styles.submenuItemText}>{t("profileEdit.directoryListing")}</Text>
-              </View>
-            </TouchableRipple>
-          </View>
-        )}
       </View>
     );
-  };
-
-  const editLoginInfoAction = () => {
-    const currentUserChurch = useUserStore.getState().currentUserChurch;
-    const extra = Constants.expoConfig?.extra || {};
-    const stage = extra.STAGE;
-
-    let url: string;
-    const baseUrl = stage === "prod"
-      ? "https://app.chums.org/login"
-      : "https://app.staging.chums.org/login";
-
-    const loginParams = new URLSearchParams({
-      returnUrl: "/profile?hideHeader=true",
-      hideHeader: "true",
-    });
-
-    url = `${baseUrl}?${loginParams.toString()}`;
-
-    if (currentUserChurch?.jwt) url += "&jwt=" + currentUserChurch.jwt;
-
-    closeDrawerAndNavigate(() => {
-      router.push({
-        pathname: "websiteUrlRoot",
-        params: { url, title: t("profileEdit.loginInformation") }
-      });
-    });
   };
 
   const editDirectoryListingAction = () => {
@@ -268,7 +207,6 @@ export function CustomDrawer(props?: any) {
   };
 
   const closeDrawerAndNavigate = (navigateAction: () => void) => {
-    setShowProfileMenu(false);
     setTimeout(() => {
       try {
         if (navigation && typeof navigation.closeDrawer === 'function') {
@@ -352,52 +290,21 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     color: "#3c3c3c" // Dark gray from style guide
   },
-  actionButtons: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  profileDropdownButton: {
+  profileButton: {
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: 4,
     backgroundColor: "#F6F6F8"
   },
-  profileDropdownContent: {
+  profileButtonContent: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4
   },
-  profileDropdownText: {
+  profileButtonText: {
     fontSize: 14,
     fontWeight: "500",
     color: "#0D47A1"
-  },
-  profileSubmenu: {
-    marginTop: 12,
-    marginLeft: 60,
-    backgroundColor: "#F6F6F8",
-    borderRadius: 8,
-    overflow: "hidden"
-  },
-  submenuItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 16
-  },
-  submenuItemContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12
-  },
-  submenuItemText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#3c3c3c"
-  },
-  messageIconButton: {
-    padding: 8,
-    borderRadius: 24,
-    backgroundColor: "#F6F6F8"
   },
   churchButton: {
     borderRadius: 8,

@@ -121,6 +121,8 @@ export const HouseholdEdit: React.FC<HouseholdEditProps> = ({
                 onPress={handleAddMember}
                 disabled={!newMemberName.trim()}
                 style={styles.addButton}
+                buttonColor="#0D47A1"
+                textColor="#FFFFFF"
                 contentStyle={styles.addButtonContent}>
                 {t("common.add")}
               </Button>
@@ -221,8 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF"
   },
   addButton: {
-    marginTop: 6,
-    backgroundColor: "#0D47A1"
+    marginTop: 6
   },
   addButtonContent: {
     paddingHorizontal: 8
