@@ -122,8 +122,13 @@ const MemberDetail = () => {
 
   const renderHouseholdMember = useCallback(({ item }: { item: Member }) => <MemberCard member={item} onPress={handleMemberPress} subtitle={t("members.householdMember")} size="medium" />, [handleMemberPress, t]);
 
+  const handleEditProfile = useCallback(() => {
+    router.push("/(drawer)/profileEdit");
+  }, []);
+
   const primaryPhone = memberinfo?.mobilePhone || memberinfo?.homePhone;
   const hasContactInfo = memberinfo?.email || primaryPhone || memberinfo?.address1;
+  const isOwnProfile = currentUserChurch?.person?.id === parsedMember?.id;
 
   return (
     <SafeAreaProvider>
@@ -150,6 +155,17 @@ const MemberDetail = () => {
             {/* Quick Actions */}
             <View style={styles.quickActionsSection}>
               <View style={styles.quickActionsGrid}>
+                {isOwnProfile && (
+                  <TouchableOpacity style={styles.quickActionButton} onPress={handleEditProfile}>
+                    <View style={[styles.quickActionIcon, styles.editProfileIcon]}>
+                      <MaterialIcons name="edit" size={24} color="#FFFFFF" />
+                    </View>
+                    <Text variant="labelMedium" style={styles.quickActionText}>
+                      {t("common.edit")}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
                 <TouchableOpacity style={styles.quickActionButton} onPress={handleMessage}>
                   <View style={styles.quickActionIcon}>
                     <MaterialIcons name="message" size={24} color="#FFFFFF" />
@@ -366,6 +382,9 @@ const styles = StyleSheet.create({
     color: "#3c3c3c",
     fontWeight: "600",
     textAlign: "center"
+  },
+  editProfileIcon: {
+    backgroundColor: "#4CAF50"
   },
 
   // Sections

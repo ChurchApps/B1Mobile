@@ -42,6 +42,7 @@ export function CustomDrawer(props?: any) {
   const params = useGlobalSearchParams();
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const { top } = useSafeAreaInsets();
 
@@ -190,9 +191,19 @@ export function CustomDrawer(props?: any) {
               {`${user.firstName} ${user.lastName}`}
             </Text>
             <View style={styles.actionButtons}>
-              <Button mode="text" onPress={editProfileAction} labelStyle={styles.profileLabel} style={styles.profileButton} textColor="#0D47A1" compact icon={() => <MaterialIcons name="edit" size={16} color="#0D47A1" />}>
-                {t("navigation.editProfile")}
-              </Button>
+              <TouchableRipple
+                style={styles.profileDropdownButton}
+                onPress={() => setShowProfileMenu(!showProfileMenu)}>
+                <View style={styles.profileDropdownContent}>
+                  <MaterialIcons name="edit" size={16} color="#0D47A1" />
+                  <Text style={styles.profileDropdownText}>{t("navigation.editProfile")}</Text>
+                  <MaterialIcons
+                    name={showProfileMenu ? "expand-less" : "expand-more"}
+                    size={18}
+                    color="#0D47A1"
+                  />
+                </View>
+              </TouchableRipple>
               {user && (
                 <TouchableRipple style={styles.messageIconButton} onPress={() => router.navigate("/(drawer)/searchMessageUser")}>
                   <>
@@ -203,33 +214,73 @@ export function CustomDrawer(props?: any) {
             </View>
           </View>
         </View>
+        {showProfileMenu && (
+          <View style={styles.profileSubmenu}>
+            <TouchableRipple style={styles.submenuItem} onPress={editLoginInfoAction}>
+              <View style={styles.submenuItemContent}>
+                <MaterialIcons name="lock" size={18} color="#0D47A1" />
+                <Text style={styles.submenuItemText}>{t("profileEdit.loginInformation")}</Text>
+              </View>
+            </TouchableRipple>
+            <TouchableRipple style={styles.submenuItem} onPress={editDirectoryListingAction}>
+              <View style={styles.submenuItemContent}>
+                <MaterialIcons name="person" size={18} color="#0D47A1" />
+                <Text style={styles.submenuItemText}>{t("profileEdit.directoryListing")}</Text>
+              </View>
+            </TouchableRipple>
+          </View>
+        )}
       </View>
     );
   };
 
-  const editProfileAction = () => {
+  const editLoginInfoAction = () => {
     const currentUserChurch = useUserStore.getState().currentUserChurch;
     const extra = Constants.expoConfig?.extra || {};
     const stage = extra.STAGE;
 
     let url: string;
-    const baseUrl = stage === "prod" 
-      ? "https://app.chums.org/login" 
+    const baseUrl = stage === "prod"
+      ? "https://app.chums.org/login"
       : "https://app.staging.chums.org/login";
 
-    const params = new URLSearchParams({
+    const loginParams = new URLSearchParams({
       returnUrl: "/profile?hideHeader=true",
       hideHeader: "true",
     });
 
-    url = `${baseUrl}?${params.toString()}`;
+    url = `${baseUrl}?${loginParams.toString()}`;
 
     if (currentUserChurch?.jwt) url += "&jwt=" + currentUserChurch.jwt;
 
-    router.push({
-          pathname:"websiteUrlRoot",
-          params: { url, title: t("navigation.editProfile")}
-        });
+    closeDrawerAndNavigate(() => {
+      router.push({
+        pathname: "websiteUrlRoot",
+        params: { url, title: t("profileEdit.loginInformation") }
+      });
+    });
+  };
+
+  const editDirectoryListingAction = () => {
+    closeDrawerAndNavigate(() => {
+      router.push("/(drawer)/profileEdit");
+    });
+  };
+
+  const closeDrawerAndNavigate = (navigateAction: () => void) => {
+    setShowProfileMenu(false);
+    setTimeout(() => {
+      try {
+        if (navigation && typeof navigation.closeDrawer === 'function') {
+          navigation.closeDrawer();
+        } else {
+          navigation.dispatch(DrawerActions.closeDrawer());
+        }
+      } catch (error) {
+        console.warn('Failed to close drawer:', error);
+      }
+      navigateAction();
+    }, 100);
   };
 
   const drawerFooterComponent = () => {
@@ -306,14 +357,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between"
   },
-  profileButton: {
-    margin: 0,
-    padding: 0,
-    minWidth: 0,
-    height: 32
+  profileDropdownButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    backgroundColor: "#F6F6F8"
   },
-  profileLabel: {
-    lineHeight: 16
+  profileDropdownContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4
+  },
+  profileDropdownText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#0D47A1"
+  },
+  profileSubmenu: {
+    marginTop: 12,
+    marginLeft: 60,
+    backgroundColor: "#F6F6F8",
+    borderRadius: 8,
+    overflow: "hidden"
+  },
+  submenuItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16
+  },
+  submenuItemContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12
+  },
+  submenuItemText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#3c3c3c"
   },
   messageIconButton: {
     padding: 8,

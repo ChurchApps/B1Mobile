@@ -85,6 +85,13 @@ export default function DrawerLayout() {
         <Drawer.Screen name="sermons" options={{ title: t("sermons.sermons") }} />
         <Drawer.Screen name="searchMessageUser" options={{ title: t("navigation.searchMessages") }} />
         <Drawer.Screen
+          name="profileEdit"
+          options={{
+            title: t("profileEdit.editProfile"),
+            drawerItemStyle: { display: "none" }
+          }}
+        />
+        <Drawer.Screen
           name="churchSearch"
           options={({ navigation }) => ({
             title: t("navigation.churchSearch"),
