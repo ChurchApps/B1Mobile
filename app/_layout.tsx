@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { useTranslation } from "react-i18next";
 
 import { initializeFirebase } from "../src/config/firebase";
@@ -97,17 +98,19 @@ export default Sentry.wrap(function RootLayout() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <StatusBar barStyle={"light-content"} />
-          <SafeAreaProvider>
-            <NotificationNavigationHandler />
-            <Stack screenOptions={{ headerShown: true }} initialRouteName="auth">
-              {screens.map(screen => (
-                <Stack.Screen key={screen.name} name={screen.name} options={screen.options} />
-              ))}
-            </Stack>
-          </SafeAreaProvider>
-        </ThemeProvider>
+        <ActionSheetProvider>
+          <ThemeProvider>
+            <StatusBar barStyle={"light-content"} />
+            <SafeAreaProvider>
+              <NotificationNavigationHandler />
+              <Stack screenOptions={{ headerShown: true }} initialRouteName="auth">
+                {screens.map(screen => (
+                  <Stack.Screen key={screen.name} name={screen.name} options={screen.options} />
+                ))}
+              </Stack>
+            </SafeAreaProvider>
+          </ThemeProvider>
+        </ActionSheetProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

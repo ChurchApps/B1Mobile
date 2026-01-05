@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert, Platform } from "react-native";
+import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { Text, ActivityIndicator } from "react-native-paper";
 import { useActionSheet } from "@expo/react-native-action-sheet";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import { Avatar } from "../common/Avatar";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
@@ -57,7 +58,7 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
-        base64: true
+        exif: false
       };
 
       const result = useCamera
@@ -66,9 +67,19 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({
 
       if (!result.canceled && result.assets[0]) {
         const asset = result.assets[0];
-        if (asset.base64) {
-          const mimeType = asset.mimeType || "image/jpeg";
-          const dataUrl = `data:${mimeType};base64,${asset.base64}`;
+
+        // Resize to match B1Admin (300px height, proportional width based on 4:3 aspect)
+        const targetHeight = 300;
+        const targetWidth = Math.round(targetHeight * (4 / 3));
+
+        const manipulated = await ImageManipulator.manipulateAsync(
+          asset.uri,
+          [{ resize: { width: targetWidth, height: targetHeight } }],
+          { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG, base64: true }
+        );
+
+        if (manipulated.base64) {
+          const dataUrl = `data:image/jpeg;base64,${manipulated.base64}`;
           onPhotoSelected(dataUrl);
         }
       }
