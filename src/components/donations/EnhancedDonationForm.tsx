@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert } from "react-native";
-import { Card, Text, TextInput, Button, Switch, Menu } from "react-native-paper";
+import { View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
+import { Card, Text, TextInput, Button, Switch, Menu, SegmentedButtons } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
-import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
+import { CardField, CardFieldInput, createPaymentMethod, collectBankAccountForSetup, confirmSetupIntent } from "@stripe/stripe-react-native";
 import { ApiHelper, CurrencyHelper } from "../../helpers";
 import { DonationHelper } from "../../helpers/DonationHelper";
 import { FundInterface, StripeDonationInterface, StripePaymentMethod, PaymentGateway } from "../../interfaces";
@@ -55,6 +55,10 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
   const [openStartPicker, setOpenStartPicker] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
+
+  // Guest payment type (card or bank)
+  const [guestPaymentType, setGuestPaymentType] = useState<"card" | "bank">("card");
+  const [bankConnecting, setBankConnecting] = useState(false);
 
   // Church data for non-auth users
   const [churchData, setChurchData] = useState<any>(null);
@@ -217,7 +221,12 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
 
 
       if (!currentUserChurch?.person?.id) {
-        await handleGuestDonation(donation);
+        // Guest user - route based on payment type
+        if (guestPaymentType === "bank") {
+          await handleGuestBankDonation(donation);
+        } else {
+          await handleGuestDonation(donation);
+        }
       } else {
         // For authenticated users, add gatewayId and other required fields
         const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
@@ -336,6 +345,98 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
     await makeDonation(updatedDonation);
   };
 
+  const handleGuestBankDonation = async (donation: StripeDonationInterface) => {
+    setBankConnecting(true);
+
+    try {
+      // Create user and person first
+      await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
+
+      const personData = {
+        churchId: churchId || CacheHelper.church?.id || "",
+        firstName,
+        lastName,
+        email
+      };
+      const personResult = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
+
+      // Get ACH setup intent from anonymous endpoint
+      const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
+      const setupResponse = await ApiHelper.postAnonymous("/paymentmethods/ach-setup-intent-anon", {
+        email,
+        name: `${firstName} ${lastName}`,
+        churchId: churchId || CacheHelper.church?.id || "",
+        gatewayId: gateway?.id
+      }, "GivingApi");
+
+      if (setupResponse?.error) {
+        throw new Error(setupResponse.error);
+      }
+
+      // Use Financial Connections to collect bank account
+      const { setupIntent: collectedSetupIntent, error: collectError } = await collectBankAccountForSetup(
+        setupResponse.clientSecret,
+        {
+          paymentMethodType: "USBankAccount",
+          paymentMethodData: {
+            billingDetails: {
+              name: `${firstName} ${lastName}`,
+              email
+            }
+          }
+        }
+      );
+
+      if (collectError) {
+        throw new Error(collectError.message || "Failed to connect bank account");
+      }
+
+      // Check if user completed the flow
+      if (!collectedSetupIntent?.paymentMethod?.id) {
+        throw new Error("Bank account connection was not completed. Please try again.");
+      }
+
+      // Confirm the SetupIntent
+      const { setupIntent: confirmedIntent, error: confirmError } = await confirmSetupIntent(
+        setupResponse.clientSecret,
+        { paymentMethodType: "USBankAccount" }
+      );
+
+      if (confirmError) {
+        throw new Error(confirmError.message || "Failed to confirm bank account");
+      }
+
+      setBankConnecting(false);
+
+      // Process the donation - use paymentMethod.id (paymentMethodId is deprecated)
+      const updatedDonation = {
+        amount: donation.amount,
+        id: confirmedIntent?.paymentMethod?.id || collectedSetupIntent?.paymentMethod?.id || "",
+        customerId: setupResponse.customerId,
+        type: "bank",
+        gatewayId: gateway?.id,
+        churchId: churchId || CacheHelper.church?.id,
+        person: {
+          id: personResult.id,
+          email: email,
+          name: `${firstName} ${lastName}`
+        },
+        notes: "",
+        funds: donation.funds || [],
+        church: {
+          name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
+          subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
+          churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
+        }
+      };
+
+      await makeDonation(updatedDonation);
+    } catch (error: any) {
+      setBankConnecting(false);
+      throw error;
+    }
+  };
+
   const makeDonation = async (donation: StripeDonationInterface) => {
     const endpoint = isRecurring ? "/donate/subscribe/" : "/donate/charge/";
     const result = await ApiHelper.post(endpoint, donation, "GivingApi");
@@ -399,6 +500,26 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
               <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} style={[styles.guestInput, styles.nameInput]} />
               <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} style={[styles.guestInput, styles.nameInput]} />
             </View>
+
+            {/* Payment Type Selector for Guests */}
+            <Text variant="titleSmall" style={styles.paymentTypeLabel}>
+              {t("donations.selectPaymentMethod")}
+            </Text>
+            <SegmentedButtons
+              value={guestPaymentType}
+              onValueChange={(value) => {
+                setGuestPaymentType(value as "card" | "bank");
+                // Reset recurring when switching to bank (one-time only for guest ACH)
+                if (value === "bank") {
+                  setIsRecurring(false);
+                }
+              }}
+              buttons={[
+                { value: "card", label: "Credit/Debit Card" },
+                { value: "bank", label: "Bank Account (ACH)" }
+              ]}
+              style={styles.paymentTypeButtons}
+            />
           </Card.Content>
         </Card>
       )}
@@ -434,7 +555,8 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         </Card.Content>
       </Card>
 
-      {/* Recurring Toggle */}
+      {/* Recurring Toggle - Hidden for guest bank payments (one-time only) */}
+      {!((!currentUserChurch?.person?.id) && guestPaymentType === "bank") && (
       <Card style={styles.sectionCard}>
         <Card.Content>
           <View style={styles.switchRow}>
@@ -501,6 +623,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
           )}
         </Card.Content>
       </Card>
+      )}
 
       {/* Payment Method */}
       <Card style={styles.sectionCard}>
@@ -532,6 +655,23 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
                 />
               ))}
             </Menu>
+          ) : guestPaymentType === "bank" ? (
+            <View style={styles.bankConnectionContainer}>
+              <Text variant="bodyMedium" style={styles.bankConnectionText}>
+                Securely connect your bank account using Stripe Financial Connections.
+              </Text>
+              <Text variant="bodySmall" style={styles.bankConnectionSubtext}>
+                You'll log in to your bank to authorize the connection. Your credentials are never shared.
+              </Text>
+              {bankConnecting && (
+                <View style={styles.bankConnectingRow}>
+                  <ActivityIndicator size="small" color="#0D47A1" />
+                  <Text variant="bodyMedium" style={styles.bankConnectingText}>
+                    Connecting to your bank...
+                  </Text>
+                </View>
+              )}
+            </View>
           ) : (
             <CardField
               postalCodeEnabled={false}
@@ -748,4 +888,43 @@ const styles = StyleSheet.create({
     color: "#3c3c3c",
     fontSize: 14,
   },
+
+  // Payment Type Selector for Guests
+  paymentTypeLabel: {
+    color: "#3c3c3c",
+    fontWeight: "600",
+    marginTop: 8,
+    marginBottom: 8
+  },
+  paymentTypeButtons: {
+    marginBottom: 8
+  },
+
+  // Bank Connection UI
+  bankConnectionContainer: {
+    padding: 16,
+    backgroundColor: "#F6F6F8",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    alignItems: "center"
+  },
+  bankConnectionText: {
+    color: "#3c3c3c",
+    textAlign: "center",
+    marginBottom: 8
+  },
+  bankConnectionSubtext: {
+    color: "#9E9E9E",
+    textAlign: "center"
+  },
+  bankConnectingRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 16,
+    gap: 8
+  },
+  bankConnectingText: {
+    color: "#0D47A1"
+  }
 });
