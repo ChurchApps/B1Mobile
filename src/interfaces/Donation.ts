@@ -1,5 +1,7 @@
 import { PersonInterface } from "./Membership";
 
+export type DonationStatus = "pending" | "complete" | "failed";
+
 export interface DonationInterface {
   id?: string;
   batchId?: string;
@@ -9,6 +11,7 @@ export interface DonationInterface {
   method?: string;
   methodDetails?: string;
   notes?: string;
+  status?: DonationStatus;
   person?: PersonInterface;
   fund?: FundInterface;
 }
@@ -124,6 +127,7 @@ export interface DonationImpact {
   methodDetails?: string | null;
   notes?: string | null;
   personId: string;
+  status?: DonationStatus;
   fund?: { id: string; name: string; amount?: number };
 };
 

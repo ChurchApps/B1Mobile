@@ -32,10 +32,10 @@ export function Donations() {
     ({ item: donation }: { item: DonationInterface }) => (
       <List.Item
         title={DateHelper.prettyDate(new Date(donation.donationDate || ""))}
-        description={donation.fund?.name}
+        description={donation.status === "pending" ? `${donation.fund?.name} (Pending)` : donation.fund?.name}
         right={() => (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text variant="bodyLarge" style={{ marginRight: spacing.md }}>
+            <Text variant="bodyLarge" style={{ marginRight: spacing.md, color: donation.status === "pending" ? "#f59e0b" : undefined }}>
               {CurrencyHelper.formatCurrency(donation.fund?.amount || 0)}
             </Text>
             <IconButton
@@ -105,6 +105,13 @@ export function Donations() {
               <List.Item title={t("donations.method")} description={`${selectedDonation.method} - ${selectedDonation.methodDetails}`} />
               <List.Item title={t("donations.fund")} description={selectedDonation.fund?.name} />
               <List.Item title={t("donations.amount")} description={CurrencyHelper.formatCurrency(selectedDonation.fund?.amount || 0)} />
+              {selectedDonation.status === "pending" && (
+                <List.Item
+                  title={t("donations.status")}
+                  description="Pending - ACH transfers typically take 4-5 business days"
+                  descriptionStyle={{ color: "#f59e0b" }}
+                />
+              )}
             </List.Section>
           </ScrollView>
         </Modal>
