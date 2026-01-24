@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { TextInput, Card, Button } from "react-native-paper";
+import { TextInput, Card } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 
 interface ChurchSearchInputProps {
@@ -23,6 +23,15 @@ export const ChurchSearchInput: React.FC<ChurchSearchInputProps> = ({ searchText
             onChangeText={onSearchTextChange}
             style={styles.searchInput}
             left={<TextInput.Icon icon="magnify" />}
+            right={
+              searchText.length > 0 ? (
+                <TextInput.Icon
+                  icon="close-circle"
+                  onPress={() => onSearchTextChange("")}
+                  forceTextInputFocus={false}
+                />
+              ) : null
+            }
             theme={{
               colors: {
                 primary: "#0D47A1",
@@ -30,15 +39,6 @@ export const ChurchSearchInput: React.FC<ChurchSearchInputProps> = ({ searchText
               }
             }}
           />
-          {searchText.length > 0 && (
-            <Button
-              mode="text"
-              onPress={() => onSearchTextChange("")}
-              style={styles.clearButton}
-              labelStyle={styles.clearButtonText}>
-              {t("churchSearch.clearSearch")}
-            </Button>
-          )}
         </Card.Content>
       </Card>
     </View>
@@ -62,14 +62,6 @@ const styles = StyleSheet.create({
     padding: 20
   },
   searchInput: {
-    backgroundColor: "#FFFFFF",
-    marginBottom: 8
-  },
-  clearButton: {
-    alignSelf: "flex-end"
-  },
-  clearButtonText: {
-    color: "#0D47A1",
-    fontWeight: "500"
+    backgroundColor: "#FFFFFF"
   }
 });
