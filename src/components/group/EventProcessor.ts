@@ -361,7 +361,7 @@ export class EventProcessor {
 
   static calculateMarkedDates(expandedEvents: EventInterface[], activeTab: number): any {
     // Only calculate when calendar tab is active and events are loaded
-    if (activeTab !== 3 || !expandedEvents || expandedEvents.length === 0) {
+    if (activeTab !== 4 || !expandedEvents || expandedEvents.length === 0) {
       return {};
     }
 
