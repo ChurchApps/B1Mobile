@@ -37,30 +37,59 @@ interface NotificationContent {
 
 const MessageScreen = () => {
   const { t } = useTranslation();
-  const { userDetails } = useLocalSearchParams<{ userDetails: any }>();
-  console.log("Raw userDetails param:", userDetails);
-  const details = userDetails ? JSON.parse(userDetails) : null;
-  console.log("Parsed details:", details);
+  const { userDetails, chatId } = useLocalSearchParams<{ userDetails: any; chatId: string }>();
+  console.log("Raw userDetails param:", userDetails, "chatId:", chatId);
 
-  // Add early return if no details
-  if (!details || !details.id) {
-    console.error("No user details provided to MessageScreen", { userDetails, details });
-    return (
-      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>{t("messages.errorNoUserDetails")}</Text>
-      </SafeAreaView>
-    );
-  }
   const { theme, spacing } = useAppTheme();
   const [messageText, setMessageText] = useState("");
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
   const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
   const [loading, setLoading] = useState(false);
+  const [userFromChat, setUserFromChat] = useState<any>(null);
+  const [initialLoading, setInitialLoading] = useState(!!chatId && !userDetails);
   const { showActionSheetWithOptions } = useActionSheet();
   const conversationIdRef = useRef<string | undefined>(undefined);
   const user = useUser();
   const currentUserChurch = useCurrentUserChurch();
+
+  // Resolve details from either userDetails or userFromChat
+  const details = userDetails ? JSON.parse(userDetails) : userFromChat;
+  console.log("Parsed details:", details);
+
+  // Fetch user details from chatId when navigating from notification
+  useEffect(() => {
+    const fetchUserFromChatId = async () => {
+      if (!chatId || userDetails || !currentUserChurch?.person?.id) return;
+
+      try {
+        setInitialLoading(true);
+        // Get all private messages to find the conversation
+        const conversations: ConversationCheckInterface[] = await ApiHelper.get("/privateMessages", "MessagingApi");
+        const targetConversation = conversations.find((c: ConversationCheckInterface) => c.conversationId === chatId);
+
+        if (targetConversation) {
+          // Determine the other person in the conversation
+          const otherPersonId = targetConversation.fromPersonId === currentUserChurch.person.id ? targetConversation.toPersonId : targetConversation.fromPersonId;
+
+          // Fetch person details
+          const people = await ApiHelper.get(`/people/basic?ids=${otherPersonId}`, "MembershipApi");
+          if (people && people.length > 0) {
+            setUserFromChat({
+              id: people[0].id,
+              name: people[0].name
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user from chatId:", error);
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    fetchUserFromChatId();
+  }, [chatId, userDetails, currentUserChurch?.person?.id]);
 
   // Update ref when conversation changes
   useEffect(() => {
@@ -105,6 +134,7 @@ const MessageScreen = () => {
   }, []);
 
   const getConversations = useCallback(() => {
+    if (!details?.id) return; // Guard against missing details
     setLoading(true);
     console.log("Getting conversations for user:", details.id);
 
@@ -132,18 +162,27 @@ const MessageScreen = () => {
         console.error("Error fetching conversations:", error);
         setLoading(false);
       });
-  }, [details.id, getMessagesList, currentUserChurch?.person?.id]);
+  }, [details?.id, getMessagesList, currentUserChurch?.person?.id]);
+
+  const loadMembers = useCallback(() => {
+    if (currentUserChurch?.person?.id) {
+      ApiHelper.get(`/people/ids?ids=${currentUserChurch.person.id}`, "MembershipApi");
+    }
+  }, [currentUserChurch?.person?.id]);
 
   const loadData = useCallback(() => {
+    if (!details?.id) return; // Guard against missing details
     getConversations();
     loadMembers();
-  }, [getConversations]);
+  }, [details?.id, getConversations, loadMembers]);
 
   // Refresh data when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      loadData();
-    }, [loadData])
+      if (details?.id) {
+        loadData();
+      }
+    }, [details?.id, loadData])
   );
 
   useEffect(() => {
@@ -168,7 +207,7 @@ const MessageScreen = () => {
       // If we have a specific conversation ID, only refresh if it matches
       if (data?.conversationId && conversationIdRef.current && data.conversationId === conversationIdRef.current) {
         getMessagesList(conversationIdRef.current);
-      } else if (!data?.conversationId) {
+      } else if (!data?.conversationId && details?.id) {
         // If no specific conversation ID, refresh everything
         loadData();
       }
@@ -179,14 +218,16 @@ const MessageScreen = () => {
     eventBus.addListener("conversationUpdate", handleConversationUpdate);
 
     // Initial load
-    loadData();
+    if (details?.id) {
+      loadData();
+    }
 
     return () => {
       eventBus.removeListener("updateChatMessages");
       eventBus.removeListener("notification");
       eventBus.removeListener("conversationUpdate");
     };
-  }, [getMessagesList, loadData]);
+  }, [getMessagesList, loadData, details?.id]);
 
   // Add polling for new messages when screen is focused
   useFocusEffect(
@@ -201,11 +242,36 @@ const MessageScreen = () => {
     }, [getMessagesList])
   );
 
-  const loadMembers = () => {
-    if (currentUserChurch?.person?.id) {
-      ApiHelper.get(`/people/ids?ids=${currentUserChurch.person.id}`, "MembershipApi");
-    }
-  };
+  useScreenHeader({
+    title: details?.name?.display,
+    placeholder: details?.DisplayName || t("messages.messages"),
+    headerRight: () => (
+      <View>
+        <IconButton icon="account-plus" size={28} iconColor="white" onPress={() => router.push("/searchMessageUserRoot")} />
+      </View>
+    )
+  });
+
+  // Show loading while fetching user from chatId
+  if (initialLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.colors.background }}>
+        <LoadingWrapper loading={true}>
+          <View />
+        </LoadingWrapper>
+      </SafeAreaView>
+    );
+  }
+
+  // Show error if no details available
+  if (!details || !details.id) {
+    console.error("No user details provided to MessageScreen", { userDetails, chatId, details });
+    return (
+      <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>{t("messages.errorNoUserDetails")}</Text>
+      </SafeAreaView>
+    );
+  }
 
   const sendMessageInitiate = () => {
     if (messageText == "") return;
@@ -270,16 +336,6 @@ const MessageScreen = () => {
       }
     });
   };
-
-  useScreenHeader({
-    title: details?.name?.display,
-    placeholder: details?.DisplayName || t("messages.messages"),
-    headerRight: () => (
-      <View>
-        <IconButton icon="account-plus" size={28} iconColor="white" onPress={() => router.push("/searchMessageUserRoot")} />
-      </View>
-    )
-  });
 
   const messageInputView = () => (
     <Surface style={{ flexDirection: "row", alignItems: "center", padding: spacing.sm, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
