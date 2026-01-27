@@ -1,10 +1,12 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert, Linking } from "react-native";
 import { Button } from "react-native-paper";
 import { Calendar, DateData } from "react-native-calendars";
 import { router } from "expo-router";
 import { useAppTheme } from "../../theme";
 import { InlineLoader } from "../common/LoadingComponents";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
+import { EnvironmentHelper } from "../../helpers";
 
 interface GroupCalendarTabProps {
   groupId: string;
@@ -18,6 +20,31 @@ interface GroupCalendarTabProps {
 
 export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isLeader, isLoading, selected, markedDates, onDayPress, onMonthChange }) => {
   const { theme } = useAppTheme();
+  const currentUserChurch = useCurrentUserChurch();
+
+  const handleSubscribe = async () => {
+    const churchId = currentUserChurch?.church?.id;
+    if (!churchId) {
+      Alert.alert("Error", "Unable to get church information. Please try again.");
+      return;
+    }
+
+    // Replace https:// with webcal:// to open in calendar app
+    const baseUrl = EnvironmentHelper.ContentApi.replace("https://", "webcal://");
+    const subscriptionUrl = `${baseUrl}/events/subscribe?groupId=${groupId}&churchId=${churchId}`;
+
+    try {
+      const supported = await Linking.canOpenURL(subscriptionUrl);
+      if (supported) {
+        await Linking.openURL(subscriptionUrl);
+      } else {
+        Alert.alert("Error", "Unable to open calendar app. Please try again.");
+      }
+    } catch (error) {
+      console.error("Failed to open calendar:", error);
+      Alert.alert("Error", "Failed to open calendar app. Please try again.");
+    }
+  };
 
   const handleAddEvent = () => {
     const tomorrow = new Date();
@@ -56,6 +83,9 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
           Add Event
         </Button>
       )}
+      <Button mode="outlined" icon="calendar-sync" onPress={handleSubscribe} style={styles.subscribeButton}>
+        Subscribe
+      </Button>
       <Calendar
         current={selected}
         markingType="multi-dot"
@@ -95,6 +125,9 @@ const styles = StyleSheet.create({
   addEventButton: {
     marginBottom: 16,
     backgroundColor: "#70DC87"
+  },
+  subscribeButton: {
+    marginBottom: 16
   },
   loadingOverlay: {
     position: "absolute",
