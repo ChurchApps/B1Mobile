@@ -268,6 +268,8 @@
     "latestUpdates": "최신 업데이트",
     "groupDetails": "그룹 상세정보",
     "groupChat": "그룹 채팅",
+    "discussions": "토론",
+    "announcements": "공지사항",
     "failedToLoad": "그룹 상세정보를 불러오는데 실패했습니다",
     "noMessagesYet": "아직 메시지가 없습니다",
     "startConversationToConnect": "그룹과 연결하려면 대화를 시작하세요",

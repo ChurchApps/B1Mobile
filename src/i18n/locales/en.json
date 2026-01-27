@@ -269,6 +269,8 @@
     "latestUpdates": "Latest Updates",
     "groupDetails": "Group Details",
     "groupChat": "Group Chat",
+    "discussions": "Discussions",
+    "announcements": "Announcements",
     "failedToLoad": "Failed to load group details",
     "noMessagesYet": "No messages yet",
     "startConversationToConnect": "Start a conversation to connect with your group",

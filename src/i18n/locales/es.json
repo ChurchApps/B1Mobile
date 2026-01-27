@@ -268,6 +268,8 @@
     "latestUpdates": "Ultimas Actualizaciones",
     "groupDetails": "Detalles del Grupo",
     "groupChat": "Chat del Grupo",
+    "discussions": "Discusiones",
+    "announcements": "Anuncios",
     "failedToLoad": "Error al cargar los detalles del grupo",
     "noMessagesYet": "Sin mensajes aún",
     "startConversationToConnect": "Inicia una conversación para conectar con tu grupo",
