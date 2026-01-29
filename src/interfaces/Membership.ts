@@ -57,9 +57,9 @@ export interface PersonInterface {
   contactInfo: ContactInfoInterface;
   membershipStatus?: string;
   gender?: string;
-  birthDate?: Date;
+  birthDate?: string;  // YYYY-MM-DD format - date-only field
   maritalStatus?: string;
-  anniversary?: Date;
+  anniversary?: string;  // YYYY-MM-DD format - date-only field
   photo?: string;
   photoUpdated?: Date;
   householdId?: string;

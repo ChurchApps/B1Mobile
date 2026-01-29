@@ -31,7 +31,7 @@ export function Donations() {
   const renderDonationItem = useCallback(
     ({ item: donation }: { item: DonationInterface }) => (
       <List.Item
-        title={DateHelper.prettyDate(new Date(donation.donationDate || ""))}
+        title={DateHelper.prettyDate(new Date((donation.donationDate || "") + "T00:00:00"))}
         description={donation.status === "pending" ? `${donation.fund?.name} (Pending)` : donation.fund?.name}
         right={() => (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -101,7 +101,7 @@ export function Donations() {
           </View>
           <ScrollView>
             <List.Section>
-              <List.Item title={t("donations.date")} description={DateHelper.prettyDate(new Date(selectedDonation.donationDate || ""))} />
+              <List.Item title={t("donations.date")} description={DateHelper.prettyDate(new Date((selectedDonation.donationDate || "") + "T00:00:00"))} />
               <List.Item title={t("donations.method")} description={`${selectedDonation.method} - ${selectedDonation.methodDetails}`} />
               <List.Item title={t("donations.fund")} description={selectedDonation.fund?.name} />
               <List.Item title={t("donations.amount")} description={CurrencyHelper.formatCurrency(selectedDonation.fund?.amount || 0)} />

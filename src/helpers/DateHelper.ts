@@ -2,16 +2,31 @@ import dayjs from "./dayjsConfig";
 import { ErrorHelper } from "./ErrorHelper";
 
 export class DateHelper {
-  static formatHtml5Date(date: Date): string {
-    let result = "";
-    if (date !== undefined && date !== null) {
-      try {
-        result = new Date(date).toISOString().split("T")[0];
-      } catch (e) {
-        ErrorHelper.logError("DateHelper", "formatHtml5Date: " + String(e));
-      }
+  static formatHtml5Date(date: Date | string | null | undefined): string {
+    if (!date) return "";
+
+    // If already a YYYY-MM-DD string, return as-is
+    if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
+
+    // If ISO string, extract date portion (ignore timezone)
+    if (typeof date === "string") {
+      const match = date.match(/^(\d{4}-\d{2}-\d{2})/);
+      if (match) return match[1];
     }
-    return result;
+
+    // For Date objects, use LOCAL year/month/day (not UTC)
+    try {
+      const d = date instanceof Date ? date : new Date(date);
+      if (isNaN(d.getTime())) return "";
+
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    } catch (e) {
+      ErrorHelper.logError("DateHelper", "formatHtml5Date: " + String(e));
+      return "";
+    }
   }
 
   // Localized short date format: "Dec 30, 2025" (en) or "30 déc. 2025" (fr)

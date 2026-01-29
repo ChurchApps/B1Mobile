@@ -6,7 +6,7 @@ export interface DonationInterface {
   id?: string;
   batchId?: string;
   personId?: string;
-  donationDate?: Date;
+  donationDate?: string;  // YYYY-MM-DD format - date-only field
   amount?: number;
   method?: string;
   methodDetails?: string;
