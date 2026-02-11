@@ -1,6 +1,5 @@
 import { ApiHelper, CurrencyHelper, UserHelper, UserInterface } from "../../../src/helpers";
-import { DonationHelper } from "../../../src/helpers/DonationHelper";
-import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod, MultiGatewayDonationInterface, PaymentMethod, PaymentGateway } from "../../../src/interfaces";
+import { FundDonationInterface, FundInterface, PersonInterface, StripeDonationInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { CardField, CardFieldInput, createPaymentMethod } from "@stripe/stripe-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, View } from "react-native";
@@ -109,13 +108,13 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const handleFundDonationsChange = async (fd: FundDonationInterface[]) => {
     setFundDonations(fd);
     let totalAmount = 0;
-    let selectedFunds: any = [];
+    const selectedFunds: any = [];
     for (const fundDonation of fd) {
       totalAmount += fundDonation.amount || 0;
-      let fund = funds.find((fund: FundInterface) => fund.id === fundDonation.fundId);
+      const fund = funds.find((fund: FundInterface) => fund.id === fundDonation.fundId);
       selectedFunds.push({ id: fundDonation.fundId, amount: fundDonation.amount || 0, name: fund?.name || "" });
     }
-    let d = { ...donation };
+    const d = { ...donation };
     d.amount = totalAmount;
     d.funds = selectedFunds;
     setDonation(d);
@@ -146,9 +145,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         type: method?.type,
         billing_cycle_anchor: +new Date(date),
         amount: parseFloat(total.toFixed(2)),
-        church: {
-          subDomain: CacheHelper.church?.subDomain
-        }
+        church: { subDomain: CacheHelper.church?.subDomain }
       };
       saveDonation(payload, "");
     }
@@ -191,9 +188,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             person: donation.person,
             billing_cycle_anchor: +new Date(date),
             interval: donation.interval,
-            church: {
-              subDomain: CacheHelper.church?.subDomain
-            }
+            church: { subDomain: CacheHelper.church?.subDomain }
           };
           saveDonation(payload, "");
         }
@@ -233,26 +228,11 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       case "type":
         if (donationsCopy.interval) {
           switch (value) {
-            case "one_week":
-              donationsCopy.interval.interval_count = 1;
-              donationsCopy.interval.interval = "week";
-              break;
-            case "two_week":
-              donationsCopy.interval.interval_count = 2;
-              donationsCopy.interval.interval = "week";
-              break;
-            case "one_month":
-              donationsCopy.interval.interval_count = 1;
-              donationsCopy.interval.interval = "month";
-              break;
-            case "three_month":
-              donationsCopy.interval.interval_count = 3;
-              donationsCopy.interval.interval = "month";
-              break;
-            case "one_year":
-              donationsCopy.interval.interval_count = 1;
-              donationsCopy.interval.interval = "year";
-              break;
+            case "one_week": donationsCopy.interval.interval_count = 1; donationsCopy.interval.interval = "week"; break;
+            case "two_week": donationsCopy.interval.interval_count = 2; donationsCopy.interval.interval = "week"; break;
+            case "one_month": donationsCopy.interval.interval_count = 1; donationsCopy.interval.interval = "month"; break;
+            case "three_month": donationsCopy.interval.interval_count = 3; donationsCopy.interval.interval = "month"; break;
+            case "one_year": donationsCopy.interval.interval_count = 1; donationsCopy.interval.interval = "year"; break;
           }
         }
         break;
@@ -268,7 +248,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const getTransactionFee = async (amount: number) => {
     if (amount > 0) {
       const selectedPaymentMethod = pm.find(p => p.id === selectedMethod);
-      let requestData: any = { amount };
+      const requestData: any = { amount };
 
       if (selectedPaymentMethod?.type === "paypal") {
         requestData.provider = "paypal";

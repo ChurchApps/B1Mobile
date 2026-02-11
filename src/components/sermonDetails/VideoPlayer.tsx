@@ -73,9 +73,7 @@ const styles = StyleSheet.create({
     aspectRatio: 16 / 9,
     backgroundColor: "#000"
   },
-  webView: {
-    flex: 1
-  },
+  webView: { flex: 1 },
   loadingContainer: {
     position: "absolute",
     top: 0,

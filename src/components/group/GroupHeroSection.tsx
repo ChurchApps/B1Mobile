@@ -114,10 +114,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8
   },
-  statsChip: {
-    backgroundColor: "rgba(255, 255, 255, 0.9)"
-  },
-  leaderChip: {
-    backgroundColor: "rgba(255, 193, 7, 0.9)"
-  }
+  statsChip: { backgroundColor: "rgba(255, 255, 255, 0.9)" },
+  leaderChip: { backgroundColor: "rgba(255, 193, 7, 0.9)" }
 });

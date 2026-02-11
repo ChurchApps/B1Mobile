@@ -186,9 +186,7 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginVertical: 12
-  },
+  container: { marginVertical: 12 },
   label: {
     fontSize: 16,
     marginBottom: 6
@@ -198,10 +196,6 @@ const styles = StyleSheet.create({
     height: 6,
     borderRadius: 4
   },
-  uploadBtn: {
-    marginTop: 8
-  },
-  cancelBtn: {
-    marginTop: 4
-  }
+  uploadBtn: { marginTop: 8 },
+  cancelBtn: { marginTop: 4 }
 });

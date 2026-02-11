@@ -10,37 +10,37 @@ interface SermonActionsProps {
   showWatchButton: boolean;
 }
 
-export const SermonActions: React.FC<SermonActionsProps> = ({ 
-  onShare, 
-  onExternalLink, 
-  onWatchVideo, 
-  showWatchButton 
+export const SermonActions: React.FC<SermonActionsProps> = ({
+  onShare,
+  onExternalLink,
+  onWatchVideo,
+  showWatchButton
 }) => {
   return (
     <View style={styles.actionContainer}>
       <View style={styles.actionRow}>
-        <Button 
-          mode="outlined" 
-          onPress={onShare} 
-          style={styles.actionButton} 
+        <Button
+          mode="outlined"
+          onPress={onShare}
+          style={styles.actionButton}
           icon={() => <MaterialIcons name="share" size={20} color="#0D47A1" />}>
           Share
         </Button>
 
-        <Button 
-          mode="outlined" 
-          onPress={onExternalLink} 
-          style={styles.actionButton} 
+        <Button
+          mode="outlined"
+          onPress={onExternalLink}
+          style={styles.actionButton}
           icon={() => <MaterialIcons name="open-in-new" size={20} color="#0D47A1" />}>
           Open Link
         </Button>
       </View>
 
       {showWatchButton && (
-        <Button 
-          mode="contained" 
-          onPress={onWatchVideo} 
-          style={styles.watchButton} 
+        <Button
+          mode="contained"
+          onPress={onWatchVideo}
+          style={styles.watchButton}
           icon={() => <MaterialIcons name="play-arrow" size={20} color="#FFFFFF" />}>
           Watch Sermon
         </Button>
@@ -50,9 +50,7 @@ export const SermonActions: React.FC<SermonActionsProps> = ({
 };
 
 const styles = StyleSheet.create({
-  actionContainer: {
-    marginTop: 8
-  },
+  actionContainer: { marginTop: 8 },
   actionRow: {
     flexDirection: "row",
     justifyContent: "space-around",

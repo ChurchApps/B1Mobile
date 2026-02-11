@@ -74,7 +74,7 @@ const ChurchSearch = () => {
       setSelectingChurch(true);
 
       // Check if user is already a member of this church
-      let existing = userChurches.find(uc => uc.church.id === churchData.id);
+      const existing = userChurches.find(uc => uc.church.id === churchData.id);
       if (existing) {
         churchData = existing.church;
       }
@@ -115,10 +115,10 @@ const ChurchSearch = () => {
   // Remove StoreToRecent - handled by the store now
 
   const renderChurchItem = ({ item }: { item: ChurchInterface }) => (
-    <ChurchListItem 
-      church={item} 
-      onPress={churchSelection} 
-      isSelecting={selectingChurch} 
+    <ChurchListItem
+      church={item}
+      onPress={churchSelection}
+      isSelecting={selectingChurch}
     />
   );
 
@@ -131,9 +131,9 @@ const ChurchSearch = () => {
         <View style={styles.content}>
           <ChurchSearchHero />
 
-          <ChurchSearchInput 
-            searchText={searchText} 
-            onSearchTextChange={setSearchText} 
+          <ChurchSearchInput
+            searchText={searchText}
+            onSearchTextChange={setSearchText}
           />
 
           {loading && <SearchLoadingIndicator />}
@@ -175,16 +175,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  content: {
-    flex: 1
-  },
+  content: { flex: 1 },
   resultsSection: {
     flex: 1,
     paddingHorizontal: 16
   },
-  sectionHeader: {
-    marginBottom: 16
-  },
+  sectionHeader: { marginBottom: 16 },
   sectionTitle: {
     color: "#3c3c3c",
     fontWeight: "700",
@@ -195,12 +191,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontStyle: "italic"
   },
-  listContent: {
-    paddingBottom: 32
-  },
-  separator: {
-    height: 12
-  }
+  listContent: { paddingBottom: 32 },
+  separator: { height: 12 }
 });
 
 export default ChurchSearch;

@@ -15,7 +15,9 @@ import ru from "./locales/ru.json";
 import tl from "./locales/tl.json";
 import zh from "./locales/zh.json";
 
-const supportedLanguages = ["de", "en", "es", "fr", "hi", "it", "ko", "no", "pt", "ru", "tl", "zh"];
+const supportedLanguages = [
+  "de", "en", "es", "fr", "hi", "it", "ko", "no", "pt", "ru", "tl", "zh"
+];
 const deviceLanguage = Localization.getLocales()[0]?.languageCode ?? "en";
 const supportedLanguage = supportedLanguages.includes(deviceLanguage) ? deviceLanguage : "en";
 

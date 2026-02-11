@@ -152,9 +152,7 @@ const getStatusColor = (status: string) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 24
-  },
+  container: { marginBottom: 24 },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -200,9 +198,7 @@ const styles = StyleSheet.create({
   },
 
   // Cards List
-  cardsList: {
-    gap: 12
-  },
+  cardsList: { gap: 12 },
   upcomingCard: {
     borderRadius: 16,
     elevation: 2,
@@ -212,12 +208,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     backgroundColor: "#FFFFFF"
   },
-  cardTouchable: {
-    borderRadius: 16
-  },
-  cardContent: {
-    padding: 4
-  },
+  cardTouchable: { borderRadius: 16 },
+  cardContent: { padding: 4 },
 
   // Card Header
   cardHeader: {
@@ -253,9 +245,7 @@ const styles = StyleSheet.create({
   },
 
   // Details Container
-  detailsContainer: {
-    gap: 12
-  },
+  detailsContainer: { gap: 12 },
   detailRow: {
     flexDirection: "row",
     alignItems: "center",

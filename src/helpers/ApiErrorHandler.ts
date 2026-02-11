@@ -24,7 +24,7 @@ export class ApiErrorHandler {
   ): Promise<T | null> {
     try {
       const response = await apiCall();
-      
+
       if (response?.raw?.message) {
         const errorMessage = response.raw.message;
         if (!options?.silentError) {
@@ -33,7 +33,7 @@ export class ApiErrorHandler {
         options?.onError?.(errorMessage);
         return null;
       }
-      
+
       if (response?.data) {
         if (options?.showSuccessAlert && options?.successMessage) {
           Alert.alert("Success", options.successMessage);
@@ -41,15 +41,15 @@ export class ApiErrorHandler {
         options?.onSuccess?.(response.data);
         return response.data;
       }
-      
+
       return null;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Something went wrong";
-      
+
       if (!options?.silentError) {
         Alert.alert(options?.errorTitle || "Error", errorMessage);
       }
-      
+
       options?.onError?.(errorMessage);
       return null;
     }

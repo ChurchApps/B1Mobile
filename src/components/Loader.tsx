@@ -12,11 +12,11 @@ interface Props {
 export function Loader({ isLoading, size = "large", color = "#0D47A1", style }: Props) {
   return (
     <View style={[{ padding: 16 }, style]}>
-      <ActivityIndicator 
-        style={globalStyles.indicatorStyle} 
-        size={size} 
-        color={color} 
-        animating={isLoading} 
+      <ActivityIndicator
+        style={globalStyles.indicatorStyle}
+        size={size}
+        color={color}
+        animating={isLoading}
       />
     </View>
   );

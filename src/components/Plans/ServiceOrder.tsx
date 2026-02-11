@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { type PlanInterface, type PlanItemInterface, type VenuePlanItemsResponseInterface, LessonsContentProvider } from "@churchapps/helpers";
-import { ApiHelper } from "../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { globalStyles } from "../../../src/helpers/GlobalStyles";
 import { useQuery } from "@tanstack/react-query";
@@ -82,10 +81,10 @@ export const ServiceOrder = (props: Props) => {
 
 const styles = StyleSheet.create({
   serviceOrderContainer: {
-    width: '100%',
+    width: "100%",
     paddingTop: DimensionHelper.hp(2),
     marginHorizontal: 0,
-    alignSelf: 'stretch'
+    alignSelf: "stretch"
   },
   contentContainer: {
     paddingTop: DimensionHelper.hp(1),

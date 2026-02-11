@@ -84,9 +84,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     overflow: "hidden"
   },
-  sermonContent: {
-    position: "relative"
-  },
+  sermonContent: { position: "relative" },
   sermonImageContainer: {
     position: "relative",
     aspectRatio: 16 / 9,
@@ -138,9 +136,7 @@ const styles = StyleSheet.create({
     left: "20%",
     marginTop: -30
   },
-  fallbackIcon: {
-    zIndex: 2
-  },
+  fallbackIcon: { zIndex: 2 },
   playOverlay: {
     position: "absolute",
     top: 12,
@@ -171,9 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.7)",
     padding: 16
   },
-  sermonInfo: {
-    flex: 1
-  },
+  sermonInfo: { flex: 1 },
   sermonTitle: {
     color: "#FFFFFF",
     fontWeight: "600",

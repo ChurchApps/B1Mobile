@@ -123,9 +123,7 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: "center"
   },
-  liveContent: {
-    alignItems: "center"
-  },
+  liveContent: { alignItems: "center" },
   liveIndicator: {
     flexDirection: "row",
     alignItems: "center",
@@ -178,9 +176,7 @@ const styles = StyleSheet.create({
     padding: 24,
     alignItems: "center"
   },
-  countdownContent: {
-    alignItems: "center"
-  },
+  countdownContent: { alignItems: "center" },
   countdownLabel: {
     color: "#FFFFFF",
     fontWeight: "600",
@@ -194,9 +190,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     gap: 24
   },
-  timeUnit: {
-    alignItems: "center"
-  },
+  timeUnit: { alignItems: "center" },
   timeNumber: {
     color: "#FFFFFF",
     fontWeight: "800",

@@ -36,7 +36,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
   };
 
   const onPressSaveButton = () => {
-    if (validate())
+    if (validate()) {
       ApiHelper.post("/blockoutDates", [BlockoutDate], "DoingApi")
         .then(() => {
           onClose();
@@ -45,7 +45,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
         .catch(error => {
           console.error("Error saving blockout date:", error);
         });
-    else return;
+    } else return;
   };
   const onPressDeleteButton = (id: number) => {
     ApiHelper.delete("/blockoutDates/" + id, "DoingApi")

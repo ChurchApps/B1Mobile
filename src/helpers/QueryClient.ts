@@ -14,7 +14,7 @@ const hybridPersister = new HybridCachePersister({
 const CACHE_KEY = "REACT_QUERY_CACHE";
 const CACHE_VERSION = "1.0";
 const LONG_TERM_CACHE_TIME = 30 * 24 * 60 * 60 * 1000; // 30 days
-const CRITICAL_QUERIES = ['/churches', '/user', '/appearance', '/settings/public'];
+const CRITICAL_QUERIES = ["/churches", "/user", "/appearance", "/settings/public"];
 
 // Function to save cache using hybrid persister
 const persistCache = async (queryClient: QueryClient, onlyCritical = false) => {
@@ -118,7 +118,7 @@ export const queryClient = new QueryClient({
       refetchInterval: false, // Don't use time-based polling
       refetchIntervalInBackground: false,
       // Ensure queries are considered stale immediately for better UX
-      structuralSharing: true, // Prevent unnecessary re-renders
+      structuralSharing: true // Prevent unnecessary re-renders
     },
     mutations: {
       networkMode: "offlineFirst",
@@ -133,7 +133,7 @@ let criticalPersistCounter = 0;
 
 setInterval(() => {
   criticalPersistCounter++;
-  
+
   if (criticalPersistCounter >= 5) {
     // Every 5 intervals (5 minutes) - persist all queries
     persistCache(queryClient, false);
@@ -173,15 +173,15 @@ const invalidateRelatedQueries = (endpoint: string) => {
   if (path.includes("/events") || path.includes("/event")) {
     // Import and clear EventProcessor cache
     try {
-      import('../components/group/EventProcessor').then(({ EventProcessor }) => {
+      import("../components/group/EventProcessor").then(({ EventProcessor }) => {
         if (EventProcessor?.clearCache) {
           EventProcessor.clearCache();
         }
       }).catch(error => {
-        console.warn('Could not clear EventProcessor cache:', error);
+        console.warn("Could not clear EventProcessor cache:", error);
       });
     } catch (error) {
-      console.warn('Error importing EventProcessor:', error);
+      console.warn("Error importing EventProcessor:", error);
     }
   }
 
@@ -195,10 +195,10 @@ const invalidateRelatedQueries = (endpoint: string) => {
     queryClient.invalidateQueries({ queryKey: ["/events"] });
     queryClient.invalidateQueries({ queryKey: ["timeline"] });
     // Invalidate all group events queries
-    queryClient.invalidateQueries({ 
+    queryClient.invalidateQueries({
       predicate: (query) => {
         const key = query.queryKey[0] as string;
-        return key?.includes('/events/group/');
+        return key?.includes("/events/group/");
       }
     });
   }
@@ -260,7 +260,7 @@ ApiHelper.delete = async (...args: any[]) => {
 // Restore cache on initialization with migration support
 export const initializeQueryCache = async () => {
   await restoreCache(queryClient);
-  
+
   // Migrate existing AsyncStorage cache to SQLite if needed
   try {
     await hybridPersister.migrateToSQLite();

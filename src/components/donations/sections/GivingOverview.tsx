@@ -132,9 +132,7 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     textAlign: "center"
   },
-  section: {
-    marginBottom: 24
-  },
+  section: { marginBottom: 24 },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -168,9 +166,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 16
   },
-  activityDetails: {
-    flex: 1
-  },
+  activityDetails: { flex: 1 },
   activityTitle: {
     color: "#3c3c3c",
     fontWeight: "600",
@@ -181,9 +177,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 2
   },
-  activityDate: {
-    color: "#9E9E9E"
-  },
+  activityDate: { color: "#9E9E9E" },
   repeatButton: {
     backgroundColor: "rgba(21, 101, 192, 0.1)",
     paddingHorizontal: 16,
@@ -208,9 +202,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 24
   },
-  ctaIcon: {
-    marginBottom: 16
-  },
+  ctaIcon: { marginBottom: 16 },
   ctaTitle: {
     color: "#3c3c3c",
     fontWeight: "700",

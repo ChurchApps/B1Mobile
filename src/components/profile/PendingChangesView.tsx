@@ -124,9 +124,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 4
   },
-  changeValue: {
-    color: "#3c3c3c"
-  },
+  changeValue: { color: "#3c3c3c" },
   photoPreview: {
     width: 60,
     height: 45,

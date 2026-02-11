@@ -60,9 +60,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 3
   },
-  infoContent: {
-    padding: 20
-  },
+  infoContent: { padding: 20 },
   seriesLabel: {
     color: "#0D47A1",
     fontWeight: "600",
@@ -81,16 +79,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16
   },
-  dateText: {
-    color: "#9E9E9E"
-  },
+  dateText: { color: "#9E9E9E" },
   separator: {
     color: "#9E9E9E",
     marginHorizontal: 8
   },
-  durationInfo: {
-    color: "#9E9E9E"
-  },
+  durationInfo: { color: "#9E9E9E" },
   description: {
     color: "#3c3c3c",
     lineHeight: 22

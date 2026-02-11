@@ -3,7 +3,7 @@ import { EnhancedDonationForm, EnhancedGivingHistory } from "../../src/component
 import { GivingOverview, DonationTabBar, ManagePayments } from "../../src/components/donations/sections/exports";
 import { UserHelper } from "@/helpers/UserHelper";
 import { ErrorHelper } from "../../src/helpers/ErrorHelper";
-import { DonationImpact, GatewayData, PaymentMethodsResponse, StripePaymentMethod } from "../../src/interfaces";
+import { DonationImpact, GatewayData, StripePaymentMethod } from "../../src/interfaces";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused, useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { initStripe } from "@stripe/stripe-react-native";
@@ -70,7 +70,7 @@ const Donation = () => {
   // Get customer ID first (like AppHelper with fallback)
   const {
     data: customerData,
-    isLoading: customerLoading,
+    isLoading: customerLoading
   } = useQuery<any>({
     queryKey: ["/customers?personId=" + person?.id, "GivingApi"],
     enabled: !!person?.id && isFocused,
@@ -133,7 +133,7 @@ const Donation = () => {
     } else if (customerData && (!paymentMethodsData || paymentMethodsData.length === 0)) {
       // Fallback: use customer data if no payment methods data
       const cust = Array.isArray(customerData) ? customerData[0] : customerData;
-      const cid = cust?.id || cust?.customerId || '';
+      const cid = cust?.id || cust?.customerId || "";
       setCustomerId(cid);
       setPaymentMethods([]); // No payment methods available
     }
@@ -170,11 +170,11 @@ const Donation = () => {
 
     const repeatDonation: { amount: string; fundId?: string } = {
       amount: String(donationImpactData[0]?.amount),
-      fundId: donationImpactData[0]?.fund?.id,
-    }
+      fundId: donationImpactData[0]?.fund?.id
+    };
     setSelectedRepeatDonation(repeatDonation);
 
-    setActiveSection('donate');
+    setActiveSection("donate");
   };
 
   const renderOverviewSection = () => <GivingOverview givingStats={givingStats} onDonatePress={handleRepeatDonation} onHistoryPress={() => setActiveSection("history")} />;
@@ -210,9 +210,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  content: {
-    flex: 1
-  },
+  content: { flex: 1 },
   scrollView: {
     flex: 1,
     backgroundColor: "#F6F6F8"

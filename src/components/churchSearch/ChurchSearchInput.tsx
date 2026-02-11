@@ -58,10 +58,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6
   },
-  searchContent: {
-    padding: 20
-  },
-  searchInput: {
-    backgroundColor: "#FFFFFF"
-  }
+  searchContent: { padding: 20 },
+  searchInput: { backgroundColor: "#FFFFFF" }
 });

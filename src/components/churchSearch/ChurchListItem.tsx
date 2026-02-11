@@ -38,10 +38,10 @@ export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress,
     <Card style={styles.churchCard} onPress={() => !isSelecting && onPress(church)}>
       <Card.Content style={styles.churchContent}>
         <View style={styles.churchImageContainer}>
-          <OptimizedImage 
-            source={churchImage} 
-            style={styles.churchImage} 
-            placeholder={Constants.Images.logoBlue} 
+          <OptimizedImage
+            source={churchImage}
+            style={styles.churchImage}
+            placeholder={Constants.Images.logoBlue}
           />
         </View>
         <View style={styles.churchDetails}>
@@ -88,15 +88,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%"
   },
-  churchDetails: {
-    flex: 1
-  },
+  churchDetails: { flex: 1 },
   churchName: {
     color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 4
   },
-  churchSubtitle: {
-    color: "#9E9E9E"
-  }
+  churchSubtitle: { color: "#9E9E9E" }
 });

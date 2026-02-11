@@ -23,9 +23,9 @@ export const DonationTabBar: React.FC<DonationTabBarProps> = ({ activeSection, o
   return (
     <View style={styles.tabContainer}>
       {tabs.map(tab => (
-        <TouchableOpacity 
+        <TouchableOpacity
           key={tab.key}
-          style={[styles.tab, activeSection === tab.key && styles.activeTab]} 
+          style={[styles.tab, activeSection === tab.key && styles.activeTab]}
           onPress={() => onTabChange(tab.key)}>
           <Text variant="labelLarge" style={[styles.tabText, activeSection === tab.key && styles.activeTabText]}>
             {tab.label}
@@ -51,9 +51,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent"
   },
-  activeTab: {
-    borderBottomColor: "#0D47A1"
-  },
+  activeTab: { borderBottomColor: "#0D47A1" },
   tabText: {
     color: "#9E9E9E",
     fontWeight: "500"

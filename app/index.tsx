@@ -1,10 +1,9 @@
 import React from "react";
-import { ApiHelper, Constants, EnvironmentHelper, UserHelper, globalStyles } from "../src/helpers";
+import { ApiHelper, EnvironmentHelper, UserHelper } from "../src/helpers";
 import { ErrorHelper } from "../src/helpers/ErrorHelper";
 import { PushNotificationHelper } from "../src/helpers/PushNotificationHelper";
 import { UpdateHelper } from "../src/helpers/UpdateHelper";
 import { SecureStorageHelper } from "../src/helpers/SecureStorageHelper";
-import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import { Platform, View, StatusBar, Dimensions } from "react-native";
@@ -159,18 +158,18 @@ const SplashScreen = () => {
     }
   };
 
-  const screenData = Dimensions.get('screen');
+  const screenData = Dimensions.get("screen");
   const maxDimension = Math.min(screenData.width, screenData.height) * 0.9;
 
   return (
     <>
       <StatusBar hidden={true} />
-      <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
+      <View style={{ flex: 1, backgroundColor: "black", justifyContent: "center", alignItems: "center" }}>
         <Video
           source={require("../assets/B1Loop.mp4")}
           style={{
             width: maxDimension,
-            height: maxDimension,
+            height: maxDimension
           }}
           resizeMode={ResizeMode.CONTAIN}
           shouldPlay

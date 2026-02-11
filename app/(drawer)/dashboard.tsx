@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import {
-  ActivityIndicator,
   Dimensions,
   RefreshControl,
   ScrollView,
@@ -137,7 +136,7 @@ const Dashboard = () => {
     (item: LinkInterface) => {
       const linkId = generateLinkId(item);
       incrementLinkViewCount(linkId);
-      NavigationUtils.navigateToScreen(item, currentChurch, 'home');
+      NavigationUtils.navigateToScreen(item, currentChurch, "home");
     },
     [generateLinkId, incrementLinkViewCount, currentChurch]
   );
@@ -300,9 +299,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  scrollView: {
-    flex: 1
-  },
+  scrollView: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 24
@@ -314,9 +311,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     marginBottom: 16
   },
-  welcomeContent: {
-    alignItems: "center"
-  },
+  welcomeContent: { alignItems: "center" },
   welcomeTitle: {
     color: "#9E9E9E",
     marginBottom: 8,

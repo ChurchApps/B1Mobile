@@ -5,8 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
 import { CardField, CardFieldInput, createPaymentMethod, collectBankAccountForSetup, confirmSetupIntent } from "@stripe/stripe-react-native";
 import { ApiHelper, CurrencyHelper } from "../../helpers";
-import { DonationHelper } from "../../helpers/DonationHelper";
-import { FundInterface, StripeDonationInterface, StripePaymentMethod, PaymentGateway } from "../../interfaces";
+import { FundInterface, StripeDonationInterface, StripePaymentMethod } from "../../interfaces";
 import { useUser, useCurrentUserChurch } from "../../stores/useUserStore";
 import { CacheHelper } from "../../helpers";
 import { DonationComplete } from "./DonationComplete";
@@ -132,7 +131,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
   const getTransactionFee = async (amount: number) => {
     if (amount > 0) {
       const selectedPaymentMethod = pm.find(p => p.id === selectedMethod);
-      let requestData: any = { amount };
+      const requestData: any = { amount };
 
       if (selectedPaymentMethod?.type === "paypal") {
         requestData.provider = "paypal";
@@ -214,9 +213,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
             interval: getIntervalType(selectedInterval)
           }
           : undefined,
-        church: {
-          subDomain: CacheHelper.church?.subDomain || ""
-        }
+        church: { subDomain: CacheHelper.church?.subDomain || "" }
       };
 
 
@@ -251,31 +248,21 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
 
   const getIntervalCount = (interval: string) => {
     switch (interval) {
-      case "one_week":
-        return 1;
-      case "one_month":
-        return 1;
-      case "three_month":
-        return 3;
-      case "one_year":
-        return 1;
-      default:
-        return 1;
+      case "one_week": return 1;
+      case "one_month": return 1;
+      case "three_month": return 3;
+      case "one_year": return 1;
+      default: return 1;
     }
   };
 
   const getIntervalType = (interval: string) => {
     switch (interval) {
-      case "one_week":
-        return "week";
-      case "one_month":
-        return "month";
-      case "three_month":
-        return "month";
-      case "one_year":
-        return "year";
-      default:
-        return "month";
+      case "one_week": return "week";
+      case "one_month": return "month";
+      case "three_month": return "month";
+      case "one_year": return "year";
+      default: return "month";
     }
   };
 
@@ -557,72 +544,72 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
 
       {/* Recurring Toggle - Hidden for guest bank payments (one-time only) */}
       {!((!currentUserChurch?.person?.id) && guestPaymentType === "bank") && (
-      <Card style={styles.sectionCard}>
-        <Card.Content>
-          <View style={styles.switchRow}>
-            <View style={styles.switchContent}>
-              <Text variant="titleMedium" style={styles.switchTitle}>
-                {t("donations.recurring")}
-              </Text>
-              <Text variant="bodyMedium" style={styles.switchSubtitle}>
-                {t("donations.donate")}
-              </Text>
+        <Card style={styles.sectionCard}>
+          <Card.Content>
+            <View style={styles.switchRow}>
+              <View style={styles.switchContent}>
+                <Text variant="titleMedium" style={styles.switchTitle}>
+                  {t("donations.recurring")}
+                </Text>
+                <Text variant="bodyMedium" style={styles.switchSubtitle}>
+                  {t("donations.donate")}
+                </Text>
+              </View>
+              <Switch value={isRecurring} onValueChange={setIsRecurring} thumbColor={isRecurring ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
             </View>
-            <Switch value={isRecurring} onValueChange={setIsRecurring} thumbColor={isRecurring ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
-          </View>
 
-          {isRecurring && (
-            <View style={styles.intervalSection}>
-              <View style={{ width: DimensionHelper.wp(35) }}>
-                <Text variant="titleSmall" style={styles.intervalLabel}>
-                  {t("donations.selectInterval")}
-                </Text>
-                <Menu
-                  visible={showIntervalMenu}
-                  onDismiss={() => setShowIntervalMenu(false)}
-                  anchor={
-                    <TouchableOpacity style={styles.selector} onPress={() => setShowIntervalMenu(true)}>
-                      <Text variant="bodyLarge" style={styles.selectorText}>
-                        {getIntervalLabel(selectedInterval)}
-                      </Text>
-                      <MaterialIcons name="expand-more" size={24} color="#9E9E9E" />
-                    </TouchableOpacity>
-                  }>
-                  {intervalTypes.map(interval => (
-                    <Menu.Item
-                      key={interval.value}
-                      onPress={() => {
-                        setSelectedInterval(interval.value);
-                        setShowIntervalMenu(false);
-                      }}
-                      title={interval.label}
-                    />
-                  ))}
-                </Menu>
-              </View>
-              <View style={{ width: DimensionHelper.wp(35) }}>
-                <Text variant="titleSmall" style={styles.intervalLabel}>
+            {isRecurring && (
+              <View style={styles.intervalSection}>
+                <View style={{ width: DimensionHelper.wp(35) }}>
+                  <Text variant="titleSmall" style={styles.intervalLabel}>
+                    {t("donations.selectInterval")}
+                  </Text>
+                  <Menu
+                    visible={showIntervalMenu}
+                    onDismiss={() => setShowIntervalMenu(false)}
+                    anchor={
+                      <TouchableOpacity style={styles.selector} onPress={() => setShowIntervalMenu(true)}>
+                        <Text variant="bodyLarge" style={styles.selectorText}>
+                          {getIntervalLabel(selectedInterval)}
+                        </Text>
+                        <MaterialIcons name="expand-more" size={24} color="#9E9E9E" />
+                      </TouchableOpacity>
+                    }>
+                    {intervalTypes.map(interval => (
+                      <Menu.Item
+                        key={interval.value}
+                        onPress={() => {
+                          setSelectedInterval(interval.value);
+                          setShowIntervalMenu(false);
+                        }}
+                        title={interval.label}
+                      />
+                    ))}
+                  </Menu>
+                </View>
+                <View style={{ width: DimensionHelper.wp(35) }}>
+                  <Text variant="titleSmall" style={styles.intervalLabel}>
                   Start Date
-                </Text>
-                <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton}>
-                  <Text style={styles.dateTimeText}>{dayjs(startDate).format("ll")}</Text>
-                </Button>
-                <DatePicker
-                  modal
-                  open={openStartPicker}
-                  date={startDate}
-                  mode={"date"}
-                  onConfirm={date => {
-                    setOpenStartPicker(false);
-                    setStartDate(date);
-                  }}
-                  onCancel={() => setOpenStartPicker(false)}
-                />
+                  </Text>
+                  <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton}>
+                    <Text style={styles.dateTimeText}>{dayjs(startDate).format("ll")}</Text>
+                  </Button>
+                  <DatePicker
+                    modal
+                    open={openStartPicker}
+                    date={startDate}
+                    mode={"date"}
+                    onConfirm={date => {
+                      setOpenStartPicker(false);
+                      setStartDate(date);
+                    }}
+                    onCancel={() => setOpenStartPicker(false)}
+                  />
+                </View>
               </View>
-            </View>
-          )}
-        </Card.Content>
-      </Card>
+            )}
+          </Card.Content>
+        </Card>
       )}
 
       {/* Payment Method */}
@@ -777,9 +764,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12
   },
-  nameInput: {
-    flex: 1
-  },
+  nameInput: { flex: 1 },
 
   // Section Cards
   sectionCard: {
@@ -836,8 +821,8 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     borderTopWidth: 1,
     borderTopColor: "#F0F0F0",
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   intervalLabel: {
     color: "#3c3c3c",
@@ -877,7 +862,7 @@ const styles = StyleSheet.create({
   },
   dateTimeButton: {
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: "center",
     paddingVertical: 8,
     backgroundColor: "#F6F6F8",
     borderRadius: 12,
@@ -886,7 +871,7 @@ const styles = StyleSheet.create({
   },
   dateTimeText: {
     color: "#3c3c3c",
-    fontSize: 14,
+    fontSize: 14
   },
 
   // Payment Type Selector for Guests
@@ -896,9 +881,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 8
   },
-  paymentTypeButtons: {
-    marginBottom: 8
-  },
+  paymentTypeButtons: { marginBottom: 8 },
 
   // Bank Connection UI
   bankConnectionContainer: {
@@ -924,7 +907,5 @@ const styles = StyleSheet.create({
     marginTop: 16,
     gap: 8
   },
-  bankConnectingText: {
-    color: "#0D47A1"
-  }
+  bankConnectingText: { color: "#0D47A1" }
 });

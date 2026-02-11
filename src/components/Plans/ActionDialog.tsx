@@ -83,15 +83,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10
   },
-  closeButton: {
-    padding: 4
-  },
-  webViewContainer: {
-    flex: 1
-  },
-  webView: {
-    flex: 1
-  },
+  closeButton: { padding: 4 },
+  webViewContainer: { flex: 1 },
+  webView: { flex: 1 },
   closeButtonBottom: {
     backgroundColor: "#f5f5f5",
     paddingVertical: DimensionHelper.hp(1.5),

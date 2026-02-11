@@ -64,7 +64,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
           )}
         </View>
       )}
-      
+
       {scrollable ? (
         <ScrollView
           style={{ flex: 1 }}
@@ -78,7 +78,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
           {children}
         </View>
       )}
-      
+
       {actions && actions.length > 0 && (
         <View
           style={[
@@ -205,7 +205,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   };
 
   const actions: ModalAction[] = [];
-  
+
   if (cancelText) {
     actions.push({
       text: cancelText,
@@ -213,7 +213,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
       variant: "secondary"
     });
   }
-  
+
   actions.push({
     text: confirmText,
     onPress: () => {

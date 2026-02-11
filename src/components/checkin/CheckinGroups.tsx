@@ -163,12 +163,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16
   },
-  groupsList: {
-    flex: 1
-  },
-  groupsContent: {
-    paddingBottom: 16
-  },
+  groupsList: { flex: 1 },
+  groupsContent: { paddingBottom: 16 },
   categoryCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
@@ -180,9 +176,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     overflow: "hidden"
   },
-  categoryHeader: {
-    borderRadius: 12
-  },
+  categoryHeader: { borderRadius: 12 },
   categoryHeaderContent: {
     flexDirection: "row",
     alignItems: "center",
@@ -206,9 +200,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
-  groupsContainer: {
-    backgroundColor: "#F6F6F8"
-  },
+  groupsContainer: { backgroundColor: "#F6F6F8" },
   divider: {
     height: 1,
     backgroundColor: "#F0F0F0"

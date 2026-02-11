@@ -1,85 +1,65 @@
 import js from "@eslint/js";
-import * as tseslint from "@typescript-eslint/eslint-plugin";
+import tseslint from "@typescript-eslint/eslint-plugin";
 import tseslintParser from "@typescript-eslint/parser";
-import react from "eslint-plugin-react";
-import reactNative from "eslint-plugin-react-native";
-import prettierPlugin from "eslint-plugin-prettier";
+import reactPlugin from "eslint-plugin-react";
+import reactNativePlugin from "eslint-plugin-react-native";
 import unusedImports from "eslint-plugin-unused-imports";
 
 export default [
+  { ignores: ["node_modules/", "dist/", "build/", ".next/", "coverage/", "*.config.js"] },
   js.configs.recommended,
   {
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
     languageOptions: {
       parser: tseslintParser,
       parserOptions: {
-        ecmaFeatures: {
-          jsx: true
-        },
+        ecmaFeatures: { jsx: true },
         ecmaVersion: 2023,
         sourceType: "module"
       }
     },
     plugins: {
       "@typescript-eslint": tseslint,
-      react,
-      "react-native": reactNative,
-      prettier: prettierPlugin,
+      "react": reactPlugin,
+      "react-native": reactNativePlugin,
       "unused-imports": unusedImports
     },
     settings: {
-      react: {
-        version: "detect"
-      }
+      react: { version: "detect" }
     },
     rules: {
+      "prefer-const": "error",
       "@typescript-eslint/no-explicit-any": "off",
-      "@next/next/no-img-element": "off",
-      "@next/next/no-html-link-for-pages": "off",
-      "react/jsx-key": "off",
-      "react/no-unescaped-entities": "off",
-      "react-hooks/exhaustive-deps": "off",
-      "comma-dangle": "off",
-      "eol-last": ["warn", "always"],
-      "quote-props": ["error", "as-needed"],
-      quotes: "off",
-      "no-trailing-spaces": "warn",
-      "no-var": "error",
-      "operator-linebreak": "off",
-      "multiline-ternary": "off",
-      "@typescript-eslint/type-annotation-spacing": "off",
-      "@typescript-eslint/object-curly-spacing": "off",
-      "@typescript-eslint/brace-style": "off",
-      "react/jsx-wrap-multilines": "off",
-      "react/jsx-curly-spacing": "off",
-      "react/jsx-parens": "off",
-      indent: ["warn", 2, { SwitchCase: 1 }],
-      "arrow-body-style": ["warn", "as-needed"],
-      "react/jsx-tag-spacing": ["warn", { beforeSelfClosing: "always", beforeClosing: "never" }],
-      "no-multiple-empty-lines": "off",
-      "jsx-quotes": ["warn", "prefer-double"],
-      "no-undef": "off",
-      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": ["warn", { args: "all", argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
       "unused-imports/no-unused-imports": "error",
-      "unused-imports/no-unused-vars": "error",
-      "no-useless-catch": "off",
-      "prettier/prettier": [
-        "error",
-        {
-          printWidth: 999,
-          singleQuote: false,
-          trailingComma: "none",
-          bracketSpacing: true,
-          arrowParens: "avoid",
-          endOfLine: "auto",
-          functionCallArguments: "single-line",
-          parenSpacing: false,
-          jsxParens: "avoid",
-          arrayBracketNewline: "never",
-          arrayElementNewline: "never",
-          objectPropertyNewline: "never"
-        }
-      ]
+      "no-trailing-spaces": "error",
+      "eol-last": ["error", "always"],
+      "quotes": ["error", "double", { avoidEscape: true, allowTemplateLiterals: true }],
+      "semi": ["error", "always"],
+      "comma-dangle": ["error", "never"],
+      "indent": ["warn", 2, { SwitchCase: 1 }],
+      "comma-spacing": ["error", { before: false, after: true }],
+      "key-spacing": ["error", { beforeColon: false, afterColon: true, mode: "strict" }],
+      "keyword-spacing": ["error", { before: true, after: true }],
+      "space-infix-ops": "error",
+      "no-multi-spaces": ["error", { ignoreEOLComments: true }],
+      "block-spacing": ["error", "always"],
+      "brace-style": ["error", "1tbs", { allowSingleLine: true }],
+      "curly": ["error", "multi-line"],
+      "nonblock-statement-body-position": ["error", "beside"],
+      "object-curly-spacing": ["error", "always"],
+      "object-curly-newline": ["error", { ObjectExpression: { multiline: true }, ObjectPattern: { multiline: true }, ImportDeclaration: { multiline: true }, ExportDeclaration: { multiline: true } }],
+      "object-property-newline": ["error", { allowAllPropertiesOnSameLine: true }],
+      "array-bracket-spacing": ["error", "never"],
+      "array-bracket-newline": ["error", { multiline: true, minItems: 8 }],
+      "array-element-newline": ["error", { ArrayExpression: "consistent", ArrayPattern: { minItems: 8 } }],
+      "function-paren-newline": ["error", "consistent"],
+      "function-call-argument-newline": ["error", "consistent"],
+      "max-len": ["warn", { code: 250, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreComments: true, ignoreUrls: true, ignoreRegExpLiterals: true }],
+      "react-native/no-inline-styles": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "no-undef": "off",
+      "no-unused-vars": "off"
     }
   }
 ];

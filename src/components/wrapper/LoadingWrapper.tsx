@@ -114,9 +114,7 @@ export const LoadingWrapper: React.FC<Props> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
+  container: { flex: 1 },
   loaderContainer: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(248, 249, 250, 0.8)",

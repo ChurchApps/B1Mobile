@@ -1,7 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { FlatList, Text, View, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { AssignmentInterface, EnvironmentHelper, PersonInterface, PositionInterface } from "../../../src/helpers";
+import { AssignmentInterface, PersonInterface, PositionInterface } from "../../../src/helpers";
 import { Card } from "react-native-paper";
 import { Avatar } from "../common/Avatar";
 
@@ -78,9 +78,7 @@ export const Teams = React.memo(({ positions, assignments, people, name }: Props
 });
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 24
-  },
+  container: { marginBottom: 24 },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -90,9 +88,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12
   },
-  headerIcon: {
-    marginRight: 8
-  },
+  headerIcon: { marginRight: 8 },
   headerTitle: {
     fontSize: 16,
     fontWeight: "700",
@@ -112,9 +108,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600"
   },
-  membersList: {
-    backgroundColor: "transparent"
-  },
+  membersList: { backgroundColor: "transparent" },
   memberCard: {
     borderRadius: 12,
     backgroundColor: "#FFFFFF",
@@ -131,12 +125,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1
   },
-  avatar: {
-    marginRight: 12
-  },
-  memberDetails: {
-    flex: 1
-  },
+  avatar: { marginRight: 12 },
+  memberDetails: { flex: 1 },
   memberName: {
     fontSize: 16,
     fontWeight: "600",
@@ -148,7 +138,5 @@ const styles = StyleSheet.create({
     color: "#9E9E9E",
     fontWeight: "500"
   },
-  separator: {
-    height: 8
-  }
+  separator: { height: 8 }
 });

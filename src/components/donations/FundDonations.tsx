@@ -15,14 +15,14 @@ export function FundDonations({ funds, fundDonations, updatedFunction }: Props) 
   const { spacing } = useAppTheme();
 
   const handleUpdated = (fundDonation: FundDonationInterface, index: number) => {
-    let fdDonations = [...fundDonations];
+    const fdDonations = [...fundDonations];
     fdDonations[index] = fundDonation;
     updatedFunction(fdDonations);
   };
 
   const addRow = () => {
-    let fDonations = [...fundDonations];
-    let fd = { fundId: funds[0].id } as FundDonationInterface;
+    const fDonations = [...fundDonations];
+    const fd = { fundId: funds[0].id } as FundDonationInterface;
     fDonations.push(fd);
     updatedFunction(fDonations);
   };

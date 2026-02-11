@@ -96,9 +96,7 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
             {t("profileEdit.contact")}
           </Text>
           <View style={styles.row}>
-            {renderInput("contactInfo.email", t("profileEdit.email"), {
-              keyboardType: "email-address"
-            })}
+            {renderInput("contactInfo.email", t("profileEdit.email"), { keyboardType: "email-address" })}
           </View>
           <View style={[styles.inputWrapper, isModified("birthDate") && styles.modifiedInput]}>
             <TextInput
@@ -150,19 +148,13 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
             {t("profileEdit.phone")}
           </Text>
           <View style={styles.row}>
-            {renderInput("contactInfo.mobilePhone", t("profileEdit.mobilePhone"), {
-              keyboardType: "phone-pad"
-            })}
+            {renderInput("contactInfo.mobilePhone", t("profileEdit.mobilePhone"), { keyboardType: "phone-pad" })}
           </View>
           <View style={styles.row}>
-            {renderInput("contactInfo.homePhone", t("profileEdit.homePhone"), {
-              keyboardType: "phone-pad"
-            })}
+            {renderInput("contactInfo.homePhone", t("profileEdit.homePhone"), { keyboardType: "phone-pad" })}
           </View>
           <View style={styles.row}>
-            {renderInput("contactInfo.workPhone", t("profileEdit.workPhone"), {
-              keyboardType: "phone-pad"
-            })}
+            {renderInput("contactInfo.workPhone", t("profileEdit.workPhone"), { keyboardType: "phone-pad" })}
           </View>
         </Card.Content>
       </Card>
@@ -202,22 +194,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "#F0F0F0",
     paddingBottom: 8
   },
-  row: {
-    marginBottom: 12
-  },
+  row: { marginBottom: 12 },
   rowHalf: {
     flexDirection: "row",
     gap: 12
   },
-  halfInput: {
-    flex: 1
-  },
-  inputWrapper: {
-    position: "relative"
-  },
-  modifiedInput: {
-    borderRadius: 4
-  },
+  halfInput: { flex: 1 },
+  inputWrapper: { position: "relative" },
+  modifiedInput: { borderRadius: 4 },
   modifiedIndicator: {
     position: "absolute",
     top: 8,
@@ -227,10 +211,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: "#FFC107"
   },
-  input: {
-    backgroundColor: "#FFFFFF"
-  },
-  bottomPadding: {
-    height: 100
-  }
+  input: { backgroundColor: "#FFFFFF" },
+  bottomPadding: { height: 100 }
 });

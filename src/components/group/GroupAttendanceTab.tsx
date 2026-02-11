@@ -549,9 +549,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    minHeight: 200
-  },
+  container: { minHeight: 200 },
   dateButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -561,9 +559,7 @@ const styles = StyleSheet.create({
     paddingRight: 4,
     marginBottom: 12
   },
-  dateIcon: {
-    margin: 0
-  },
+  dateIcon: { margin: 0 },
   dateButtonText: {
     flex: 1,
     fontSize: 15,
@@ -581,15 +577,9 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     fontWeight: "500"
   },
-  actionButtons: {
-    flexDirection: "row"
-  },
-  actionButtonLabel: {
-    fontSize: 13
-  },
-  searchSection: {
-    marginBottom: 12
-  },
+  actionButtons: { flexDirection: "row" },
+  actionButtonLabel: { fontSize: 13 },
+  searchSection: { marginBottom: 12 },
   searchInputRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -616,16 +606,12 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 4
   },
-  searchResultDisabled: {
-    opacity: 0.5
-  },
+  searchResultDisabled: { opacity: 0.5 },
   searchResultInfo: {
     flex: 1,
     marginLeft: 10
   },
-  searchResultName: {
-    color: "#1F2937"
-  },
+  searchResultName: { color: "#1F2937" },
   alreadyAddedText: {
     color: "#9CA3AF",
     fontSize: 12,
@@ -641,9 +627,7 @@ const styles = StyleSheet.create({
     marginVertical: 12,
     backgroundColor: "#E5E7EB"
   },
-  memberList: {
-    marginBottom: 16
-  },
+  memberList: { marginBottom: 16 },
   memberCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -664,9 +648,7 @@ const styles = StyleSheet.create({
     color: "#9CA3AF",
     marginTop: 1
   },
-  presentText: {
-    color: "#10B981"
-  },
+  presentText: { color: "#10B981" },
   loadingContainer: {
     alignItems: "center",
     justifyContent: "center",

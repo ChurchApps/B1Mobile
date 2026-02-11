@@ -151,9 +151,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 24
   },
-  avatarContainer: {
-    position: "relative"
-  },
+  avatarContainer: { position: "relative" },
   avatar: {
     borderWidth: 3,
     borderColor: "#0D47A1"

@@ -395,9 +395,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginHorizontal: 16
   },
-  headerSpacer: {
-    width: 40
-  },
+  headerSpacer: { width: 40 },
 
   // Cards
   instructionsCard: {
@@ -488,12 +486,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12
   },
-  depositField: {
-    flex: 1
-  },
-  depositInput: {
-    backgroundColor: "#FFFFFF"
-  },
+  depositField: { flex: 1 },
+  depositInput: { backgroundColor: "#FFFFFF" },
   dollarSign: {
     fontSize: 16,
     fontWeight: "600",
@@ -531,9 +525,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 2
   },
-  switchSubtitle: {
-    color: "#9E9E9E"
-  },
+  switchSubtitle: { color: "#9E9E9E" },
 
   // Security Section
   securityHeader: {
@@ -587,9 +579,7 @@ const styles = StyleSheet.create({
   },
 
   // Delete Button
-  divider: {
-    marginHorizontal: 16
-  },
+  divider: { marginHorizontal: 16 },
   deleteButton: {
     margin: 16,
     marginTop: 8

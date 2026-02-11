@@ -86,7 +86,7 @@ const UserConversations = ({ conversation, conversationId, createConversation }:
   );
 
   const getNotes = (item: any) => {
-    let noteArray: React.ReactNode[] = [];
+    const noteArray: React.ReactNode[] = [];
     for (let i = 1; i < item?.messages?.length; i++) noteArray.push(<Note key={item.messages[i].id} message={item.messages[i]} showEditNote={setEditMessageId} />);
     return noteArray;
   };

@@ -15,9 +15,7 @@ export const NotificationNavigationHandler = () => {
           // Navigate to message screen with chat ID
           router.push({
             pathname: "/messageScreenRoot",
-            params: {
-              chatId: data.chatId
-            }
+            params: { chatId: data.chatId }
           });
         } else {
           // Fallback: navigate to notifications screen to find messages

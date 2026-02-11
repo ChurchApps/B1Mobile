@@ -110,9 +110,7 @@ const MyGroups = () => {
         // Track the view
         incrementGroupViewCount(item.id);
 
-        router.navigate({
-          pathname: `/groupDetails/${item.id}`
-        });
+        router.navigate({ pathname: `/groupDetails/${item.id}` });
       };
 
       if (type === "hero") {
@@ -281,14 +279,10 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     backgroundColor: "#F6F6F8"
   },
-  groupsSection: {
-    marginBottom: 16
-  },
+  groupsSection: { marginBottom: 16 },
 
   // Hero Section (matching dashboard)
-  heroSection: {
-    marginBottom: 24
-  },
+  heroSection: { marginBottom: 24 },
   heroCard: {
     borderRadius: 16,
     overflow: "hidden",
@@ -332,9 +326,7 @@ const styles = StyleSheet.create({
   },
 
   // Featured Section (matching dashboard)
-  featuredSection: {
-    marginBottom: 24
-  },
+  featuredSection: { marginBottom: 24 },
   sectionTitle: {
     color: "#3c3c3c",
     fontWeight: "600",
@@ -345,9 +337,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12
   },
-  featuredItem: {
-    flex: 1
-  },
+  featuredItem: { flex: 1 },
   featuredCard: {
     borderRadius: 12,
     overflow: "hidden",
@@ -384,18 +374,10 @@ const styles = StyleSheet.create({
   },
 
   // Regular Section
-  regularSection: {
-    marginBottom: 16
-  },
-  regularSectionTop: {
-    marginTop: 8
-  },
-  regularGroupsList: {
-    gap: 12
-  },
-  regularGroupItem: {
-    width: "100%"
-  },
+  regularSection: { marginBottom: 16 },
+  regularSectionTop: { marginTop: 8 },
+  regularGroupsList: { gap: 12 },
+  regularGroupItem: { width: "100%" },
   regularGroupCard: {
     overflow: "hidden",
     borderRadius: 12,

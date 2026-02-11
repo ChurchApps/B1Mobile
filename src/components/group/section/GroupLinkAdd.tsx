@@ -77,9 +77,9 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
         )}
         <Text style={styles.note}>{t("groups.linkNote")}</Text>
 
-        <TextInput style={styles.input} autoCapitalize={'none'} placeholder={t("groups.linkText")} value={text} onChangeText={setText} accessibilityLabel="Link display text" />
+        <TextInput style={styles.input} autoCapitalize={"none"} placeholder={t("groups.linkText")} value={text} onChangeText={setText} accessibilityLabel="Link display text" />
 
-        <TextInput style={styles.input} autoCapitalize={'none'} placeholder={t("groups.linkUrl")} value={url} onChangeText={setUrl} accessibilityLabel="Link URL" />
+        <TextInput style={styles.input} autoCapitalize={"none"} placeholder={t("groups.linkUrl")} value={url} onChangeText={setUrl} accessibilityLabel="Link URL" />
 
         <Button mode="contained" onPress={handleAdd} style={styles.button}>
           {t("common.add")}
@@ -90,9 +90,7 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
+  container: { flex: 1 },
   header: {
     fontSize: 18,
     fontWeight: "600",
@@ -112,12 +110,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc"
   },
-  button: {
-    marginTop: 8
-  },
-  errorContainer: {
-    marginBottom: 8
-  },
+  button: { marginTop: 8 },
+  errorContainer: { marginBottom: 8 },
   contentCard: {
     marginHorizontal: 16,
     marginBottom: 24,

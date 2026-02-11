@@ -51,7 +51,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
       return;
     }
 
-    let paymentMethod: PaymentMethodInterface = {
+    const paymentMethod: PaymentMethodInterface = {
       id: stripePaymentMethod.paymentMethod.id,
       customerId,
       personId: person.id,

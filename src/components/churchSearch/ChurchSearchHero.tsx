@@ -37,7 +37,7 @@ export const ChurchSearchHero: React.FC = () => {
 const styles = StyleSheet.create({
   heroSection: {
     paddingHorizontal: DimensionHelper.wp(4),
-    paddingVertical: DimensionHelper.hp(2),
+    paddingVertical: DimensionHelper.hp(2)
   },
   heroCard: {
     borderRadius: DimensionHelper.wp(5),
@@ -46,32 +46,30 @@ const styles = StyleSheet.create({
     shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
-    shadowRadius: 8,
+    shadowRadius: 8
   },
   heroGradient: {
     paddingVertical: DimensionHelper.hp(4),
     paddingHorizontal: DimensionHelper.wp(6),
-    minHeight: DimensionHelper.hp(20),
+    minHeight: DimensionHelper.hp(20)
   },
   heroContent: {
     alignItems: "center",
     justifyContent: "center",
-    flexGrow: 1,
+    flexGrow: 1
   },
-  heroIcon: {
-    marginBottom: DimensionHelper.hp(2),
-  },
+  heroIcon: { marginBottom: DimensionHelper.hp(2) },
   heroTitle: {
     color: "#FFFFFF",
     fontWeight: "700",
     fontSize: DimensionHelper.wp(5.2),
     marginBottom: DimensionHelper.hp(1),
-    textAlign: "center",
+    textAlign: "center"
   },
   heroSubtitle: {
     color: "#FFFFFF",
     opacity: 0.9,
     fontSize: DimensionHelper.wp(4),
-    textAlign: "center",
-  },
+    textAlign: "center"
+  }
 });

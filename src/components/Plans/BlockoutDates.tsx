@@ -187,9 +187,7 @@ export const BlockoutDates = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 24
-  },
+  container: { marginBottom: 24 },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -239,9 +237,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600"
   },
-  cardsList: {
-    gap: 12
-  },
+  cardsList: { gap: 12 },
   listHeader: {
     flexDirection: "row",
     justifyContent: "space-between",

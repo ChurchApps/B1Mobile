@@ -105,9 +105,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             />
           ) : undefined
         }
-        style={{
-          backgroundColor: editable ? "#ffffff" : "#f5f5f5"
-        }}
+        style={{ backgroundColor: editable ? "#ffffff" : "#f5f5f5" }}
       />
       {error && (
         <Text style={{ color: Constants.Colors.button_red, fontSize: 12, marginTop: 4 }}>
@@ -154,9 +152,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
             icon={() => <Ionicons name="chevron-down" size={20} color={Constants.Colors.text_gray} />}
           />
         }
-        style={{
-          backgroundColor: "#ffffff"
-        }}
+        style={{ backgroundColor: "#ffffff" }}
       />
       {error && (
         <Text style={{ color: Constants.Colors.button_red, fontSize: 12, marginTop: 4 }}>

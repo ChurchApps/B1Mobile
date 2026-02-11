@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { FlatList, SafeAreaView, StyleSheet, View } from "react-native";
 import { Text, Button, Surface, Card } from "react-native-paper";
@@ -15,7 +15,7 @@ import utc from "dayjs/plugin/utc";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 import { useQuery } from "@tanstack/react-query";
-import { EventHelper, EventInterface } from "@churchapps/helpers";
+import { EventInterface } from "@churchapps/helpers";
 import { MainHeader } from "../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import GroupChatModal from "../../../src/components/modals/GroupChatModal";
@@ -54,7 +54,7 @@ const GroupDetails = () => {
   // Refresh events when screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
-      console.log('Screen focused - refreshing events');
+      console.log("Screen focused - refreshing events");
       refetchEvents();
       // If we came back with an activeTab parameter, set it
       if (initialActiveTab) {
@@ -77,15 +77,13 @@ const GroupDetails = () => {
     gcTime: 30 * 60 * 1000, // 30 minutes
     retry: 3,
     retryDelay: 1000,
-    meta: {
-      errorMessage: t("groups.failedToLoad")
-    }
+    meta: { errorMessage: t("groups.failedToLoad") }
   });
 
   useScreenHeader({
     title: groupDetails?.name,
     placeholder: t("groups.groupDetails"),
-    dependencies: [groupDetails],
+    dependencies: [groupDetails]
   });
 
 
@@ -134,9 +132,9 @@ const GroupDetails = () => {
       return [];
     }
     const processed = updateTime(eventsData);
-    console.log('Events useMemo - processed events:', processed?.length, 'events');
+    console.log("Events useMemo - processed events:", processed?.length, "events");
     if (processed?.length > 0) {
-      console.log('Sample processed event:', {
+      console.log("Sample processed event:", {
         id: processed[0].id,
         title: processed[0].title,
         start: processed[0].start
@@ -152,7 +150,7 @@ const GroupDetails = () => {
   // Trigger refetch when switching to events tab
   useEffect(() => {
     if (activeTab === 4 && currentUserChurch?.jwt) {
-      console.log('Switched to events tab - refetching events');
+      console.log("Switched to events tab - refetching events");
       refetchEvents();
     }
   }, [activeTab, currentUserChurch?.jwt, refetchEvents]);
@@ -174,7 +172,7 @@ const GroupDetails = () => {
         const expanded = EventProcessor.expandEventsForMonth(events, currentMonth);
         setExpandedEvents(expanded);
       } catch (error) {
-        console.error('Event expansion failed:', error);
+        console.error("Event expansion failed:", error);
         setExpandedEvents([]);
       } finally {
         setIsProcessingEvents(false);
@@ -187,9 +185,9 @@ const GroupDetails = () => {
 
   const markedDates = useMemo(() => {
     const marked = EventProcessor.calculateMarkedDates(expandedEvents, activeTab);
-    console.log('markedDates useMemo - expandedEvents count:', expandedEvents?.length);
+    console.log("markedDates useMemo - expandedEvents count:", expandedEvents?.length);
     if (expandedEvents?.length > 0) {
-      console.log('markedDates useMemo - sample expanded event:', {
+      console.log("markedDates useMemo - sample expanded event:", {
         id: expandedEvents[0].id,
         title: expandedEvents[0].title,
         start: expandedEvents[0].start
@@ -202,7 +200,7 @@ const GroupDetails = () => {
     (day: DateData) => {
       setSelected(day.dateString);
       const selectedDayEvents = markedDates[day.dateString]?.events || [];
-      console.log('onDayPress - selectedDayEvents for', day.dateString, ':', selectedDayEvents.map(e => ({ id: e.id, title: e.title })));
+      console.log("onDayPress - selectedDayEvents for", day.dateString, ":", selectedDayEvents.map(e => ({ id: e.id, title: e.title })));
       if (selectedDayEvents.length !== 0) {
         setShowEventModal(true);
         setSelectedEvents(selectedDayEvents);
@@ -295,81 +293,81 @@ const GroupDetails = () => {
     { key: "members", label: t("members.members"), icon: "account-group-outline" },
     { key: "attendance", label: t("checkin.attendance"), icon: "clipboard-check-outline", leaderOnly: true },
     { key: "events", label: t("events.events"), icon: "calendar-outline" },
-    { key: "resources", label: t("common.resources"), icon: "file-document-outline" },
+    { key: "resources", label: t("common.resources"), icon: "file-document-outline" }
   ];
 
   return (
     <>
-      <View style={[styles.container, (showEventModal || showChatModal) && { display: 'none' }]}>
-          <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigationBackNormal} />
+      <View style={[styles.container, (showEventModal || showChatModal) && { display: "none" }]}>
+        <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigationBackNormal} />
 
-          <FlatList
-            data={[{ key: "content" }]}
-            renderItem={() => (
-              <View>
-                {/* Hero Section */}
-                <GroupHeroSection
-                  name={name}
-                  photoUrl={photoUrl}
-                  memberCount={groupMembersLoading ? undefined : groupMembers.length}
-                  isLeader={isLeader}
+        <FlatList
+          data={[{ key: "content" }]}
+          renderItem={() => (
+            <View>
+              {/* Hero Section */}
+              <GroupHeroSection
+                name={name}
+                photoUrl={photoUrl}
+                memberCount={groupMembersLoading ? undefined : groupMembers.length}
+                isLeader={isLeader}
+              />
+
+              {/* Navigation Buttons */}
+              <GroupNavigationTabs
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                tabs={tabs}
+                isLeader={isLeader}
+              />
+
+              {/* Content Display */}
+              {activeTab !== 5 && <Card style={styles.contentCard}>
+                {/* Tab Content */}
+                <View style={styles.tabContent}>
+                  {activeTab === 0 && (
+                    <GroupAboutTab about={about} />
+                  )}
+
+                  {activeTab === 2 && (
+                    <GroupMembersTab
+                      members={groupMembers}
+                      isLoading={groupMembersLoading}
+                    />
+                  )}
+
+                  {activeTab === 3 && isLeader && (
+                    <GroupAttendanceTab
+                      groupId={id || ""}
+                      members={groupMembers}
+                    />
+                  )}
+
+                  {activeTab === 4 && (
+                    <GroupCalendarTab
+                      groupId={id || ""}
+                      isLeader={isLeader}
+                      isLoading={isProcessingEvents}
+                      selected={selected}
+                      markedDates={markedDates}
+                      onDayPress={onDayPress}
+                      onMonthChange={onMonthChange}
+                    />
+                  )}
+                </View>
+              </Card>
+              }
+              {activeTab === 5 && (
+                <GroupResourcesTab
+                  groupId={id || ""}
                 />
-
-                {/* Navigation Buttons */}
-                <GroupNavigationTabs
-                  activeTab={activeTab}
-                  onTabChange={setActiveTab}
-                  tabs={tabs}
-                  isLeader={isLeader}
-                />
-
-                {/* Content Display */}
-                {activeTab !== 5 && <Card style={styles.contentCard}>
-                  {/* Tab Content */}
-                  <View style={styles.tabContent}>
-                    {activeTab === 0 && (
-                      <GroupAboutTab about={about} />
-                    )}
-
-                    {activeTab === 2 && (
-                      <GroupMembersTab
-                        members={groupMembers}
-                        isLoading={groupMembersLoading}
-                      />
-                    )}
-
-                    {activeTab === 3 && isLeader && (
-                      <GroupAttendanceTab
-                        groupId={id || ""}
-                        members={groupMembers}
-                      />
-                    )}
-
-                    {activeTab === 4 && (
-                      <GroupCalendarTab
-                        groupId={id || ""}
-                        isLeader={isLeader}
-                        isLoading={isProcessingEvents}
-                        selected={selected}
-                        markedDates={markedDates}
-                        onDayPress={onDayPress}
-                        onMonthChange={onMonthChange}
-                      />
-                    )}
-                  </View>
-                </Card>
-                }
-                {activeTab === 5 && (
-                  <GroupResourcesTab
-                    groupId={id || ""}
-                  />
-                )}
-              </View>
-            )}
-            keyExtractor={item => item.key}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.mainContainer}
-          />
+              )}
+            </View>
+          )}
+          keyExtractor={item => item.key}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.mainContainer}
+        />
       </View>
 
       <GroupEventModal

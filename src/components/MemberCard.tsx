@@ -137,12 +137,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center"
   },
-  memberAvatar: {
-    marginRight: 16
-  },
-  memberDetails: {
-    flex: 1
-  },
+  memberAvatar: { marginRight: 16 },
+  memberDetails: { flex: 1 },
   nameContainer: {
     flexDirection: "row",
     flexWrap: "wrap",

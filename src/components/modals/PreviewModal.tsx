@@ -33,7 +33,7 @@ export function PreviewModal({ show, close, donation, paymentMethodName, donatio
   const formatInterval = () => {
     const count = donation.interval?.interval_count;
     const interval = donation.interval?.interval;
-    let result = `${count} ${interval}`;
+    const result = `${count} ${interval}`;
     return count && count > 1 ? result + "s" : result;
   };
 

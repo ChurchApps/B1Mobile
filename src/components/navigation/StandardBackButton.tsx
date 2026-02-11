@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, Alert, BackHandler } from "react-native";
+import { TouchableOpacity, Alert } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "../../hooks/useNavigation";
 import { designSystem } from "../../theme/designSystem";
@@ -77,9 +77,9 @@ export const StandardBackButton: React.FC<StandardBackButtonProps> = ({
         confirmMessage,
         [
           { text: "Cancel", style: "cancel" },
-          { 
-            text: "Go Back", 
-            style: "destructive", 
+          {
+            text: "Go Back",
+            style: "destructive",
             onPress: () => {
               try {
                 navigateBack();
@@ -116,10 +116,10 @@ export const StandardBackButton: React.FC<StandardBackButtonProps> = ({
       accessibilityRole="button"
       activeOpacity={0.7}
     >
-      <AntDesign 
-        name="arrowleft" 
-        size={size} 
-        color={color} 
+      <AntDesign
+        name="arrowleft"
+        size={size}
+        color={color}
       />
     </TouchableOpacity>
   );

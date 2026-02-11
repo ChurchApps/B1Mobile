@@ -99,16 +99,11 @@ const SermonDetails = () => {
     if (!sermon?.videoData || !sermon?.videoType) return null;
 
     switch (sermon.videoType) {
-      case "youtube":
-        return `https://www.youtube.com/watch?v=${sermon.videoData}`;
-      case "youtube_channel":
-        return `https://www.youtube.com/channel/${sermon.videoData}/live`;
-      case "vimeo":
-        return `https://vimeo.com/${sermon.videoData}`;
-      case "facebook":
-        return `https://www.facebook.com/video.php?v=${sermon.videoData}`;
-      default:
-        return sermon.videoData; // Custom URL
+      case "youtube": return `https://www.youtube.com/watch?v=${sermon.videoData}`;
+      case "youtube_channel": return `https://www.youtube.com/channel/${sermon.videoData}/live`;
+      case "vimeo": return `https://vimeo.com/${sermon.videoData}`;
+      case "facebook": return `https://www.facebook.com/video.php?v=${sermon.videoData}`;
+      default: return sermon.videoData; // Custom URL
     }
   }, [sermon]);
 
@@ -210,9 +205,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  content: {
-    flex: 1
-  },
+  content: { flex: 1 },
   scrollView: {
     flex: 1,
     backgroundColor: "#F6F6F8"
@@ -246,9 +239,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 24
   },
-  errorButton: {
-    backgroundColor: "#0D47A1"
-  }
+  errorButton: { backgroundColor: "#0D47A1" }
 });
 
 export default SermonDetails;

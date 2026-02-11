@@ -39,7 +39,5 @@ const styles = StyleSheet.create({
     elevation: 3,
     overflow: "hidden"
   },
-  actions: {
-    justifyContent: "flex-end"
-  }
+  actions: { justifyContent: "flex-end" }
 });

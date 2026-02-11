@@ -23,9 +23,7 @@ export const GettingStartedHelper: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  helperSection: {
-    padding: 32
-  },
+  helperSection: { padding: 32 },
   helperContent: {
     alignItems: "center",
     backgroundColor: "#FFFFFF",
@@ -37,9 +35,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 2
   },
-  helperIcon: {
-    marginBottom: 16
-  },
+  helperIcon: { marginBottom: 16 },
   helperTitle: {
     color: "#3c3c3c",
     fontWeight: "600",

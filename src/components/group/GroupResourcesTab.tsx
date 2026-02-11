@@ -146,12 +146,8 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
 };
 
 const styles = StyleSheet.create({
-  containerScoll: {
-    flex: 1
-  },
-  aboutContainer: {
-    minHeight: 200
-  },
+  containerScoll: { flex: 1 },
+  aboutContainer: { minHeight: 200 },
   markdownStyles: {
     body: {
       color: "#3c3c3c",

@@ -62,9 +62,7 @@ const SearchMessageUser = () => {
     try {
       router.navigate({
         pathname: "/messageScreenRoot",
-        params: {
-          userDetails: JSON.stringify(userData)
-        }
+        params: { userDetails: JSON.stringify(userData) }
       });
     } catch (err: any) {
       ErrorHelper.logError("user-selection", err);
@@ -93,7 +91,9 @@ const SearchMessageUser = () => {
         </Surface>
       </TouchableWithoutFeedback>
     ),
-    [spacing.md, theme.colors.background, theme.colors.surface, theme.roundness, searchText, handleSearchChange, handleSearchPress, loading, t]
+    [
+      spacing.md, theme.colors.background, theme.colors.surface, theme.roundness, searchText, handleSearchChange, handleSearchPress, loading, t
+    ]
   );
 
   const displayedSearchList = useMemo(() => (searchText === "" ? (searchList.length !== 0 ? searchList : []) : searchList), [searchText, searchList]);
@@ -104,68 +104,68 @@ const SearchMessageUser = () => {
       <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         {mainLoading && <ActivityIndicator animating={true} size="large" style={{ marginTop: spacing.lg }} />}
         {!mainLoading && (
-    <List.Section style={{ flex: 1 }}>
-      {searchSection}
+          <List.Section style={{ flex: 1 }}>
+            {searchSection}
 
-      <FlatList
-        data={displayedSearchList}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => {
-          const imageUri = item.photo
-            ? item.photo.startsWith("http")
-              ? item.photo
-              : EnvironmentHelper.ContentRoot + item.photo
-            : "";
+            <FlatList
+              data={displayedSearchList}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
+                const imageUri = item.photo
+                  ? item.photo.startsWith("http")
+                    ? item.photo
+                    : EnvironmentHelper.ContentRoot + item.photo
+                  : "";
 
-          return (
-            <List.Item
-              title={item.name.display}
-              left={() =>
-                item.photo ? (
-                  <OptimizedImage
-                    source={{ uri: imageUri }}
+                return (
+                  <List.Item
+                    title={item.name.display}
+                    left={() =>
+                      item.photo ? (
+                        <OptimizedImage
+                          source={{ uri: imageUri }}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                            marginRight: spacing.md
+                          }}
+                          contentFit="cover"
+                        />
+                      ) : (
+                        <OptimizedImage
+                          source={Constants.Images.ic_user}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                            marginRight: spacing.md
+                          }}
+                          tintColor={theme.colors.primary}
+                          contentFit="cover"
+                        />
+                      )
+                    }
+                    onPress={() => userSelection(item)}
                     style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 20,
-                      marginRight: spacing.md,
+                      backgroundColor: theme.colors.surface,
+                      marginHorizontal: spacing.md,
+                      marginBottom: spacing.xs,
+                      borderRadius: theme.roundness,
+                      elevation: 1
                     }}
-                    contentFit="cover"
+                    titleStyle={{ fontWeight: "500" }}
                   />
-                ) : (
-                  <OptimizedImage
-                    source={Constants.Images.ic_user}
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 20,
-                      marginRight: spacing.md,
-                    }}
-                    tintColor={theme.colors.primary}
-                    contentFit="cover"
-                  />
-                )
-              }
-              onPress={() => userSelection(item)}
-              style={{
-                backgroundColor: theme.colors.surface,
-                marginHorizontal: spacing.md,
-                marginBottom: spacing.xs,
-                borderRadius: theme.roundness,
-                elevation: 1,
+                );
               }}
-              titleStyle={{ fontWeight: "500" }}
+              ListEmptyComponent={
+                <Text style={{ textAlign: "center", marginTop: spacing.lg }}>
+                  {searchText !== "" && !loading && searchText === lastSearch ? t("common.noMatchesFound") : null}
+                </Text>
+              }
             />
-          );
-        }}
-        ListEmptyComponent={
-          <Text style={{ textAlign: "center", marginTop: spacing.lg }}>
-            {searchText !== '' && !loading && searchText === lastSearch ? t("common.noMatchesFound") : null}
-          </Text>
-        }
-      />
-    </List.Section>
-  )}
+          </List.Section>
+        )}
       </View>
     </>
   );

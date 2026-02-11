@@ -111,12 +111,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     flex: 1
   },
-  eventModalClose: {
-    margin: 0
-  },
-  eventModalDivider: {
-    marginBottom: 8
-  },
+  eventModalClose: { margin: 0 },
+  eventModalDivider: { marginBottom: 8 },
   eventsContainer: {
     paddingHorizontal: 16,
     paddingBottom: 16
@@ -131,9 +127,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4
   },
-  eventCardContent: {
-    padding: 16
-  },
+  eventCardContent: { padding: 16 },
   eventHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -151,9 +145,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8
   },
-  editEventButton: {
-    margin: 0
-  },
+  editEventButton: { margin: 0 },
   privateChip: {
     backgroundColor: "#FFF3E0",
     borderColor: "#FF9800"

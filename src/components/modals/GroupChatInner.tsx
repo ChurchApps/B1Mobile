@@ -122,13 +122,14 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
   const deleteMessage = async (obj: ChatMessage) => {
     try {
       setMessages(prev =>
-        prev.filter(item => item.id !== obj.id)
-      );
+        prev.filter(item => item.id !== obj.id));
       setEditingMessage(null);
       setNewMessage("");
       await ApiHelper.delete(`/messages/${currentChurch?.id}/${editingMessage?.id}`, "MessagingApi");
-    } catch (err) {
+    } catch (_err) {
+      // silently handle error
     } finally {
+      // cleanup
     }
   };
 
@@ -142,8 +143,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
     if (editingMessage) {
       optimisticMsg = { ...editingMessage, content: trimmedMessage };
       setMessages(prev =>
-        prev.map(item => (item.id === editingMessage.id ? optimisticMsg : item))
-      );
+        prev.map(item => (item.id === editingMessage.id ? optimisticMsg : item)));
       setEditingMessage(null);
       setNewMessage("");
     } else {
@@ -155,7 +155,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
         displayName: currentUserChurch?.person?.name?.display || "",
         timeSent: new Date().toISOString(),
         isOwn: true,
-        person: currentUserChurch?.person,
+        person: currentUserChurch?.person
       };
 
       setMessages(prev => [optimisticMsg, ...prev]);
@@ -173,7 +173,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
           contentType: contentType,
           contentId: groupId,
           title: `${groupName} ${contentType === "groupAnnouncement" ? "Announcements" : "Chat"}`,
-          visibility: "hidden",
+          visibility: "hidden"
         };
         const result: ConversationInterface[] = await ApiHelper.post(
           "/conversations",
@@ -187,14 +187,13 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
         conversationId,
         content: optimisticMsg.content,
         personId: optimisticMsg.personId,
-        id: editingMessage ? editingMessage.id : "",
+        id: editingMessage ? editingMessage.id : ""
       };
 
       const savedMsg = await ApiHelper.post("/messages", [payload], "MessagingApi");
 
       setMessages(prev =>
-        prev.map(m => (m.id === tempId ? { ...m, ...savedMsg[0] } : m))
-      );
+        prev.map(m => (m.id === tempId ? { ...m, ...savedMsg[0] } : m)));
     } catch (err) {
       console.error("Failed to send message:", err);
 
@@ -395,7 +394,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
                 if (msgToEdit) {
                   setEditingMessage(msgToEdit);
                   closeModal();
-                  deleteMessage(msgToEdit)
+                  deleteMessage(msgToEdit);
                 }
               }}>
               <Text style={{ fontSize: 16, color: "red" }}>{t("common.delete")}</Text>
@@ -408,9 +407,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
 };
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1
-  },
+  mainContainer: { flex: 1 },
   messagesList: {
     flexGrow: 1,
     paddingHorizontal: 16,
@@ -426,9 +423,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12
   },
-  ownMessageContainer: {
-    flexDirection: "row-reverse"
-  },
+  ownMessageContainer: { flexDirection: "row-reverse" },
   avatarContainer: {
     width: 40,
     alignItems: "center",
@@ -466,17 +461,13 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: "#3c3c3c"
   },
-  ownMessageText: {
-    color: "#FFFFFF"
-  },
+  ownMessageText: { color: "#FFFFFF" },
   timestamp: {
     fontSize: 12,
     color: "#9E9E9E",
     marginTop: 4
   },
-  ownTimestamp: {
-    color: "rgba(255, 255, 255, 0.7)"
-  },
+  ownTimestamp: { color: "rgba(255, 255, 255, 0.7)" },
   emptyState: {
     flex: 1,
     justifyContent: "center",
@@ -532,9 +523,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     backgroundColor: "#F6F6F8"
   },
-  sendButtonActive: {
-    backgroundColor: "#0D47A1"
-  }
+  sendButtonActive: { backgroundColor: "#0D47A1" }
 });
 
 export default GroupChatInner;

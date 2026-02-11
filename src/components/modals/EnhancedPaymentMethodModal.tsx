@@ -114,9 +114,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     backgroundColor: "#FFFFFF"
   },
-  cardContent: {
-    padding: 0
-  },
+  cardContent: { padding: 0 },
 
   // Header
   header: {
@@ -169,9 +167,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 16
   },
-  methodContent: {
-    flex: 1
-  },
+  methodContent: { flex: 1 },
   methodTitle: {
     color: "#3c3c3c",
     fontWeight: "600",

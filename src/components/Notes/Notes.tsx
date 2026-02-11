@@ -1,9 +1,7 @@
 import dayjs from "../../helpers/dayjsConfig";
 import React from "react";
 import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
-import { Constants } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
-import { PersonHelper } from "../../../src/helpers";
 import { Chip } from "react-native-paper";
 import { Avatar } from "../common/Avatar";
 import { useTranslation } from "react-i18next";
@@ -60,9 +58,7 @@ const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface
 };
 
 const styles = StyleSheet.create({
-  messageContainer: {
-    marginBottom: 2
-  },
+  messageContainer: { marginBottom: 2 },
   messageContent: {
     flexDirection: "row",
     paddingVertical: 8,
@@ -133,9 +129,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#9E9E9E"
   },
-  replyTextActive: {
-    color: "#0D47A1"
-  },
+  replyTextActive: { color: "#0D47A1" },
   replyCountChip: {
     backgroundColor: "rgba(21, 101, 192, 0.1)",
     height: 24

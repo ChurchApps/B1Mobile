@@ -43,5 +43,5 @@ export const fieldDefinitions = [
   { key: "contactInfo.zip", label: "Zip" },
   { key: "contactInfo.homePhone", label: "Home Phone" },
   { key: "contactInfo.mobilePhone", label: "Mobile Phone" },
-  { key: "contactInfo.workPhone", label: "Work Phone" },
+  { key: "contactInfo.workPhone", label: "Work Phone" }
 ];

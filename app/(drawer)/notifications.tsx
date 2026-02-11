@@ -30,9 +30,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  contentContainer: {
-    flex: 1
-  }
+  contentContainer: { flex: 1 }
 });
 
 export default Notifications;

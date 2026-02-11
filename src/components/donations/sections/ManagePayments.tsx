@@ -43,12 +43,12 @@ export const ManagePayments: React.FC<ManagePaymentsProps> = ({
   }
 
   return (
-    <PaymentMethods 
-      customerId={customerId} 
-      paymentMethods={paymentMethods} 
-      updatedFunction={loadData} 
-      isLoading={isLoading} 
-      publishKey={publishKey} 
+    <PaymentMethods
+      customerId={customerId}
+      paymentMethods={paymentMethods}
+      updatedFunction={loadData}
+      isLoading={isLoading}
+      publishKey={publishKey}
     />
   );
 };
@@ -66,9 +66,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 32
   },
-  loginPromptIcon: {
-    marginBottom: 16
-  },
+  loginPromptIcon: { marginBottom: 16 },
   loginPromptTitle: {
     color: "#3c3c3c",
     fontWeight: "600",

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { Text, Card } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
@@ -9,21 +9,21 @@ interface EmptyStateProps {
 
 export const EmptyState: React.FC<EmptyStateProps> = ({ type }) => {
   const isPlaylists = type === "playlists";
-  
+
   return (
     <Card style={styles.emptyCard}>
       <Card.Content style={styles.emptyContent}>
-        <MaterialIcons 
-          name={isPlaylists ? "playlist-add" : "video-library"} 
-          size={48} 
-          color="#9E9E9E" 
-          style={styles.emptyIcon} 
+        <MaterialIcons
+          name={isPlaylists ? "playlist-add" : "video-library"}
+          size={48}
+          color="#9E9E9E"
+          style={styles.emptyIcon}
         />
         <Text variant="titleMedium" style={styles.emptyTitle}>
           {isPlaylists ? "No Sermon Series Available" : "No Recent Sermons"}
         </Text>
         <Text variant="bodyMedium" style={styles.emptySubtitle}>
-          {isPlaylists 
+          {isPlaylists
             ? "Check back later for new sermon series from your church."
             : "Check back later for new sermons from your church."}
         </Text>
@@ -45,9 +45,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 32
   },
-  emptyIcon: {
-    marginBottom: 16
-  },
+  emptyIcon: { marginBottom: 16 },
   emptyTitle: {
     color: "#3c3c3c",
     fontWeight: "600",

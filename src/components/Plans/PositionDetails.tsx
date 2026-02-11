@@ -161,9 +161,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     backgroundColor: "#FFFFFF"
   },
-  cardContent: {
-    padding: 4
-  },
+  cardContent: { padding: 4 },
 
   // Position Header
   positionHeader: {
@@ -201,18 +199,14 @@ const styles = StyleSheet.create({
   },
 
   // Times Section
-  timesSection: {
-    marginBottom: 16
-  },
+  timesSection: { marginBottom: 16 },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: "#3c3c3c",
     marginBottom: 12
   },
-  timesList: {
-    gap: 8
-  },
+  timesList: { gap: 8 },
   timeItem: {
     flexDirection: "row",
     alignItems: "flex-start",

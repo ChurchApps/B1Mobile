@@ -21,9 +21,7 @@ const Register = () => {
     try {
       const data = await ApiHelper.postAnonymous("/users/register", { email, firstName, lastName }, "MembershipApi");
       if (data.email != null) {
-        Alert.alert(t("common.alert"), t("auth.registrationSuccess"), [
-          { text: "OK", onPress: () => router.navigate("/auth/login") }
-        ]);
+        Alert.alert(t("common.alert"), t("auth.registrationSuccess"), [{ text: "OK", onPress: () => router.navigate("/auth/login") }]);
       } else {
         Alert.alert(t("common.error"), t("auth.userExists"));
       }
@@ -41,7 +39,7 @@ const Register = () => {
   const validateDetails = () => {
     let result = true;
     if (email != "") {
-      let emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
+      const emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
         Alert.alert(t("common.alert"), t("auth.invalidEmail"));
         result = false;

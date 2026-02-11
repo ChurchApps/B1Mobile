@@ -44,7 +44,7 @@ export class TimelineHelper {
     }
     await promises.push(ApiHelper.getAnonymous("/sermons/timeline?sermonIds=" + sermonIds.join(","), "ContentApi"));
     const results = await Promise.all(promises);
-    let allPosts: TimelinePostInterface[] = [];
+    const allPosts: TimelinePostInterface[] = [];
     results.forEach((result: any[]) => {
       result.forEach(r => {
         allPosts.push({ postId: r.postId, postType: r.postType, groupId: r.groupId, data: r });
@@ -58,7 +58,7 @@ export class TimelineHelper {
       p.conversation = undefined;
     });
     initialConversations.forEach(conv => {
-      let existingPost = ArrayHelper.getOne(allPosts, "postId", conv.contentId);
+      const existingPost = ArrayHelper.getOne(allPosts, "postId", conv.contentId);
       if (existingPost) {
         existingPost.conversation = conv;
         if (conv.groupId) existingPost.groupId = conv.groupId;

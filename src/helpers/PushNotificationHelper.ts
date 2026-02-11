@@ -176,9 +176,7 @@ export class PushNotificationHelper {
     if (!fcmToken) {
       try {
         // Get the Expo push token
-        const token = await Notifications.getExpoPushTokenAsync({
-          projectId: "f72e5911-b8d5-467c-ad9e-423c180e9938" // Your EAS project ID
-        });
+        const token = await Notifications.getExpoPushTokenAsync({ projectId: "f72e5911-b8d5-467c-ad9e-423c180e9938" });
 
         if (token.data) {
           fcmToken = token.data;

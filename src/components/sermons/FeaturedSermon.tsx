@@ -126,9 +126,7 @@ const styles = StyleSheet.create({
     top: "30%",
     left: "25%"
   },
-  heroIcon: {
-    zIndex: 2
-  },
+  heroIcon: { zIndex: 2 },
   heroOverlay: {
     position: "absolute",
     top: 0,

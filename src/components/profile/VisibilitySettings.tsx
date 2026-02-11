@@ -312,9 +312,7 @@ const styles = StyleSheet.create({
     color: "#3c3c3c",
     flex: 1
   },
-  dropdownContainer: {
-    marginBottom: 20
-  },
+  dropdownContainer: { marginBottom: 20 },
   dropdownLabel: {
     color: "#3c3c3c",
     marginBottom: 8,
@@ -328,16 +326,12 @@ const styles = StyleSheet.create({
     borderColor: "#E0E0E0",
     backgroundColor: "#FFFFFF"
   },
-  dropdownText: {
-    color: "#3c3c3c"
-  },
+  dropdownText: { color: "#3c3c3c" },
   saveButton: {
     marginTop: 8,
     backgroundColor: "#0D47A1"
   },
-  infoCard: {
-    backgroundColor: "#F6F6F8"
-  },
+  infoCard: { backgroundColor: "#F6F6F8" },
   infoHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -348,9 +342,7 @@ const styles = StyleSheet.create({
     color: "#0D47A1",
     fontWeight: "600"
   },
-  infoItem: {
-    marginBottom: 8
-  },
+  infoItem: { marginBottom: 8 },
   infoLabel: {
     color: "#3c3c3c",
     fontWeight: "600"

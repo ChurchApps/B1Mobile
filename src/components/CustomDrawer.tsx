@@ -53,12 +53,12 @@ export function CustomDrawer(props?: any) {
     const handleLogout = () => {
       logoutAction();
     };
-    eventBus.addListener('do_logout', handleLogout);
+    eventBus.addListener("do_logout", handleLogout);
 
     return () => {
-      eventBus.removeListener('do_logout');
+      eventBus.removeListener("do_logout");
     };
-  }, [])
+  }, []);
 
   const checkIsActive = (item: ItemType, pathname: string, params?: ParamsType): boolean => {
     const path = (pathname || "").toLowerCase();
@@ -146,13 +146,13 @@ export function CustomDrawer(props?: any) {
           // Use setTimeout to ensure navigation completes before closing drawer
           setTimeout(() => {
             try {
-              if (navigation && typeof navigation.closeDrawer === 'function') {
+              if (navigation && typeof navigation.closeDrawer === "function") {
                 navigation.closeDrawer();
               } else {
                 navigation.dispatch(DrawerActions.closeDrawer());
               }
             } catch (error) {
-              console.warn('Failed to close drawer:', error);
+              console.warn("Failed to close drawer:", error);
             }
           }, 100);
         }}
@@ -209,13 +209,13 @@ export function CustomDrawer(props?: any) {
   const closeDrawerAndNavigate = (navigateAction: () => void) => {
     setTimeout(() => {
       try {
-        if (navigation && typeof navigation.closeDrawer === 'function') {
+        if (navigation && typeof navigation.closeDrawer === "function") {
           navigation.closeDrawer();
         } else {
           navigation.dispatch(DrawerActions.closeDrawer());
         }
       } catch (error) {
-        console.warn('Failed to close drawer:', error);
+        console.warn("Failed to close drawer:", error);
       }
       navigateAction();
     }, 100);
@@ -265,20 +265,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0"
   },
-  headerContent: {
-    padding: 16
-  },
-  userInfoSection: {
-    marginBottom: 16
-  },
+  headerContent: { padding: 16 },
+  userInfoSection: { marginBottom: 16 },
   userRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12
   },
-  avatarContainer: {
-    // Avatar styling handled by component
-  },
+  avatarContainer: { /* Avatar styling handled by component */ },
   userTextContainer: {
     flex: 1,
     minWidth: 0
@@ -330,9 +324,7 @@ const styles = StyleSheet.create({
     height: 24,
     marginRight: 8
   },
-  scrollContainer: {
-    flex: 1
-  },
+  scrollContainer: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 16 // Reduced padding following 8px grid
@@ -344,9 +336,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#F0F0F0"
   },
-  logoutButton: {
-    marginBottom: 8
-  },
+  logoutButton: { marginBottom: 8 },
   versionText: {
     textAlign: "center",
     color: "#9E9E9E" // Medium gray from style guide
@@ -366,11 +356,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
     height: 1
   },
-  activeMenuItem: {
-    backgroundColor: "#0D47A1",
-  },
+  activeMenuItem: { backgroundColor: "#0D47A1" },
   activeMenuText: {
     color: "#fff",
-    fontWeight: "600",
-  },
+    fontWeight: "600"
+  }
 });

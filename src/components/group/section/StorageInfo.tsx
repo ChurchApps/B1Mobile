@@ -115,9 +115,7 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
+  container: { flex: 1 },
   contentCard: {
     marginHorizontal: 16,
     marginBottom: 24,
@@ -135,9 +133,7 @@ const styles = StyleSheet.create({
     color: "#0D47A1",
     textDecorationLine: "underline"
   },
-  navButtonIcon: {
-    marginBottom: 4
-  },
+  navButtonIcon: { marginBottom: 4 },
   navButtonText: {
     color: "#000000",
     fontWeight: "700",
@@ -145,9 +141,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     alignItems: "center"
   },
-  navButtonAvatar: {
-    backgroundColor: "#9E9E9E"
-  }
+  navButtonAvatar: { backgroundColor: "#9E9E9E" }
 });
 
 export default ResourcesTable;

@@ -89,9 +89,7 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
 };
 
 const styles = StyleSheet.create({
-  membersContainer: {
-    minHeight: 200
-  },
+  membersContainer: { minHeight: 200 },
   modernMemberCard: {
     borderRadius: 12,
     elevation: 1,
@@ -117,9 +115,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 2
   },
-  memberRole: {
-    color: "#9E9E9E"
-  },
+  memberRole: { color: "#9E9E9E" },
   emptyState: {
     alignItems: "center",
     paddingVertical: 32,

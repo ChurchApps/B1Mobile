@@ -317,7 +317,5 @@ const styles = StyleSheet.create({
     color: "#9E9E9E",
     marginBottom: 8
   },
-  saveButton: {
-    marginTop: 8
-  }
+  saveButton: { marginTop: 8 }
 });

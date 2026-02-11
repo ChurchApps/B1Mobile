@@ -77,9 +77,7 @@ export const DonationComplete = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
+  container: { flex: 1 },
   background: {
     flex: 1,
     justifyContent: "center",
@@ -92,9 +90,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 400
   },
-  iconContainer: {
-    marginBottom: 32
-  },
+  iconContainer: { marginBottom: 32 },
   successIconBackground: {
     width: 120,
     height: 120,

@@ -23,9 +23,9 @@ export const CheckinHousehold = (props: Props) => {
 
   const submitAttendance = async () => {
     setLoading(true);
-    let pendingVisits: any[] = [];
+    const pendingVisits: any[] = [];
     CheckinHelper.householdMembers?.forEach((member: any) => {
-      let visitSessionList: any[] = [];
+      const visitSessionList: any[] = [];
       member.serviceTimes?.forEach((time: any) => {
         if (time.selectedGroup != null) {
           visitSessionList.push({ session: { serviceTimeId: time.id, groupId: time.selectedGroup.id, displayName: time.selectedGroup.name } });
@@ -197,12 +197,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16
   },
-  membersList: {
-    flex: 1
-  },
-  membersContent: {
-    paddingBottom: 16
-  },
+  membersList: { flex: 1 },
+  membersContent: { paddingBottom: 16 },
   memberCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
@@ -214,25 +210,19 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     overflow: "hidden"
   },
-  memberHeader: {
-    borderRadius: 12
-  },
+  memberHeader: { borderRadius: 12 },
   memberHeaderContent: {
     flexDirection: "row",
     alignItems: "center",
     padding: 16
   },
-  memberImageContainer: {
-    marginRight: 16
-  },
+  memberImageContainer: { marginRight: 16 },
   memberImage: {
     width: 56,
     height: 56,
     borderRadius: 28
   },
-  memberInfo: {
-    flex: 1
-  },
+  memberInfo: { flex: 1 },
   memberName: {
     color: "#3c3c3c",
     fontWeight: "600",
@@ -259,9 +249,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
-  serviceTimesContainer: {
-    backgroundColor: "#F6F6F8"
-  },
+  serviceTimesContainer: { backgroundColor: "#F6F6F8" },
   divider: {
     height: 1,
     backgroundColor: "#F0F0F0"
@@ -288,31 +276,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 12
   },
-  serviceTimeDetails: {
-    flex: 1
-  },
+  serviceTimeDetails: { flex: 1 },
   serviceTimeName: {
     color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 2
   },
-  selectedGroupText: {
-    color: "#9E9E9E"
-  },
+  selectedGroupText: { color: "#9E9E9E" },
   selectGroupButton: {
     borderRadius: 8,
     minWidth: 100
   },
-  selectedGroupButton: {
-    backgroundColor: "#70DC87"
-  },
+  selectedGroupButton: { backgroundColor: "#70DC87" },
   selectGroupButtonText: {
     fontSize: 12,
     fontWeight: "600"
   },
-  selectedGroupButtonText: {
-    color: "#FFFFFF"
-  },
+  selectedGroupButtonText: { color: "#FFFFFF" },
   bottomSection: {
     padding: 16,
     backgroundColor: "#FFFFFF",

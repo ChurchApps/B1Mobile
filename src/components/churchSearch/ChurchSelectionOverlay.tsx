@@ -8,7 +8,7 @@ interface ChurchSelectionOverlayProps {
 
 export const ChurchSelectionOverlay: React.FC<ChurchSelectionOverlayProps> = ({ visible }) => {
   if (!visible) return null;
-  
+
   return (
     <View style={styles.selectionOverlay}>
       <Card style={styles.selectionCard}>

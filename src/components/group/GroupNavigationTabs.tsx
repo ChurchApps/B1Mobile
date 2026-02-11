@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, TouchableOpacity, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions, Animated } from "react-native";
+import { View, TouchableOpacity, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -127,7 +127,7 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
-    marginHorizontal: 16,
+    marginHorizontal: 16
   },
   tabBar: {
     backgroundColor: "#FFFFFF",
@@ -140,18 +140,18 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
     position: "relative",
-    overflow: "hidden",
+    overflow: "hidden"
   },
   scrollContainer: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 4,
+    paddingHorizontal: 4
   },
   tab: {
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 4,
-    position: "relative",
+    position: "relative"
   },
   iconContainer: {
     width: 40,
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F3F4F6",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 6,
+    marginBottom: 6
   },
   activeIconContainer: {
     backgroundColor: "#2563EB",
@@ -168,18 +168,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 4,
+    elevation: 4
   },
   label: {
     fontSize: 11,
     fontWeight: "500",
     color: "#6B7280",
     textAlign: "center",
-    letterSpacing: -0.2,
+    letterSpacing: -0.2
   },
   activeLabel: {
     color: "#2563EB",
-    fontWeight: "700",
+    fontWeight: "700"
   },
   activeIndicator: {
     position: "absolute",
@@ -187,25 +187,25 @@ const styles = StyleSheet.create({
     width: 20,
     height: 3,
     backgroundColor: "#2563EB",
-    borderRadius: 1.5,
+    borderRadius: 1.5
   },
   gradientOverlay: {
     position: "absolute",
     top: 0,
     bottom: 0,
     width: 32,
-    zIndex: 10,
+    zIndex: 10
   },
   leftGradient: {
     left: 0,
     backgroundColor: "rgba(255,255,255,0.9)",
     borderTopLeftRadius: 16,
-    borderBottomLeftRadius: 16,
+    borderBottomLeftRadius: 16
   },
   rightGradient: {
     right: 0,
     backgroundColor: "rgba(255,255,255,0.9)",
     borderTopRightRadius: 16,
-    borderBottomRightRadius: 16,
-  },
+    borderBottomRightRadius: 16
+  }
 });

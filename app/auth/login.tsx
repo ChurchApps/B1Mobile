@@ -45,7 +45,7 @@ const Login = () => {
 
   const validateDetails = () => {
     if (email != "") {
-      let emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
+      const emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
       if (emailReg.test(email) === false) {
         Alert.alert(t("common.alert"), t("auth.invalidEmail"));
         return false;
@@ -64,7 +64,7 @@ const Login = () => {
   };
 
   const loginApiCall = () => {
-    let params = { email: email, password: password };
+    const params = { email: email, password: password };
     setLoading(true);
     ApiHelper.postAnonymous("/users/login", params, "MembershipApi")
       .then(async (data: LoginResponseInterface) => {
@@ -236,16 +236,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8" // Background from style guide
   },
-  scrollView: {
-    flex: 1
-  },
+  scrollView: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 32
   },
-  safeArea: {
-    flex: 1
-  },
+  safeArea: { flex: 1 },
 
   // Hero Section
   heroSection: {
@@ -271,9 +267,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1
   },
-  heroIcon: {
-    marginBottom: 16
-  },
+  heroIcon: { marginBottom: 16 },
   churchLogoContainer: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
@@ -320,12 +314,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6
   },
-  formContent: {
-    padding: 24
-  },
-  inputContainer: {
-    marginBottom: 16
-  },
+  formContent: { padding: 24 },
+  inputContainer: { marginBottom: 16 },
   input: {
     marginBottom: 16,
     backgroundColor: "#FFFFFF"
@@ -354,9 +344,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 16
   },
-  privacySection: {
-    alignItems: "center"
-  },
+  privacySection: { alignItems: "center" },
   privacyText: {
     color: "#9E9E9E",
     textAlign: "center",
@@ -396,9 +384,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 24
   },
-  helpIcon: {
-    marginBottom: 16
-  },
+  helpIcon: { marginBottom: 16 },
   helpTitle: {
     color: "#3c3c3c",
     fontWeight: "600",

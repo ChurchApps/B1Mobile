@@ -22,12 +22,8 @@ export class EnvironmentHelper {
     //stage = "staging";
     console.log("[EnvironmentHelper] Initializing with stage:", stage);
     switch (stage) {
-      case "prod":
-        EnvironmentHelper.initProd();
-        break;
-      default:
-        EnvironmentHelper.initDev();
-        break;
+      case "prod": EnvironmentHelper.initProd(); break;
+      default: EnvironmentHelper.initDev(); break;
     }
 
     console.log("[EnvironmentHelper] API URLs configured:");

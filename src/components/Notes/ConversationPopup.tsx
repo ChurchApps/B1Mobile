@@ -34,7 +34,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
 
   const handleSave = async (message: any) => {
     try {
-      let m = { ...newMessage } as MessageInterface;
+      const m = { ...newMessage } as MessageInterface;
       m.content = textRef.current;
 
       if (m && validate(m)) {
@@ -74,7 +74,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
   };
 
   const getNotes = (item: any) => {
-    let noteArray: React.ReactNode[] = [];
+    const noteArray: React.ReactNode[] = [];
     for (let i = 1; i < item?.messages?.length; i++) noteArray.push(<Notes key={item.messages[i].id} item={[]} message={item.messages[i]} showReplyBox={showReplyBox} handleReply={handleReply} />);
     return noteArray;
   };
@@ -155,17 +155,13 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E9ECEF",
     gap: 12
   },
-  headerIcon: {
-    backgroundColor: "#0D47A1"
-  },
+  headerIcon: { backgroundColor: "#0D47A1" },
   headerTitle: {
     color: "#3c3c3c",
     fontWeight: "700",
     flex: 1
   },
-  headerSubtitle: {
-    color: "#9E9E9E"
-  },
+  headerSubtitle: { color: "#9E9E9E" },
   messagesContainer: {
     flex: 1,
     maxHeight: DimensionHelper.hp(50)
@@ -174,9 +170,7 @@ const styles = StyleSheet.create({
     padding: 12,
     flexGrow: 1
   },
-  messageSeparator: {
-    height: 8
-  },
+  messageSeparator: { height: 8 },
   messageCard: {
     borderRadius: 16,
     elevation: 2,
@@ -209,9 +203,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     backgroundColor: "#FFFFFF"
   },
-  newConversationCard: {
-    marginBottom: 16
-  },
+  newConversationCard: { marginBottom: 16 },
   inputContent: {
     paddingVertical: 8,
     paddingHorizontal: 8
@@ -225,9 +217,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     maxHeight: 120
   },
-  replyInput: {
-    marginLeft: 8
-  },
+  replyInput: { marginLeft: 8 },
   inputText: {
     fontSize: 16,
     lineHeight: 20,
@@ -237,9 +227,7 @@ const styles = StyleSheet.create({
     borderColor: "#E9ECEF",
     borderWidth: 1
   },
-  sendIcon: {
-    marginRight: 4
-  },
+  sendIcon: { marginRight: 4 },
   emptyState: {
     flex: 1,
     justifyContent: "center",

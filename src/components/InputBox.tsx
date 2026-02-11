@@ -16,7 +16,7 @@ interface Props {
 
 export function InputBox({ title, headerIcon, children, cancelFunction, deleteFunction, saveFunction, isSubmitting = false }: Props) {
   const { t } = useTranslation();
-  let buttons: React.ReactElement[] = [];
+  const buttons: React.ReactElement[] = [];
 
   const widthClass = deleteFunction ? DimensionHelper.wp(33.33) : DimensionHelper.wp(50);
   if (cancelFunction) {

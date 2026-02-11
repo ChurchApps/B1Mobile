@@ -83,7 +83,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     if (paymentMethods.length > 0) {
       const items = paymentMethods.map((method: any) => ({
         label: method.name + " ****" + method.last4,
-        value: method.id,
+        value: method.id
       }));
       setPaymentMethodItems(items as any);
 
@@ -205,28 +205,30 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     Alert.alert(
       t("common.alert"),
       t("donations.failed"),
-      [{ text: t("common.cancel"), style: "cancel" }, {
-        text: t("common.delete"), style: "destructive",
-        onPress: async () => {
-          try {
-            setLoadingAction("delete");
-            if (!selectedRecurring) return;
-            const promises = [];
-            promises.push(ApiHelper.delete("/subscriptions/" + selectedRecurring.id, "GivingApi"));
-            promises.push(ApiHelper.delete("/subscriptionfunds/subscription/" + selectedRecurring.id, "GivingApi"));
-            await Promise.all(promises);
+      [
+        { text: t("common.cancel"), style: "cancel" }, {
+          text: t("common.delete"),
+          style: "destructive",
+          onPress: async () => {
+            try {
+              setLoadingAction("delete");
+              if (!selectedRecurring) return;
+              const promises = [];
+              promises.push(ApiHelper.delete("/subscriptions/" + selectedRecurring.id, "GivingApi"));
+              promises.push(ApiHelper.delete("/subscriptionfunds/subscription/" + selectedRecurring.id, "GivingApi"));
+              await Promise.all(promises);
 
-            setSelectedRecurring(null);
+              setSelectedRecurring(null);
 
-            Alert.alert(t("donations.thankYou"), t("donations.thankYou"));
-            loadData();
-          } catch (error) {
-            Alert.alert(t("common.error"), t("donations.failed"));
-          } finally {
-            setLoadingAction(null);
+              Alert.alert(t("donations.thankYou"), t("donations.thankYou"));
+              loadData();
+            } catch (error) {
+              Alert.alert(t("common.error"), t("donations.failed"));
+            } finally {
+              setLoadingAction(null);
+            }
           }
         }
-      }
       ]
     );
   };
@@ -249,7 +251,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
           sub.default_source = pm.type === "bank" ? (pm.id || "") : "";
         }
       }
-      await ApiHelper.post("/subscriptions", [sub], "GivingApi")
+      await ApiHelper.post("/subscriptions", [sub], "GivingApi");
       setSelectedRecurring(null);
 
       Alert.alert(t("donations.thankYou"), t("donations.thankYou"));
@@ -263,7 +265,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
   const renderTransactionItem = ({ item }: { item: DonationImpact }) => (
     <TouchableOpacity
-      // onPress={() => setSelectedTransaction(item)} 
+      // onPress={() => setSelectedTransaction(item)}
       style={styles.transactionItem}>
       <View style={styles.transactionIcon}>
         <MaterialIcons name="favorite" size={24} color="#0D47A1" />
@@ -574,7 +576,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                 </Text>
                 <TouchableOpacity onPress={() => setSelectedRecurring(null)}>
                   <MaterialIcons name="close" size={24} color="#9E9E9E" />
-                  </TouchableOpacity>
+                </TouchableOpacity>
               </View>
 
               {selectedRecurring && (
@@ -649,7 +651,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                     </Button>
                     <Button
                       mode="outlined"
-                      style={[styles.stopButton, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#d32f2f80' }]}
+                      style={[styles.stopButton, { backgroundColor: "#fff", borderWidth: 1, borderColor: "#d32f2f80" }]}
                       textColor="#d32f2f"
                       onPress={handleDelete}
                       loading={loadingAction === "delete"}
@@ -715,12 +717,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginRight: 4
   },
-  statsGrid: {
-    gap: 16
-  },
-  statItem: {
-    alignItems: "center"
-  },
+  statsGrid: { gap: 16 },
+  statItem: { alignItems: "center" },
   statValue: {
     color: "#0D47A1",
     fontWeight: "800",
@@ -749,9 +747,7 @@ const styles = StyleSheet.create({
   },
 
   // Section
-  section: {
-    gap: 12
-  },
+  section: { gap: 12 },
   sectionTitle: {
     color: "#3c3c3c",
     fontWeight: "700",
@@ -778,9 +774,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 16
   },
-  recurringDetails: {
-    flex: 1
-  },
+  recurringDetails: { flex: 1 },
   recurringFund: {
     color: "#3c3c3c",
     fontWeight: "600",
@@ -791,12 +785,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 2
   },
-  recurringNext: {
-    color: "#9E9E9E"
-  },
-  manageButton: {
-    borderColor: "#0D47A1"
-  },
+  recurringNext: { color: "#9E9E9E" },
+  manageButton: { borderColor: "#0D47A1" },
 
   // Transactions
   transactionsCard: {
@@ -818,9 +808,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 16
   },
-  transactionDetails: {
-    flex: 1
-  },
+  transactionDetails: { flex: 1 },
   transactionFund: {
     color: "#3c3c3c",
     fontWeight: "600",
@@ -839,9 +827,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#0D47A1"
   },
-  transactionAmount: {
-    alignItems: "flex-end"
-  },
+  transactionAmount: { alignItems: "flex-end" },
   amountText: {
     color: "#3c3c3c",
     fontWeight: "700",
@@ -852,18 +838,14 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4
   },
-  divider: {
-    marginHorizontal: 16
-  },
+  divider: { marginHorizontal: 16 },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     backgroundColor: "rgba(0,0,0,0.5)",
-    paddingHorizontal: 16,
+    paddingHorizontal: 16
   },
-  modalScrollView: {
-    flex: 1
-  },
+  modalScrollView: { flex: 1 },
   modalContent: {
     padding: 16,
     paddingTop: 50 // Safe area
@@ -876,7 +858,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#FFFFFF"
   },
   detailHeader: {
     flexDirection: "row",
@@ -922,16 +904,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8
   },
-  detailLabel: {
-    color: "#9E9E9E"
-  },
+  detailLabel: { color: "#9E9E9E" },
   detailValue: {
     color: "#3c3c3c",
     fontWeight: "500"
   },
-  detailDivider: {
-    marginVertical: 8
-  },
+  detailDivider: { marginVertical: 8 },
   detailTotalLabel: {
     color: "#3c3c3c",
     fontWeight: "700"
@@ -940,9 +918,7 @@ const styles = StyleSheet.create({
     color: "#0D47A1",
     fontWeight: "700"
   },
-  detailInfo: {
-    gap: 8
-  },
+  detailInfo: { gap: 8 },
 
   // Recurring Management
   recurringFreqText: {
@@ -956,8 +932,8 @@ const styles = StyleSheet.create({
   },
   managementActions: {
     marginTop: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   stopButton: {
     borderRadius: 8,
@@ -995,9 +971,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 32
   },
-  loginPromptIcon: {
-    marginBottom: 16
-  },
+  loginPromptIcon: { marginBottom: 16 },
   loginPromptTitle: {
     color: "#3c3c3c",
     fontWeight: "600",
@@ -1011,23 +985,23 @@ const styles = StyleSheet.create({
   },
   emptyWrap: {
     paddingVertical: 40,
-    alignItems: "center",
+    alignItems: "center"
   },
   emptyTitle: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#3c3c3c',
+    fontWeight: "700",
+    color: "#3c3c3c",
     marginBottom: 6
   },
   card: {
     marginBottom: 12,
     borderRadius: 12,
-    elevation: 2,
+    elevation: 2
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: 'center',
+    justifyContent: "center"
   },
   iconWrap: {
     width: 40,
@@ -1038,25 +1012,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 12
   },
-  detailsWrap: {
-    flex: 1,
-  },
+  detailsWrap: { flex: 1 },
   fundText: {
     fontSize: 15,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   totalText: {
     fontSize: 14,
     fontWeight: "600",
-    marginTop: 4,
+    marginTop: 4
   },
   metaText: {
     fontSize: 14,
-    color: "#000",
+    color: "#000"
   },
-  emptyText: {
-    color: "#777",
-  },
+  emptyText: { color: "#777" },
   dropdownStyle: {
     backgroundColor: "#fff",
     borderColor: "#E5E7EB",
@@ -1065,6 +1035,6 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 4 }
   }
 });

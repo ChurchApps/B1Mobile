@@ -226,9 +226,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#eee"
   },
-  detailsTable: {
-    marginBottom: 10
-  },
+  detailsTable: { marginBottom: 10 },
   detailRow: {
     fontSize: DimensionHelper.wp(3.7),
     marginBottom: 2,
@@ -252,9 +250,7 @@ const styles = StyleSheet.create({
     fontSize: DimensionHelper.wp(3.7),
     color: Constants.Colors.Dark_Gray
   },
-  linksSection: {
-    marginTop: 10
-  },
+  linksSection: { marginTop: 10 },
   linksTitle: {
     fontWeight: "bold",
     fontSize: DimensionHelper.wp(4),

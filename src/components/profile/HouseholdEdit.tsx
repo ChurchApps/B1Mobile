@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Text, TextInput, Button, Card, IconButton } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { PersonInterface } from "../../interfaces";
@@ -206,9 +206,7 @@ const styles = StyleSheet.create({
     color: "#3c3c3c",
     fontWeight: "600"
   },
-  memberRole: {
-    color: "#9E9E9E"
-  },
+  memberRole: { color: "#9E9E9E" },
   helperText: {
     color: "#9E9E9E",
     marginBottom: 16
@@ -222,12 +220,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF"
   },
-  addButton: {
-    marginTop: 6
-  },
-  addButtonContent: {
-    paddingHorizontal: 8
-  },
+  addButton: { marginTop: 6 },
+  addButtonContent: { paddingHorizontal: 8 },
   pendingSection: {
     marginTop: 20,
     paddingTop: 16,
@@ -248,16 +242,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginBottom: 8
   },
-  pendingIcon: {
-    marginRight: 8
-  },
+  pendingIcon: { marginRight: 8 },
   pendingName: {
     flex: 1,
     color: "#3c3c3c"
   },
-  removeButton: {
-    margin: 0
-  },
+  removeButton: { margin: 0 },
   pendingNote: {
     color: "#9E9E9E",
     fontStyle: "italic",

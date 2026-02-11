@@ -114,9 +114,7 @@ const styles = StyleSheet.create({
     bottom: -15,
     left: -15
   },
-  playlistIcon: {
-    zIndex: 2
-  },
+  playlistIcon: { zIndex: 2 },
   playlistOverlay: {
     position: "absolute",
     bottom: 0,

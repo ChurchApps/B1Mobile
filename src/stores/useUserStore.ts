@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { UserInterface, ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface, LoginResponseInterface, LinkInterface } from "../helpers/Interfaces";
+import { UserInterface, ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface, LoginResponseInterface } from "../helpers/Interfaces";
 import { ApiHelper } from "@churchapps/helpers";
 import { SecureStorageHelper } from "../helpers/SecureStorageHelper";
 import { PushNotificationHelper } from "../helpers/PushNotificationHelper";
@@ -194,7 +194,7 @@ export const useUserStore = create<UserState>()(
         if (userChurch) {
           // Essential: Set church immediately for fast UI update
           get().addRecentChurch(church);
-          
+
           // Essential: Update API permissions immediately
           ApiHelper.setDefaultPermissions(userChurch.jwt || "");
           userChurch.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
@@ -333,12 +333,12 @@ export const useUserStore = create<UserState>()(
           userChurches: [],
           currentUserChurch: currentChurch
             ? {
-                person: null,
-                church: currentChurch,
-                jwt: "",
-                apis: [],
-                groups: []
-              }
+              person: null,
+              church: currentChurch,
+              jwt: "",
+              apis: [],
+              groups: []
+            }
             : null
           // Keep churchAppearance and links so UI stays consistent
           // churchAppearance: null,

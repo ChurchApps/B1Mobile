@@ -1,5 +1,5 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { ApiHelper } from '@/helpers';
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { ApiHelper } from "@/helpers";
 
 // Cache strategy: Immediate stale + 30-day retention
 // - Data is immediately considered stale (staleTime: 0)
@@ -8,7 +8,7 @@ import { ApiHelper } from '@/helpers';
 // - Users see old data instantly, then get fresh data seamlessly
 const LONG_TERM_CACHE_TIME = 30 * 24 * 60 * 60 * 1000; // 30 days
 
-interface StaleWhileRevalidateOptions<T> extends Omit<UseQueryOptions<T>, 'queryKey' | 'queryFn'> {
+interface StaleWhileRevalidateOptions<T> extends Omit<UseQueryOptions<T>, "queryKey" | "queryFn"> {
   queryKey: any[];
   apiEndpoint: string;
   apiType?: string;
@@ -21,12 +21,12 @@ interface StaleWhileRevalidateOptions<T> extends Omit<UseQueryOptions<T>, 'query
 export function useStaleWhileRevalidate<T = any>({
   queryKey,
   apiEndpoint,
-  apiType = 'MembershipApi',
+  apiType = "MembershipApi",
   customStaleTime,
   useSkeletonOnInitial = true,
   ...options
 }: StaleWhileRevalidateOptions<T>) {
-  
+
   const query = useQuery({
     queryKey,
     queryFn: async () => {
@@ -36,12 +36,12 @@ export function useStaleWhileRevalidate<T = any>({
     // Override staleTime if provided
     staleTime: customStaleTime !== undefined ? customStaleTime : 0,
     // Ensure we always refetch but show stale data immediately
-    refetchOnMount: 'always',
+    refetchOnMount: "always",
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
     // Keep cached data for 30 days for snappy app reopening
     gcTime: LONG_TERM_CACHE_TIME,
-    ...options,
+    ...options
   });
 
   return {
@@ -51,7 +51,7 @@ export function useStaleWhileRevalidate<T = any>({
     // Helper to check if data is being refreshed in background
     isRevalidating: query.isFetching && !query.isLoading,
     // Helper to check if we have stale data
-    hasStaleData: !!query.data && query.isStale,
+    hasStaleData: !!query.data && query.isStale
   };
 }
 
@@ -62,59 +62,59 @@ export function useStaleWhileRevalidate<T = any>({
 
 export function useChurchData(churchId: string) {
   return useStaleWhileRevalidate({
-    queryKey: ['church', churchId],
-    apiEndpoint: `/churches/${churchId}`,
+    queryKey: ["church", churchId],
+    apiEndpoint: `/churches/${churchId}`
     // No custom stale time - use immediate staleness
   });
 }
 
 export function useChurchAppearance(churchId: string) {
   return useStaleWhileRevalidate({
-    queryKey: ['appearance', churchId],
-    apiEndpoint: `/settings/public/${churchId}`,
+    queryKey: ["appearance", churchId],
+    apiEndpoint: `/settings/public/${churchId}`
     // No custom stale time - use immediate staleness
   });
 }
 
 export function useUserData() {
   return useStaleWhileRevalidate({
-    queryKey: ['user'],
-    apiEndpoint: '/users/current',
+    queryKey: ["user"],
+    apiEndpoint: "/users/current"
     // No custom stale time - use immediate staleness
   });
 }
 
 export function useGroups() {
   return useStaleWhileRevalidate({
-    queryKey: ['groups'],
-    apiEndpoint: '/groups',
+    queryKey: ["groups"],
+    apiEndpoint: "/groups"
     // No custom stale time - use immediate staleness
   });
 }
 
 export function usePlans() {
   return useStaleWhileRevalidate({
-    queryKey: ['plans'],
-    apiEndpoint: '/plans',
-    apiType: 'DoingApi',
+    queryKey: ["plans"],
+    apiEndpoint: "/plans",
+    apiType: "DoingApi"
     // No custom stale time - use immediate staleness
   });
 }
 
 export function useSermons(churchId: string) {
   return useStaleWhileRevalidate({
-    queryKey: ['sermons', churchId],
+    queryKey: ["sermons", churchId],
     apiEndpoint: `/playlists/public/${churchId}`,
-    apiType: 'ContentApi',
+    apiType: "ContentApi"
     // No custom stale time - use immediate staleness
   });
 }
 
 export function useDonationFunds(churchId: string) {
   return useStaleWhileRevalidate({
-    queryKey: ['funds', churchId],
+    queryKey: ["funds", churchId],
     apiEndpoint: `/funds/churchId/${churchId}`,
-    apiType: 'GivingApi',
+    apiType: "GivingApi"
     // No custom stale time - use immediate staleness
   });
 }

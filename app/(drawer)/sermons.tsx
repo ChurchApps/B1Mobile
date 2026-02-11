@@ -258,9 +258,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  content: {
-    flex: 1
-  },
+  content: { flex: 1 },
   scrollView: {
     flex: 1,
     backgroundColor: "#F6F6F8"
@@ -270,9 +268,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 32
   },
-  section: {
-    flex: 1
-  },
+  section: { flex: 1 },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -302,9 +298,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 24
   },
-  errorButton: {
-    backgroundColor: "#0D47A1"
-  }
+  errorButton: { backgroundColor: "#0D47A1" }
 });
 
 export default Sermons;

@@ -123,7 +123,7 @@ export function NotificationTab() {
   };
 
   const renderChatListItems = (item: any) => {
-    let userchatDetails = {
+    const userchatDetails = {
       id: item.id,
       DisplayName: item.displayName,
       photo: item.photo
@@ -158,16 +158,11 @@ export function NotificationTab() {
     const getNotificationIcon = (type: string) => {
       switch (type?.toLowerCase()) {
         case "plan":
-        case "schedule":
-          return "calendar-today";
-        case "message":
-          return "message";
-        case "group":
-          return "group";
-        case "donation":
-          return "payment";
-        default:
-          return "notifications";
+        case "schedule": return "calendar-today";
+        case "message": return "message";
+        case "group": return "group";
+        case "donation": return "payment";
+        default: return "notifications";
       }
     };
 
@@ -331,25 +326,19 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     backgroundColor: "#FFFFFF"
   },
-  messageContent: {
-    padding: 16
-  },
+  messageContent: { padding: 16 },
   messageHeader: {
     flexDirection: "row",
     alignItems: "center"
   },
-  avatarContainer: {
-    marginRight: 12
-  },
+  avatarContainer: { marginRight: 12 },
   avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
     backgroundColor: "#F6F6F8"
   },
-  messageInfo: {
-    flex: 1
-  },
+  messageInfo: { flex: 1 },
   senderName: {
     color: "#3c3c3c",
     fontWeight: "600",
@@ -371,9 +360,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     backgroundColor: "#FFFFFF"
   },
-  notificationContent: {
-    padding: 16
-  },
+  notificationContent: { padding: 16 },
   notificationHeader: {
     flexDirection: "row",
     alignItems: "flex-start"
@@ -387,9 +374,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 12
   },
-  notificationInfo: {
-    flex: 1
-  },
+  notificationInfo: { flex: 1 },
   notificationMessage: {
     color: "#3c3c3c",
     lineHeight: 20,

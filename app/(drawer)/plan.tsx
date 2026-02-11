@@ -252,9 +252,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  scrollView: {
-    flex: 1
-  },
+  scrollView: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
     padding: 16,
@@ -281,9 +279,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1
   },
-  heroIcon: {
-    marginBottom: 12
-  },
+  heroIcon: { marginBottom: 12 },
   heroTitle: {
     color: "#FFFFFF",
     fontSize: 24,

@@ -219,9 +219,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  content: {
-    flex: 1
-  },
+  content: { flex: 1 },
   scrollView: {
     flex: 1,
     backgroundColor: "#F6F6F8"
@@ -297,9 +295,7 @@ const styles = StyleSheet.create({
     top: "40%",
     left: "30%"
   },
-  headerIcon: {
-    zIndex: 2
-  },
+  headerIcon: { zIndex: 2 },
   headerOverlay: {
     position: "absolute",
     top: 0,
@@ -311,9 +307,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
-  headerInfo: {
-    alignItems: "center"
-  },
+  headerInfo: { alignItems: "center" },
   headerLabel: {
     color: "#FFFFFF",
     fontWeight: "600",
@@ -349,9 +343,7 @@ const styles = StyleSheet.create({
   },
 
   // Sermons Section
-  sermonsSection: {
-    flex: 1
-  },
+  sermonsSection: { flex: 1 },
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -363,9 +355,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 20
   },
-  sectionSubtitle: {
-    color: "#9E9E9E"
-  },
+  sectionSubtitle: { color: "#9E9E9E" },
 
   // Empty State
   emptyCard: {
@@ -380,9 +370,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 32
   },
-  emptyIcon: {
-    marginBottom: 16
-  },
+  emptyIcon: { marginBottom: 16 },
   emptyTitle: {
     color: "#3c3c3c",
     fontWeight: "600",

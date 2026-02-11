@@ -66,9 +66,7 @@ export default function RRuleEditor(props: Props) {
           options.byweekday = [];
         }
         break;
-      case "interval":
-        options.interval = parseInt(e);
-        break;
+      case "interval": options.interval = parseInt(e); break;
     }
     setRRuleOptions(options);
   };
@@ -92,14 +90,14 @@ export default function RRuleEditor(props: Props) {
   const handleWeekDayClick = (value: Weekday) => {
     const options = { ...rRuleOptions };
     if (!options.byweekday) options.byweekday = [];
-    let selected = rRuleOptions.byweekday?.includes(value.weekday);
+    const selected = rRuleOptions.byweekday?.includes(value.weekday);
     if (!selected) options.byweekday.push(value.weekday);
     else options.byweekday = options.byweekday.filter(x => x !== value.weekday);
     setRRuleOptions(options);
   };
 
   const getDayButton = (value: Weekday, label: string) => {
-    let selected = rRuleOptions.byweekday?.includes(value.weekday);
+    const selected = rRuleOptions.byweekday?.includes(value.weekday);
     return (
       <TouchableOpacity
         key={value.toString()}
@@ -194,12 +192,8 @@ export default function RRuleEditor(props: Props) {
   const handleEndFollowupChange = (type: string, e: any) => {
     const options = { ...rRuleOptions };
     switch (type) {
-      case "until":
-        options.until = DateHelper.toDate(e);
-        break;
-      case "count":
-        options.count = parseInt(e);
-        break;
+      case "until": options.until = DateHelper.toDate(e); break;
+      case "count": options.count = parseInt(e); break;
     }
     setRRuleOptions(options);
   };
@@ -375,12 +369,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#2196F3",
     borderColor: "#1976D2"
   },
-  dayButtonText: {
-    color: "#000"
-  },
-  selectedDayText: {
-    color: "#fff"
-  },
+  dayButtonText: { color: "#000" },
+  selectedDayText: { color: "#fff" },
   dateConatiner: {
     borderWidth: 1,
     paddingHorizontal: DimensionHelper.wp(2),

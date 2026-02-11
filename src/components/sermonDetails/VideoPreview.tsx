@@ -18,10 +18,10 @@ export const VideoPreview: React.FC<VideoPreviewProps> = ({ sermon, onPlay, visi
   return (
     <Card style={styles.previewCard}>
       <TouchableOpacity style={styles.previewContainer} onPress={onPlay}>
-        <OptimizedImage 
-          source={{ uri: sermon.thumbnail || "" }} 
-          style={styles.previewImage} 
-          contentFit="cover" 
+        <OptimizedImage
+          source={{ uri: sermon.thumbnail || "" }}
+          style={styles.previewImage}
+          contentFit="cover"
         />
         <View style={styles.previewOverlay}>
           <View style={styles.playButton}>

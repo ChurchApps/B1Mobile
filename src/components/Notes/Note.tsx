@@ -6,7 +6,6 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PersonHelper } from "../../../src/helpers";
-import { OptimizedImage } from "../OptimizedImage";
 import { Avatar } from "../common/Avatar";
 
 interface NotesInterface {

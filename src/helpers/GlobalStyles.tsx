@@ -573,9 +573,7 @@ export const globalStyles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center"
   },
-  InputView: {
-    width: DimensionHelper.wp(66)
-  },
+  InputView: { width: DimensionHelper.wp(66) },
   PassInputTextStyle: {
     fontFamily: Constants.Fonts.RobotoMedium,
     color: "black",

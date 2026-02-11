@@ -64,7 +64,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
   });
 
   const getInterval = (subscription: SubscriptionInterface) => {
-    let interval = subscription?.plan?.interval_count + " " + subscription?.plan?.interval;
+    const interval = subscription?.plan?.interval_count + " " + subscription?.plan?.interval;
     return subscription?.plan?.interval_count > 1 ? interval + "s" : interval;
   };
 
@@ -119,7 +119,7 @@ export function RecurringDonations({ customerId, paymentMethods: pm, updatedFunc
         onPress: async () => {
           try {
             setIsDeleting(true);
-            let promises: any[] = [];
+            const promises: any[] = [];
             promises.push(ApiHelper.delete("/subscriptions/" + selectedSubscription.id, "GivingApi"));
             promises.push(ApiHelper.delete("/subscriptionfunds/subscription/" + selectedSubscription.id, "GivingApi"));
             await Promise.all(promises);

@@ -20,7 +20,7 @@ export const FundDonation = React.memo(({ fundDonation, funds, index, updatedFun
 
   const handleAmountChange = useCallback(
     (text: string) => {
-      let fd = { ...fundDonation };
+      const fd = { ...fundDonation };
       fd.amount = parseFloat(text.replace(/[^0-9.]/g, ""));
       updatedFunction(fd, index);
     },
@@ -28,7 +28,7 @@ export const FundDonation = React.memo(({ fundDonation, funds, index, updatedFun
   );
 
   useEffect(() => {
-    let fd = { ...fundDonation };
+    const fd = { ...fundDonation };
     fd.fundId = selectedFund;
     updatedFunction(fd, index);
   }, [selectedFund, fundDonation, index, updatedFunction]);

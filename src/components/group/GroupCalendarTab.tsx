@@ -119,16 +119,12 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
 };
 
 const styles = StyleSheet.create({
-  calendarContainer: {
-    minHeight: 350
-  },
+  calendarContainer: { minHeight: 350 },
   addEventButton: {
     marginBottom: 16,
     backgroundColor: "#70DC87"
   },
-  subscribeButton: {
-    marginBottom: 16
-  },
+  subscribeButton: { marginBottom: 16 },
   loadingOverlay: {
     position: "absolute",
     top: 80,

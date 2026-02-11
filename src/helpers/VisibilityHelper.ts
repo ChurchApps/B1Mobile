@@ -4,22 +4,15 @@ export function isLinkVisible(link: LinkInterface, user: LoginUserChurchInterfac
   const visibility = link.visibility || "everyone";
 
   switch (visibility) {
-    case "everyone":
-      return true;
-
-    case "visitors":
-      return !!user?.person?.id;
-
+    case "everyone": return true;
+    case "visitors": return !!user?.person?.id;
     case "members": {
       const status = user?.person?.membershipStatus?.toLowerCase();
       return status === "member" || status === "staff";
     }
 
-    case "staff":
-      return user?.person?.membershipStatus?.toLowerCase() === "staff";
-
-    case "team":
-      return user?.groups?.some(g => g.tags?.includes("team")) || false;
+    case "staff": return user?.person?.membershipStatus?.toLowerCase() === "staff";
+    case "team": return user?.groups?.some(g => g.tags?.includes("team")) || false;
 
     case "groups": {
       if (!link.groupIds) return false;
@@ -33,8 +26,7 @@ export function isLinkVisible(link: LinkInterface, user: LoginUserChurchInterfac
       }
     }
 
-    default:
-      return true;
+    default: return true;
   }
 }
 

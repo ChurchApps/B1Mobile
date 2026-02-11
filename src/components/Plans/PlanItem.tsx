@@ -86,7 +86,9 @@ export const PlanItem = React.memo((props: Props) => {
         {showLessonDetails && props.planItem.relatedId && <LessonDialog sectionId={props.planItem.relatedId} sectionName={props.planItem.label} onClose={handleLessonClose} />}
       </View>
     ),
-    [itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleLessonPress, handleLessonClose, showLessonDetails]
+    [
+      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleLessonPress, handleLessonClose, showLessonDetails
+    ]
   );
 
   const getSongRow = useCallback(
@@ -106,7 +108,9 @@ export const PlanItem = React.memo((props: Props) => {
         {showSongDetails && <SongDialog arrangementKeyId={props.planItem.relatedId} onClose={handleSongClose} />}
       </View>
     ),
-    [itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleSongPress, handleSongClose, showSongDetails]
+    [
+      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleSongPress, handleSongClose, showSongDetails
+    ]
   );
 
   const getActionRow = useCallback(
@@ -130,7 +134,9 @@ export const PlanItem = React.memo((props: Props) => {
         {showActionDetails && props.planItem.relatedId && <ActionDialog actionId={props.planItem.relatedId} actionName={props.planItem.label} onClose={handleActionClose} />}
       </View>
     ),
-    [itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleActionPress, handleActionClose, showActionDetails]
+    [
+      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleActionPress, handleActionClose, showActionDetails
+    ]
   );
 
   const getAddOnRow = useCallback(
@@ -154,7 +160,9 @@ export const PlanItem = React.memo((props: Props) => {
         {showAddOnDetails && props.planItem.relatedId && <AddOnDialog addOnId={props.planItem.relatedId} addOnName={props.planItem.label} onClose={handleAddOnClose} />}
       </View>
     ),
-    [itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleAddOnPress, handleAddOnClose, showAddOnDetails]
+    [
+      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleAddOnPress, handleAddOnClose, showAddOnDetails
+    ]
   );
 
   const getLessonSectionRow = useCallback(
@@ -178,7 +186,9 @@ export const PlanItem = React.memo((props: Props) => {
         {showLessonDetails && props.planItem.relatedId && <LessonDialog sectionId={props.planItem.relatedId} sectionName={props.planItem.label} onClose={handleLessonClose} />}
       </View>
     ),
-    [itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleLessonPress, handleLessonClose, showLessonDetails]
+    [
+      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleLessonPress, handleLessonClose, showLessonDetails
+    ]
   );
 
   const planItemContent = useMemo(() => {
@@ -204,9 +214,7 @@ export const PlanItem = React.memo((props: Props) => {
 });
 
 const styles = StyleSheet.create({
-  headerContainer: {
-    paddingVertical: DimensionHelper.hp(1)
-  },
+  headerContainer: { paddingVertical: DimensionHelper.hp(1) },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -244,9 +252,7 @@ const styles = StyleSheet.create({
     fontSize: DimensionHelper.wp(4),
     color: Constants.Colors.Dark_Gray
   },
-  linkText: {
-    color: Constants.Colors.app_color
-  },
+  linkText: { color: Constants.Colors.app_color },
   descriptionText: {
     fontSize: DimensionHelper.wp(3.5),
     color: Constants.Colors.Dark_Gray,

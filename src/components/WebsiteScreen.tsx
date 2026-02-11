@@ -41,9 +41,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   useFocusEffect(
     useCallback(() => {
       navigationMain &&
-        navigationMain.setOptions({
-          title: title || "Website"
-        });
+        navigationMain.setOptions({ title: title || "Website" });
     }, [navigationMain, title])
   );
 
@@ -60,7 +58,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
       return;
     }
 
-    let newUrl = currentUrl + "&autoPrint=1";
+    const newUrl = currentUrl + "&autoPrint=1";
     Linking.openURL(newUrl);
   };
 

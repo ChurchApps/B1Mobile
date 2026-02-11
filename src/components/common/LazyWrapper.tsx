@@ -1,13 +1,13 @@
-import React, { Suspense } from 'react';
-import { InlineLoader } from './LoadingComponents';
+import React, { Suspense } from "react";
+import { InlineLoader } from "./LoadingComponents";
 
 interface LazyWrapperProps {
   children: React.ReactNode;
   loadingText?: string;
 }
 
-export const LazyWrapper: React.FC<LazyWrapperProps> = ({ 
-  children, 
+export const LazyWrapper: React.FC<LazyWrapperProps> = ({
+  children,
   loadingText = "Loading..."
 }) => {
   return (

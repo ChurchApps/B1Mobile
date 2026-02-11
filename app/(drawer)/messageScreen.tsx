@@ -112,7 +112,7 @@ const MessageScreen = () => {
       const data = await ApiHelper.get("/messages/conversation/" + conversationId, "MessagingApi");
       console.log("Messages received:", data);
       if (data && Array.isArray(data)) {
-        let messages: MessageInterface[] = data;
+        const messages: MessageInterface[] = data;
         // Fetch person data to populate displayName
         if (messages.length > 0) {
           const peopleIds = ArrayHelper.getIds(messages, "personId");
@@ -277,7 +277,7 @@ const MessageScreen = () => {
     if (messageText == "") return;
     if (!currentUserChurch?.person?.id) return;
     if (currentConversation == null || currentConversation == undefined || Object.keys(currentConversation).length == 0) {
-      let params = [
+      const params = [
         {
           allowAnonymousPosts: false,
           contentType: "privateMessage",
@@ -288,7 +288,7 @@ const MessageScreen = () => {
       ];
       ApiHelper.post("/conversations", params, "MessagingApi").then(async (data: ConversationCreateInterface[]) => {
         if (data != null && data.length > 0 && data[0]?.id) {
-          let params = [{ fromPersonId: currentUserChurch.person.id, toPersonId: details.id, conversationId: data[0]?.id }];
+          const params = [{ fromPersonId: currentUserChurch.person.id, toPersonId: details.id, conversationId: data[0]?.id }];
           ApiHelper.post("/privateMessages", params, "MessagingApi").then((data: PrivateMessagesCreate[]) => {
             if (data != null && data.length > 0 && data[0]?.id) {
               sendMessage(data[0].conversationId);
@@ -302,7 +302,7 @@ const MessageScreen = () => {
   const sendMessage = (conversationId: string) => {
     let params = {};
     if (editedMessage == null) params = [{ conversationId: conversationId, content: messageText }];
-    else
+    else {
       params = [
         {
           id: editedMessage.id,
@@ -316,6 +316,7 @@ const MessageScreen = () => {
           timeUpdated: null
         }
       ];
+    }
 
     ApiHelper.post("/messages", params, "MessagingApi").then(() => {
       setMessageText("");

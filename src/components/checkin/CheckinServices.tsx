@@ -142,7 +142,7 @@ export const CheckinServices = (props: Props) => {
 
   const createGroupTree = (groups: any) => {
     let category = "";
-    let group_tree: any[] = [];
+    const group_tree: any[] = [];
 
     const sortedGroups = groups.sort((a: any, b: any) => ((a.categoryName || "") > (b.categoryName || "") ? 1 : -1));
 
@@ -263,12 +263,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16
   },
-  servicesList: {
-    flex: 1
-  },
-  servicesContent: {
-    paddingBottom: 24
-  },
+  servicesList: { flex: 1 },
+  servicesContent: { paddingBottom: 24 },
   serviceCard: {
     backgroundColor: "#FFFFFF",
     borderRadius: 12,
@@ -294,9 +290,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 16
   },
-  serviceInfo: {
-    flex: 1
-  },
+  serviceInfo: { flex: 1 },
   serviceName: {
     color: "#3c3c3c",
     fontWeight: "600",

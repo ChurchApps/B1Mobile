@@ -294,9 +294,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8" // Background from style guide
   },
-  scrollView: {
-    flex: 1
-  },
+  scrollView: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
     paddingBottom: 32
@@ -383,9 +381,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center"
   },
-  editProfileIcon: {
-    backgroundColor: "#4CAF50"
-  },
+  editProfileIcon: { backgroundColor: "#4CAF50" },
 
   // Sections
   section: {
@@ -425,9 +421,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 16
   },
-  contactDetails: {
-    flex: 1
-  },
+  contactDetails: { flex: 1 },
   contactLabel: {
     color: "#9E9E9E",
     fontSize: 12,

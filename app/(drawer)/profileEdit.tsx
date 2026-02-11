@@ -250,12 +250,9 @@ const ProfileEdit = () => {
             onFamilyMembersChange={setPendingFamilyMembers}
           />
         );
-      case "account":
-        return <AccountSettings />;
-      case "visibility":
-        return <VisibilitySettings />;
-      default:
-        return null;
+      case "account": return <AccountSettings />;
+      case "visibility": return <VisibilitySettings />;
+      default: return null;
     }
   };
 
@@ -295,9 +292,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8"
   },
-  content: {
-    flex: 1
-  }
+  content: { flex: 1 }
 });
 
 export default ProfileEdit;

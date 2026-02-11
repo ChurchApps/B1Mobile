@@ -107,38 +107,32 @@ export const LessonPreview = React.memo((props: Props) => {
 });
 
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: DimensionHelper.wp(2),
-  },
+  container: { paddingHorizontal: DimensionHelper.wp(2) },
   venueLabel: {
     fontSize: DimensionHelper.wp(3.5),
     color: Constants.Colors.Dark_Gray,
     marginBottom: DimensionHelper.hp(1),
-    opacity: 0.7,
+    opacity: 0.7
   },
-  previewContent: {
-    opacity: 0.6,
-  },
-  headerSection: {
-    marginBottom: DimensionHelper.hp(1),
-  },
+  previewContent: { opacity: 0.6 },
+  headerSection: { marginBottom: DimensionHelper.hp(1) },
   headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#f5f5f5",
     padding: DimensionHelper.wp(2),
-    borderRadius: 4,
+    borderRadius: 4
   },
   headerLabel: {
     fontSize: DimensionHelper.wp(4),
     fontWeight: "600",
-    color: Constants.Colors.Dark_Gray,
+    color: Constants.Colors.Dark_Gray
   },
   headerTime: {
     fontSize: DimensionHelper.wp(3.5),
     color: Constants.Colors.Dark_Gray,
-    opacity: 0.7,
+    opacity: 0.7
   },
   itemRow: {
     flexDirection: "row",
@@ -147,34 +141,30 @@ const styles = StyleSheet.create({
     paddingVertical: DimensionHelper.hp(1),
     paddingHorizontal: DimensionHelper.wp(2),
     borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0",
+    borderBottomColor: "#e0e0e0"
   },
-  childItem: {
-    paddingLeft: DimensionHelper.wp(4),
-  },
-  itemContent: {
-    flex: 1,
-  },
+  childItem: { paddingLeft: DimensionHelper.wp(4) },
+  itemContent: { flex: 1 },
   itemLabel: {
     fontSize: DimensionHelper.wp(3.5),
-    color: Constants.Colors.Dark_Gray,
+    color: Constants.Colors.Dark_Gray
   },
   itemLabelLink: {
     fontSize: DimensionHelper.wp(3.5),
     color: Constants.Colors.app_color,
-    textDecorationLine: "underline",
+    textDecorationLine: "underline"
   },
   itemDescription: {
     fontSize: DimensionHelper.wp(3),
     color: Constants.Colors.Dark_Gray,
     opacity: 0.7,
     fontStyle: "italic",
-    marginTop: DimensionHelper.hp(0.3),
+    marginTop: DimensionHelper.hp(0.3)
   },
   itemTime: {
     fontSize: DimensionHelper.wp(3.5),
     color: Constants.Colors.Dark_Gray,
     opacity: 0.7,
-    marginLeft: DimensionHelper.wp(2),
-  },
+    marginLeft: DimensionHelper.wp(2)
+  }
 });

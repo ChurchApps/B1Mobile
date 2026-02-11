@@ -57,9 +57,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent"
   },
-  activeTab: {
-    borderBottomColor: "#0D47A1"
-  },
+  activeTab: { borderBottomColor: "#0D47A1" },
   tabContent: {
     flexDirection: "row",
     alignItems: "center",

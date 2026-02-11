@@ -218,9 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F6F6F8" // Background from style guide
   },
-  content: {
-    flex: 1
-  },
+  content: { flex: 1 },
 
   // Search Section
   searchSection: {
@@ -231,12 +229,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0"
   },
-  searchContainer: {
-    marginBottom: 0
-  },
-  searchInput: {
-    backgroundColor: "#FFFFFF"
-  },
+  searchContainer: { marginBottom: 0 },
+  searchInput: { backgroundColor: "#FFFFFF" },
 
   // List Content
   listContent: {

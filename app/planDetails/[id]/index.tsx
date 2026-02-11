@@ -176,7 +176,7 @@ const PlanDetails = () => {
             </View>
           )}
         </View>
-        
+
         {assignmentsLoading || positionsLoading || timesLoading ? (
           <Card style={styles.loadingCard}>
             <Card.Content style={styles.loadingCardContent}>
@@ -310,9 +310,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent"
   },
-  activeTab: {
-    borderBottomColor: "#0D47A1"
-  },
+  activeTab: { borderBottomColor: "#0D47A1" },
   tabText: {
     color: "#9E9E9E",
     fontWeight: "500",
@@ -333,9 +331,7 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 32
   },
-  contentSection: {
-    marginBottom: 16
-  },
+  contentSection: { marginBottom: 16 },
 
   // Loading Indicator
   loadingContainer: {
@@ -387,9 +383,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flex: 1
   },
-  overviewHeroIcon: {
-    marginBottom: 12
-  },
+  overviewHeroIcon: { marginBottom: 12 },
   overviewHeroTitle: {
     color: "#FFFFFF",
     fontSize: 24,
@@ -405,9 +399,7 @@ const styles = StyleSheet.create({
   },
 
   // My Positions Section - Prominent Display
-  myPositionsSection: {
-    marginBottom: 24
-  },
+  myPositionsSection: { marginBottom: 24 },
   myPositionsHeader: {
     flexDirection: "row",
     alignItems: "center",

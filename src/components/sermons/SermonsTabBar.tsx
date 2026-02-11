@@ -10,15 +10,15 @@ interface SermonsTabBarProps {
 export const SermonsTabBar: React.FC<SermonsTabBarProps> = ({ activeSection, onTabChange }) => {
   return (
     <View style={styles.tabContainer}>
-      <TouchableOpacity 
-        style={[styles.tab, activeSection === "playlists" && styles.activeTab]} 
+      <TouchableOpacity
+        style={[styles.tab, activeSection === "playlists" && styles.activeTab]}
         onPress={() => onTabChange("playlists")}>
         <Text variant="labelLarge" style={[styles.tabText, activeSection === "playlists" && styles.activeTabText]}>
           Series
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity 
-        style={[styles.tab, activeSection === "recent" && styles.activeTab]} 
+      <TouchableOpacity
+        style={[styles.tab, activeSection === "recent" && styles.activeTab]}
         onPress={() => onTabChange("recent")}>
         <Text variant="labelLarge" style={[styles.tabText, activeSection === "recent" && styles.activeTabText]}>
           Recent
@@ -43,9 +43,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent"
   },
-  activeTab: {
-    borderBottomColor: "#0D47A1"
-  },
+  activeTab: { borderBottomColor: "#0D47A1" },
   tabText: {
     color: "#9E9E9E",
     fontWeight: "500"

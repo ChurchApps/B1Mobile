@@ -97,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({
             style={{ marginRight: designSystem.spacing.sm }}
           />
         )}
-        
+
         {showMenu && (
           <TouchableOpacity onPress={handleMenuPress} style={{ marginRight: 12 }}>
             <Ionicons name="menu" size={24} color={getIconColor()} />

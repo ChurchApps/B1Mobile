@@ -30,9 +30,7 @@ export const GroupAboutTab: React.FC<GroupAboutTabProps> = ({ about }) => {
 };
 
 const styles = StyleSheet.create({
-  aboutContainer: {
-    minHeight: 200
-  },
+  aboutContainer: { minHeight: 200 },
   markdownStyles: {
     body: {
       color: "#3c3c3c",

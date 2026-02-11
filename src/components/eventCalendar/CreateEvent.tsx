@@ -503,24 +503,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4
   },
-  scrollView: {
-    flex: 1
-  },
+  scrollView: { flex: 1 },
   scrollContent: {
     padding: 20,
     paddingBottom: 100
   },
-  fieldContainer: {
-    marginVertical: 16
-  },
+  fieldContainer: { marginVertical: 16 },
   fieldLabel: {
     color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 8
   },
-  textInput: {
-    backgroundColor: "#FFFFFF"
-  },
+  textInput: { backgroundColor: "#FFFFFF" },
   optionRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -529,20 +523,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#F0F0F0"
   },
-  optionInfo: {
-    flex: 1
-  },
+  optionInfo: { flex: 1 },
   optionTitle: {
     color: "#3c3c3c",
     fontWeight: "500",
     marginBottom: 2
   },
-  optionSubtitle: {
-    color: "#9E9E9E"
-  },
-  dateTimeContainer: {
-    marginTop: 8
-  },
+  optionSubtitle: { color: "#9E9E9E" },
+  dateTimeContainer: { marginTop: 8 },
   dateTimeRow: {
     flexDirection: "row",
     alignItems: "center",

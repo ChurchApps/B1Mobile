@@ -94,28 +94,28 @@ export class ValidationHelper {
     if (!value) return "Expiry date is required";
     const regex = /^(0[1-9]|1[0-2])\/\d{2}$/;
     if (!regex.test(value)) return "Invalid expiry date (MM/YY)";
-    
+
     const [month, year] = value.split("/");
     const currentYear = new Date().getFullYear() % 100;
     const currentMonth = new Date().getMonth() + 1;
-    
+
     if (Number(year) < currentYear || (Number(year) === currentYear && Number(month) < currentMonth)) {
       return "Card has expired";
     }
-    
+
     return null;
   }
 
   static validateForm(values: Record<string, any>, validators: Record<string, (value: any) => string | null>): Record<string, string> {
     const errors: Record<string, string> = {};
-    
+
     Object.keys(validators).forEach(key => {
       const error = validators[key](values[key]);
       if (error) {
         errors[key] = error;
       }
     });
-    
+
     return errors;
   }
 

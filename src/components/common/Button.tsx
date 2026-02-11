@@ -29,7 +29,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   const getBackgroundColor = () => {
     if (isDisabled) return "#cccccc";
-    
+
     switch (variant) {
       case "primary": return Constants.Colors.button_bg;
       case "secondary": return Constants.Colors.button_yellow;
