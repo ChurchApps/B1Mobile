@@ -20,6 +20,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@churchapps/content-provider-helper": "^0.1.0",
     "@churchapps/helpers": "^1.2.22",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^15.0.3",

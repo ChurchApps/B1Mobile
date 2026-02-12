@@ -5,7 +5,6 @@ export type { PlanItemInterface };
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants } from "../../../src/helpers/Constants";
 import { SongDialog } from "./SongDialog";
-import { AddOnDialog } from "./AddOnDialog";
 import { ActionDialog } from "./ActionDialog";
 import { LessonDialog } from "./LessonDialog";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -14,45 +13,55 @@ interface Props {
   planItem: PlanItemInterface;
   isLast?: boolean;
   startTime?: number;
+  associatedProviderId?: string;
+  associatedVenueId?: string;
+  ministryId?: string;
 }
 
 export const PlanItem = React.memo((props: Props) => {
   const [showSongDetails, setShowSongDetails] = React.useState(false);
-  const [showAddOnDetails, setShowAddOnDetails] = React.useState(false);
   const [showActionDetails, setShowActionDetails] = React.useState(false);
   const [showLessonDetails, setShowLessonDetails] = React.useState(false);
 
+  const pi = props.planItem;
+  const hasProviderFields = pi.providerId && pi.providerPath && pi.providerContentPath;
+
   const itemContainerStyle = useMemo(() => [styles.itemContainer, props.isLast && { borderBottomWidth: 0 }], [props.isLast]);
-
-  const formattedTime = useMemo(() => PlanHelper.formatTime(props.planItem.seconds || 0), [props.planItem.seconds]);
-
+  const formattedTime = useMemo(() => PlanHelper.formatTime(pi.seconds || 0), [pi.seconds]);
   const formattedStartTime = useMemo(() => PlanHelper.formatTime(props.startTime || 0), [props.startTime]);
 
   const renderedChildren = useMemo(() => {
-    if (!props.planItem.children?.length) return null;
+    if (!pi.children?.length) return null;
     let cumulativeTime = props.startTime || 0;
-    return props.planItem.children.map((child) => {
+    return pi.children.map((child) => {
       const childStartTime = cumulativeTime;
       cumulativeTime += child.seconds || 0;
-      return <PlanItem key={child.id} planItem={child} startTime={childStartTime} />;
+      return (
+        <PlanItem
+          key={child.id}
+          planItem={child}
+          startTime={childStartTime}
+          associatedProviderId={props.associatedProviderId}
+          associatedVenueId={props.associatedVenueId}
+          ministryId={props.ministryId}
+        />
+      );
     });
-  }, [props.planItem.children, props.startTime]);
+  }, [pi.children, props.startTime, props.associatedProviderId, props.associatedVenueId, props.ministryId]);
 
   const handleSongPress = useCallback(() => setShowSongDetails(true), []);
   const handleSongClose = useCallback(() => setShowSongDetails(false), []);
-  const handleAddOnPress = useCallback(() => setShowAddOnDetails(true), []);
-  const handleAddOnClose = useCallback(() => setShowAddOnDetails(false), []);
   const handleActionPress = useCallback(() => setShowActionDetails(true), []);
   const handleActionClose = useCallback(() => setShowActionDetails(false), []);
   const handleLessonPress = useCallback(() => setShowLessonDetails(true), []);
   const handleLessonClose = useCallback(() => setShowLessonDetails(false), []);
 
   const getHeaderRow = useCallback(() => {
-    const sectionDuration = PlanHelper.getSectionDuration(props.planItem);
+    const sectionDuration = PlanHelper.getSectionDuration(pi);
     return (
       <View style={styles.headerContainer}>
         <View style={styles.headerRow}>
-          <Text style={styles.headerLabel}>{props.planItem.label}</Text>
+          <Text style={styles.headerLabel}>{pi.label}</Text>
           {sectionDuration > 0 && (
             <View style={styles.durationContainer}>
               <MaterialIcons name="schedule" size={14} color="#999" />
@@ -63,152 +72,97 @@ export const PlanItem = React.memo((props: Props) => {
         {renderedChildren}
       </View>
     );
-  }, [props.planItem, renderedChildren]);
+  }, [pi, renderedChildren]);
 
-  const getItemRow = useCallback(
-    () => (
-      <View style={itemContainerStyle}>
-        <Text style={styles.startTimeText}>{formattedStartTime}</Text>
-        <View style={styles.contentContainer}>
-          {props.planItem.relatedId ? (
-            <TouchableOpacity onPress={handleLessonPress}>
-              <Text style={[styles.labelText, styles.linkText]}>{props.planItem.label}</Text>
-            </TouchableOpacity>
-          ) : (
-            <Text style={styles.labelText}>{props.planItem.label}</Text>
-          )}
-          {props.planItem.description ? <Text style={styles.descriptionText}>{props.planItem.description}</Text> : null}
-        </View>
-        <View style={styles.durationContainer}>
-          <MaterialIcons name="schedule" size={14} color="#999" />
-          <Text style={styles.durationText}>{formattedTime}</Text>
-        </View>
-        {showLessonDetails && props.planItem.relatedId && <LessonDialog sectionId={props.planItem.relatedId} sectionName={props.planItem.label} onClose={handleLessonClose} />}
-      </View>
-    ),
-    [
-      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleLessonPress, handleLessonClose, showLessonDetails
-    ]
-  );
-
-  const getSongRow = useCallback(
-    () => (
-      <View style={itemContainerStyle}>
-        <Text style={styles.startTimeText}>{formattedStartTime}</Text>
-        <View style={styles.contentContainer}>
-          <TouchableOpacity onPress={handleSongPress}>
-            <Text style={[styles.labelText, styles.linkText]}>{props.planItem.label}</Text>
+  const getGenericRow = useCallback((onPress?: () => void, dialogElement?: React.ReactNode) => (
+    <View style={itemContainerStyle}>
+      <Text style={styles.startTimeText}>{formattedStartTime}</Text>
+      <View style={styles.contentContainer}>
+        {onPress ? (
+          <TouchableOpacity onPress={onPress}>
+            <Text style={[styles.labelText, styles.linkText]}>{pi.label}</Text>
           </TouchableOpacity>
-          {props.planItem.description ? <Text style={styles.descriptionText}>{props.planItem.description}</Text> : null}
-        </View>
-        <View style={styles.durationContainer}>
-          <MaterialIcons name="schedule" size={14} color="#999" />
-          <Text style={styles.durationText}>{formattedTime}</Text>
-        </View>
-        {showSongDetails && <SongDialog arrangementKeyId={props.planItem.relatedId} onClose={handleSongClose} />}
+        ) : (
+          <Text style={styles.labelText}>{pi.label}</Text>
+        )}
+        {pi.description ? <Text style={styles.descriptionText}>{pi.description}</Text> : null}
       </View>
-    ),
-    [
-      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleSongPress, handleSongClose, showSongDetails
-    ]
-  );
-
-  const getActionRow = useCallback(
-    () => (
-      <View style={itemContainerStyle}>
-        <Text style={styles.startTimeText}>{formattedStartTime}</Text>
-        <View style={styles.contentContainer}>
-          {props.planItem.relatedId ? (
-            <TouchableOpacity onPress={handleActionPress}>
-              <Text style={[styles.labelText, styles.linkText]}>{props.planItem.label}</Text>
-            </TouchableOpacity>
-          ) : (
-            <Text style={styles.labelText}>{props.planItem.label}</Text>
-          )}
-          {props.planItem.description ? <Text style={styles.descriptionText}>{props.planItem.description}</Text> : null}
-        </View>
-        <View style={styles.durationContainer}>
-          <MaterialIcons name="schedule" size={14} color="#999" />
-          <Text style={styles.durationText}>{formattedTime}</Text>
-        </View>
-        {showActionDetails && props.planItem.relatedId && <ActionDialog actionId={props.planItem.relatedId} actionName={props.planItem.label} onClose={handleActionClose} />}
+      <View style={styles.durationContainer}>
+        <MaterialIcons name="schedule" size={14} color="#999" />
+        <Text style={styles.durationText}>{formattedTime}</Text>
       </View>
-    ),
-    [
-      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleActionPress, handleActionClose, showActionDetails
-    ]
-  );
-
-  const getAddOnRow = useCallback(
-    () => (
-      <View style={itemContainerStyle}>
-        <Text style={styles.startTimeText}>{formattedStartTime}</Text>
-        <View style={styles.contentContainer}>
-          {props.planItem.relatedId ? (
-            <TouchableOpacity onPress={handleAddOnPress}>
-              <Text style={[styles.labelText, styles.linkText]}>{props.planItem.label}</Text>
-            </TouchableOpacity>
-          ) : (
-            <Text style={styles.labelText}>{props.planItem.label}</Text>
-          )}
-          {props.planItem.description ? <Text style={styles.descriptionText}>{props.planItem.description}</Text> : null}
-        </View>
-        <View style={styles.durationContainer}>
-          <MaterialIcons name="schedule" size={14} color="#999" />
-          <Text style={styles.durationText}>{formattedTime}</Text>
-        </View>
-        {showAddOnDetails && props.planItem.relatedId && <AddOnDialog addOnId={props.planItem.relatedId} addOnName={props.planItem.label} onClose={handleAddOnClose} />}
-      </View>
-    ),
-    [
-      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleAddOnPress, handleAddOnClose, showAddOnDetails
-    ]
-  );
-
-  const getLessonSectionRow = useCallback(
-    () => (
-      <View style={itemContainerStyle}>
-        <Text style={styles.startTimeText}>{formattedStartTime}</Text>
-        <View style={styles.contentContainer}>
-          {props.planItem.relatedId ? (
-            <TouchableOpacity onPress={handleLessonPress}>
-              <Text style={[styles.labelText, styles.linkText]}>{props.planItem.label}</Text>
-            </TouchableOpacity>
-          ) : (
-            <Text style={styles.labelText}>{props.planItem.label}</Text>
-          )}
-          {props.planItem.description ? <Text style={styles.descriptionText}>{props.planItem.description}</Text> : null}
-        </View>
-        <View style={styles.durationContainer}>
-          <MaterialIcons name="schedule" size={14} color="#999" />
-          <Text style={styles.durationText}>{formattedTime}</Text>
-        </View>
-        {showLessonDetails && props.planItem.relatedId && <LessonDialog sectionId={props.planItem.relatedId} sectionName={props.planItem.label} onClose={handleLessonClose} />}
-      </View>
-    ),
-    [
-      itemContainerStyle, formattedStartTime, formattedTime, props.planItem.label, props.planItem.description, props.planItem.relatedId, handleLessonPress, handleLessonClose, showLessonDetails
-    ]
-  );
+      {dialogElement}
+    </View>
+  ), [itemContainerStyle, formattedStartTime, formattedTime, pi.label, pi.description]);
 
   const planItemContent = useMemo(() => {
-    switch (props.planItem.itemType) {
+    switch (pi.itemType) {
       case "header":
         return getHeaderRow();
       case "song":
       case "arrangementKey":
-        return getSongRow();
+        return getGenericRow(
+          pi.relatedId ? handleSongPress : undefined,
+          showSongDetails && <SongDialog arrangementKeyId={pi.relatedId} onClose={handleSongClose} />
+        );
+      // Action types (new provider + legacy)
+      case "providerPresentation":
       case "lessonAction":
-        return getActionRow();
+      case "action":
+      // File/add-on types (new provider + legacy)
+      case "providerFile":
       case "lessonAddOn":
-        return getAddOnRow();
+      case "addon":
+      case "file":
+        return getGenericRow(
+          (pi.relatedId || hasProviderFields) ? handleActionPress : undefined,
+          showActionDetails && (
+            <ActionDialog
+              actionId={pi.relatedId || pi.providerContentPath || pi.id}
+              contentName={pi.label}
+              onClose={handleActionClose}
+              providerId={pi.providerId || props.associatedProviderId}
+              downloadUrl={pi.link}
+              providerPath={pi.providerPath}
+              providerContentPath={pi.providerContentPath}
+            />
+          )
+        );
+      // Section types (new provider + legacy)
+      case "providerSection":
       case "lessonSection":
-        return getLessonSectionRow();
+      case "section":
+        return getGenericRow(
+          (pi.relatedId || hasProviderFields) ? handleLessonPress : undefined,
+          showLessonDetails && (
+            <LessonDialog
+              sectionId={pi.relatedId || pi.providerContentPath || pi.id}
+              sectionName={pi.label}
+              onClose={handleLessonClose}
+              providerId={pi.providerId}
+              downloadUrl={pi.link}
+              providerPath={pi.providerPath}
+              providerContentPath={pi.providerContentPath}
+            />
+          )
+        );
       case "item":
       default:
-        return getItemRow();
+        return getGenericRow(
+          pi.relatedId ? handleLessonPress : undefined,
+          showLessonDetails && pi.relatedId && (
+            <LessonDialog
+              sectionId={pi.relatedId}
+              sectionName={pi.label}
+              onClose={handleLessonClose}
+              providerId={pi.providerId}
+              providerPath={pi.providerPath}
+              providerContentPath={pi.providerContentPath}
+            />
+          )
+        );
     }
-  }, [props.planItem.itemType, getHeaderRow, getSongRow, getActionRow, getAddOnRow, getLessonSectionRow, getItemRow]);
+  }, [pi.itemType, getHeaderRow, getGenericRow, handleSongPress, handleSongClose, handleActionPress, handleActionClose, handleLessonPress, handleLessonClose, showSongDetails, showActionDetails, showLessonDetails, hasProviderFields, props.associatedProviderId]);
 
   return <>{planItemContent}</>;
 });

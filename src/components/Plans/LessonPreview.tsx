@@ -1,46 +1,42 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { PlanHelper } from "@churchapps/helpers";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { PlanHelper, type PlanItemInterface } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants, ExternalVenueRefInterface } from "../../../src/helpers";
-import type { PlanItemInterface } from "./PlanItem";
 import { ActionDialog } from "./ActionDialog";
 import { LessonDialog } from "./LessonDialog";
-import { AddOnDialog } from "./AddOnDialog";
 
 interface Props {
   lessonItems: PlanItemInterface[];
   venueName: string;
   externalRef?: ExternalVenueRefInterface | null;
+  associatedProviderId?: string;
+  associatedVenueId?: string;
+  ministryId?: string;
+}
+
+function isClickableAction(item: PlanItemInterface): boolean {
+  const actionTypes = ["providerPresentation", "lessonAction", "action", "providerFile", "lessonAddOn", "addon", "file"];
+  if (!actionTypes.includes(item.itemType || "")) return false;
+  return !!(item.relatedId || (item.providerId && item.providerPath && item.providerContentPath));
+}
+
+function isClickableSection(item: PlanItemInterface): boolean {
+  const sectionTypes = ["providerSection", "lessonSection", "section", "item"];
+  if (!sectionTypes.includes(item.itemType || "")) return false;
+  return !!(item.relatedId || (item.providerId && item.providerPath && item.providerContentPath));
 }
 
 export const LessonPreview = React.memo((props: Props) => {
-  const [actionId, setActionId] = useState<string | null>(null);
-  const [actionName, setActionName] = useState<string>("");
-  const [lessonSectionId, setLessonSectionId] = useState<string | null>(null);
-  const [sectionName, setSectionName] = useState<string>("");
-  const [addOnId, setAddOnId] = useState<string | null>(null);
-  const [addOnName, setAddOnName] = useState<string>("");
+  const [actionItem, setActionItem] = useState<PlanItemInterface | null>(null);
+  const [sectionItem, setSectionItem] = useState<PlanItemInterface | null>(null);
 
   const handleActionClick = useCallback((item: PlanItemInterface) => {
-    if (item.relatedId) {
-      setActionId(item.relatedId);
-      setActionName(item.label || "");
-    }
+    setActionItem(item);
   }, []);
 
   const handleSectionClick = useCallback((item: PlanItemInterface) => {
-    if (item.relatedId) {
-      setLessonSectionId(item.relatedId);
-      setSectionName(item.label || "");
-    }
-  }, []);
-
-  const handleAddOnClick = useCallback((item: PlanItemInterface) => {
-    if (item.relatedId) {
-      setAddOnId(item.relatedId);
-      setAddOnName(item.label || "");
-    }
+    setSectionItem(item);
   }, []);
 
   const renderPreviewItem = (item: PlanItemInterface, isChild: boolean = false) => {
@@ -59,19 +55,20 @@ export const LessonPreview = React.memo((props: Props) => {
       );
     }
 
-    const isAction = item.itemType === "lessonAction" && item.relatedId;
-    const isLessonSection = item.itemType === "item" && item.relatedId;
-    const isAddOn = item.itemType === "lessonAddOn" && item.relatedId;
-    const isClickable = isAction || isLessonSection || isAddOn;
+    const isAction = isClickableAction(item);
+    const isSection = isClickableSection(item);
+    const isClickable = isAction || isSection;
 
     const handleClick = () => {
       if (isAction) handleActionClick(item);
-      else if (isAddOn) handleAddOnClick(item);
-      else handleSectionClick(item);
+      else if (isSection) handleSectionClick(item);
     };
 
     return (
       <View key={item.id} style={[styles.itemRow, isChild && styles.childItem]}>
+        {item.thumbnailUrl && (
+          <Image source={{ uri: item.thumbnailUrl }} style={styles.thumbnail} resizeMode="cover" />
+        )}
         <View style={styles.itemContent}>
           {isClickable ? (
             <TouchableOpacity onPress={handleClick}>
@@ -99,9 +96,30 @@ export const LessonPreview = React.memo((props: Props) => {
           {props.lessonItems.map((item) => renderPreviewItem(item))}
         </View>
       </View>
-      {actionId && <ActionDialog actionId={actionId} actionName={actionName} externalRef={props.externalRef} onClose={() => setActionId(null)} />}
-      {lessonSectionId && <LessonDialog sectionId={lessonSectionId} sectionName={sectionName} externalRef={props.externalRef} onClose={() => setLessonSectionId(null)} />}
-      {addOnId && <AddOnDialog addOnId={addOnId} addOnName={addOnName} externalRef={props.externalRef} onClose={() => setAddOnId(null)} />}
+      {actionItem && (
+        <ActionDialog
+          actionId={actionItem.relatedId || actionItem.providerContentPath || actionItem.id || ""}
+          contentName={actionItem.label}
+          externalRef={props.externalRef}
+          onClose={() => setActionItem(null)}
+          providerId={actionItem.providerId || props.associatedProviderId}
+          downloadUrl={actionItem.link}
+          providerPath={actionItem.providerPath}
+          providerContentPath={actionItem.providerContentPath}
+        />
+      )}
+      {sectionItem && (
+        <LessonDialog
+          sectionId={sectionItem.relatedId || sectionItem.providerContentPath || sectionItem.id || ""}
+          sectionName={sectionItem.label}
+          externalRef={props.externalRef}
+          onClose={() => setSectionItem(null)}
+          providerId={sectionItem.providerId}
+          downloadUrl={sectionItem.link}
+          providerPath={sectionItem.providerPath}
+          providerContentPath={sectionItem.providerContentPath}
+        />
+      )}
     </>
   );
 });
@@ -144,6 +162,12 @@ const styles = StyleSheet.create({
     borderBottomColor: "#e0e0e0"
   },
   childItem: { paddingLeft: DimensionHelper.wp(4) },
+  thumbnail: {
+    width: 40,
+    height: 40,
+    borderRadius: 4,
+    marginRight: DimensionHelper.wp(2)
+  },
   itemContent: { flex: 1 },
   itemLabel: {
     fontSize: DimensionHelper.wp(3.5),

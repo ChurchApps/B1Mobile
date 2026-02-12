@@ -5,39 +5,76 @@ import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { Constants, ExternalVenueRefInterface } from "../../../src/helpers";
 import { EnvironmentHelper } from "../../../src/helpers/EnvironmentHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
+import { useProviderContent } from "./hooks/useProviderContent";
+import { ContentRenderer } from "./ContentRenderer";
 
 interface Props {
   actionId: string;
-  actionName?: string;
-  externalRef?: ExternalVenueRefInterface | null;
+  contentName?: string;
   onClose: () => void;
+  externalRef?: ExternalVenueRefInterface | null;
+  providerId?: string;
+  downloadUrl?: string;
+  providerPath?: string;
+  providerContentPath?: string;
 }
 
-export const ActionDialog = ({ actionId, actionName, externalRef, onClose }: Props) => {
-  const iframeUrl = externalRef
-    ? `${EnvironmentHelper.LessonsRoot}/embed/external/${externalRef.externalProviderId}/action/${actionId}`
-    : `${EnvironmentHelper.LessonsRoot}/embed/action/${actionId}`;
+export const ActionDialog = (props: Props) => {
+  const hasProviderData = !!(props.providerId && props.providerPath && props.providerContentPath) || !!props.downloadUrl;
+
+  const { content, loading, error } = useProviderContent({
+    providerId: hasProviderData ? props.providerId : undefined,
+    providerPath: hasProviderData ? props.providerPath : undefined,
+    providerContentPath: hasProviderData ? props.providerContentPath : undefined,
+    fallbackUrl: props.downloadUrl
+  });
+
+  const renderContent = () => {
+    if (hasProviderData) {
+      return (
+        <ContentRenderer
+          url={content?.url}
+          mediaType={content?.mediaType}
+          title={props.contentName}
+          description={content?.description}
+          loading={loading}
+          error={error || undefined}
+        />
+      );
+    }
+
+    // Legacy WebView fallback
+    const iframeUrl = props.externalRef
+      ? `${EnvironmentHelper.LessonsRoot}/embed/external/${props.externalRef.externalProviderId}/action/${props.actionId}`
+      : `${EnvironmentHelper.LessonsRoot}/embed/action/${props.actionId}`;
+
+    return (
+      <View style={styles.webViewContainer}>
+        <WebView
+          source={{ uri: iframeUrl }}
+          style={styles.webView}
+          startInLoadingState={true}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+        />
+      </View>
+    );
+  };
 
   return (
-    <Modal visible={!!actionId} animationType="slide" transparent={true} onRequestClose={onClose}>
+    <Modal visible={!!props.actionId} animationType="slide" transparent={true} onRequestClose={props.onClose}>
       <View style={styles.overlay}>
         <View style={styles.dialog}>
           <View style={styles.header}>
-            <Text style={styles.title} numberOfLines={1}>{actionName || "Action"}</Text>
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Text style={styles.title} numberOfLines={1}>{props.contentName || "Action"}</Text>
+            <TouchableOpacity style={styles.closeButton} onPress={props.onClose}>
               <Icons name="close" size={28} color={Constants.Colors.Dark_Gray} />
             </TouchableOpacity>
           </View>
-          <View style={styles.webViewContainer}>
-            <WebView
-              source={{ uri: iframeUrl }}
-              style={styles.webView}
-              startInLoadingState={true}
-              javaScriptEnabled={true}
-              domStorageEnabled={true}
-            />
+          <View style={styles.contentArea}>
+            {renderContent()}
           </View>
-          <TouchableOpacity style={styles.closeButtonBottom} onPress={onClose}>
+          <TouchableOpacity style={styles.closeButtonBottom} onPress={props.onClose}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
         </View>
@@ -84,6 +121,7 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   closeButton: { padding: 4 },
+  contentArea: { flex: 1 },
   webViewContainer: { flex: 1 },
   webView: { flex: 1 },
   closeButtonBottom: {
