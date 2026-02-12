@@ -42,7 +42,7 @@ export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress 
                 {sermon.title || "Untitled Sermon"}
               </Text>
               <Text variant="bodyMedium" style={styles.heroDate}>
-                {sermon.publishDate ? DateHelper.prettyDate(new Date(sermon.publishDate)) : ""}
+                {sermon.publishDate ? DateHelper.prettyDate(DateHelper.toDate(sermon.publishDate)) : ""}
               </Text>
               {(sermon.duration && (
                 <Text variant="bodySmall" style={styles.heroDuration}>

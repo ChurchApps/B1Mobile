@@ -26,7 +26,7 @@ export const SermonInfo: React.FC<SermonInfoProps> = ({ sermon, playlistTitle, f
 
         <View style={styles.metaRow}>
           <Text variant="bodyMedium" style={styles.dateText}>
-            {sermon.publishDate ? DateHelper.prettyDate(new Date(sermon.publishDate)) : ""}
+            {sermon.publishDate ? DateHelper.prettyDate(DateHelper.toDate(sermon.publishDate)) : ""}
           </Text>
           {sermon.duration && (
             <>

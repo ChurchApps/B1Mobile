@@ -45,7 +45,7 @@ export const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onPress })
                 </Text>
               )}
               <Text variant="bodySmall" style={styles.playlistDate}>
-                {playlist.publishDate ? DateHelper.prettyDate(new Date(playlist.publishDate)) : ""}
+                {playlist.publishDate ? DateHelper.prettyDate(DateHelper.toDate(playlist.publishDate)) : ""}
               </Text>
             </View>
             <MaterialIcons name="chevron-right" size={24} color="#FFFFFF" />

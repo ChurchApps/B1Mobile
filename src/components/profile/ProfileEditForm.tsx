@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Text, TextInput, Card } from "react-native-paper";
 import { PersonInterface } from "../../interfaces";
+import { DateHelper } from "../../helpers/DateHelper";
 import { PhotoPicker } from "./PhotoPicker";
 import DatePicker from "react-native-date-picker";
 import { useTranslation } from "react-i18next";
@@ -29,7 +30,7 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       value = value?.[part];
     }
     if (key === "birthDate" && value) {
-      return new Date(value).toLocaleDateString();
+      return DateHelper.toDate(value).toLocaleDateString();
     }
     return value || "";
   };
@@ -60,7 +61,7 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     </View>
   );
 
-  const birthDate = person?.birthDate ? new Date(person.birthDate) : new Date();
+  const birthDate = person?.birthDate ? DateHelper.toDate(person.birthDate) : new Date();
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -167,7 +168,7 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
         maximumDate={new Date()}
         onConfirm={(date) => {
           setShowDatePicker(false);
-          onFieldChange("birthDate", date.toISOString().split("T")[0]);
+          onFieldChange("birthDate", DateHelper.formatHtml5Date(date));
         }}
         onCancel={() => setShowDatePicker(false)}
       />

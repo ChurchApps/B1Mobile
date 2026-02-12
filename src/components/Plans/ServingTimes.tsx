@@ -1,4 +1,5 @@
 import dayjs from "../../helpers/dayjsConfig";
+import { DateHelper } from "../../helpers/DateHelper";
 import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -96,7 +97,7 @@ export const ServingTimes = ({ plans, positions, assignments, isLoading = false 
                           </Text>
                           <View style={styles.dateContainer}>
                             <MaterialIcons name="event" size={16} color="#0D47A1" style={styles.dateIcon} />
-                            <Text style={styles.dateText}>{dayjs(item.serviceDate).format("ll")}</Text>
+                            <Text style={styles.dateText}>{dayjs(DateHelper.toDate(item.serviceDate)).format("ll")}</Text>
                           </View>
                         </View>
                         <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>

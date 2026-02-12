@@ -62,7 +62,7 @@ export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDur
                   {sermon.title || "Untitled Sermon"}
                 </Text>
                 <Text variant="bodySmall" style={styles.sermonDate}>
-                  {sermon.publishDate ? DateHelper.prettyDate(new Date(sermon.publishDate)) : ""}
+                  {sermon.publishDate ? DateHelper.prettyDate(DateHelper.toDate(sermon.publishDate)) : ""}
                 </Text>
               </View>
             </View>

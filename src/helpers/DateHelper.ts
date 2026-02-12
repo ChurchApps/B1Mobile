@@ -2,6 +2,17 @@ import dayjs from "./dayjsConfig";
 import { ErrorHelper } from "./ErrorHelper";
 
 export class DateHelper {
+  //Fixes timezone issues when you just need the date.
+  static toDate(input: any) {
+    const str = input.toString();
+    const dateOnlyMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (dateOnlyMatch) {
+      const [, year, month, day] = dateOnlyMatch;
+      return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 12, 0, 0);
+    }
+    return new Date(Date.parse(str.replace("Z", "")));
+  }
+
   static formatHtml5Date(date: Date | string | null | undefined): string {
     if (!date) return "";
 

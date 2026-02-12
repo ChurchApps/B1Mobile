@@ -9,6 +9,7 @@ import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { Card, Button } from "react-native-paper";
 import { InlineLoader } from "../common/LoadingComponents";
 import { ApiHelper } from "@churchapps/helpers";
+import { DateHelper } from "../../helpers/DateHelper";
 
 interface BlockoutDate {
   churchId: string;
@@ -69,8 +70,8 @@ export const BlockoutDates = () => {
   const saveBlockout = async () => {
     try {
       const blockoutDate = {
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString()
+        startDate: DateHelper.formatHtml5Date(startDate),
+        endDate: DateHelper.formatHtml5Date(endDate)
       };
       await ApiHelper.post("/blockoutDates", [blockoutDate], "DoingApi");
       setShowForm(false);

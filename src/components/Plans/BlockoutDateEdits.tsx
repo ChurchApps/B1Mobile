@@ -1,5 +1,6 @@
 import { ApiHelper } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
+import { DateHelper } from "../../helpers/DateHelper";
 import dayjs from "../../helpers/dayjsConfig";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -77,9 +78,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
               button={<MaterialIcons name={"calendar-today"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
               locale="en"
               onSelect={(date: Date) => {
-                const selectedDate = new Date(date);
-                selectedDate.setHours(23, 59, 59, 999);
-                setBlockoutDate({ ...BlockoutDate, startDate: selectedDate });
+                setBlockoutDate({ ...BlockoutDate, startDate: DateHelper.formatHtml5Date(date) });
                 setStartDate(date);
                 setErrors([]);
               }}
@@ -95,9 +94,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
               button={<MaterialIcons name={"calendar-today"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
               locale="en"
               onSelect={(date: Date) => {
-                const selectedDate = new Date(date);
-                selectedDate.setHours(23, 59, 59, 999);
-                setBlockoutDate({ ...BlockoutDate, endDate: selectedDate });
+                setBlockoutDate({ ...BlockoutDate, endDate: DateHelper.formatHtml5Date(date) });
                 setEndDate(date);
                 setErrors([]);
               }}

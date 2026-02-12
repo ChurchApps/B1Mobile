@@ -132,7 +132,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     }
 
     return donations.filter((d) => {
-      const donationDate = new Date(d.donationDate);
+      const donationDate = DateHelper.toDate(d.donationDate);
       return cutoffDate ? donationDate >= cutoffDate : true;
     });
   }, [donations, selectedPeriod]);
@@ -276,7 +276,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
           {item.fund?.name}
         </Text>
         <Text variant="bodySmall" style={styles.transactionDate}>
-          {DateHelper.prettyDate(new Date(item.donationDate))} • {item.method} - {item.methodDetails}
+          {DateHelper.prettyDate(DateHelper.toDate(item.donationDate))} • {item.method} - {item.methodDetails}
         </Text>
       </View>
 

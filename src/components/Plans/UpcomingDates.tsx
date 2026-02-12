@@ -1,4 +1,5 @@
 import dayjs from "../../helpers/dayjsConfig";
+import { DateHelper } from "../../helpers/DateHelper";
 import React, { useEffect, useMemo } from "react";
 import { Text, TouchableOpacity, View, StyleSheet, Animated } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -110,7 +111,7 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
                       <View style={styles.detailsContainer}>
                         <View style={styles.detailRow}>
                           <MaterialIcons name="event" size={18} color="#0D47A1" />
-                          <Text style={styles.detailText}>{dayjs(item.serviceDate).format("ll")}</Text>
+                          <Text style={styles.detailText}>{dayjs(DateHelper.toDate(item.serviceDate)).format("ll")}</Text>
                         </View>
 
                         {item.time && (

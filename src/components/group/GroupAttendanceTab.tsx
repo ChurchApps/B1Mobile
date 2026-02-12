@@ -6,6 +6,7 @@ import dayjs from "../../helpers/dayjsConfig";
 import { useTranslation } from "react-i18next";
 import { ApiHelper } from "@churchapps/helpers";
 import { Constants, EnvironmentHelper } from "../../helpers";
+import { DateHelper } from "../../helpers/DateHelper";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface SessionInterface {
@@ -265,7 +266,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
       if (!sessionId) {
         const newSession: SessionInterface = {
           groupId: groupId,
-          sessionDate: dayjs(selectedDate).toISOString()
+          sessionDate: DateHelper.formatHtml5Date(selectedDate)
         };
 
         const createdSessions = await ApiHelper.post("/sessions", [newSession], "AttendanceApi");
