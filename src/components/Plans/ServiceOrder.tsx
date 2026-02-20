@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
 import { type PlanInterface, type PlanItemInterface, type VenuePlanItemsResponseInterface, LessonsContentProvider, ApiHelper } from "@churchapps/helpers";
-import { getProvider, type InstructionItem, type IProvider, type Instructions } from "@churchapps/content-provider-helper";
+import { getProvider, type InstructionItem, type IProvider, type Instructions } from "@churchapps/content-providers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { globalStyles } from "../../../src/helpers/GlobalStyles";
 import { useQuery } from "@tanstack/react-query";
