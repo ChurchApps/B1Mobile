@@ -4,7 +4,7 @@ import { PlansTabBar } from "../../src/components/Plans/PlansTabBar";
 import { ServingTimes } from "../../src/components/Plans/ServingTimes";
 import { UpcomingDates } from "../../src/components/Plans/UpcomingDates";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ArrayHelper } from "@/helpers/index";
+import { ArrayHelper, DateHelper } from "@/helpers/index";
 import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "@/helpers/Interfaces";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -95,10 +95,10 @@ const Plan = () => {
   const startOfToday = useMemo(() => dayjs().startOf("day").toDate(), []);
 
   // Filter for upcoming plans (serviceDate >= start of today)
-  const upcomingPlans = useMemo(() => plans.filter(p => p.serviceDate && new Date(p.serviceDate) >= startOfToday), [plans, startOfToday]);
+  const upcomingPlans = useMemo(() => plans.filter(p => p.serviceDate && DateHelper.toDate(p.serviceDate) >= startOfToday), [plans, startOfToday]);
 
   // Filter for past plans (serviceDate < start of today)
-  const pastPlans = useMemo(() => plans.filter(p => p.serviceDate && new Date(p.serviceDate) < startOfToday), [plans, startOfToday]);
+  const pastPlans = useMemo(() => plans.filter(p => p.serviceDate && DateHelper.toDate(p.serviceDate) < startOfToday), [plans, startOfToday]);
 
   // Filter assignments for upcoming plans only (used for hero stats)
   const upcomingAssignments = useMemo(() => {
@@ -135,7 +135,7 @@ const Plan = () => {
     const requestedCount = upcomingAssignments.length;
     const confirmedCount = upcomingAssignments.filter(a => a.status === "Confirmed" || a.status === "Accepted").length;
     const pendingCount = upcomingAssignments.filter(a => !a.status || a.status === "Unconfirmed" || a.status === "Pending").length;
-    const nextPlan = [...upcomingPlans].sort((a, b) => new Date(a.serviceDate!).getTime() - new Date(b.serviceDate!).getTime())[0];
+    const nextPlan = [...upcomingPlans].sort((a, b) => DateHelper.toDate(a.serviceDate!).getTime() - DateHelper.toDate(b.serviceDate!).getTime())[0];
 
     return {
       requested: requestedCount,
@@ -162,7 +162,7 @@ const Plan = () => {
             {planStats.nextPlan && (
               <View style={styles.nextPlanContainer}>
                 <Text style={styles.nextPlanLabel}>{t("plans.nextService")}</Text>
-                <Text style={styles.nextPlanDate}>{dayjs(planStats.nextPlan.serviceDate).format("ll")}</Text>
+                <Text style={styles.nextPlanDate}>{dayjs(DateHelper.toDate(planStats.nextPlan.serviceDate)).format("ll")}</Text>
               </View>
             )}
           </View>

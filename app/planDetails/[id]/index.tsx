@@ -3,7 +3,7 @@ import { PositionDetails } from "../../../src/components/Plans/PositionDetails";
 import { Teams } from "../../../src/components/Plans/Teams";
 import { ServiceOrder } from "../../../src/components/Plans/ServiceOrder";
 import { MainHeader } from "../../../src/components/wrapper/MainHeader";
-import { ArrayHelper, AssignmentInterface, PersonInterface, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
+import { ArrayHelper, AssignmentInterface, DateHelper, PersonInterface, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused, DrawerActions } from "@react-navigation/native";
@@ -154,7 +154,7 @@ const PlanDetails = () => {
             <View style={styles.overviewHeroContent}>
               <MaterialIcons name="assignment" size={48} color="white" style={styles.overviewHeroIcon} />
               <Text style={styles.overviewHeroTitle}>{plan.name}</Text>
-              <Text style={styles.overviewHeroDate}>{plan.serviceDate ? dayjs(plan.serviceDate).format("ll") : t("common.tbd")}</Text>
+              <Text style={styles.overviewHeroDate}>{plan.serviceDate ? dayjs(DateHelper.toDate(plan.serviceDate)).format("ll") : t("common.tbd")}</Text>
             </View>
           </LinearGradient>
         ) : (
