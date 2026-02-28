@@ -103,6 +103,15 @@ export class NavigationUtils {
         router.push(isFromHome ? "/sermonsRoot" : "/(drawer)/sermons");
         break;
       }
+      case "registrations": {
+        if (!uc?.person?.id) {
+          Alert.alert("Alert", "You must be logged in to access this page.");
+        } else {
+          UserHelper.addOpenScreenEvent("RegistrationsScreen");
+          router.push("/(drawer)/registrations");
+        }
+        break;
+      }
     }
   }
 

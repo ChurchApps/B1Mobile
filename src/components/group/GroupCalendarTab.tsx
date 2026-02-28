@@ -1,6 +1,6 @@
 import React from "react";
-import { View, StyleSheet, Alert, Linking } from "react-native";
-import { Button } from "react-native-paper";
+import { ScrollView, View, StyleSheet, Alert, Linking } from "react-native";
+import { Button, Chip } from "react-native-paper";
 import { Calendar, DateData } from "react-native-calendars";
 import { router } from "expo-router";
 import { useAppTheme } from "../../theme";
@@ -16,9 +16,13 @@ interface GroupCalendarTabProps {
   markedDates: any;
   onDayPress: (day: DateData) => void;
   onMonthChange?: (month: DateData) => void;
+  tags?: string[];
+  selectedTags?: string[];
+  onToggleTag?: (tag: string) => void;
+  onClearTags?: () => void;
 }
 
-export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isLeader, isLoading, selected, markedDates, onDayPress, onMonthChange }) => {
+export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isLeader, isLoading, selected, markedDates, onDayPress, onMonthChange, tags, selectedTags, onToggleTag, onClearTags }) => {
   const { theme } = useAppTheme();
   const currentUserChurch = useCurrentUserChurch();
 
@@ -86,6 +90,24 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
       <Button mode="outlined" icon="calendar-sync" onPress={handleSubscribe} style={styles.subscribeButton}>
         Subscribe
       </Button>
+      {tags && tags.length > 0 && (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tagContainer} contentContainerStyle={styles.tagContent}>
+          {tags.map((tag) => (
+            <Chip
+              key={tag}
+              selected={selectedTags?.includes(tag)}
+              onPress={() => onToggleTag?.(tag)}
+              style={styles.tagChip}
+              compact
+            >
+              {tag}
+            </Chip>
+          ))}
+          {selectedTags && selectedTags.length > 0 && (
+            <Chip onPress={onClearTags} onClose={onClearTags} style={styles.tagChip} compact>Clear</Chip>
+          )}
+        </ScrollView>
+      )}
       <Calendar
         current={selected}
         markingType="multi-dot"
@@ -131,5 +153,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: "center"
-  }
+  },
+  tagContainer: { marginBottom: 8, maxHeight: 40 },
+  tagContent: { gap: 6, paddingHorizontal: 2 },
+  tagChip: { height: 32 }
 });

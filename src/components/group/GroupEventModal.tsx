@@ -1,11 +1,12 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Text, Card, Chip, IconButton, Divider } from "react-native-paper";
+import { Button, Text, Card, Chip, IconButton, Divider } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router } from "expo-router";
 import dayjs from "../../helpers/dayjsConfig";
 import { EventModal } from "../eventCalendar/EventModal";
 import { EventInterface } from "@churchapps/helpers";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 interface GroupEventModalProps {
   isVisible: boolean;
@@ -17,6 +18,16 @@ interface GroupEventModalProps {
 }
 
 export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onClose, selectedDate, selectedEvents, groupId, isLeader }) => {
+  const currentUserChurch = useCurrentUserChurch();
+
+  const handleRegister = (event: EventInterface) => {
+    onClose();
+    router.navigate({
+      pathname: "/registerEventRoot",
+      params: { eventId: event.id, churchId: currentUserChurch?.church?.id || "" }
+    });
+  };
+
   const handleEditEvent = (event: EventInterface) => {
     onClose();
     router.navigate({
@@ -82,6 +93,12 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onC
                       </View>
                     )}
                   </View>
+
+                  {event.registrationEnabled && (
+                    <Button mode="contained" icon="account-check" onPress={() => handleRegister(event)} style={styles.registerButton} compact>
+                      Register
+                    </Button>
+                  )}
                 </Card.Content>
               </Card>
             ))}
@@ -177,5 +194,10 @@ const styles = StyleSheet.create({
   eventRecurrenceText: {
     color: "#666",
     fontSize: 12
+  },
+  registerButton: {
+    marginTop: 12,
+    backgroundColor: "#0D47A1",
+    alignSelf: "flex-start"
   }
 });

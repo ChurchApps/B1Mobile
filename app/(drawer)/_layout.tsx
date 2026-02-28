@@ -84,6 +84,7 @@ export default function DrawerLayout() {
         <Drawer.Screen name="plan" options={{ title: t("plans.plans") }} />
         <Drawer.Screen name="sermons" options={{ title: t("sermons.sermons") }} />
         <Drawer.Screen name="searchMessageUser" options={{ title: t("navigation.searchMessages") }} />
+        <Drawer.Screen name="registrations" options={{ title: "Registrations" }} />
         <Drawer.Screen
           name="profileEdit"
           options={{

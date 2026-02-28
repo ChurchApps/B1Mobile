@@ -146,6 +146,30 @@ const GroupDetails = () => {
 
   const [expandedEvents, setExpandedEvents] = useState<EventInterface[]>([]);
   const [isProcessingEvents, setIsProcessingEvents] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    events.forEach((ev: EventInterface) => {
+      if (ev.tags) ev.tags.split(",").forEach((t: string) => { const trimmed = t.trim(); if (trimmed) tagSet.add(trimmed); });
+    });
+    return Array.from(tagSet).sort();
+  }, [events]);
+
+  const filteredEvents = useMemo(() => {
+    if (selectedTags.length === 0) return events;
+    return events.filter((ev: EventInterface) => {
+      if (!ev.tags) return false;
+      const eventTags = ev.tags.split(",").map((t: string) => t.trim());
+      return selectedTags.some((tag) => eventTags.includes(tag));
+    });
+  }, [events, selectedTags]);
+
+  const toggleTag = useCallback((tag: string) => {
+    setSelectedTags((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]);
+  }, []);
+
+  const clearTags = useCallback(() => setSelectedTags([]), []);
 
   // Trigger refetch when switching to events tab
   useEffect(() => {
@@ -157,7 +181,7 @@ const GroupDetails = () => {
 
   // Async event expansion to prevent UI blocking - now month-based
   useEffect(() => {
-    if (activeTab !== 4 || events.length === 0) {
+    if (activeTab !== 4 || filteredEvents.length === 0) {
       setExpandedEvents([]);
       setIsProcessingEvents(false);
       return;
@@ -169,7 +193,7 @@ const GroupDetails = () => {
     const processEventsSync = () => {
       try {
         // Force fresh calculation by including timestamp in cache key
-        const expanded = EventProcessor.expandEventsForMonth(events, currentMonth);
+        const expanded = EventProcessor.expandEventsForMonth(filteredEvents, currentMonth);
         setExpandedEvents(expanded);
       } catch (error) {
         console.error("Event expansion failed:", error);
@@ -181,7 +205,7 @@ const GroupDetails = () => {
 
     // Process immediately for faster response
     processEventsSync();
-  }, [events, activeTab, currentMonth, eventsData?.length]); // Add eventsData.length to force recalc on data change
+  }, [filteredEvents, activeTab, currentMonth, eventsData?.length]); // Add eventsData.length to force recalc on data change
 
   const markedDates = useMemo(() => {
     const marked = EventProcessor.calculateMarkedDates(expandedEvents, activeTab);
@@ -352,6 +376,10 @@ const GroupDetails = () => {
                       markedDates={markedDates}
                       onDayPress={onDayPress}
                       onMonthChange={onMonthChange}
+                      tags={allTags}
+                      selectedTags={selectedTags}
+                      onToggleTag={toggleTag}
+                      onClearTags={clearTags}
                     />
                   )}
                 </View>
