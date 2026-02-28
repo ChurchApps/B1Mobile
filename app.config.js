@@ -72,7 +72,7 @@ module.exports = {
         "expo-build-properties",
         {
           ios: {
-            deploymentTarget: "15.1",
+            deploymentTarget: "17.0",
             useFrameworks: "static"
           }
         }
@@ -95,7 +95,7 @@ module.exports = {
       MEMBERSHIP_API: process.env.MEMBERSHIP_API || "https://api.churchapps.org/membership",
       MESSAGING_API: process.env.MESSAGING_API || "https://api.churchapps.org/messaging",
       STAGE: process.env.STAGE || "prod",
-      YOUVERSION_API_KEY: process.env.YOUVERSION_API_KEY || "",
+      YOUVERSION_API_KEY: process.env.YOUVERSION_API_KEY || "kcjG9986IOT5ThXvd3lJT1DArk9RBlYt6gzAVNA8Lnb9a8Ld",
       eas: {
         projectId: "f72e5911-b8d5-467c-ad9e-423c180e9938"
       }

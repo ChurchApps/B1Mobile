@@ -16,6 +16,11 @@ import { StatusBar } from "react-native";
 import { AppLifecycleManager } from "../src/helpers/AppLifecycleManager";
 import "../src/i18n";
 import * as Sentry from "@sentry/react-native";
+import Constants from "expo-constants";
+import { YouVersionPlatform } from "@youversion/platform-react-native";
+
+const youversionKey = Constants.expoConfig?.extra?.YOUVERSION_API_KEY;
+if (youversionKey) YouVersionPlatform.configure(youversionKey);
 
 Sentry.init({
   dsn: "https://33dae282f3ce6781e2ae09f0e44b1dfa@o4510432524107776.ingest.us.sentry.io/4510440258469888",

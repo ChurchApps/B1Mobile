@@ -1,11 +1,14 @@
-import { WebsiteScreen } from "@/components/WebsiteScreen";
-import { useLocalSearchParams } from "expo-router";
-// import { BiblePageYouVersion } from "@/components/BiblePageYouVersion";
+import { View, StyleSheet } from "react-native";
+import { BibleReaderView } from "@youversion/platform-react-native";
 
-const Bible = () => {
-  const { url, title } = useLocalSearchParams<{ url: any; title: any }>();
-  // return <BiblePageYouVersion />;
-  return <WebsiteScreen url={url} title={title} />;
-};
+const Bible = () => (
+  <View style={styles.container}>
+    <BibleReaderView appName="B1 Church" signInMessage="Sign in with YouVersion to access your highlights and bookmarks" />
+  </View>
+);
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#fff" }
+});
 
 export default Bible;

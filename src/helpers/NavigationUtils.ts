@@ -8,7 +8,6 @@ import { useUserStore } from "../stores/useUserStore";
 
 export class NavigationUtils {
   static navigateToScreen(item: LinkInterface, currentChurch?: any, from?: "home" | "drawer") {
-    const bibleUrl = "https://biblia.com/api/plugins/embeddedbible?layout=normal&historyButtons=false&resourcePicker=false&shareButton=false&textSizeButton=false&startingReference=Ge1.1&resourceName=nirv";
     const uc = useUserStore.getState().currentUserChurch;
     const isFromHome = from === "home";
 
@@ -37,10 +36,7 @@ export class NavigationUtils {
       }
       case "bible": {
         UserHelper.addOpenScreenEvent("BibleScreen");
-        router.push({
-          pathname: isFromHome ? "bibleRoot" : "/(drawer)/bible",
-          params: { url: bibleUrl, title: item.text }
-        });
+        router.push(isFromHome ? "bibleRoot" : "/(drawer)/bible");
         break;
       }
       case "plans": {
