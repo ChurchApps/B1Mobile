@@ -110,6 +110,7 @@ export const PlanItem = React.memo((props: Props) => {
       case "lessonAction":
       case "action":
       // File/add-on types (new provider + legacy)
+      // falls through
       case "providerFile":
       case "lessonAddOn":
       case "addon":
@@ -162,7 +163,9 @@ export const PlanItem = React.memo((props: Props) => {
           )
         );
     }
-  }, [pi.itemType, getHeaderRow, getGenericRow, handleSongPress, handleSongClose, handleActionPress, handleActionClose, handleLessonPress, handleLessonClose, showSongDetails, showActionDetails, showLessonDetails, hasProviderFields, props.associatedProviderId]);
+  }, [
+    pi.itemType, getHeaderRow, getGenericRow, handleSongPress, handleSongClose, handleActionPress, handleActionClose, handleLessonPress, handleLessonClose, showSongDetails, showActionDetails, showLessonDetails, hasProviderFields, props.associatedProviderId
+  ]);
 
   return <>{planItemContent}</>;
 });

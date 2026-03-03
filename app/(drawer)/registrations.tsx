@@ -56,7 +56,9 @@ const Registrations = () => {
     Alert.alert("Cancel Registration", "Are you sure you want to cancel this registration?", [
       { text: "Keep", style: "cancel" },
       {
-        text: "Cancel Registration", style: "destructive", onPress: async () => {
+        text: "Cancel Registration",
+        style: "destructive",
+        onPress: async () => {
           await ApiHelper.post("/registrations/" + regId + "/cancel", {}, "ContentApi");
           loadData();
         }

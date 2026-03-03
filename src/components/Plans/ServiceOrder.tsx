@@ -85,8 +85,7 @@ export const ServiceOrder = (props: Props) => {
 
       if (instructions) {
         const items: PlanItemInterface[] = instructions.items.map((item, index) =>
-          instructionToPlanItem(item, props.plan.providerId, props.plan.providerPlanId, [index])
-        );
+          instructionToPlanItem(item, props.plan.providerId, props.plan.providerPlanId, [index]));
         return { items, venueName: props.plan.providerPlanName || instructions.name || "" };
       }
     }

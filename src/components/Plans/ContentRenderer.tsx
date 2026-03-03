@@ -143,12 +143,8 @@ const styles = StyleSheet.create({
     padding: DimensionHelper.wp(8),
     minHeight: 200
   },
-  scrollContainer: {
-    flex: 1
-  },
-  paddedContent: {
-    padding: DimensionHelper.wp(4)
-  },
+  scrollContainer: { flex: 1 },
+  paddedContent: { padding: DimensionHelper.wp(4) },
   errorText: {
     color: "red",
     fontSize: DimensionHelper.wp(4),
@@ -171,9 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: screenHeight * 0.5
   },
-  webView: {
-    flex: 1
-  },
+  webView: { flex: 1 },
   imageContainer: {
     justifyContent: "center",
     alignItems: "center",
