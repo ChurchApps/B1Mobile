@@ -58,10 +58,10 @@ export class UserHelper {
         return false;
       }
 
-      const response = await ApiHelper.postAnonymous("/users/refresh", { jwt: currentToken }, "MembershipApi");
-      if (response.jwt) {
-        await SecureStorageHelper.setSecureItem("default_jwt", response.jwt);
-        ApiHelper.setDefaultPermissions(response.jwt);
+      const response = await ApiHelper.postAnonymous("/users/login", { jwt: currentToken }, "MembershipApi");
+      if (response.user?.jwt) {
+        await SecureStorageHelper.setSecureItem("default_jwt", response.user.jwt);
+        ApiHelper.setDefaultPermissions(response.user.jwt);
         return true;
       }
     } catch (error) {

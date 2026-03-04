@@ -174,8 +174,8 @@ export const useUserStore = create<UserState>()(
           church: currentChurch.church.name
         });
 
-        // Store JWT tokens securely
-        await storeSecureTokens(currentChurch);
+        // Store user JWT (180-day) securely for session persistence
+        await storeSecureTokens(currentChurch, data.user?.jwt);
 
         // Load person record
         await get().loadPersonRecord();
@@ -411,11 +411,11 @@ export const useUserStore = create<UserState>()(
 );
 
 // Helper function to store JWT tokens securely
-async function storeSecureTokens(userChurch: LoginUserChurchInterface): Promise<void> {
+async function storeSecureTokens(userChurch: LoginUserChurchInterface, userJwt?: string): Promise<void> {
   try {
-    // Only store the main JWT token to avoid SecureStore size limits
-    if (userChurch?.jwt) {
-      await SecureStorageHelper.setSecureItem("default_jwt", userChurch.jwt);
+    // Store the user JWT (180-day) for session persistence, not the church JWT (2-day)
+    if (userJwt) {
+      await SecureStorageHelper.setSecureItem("default_jwt", userJwt);
     }
 
     // Set API permissions in memory (they'll be refreshed on app restart)

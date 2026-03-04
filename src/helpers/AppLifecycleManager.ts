@@ -58,20 +58,21 @@ export class AppLifecycleManager {
       }
 
       if (UserHelper.isTokenValid(jwt)) {
-        console.log("JWT token is valid, restoring API permissions");
-        ApiHelper.setDefaultPermissions(jwt);
-
-        const currentUserChurch = userStore.currentUserChurch;
-        if (currentUserChurch?.apis) {
-          currentUserChurch.apis.forEach(api => {
-            if (api.keyName && api.jwt) {
-              ApiHelper.setPermissions(api.keyName, api.jwt, api.permissions || []);
-            }
-          });
-          ApiHelper.setPermissions("MessagingApi", jwt, []);
+        console.log("JWT token is valid, re-authenticating for fresh API tokens");
+        try {
+          const data = await ApiHelper.postAnonymous("/users/login", { jwt }, "MembershipApi");
+          if (data.user) {
+            await userStore.handleLogin(data);
+            console.log("Session restored with fresh API tokens");
+          } else {
+            console.log("Re-authentication returned no user, restoring from cache");
+            ApiHelper.setDefaultPermissions(jwt);
+          }
+        } catch (error) {
+          console.error("Re-authentication failed, restoring from cache:", error);
+          // Fallback: set default permissions so app is at least partially functional
+          ApiHelper.setDefaultPermissions(jwt);
         }
-
-        console.log("Session restored successfully");
       } else {
         console.log("JWT token is expired, attempting refresh...");
         const refreshed = await UserHelper.refreshToken();
