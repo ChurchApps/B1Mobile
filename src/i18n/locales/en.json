@@ -27,6 +27,8 @@
     "signIn": "Sign In",
     "signInTo": "Sign in to {{churchName}}",
     "signInToAccess": "Sign in to access your church community",
+    "noAccountFound": "No account found for this email. Create one to get started.",
+    "churchRecordFound": "We found your record at {{churchName}}. Complete registration to link your account.",
     "userExists": "This user already exists. Please log in with your username and password.",
     "welcomeBack": "Welcome Back",
     "welcomeToB1": "Welcome to B1"

@@ -1,25 +1,29 @@
 import React from "react";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { ApiHelper } from "../../src/helpers";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Alert, SafeAreaView } from "react-native";
-import { Button, Text, TextInput, Surface } from "react-native-paper";
+import { Button, Text, TextInput, Surface, Banner } from "react-native-paper";
 import { useAppTheme } from "../../src/theme";
 import { useTranslation } from "react-i18next";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Register = () => {
   const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
+  const params = useLocalSearchParams<{ email?: string; firstName?: string; lastName?: string; churchId?: string; churchName?: string }>();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState(params.email || "");
+  const [firstName, setFirstName] = useState(params.firstName || "");
+  const [lastName, setLastName] = useState(params.lastName || "");
 
   const registerApiCall = async () => {
     setLoading(true);
     try {
-      const data = await ApiHelper.postAnonymous("/users/register", { email, firstName, lastName }, "MembershipApi");
+      const registerData: any = { email, firstName, lastName };
+      if (params.churchId) registerData.churchId = params.churchId;
+      const data = await ApiHelper.postAnonymous("/users/register", registerData, "MembershipApi");
       if (data.email != null) {
         Alert.alert(t("common.alert"), t("auth.registrationSuccess"), [{ text: "OK", onPress: () => router.navigate("/auth/login") }]);
       } else {
@@ -62,6 +66,12 @@ const Register = () => {
       <Text variant="headlineMedium" style={{ marginBottom: spacing.md }}>
         {t("auth.registerAccount")}
       </Text>
+
+      {params.churchName && (
+        <Banner visible={true} icon={({ size }) => <MaterialIcons name="info" size={size} color={theme.colors.primary} />} style={{ marginBottom: spacing.md, backgroundColor: "#E3F2FD", borderRadius: 8 }}>
+          {t("auth.churchRecordFound", { churchName: params.churchName })}
+        </Banner>
+      )}
 
       <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
 

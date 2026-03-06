@@ -1,5 +1,5 @@
 import React from "react";
-import { ApiHelper, EnvironmentHelper, LoginResponseInterface } from "../../src/helpers";
+import { ApiHelper, EnvironmentHelper, LoginResponseInterface, CheckEmailResponseInterface } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Linking, SafeAreaView, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
@@ -63,6 +63,32 @@ const Login = () => {
     }
   };
 
+  const handleLoginFailure = async () => {
+    try {
+      const resp: CheckEmailResponseInterface = await ApiHelper.postAnonymous("/users/checkEmail", { email }, "MembershipApi");
+      if (resp.exists) {
+        Alert.alert(t("common.alert"), t("auth.invalidLogin"));
+      } else {
+        const params: any = { email };
+        if (resp.peopleMatches.length === 1) {
+          params.firstName = resp.peopleMatches[0].firstName;
+          params.lastName = resp.peopleMatches[0].lastName;
+          params.churchId = resp.peopleMatches[0].churchId;
+          params.churchName = resp.peopleMatches[0].churchName;
+        } else if (resp.peopleMatches.length > 1) {
+          params.firstName = resp.peopleMatches[0].firstName;
+          params.lastName = resp.peopleMatches[0].lastName;
+        }
+        Alert.alert(t("common.alert"), t("auth.noAccountFound"), [
+          { text: t("auth.register"), onPress: () => router.navigate({ pathname: "/auth/register", params }) },
+          { text: "OK" }
+        ]);
+      }
+    } catch {
+      Alert.alert(t("common.alert"), t("auth.invalidLogin"));
+    }
+  };
+
   const loginApiCall = () => {
     const params = { email: email, password: password };
     setLoading(true);
@@ -74,12 +100,12 @@ const Login = () => {
           router.replace("/(drawer)/dashboard");
         } else {
           setLoading(false);
-          Alert.alert(t("common.alert"), t("auth.invalidLogin"));
+          handleLoginFailure();
         }
       })
       .catch(() => {
         setLoading(false);
-        Alert.alert(t("common.alert"), t("auth.invalidLogin"));
+        handleLoginFailure();
       });
   };
 

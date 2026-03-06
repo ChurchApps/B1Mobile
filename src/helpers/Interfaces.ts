@@ -198,6 +198,17 @@ export interface IPermission {
   action: string;
 }
 
+export interface PeopleMatchInterface {
+  firstName: string;
+  lastName: string;
+  churchId: string;
+  churchName: string;
+}
+export interface CheckEmailResponseInterface {
+  exists: boolean;
+  peopleMatches: PeopleMatchInterface[];
+}
+
 export interface UserSearchInterface {
   toPersonId?: string;
   anniversary?: Date;
