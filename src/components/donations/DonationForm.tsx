@@ -91,11 +91,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       Alert.alert(t("donations.minAmount"));
     } else {
       if (!currentUserChurch?.person?.id) {
-        donation.person = {
-          id: "",
-          email: email,
-          name: firstName + " " + lastName
-        };
+        donation.person = { id: "", email: email, name: firstName + " " + lastName };
       }
       setShowPreviewModal(true);
     }
@@ -172,11 +168,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
           Alert.alert("Failed", result.raw.message);
         } else {
           const d: { paymentMethod: StripePaymentMethod; customerId: string } = result;
-          donation.person = {
-            name: firstName + " " + lastName,
-            id: person.id!,
-            email: email
-          };
+          donation.person = { name: firstName + " " + lastName, id: person.id!, email: email };
           const payload: StripeDonationInterface = {
             id: d.paymentMethod.id,
             customerId: d.customerId,

@@ -97,8 +97,7 @@ export const PlanItem = React.memo((props: Props) => {
 
   const planItemContent = useMemo(() => {
     switch (pi.itemType) {
-      case "header":
-        return getHeaderRow();
+      case "header": return getHeaderRow();
       case "song":
       case "arrangementKey":
         return getGenericRow(

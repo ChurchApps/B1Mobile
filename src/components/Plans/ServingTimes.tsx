@@ -17,17 +17,12 @@ interface Props {
 }
 const getTranslatedStatus = (status: string, t: (key: string) => string): string => {
   switch (status?.toLowerCase()) {
-    case "accepted":
-      return t("plans.accepted");
-    case "confirmed":
-      return t("plans.confirmed");
-    case "declined":
-      return t("plans.declined");
-    case "pending":
-      return t("plans.pendingResponse");
+    case "accepted": return t("plans.accepted");
+    case "confirmed": return t("plans.confirmed");
+    case "declined": return t("plans.declined");
+    case "pending": return t("plans.pendingResponse");
     case "unconfirmed":
-    default:
-      return t("plans.unconfirmed");
+    default: return t("plans.unconfirmed");
   }
 };
 
@@ -124,14 +119,10 @@ export const ServingTimes = ({ plans, positions, assignments, isLoading = false 
 const getStatusColor = (status: string) => {
   switch (status?.toLowerCase()) {
     case "accepted":
-    case "confirmed":
-      return "#388E3C";
-    case "declined":
-      return "#B0120C";
-    case "pending":
-      return "#FEAA24";
-    default:
-      return "#9E9E9E";
+    case "confirmed": return "#388E3C";
+    case "declined": return "#B0120C";
+    case "pending": return "#FEAA24";
+    default: return "#9E9E9E";
   }
 };
 

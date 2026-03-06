@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { Card, Button, Chip } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DateHelper } from "@churchapps/helpers";
@@ -154,22 +154,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     height: 28
   },
-  openChip: {
-    backgroundColor: "#E8F5E9"
-  },
-  fullChip: {
-    backgroundColor: "#F5F5F5"
-  },
+  openChip: { backgroundColor: "#E8F5E9" },
+  fullChip: { backgroundColor: "#F5F5F5" },
   chipText: {
     fontSize: 12,
     fontWeight: "600"
   },
-  openChipText: {
-    color: "#388E3C"
-  },
-  fullChipText: {
-    color: "#9E9E9E"
-  },
+  openChipText: { color: "#388E3C" },
+  fullChipText: { color: "#9E9E9E" },
   progressContainer: {
     marginTop: 16,
     marginBottom: 8
@@ -200,12 +192,8 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     height: 28
   },
-  positionOpen: {
-    backgroundColor: "#E3F2FD"
-  },
-  positionFull: {
-    backgroundColor: "#F5F5F5"
-  },
+  positionOpen: { backgroundColor: "#E3F2FD" },
+  positionFull: { backgroundColor: "#F5F5F5" },
   positionChipText: {
     fontSize: 11,
     color: "#3c3c3c"

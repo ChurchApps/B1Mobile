@@ -264,10 +264,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
       let sessionId = currentSession?.id;
 
       if (!sessionId) {
-        const newSession: SessionInterface = {
-          groupId: groupId,
-          sessionDate: DateHelper.formatHtml5Date(selectedDate)
-        };
+        const newSession: SessionInterface = { groupId: groupId, sessionDate: DateHelper.formatHtml5Date(selectedDate) };
 
         const createdSessions = await ApiHelper.post("/sessions", [newSession], "AttendanceApi");
         if (createdSessions && createdSessions.length > 0) {

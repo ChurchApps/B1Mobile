@@ -155,12 +155,7 @@ export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, on
       if (isLoggedIn) {
         payload.personId = currentUserChurch.person.id;
       } else {
-        payload.guestInfo = {
-          firstName: guestFirstName.trim(),
-          lastName: guestLastName.trim(),
-          email: guestEmail.trim(),
-          phone: guestPhone.trim() || undefined
-        };
+        payload.guestInfo = { firstName: guestFirstName.trim(), lastName: guestLastName.trim(), email: guestEmail.trim(), phone: guestPhone.trim() || undefined };
       }
       if (members.length > 0) {
         payload.members = members.map((m) => ({ firstName: m.firstName.trim(), lastName: m.lastName.trim() }));

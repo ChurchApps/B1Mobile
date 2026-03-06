@@ -119,17 +119,10 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     let cutoffDate: Date;
 
     switch (selectedPeriod) {
-      case "30d":
-        cutoffDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        break;
-      case "90d":
-        cutoffDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-        break;
-      case "ytd":
-        cutoffDate = new Date(now.getFullYear(), 0, 1);
-        break;
-      default:
-        return donations;
+      case "30d": cutoffDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); break;
+      case "90d": cutoffDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000); break;
+      case "ytd": cutoffDate = new Date(now.getFullYear(), 0, 1); break;
+      default: return donations;
     }
 
     return donations.filter((d) => {
@@ -180,14 +173,10 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed":
-        return "#70DC87";
-      case "pending":
-        return "#FEAA24";
-      case "failed":
-        return "#B0120C";
-      default:
-        return "#9E9E9E";
+      case "completed": return "#70DC87";
+      case "pending": return "#FEAA24";
+      case "failed": return "#B0120C";
+      default: return "#9E9E9E";
     }
   };
 

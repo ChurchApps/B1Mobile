@@ -69,10 +69,7 @@ export const BlockoutDates = () => {
 
   const saveBlockout = async () => {
     try {
-      const blockoutDate = {
-        startDate: DateHelper.formatHtml5Date(startDate),
-        endDate: DateHelper.formatHtml5Date(endDate)
-      };
+      const blockoutDate = { startDate: DateHelper.formatHtml5Date(startDate), endDate: DateHelper.formatHtml5Date(endDate) };
       await ApiHelper.post("/blockoutDates", [blockoutDate], "DoingApi");
       setShowForm(false);
     } catch (err) {

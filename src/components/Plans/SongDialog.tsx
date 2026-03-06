@@ -277,24 +277,15 @@ const styles = StyleSheet.create({
 
 function getServiceIcon(service: string) {
   switch ((service || "").toLowerCase()) {
-    case "youtube":
-      return <MaterialCommunityIcons name="youtube" size={24} color="#FF0000" style={{ marginRight: 8 }} />;
-    case "ccli":
-      return <MaterialCommunityIcons name="music-circle" size={24} color="#222" style={{ marginRight: 8 }} />;
-    case "praisecharts":
-      return <MaterialCommunityIcons name="music-box-multiple" size={24} color="#2e7d32" style={{ marginRight: 8 }} />;
-    case "spotify":
-      return <MaterialCommunityIcons name="spotify" size={24} color="#1DB954" style={{ marginRight: 8 }} />;
+    case "youtube": return <MaterialCommunityIcons name="youtube" size={24} color="#FF0000" style={{ marginRight: 8 }} />;
+    case "ccli": return <MaterialCommunityIcons name="music-circle" size={24} color="#222" style={{ marginRight: 8 }} />;
+    case "praisecharts": return <MaterialCommunityIcons name="music-box-multiple" size={24} color="#2e7d32" style={{ marginRight: 8 }} />;
+    case "spotify": return <MaterialCommunityIcons name="spotify" size={24} color="#1DB954" style={{ marginRight: 8 }} />;
     case "apple":
-    case "apple music":
-      return <MaterialCommunityIcons name="apple" size={24} color="#000" style={{ marginRight: 8 }} />;
-    case "genius":
-      return <MaterialCommunityIcons name="lightbulb-on-outline" size={24} color="#f5e342" style={{ marginRight: 8 }} />;
-    case "hymnary":
-      return <MaterialCommunityIcons name="book-music" size={24} color="#1976d2" style={{ marginRight: 8 }} />;
-    case "musicbrainz":
-      return <MaterialCommunityIcons name="brain" size={24} color="#ff8800" style={{ marginRight: 8 }} />;
-    default:
-      return null;
+    case "apple music": return <MaterialCommunityIcons name="apple" size={24} color="#000" style={{ marginRight: 8 }} />;
+    case "genius": return <MaterialCommunityIcons name="lightbulb-on-outline" size={24} color="#f5e342" style={{ marginRight: 8 }} />;
+    case "hymnary": return <MaterialCommunityIcons name="book-music" size={24} color="#1976d2" style={{ marginRight: 8 }} />;
+    case "musicbrainz": return <MaterialCommunityIcons name="brain" size={24} color="#ff8800" style={{ marginRight: 8 }} />;
+    default: return null;
   }
 }

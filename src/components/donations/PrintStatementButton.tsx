@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import { Card, Button, SegmentedButtons } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Print from "expo-print";
-import { ApiHelper, DonationInterface, FundDonationInterface, FundInterface, DateHelper, PersonInterface } from "@churchapps/helpers";
+import { ApiHelper, DonationInterface, FundDonationInterface, FundInterface, DateHelper } from "@churchapps/helpers";
 import { useTranslation } from "react-i18next";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { generateStatementHtml } from "./DonationStatementHtml";
@@ -26,8 +26,7 @@ export function PrintStatementButton() {
       ]);
 
       const donations = allDonations.filter(d =>
-        DateHelper.toDate(d.donationDate).getFullYear() === year
-      );
+        DateHelper.toDate(d.donationDate).getFullYear() === year);
 
       const html = generateStatementHtml({
         year,
@@ -106,9 +105,7 @@ const styles = StyleSheet.create({
     color: "#9E9E9E",
     marginBottom: 12
   },
-  segmented: {
-    marginBottom: 12
-  },
+  segmented: { marginBottom: 12 },
   button: {
     borderRadius: 8,
     backgroundColor: "#0D47A1"

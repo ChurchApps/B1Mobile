@@ -374,10 +374,7 @@ export class EventProcessor {
         const dateString = dayjs(event.start).format("YYYY-MM-DD");
 
         if (!marked[dateString]) {
-          marked[dateString] = {
-            dots: [],
-            events: []
-          };
+          marked[dateString] = { dots: [], events: [] };
         }
 
         marked[dateString].dots.push({ color: "#0D47A1" });

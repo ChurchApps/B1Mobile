@@ -123,11 +123,7 @@ export function NotificationTab() {
   };
 
   const renderChatListItems = (item: any) => {
-    const userchatDetails = {
-      id: item.id,
-      DisplayName: item.displayName,
-      photo: item.photo
-    };
+    const userchatDetails = { id: item.id, DisplayName: item.displayName, photo: item.photo };
     return (
       <Card style={styles.messageCard} mode="elevated" onPress={() => router.push({ pathname: "/messageScreenRoot", params: { userDetails: JSON.stringify(userchatDetails) } })}>
         <Card.Content style={styles.messageContent}>

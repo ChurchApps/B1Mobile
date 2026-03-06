@@ -38,8 +38,6 @@ const VolunteerSignupScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#F6F6F8" }
-});
+const styles = StyleSheet.create({ container: { flex: 1, backgroundColor: "#F6F6F8" } });
 
 export default VolunteerSignupScreen;

@@ -25,12 +25,7 @@ export class Constants {
     Active_TabColor: designSystem.colors.primary[500] // Updated to Primary Blue
   };
 
-  static Fonts = {
-    RobotoLight: "Roboto-Light",
-    RobotoBold: "Roboto-Bold",
-    RobotoMedium: "Roboto-Medium",
-    RobotoRegular: "Roboto-Regular"
-  };
+  static Fonts = { RobotoLight: "Roboto-Light", RobotoBold: "Roboto-Bold", RobotoMedium: "Roboto-Medium", RobotoRegular: "Roboto-Regular" };
 
   static Images = {
     ic_menu: require("../assets/images/ic_menu.png"),

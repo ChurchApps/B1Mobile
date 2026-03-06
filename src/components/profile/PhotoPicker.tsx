@@ -53,13 +53,7 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({
     setIsLoading(true);
 
     try {
-      const options: ImagePicker.ImagePickerOptions = {
-        mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
-        exif: false
-      };
+      const options: ImagePicker.ImagePickerOptions = { mediaTypes: ["images"], allowsEditing: true, aspect: [4, 3], quality: 0.8, exif: false };
 
       const result = useCamera
         ? await ImagePicker.launchCameraAsync(options)

@@ -81,16 +81,11 @@ const SermonDetails = () => {
     if (!sermon?.videoData || !sermon?.videoType) return null;
 
     switch (sermon.videoType) {
-      case "youtube":
-        return `https://www.youtube.com/embed/${sermon.videoData}?autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1`;
-      case "youtube_channel":
-        return `https://www.youtube.com/embed/live_stream?channel=${sermon.videoData}&autoplay=1`;
-      case "vimeo":
-        return `https://player.vimeo.com/video/${sermon.videoData}?autoplay=1`;
-      case "facebook":
-        return `https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fvideo.php%3Fv%3D${sermon.videoData}&show_text=0&autoplay=1&allowFullScreen=1`;
-      default:
-        return sermon.videoData; // Custom URL
+      case "youtube": return `https://www.youtube.com/embed/${sermon.videoData}?autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1`;
+      case "youtube_channel": return `https://www.youtube.com/embed/live_stream?channel=${sermon.videoData}&autoplay=1`;
+      case "vimeo": return `https://player.vimeo.com/video/${sermon.videoData}?autoplay=1`;
+      case "facebook": return `https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fvideo.php%3Fv%3D${sermon.videoData}&show_text=0&autoplay=1&allowFullScreen=1`;
+      default: return sermon.videoData; // Custom URL
     }
   }, [sermon]);
 

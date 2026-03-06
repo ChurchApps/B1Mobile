@@ -45,14 +45,7 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
   const { timeDifference, MinDifference, dayDiff, formattedDate } = dateCalculations;
 
   const createConversation = useCallback(async () => {
-    const conv: ConversationInterface = {
-      groupId: item?.item?.data?.groupId,
-      churchId: currentUserChurch?.church?.id,
-      contentType: item?.item?.postType,
-      contentId: item?.item?.postId,
-      title: item?.item?.postType + " #" + item?.item?.postId + " Conversation",
-      messages: []
-    };
+    const conv: ConversationInterface = { groupId: item?.item?.data?.groupId, churchId: currentUserChurch?.church?.id, contentType: item?.item?.postType, contentId: item?.item?.postId, title: item?.item?.postType + " #" + item?.item?.postId + " Conversation", messages: [] };
     const result = await ApiHelper.post("/conversations", [conv], "MessagingApi");
     item?.item?.conversation;
     const cId = result[0].id;

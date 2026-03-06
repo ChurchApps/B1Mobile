@@ -49,11 +49,7 @@ const persistCache = async (queryClient: QueryClient, onlyCritical = false) => {
       }
     }));
 
-    const cacheData = {
-      version: CACHE_VERSION,
-      timestamp: Date.now(),
-      queries: serializedQueries
-    };
+    const cacheData = { version: CACHE_VERSION, timestamp: Date.now(), queries: serializedQueries };
 
     // Use hybrid persister for intelligent storage selection
     await hybridPersister.persistClient(cacheData);

@@ -168,10 +168,7 @@ const Donation = () => {
   const handleRepeatDonation = () => {
     if (!givingStats.lastGift) return;
 
-    const repeatDonation: { amount: string; fundId?: string } = {
-      amount: String(donationImpactData[0]?.amount),
-      fundId: donationImpactData[0]?.fund?.id
-    };
+    const repeatDonation: { amount: string; fundId?: string } = { amount: String(donationImpactData[0]?.amount), fundId: donationImpactData[0]?.fund?.id };
     setSelectedRepeatDonation(repeatDonation);
 
     setActiveSection("donate");

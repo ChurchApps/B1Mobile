@@ -215,13 +215,7 @@ export const useUserStore = create<UserState>()(
       // Set church for anonymous browsing (when user isn't logged in)
       setAnonymousChurch: async (church: ChurchInterface) => {
         // Create a minimal LoginUserChurchInterface for anonymous browsing
-        const anonymousUserChurch: LoginUserChurchInterface = {
-          person: null,
-          church: church,
-          jwt: "",
-          apis: [],
-          groups: []
-        };
+        const anonymousUserChurch: LoginUserChurchInterface = { person: null, church: church, jwt: "", apis: [], groups: [] };
 
         // Essential: Set church immediately for fast UI update
         set({ currentUserChurch: anonymousUserChurch });

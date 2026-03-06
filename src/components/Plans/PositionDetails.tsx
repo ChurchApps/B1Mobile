@@ -24,37 +24,27 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "accepted":
-      case "confirmed":
-        return "#388E3C";
-      case "declined":
-        return "#B0120C";
-      default:
-        return "#FEAA24";
+      case "confirmed": return "#388E3C";
+      case "declined": return "#B0120C";
+      default: return "#FEAA24";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
       case "accepted":
-      case "confirmed":
-        return "check-circle";
-      case "declined":
-        return "cancel";
-      default:
-        return "schedule";
+      case "confirmed": return "check-circle";
+      case "declined": return "cancel";
+      default: return "schedule";
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status?.toLowerCase()) {
-      case "accepted":
-        return t("plans.accepted");
-      case "declined":
-        return t("plans.declined");
-      case "confirmed":
-        return t("plans.confirmed");
-      default:
-        return t("plans.pendingResponse");
+      case "accepted": return t("plans.accepted");
+      case "declined": return t("plans.declined");
+      case "confirmed": return t("plans.confirmed");
+      default: return t("plans.pendingResponse");
     }
   };
 
