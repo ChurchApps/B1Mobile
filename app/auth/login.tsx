@@ -1,4 +1,5 @@
 import React from "react";
+import { useThemeColors } from "@/theme";
 import { ApiHelper, EnvironmentHelper, LoginResponseInterface, CheckEmailResponseInterface } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -13,6 +14,7 @@ import { useTranslation } from "react-i18next";
 
 const Login = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -92,7 +94,7 @@ const Login = () => {
 
   return (
     <LoadingWrapper loading={loading}>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: tc.background }]}>
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <SafeAreaView style={styles.safeArea}>
             {/* Hero Section */}
@@ -134,7 +136,7 @@ const Login = () => {
 
             {/* Login Form */}
             <View style={styles.formSection}>
-              <Card style={styles.formCard}>
+              <Card style={[styles.formCard, { backgroundColor: tc.surface }]}>
                 <Card.Content style={styles.formContent}>
                   <View style={styles.inputContainer}>
                     <TextInput
@@ -148,7 +150,7 @@ const Login = () => {
                       autoComplete="email"
                       textContentType="emailAddress"
                       keyboardType="email-address"
-                      style={styles.input}
+                      style={[styles.input, { backgroundColor: tc.surface }]}
                       left={<TextInput.Icon icon="email" />}
                       accessibilityLabel="Email address"
                     />
@@ -164,7 +166,7 @@ const Login = () => {
                       autoCorrect={false}
                       autoComplete="password"
                       textContentType="password"
-                      style={styles.input}
+                      style={[styles.input, { backgroundColor: tc.surface }]}
                       left={<TextInput.Icon icon="lock" />}
                       right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />}
                       accessibilityLabel="Password"
@@ -172,7 +174,7 @@ const Login = () => {
                   </View>
 
                   <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => Linking.openURL(forgotLink)} accessibilityLabel="Forgot password" accessibilityRole="link">
-                    <Text variant="bodyMedium" style={styles.forgotPasswordText}>
+                    <Text variant="bodyMedium" style={[styles.forgotPasswordText, { color: tc.primary }]}>
                       {t("auth.forgotPassword")}
                     </Text>
                   </TouchableOpacity>
@@ -182,18 +184,18 @@ const Login = () => {
                   </Button>
 
                   <View style={styles.privacySection}>
-                    <Text variant="bodySmall" style={styles.privacyText}>
+                    <Text variant="bodySmall" style={[styles.privacyText, { color: tc.textSecondary }]}>
                       {t("auth.privacyConsent")}{" "}
-                      <Text variant="bodySmall" style={styles.privacyLink} onPress={() => router.navigate("/auth/privacy")}>
+                      <Text variant="bodySmall" style={[styles.privacyLink, { color: tc.primary }]} onPress={() => router.navigate("/auth/privacy")}>
                         {t("auth.privacyPolicy")}
                       </Text>
                     </Text>
                   </View>
 
                   <View style={styles.registerSection}>
-                    <Text variant="bodyMedium" style={styles.registerText}>
+                    <Text variant="bodyMedium" style={[styles.registerText, { color: tc.text }]}>
                       {t("auth.noAccount")}{" "}
-                      <Text variant="bodyMedium" style={styles.registerLink} onPress={() => router.navigate("/auth/register")} accessibilityLabel="Create an account" accessibilityRole="link">
+                      <Text variant="bodyMedium" style={[styles.registerLink, { color: tc.primary }]} onPress={() => router.navigate("/auth/register")} accessibilityLabel="Create an account" accessibilityRole="link">
                         {t("auth.register")}
                       </Text>
                     </Text>
@@ -205,13 +207,13 @@ const Login = () => {
             {/* Help Section */}
             {!currentChurch && (
               <View style={styles.helpSection}>
-                <Card style={styles.helpCard}>
+                <Card style={[styles.helpCard, { backgroundColor: tc.surface }]}>
                   <Card.Content style={styles.helpContent}>
                     <MaterialIcons name="help-outline" size={32} color="#9E9E9E" style={styles.helpIcon} />
-                    <Text variant="titleMedium" style={styles.helpTitle}>
+                    <Text variant="titleMedium" style={[styles.helpTitle, { color: tc.text }]}>
                       {t("auth.newToB1")}
                     </Text>
-                    <Text variant="bodyMedium" style={styles.helpText}>
+                    <Text variant="bodyMedium" style={[styles.helpText, { color: tc.textSecondary }]}>
                       {t("auth.findChurchFirst")}
                     </Text>
                     <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.helpButton} labelStyle={styles.helpButtonText}>

@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { Constants } from "../../helpers";
 import { CommonStyles } from "../../theme/CommonStyles";
 import { Button } from "./Button";
+import { useThemeColors } from "../../theme";
 
 interface ModalAction {
   text: string;
@@ -41,6 +42,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
   contentStyle
 }) => {
   const insets = useSafeAreaInsets();
+  const tc = useThemeColors();
 
   const handleBackdropPress = () => {
     if (closeOnBackdrop) {
@@ -49,7 +51,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
   };
 
   const content = (
-    <View style={[CommonStyles.container, { paddingTop: fullScreen ? insets.top : 0 }]}>
+    <View style={[CommonStyles.container, { paddingTop: fullScreen ? insets.top : 0, backgroundColor: tc.surface }]}>
       {(title || showCloseButton) && (
         <View style={[CommonStyles.rowBetween, { padding: 16, paddingBottom: 8 }]}>
           {title && (
@@ -153,7 +155,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
             <View
               style={[
                 {
-                  backgroundColor: "#ffffff",
+                  backgroundColor: tc.surface,
                   borderRadius: 12,
                   maxHeight: "80%",
                   shadowColor: "#000",

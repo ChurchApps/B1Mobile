@@ -16,9 +16,11 @@ import { FeaturedSermon, PlaylistCard, LiveStreamCard, EmptyState, SermonsTabBar
 import { UserHelper } from "../../src/helpers";
 import { PlaylistInterface, SermonInterface } from "@churchapps/helpers";
 import { useCurrentChurch } from "../../src/stores/useUserStore";
+import { useThemeColors } from "../../src/theme";
 
 const Sermons = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack, router } = useNavigation();
   const [activeSection, setActiveSection] = useState<"playlists" | "recent">("playlists");
@@ -160,7 +162,7 @@ const Sermons = () => {
       {showCountdown ? renderCountdown() : renderFeaturedSermon()}
 
       <View style={styles.sectionHeader}>
-        <Text variant="titleLarge" style={styles.sectionTitle}>
+        <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
           {t("sermons.sermonSeries")}
         </Text>
       </View>
@@ -175,7 +177,7 @@ const Sermons = () => {
       {showCountdown && renderCountdown()}
 
       <View style={styles.sectionHeader}>
-        <Text variant="titleLarge" style={styles.sectionTitle}>
+        <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
           {t("sermons.recentSermons")}
         </Text>
       </View>
@@ -187,14 +189,14 @@ const Sermons = () => {
   if (playlistsError || sermonsError) {
     console.error("Sermons error - playlists:", playlistsError, "sermons:", sermonsError);
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: tc.background }]}>
         <MainHeader title={t("sermons.sermons")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
         <View style={styles.errorContainer}>
           <MaterialIcons name="error-outline" size={48} color="#B0120C" />
           <Text variant="titleMedium" style={styles.errorTitle}>
             {t("sermons.unableToLoad")}
           </Text>
-          <Text variant="bodyMedium" style={styles.errorMessage}>
+          <Text variant="bodyMedium" style={[styles.errorMessage, { color: tc.textSecondary }]}>
             {t("sermons.checkConnection")}
           </Text>
           {__DEV__ && (
@@ -211,14 +213,14 @@ const Sermons = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tc.background }]}>
       <LoadingWrapper loading={isLoading}>
         <View style={styles.content}>
           <MainHeader title={t("sermons.sermons")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
           <SermonsTabBar activeSection={activeSection} onTabChange={setActiveSection} />
 
-          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <ScrollView style={[styles.scrollView, { backgroundColor: tc.background }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             {activeSection === "playlists" && renderPlaylistsSection()}
             {activeSection === "recent" && renderRecentSection()}
           </ScrollView>

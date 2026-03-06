@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback } from "react";
+import { useThemeColors } from "@/theme";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -37,6 +38,7 @@ interface Member {
 
 const MemberDetail = () => {
   const theme = useTheme();
+  const tc = useThemeColors();
   const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { member } = useLocalSearchParams<{ member: any }>();
@@ -112,7 +114,7 @@ const MemberDetail = () => {
   return (
     <SafeAreaProvider>
       <LoadingWrapper loading={isLoading}>
-        <Surface style={styles.container}>
+        <Surface style={[styles.container, { backgroundColor: tc.background }]}>
           <MainHeader title={t("members.memberDetails")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
 
           <ScrollView ref={scrollViewRef} style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -139,7 +141,7 @@ const MemberDetail = () => {
                     <View style={[styles.quickActionIcon, styles.editProfileIcon]}>
                       <MaterialIcons name="edit" size={24} color="#FFFFFF" />
                     </View>
-                    <Text variant="labelMedium" style={styles.quickActionText}>
+                    <Text variant="labelMedium" style={[styles.quickActionText, { color: tc.text }]}>
                       {t("common.edit")}
                     </Text>
                   </TouchableOpacity>
@@ -159,7 +161,7 @@ const MemberDetail = () => {
                     <View style={styles.quickActionIcon}>
                       <MaterialIcons name="phone" size={24} color="#FFFFFF" />
                     </View>
-                    <Text variant="labelMedium" style={styles.quickActionText}>
+                    <Text variant="labelMedium" style={[styles.quickActionText, { color: tc.text }]}>
                       {t("members.call")}
                     </Text>
                   </TouchableOpacity>
@@ -170,7 +172,7 @@ const MemberDetail = () => {
                     <View style={styles.quickActionIcon}>
                       <MaterialIcons name="email" size={24} color="#FFFFFF" />
                     </View>
-                    <Text variant="labelMedium" style={styles.quickActionText}>
+                    <Text variant="labelMedium" style={[styles.quickActionText, { color: tc.text }]}>
                       {t("members.email")}
                     </Text>
                   </TouchableOpacity>
@@ -181,21 +183,21 @@ const MemberDetail = () => {
             {/* Contact Information */}
             {hasContactInfo && (
               <View style={styles.section}>
-                <Text variant="titleLarge" style={styles.sectionTitle}>
+                <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
                   {t("members.contactInformation")}
                 </Text>
 
                 {memberinfo?.email && (
-                  <Card style={styles.contactCard} onPress={() => handleEmail(memberinfo.email)}>
+                  <Card style={[styles.contactCard, { backgroundColor: tc.surface }]} onPress={() => handleEmail(memberinfo.email)}>
                     <Card.Content style={styles.contactContent}>
-                      <View style={styles.contactIcon}>
+                      <View style={[styles.contactIcon, { backgroundColor: tc.background }]}>
                         <MaterialIcons name="email" size={24} color={theme.colors.primary} />
                       </View>
                       <View style={styles.contactDetails}>
-                        <Text variant="bodySmall" style={styles.contactLabel}>
+                        <Text variant="bodySmall" style={[styles.contactLabel, { color: tc.textSecondary }]}>
                           {t("members.emailAddress")}
                         </Text>
-                        <Text variant="titleMedium" style={styles.contactValue}>
+                        <Text variant="titleMedium" style={[styles.contactValue, { color: tc.text }]}>
                           {memberinfo.email}
                         </Text>
                       </View>
@@ -205,16 +207,16 @@ const MemberDetail = () => {
                 )}
 
                 {primaryPhone && (
-                  <Card style={styles.contactCard} onPress={() => handleCall(primaryPhone)}>
+                  <Card style={[styles.contactCard, { backgroundColor: tc.surface }]} onPress={() => handleCall(primaryPhone)}>
                     <Card.Content style={styles.contactContent}>
-                      <View style={styles.contactIcon}>
+                      <View style={[styles.contactIcon, { backgroundColor: tc.background }]}>
                         <MaterialIcons name="phone" size={24} color={theme.colors.primary} />
                       </View>
                       <View style={styles.contactDetails}>
-                        <Text variant="bodySmall" style={styles.contactLabel}>
+                        <Text variant="bodySmall" style={[styles.contactLabel, { color: tc.textSecondary }]}>
                           {memberinfo?.mobilePhone ? t("members.mobilePhone") : t("members.phoneNumber")}
                         </Text>
-                        <Text variant="titleMedium" style={styles.contactValue}>
+                        <Text variant="titleMedium" style={[styles.contactValue, { color: tc.text }]}>
                           {primaryPhone}
                         </Text>
                       </View>
@@ -224,21 +226,21 @@ const MemberDetail = () => {
                 )}
 
                 {memberinfo?.address1 && (
-                  <Card style={styles.contactCard} onPress={handleAddress}>
+                  <Card style={[styles.contactCard, { backgroundColor: tc.surface }]} onPress={handleAddress}>
                     <Card.Content style={styles.contactContent}>
-                      <View style={styles.contactIcon}>
+                      <View style={[styles.contactIcon, { backgroundColor: tc.background }]}>
                         <MaterialIcons name="location-on" size={24} color={theme.colors.primary} />
                       </View>
                       <View style={styles.contactDetails}>
-                        <Text variant="bodySmall" style={styles.contactLabel}>
+                        <Text variant="bodySmall" style={[styles.contactLabel, { color: tc.textSecondary }]}>
                           {t("members.address")}
                         </Text>
-                        <Text variant="titleMedium" style={styles.contactValue} numberOfLines={2}>
+                        <Text variant="titleMedium" style={[styles.contactValue, { color: tc.text }]} numberOfLines={2}>
                           {memberinfo.address1}
                           {memberinfo.address2 && `, ${memberinfo.address2}`}
                         </Text>
                         {(memberinfo.city || memberinfo.state || memberinfo.zip) && (
-                          <Text variant="bodyMedium" style={styles.contactSubValue}>
+                          <Text variant="bodyMedium" style={[styles.contactSubValue, { color: tc.textSecondary }]}>
                             {[memberinfo.city, memberinfo.state, memberinfo.zip].filter(Boolean).join(", ")}
                           </Text>
                         )}
@@ -253,7 +255,7 @@ const MemberDetail = () => {
             {/* Household Members */}
             {householdList.length > 0 && (
               <View style={styles.section}>
-                <Text variant="titleLarge" style={styles.sectionTitle}>
+                <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
                   {t("members.householdMembers")}
                 </Text>
                 {householdList.map((item: Member) => (

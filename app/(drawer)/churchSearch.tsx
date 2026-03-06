@@ -1,4 +1,5 @@
 import React from "react";
+import { useThemeColors } from "@/theme";
 import { ChurchInterface, UserHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { ApiHelper } from "@churchapps/helpers";
@@ -23,6 +24,7 @@ import { useTranslation } from "react-i18next";
 
 const ChurchSearch = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const [searchText, setSearchText] = useState("");
   const [selectingChurch, setSelectingChurch] = useState(false);
   const recentChurches = useRecentChurches();
@@ -104,7 +106,7 @@ const ChurchSearch = () => {
   const displayedChurches = searchText.length < 3 ? recentChurches.slice().reverse() : searchList;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: tc.background }]}>
       <ChurchSelectionOverlay visible={selectingChurch} />
       <View style={styles.content}>
         <ChurchSearchHero />
@@ -121,16 +123,16 @@ const ChurchSearch = () => {
           {!loading && (
             <>
               <View style={styles.sectionHeader}>
-                <Text variant="titleLarge" style={styles.sectionTitle}>
+                <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
                   {searchText.length < 3 ? t("churchSearch.recentChurches") : t("churchSearch.searchResults")}
                 </Text>
                 {searchText.length < 3 && recentChurches.length === 0 && (
-                  <Text variant="bodyMedium" style={styles.emptyText}>
+                  <Text variant="bodyMedium" style={[styles.emptyText, { color: tc.textSecondary }]}>
                     {t("churchSearch.noRecentChurches")}
                   </Text>
                 )}
                 {searchText.length >= 3 && displayedChurches.length === 0 && !loading && (
-                  <Text variant="bodyMedium" style={styles.emptyText}>
+                  <Text variant="bodyMedium" style={[styles.emptyText, { color: tc.textSecondary }]}>
                     {t("churchSearch.noChurchesFound")}
                   </Text>
                 )}

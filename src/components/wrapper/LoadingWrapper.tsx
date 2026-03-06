@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { Loader } from "../Loader";
 import { runOnJS } from "react-native-reanimated";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export const LoadingWrapper: React.FC<Props> = ({
   minLoadingTime = 300, // Default minimum loading time
   loadingThreshold = 100 // Default threshold before showing loader
 }) => {
+  const tc = useThemeColors();
   const [isLoading, setIsLoading] = useState(initialLoading);
   const [showLoader, setShowLoader] = useState(false);
   const loadingStartTime = useRef<number | null>(null);
@@ -103,8 +105,8 @@ export const LoadingWrapper: React.FC<Props> = ({
     <View style={styles.container}>
       {children}
       {isLoading && showLoader && (
-        <Animated.View style={[styles.loaderContainer, { opacity: fadeAnim }]}>
-          <View style={styles.loaderCard}>
+        <Animated.View style={[styles.loaderContainer, { opacity: fadeAnim, backgroundColor: tc.overlay }]}>
+          <View style={[styles.loaderCard, { backgroundColor: tc.surface }]}>
             <Loader isLoading={true} />
           </View>
         </Animated.View>

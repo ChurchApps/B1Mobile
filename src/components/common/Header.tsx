@@ -7,6 +7,7 @@ import { Constants } from "../../helpers";
 import { HeaderBell } from "../wrapper/HeaderBell";
 import { StandardBackButton } from "../navigation/StandardBackButton";
 import { designSystem } from "../../theme/designSystem";
+import { useThemeColors } from "../../theme";
 
 interface HeaderProps {
   variant?: "blue" | "white" | "simple" | "transparent";
@@ -35,23 +36,24 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const tc = useThemeColors();
 
   const getBackgroundColor = () => {
     switch (variant) {
       case "blue": return Constants.Colors.app_color;
-      case "white": return "#ffffff";
-      case "simple": return "#ffffff";
+      case "white": return tc.surface;
+      case "simple": return tc.surface;
       case "transparent": return "transparent";
       default: return Constants.Colors.app_color;
     }
   };
 
   const getTextColor = () => {
-    return variant === "blue" || variant === "transparent" ? "#ffffff" : "#000000";
+    return variant === "blue" || variant === "transparent" ? "#ffffff" : tc.text;
   };
 
   const getIconColor = () => {
-    return variant === "blue" || variant === "transparent" ? "#ffffff" : "#000000";
+    return variant === "blue" || variant === "transparent" ? "#ffffff" : tc.text;
   };
 
   const handleBackPress = () => {
@@ -82,7 +84,7 @@ export const Header: React.FC<HeaderProps> = ({
           justifyContent: "space-between",
           ...(variant === "white" && {
             borderBottomWidth: 1,
-            borderBottomColor: "#e0e0e0"
+            borderBottomColor: tc.border
           })
         },
         style

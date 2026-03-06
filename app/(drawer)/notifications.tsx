@@ -1,4 +1,5 @@
 import React from "react";
+import { useThemeColors } from "@/theme";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NotificationTab } from "../../src/components/NotificationView";
@@ -6,6 +7,7 @@ import { UserHelper } from "../../src/helpers";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 
 const Notifications = () => {
+  const tc = useThemeColors();
   React.useEffect(() => {
     UserHelper.addOpenScreenEvent("Notifications");
     updateCurrentScreen("/(drawer)/notifications");
@@ -16,7 +18,7 @@ const Notifications = () => {
 
   return (
     <SafeAreaProvider>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: tc.background }]}>
         <View style={styles.contentContainer}>
           <NotificationTab />
         </View>

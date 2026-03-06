@@ -3,6 +3,7 @@ import { View, ActivityIndicator, Text, StyleProp, ViewStyle, TouchableOpacity }
 import { Constants } from "../../helpers";
 import { CommonStyles } from "../../theme/CommonStyles";
 import { Button } from "./Button";
+import { useThemeColors } from "../../theme";
 
 interface LoadingOverlayProps {
   visible: boolean;
@@ -11,12 +12,13 @@ interface LoadingOverlayProps {
 }
 
 export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ visible, message, style }) => {
+  const tc = useThemeColors();
   if (!visible) return null;
 
   return (
     <View style={[CommonStyles.loadingOverlay, style]}>
       <View style={{
-        backgroundColor: "#ffffff",
+        backgroundColor: tc.surface,
         padding: 24,
         borderRadius: 8,
         alignItems: "center",
@@ -26,9 +28,9 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ visible, message
         shadowRadius: 4,
         elevation: 5
       }}>
-        <ActivityIndicator size="large" color={Constants.Colors.primary || "#0D47A1"} />
+        <ActivityIndicator size="large" color={tc.primary} />
         {message && (
-          <Text style={[CommonStyles.bodyText, { marginTop: 12, color: "#3c3c3c", textAlign: "center" }]}>
+          <Text style={[CommonStyles.bodyText, { marginTop: 12, color: tc.text, textAlign: "center" }]}>
             {message}
           </Text>
         )}
@@ -133,15 +135,16 @@ interface InlineLoaderProps {
 
 export const InlineLoader: React.FC<InlineLoaderProps> = ({
   size = "small",
-  color = Constants.Colors.primary || "#0D47A1",
+  color,
   text,
   style
 }) => {
+  const tc = useThemeColors();
   return (
     <View style={[CommonStyles.row, { justifyContent: "center", padding: 8 }, style]}>
-      <ActivityIndicator size={size} color={color} />
+      <ActivityIndicator size={size} color={color || tc.primary} />
       {text && (
-        <Text style={[CommonStyles.bodyText, { marginLeft: 8, color: "#3c3c3c" }]}>
+        <Text style={[CommonStyles.bodyText, { marginLeft: 8, color: tc.text }]}>
           {text}
         </Text>
       )}

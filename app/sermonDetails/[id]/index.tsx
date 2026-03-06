@@ -16,9 +16,11 @@ import { UserHelper, EnvironmentHelper } from "../../../src/helpers";
 import { SermonInterface } from "@churchapps/helpers";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
 import { useCurrentChurch } from "../../../src/stores/useUserStore";
+import { useThemeColors } from "../../../src/theme";
 
 const SermonDetails = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const currentChurch = useCurrentChurch();
   const { id, title, playlistTitle } = useLocalSearchParams<{
@@ -131,14 +133,14 @@ const SermonDetails = () => {
 
   if (error) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: tc.background }]}>
         <MainHeader title={title || t("sermons.sermon")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
         <View style={styles.errorContainer}>
           <MaterialIcons name="error-outline" size={48} color="#B0120C" />
           <Text variant="titleMedium" style={styles.errorTitle}>
             Unable to Load Sermon
           </Text>
-          <Text variant="bodyMedium" style={styles.errorMessage}>
+          <Text variant="bodyMedium" style={[styles.errorMessage, { color: tc.textSecondary }]}>
             Please check your connection and try again.
           </Text>
           <Button mode="contained" onPress={() => router.back()} style={styles.errorButton}>
@@ -150,12 +152,12 @@ const SermonDetails = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tc.background }]}>
       <LoadingWrapper loading={isLoading}>
         <View style={styles.content}>
           <MainHeader title={sermon?.title || title || t("sermons.sermon")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
 
-          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <ScrollView style={[styles.scrollView, { backgroundColor: tc.background }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             {renderVideoPreview()}
             {renderVideoPlayer()}
             {renderSermonInfo()}

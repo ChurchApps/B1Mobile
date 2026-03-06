@@ -6,6 +6,7 @@ import { OptimizedImage } from "../OptimizedImage";
 import { ArrayHelper, Constants } from "../../helpers";
 import { ChurchInterface } from "../../helpers";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface ChurchListItemProps {
   church: ChurchInterface;
@@ -15,6 +16,7 @@ interface ChurchListItemProps {
 
 export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress, isSelecting }) => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const churchImage = (() => {
     // Default to B1 logo
     let image = Constants.Images.logoBlue;
@@ -45,17 +47,17 @@ export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress,
           />
         </View>
         <View style={styles.churchDetails}>
-          <Text variant="titleMedium" style={styles.churchName} numberOfLines={2}>
+          <Text variant="titleMedium" style={[styles.churchName, { color: tc.text }]} numberOfLines={2}>
             {church.name}
           </Text>
-          <Text variant="bodySmall" style={styles.churchSubtitle}>
+          <Text variant="bodySmall" style={[styles.churchSubtitle, { color: tc.textSecondary }]}>
             {isSelecting ? t("churchSearch.connecting") : t("churchSearch.tapToConnect")}
           </Text>
         </View>
         {isSelecting ? (
-          <ActivityIndicator size="small" color="#0D47A1" />
+          <ActivityIndicator size="small" color={tc.primary} />
         ) : (
-          <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
+          <MaterialIcons name="chevron-right" size={24} color={tc.textSecondary} />
         )}
       </Card.Content>
     </Card>

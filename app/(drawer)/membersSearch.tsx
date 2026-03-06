@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { useThemeColors } from "@/theme";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -33,6 +34,7 @@ interface MemberSection {
 
 const MembersSearch = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const theme = useTheme();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack } = useNavigation();
@@ -122,41 +124,41 @@ const MembersSearch = () => {
   const renderSectionHeader = useCallback(
     ({ section }: { section: MemberSection }) => (
       <View style={styles.sectionHeader}>
-        <Text variant="titleMedium" style={styles.sectionTitle}>
+        <Text variant="titleMedium" style={[styles.sectionTitle, { color: tc.primary }]}>
           {section.title}
         </Text>
-        <View style={styles.sectionDivider} />
+        <View style={[styles.sectionDivider, { backgroundColor: tc.border }]} />
       </View>
     ),
-    []
+    [tc]
   );
 
   const renderEmptyState = useCallback(
     () => (
       <View style={styles.emptyState}>
         <MaterialIcons name="people-outline" size={64} color={theme.colors.onSurfaceVariant} />
-        <Text variant="headlineSmall" style={styles.emptyTitle}>
+        <Text variant="headlineSmall" style={[styles.emptyTitle, { color: tc.text }]}>
           {searchText ? t("members.noMembersFound") : t("navigation.directory")}
         </Text>
-        <Text variant="bodyMedium" style={styles.emptySubtitle}>
+        <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: tc.textSecondary }]}>
           {searchText ? t("members.tryAdjusting") : t("members.searchForMembers")}
         </Text>
       </View>
     ),
-    [searchText, theme.colors.onSurfaceVariant, t]
+    [searchText, theme.colors.onSurfaceVariant, tc, t]
   );
 
   return (
     <SafeAreaProvider>
       <LoadingWrapper loading={isLoading}>
-        <Surface style={styles.container}>
+        <Surface style={[styles.container, { backgroundColor: tc.background }]}>
           <MainHeader title={t("navigation.directory")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
           <View style={styles.content}>
             {/* Search Header */}
-            <View style={styles.searchSection}>
+            <View style={[styles.searchSection, { backgroundColor: tc.surface, borderBottomColor: tc.border }]}>
               <View style={styles.searchContainer}>
-                <TextInput mode="outlined" label={t("members.searchMembers")} placeholder={t("members.enterName")} value={searchText} onChangeText={handleSearchChange} style={styles.searchInput} left={<TextInput.Icon icon="magnify" />} right={searchText ? <TextInput.Icon icon="close" onPress={() => setSearchText("")} /> : undefined} />
+                <TextInput mode="outlined" label={t("members.searchMembers")} placeholder={t("members.enterName")} value={searchText} onChangeText={handleSearchChange} style={[styles.searchInput, { backgroundColor: tc.surface }]} left={<TextInput.Icon icon="magnify" />} right={searchText ? <TextInput.Icon icon="close" onPress={() => setSearchText("")} /> : undefined} />
               </View>
             </View>
 

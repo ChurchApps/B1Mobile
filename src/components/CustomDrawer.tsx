@@ -14,6 +14,7 @@ import type { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { eventBus } from "@/helpers/PushNotificationHelper";
 import { useThemeContext } from "../theme/ThemeProvider";
+import { useThemeColors } from "../theme/index";
 import { useTranslation } from "react-i18next";
 import { HapticsHelper } from "../helpers/HapticsHelper";
 import pkg from "../../package.json";
@@ -42,6 +43,7 @@ export function CustomDrawer(props?: any) {
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { theme: themeMode, toggleTheme } = useThemeContext();
+  const tc = useThemeColors();
 
   const { top } = useSafeAreaInsets();
 
@@ -145,7 +147,7 @@ export function CustomDrawer(props?: any) {
         accessibilityRole="menuitem"
         accessibilityLabel={item.text}
         title={item.text}
-        left={() => (topItem ? <Image source={{ uri: item.photo }} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={isActive ? "#FFF" : "#0D47A1"} style={styles.drawerIcon} />)}
+        left={() => (topItem ? <Image source={{ uri: item.photo }} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={isActive ? "#FFF" : tc.primary} style={styles.drawerIcon} />)}
         onPress={() => {
           HapticsHelper.selection();
           NavigationUtils.navigateToScreen(item, currentChurch);
@@ -162,17 +164,17 @@ export function CustomDrawer(props?: any) {
             }
           }, 100);
         }}
-        style={[styles.listItem, isActive && styles.activeMenuItem]}
-        titleStyle={[styles.listItemText, isActive && styles.activeMenuText]}
+        style={[styles.listItem, { backgroundColor: tc.surface, borderBottomColor: tc.border }, isActive && styles.activeMenuItem]}
+        titleStyle={[styles.listItemText, { color: tc.text }, isActive && styles.activeMenuText]}
       />
     );
   };
 
   const drawerHeaderComponent = () => (
-    <Surface style={styles.headerContainer} elevation={2}>
+    <Surface style={[styles.headerContainer, { backgroundColor: tc.surface, borderBottomColor: tc.border }]} elevation={2}>
       <View style={styles.headerContent}>
         {getUserInfo()}
-        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#0D47A1" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#0D47A1" />} accessibilityRole="button">
+        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor={tc.isDark ? "#2D2D2D" : "#FFFFFF"} textColor={tc.primary} icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color={tc.primary} />} accessibilityRole="button">
           {!currentChurch ? t("churchSearch.findChurch") : (currentChurch.name || t("churchSearch.selectChurch"))}
         </Button>
       </View>
@@ -189,17 +191,17 @@ export function CustomDrawer(props?: any) {
         <View style={styles.userRow}>
           <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={48} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={48} label={`${user.firstName?.[0] || "U"}${user.lastName?.[0] || "S"}`} />}</View>
           <View style={styles.userTextContainer}>
-            <Text variant="titleMedium" numberOfLines={1} style={styles.userName}>
+            <Text variant="titleMedium" numberOfLines={1} style={[styles.userName, { color: tc.text }]}>
               {`${user.firstName} ${user.lastName}`}
             </Text>
             <TouchableRipple
-              style={styles.profileButton}
+              style={[styles.profileButton, { backgroundColor: tc.iconBackground }]}
               onPress={editDirectoryListingAction}
               accessibilityLabel="Edit profile"
               accessibilityRole="button">
               <View style={styles.profileButtonContent}>
-                <MaterialIcons name="edit" size={16} color="#0D47A1" />
-                <Text style={styles.profileButtonText}>{t("navigation.editProfile")}</Text>
+                <MaterialIcons name="edit" size={16} color={tc.primary} />
+                <Text style={[styles.profileButtonText, { color: tc.primary }]}>{t("navigation.editProfile")}</Text>
               </View>
             </TouchableRipple>
           </View>
@@ -231,11 +233,11 @@ export function CustomDrawer(props?: any) {
 
   const drawerFooterComponent = () => {
     return (
-      <Surface style={styles.footerContainer} elevation={1}>
-        <Button mode="outlined" onPress={toggleTheme} style={styles.themeToggleButton} icon={() => <MaterialIcons name={themeMode === "dark" ? "light-mode" : "dark-mode"} size={24} color="#0D47A1" />} accessibilityLabel={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"} accessibilityRole="button">
+      <Surface style={[styles.footerContainer, { backgroundColor: tc.surface, borderTopColor: tc.border }]} elevation={1}>
+        <Button mode="outlined" onPress={toggleTheme} style={styles.themeToggleButton} icon={() => <MaterialIcons name={themeMode === "dark" ? "light-mode" : "dark-mode"} size={24} color={tc.primary} />} accessibilityLabel={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"} accessibilityRole="button">
           {themeMode === "dark" ? t("drawer.lightMode") : t("drawer.darkMode")}
         </Button>
-        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />} loading={isLoggingOut} disabled={isLoggingOut} accessibilityLabel={user ? "Log out" : "Log in"} accessibilityRole="button">
+        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color={tc.primary} />} loading={isLoggingOut} disabled={isLoggingOut} accessibilityLabel={user ? "Log out" : "Log in"} accessibilityRole="button">
           {isLoggingOut ? t("drawer.signingOut") : user ? t("drawer.logout") : t("drawer.login")}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>
@@ -246,7 +248,7 @@ export function CustomDrawer(props?: any) {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: top }]}>
+    <View style={[styles.container, { paddingTop: top, backgroundColor: tc.surface }]}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {drawerHeaderComponent()}
         {links.length === 0 ? (
@@ -254,7 +256,7 @@ export function CustomDrawer(props?: any) {
             <Text>{t("navigation.loadingNavigation")}</Text>
           </View>
         ) : (
-          <View style={styles.menuContainer}>
+          <View style={[styles.menuContainer, { backgroundColor: tc.surface }]}>
             {links.map((item, index) => (
               <View key={item.id || index}>{listItem(!!(item as any).photo, item)}</View>
             ))}
@@ -365,7 +367,6 @@ const styles = StyleSheet.create({
   },
   separator: {
     marginVertical: 8,
-    backgroundColor: "#F0F0F0",
     height: 1
   },
   activeMenuItem: { backgroundColor: "#0D47A1" },

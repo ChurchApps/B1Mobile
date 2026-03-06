@@ -18,9 +18,11 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import dayjs from "../../../src/helpers/dayjsConfig";
+import { useThemeColors } from "../../../src/theme";
 
 const PlanDetails = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams<{ id: string }>();
   const planId = id;
@@ -150,7 +152,7 @@ const PlanDetails = () => {
       <View style={styles.myPositionsSection}>
         <View style={styles.myPositionsHeader}>
           <MaterialIcons name="assignment-ind" size={24} color="#0D47A1" />
-          <Text style={styles.myPositionsTitle}>{t("plans.myAssignments")}</Text>
+          <Text style={[styles.myPositionsTitle, { color: tc.primary }]}>{t("plans.myAssignments")}</Text>
           {!assignmentsLoading && (
             <View style={styles.assignmentCount}>
               <Text style={styles.assignmentCountText}>{myAssignments.length}</Text>
@@ -170,8 +172,8 @@ const PlanDetails = () => {
           <Card style={styles.noAssignmentsCard}>
             <Card.Content style={styles.noAssignmentsContent}>
               <MaterialIcons name="assignment-late" size={48} color="#9E9E9E" />
-              <Text style={styles.noAssignmentsText}>{t("plans.noAssignmentsForPlan")}</Text>
-              <Text style={styles.noAssignmentsSubtext}>{t("plans.checkWithTeamLeader")}</Text>
+              <Text style={[styles.noAssignmentsText, { color: tc.text }]}>{t("plans.noAssignmentsForPlan")}</Text>
+              <Text style={[styles.noAssignmentsSubtext, { color: tc.textSecondary }]}>{t("plans.checkWithTeamLeader")}</Text>
             </Card.Content>
           </Card>
         )}
@@ -182,12 +184,12 @@ const PlanDetails = () => {
         <Card.Content>
           <View style={styles.overviewNotesHeader}>
             <MaterialIcons name="note" size={24} color="#0D47A1" />
-            <Text style={styles.overviewNotesTitle}>{t("plans.planNotes")}</Text>
+            <Text style={[styles.overviewNotesTitle, { color: tc.text }]}>{t("plans.planNotes")}</Text>
           </View>
           {planLoading ? (
             <InlineLoader text={t("plans.loadingNotes")} />
           ) : plan?.notes ? (
-            <Text style={styles.overviewNotesText}>{plan.notes.replace(/\n/g, " ")}</Text>
+            <Text style={[styles.overviewNotesText, { color: tc.textSecondary }]}>{plan.notes.replace(/\n/g, " ")}</Text>
           ) : (
             <Text style={styles.noNotesText}>{t("plans.noNotesAvailable")}</Text>
           )}
@@ -199,25 +201,25 @@ const PlanDetails = () => {
   const renderLoadingIndicator = () => (
     <View style={styles.loadingContainer}>
       <ActivityIndicator size="large" color="#0D47A1" />
-      <Text style={styles.loadingText}>{t("plans.loadingPlanDetails")}</Text>
+      <Text style={[styles.loadingText, { color: tc.textSecondary }]}>{t("plans.loadingPlanDetails")}</Text>
     </View>
   );
 
   return (
     <SafeAreaProvider>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: tc.background }]}>
           <MainHeader title={t("navigation.planDetails")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
 
           {/* Tab Navigation */}
-          <View style={styles.tabContainer}>
+          <View style={[styles.tabContainer, { backgroundColor: tc.surface }]}>
             <TouchableOpacity style={[styles.tab, selectedTab === "overview" && styles.activeTab]} onPress={() => setSelectedTab("overview")}>
-              <Text style={[styles.tabText, selectedTab === "overview" && styles.activeTabText]}>{t("plans.overview")}</Text>
+              <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "overview" && styles.activeTabText]}>{t("plans.overview")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.tab, selectedTab === "serviceOrder" && styles.activeTab]} onPress={() => setSelectedTab("serviceOrder")}>
-              <Text style={[styles.tabText, selectedTab === "serviceOrder" && styles.activeTabText]}>{t("plans.serviceOrder")}</Text>
+              <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "serviceOrder" && styles.activeTabText]}>{t("plans.serviceOrder")}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.tab, selectedTab === "teams" && styles.activeTab]} onPress={() => setSelectedTab("teams")}>
-              <Text style={[styles.tabText, selectedTab === "teams" && styles.activeTabText]}>{t("plans.teams")}</Text>
+              <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "teams" && styles.activeTabText]}>{t("plans.teams")}</Text>
             </TouchableOpacity>
           </View>
 
@@ -227,7 +229,7 @@ const PlanDetails = () => {
               <Text style={styles.errorText}>{errorMessage}</Text>
             </View>
           ) : (
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            <ScrollView style={[styles.scrollView, { backgroundColor: tc.background }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
               {selectedTab === "overview" && renderOverviewSection()}
               {selectedTab === "serviceOrder" && (
                 <View style={styles.contentSection}>
@@ -235,7 +237,7 @@ const PlanDetails = () => {
                     <Card.Content>
                       <View style={styles.sectionHeader}>
                         <MaterialIcons name="format-list-numbered" size={24} color="#0D47A1" />
-                        <Text style={styles.sectionTitle}>{t("plans.serviceOrder")}</Text>
+                        <Text style={[styles.sectionTitle, { color: tc.text }]}>{t("plans.serviceOrder")}</Text>
                       </View>
                       {planLoading ? (
                         <InlineLoader size="large" text={t("plans.loadingServiceOrder")} />

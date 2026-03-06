@@ -24,6 +24,7 @@ import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 import { useUserStore, useCurrentChurch, useChurchAppearance, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
 import { useTranslation } from "react-i18next";
 import { HapticsHelper } from "../../src/helpers/HapticsHelper";
+import { useThemeColors } from "@/theme";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ const Dashboard = () => {
   const { links } = useUserStore();
   const linkViewCounts = useLinkViewCounts();
   const incrementLinkViewCount = useIncrementLinkViewCount();
+  const tc = useThemeColors();
 
   // Debug logging
 
@@ -186,7 +188,7 @@ const Dashboard = () => {
         {/* Featured Cards */}
         {featuredItems.length > 1 && (
           <View style={styles.featuredSection}>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
+            <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
               {t("common.featured")}
             </Text>
             <View style={styles.featuredGrid}>
@@ -209,16 +211,16 @@ const Dashboard = () => {
         {/* Quick Actions */}
         {otherItems.length > 0 && (
           <View style={styles.quickActionsSection}>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
+            <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
               {t("common.quickActions")}
             </Text>
             <View style={styles.quickActionsGrid}>
               {otherItems.map(item => (
-                <TouchableOpacity key={generateLinkId(item)} style={styles.quickActionItem} onPress={() => handleLinkPress(item)}>
-                  <View style={styles.quickActionIcon}>
-                    <MaterialIcons name={item.icon ? item.icon.split("_").join("-") : "apps"} size={24} color="#0D47A1" />
+                <TouchableOpacity key={generateLinkId(item)} style={[styles.quickActionItem, { backgroundColor: tc.surface }]} onPress={() => handleLinkPress(item)}>
+                  <View style={[styles.quickActionIcon, { backgroundColor: tc.iconBackground }]}>
+                    <MaterialIcons name={item.icon ? item.icon.split("_").join("-") : "apps"} size={24} color={tc.primary} />
                   </View>
-                  <Text variant="bodyMedium" style={styles.quickActionText} numberOfLines={2}>
+                  <Text variant="bodyMedium" style={[styles.quickActionText, { color: tc.text }]} numberOfLines={2}>
                     {item.text}
                   </Text>
                 </TouchableOpacity>
@@ -228,29 +230,29 @@ const Dashboard = () => {
         )}
       </>
     );
-  }, [isLoading, filteredLinks, getBackgroundImage, handleLinkPress, generateLinkId]);
+  }, [isLoading, filteredLinks, getBackgroundImage, handleLinkPress, generateLinkId, tc]);
 
   const welcomeSection = useMemo(
     () => (
-      <View style={styles.welcomeSection}>
+      <View style={[styles.welcomeSection, { backgroundColor: tc.surface }]}>
         <View style={styles.welcomeContent}>
-          <Text variant="headlineMedium" style={styles.welcomeTitle}>
+          <Text variant="headlineMedium" style={[styles.welcomeTitle, { color: tc.textSecondary }]}>
             {t("dashboard.welcomeTo")}
           </Text>
           {churchAppearance?.logoLight ? (
             <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.churchLogo} contentFit="contain" priority="high" />
           ) : (
-            <Text variant="headlineLarge" style={styles.churchName}>
+            <Text variant="headlineLarge" style={[styles.churchName, { color: tc.primary }]}>
               {currentChurch?.name || ""}
             </Text>
           )}
-          <Text variant="bodyLarge" style={styles.welcomeSubtitle}>
+          <Text variant="bodyLarge" style={[styles.welcomeSubtitle, { color: tc.text }]}>
             {t("dashboard.stayConnected")}
           </Text>
         </View>
       </View>
     ),
-    [churchAppearance?.logoLight, currentChurch?.name, t]
+    [churchAppearance?.logoLight, currentChurch?.name, t, tc]
   );
 
   const handleDrawerOpen = useCallback(() => {
@@ -260,9 +262,9 @@ const Dashboard = () => {
   return (
     <SafeAreaProvider>
       <LoadingWrapper loading={isLoading}>
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: tc.background }]}>
           <MainHeader title={t("dashboard.home")} openDrawer={handleDrawerOpen} />
-          <View style={styles.contentContainer}>
+          <View style={[styles.contentContainer, { backgroundColor: tc.background }]}>
             <ScrollView
               style={styles.scrollView}
               contentContainerStyle={styles.scrollContent}

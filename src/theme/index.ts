@@ -76,13 +76,45 @@ export const darkTheme = {
 // Custom hook to use our theme and styles
 export const useAppTheme = () => {
   const theme = useTheme();
+  const isDark = theme.dark;
   return {
     theme,
+    isDark,
     componentStyles,
     spacing: designSystem.spacing,
     colors: designSystem.colors,
     typography: designSystem.typography,
     borderRadius: designSystem.borderRadius,
     shadows: designSystem.shadows
+  };
+};
+
+// Hook that returns semantic colors based on current theme
+export const useThemeColors = () => {
+  const theme = useTheme();
+  const isDark = theme.dark;
+
+  return {
+    isDark,
+    // Backgrounds
+    background: theme.colors.background,
+    surface: theme.colors.surface,
+    surfaceVariant: theme.colors.surfaceVariant,
+    // Text
+    text: theme.colors.onSurface,
+    textSecondary: theme.colors.onSurfaceVariant,
+    // Brand
+    primary: theme.colors.primary,
+    onPrimary: theme.colors.onPrimary,
+    // UI elements
+    border: isDark ? "#333333" : "#F0F0F0",
+    card: theme.colors.surface,
+    headerBg: designSystem.colors.primary[500],
+    inputBorder: isDark ? "#444444" : "lightgray",
+    inputText: isDark ? "#E0E0E0" : "gray",
+    shadow: isDark ? "#000000" : designSystem.colors.primary[500],
+    overlay: isDark ? "rgba(0,0,0,0.7)" : "rgba(255,255,255,0.5)",
+    // Quick action / icon backgrounds
+    iconBackground: isDark ? "#2D2D2D" : "#F6F6F8",
   };
 };

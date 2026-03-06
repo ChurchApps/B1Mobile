@@ -18,9 +18,11 @@ import { UserHelper, DateHelper } from "../../../src/helpers";
 import { SermonInterface, PlaylistInterface } from "@churchapps/helpers";
 import { useCurrentChurch } from "../../../src/stores/useUserStore";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
+import { useThemeColors } from "../../../src/theme";
 
 const PlaylistDetails = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id, title } = useLocalSearchParams<{ id: string; title: string }>();
   const currentChurch = useCurrentChurch();
@@ -132,10 +134,10 @@ const PlaylistDetails = () => {
     <Card style={styles.emptyCard}>
       <Card.Content style={styles.emptyContent}>
         <MaterialIcons name="video-library" size={48} color="#9E9E9E" style={styles.emptyIcon} />
-        <Text variant="titleMedium" style={styles.emptyTitle}>
+        <Text variant="titleMedium" style={[styles.emptyTitle, { color: tc.text }]}>
           No Sermons in This Series
         </Text>
-        <Text variant="bodyMedium" style={styles.emptySubtitle}>
+        <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: tc.textSecondary }]}>
           Sermons will appear here as they are added to this series.
         </Text>
       </Card.Content>
@@ -144,14 +146,14 @@ const PlaylistDetails = () => {
 
   if (playlistError || sermonsError) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: tc.background }]}>
         <MainHeader title={title || t("sermons.playlist")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
         <View style={styles.errorContainer}>
           <MaterialIcons name="error-outline" size={48} color="#B0120C" />
           <Text variant="titleMedium" style={styles.errorTitle}>
             Unable to Load Playlist
           </Text>
-          <Text variant="bodyMedium" style={styles.errorMessage}>
+          <Text variant="bodyMedium" style={[styles.errorMessage, { color: tc.textSecondary }]}>
             Please check your connection and try again.
           </Text>
         </View>
@@ -160,21 +162,21 @@ const PlaylistDetails = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: tc.background }]}>
       <LoadingWrapper loading={isLoading}>
         <View style={styles.content}>
           <MainHeader title={title || t("sermons.playlist")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
 
-          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <ScrollView style={[styles.scrollView, { backgroundColor: tc.background }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             {renderPlaylistHeader()}
 
             <View style={styles.sermonsSection}>
               <View style={styles.sectionHeader}>
-                <Text variant="titleLarge" style={styles.sectionTitle}>
+                <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
                   Sermons
                 </Text>
                 {sermons && sermons.length > 0 && (
-                  <Text variant="bodyMedium" style={styles.sectionSubtitle}>
+                  <Text variant="bodyMedium" style={[styles.sectionSubtitle, { color: tc.textSecondary }]}>
                     {sermons.length} sermon{sermons.length !== 1 ? "s" : ""}
                   </Text>
                 )}

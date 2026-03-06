@@ -1,4 +1,5 @@
 import React from "react";
+import { useThemeColors } from "@/theme";
 import { EnhancedDonationForm, EnhancedGivingHistory } from "../../src/components/donations/LazyDonationComponents";
 import { GivingOverview, DonationTabBar, ManagePayments } from "../../src/components/donations/sections/exports";
 import { UserHelper } from "@/helpers/UserHelper";
@@ -18,6 +19,7 @@ import { useTranslation } from "react-i18next";
 
 const Donation = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack } = useNavigation();
   const [customerId, setCustomerId] = useState<string>("");
@@ -161,13 +163,13 @@ const Donation = () => {
   const renderHistorySection = () => <EnhancedGivingHistory customerId={customerId} paymentMethods={paymentMethods || []} donationImpactData={donationImpactData || []} donationImpactLoading={donationImpactLoading} />;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: tc.background }]}>
       <View style={styles.content}>
         <MainHeader title={t("donations.giving")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
         <DonationTabBar activeSection={activeSection} onTabChange={setActiveSection} />
 
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.scrollView, { backgroundColor: tc.background }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {activeSection === "overview" && renderOverviewSection()}
           {activeSection === "donate" && renderDonateSection()}
           {activeSection === "manage" && renderManageSection()}

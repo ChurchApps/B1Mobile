@@ -11,11 +11,13 @@ import { ErrorBoundary } from "../../src/components/ErrorBoundary";
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
 import { useCurrentUserChurch } from "@/stores/useUserStore";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "@/theme";
 
 export default function DrawerLayout() {
   const { t } = useTranslation();
   const router = useRouter();
   const currentChurch = useCurrentUserChurch();
+  const tc = useThemeColors();
 
   // Helper: get current route name
   const getCurrentRouteName = (state: any) => {
@@ -38,9 +40,10 @@ export default function DrawerLayout() {
     headerStyle: { backgroundColor: "#0D47A1" },
     headerTintColor: "#FFF",
     headerTitleAlign: "center" as const,
-    drawerStyle: { width: 280, backgroundColor: "#F6F6F8" },
+    drawerStyle: { width: 280, backgroundColor: tc.surface },
     drawerType: "slide" as const,
-    overlayColor: "rgba(0, 0, 0, 0.5)"
+    overlayColor: "rgba(0, 0, 0, 0.5)",
+    sceneStyle: { backgroundColor: tc.background }
   };
 
   // Header left renderer

@@ -15,10 +15,16 @@ import { HeaderBell } from "@/components/wrapper/HeaderBell";
 import { StatusBar } from "react-native";
 import { AppLifecycleManager } from "../src/helpers/AppLifecycleManager";
 import { designSystem } from "../src/theme/designSystem";
+import { useThemeContext } from "../src/theme/ThemeProvider";
 import "../src/i18n";
 import * as Sentry from "@sentry/react-native";
 import Constants from "expo-constants";
 import { YouVersionPlatform } from "@youversion/platform-react-native";
+
+function ThemedStatusBar() {
+  const { theme } = useThemeContext();
+  return <StatusBar barStyle={theme === "dark" ? "light-content" : "light-content"} backgroundColor={theme === "dark" ? "#121212" : undefined} />;
+}
 
 const youversionKey = Constants.expoConfig?.extra?.YOUVERSION_API_KEY;
 if (youversionKey) YouVersionPlatform.configure(youversionKey);
@@ -109,7 +115,7 @@ export default Sentry.wrap(function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <ActionSheetProvider>
           <ThemeProvider>
-            <StatusBar barStyle="light-content" />
+            <ThemedStatusBar />
             <SafeAreaProvider>
               <NotificationNavigationHandler />
               <Stack screenOptions={{ headerShown: true, animation: "slide_from_right" }} initialRouteName="auth">
