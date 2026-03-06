@@ -5,7 +5,7 @@ import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { Alert, Linking, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
-import { Card, Surface, Text, MD3LightTheme } from "react-native-paper";
+import { Card, Surface, Text, useTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { Avatar } from "../../src/components/common/Avatar";
 import { MemberCard } from "../../src/components/MemberCard";
@@ -15,28 +15,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1", // Primary Blue from style guide
-    secondary: "#F6F6F8", // Background from style guide
-    surface: "#FFFFFF", // Card Background from style guide
-    background: "#F6F6F8", // Background from style guide
-    onSurface: "#3c3c3c", // Dark Gray from style guide
-    onBackground: "#3c3c3c", // Dark Gray from style guide
-    onSurfaceVariant: "#9E9E9E", // Medium Gray from style guide
-    elevation: {
-      level0: "transparent",
-      level1: "#FFFFFF",
-      level2: "#F6F6F8",
-      level3: "#F0F0F0",
-      level4: "#E9ECEF",
-      level5: "#E2E6EA"
-    }
-  }
-};
 
 interface ContactInfo {
   email?: string;
@@ -58,6 +36,7 @@ interface Member {
 }
 
 const MemberDetail = () => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { member } = useLocalSearchParams<{ member: any }>();

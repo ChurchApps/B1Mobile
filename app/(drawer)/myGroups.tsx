@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
-import { Provider as PaperProvider, Card, Text, MD3LightTheme } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useQuery } from "@tanstack/react-query";
 import { ArrayHelper, UserPostInterface } from "../../src/helpers";
@@ -12,25 +12,6 @@ import { useUser, useGroupViewCounts, useIncrementGroupViewCount } from "../../s
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "../../src/hooks";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1", // Primary Blue from style guide
-    secondary: "#F6F6F8", // Background from style guide
-    surface: "#FFFFFF", // Card Background from style guide
-    background: "#F6F6F8", // Background from style guide
-    elevation: {
-      level0: "transparent",
-      level1: "#FFFFFF",
-      level2: "#F6F6F8",
-      level3: "#F0F0F0",
-      level4: "#E9ECEF",
-      level5: "#E2E6EA"
-    }
-  }
-};
 
 interface Group {
   id: string;
@@ -246,18 +227,16 @@ const MyGroups = () => {
   }, [sortedGroups, showGroups, mergeData]);
 
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaProvider>
-        <LoadingWrapper loading={loading}>
-          <View style={styles.container}>
-            <MainHeader title={t("groups.myGroups")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
-            <View style={styles.contentContainer}>
-              <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListHeaderComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={() => `key-${Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
-            </View>
+    <SafeAreaProvider>
+      <LoadingWrapper loading={loading}>
+        <View style={styles.container}>
+          <MainHeader title={t("groups.myGroups")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+          <View style={styles.contentContainer}>
+            <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListHeaderComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={() => `key-${Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
           </View>
-        </LoadingWrapper>
-      </SafeAreaProvider>
-    </PaperProvider>
+        </View>
+      </LoadingWrapper>
+    </SafeAreaProvider>
   );
 };
 

@@ -6,7 +6,7 @@ import { useNavigation as useReactNavigation, DrawerActions } from "@react-navig
 import { router } from "expo-router";
 import { useNavigation } from "../../src/hooks";
 import { View, StyleSheet, SectionList } from "react-native";
-import { Surface, Text, TextInput, MD3LightTheme } from "react-native-paper";
+import { Surface, Text, TextInput, useTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { MemberCard } from "../../src/components/MemberCard";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
@@ -14,28 +14,6 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1", // Primary Blue from style guide
-    secondary: "#F6F6F8", // Background from style guide
-    surface: "#FFFFFF", // Card Background from style guide
-    background: "#F6F6F8", // Background from style guide
-    onSurface: "#3c3c3c", // Dark Gray from style guide
-    onBackground: "#3c3c3c", // Dark Gray from style guide
-    onSurfaceVariant: "#9E9E9E", // Medium Gray from style guide
-    elevation: {
-      level0: "transparent",
-      level1: "#FFFFFF",
-      level2: "#F6F6F8",
-      level3: "#F0F0F0",
-      level4: "#E9ECEF",
-      level5: "#E2E6EA"
-    }
-  }
-};
 
 interface Member {
   id: string;
@@ -55,6 +33,7 @@ interface MemberSection {
 
 const MembersSearch = () => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack } = useNavigation();
   const [searchText, setSearchText] = useState("");

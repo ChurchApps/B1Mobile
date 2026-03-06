@@ -4,34 +4,15 @@ import { useNavigation } from "@react-navigation/native";
 import dayjs from "../helpers/dayjsConfig";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View, ScrollView } from "react-native";
-import { Provider as PaperProvider, Card, Text, MD3LightTheme, Chip, Button } from "react-native-paper";
+import { Card, Text, Chip, Button } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
 import { useQuery } from "@tanstack/react-query";
-import { Loader } from "./Loader";
+import { ListSkeleton } from "./common/Skeleton";
 import { router } from "expo-router";
 import { useCurrentUserChurch } from "../stores/useUserStore";
 import { Avatar } from "./common/Avatar";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#F6F6F8",
-    surface: "#FFFFFF",
-    background: "#F6F6F8",
-    elevation: {
-      level0: "transparent",
-      level1: "#FFFFFF",
-      level2: "#F6F6F8",
-      level3: "#F0F0F0",
-      level4: "#E9ECEF",
-      level5: "#E2E6EA"
-    }
-  }
-};
 
 export function NotificationTab() {
   const { t } = useTranslation();
@@ -120,7 +101,7 @@ export function NotificationTab() {
   const renderChatListItems = (item: any) => {
     const userchatDetails = { id: item.id, DisplayName: item.displayName, photo: item.photo };
     return (
-      <Card style={styles.messageCard} mode="elevated" onPress={() => router.push({ pathname: "/messageScreenRoot", params: { userDetails: JSON.stringify(userchatDetails) } })}>
+      <Card style={styles.messageCard} mode="elevated" onPress={() => router.push({ pathname: "/messageScreenRoot", params: { userDetails: JSON.stringify(userchatDetails) } })} accessibilityLabel={"Message from " + item.displayName} accessibilityRole="button">
         <Card.Content style={styles.messageContent}>
           <View style={styles.messageHeader}>
             <View style={styles.avatarContainer}>
@@ -171,7 +152,7 @@ export function NotificationTab() {
     };
 
     return (
-      <Card style={styles.notificationCard} mode="elevated" onPress={() => navigation.navigate("PlanDetails", { id: item?.contentId })}>
+      <Card style={styles.notificationCard} mode="elevated" onPress={() => navigation.navigate("PlanDetails", { id: item?.contentId })} accessibilityLabel={item.message} accessibilityRole="button">
         <Card.Content style={styles.notificationContent}>
           <View style={styles.notificationHeader}>
             <View style={styles.notificationIcon}>
@@ -198,7 +179,7 @@ export function NotificationTab() {
   const MessagesRoute = () => (
     <View style={styles.tabContainer}>
       {isLoading ? (
-        <Loader isLoading={true} />
+        <ListSkeleton count={5} />
       ) : mergeData.length > 0 ? (
         <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={(item, index) => `message-${item.id}-${index}`} contentContainerStyle={styles.listContent} initialNumToRender={10} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
       ) : (
@@ -211,7 +192,7 @@ export function NotificationTab() {
             <Text variant="bodyMedium" style={styles.emptySubtitle}>
               {t("notifications.startConversation")}
             </Text>
-            <Button mode="contained" onPress={() => router.push("/searchMessageUserRoot")} style={styles.actionButton}>
+            <Button mode="contained" onPress={() => router.push("/searchMessageUserRoot")} style={styles.actionButton} accessibilityLabel="Find people to message">
               <Text style={styles.actionButtonText}>{t("notifications.findPeople")}</Text>
             </Button>
           </View>
@@ -223,7 +204,7 @@ export function NotificationTab() {
   const NotificationRoute = () => (
     <View style={styles.tabContainer}>
       {isLoading ? (
-        <Loader isLoading={true} />
+        <ListSkeleton count={5} />
       ) : NotificationData.length > 0 ? (
         <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={(item, index) => `notification-${item.id}-${index}`} contentContainerStyle={styles.listContent} initialNumToRender={8} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={4} updateCellsBatchingPeriod={100} />
       ) : (
@@ -264,11 +245,9 @@ export function NotificationTab() {
   );
 
   return (
-    <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        <TabView navigationState={{ index: 0, routes }} renderScene={renderScene} onIndexChange={() => {}} swipeEnabled={false} renderTabBar={renderTabBar} initialLayout={{ width: 400 }} />
-      </View>
-    </PaperProvider>
+    <View style={styles.container}>
+      <TabView navigationState={{ index: 0, routes }} renderScene={renderScene} onIndexChange={() => {}} swipeEnabled={false} renderTabBar={renderTabBar} initialLayout={{ width: 400 }} />
+    </View>
   );
 }
 

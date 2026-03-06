@@ -13,7 +13,9 @@ import { useNavigation } from "@react-navigation/native";
 import type { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { eventBus } from "@/helpers/PushNotificationHelper";
+import { useThemeContext } from "../theme/ThemeProvider";
 import { useTranslation } from "react-i18next";
+import { HapticsHelper } from "../helpers/HapticsHelper";
 import pkg from "../../package.json";
 
 type ItemType = {
@@ -39,6 +41,7 @@ export function CustomDrawer(props?: any) {
   const params = useGlobalSearchParams();
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { theme: themeMode, toggleTheme } = useThemeContext();
 
   const { top } = useSafeAreaInsets();
 
@@ -139,9 +142,12 @@ export function CustomDrawer(props?: any) {
 
     return (
       <List.Item
+        accessibilityRole="menuitem"
+        accessibilityLabel={item.text}
         title={item.text}
         left={() => (topItem ? <Image source={{ uri: item.photo }} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={isActive ? "#FFF" : "#0D47A1"} style={styles.drawerIcon} />)}
         onPress={() => {
+          HapticsHelper.selection();
           NavigationUtils.navigateToScreen(item, currentChurch);
           // Use setTimeout to ensure navigation completes before closing drawer
           setTimeout(() => {
@@ -166,7 +172,7 @@ export function CustomDrawer(props?: any) {
     <Surface style={styles.headerContainer} elevation={2}>
       <View style={styles.headerContent}>
         {getUserInfo()}
-        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#0D47A1" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#0D47A1" />}>
+        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#0D47A1" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#0D47A1" />} accessibilityRole="button">
           {!currentChurch ? t("churchSearch.findChurch") : (currentChurch.name || t("churchSearch.selectChurch"))}
         </Button>
       </View>
@@ -188,7 +194,9 @@ export function CustomDrawer(props?: any) {
             </Text>
             <TouchableRipple
               style={styles.profileButton}
-              onPress={editDirectoryListingAction}>
+              onPress={editDirectoryListingAction}
+              accessibilityLabel="Edit profile"
+              accessibilityRole="button">
               <View style={styles.profileButtonContent}>
                 <MaterialIcons name="edit" size={16} color="#0D47A1" />
                 <Text style={styles.profileButtonText}>{t("navigation.editProfile")}</Text>
@@ -224,7 +232,10 @@ export function CustomDrawer(props?: any) {
   const drawerFooterComponent = () => {
     return (
       <Surface style={styles.footerContainer} elevation={1}>
-        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />} loading={isLoggingOut} disasbled={isLoggingOut}>
+        <Button mode="outlined" onPress={toggleTheme} style={styles.themeToggleButton} icon={() => <MaterialIcons name={themeMode === "dark" ? "light-mode" : "dark-mode"} size={24} color="#0D47A1" />} accessibilityLabel={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"} accessibilityRole="button">
+          {themeMode === "dark" ? t("drawer.lightMode") : t("drawer.darkMode")}
+        </Button>
+        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />} loading={isLoggingOut} disabled={isLoggingOut} accessibilityLabel={user ? "Log out" : "Log in"} accessibilityRole="button">
           {isLoggingOut ? t("drawer.signingOut") : user ? t("drawer.logout") : t("drawer.login")}
         </Button>
         <Text variant="bodySmall" style={styles.versionText}>
@@ -336,6 +347,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#F0F0F0"
   },
+  themeToggleButton: { marginBottom: 8 },
   logoutButton: { marginBottom: 8 },
   versionText: {
     textAlign: "center",

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
-import { Provider as PaperProvider, Text, MD3LightTheme, Button } from "react-native-paper";
+import { Text, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
@@ -16,27 +16,6 @@ import { FeaturedSermon, PlaylistCard, LiveStreamCard, EmptyState, SermonsTabBar
 import { UserHelper } from "../../src/helpers";
 import { PlaylistInterface, SermonInterface } from "@churchapps/helpers";
 import { useCurrentChurch } from "../../src/stores/useUserStore";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#f0f2f5",
-    surface: "#ffffff",
-    background: "#F6F6F8",
-    onSurface: "#3c3c3c",
-    onBackground: "#3c3c3c",
-    elevation: {
-      level0: "transparent",
-      level1: "#ffffff",
-      level2: "#f8f9fa",
-      level3: "#f0f2f5",
-      level4: "#e9ecef",
-      level5: "#e2e6ea"
-    }
-  }
-};
 
 const Sermons = () => {
   const { t } = useTranslation();
@@ -208,48 +187,44 @@ const Sermons = () => {
   if (playlistsError || sermonsError) {
     console.error("Sermons error - playlists:", playlistsError, "sermons:", sermonsError);
     return (
-      <PaperProvider theme={theme}>
-        <SafeAreaView style={styles.container}>
-          <MainHeader title={t("sermons.sermons")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
-          <View style={styles.errorContainer}>
-            <MaterialIcons name="error-outline" size={48} color="#B0120C" />
-            <Text variant="titleMedium" style={styles.errorTitle}>
-              {t("sermons.unableToLoad")}
+      <SafeAreaView style={styles.container}>
+        <MainHeader title={t("sermons.sermons")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+        <View style={styles.errorContainer}>
+          <MaterialIcons name="error-outline" size={48} color="#B0120C" />
+          <Text variant="titleMedium" style={styles.errorTitle}>
+            {t("sermons.unableToLoad")}
+          </Text>
+          <Text variant="bodyMedium" style={styles.errorMessage}>
+            {t("sermons.checkConnection")}
+          </Text>
+          {__DEV__ && (
+            <Text variant="bodySmall" style={[styles.errorMessage, { marginTop: 8 }]}>
+              Church ID: {currentChurch?.id || "Not set"}
             </Text>
-            <Text variant="bodyMedium" style={styles.errorMessage}>
-              {t("sermons.checkConnection")}
-            </Text>
-            {__DEV__ && (
-              <Text variant="bodySmall" style={[styles.errorMessage, { marginTop: 8 }]}>
-                Church ID: {currentChurch?.id || "Not set"}
-              </Text>
-            )}
-            <Button mode="contained" onPress={() => navigateBack()} style={styles.errorButton}>
-              {t("sermons.goBack")}
-            </Button>
-          </View>
-        </SafeAreaView>
-      </PaperProvider>
+          )}
+          <Button mode="contained" onPress={() => navigateBack()} style={styles.errorButton}>
+            {t("sermons.goBack")}
+          </Button>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        <LoadingWrapper loading={isLoading}>
-          <View style={styles.content}>
-            <MainHeader title={t("sermons.sermons")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+    <View style={styles.container}>
+      <LoadingWrapper loading={isLoading}>
+        <View style={styles.content}>
+          <MainHeader title={t("sermons.sermons")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
-            <SermonsTabBar activeSection={activeSection} onTabChange={setActiveSection} />
+          <SermonsTabBar activeSection={activeSection} onTabChange={setActiveSection} />
 
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              {activeSection === "playlists" && renderPlaylistsSection()}
-              {activeSection === "recent" && renderRecentSection()}
-            </ScrollView>
-          </View>
-        </LoadingWrapper>
-      </View>
-    </PaperProvider>
+          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            {activeSection === "playlists" && renderPlaylistsSection()}
+            {activeSection === "recent" && renderRecentSection()}
+          </ScrollView>
+        </View>
+      </LoadingWrapper>
+    </View>
   );
 };
 

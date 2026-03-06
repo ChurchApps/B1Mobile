@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, StyleSheet, Alert } from "react-native";
-import { Provider as PaperProvider, MD3LightTheme } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { ApiHelper } from "@churchapps/helpers";
@@ -25,19 +24,6 @@ import {
   fieldDefinitions
 } from "../../src/interfaces";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#F6F6F8",
-    surface: "#FFFFFF",
-    background: "#F6F6F8",
-    onSurface: "#3c3c3c",
-    onBackground: "#3c3c3c"
-  }
-};
 
 const ProfileEdit = () => {
   const { t } = useTranslation();
@@ -257,33 +243,31 @@ const ProfileEdit = () => {
   };
 
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaProvider>
-        <LoadingWrapper loading={isLoading}>
-          <View style={styles.container}>
-            <ProfileTabBar
-              activeSection={activeTab}
-              onTabChange={setActiveTab}
-              hasChanges={hasChanges}
-            />
+    <SafeAreaProvider>
+      <LoadingWrapper loading={isLoading}>
+        <View style={styles.container}>
+          <ProfileTabBar
+            activeSection={activeTab}
+            onTabChange={setActiveTab}
+            hasChanges={hasChanges}
+          />
 
-            <View style={styles.content}>
-              {renderContent()}
-            </View>
-
-            {/* Pending Changes Footer */}
-            {hasChanges && activeTab !== "visibility" && (
-              <PendingChangesView
-                changes={changes}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-                isSubmitting={isSubmitting}
-              />
-            )}
+          <View style={styles.content}>
+            {renderContent()}
           </View>
-        </LoadingWrapper>
-      </SafeAreaProvider>
-    </PaperProvider>
+
+          {/* Pending Changes Footer */}
+          {hasChanges && activeTab !== "visibility" && (
+            <PendingChangesView
+              changes={changes}
+              onSubmit={handleSubmit}
+              onCancel={handleCancel}
+              isSubmitting={isSubmitting}
+            />
+          )}
+        </View>
+      </LoadingWrapper>
+    </SafeAreaProvider>
   );
 };
 

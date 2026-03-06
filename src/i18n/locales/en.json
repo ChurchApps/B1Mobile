@@ -275,7 +275,9 @@
   "drawer": {
     "login": "Login",
     "logout": "Log out",
-    "signingOut": "Signing out..."
+    "signingOut": "Signing out...",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
   },
   "events": {
     "after": "After",

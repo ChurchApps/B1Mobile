@@ -14,6 +14,7 @@ import { NotificationNavigationHandler } from "../src/components/NotificationNav
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
 import { StatusBar } from "react-native";
 import { AppLifecycleManager } from "../src/helpers/AppLifecycleManager";
+import { designSystem } from "../src/theme/designSystem";
 import "../src/i18n";
 import * as Sentry from "@sentry/react-native";
 import Constants from "expo-constants";
@@ -67,7 +68,7 @@ export default Sentry.wrap(function RootLayout() {
   // Default header style for most screens
   const defaultHeaderOptions = {
     headerBackTitle: "Back",
-    headerStyle: { backgroundColor: "#0D47A1" },
+    headerStyle: { backgroundColor: designSystem.colors.primary[500] },
     headerTintColor: "#FFF",
     headerRight: () => <HeaderBell toggleNotifications={toggleNotifications} isDetail={true} />
   };
@@ -107,10 +108,10 @@ export default Sentry.wrap(function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <ActionSheetProvider>
           <ThemeProvider>
-            <StatusBar barStyle={"light-content"} />
+            <StatusBar barStyle="light-content" />
             <SafeAreaProvider>
               <NotificationNavigationHandler />
-              <Stack screenOptions={{ headerShown: true }} initialRouteName="auth">
+              <Stack screenOptions={{ headerShown: true, animation: "slide_from_right" }} initialRouteName="auth">
                 {screens.map(screen => (
                   <Stack.Screen key={screen.name} name={screen.name} options={screen.options} />
                 ))}

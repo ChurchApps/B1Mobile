@@ -16,7 +16,7 @@ const customColors = {
   primary: designSystem.colors.primary[500],
   secondary: designSystem.colors.secondary[500],
   error: designSystem.colors.error[500],
-  background: "#FFFFFF",
+  background: "#F6F6F8",
   surface: "#FFFFFF",
   surfaceVariant: designSystem.colors.neutral[50],
   onSurface: designSystem.colors.neutral[900],
@@ -24,7 +24,15 @@ const customColors = {
   onSurfaceDisabled: designSystem.colors.neutral[500],
   onPrimary: "#FFFFFF",
   onBackground: designSystem.colors.neutral[900],
-  onError: "#FFFFFF"
+  onError: "#FFFFFF",
+  elevation: {
+    level0: "transparent",
+    level1: "#FFFFFF",
+    level2: "#F8F9FA",
+    level3: "#F0F0F0",
+    level4: "#E9ECEF",
+    level5: "#E2E6EA"
+  }
 };
 
 // Custom component styles that can be reused
@@ -51,7 +59,15 @@ export const darkTheme = {
     surfaceVariant: "#2D2D2D",
     onSurface: "#FFFFFF",
     onSurfaceVariant: "#CCCCCC",
-    onBackground: "#FFFFFF"
+    onBackground: "#FFFFFF",
+    elevation: {
+      level0: "transparent",
+      level1: "#1E1E1E",
+      level2: "#232323",
+      level3: "#282828",
+      level4: "#2D2D2D",
+      level5: "#323232"
+    }
   },
   fonts: configureFonts({ config: fontConfig }),
   roundness: designSystem.borderRadius.md

@@ -6,6 +6,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ApiHelper, Constants, globalStyles } from "../../../src/helpers";
 import { ApiErrorHandler } from "../../../src/helpers/ApiErrorHandler";
 import { useTranslation } from "react-i18next";
+import { HapticsHelper } from "../../helpers/HapticsHelper";
 
 type Props = {
   messageId?: any;
@@ -58,6 +59,7 @@ export function AddNote({ ...props }: Props) {
         await ApiHelper.post("/messages", [m], "MessagingApi");
         props.onUpdate();
         setMessage({ conversationId: cId, content: "" } as MessageInterface);
+        HapticsHelper.light();
       }
     } catch (err) {
       console.error("Error saving message:", err);
@@ -87,6 +89,7 @@ export function AddNote({ ...props }: Props) {
           marginBottom: props.type === "new" ? 2 : 16
         }}>
         <TextInput
+          accessibilityLabel="Message text"
           onChangeText={text => handleChange(text)}
           placeholderTextColor={"gray"}
           style={[
@@ -115,11 +118,11 @@ export function AddNote({ ...props }: Props) {
             width: props.messageId ? DimensionHelper.wp(15) : DimensionHelper.wp(5),
             justifyContent: props.messageId ? "space-between" : "center"
           }}>
-          <TouchableOpacity onPress={() => handleSave()}>
+          <TouchableOpacity onPress={() => handleSave()} accessibilityLabel="Send message" accessibilityRole="button">
             <MaterialIcons name={"send"} color={Constants.Colors.app_color} size={DimensionHelper.wp(5)} />
           </TouchableOpacity>
           {props.messageId && (
-            <TouchableOpacity onPress={() => deleteNote()}>
+            <TouchableOpacity onPress={() => deleteNote()} accessibilityLabel="Delete message" accessibilityRole="button">
               <MaterialIcons name={"delete"} color={Constants.Colors.app_color} size={DimensionHelper.wp(6.2)} />
             </TouchableOpacity>
           )}

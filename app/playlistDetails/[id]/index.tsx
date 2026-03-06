@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { ScrollView, View, StyleSheet } from "react-native";
-import { Provider as PaperProvider, Text, MD3LightTheme, Card } from "react-native-paper";
+import { Text, Card } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
@@ -18,27 +18,6 @@ import { UserHelper, DateHelper } from "../../../src/helpers";
 import { SermonInterface, PlaylistInterface } from "@churchapps/helpers";
 import { useCurrentChurch } from "../../../src/stores/useUserStore";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#f0f2f5",
-    surface: "#ffffff",
-    background: "#F6F6F8",
-    onSurface: "#3c3c3c",
-    onBackground: "#3c3c3c",
-    elevation: {
-      level0: "transparent",
-      level1: "#ffffff",
-      level2: "#f8f9fa",
-      level3: "#f0f2f5",
-      level4: "#e9ecef",
-      level5: "#e2e6ea"
-    }
-  }
-};
 
 const PlaylistDetails = () => {
   const { t } = useTranslation();
@@ -165,52 +144,48 @@ const PlaylistDetails = () => {
 
   if (playlistError || sermonsError) {
     return (
-      <PaperProvider theme={theme}>
-        <SafeAreaView style={styles.container}>
-          <MainHeader title={title || t("sermons.playlist")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
-          <View style={styles.errorContainer}>
-            <MaterialIcons name="error-outline" size={48} color="#B0120C" />
-            <Text variant="titleMedium" style={styles.errorTitle}>
-              Unable to Load Playlist
-            </Text>
-            <Text variant="bodyMedium" style={styles.errorMessage}>
-              Please check your connection and try again.
-            </Text>
-          </View>
-        </SafeAreaView>
-      </PaperProvider>
+      <SafeAreaView style={styles.container}>
+        <MainHeader title={title || t("sermons.playlist")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
+        <View style={styles.errorContainer}>
+          <MaterialIcons name="error-outline" size={48} color="#B0120C" />
+          <Text variant="titleMedium" style={styles.errorTitle}>
+            Unable to Load Playlist
+          </Text>
+          <Text variant="bodyMedium" style={styles.errorMessage}>
+            Please check your connection and try again.
+          </Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaView style={styles.container}>
-        <LoadingWrapper loading={isLoading}>
-          <View style={styles.content}>
-            <MainHeader title={title || t("sermons.playlist")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
+    <SafeAreaView style={styles.container}>
+      <LoadingWrapper loading={isLoading}>
+        <View style={styles.content}>
+          <MainHeader title={title || t("sermons.playlist")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
 
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              {renderPlaylistHeader()}
+          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            {renderPlaylistHeader()}
 
-              <View style={styles.sermonsSection}>
-                <View style={styles.sectionHeader}>
-                  <Text variant="titleLarge" style={styles.sectionTitle}>
-                    Sermons
+            <View style={styles.sermonsSection}>
+              <View style={styles.sectionHeader}>
+                <Text variant="titleLarge" style={styles.sectionTitle}>
+                  Sermons
+                </Text>
+                {sermons && sermons.length > 0 && (
+                  <Text variant="bodyMedium" style={styles.sectionSubtitle}>
+                    {sermons.length} sermon{sermons.length !== 1 ? "s" : ""}
                   </Text>
-                  {sermons && sermons.length > 0 && (
-                    <Text variant="bodyMedium" style={styles.sectionSubtitle}>
-                      {sermons.length} sermon{sermons.length !== 1 ? "s" : ""}
-                    </Text>
-                  )}
-                </View>
-
-                {!sermons || sermons.length === 0 ? renderEmptyState() : sermons.map(sermon => renderSermonItem(sermon))}
+                )}
               </View>
-            </ScrollView>
-          </View>
-        </LoadingWrapper>
-      </SafeAreaView>
-    </PaperProvider>
+
+              {!sermons || sermons.length === 0 ? renderEmptyState() : sermons.map(sermon => renderSermonItem(sermon))}
+            </View>
+          </ScrollView>
+        </View>
+      </LoadingWrapper>
+    </SafeAreaView>
   );
 };
 

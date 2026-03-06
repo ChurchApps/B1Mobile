@@ -10,7 +10,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
-import { Provider as PaperProvider, Card, Text, MD3LightTheme } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { UserHelper } from "../../src/helpers";
 import { NavigationUtils } from "../../src/helpers/NavigationUtils";
@@ -19,28 +19,11 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
+import { CardSkeleton } from "../../src/components/common/Skeleton";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
 import { useUserStore, useCurrentChurch, useChurchAppearance, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#175ec1",
-    secondary: "#f0f2f5",
-    surface: "#ffffff",
-    background: "#f8f9fa",
-    elevation: {
-      level0: "transparent",
-      level1: "#ffffff",
-      level2: "#f8f9fa",
-      level3: "#f0f2f5",
-      level4: "#e9ecef",
-      level5: "#e2e6ea"
-    }
-  }
-};
+import { HapticsHelper } from "../../src/helpers/HapticsHelper";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -99,6 +82,7 @@ const Dashboard = () => {
   }, [currentChurch?.id, loadDashboardData]);
 
   const onRefresh = useCallback(async () => {
+    HapticsHelper.medium();
     setRefreshing(true);
     await loadDashboardData();
     setRefreshing(false);
@@ -163,7 +147,16 @@ const Dashboard = () => {
   }, [links, linkViewCounts, generateLinkId]);
 
   const featuredContent = useMemo(() => {
-    if (isLoading || filteredLinks.length === 0) return null;
+    if (isLoading) {
+      return (
+        <View style={{ paddingHorizontal: 16 }}>
+          <CardSkeleton />
+          <CardSkeleton />
+          <CardSkeleton />
+        </View>
+      );
+    }
+    if (filteredLinks.length === 0) { return null; }
 
     // Get featured items (first 3 most important items)
     const featuredItems = filteredLinks.slice(0, 3);
@@ -265,28 +258,26 @@ const Dashboard = () => {
   }, [navigation]);
 
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaProvider>
-        <LoadingWrapper loading={isLoading}>
-          <View style={styles.container}>
-            <MainHeader title={t("dashboard.home")} openDrawer={handleDrawerOpen} />
-            <View style={styles.contentContainer}>
-              <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-                refreshControl={
-                  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#175ec1" />
-                }
-              >
-                {welcomeSection}
-                {featuredContent}
-              </ScrollView>
-            </View>
+    <SafeAreaProvider>
+      <LoadingWrapper loading={isLoading}>
+        <View style={styles.container}>
+          <MainHeader title={t("dashboard.home")} openDrawer={handleDrawerOpen} />
+          <View style={styles.contentContainer}>
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#175ec1" />
+              }
+            >
+              {welcomeSection}
+              {featuredContent}
+            </ScrollView>
           </View>
-        </LoadingWrapper>
-      </SafeAreaProvider>
-    </PaperProvider>
+        </View>
+      </LoadingWrapper>
+    </SafeAreaProvider>
   );
 };
 

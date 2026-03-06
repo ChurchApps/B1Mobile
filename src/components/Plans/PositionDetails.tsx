@@ -6,6 +6,7 @@ import { ApiHelper, PositionInterface, TimeInterface } from "../../../src/helper
 import { ApiErrorHandler } from "../../../src/helpers/ApiErrorHandler";
 import { Card, Button } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { HapticsHelper } from "../../helpers/HapticsHelper";
 
 interface Props {
   position: PositionInterface;
@@ -77,6 +78,7 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
     if (!assignment?.id) return;
     try {
       await ApiHelper.post("/assignments/accept/" + assignment.id, [], "DoingApi");
+      HapticsHelper.success();
       onUpdate();
     } catch (error) {
       console.error("Error accepting assignment:", error);
@@ -88,6 +90,7 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
     if (!assignment?.id) return;
     try {
       await ApiHelper.post("/assignments/decline/" + assignment.id, [], "DoingApi");
+      HapticsHelper.light();
       onUpdate();
     } catch (error) {
       console.error("Error declining assignment:", error);
@@ -128,10 +131,10 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
         {/* Action Buttons */}
         {canRespond && (
           <View style={styles.actionsContainer}>
-            <Button mode="outlined" onPress={handleDecline} style={styles.declineButton} labelStyle={styles.declineButtonText} icon="close">
+            <Button mode="outlined" onPress={handleDecline} style={styles.declineButton} labelStyle={styles.declineButtonText} icon="close" accessibilityLabel="Decline assignment">
               {t("plans.decline")}
             </Button>
-            <Button mode="contained" onPress={handleAccept} style={styles.acceptButton} labelStyle={styles.acceptButtonText} icon="check">
+            <Button mode="contained" onPress={handleAccept} style={styles.acceptButton} labelStyle={styles.acceptButtonText} icon="check" accessibilityLabel="Accept assignment">
               {t("plans.accept")}
             </Button>
           </View>

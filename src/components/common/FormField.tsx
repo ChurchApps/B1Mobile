@@ -60,6 +60,24 @@ export const FormField: React.FC<FormFieldProps> = ({
     return autoCapitalize;
   };
 
+  const getAutoComplete = () => {
+    switch (type) {
+      case "email": return "email" as const;
+      case "password": return "password" as const;
+      case "phone": return "tel" as const;
+      default: return "off" as const;
+    }
+  };
+
+  const getTextContentType = () => {
+    switch (type) {
+      case "email": return "emailAddress" as const;
+      case "password": return "password" as const;
+      case "phone": return "telephoneNumber" as const;
+      default: return "none" as const;
+    }
+  };
+
   return (
     <View style={[{ marginBottom: 16 }, style]}>
       <TextInput
@@ -72,6 +90,8 @@ export const FormField: React.FC<FormFieldProps> = ({
         secureTextEntry={isPassword && !showPassword}
         keyboardType={getKeyboardType()}
         autoCapitalize={getAutoCapitalize()}
+        autoComplete={getAutoComplete()}
+        textContentType={getTextContentType()}
         editable={editable}
         multiline={multiline}
         numberOfLines={numberOfLines}

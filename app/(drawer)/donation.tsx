@@ -9,34 +9,12 @@ import { useIsFocused, useNavigation as useReactNavigation, DrawerActions } from
 import { initStripe } from "@stripe/stripe-react-native";
 import { useEffect, useState, useMemo } from "react";
 import { Alert, ScrollView, View, StyleSheet } from "react-native";
-import { Provider as PaperProvider, MD3LightTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { useDonationFunds } from "../../src/hooks/useStaleWhileRevalidate";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useNavigation } from "../../src/hooks";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#f0f2f5",
-    surface: "#ffffff",
-    background: "#F6F6F8",
-    onSurface: "#3c3c3c",
-    onBackground: "#3c3c3c",
-    elevation: {
-      level0: "transparent",
-      level1: "#ffffff",
-      level2: "#f8f9fa",
-      level3: "#f0f2f5",
-      level4: "#e9ecef",
-      level5: "#e2e6ea"
-    }
-  }
-};
 
 const Donation = () => {
   const { t } = useTranslation();
@@ -183,22 +161,20 @@ const Donation = () => {
   const renderHistorySection = () => <EnhancedGivingHistory customerId={customerId} paymentMethods={paymentMethods || []} donationImpactData={donationImpactData || []} donationImpactLoading={donationImpactLoading} />;
 
   return (
-    <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <MainHeader title={t("donations.giving")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+    <View style={styles.container}>
+      <View style={styles.content}>
+        <MainHeader title={t("donations.giving")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
-          <DonationTabBar activeSection={activeSection} onTabChange={setActiveSection} />
+        <DonationTabBar activeSection={activeSection} onTabChange={setActiveSection} />
 
-          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            {activeSection === "overview" && renderOverviewSection()}
-            {activeSection === "donate" && renderDonateSection()}
-            {activeSection === "manage" && renderManageSection()}
-            {activeSection === "history" && renderHistorySection()}
-          </ScrollView>
-        </View>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          {activeSection === "overview" && renderOverviewSection()}
+          {activeSection === "donate" && renderDonateSection()}
+          {activeSection === "manage" && renderManageSection()}
+          {activeSection === "history" && renderHistorySection()}
+        </ScrollView>
       </View>
-    </PaperProvider>
+    </View>
   );
 };
 
