@@ -9,6 +9,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { DonationHelper } from "@churchapps/helpers";
 import { useTranslation } from "react-i18next";
+import { PrintStatementButton } from "./PrintStatementButton";
 
 interface DonationRecord {
   id: string;
@@ -395,6 +396,9 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
           )}
         </Card.Content>
       </Card>
+
+      {/* Print Statement */}
+      <PrintStatementButton />
 
       {/* Recurring Donations */}
       {recurringLoading ? (

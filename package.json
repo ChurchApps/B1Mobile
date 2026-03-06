@@ -58,6 +58,7 @@
     "expo-linking": "~8.0.10",
     "expo-localization": "~17.0.8",
     "expo-notifications": "~0.32.14",
+    "expo-print": "~15.0.8",
     "expo-router": "~6.0.17",
     "expo-secure-store": "~15.0.8",
     "expo-splash-screen": "~31.0.12",

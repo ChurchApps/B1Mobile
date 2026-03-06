@@ -9,9 +9,9 @@ import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } 
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
-import { useNavigation as useReactNavigation } from "expo-router";
+import { useNavigation as useReactNavigation, useRouter } from "expo-router";
 import { useNavigation } from "../../src/hooks";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
+import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 import { Provider as PaperProvider, Card, MD3LightTheme } from "react-native-paper";
@@ -44,6 +44,7 @@ const Plan = () => {
   const { t } = useTranslation();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const currentUserChurch = useCurrentUserChurch();
+  const router = useRouter();
   const { navigateBack } = useNavigation();
   const [activeSection, setActiveSection] = useState<"upcoming" | "past">("upcoming");
 
@@ -230,6 +231,18 @@ const Plan = () => {
                   <ServingTimes assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} isLoading={isLoading} />
                   {/* <UpcomingDates assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} times={times} isLoading={isLoading} /> */}
                   <BlockoutDates />
+                  <Card style={styles.volunteerCard}>
+                    <TouchableOpacity onPress={() => router.push("/(drawer)/volunteerBrowse")} activeOpacity={0.7}>
+                      <Card.Content style={styles.volunteerContent}>
+                        <MaterialIcons name="volunteer-activism" size={32} color="#0D47A1" />
+                        <View style={{ flex: 1, marginLeft: 12 }}>
+                          <Text style={styles.volunteerTitle}>{t("volunteer.browseVolunteer")}</Text>
+                          <Text style={styles.volunteerSubtitle}>{t("volunteer.browseOpportunities")}</Text>
+                        </View>
+                        <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
+                      </Card.Content>
+                    </TouchableOpacity>
+                  </Card>
                 </>
               )}
               {activeSection === "past" && (
@@ -349,6 +362,32 @@ const styles = StyleSheet.create({
   loadingHeroContent: {
     alignItems: "center",
     padding: 60
+  },
+
+  // Volunteer Browse Card
+  volunteerCard: {
+    marginTop: 24,
+    borderRadius: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 3
+  },
+  volunteerContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16
+  },
+  volunteerTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#3c3c3c"
+  },
+  volunteerSubtitle: {
+    fontSize: 13,
+    color: "#9E9E9E",
+    marginTop: 2
   }
 });
 

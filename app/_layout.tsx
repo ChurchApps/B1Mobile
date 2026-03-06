@@ -97,7 +97,9 @@ export default Sentry.wrap(function RootLayout() {
     { name: "websiteUrlRoot", options: { ...defaultHeaderOptions, title: t("navigation.website") } },
     { name: "planRoot", options: { ...defaultHeaderOptions, title: t("plans.plans") } },
     { name: "donationRoot", options: { ...defaultHeaderOptions, title: t("donations.giving") } },
-    { name: "planDetails/[id]/index", options: { ...defaultHeaderOptions, title: t("navigation.planDetails"), headerBackTitle: t("plans.plans") } }
+    { name: "planDetails/[id]/index", options: { ...defaultHeaderOptions, title: t("navigation.planDetails"), headerBackTitle: t("plans.plans") } },
+    { name: "volunteerBrowseRoot", options: { ...defaultHeaderOptions, title: t("volunteer.browseOpportunities") } },
+    { name: "volunteerSignup/[planId]/index", options: { ...defaultHeaderOptions, title: t("volunteer.browseOpportunities"), headerBackTitle: t("plans.plans") } }
   ];
 
   return (
