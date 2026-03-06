@@ -8,6 +8,7 @@ import { ArrayHelper, UserPostInterface } from "../../src/helpers";
 import { TimelineHelper } from "../../src/helpers/Timelinehelper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
+import { UpcomingEventsList } from "../../src/components/events/UpcomingEventsList";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useUser, useGroupViewCounts, useIncrementGroupViewCount } from "../../src/stores/useUserStore";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
@@ -217,6 +218,8 @@ const MyGroups = () => {
             </View>
           </View>
         )}
+        <UpcomingEventsList />
+
         {mergeData.length > 0 && (
           <View style={styles.regularSectionTop}>
             <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>

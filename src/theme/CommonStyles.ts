@@ -5,18 +5,18 @@ export const CommonStyles = StyleSheet.create({
   // Container styles
   container: {
     flex: 1,
-    backgroundColor: "#ffffff"
+    backgroundColor: designSystem.colors.neutral[50]
   },
 
   containerWithPadding: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: designSystem.colors.neutral[50],
     padding: designSystem.spacing.md
   },
 
   // Card styles
   card: {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#FFFFFF",
     borderRadius: designSystem.borderRadius.md,
     padding: designSystem.spacing.md,
     marginHorizontal: designSystem.spacing.md,
