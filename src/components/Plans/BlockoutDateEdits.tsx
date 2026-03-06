@@ -8,6 +8,7 @@ import { ModalDatePicker } from "react-native-material-date-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { BlockoutDateInterface, Constants, globalStyles } from "../../../src/helpers";
+import { ApiErrorHandler } from "../../../src/helpers/ApiErrorHandler";
 import { CustomModal } from "../modals/CustomModal";
 import { useTranslation } from "react-i18next";
 
@@ -36,27 +37,27 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
     return result.length === 0;
   };
 
-  const onPressSaveButton = () => {
-    if (validate()) {
-      ApiHelper.post("/blockoutDates", [BlockoutDate], "DoingApi")
-        .then(() => {
-          onClose();
-          onUpdate();
-        })
-        .catch(error => {
-          console.error("Error saving blockout date:", error);
-        });
-    } else return;
+  const onPressSaveButton = async () => {
+    if (!validate()) return;
+    try {
+      await ApiHelper.post("/blockoutDates", [BlockoutDate], "DoingApi");
+      onClose();
+      onUpdate();
+    } catch (error) {
+      console.error("Error saving blockout date:", error);
+      ApiErrorHandler.showErrorAlert(error, "Error");
+    }
   };
-  const onPressDeleteButton = (id: number) => {
-    ApiHelper.delete("/blockoutDates/" + id, "DoingApi")
-      .then(() => {
-        onClose();
-        onUpdate();
-      })
-      .catch(error => {
-        console.error("Error deleting blockout date:", error);
-      });
+
+  const onPressDeleteButton = async (id: number) => {
+    try {
+      await ApiHelper.delete("/blockoutDates/" + id, "DoingApi");
+      onClose();
+      onUpdate();
+    } catch (error) {
+      console.error("Error deleting blockout date:", error);
+      ApiErrorHandler.showErrorAlert(error, "Error");
+    }
   };
 
   return (

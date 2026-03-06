@@ -3,6 +3,7 @@ import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ApiHelper, PositionInterface, TimeInterface } from "../../../src/helpers";
+import { ApiErrorHandler } from "../../../src/helpers/ApiErrorHandler";
 import { Card, Button } from "react-native-paper";
 import { useTranslation } from "react-i18next";
 
@@ -72,26 +73,26 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
   const formatDate = (date: any) => date.format("lll");
   const formatTime = (date: any) => date.format("LT");
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
     if (!assignment?.id) return;
-    ApiHelper.post("/assignments/accept/" + assignment.id, [], "DoingApi")
-      .then(() => {
-        onUpdate();
-      })
-      .catch(error => {
-        console.error("Error accepting assignment:", error);
-      });
+    try {
+      await ApiHelper.post("/assignments/accept/" + assignment.id, [], "DoingApi");
+      onUpdate();
+    } catch (error) {
+      console.error("Error accepting assignment:", error);
+      ApiErrorHandler.showErrorAlert(error, "Error");
+    }
   };
 
-  const handleDecline = () => {
+  const handleDecline = async () => {
     if (!assignment?.id) return;
-    ApiHelper.post("/assignments/decline/" + assignment.id, [], "DoingApi")
-      .then(() => {
-        onUpdate();
-      })
-      .catch(error => {
-        console.error("Error declining assignment:", error);
-      });
+    try {
+      await ApiHelper.post("/assignments/decline/" + assignment.id, [], "DoingApi");
+      onUpdate();
+    } catch (error) {
+      console.error("Error declining assignment:", error);
+      ApiErrorHandler.showErrorAlert(error, "Error");
+    }
   };
 
   let latestTime = new Date();

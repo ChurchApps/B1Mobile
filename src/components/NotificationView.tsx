@@ -85,41 +85,36 @@ export function NotificationTab() {
     getPreviousConversations();
   }, []);
 
-  const getPreviousConversations = () => {
+  const getPreviousConversations = async () => {
     if (!currentUserChurch?.person?.id) {
       setLoading(false);
       return;
     }
     setLoading(true);
-    ApiHelper.get("/privateMessages", "MessagingApi")
-      .then((data: ConversationCheckInterface[]) => {
-        if (data && data.length != 0) {
-          setChatList(data);
-        }
-        setLoading(false);
-        let userIdList: string[] = [];
-        if (Object.keys(data).length != 0) {
-          userIdList = data.map(e => (currentUserChurch?.person?.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
-          if (userIdList.length != 0) {
-            ApiHelper.get("/people/basic?ids=" + userIdList.join(","), "MembershipApi")
-              .then((userData: UserSearchInterface[]) => {
-                for (let i = 0; i < userData.length; i++) {
-                  const singleUser: UserSearchInterface = userData[i];
-                  const tempConvo: ConversationCheckInterface | undefined = data.find(x => x.fromPersonId == singleUser.id || x.toPersonId == singleUser.id);
-                  userData[i].conversationId = tempConvo?.conversationId;
-                }
-                setUserData(userData);
-              })
-              .catch(error => {
-                console.error("Error fetching user data:", error);
-              });
+    try {
+      const data: ConversationCheckInterface[] = await ApiHelper.get("/privateMessages", "MessagingApi");
+      if (data && data.length !== 0) {
+        setChatList(data);
+        const userIdList = data.map(e => (currentUserChurch?.person?.id == e.fromPersonId ? e.toPersonId : e.fromPersonId));
+        if (userIdList.length !== 0) {
+          try {
+            const userData: UserSearchInterface[] = await ApiHelper.get("/people/basic?ids=" + userIdList.join(","), "MembershipApi");
+            for (let i = 0; i < userData.length; i++) {
+              const singleUser: UserSearchInterface = userData[i];
+              const tempConvo: ConversationCheckInterface | undefined = data.find(x => x.fromPersonId == singleUser.id || x.toPersonId == singleUser.id);
+              userData[i].conversationId = tempConvo?.conversationId;
+            }
+            setUserData(userData);
+          } catch (error) {
+            console.error("Error fetching user data:", error);
           }
         }
-      })
-      .catch(err => {
-        console.error("Error fetching private messages:", err);
-        setLoading(false);
-      });
+      }
+    } catch (err) {
+      console.error("Error fetching private messages:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderChatListItems = (item: any) => {

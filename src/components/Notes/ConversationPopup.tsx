@@ -39,16 +39,15 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
 
       if (m && validate(m)) {
         let cId = message && message.conversationId;
-        if (!cId) cId = m && (await createConversation());
+        if (!cId) cId = await createConversation();
         const nM = { ...m };
         nM.conversationId = cId;
-        await ApiHelper.post("/messages", [nM], "MessagingApi").then(data => {
-          if (data) {
-            onUpdate();
-            textRef.current = "";
-            setShowReplyBox(null);
-          }
-        });
+        const data = await ApiHelper.post("/messages", [nM], "MessagingApi");
+        if (data) {
+          onUpdate();
+          textRef.current = "";
+          setShowReplyBox(null);
+        }
       }
     } catch (err) {
       console.error("Error saving conversation:", err);

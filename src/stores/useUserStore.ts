@@ -74,31 +74,22 @@ export const useUserStore = create<UserState>()(
       setCurrentUserChurch: async (userChurch, appearance) => {
         set({ currentUserChurch: userChurch });
 
-        // Progressive: Load appearance in background (non-blocking)
+        // Load appearance in background (non-blocking)
         if (appearance) {
           set({ churchAppearance: appearance });
         } else {
-          // Load appearance without blocking UI
-          setTimeout(async () => {
-            try {
-              const fetchedAppearance = await ApiHelper.getAnonymous(`/settings/public/${userChurch.church.id}`, "MembershipApi");
-              set({ churchAppearance: fetchedAppearance });
-            } catch (error) {
-              console.error("Failed to fetch church appearance:", error);
-            }
-          }, 0);
+          // Fire and forget — don't await, but handle errors
+          ApiHelper.getAnonymous(`/settings/public/${userChurch.church.id}`, "MembershipApi")
+            .then((fetchedAppearance: AppearanceInterface) => set({ churchAppearance: fetchedAppearance }))
+            .catch((error: any) => console.error("Failed to fetch church appearance:", error));
         }
 
-        // Progressive: Load church links without blocking UI
-        setTimeout(() => {
-          get().loadChurchLinks(userChurch.church.id || "");
-        }, 50);
+        // Load church links in background (non-blocking)
+        get().loadChurchLinks(userChurch.church.id || "").catch(error => console.error("Failed to load church links:", error));
 
-        // Deferred: Load person record after initial render
+        // Load person record in background if authenticated
         if (userChurch.jwt) {
-          setTimeout(() => {
-            get().loadPersonRecord();
-          }, 100);
+          get().loadPersonRecord().catch(error => console.error("Failed to load person record:", error));
         }
       },
 
@@ -140,6 +131,11 @@ export const useUserStore = create<UserState>()(
       // Handle login response
       handleLogin: async (data: LoginResponseInterface) => {
         const state = get();
+
+        if (!data.userChurches || data.userChurches.length === 0) {
+          console.error("Login response contained no user churches");
+          return;
+        }
 
         // Find the current church or use the first one
         let currentChurch: LoginUserChurchInterface = data.userChurches[0];
@@ -221,20 +217,13 @@ export const useUserStore = create<UserState>()(
         set({ currentUserChurch: anonymousUserChurch });
         get().addRecentChurch(church);
 
-        // Progressive: Fetch church appearance in background
-        setTimeout(async () => {
-          try {
-            const appearance = await ApiHelper.getAnonymous(`/settings/public/${church.id}`, "MembershipApi");
-            set({ churchAppearance: appearance });
-          } catch (error) {
-            console.error("❌ Failed to fetch church appearance:", error);
-          }
-        }, 0);
+        // Fetch church appearance in background (fire and forget)
+        ApiHelper.getAnonymous(`/settings/public/${church.id}`, "MembershipApi")
+          .then(appearance => set({ churchAppearance: appearance }))
+          .catch(error => console.error("Failed to fetch church appearance:", error));
 
-        // Deferred: Load church links after initial render
-        setTimeout(() => {
-          get().loadChurchLinks(church.id || "");
-        }, 100);
+        // Load church links in background (fire and forget)
+        get().loadChurchLinks(church.id || "").catch(error => console.error("Failed to load church links:", error));
       },
 
       // Load church navigation links

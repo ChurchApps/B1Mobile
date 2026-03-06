@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableOpacity, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ApiHelper, Constants, globalStyles } from "../../../src/helpers";
+import { ApiErrorHandler } from "../../../src/helpers/ApiErrorHandler";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -54,28 +55,24 @@ export function AddNote({ ...props }: Props) {
         if (!cId) cId = await props.createConversation();
         const m = { ...message };
         m.conversationId = cId;
-        ApiHelper.post("/messages", [m], "MessagingApi")
-          .then(() => {
-            props.onUpdate();
-            const m = { ...message } as MessageInterface;
-            m.content = "";
-            setMessage(m);
-          })
-          .catch(error => {
-            console.error("Error calling message API:", error);
-          })
-          .finally(() => {
-            setMessage(null);
-          });
+        await ApiHelper.post("/messages", [m], "MessagingApi");
+        props.onUpdate();
+        setMessage({ conversationId: cId, content: "" } as MessageInterface);
       }
     } catch (err) {
-      console.error("Error calling message API:", err);
+      console.error("Error saving message:", err);
+      ApiErrorHandler.showErrorAlert(err, "Error");
     }
   }
 
   async function deleteNote() {
-    await ApiHelper.delete(`/messages/${props.messageId}`, "MessagingApi");
-    props.onUpdate();
+    try {
+      await ApiHelper.delete(`/messages/${props.messageId}`, "MessagingApi");
+      props.onUpdate();
+    } catch (err) {
+      console.error("Error deleting message:", err);
+      ApiErrorHandler.showErrorAlert(err, "Error");
+    }
   }
 
   return (

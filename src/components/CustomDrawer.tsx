@@ -53,10 +53,10 @@ export function CustomDrawer(props?: any) {
     const handleLogout = () => {
       logoutAction();
     };
-    eventBus.addListener("do_logout", handleLogout);
+    const subscription = eventBus.addListener("do_logout", handleLogout);
 
     return () => {
-      eventBus.removeListener("do_logout");
+      subscription.remove();
     };
   }, []);
 

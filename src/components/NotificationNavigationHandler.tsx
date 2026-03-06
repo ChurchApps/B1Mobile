@@ -37,13 +37,13 @@ export const NotificationNavigationHandler = () => {
     };
 
     // Add event listeners
-    eventBus.addListener("navigateToChat", handleChatNavigation);
-    eventBus.addListener("navigateToNotification", handleNotificationNavigation);
+    const chatSub = eventBus.addListener("navigateToChat", handleChatNavigation);
+    const notifSub = eventBus.addListener("navigateToNotification", handleNotificationNavigation);
 
     // Cleanup on unmount
     return () => {
-      eventBus.removeListener("navigateToChat");
-      eventBus.removeListener("navigateToNotification");
+      chatSub.remove();
+      notifSub.remove();
     };
   }, []);
 

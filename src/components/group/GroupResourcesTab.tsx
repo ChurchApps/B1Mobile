@@ -28,28 +28,25 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
     loadData();
   }, [groupId]);
 
-  const loadData = useCallback(() => {
-    ApiHelper.get("/files/group/" + groupId, "ContentApi")
-      .then(data => {
-        // alert("Files loaded: " + (data?.length || 0));
-        setFiles(data);
-      })
-      .catch((error: any) => {
-        console.error("Error fetching messages:", error);
-      });
+  const loadData = useCallback(async () => {
+    try {
+      const data = await ApiHelper.get("/files/group/" + groupId, "ContentApi");
+      setFiles(data);
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
 
-    ApiHelper.get("/links?category=groupLink", "ContentApi")
-      .then((data: LinkInterface[]) => {
-        const result: LinkInterface[] = [];
-        data?.forEach(l => {
-          if (l.linkData === groupId) result.push(l);
-        });
-        setLinks(result);
-      })
-      .catch((error: any) => {
-        console.error("Error fetching group links:", error);
+    try {
+      const data: LinkInterface[] = await ApiHelper.get("/links?category=groupLink", "ContentApi");
+      const result: LinkInterface[] = [];
+      data?.forEach(l => {
+        if (l.linkData === groupId) result.push(l);
       });
-  }, []);
+      setLinks(result);
+    } catch (error) {
+      console.error("Error fetching group links:", error);
+    }
+  }, [groupId]);
 
   const handleDelete = async (file: FileInterface) => {
     Alert.alert(t("groups.confirmDeleteFile", { name: file.fileName }), "", [
