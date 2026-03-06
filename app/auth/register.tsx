@@ -1,6 +1,6 @@
 import React from "react";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
-import { ApiHelper } from "../../src/helpers";
+import { ApiHelper, CheckEmailResponseInterface } from "../../src/helpers";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Alert, SafeAreaView } from "react-native";
@@ -17,12 +17,34 @@ const Register = () => {
   const [email, setEmail] = useState(params.email || "");
   const [firstName, setFirstName] = useState(params.firstName || "");
   const [lastName, setLastName] = useState(params.lastName || "");
+  const [matchedChurchId, setMatchedChurchId] = useState(params.churchId || "");
+  const [matchedChurchName, setMatchedChurchName] = useState(params.churchName || "");
+
+  const checkEmailForMatch = async (emailToCheck: string) => {
+    if (!emailToCheck) return;
+    const emailReg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,6})+$/;
+    if (!emailReg.test(emailToCheck)) return;
+    try {
+      const resp: CheckEmailResponseInterface = await ApiHelper.postAnonymous("/users/checkEmail", { email: emailToCheck }, "MembershipApi");
+      if (resp.exists) {
+        Alert.alert(t("common.alert"), t("auth.userExists"));
+      } else if (resp.peopleMatches.length > 0) {
+        const match = resp.peopleMatches[0];
+        if (!firstName) setFirstName(match.firstName);
+        if (!lastName) setLastName(match.lastName);
+        if (resp.peopleMatches.length === 1) {
+          setMatchedChurchId(match.churchId);
+          setMatchedChurchName(match.churchName);
+        }
+      }
+    } catch { /* silently ignore lookup failures */ }
+  };
 
   const registerApiCall = async () => {
     setLoading(true);
     try {
       const registerData: any = { email, firstName, lastName };
-      if (params.churchId) registerData.churchId = params.churchId;
+      if (matchedChurchId) registerData.churchId = matchedChurchId;
       const data = await ApiHelper.postAnonymous("/users/register", registerData, "MembershipApi");
       if (data.email != null) {
         Alert.alert(t("common.alert"), t("auth.registrationSuccess"), [{ text: "OK", onPress: () => router.navigate("/auth/login") }]);
@@ -67,17 +89,17 @@ const Register = () => {
         {t("auth.registerAccount")}
       </Text>
 
-      {params.churchName && (
+      {matchedChurchName ? (
         <Banner visible={true} icon={({ size }) => <MaterialIcons name="info" size={size} color={theme.colors.primary} />} style={{ marginBottom: spacing.md, backgroundColor: "#E3F2FD", borderRadius: 8 }}>
-          {t("auth.churchRecordFound", { churchName: params.churchName })}
+          {t("auth.churchRecordFound", { churchName: matchedChurchName })}
         </Banner>
-      )}
+      ) : null}
 
       <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
 
       <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
 
-      <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="email" />} />
+      <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} onBlur={() => checkEmailForMatch(email)} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="email" />} />
 
       <Text variant="bodySmall" style={{ marginBottom: spacing.md }}>
         {t("auth.privacyConfirm")}{" "}
