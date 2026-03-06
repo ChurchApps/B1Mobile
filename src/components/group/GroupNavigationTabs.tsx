@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { View, TouchableOpacity, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useThemeColors } from "../../theme";
 
 interface TabItem {
   key: string;
@@ -26,6 +27,7 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
   tabWidth = 64,
   isLeader = false
 }) => {
+  const tc = useThemeColors();
   const scrollRef = useRef<ScrollView>(null);
   const [showLeftGradient, setShowLeftGradient] = useState(false);
   const [showRightGradient, setShowRightGradient] = useState(false);
@@ -66,7 +68,7 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { backgroundColor: tc.surface }]}>
         <ScrollView
           ref={scrollRef}
           horizontal
@@ -93,15 +95,15 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
                 }}
                 activeOpacity={0.7}
               >
-                <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
+                <View style={[styles.iconContainer, { backgroundColor: tc.iconBackground }, isActive && styles.activeIconContainer]}>
                   <MaterialCommunityIcons
                     name={tab.icon as any}
                     size={22}
-                    color={isActive ? "#FFFFFF" : "#6B7280"}
+                    color={isActive ? "#FFFFFF" : tc.textSecondary}
                   />
                 </View>
                 <Text
-                  style={[styles.label, isActive && styles.activeLabel]}
+                  style={[styles.label, { color: tc.textSecondary }, isActive && styles.activeLabel]}
                   numberOfLines={1}
                 >
                   {tab.label}
@@ -114,10 +116,10 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
 
         {/* Gradient fade indicators */}
         {showLeftGradient && (
-          <View style={[styles.gradientOverlay, styles.leftGradient]} pointerEvents="none" />
+          <View style={[styles.gradientOverlay, styles.leftGradient, { backgroundColor: tc.isDark ? "rgba(30,30,30,0.9)" : "rgba(255,255,255,0.9)" }]} pointerEvents="none" />
         )}
         {showRightGradient && (
-          <View style={[styles.gradientOverlay, styles.rightGradient]} pointerEvents="none" />
+          <View style={[styles.gradientOverlay, styles.rightGradient, { backgroundColor: tc.isDark ? "rgba(30,30,30,0.9)" : "rgba(255,255,255,0.9)" }]} pointerEvents="none" />
         )}
       </View>
     </View>

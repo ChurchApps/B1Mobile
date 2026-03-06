@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
+import { useThemeColors } from "../../theme";
 
 interface SermonsTabBarProps {
   activeSection: "playlists" | "recent";
@@ -8,19 +9,20 @@ interface SermonsTabBarProps {
 }
 
 export const SermonsTabBar: React.FC<SermonsTabBarProps> = ({ activeSection, onTabChange }) => {
+  const tc = useThemeColors();
   return (
-    <View style={styles.tabContainer}>
+    <View style={[styles.tabContainer, { backgroundColor: tc.surface, borderBottomColor: tc.border }]}>
       <TouchableOpacity
         style={[styles.tab, activeSection === "playlists" && styles.activeTab]}
         onPress={() => onTabChange("playlists")}>
-        <Text variant="labelLarge" style={[styles.tabText, activeSection === "playlists" && styles.activeTabText]}>
+        <Text variant="labelLarge" style={[styles.tabText, { color: tc.textSecondary }, activeSection === "playlists" && styles.activeTabText]}>
           Series
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.tab, activeSection === "recent" && styles.activeTab]}
         onPress={() => onTabChange("recent")}>
-        <Text variant="labelLarge" style={[styles.tabText, activeSection === "recent" && styles.activeTabText]}>
+        <Text variant="labelLarge" style={[styles.tabText, { color: tc.textSecondary }, activeSection === "recent" && styles.activeTabText]}>
           Recent
         </Text>
       </TouchableOpacity>

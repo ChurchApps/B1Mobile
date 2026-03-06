@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { Avatar } from "./common/Avatar";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useThemeColors } from "../theme";
 
 interface Member {
   id: string;
@@ -21,6 +22,7 @@ interface MemberCardProps {
 }
 
 export const MemberCard = React.memo<MemberCardProps>(({ member, onPress, showActions = false, onCall, onEmail, subtitle, size = "medium" }) => {
+  const tc = useThemeColors();
   const handlePress = () => {
     onPress(member);
   };
@@ -42,24 +44,24 @@ export const MemberCard = React.memo<MemberCardProps>(({ member, onPress, showAc
   const { firstName, lastName } = formatName(member.name.display);
 
   return (
-    <Card style={cardStyle} onPress={handlePress}>
+    <Card style={[cardStyle, { backgroundColor: tc.surface }]} onPress={handlePress}>
       <Card.Content style={styles.memberContent}>
         <View style={styles.memberInfo}>
           <Avatar size={avatarSize} photoUrl={member.photo} firstName={member.name.first || firstName} lastName={member.name.last || lastName} style={styles.memberAvatar} />
           <View style={styles.memberDetails}>
             <View style={styles.nameContainer}>
-              <Text variant="titleMedium" style={styles.memberName} numberOfLines={1}>
+              <Text variant="titleMedium" style={[styles.memberName, { color: tc.text }]} numberOfLines={1}>
                 {firstName}
                 {lastName ? " " : ""}
               </Text>
               {lastName && (
-                <Text variant="titleMedium" style={styles.memberLastName} numberOfLines={1}>
+                <Text variant="titleMedium" style={[styles.memberLastName, { color: tc.text }]} numberOfLines={1}>
                   {lastName}
                 </Text>
               )}
             </View>
             {subtitle && (
-              <Text variant="bodySmall" style={styles.memberSubtitle} numberOfLines={1}>
+              <Text variant="bodySmall" style={[styles.memberSubtitle, { color: tc.textSecondary }]} numberOfLines={1}>
                 {subtitle}
               </Text>
             )}
@@ -71,22 +73,22 @@ export const MemberCard = React.memo<MemberCardProps>(({ member, onPress, showAc
           {showActions ? (
             <View style={styles.quickActions}>
               {onCall && (
-                <TouchableOpacity style={styles.actionButton} onPress={() => onCall(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                  <MaterialIcons name="phone" size={20} color="#0D47A1" />
+                <TouchableOpacity style={[styles.actionButton, { backgroundColor: tc.iconBackground }]} onPress={() => onCall(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                  <MaterialIcons name="phone" size={20} color={tc.primary} />
                 </TouchableOpacity>
               )}
               {onEmail && (
-                <TouchableOpacity style={styles.actionButton} onPress={() => onEmail(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-                  <MaterialIcons name="email" size={20} color="#0D47A1" />
+                <TouchableOpacity style={[styles.actionButton, { backgroundColor: tc.iconBackground }]} onPress={() => onEmail(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                  <MaterialIcons name="email" size={20} color={tc.primary} />
                 </TouchableOpacity>
               )}
-              <TouchableOpacity style={styles.actionButton} onPress={handlePress}>
-                <MaterialIcons name="chevron-right" size={20} color="#9E9E9E" />
+              <TouchableOpacity style={[styles.actionButton, { backgroundColor: tc.iconBackground }]} onPress={handlePress}>
+                <MaterialIcons name="chevron-right" size={20} color={tc.textSecondary} />
               </TouchableOpacity>
             </View>
           ) : (
-            <TouchableOpacity style={styles.actionButton} onPress={handlePress}>
-              <MaterialIcons name="chevron-right" size={20} color="#9E9E9E" />
+            <TouchableOpacity style={[styles.actionButton, { backgroundColor: tc.iconBackground }]} onPress={handlePress}>
+              <MaterialIcons name="chevron-right" size={20} color={tc.textSecondary} />
             </TouchableOpacity>
           )}
         </View>

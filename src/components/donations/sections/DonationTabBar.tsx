@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Text } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../../theme";
 
 type TabSection = "overview" | "donate" | "manage" | "history";
 
@@ -12,6 +13,7 @@ interface DonationTabBarProps {
 
 export const DonationTabBar: React.FC<DonationTabBarProps> = ({ activeSection, onTabChange }) => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
 
   const tabs: { key: TabSection; label: string }[] = [
     { key: "overview", label: t("donations.overview") },
@@ -21,13 +23,13 @@ export const DonationTabBar: React.FC<DonationTabBarProps> = ({ activeSection, o
   ];
 
   return (
-    <View style={styles.tabContainer}>
+    <View style={[styles.tabContainer, { backgroundColor: tc.surface, borderBottomColor: tc.border }]}>
       {tabs.map(tab => (
         <TouchableOpacity
           key={tab.key}
           style={[styles.tab, activeSection === tab.key && styles.activeTab]}
           onPress={() => onTabChange(tab.key)}>
-          <Text variant="labelLarge" style={[styles.tabText, activeSection === tab.key && styles.activeTabText]}>
+          <Text variant="labelLarge" style={[styles.tabText, { color: tc.textSecondary }, activeSection === tab.key && styles.activeTabText]}>
             {tab.label}
           </Text>
         </TouchableOpacity>

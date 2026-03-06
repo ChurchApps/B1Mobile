@@ -239,8 +239,8 @@ const Dashboard = () => {
           <Text variant="headlineMedium" style={[styles.welcomeTitle, { color: tc.textSecondary }]}>
             {t("dashboard.welcomeTo")}
           </Text>
-          {churchAppearance?.logoLight ? (
-            <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.churchLogo} contentFit="contain" priority="high" />
+          {(tc.isDark ? (churchAppearance?.logoDark || churchAppearance?.logoLight) : churchAppearance?.logoLight) ? (
+            <OptimizedImage source={{ uri: (tc.isDark ? churchAppearance?.logoDark || churchAppearance?.logoLight : churchAppearance?.logoLight)! }} style={styles.churchLogo} contentFit="contain" priority="high" />
           ) : (
             <Text variant="headlineLarge" style={[styles.churchName, { color: tc.primary }]}>
               {currentChurch?.name || ""}
@@ -252,7 +252,7 @@ const Dashboard = () => {
         </View>
       </View>
     ),
-    [churchAppearance?.logoLight, currentChurch?.name, t, tc]
+    [churchAppearance?.logoLight, churchAppearance?.logoDark, currentChurch?.name, t, tc]
   );
 
   const handleDrawerOpen = useCallback(() => {
