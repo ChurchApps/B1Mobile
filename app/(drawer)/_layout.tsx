@@ -37,6 +37,7 @@ export default function DrawerLayout() {
     headerShown: true,
     headerStyle: { backgroundColor: "#0D47A1" },
     headerTintColor: "#FFF",
+    headerTitleAlign: "center" as const,
     drawerStyle: { width: 280, backgroundColor: "#F6F6F8" },
     drawerType: "slide" as const,
     overlayColor: "rgba(0, 0, 0, 0.5)"

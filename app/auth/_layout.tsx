@@ -16,6 +16,7 @@ export default function AuthLayout() {
   const commonHeaderOptions = {
     headerStyle: { backgroundColor: "#0D47A1" },
     headerTintColor: "#FFF",
+    headerTitleAlign: "center" as const,
     headerLeft: () => (
       <TouchableOpacity onPress={navigationBackNormal} style={{ marginHorizontal: 10 }}>
         <MaterialIcons name="arrow-back" size={24} color={theme.colors.onPrimary} />

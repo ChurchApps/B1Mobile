@@ -70,6 +70,7 @@ export default Sentry.wrap(function RootLayout() {
     headerBackTitle: "Back",
     headerStyle: { backgroundColor: designSystem.colors.primary[500] },
     headerTintColor: "#FFF",
+    headerTitleAlign: "center" as const,
     headerRight: () => <HeaderBell toggleNotifications={toggleNotifications} isDetail={true} />
   };
 
