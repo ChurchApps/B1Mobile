@@ -8,6 +8,7 @@ import { router } from "expo-router";
 import { Card } from "react-native-paper";
 import { InlineLoader } from "../common/LoadingComponents";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   plans: PlanInterface[];
@@ -31,6 +32,7 @@ const getTranslatedStatus = (status: string, t: (key: string) => string): string
 
 export const UpcomingDates = ({ plans, positions, assignments, times, isLoading = false, isPast = false }: Props) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const fadeAnim = new Animated.Value(0);
 
   useEffect(() => {
@@ -72,53 +74,53 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialIcons name={isPast ? "history" : "schedule"} style={styles.headerIcon} size={24} />
-        <Text style={styles.headerTitle}>{isPast ? t("plans.past") : t("plans.upcomingDates")}</Text>
+        <MaterialIcons name={isPast ? "history" : "schedule"} style={[styles.headerIcon, { color: colors.primary }]} size={24} />
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{isPast ? t("plans.past") : t("plans.upcomingDates")}</Text>
       </View>
 
-      <Card style={styles.contentCard}>
+      <Card style={[styles.contentCard, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]}>
         <Card.Content>
           {isLoading ? (
             <InlineLoader size="large" text={t("plans.loadingUpcomingDates")} />
           ) : upcomingDates.length === 0 ? (
             <View style={styles.emptyStateContent}>
-              <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-              <Text style={styles.emptyStateText}>{isPast ? t("plans.noPastDatesFound") : t("plans.noUpcomingDatesFound")}</Text>
-              <Text style={styles.emptyStateSubtext}>{isPast ? t("plans.pastAssignments") : t("plans.upcomingAssignments")}</Text>
+              <MaterialIcons name="event-busy" size={48} color={colors.disabled} />
+              <Text style={[styles.emptyStateText, { color: colors.text }]}>{isPast ? t("plans.noPastDatesFound") : t("plans.noUpcomingDatesFound")}</Text>
+              <Text style={[styles.emptyStateSubtext, { color: colors.disabled }]}>{isPast ? t("plans.pastAssignments") : t("plans.upcomingAssignments")}</Text>
             </View>
           ) : (
             <View style={styles.cardsList}>
               {upcomingDates.map((item, idx) => (
-                <Card key={idx} style={styles.upcomingCard} mode="elevated">
+                <Card key={idx} style={[styles.upcomingCard, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]} mode="elevated">
                   <TouchableOpacity style={styles.cardTouchable} activeOpacity={0.7} onPress={() => router.push("/planDetails/" + item.planId)}>
                     <Card.Content style={styles.cardContent}>
                       <View style={styles.cardHeader}>
                         <View style={styles.planInfo}>
-                          <Text style={styles.planName} numberOfLines={1}>
+                          <Text style={[styles.planName, { color: colors.text }]} numberOfLines={1}>
                             {item.planName}
                           </Text>
                         </View>
-                        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+                        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status, colors) }]}>
                           <Text style={styles.statusText}>{getTranslatedStatus(item.status, t)}</Text>
                         </View>
                       </View>
 
                       <View style={styles.detailsContainer}>
                         <View style={styles.detailRow}>
-                          <MaterialIcons name="event" size={18} color="#0D47A1" />
-                          <Text style={styles.detailText}>{dayjs(DateHelper.toDate(item.serviceDate)).format("ll")}</Text>
+                          <MaterialIcons name="event" size={18} color={colors.primary} />
+                          <Text style={[styles.detailText, { color: colors.text }]}>{dayjs(DateHelper.toDate(item.serviceDate)).format("ll")}</Text>
                         </View>
 
                         {item.time && (
                           <View style={styles.detailRow}>
-                            <MaterialIcons name="access-time" size={18} color="#0D47A1" />
-                            <Text style={styles.detailText}>{item.time}</Text>
+                            <MaterialIcons name="access-time" size={18} color={colors.primary} />
+                            <Text style={[styles.detailText, { color: colors.text }]}>{item.time}</Text>
                           </View>
                         )}
 
                         <View style={styles.roleContainer}>
-                          <MaterialIcons name="assignment-ind" size={18} color="#0D47A1" />
-                          <Text style={styles.roleText}>{item.position}</Text>
+                          <MaterialIcons name="assignment-ind" size={18} color={colors.primary} />
+                          <Text style={[styles.roleText, { color: colors.primary }]}>{item.position}</Text>
                         </View>
                       </View>
                     </Card.Content>
@@ -133,13 +135,13 @@ export const UpcomingDates = ({ plans, positions, assignments, times, isLoading 
   );
 };
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: string, colors: ReturnType<typeof useThemeColors>) => {
   switch (status?.toLowerCase()) {
     case "accepted":
-    case "confirmed": return "#388E3C";
-    case "declined": return "#B0120C";
-    case "pending": return "#FEAA24";
-    default: return "#9E9E9E";
+    case "confirmed": return colors.success;
+    case "declined": return colors.error;
+    case "pending": return colors.warning;
+    default: return colors.disabled;
   }
 };
 
@@ -151,25 +153,19 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingLeft: 4
   },
-  headerIcon: {
-    color: "#0D47A1",
-    marginRight: 8
-  },
+  headerIcon: { marginRight: 8 },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#3c3c3c"
+    fontWeight: "700"
   },
 
   // Content Card
   contentCard: {
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 3,
-    backgroundColor: "#FFFFFF"
+    shadowRadius: 3
   },
   emptyStateContent: {
     alignItems: "center",
@@ -178,13 +174,11 @@ const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#3c3c3c",
     marginTop: 16,
     textAlign: "center"
   },
   emptyStateSubtext: {
     fontSize: 14,
-    color: "#9E9E9E",
     marginTop: 8,
     textAlign: "center"
   },
@@ -194,11 +188,9 @@ const styles = StyleSheet.create({
   upcomingCard: {
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 3,
-    backgroundColor: "#FFFFFF"
+    shadowRadius: 3
   },
   cardTouchable: { borderRadius: 16 },
   cardContent: { padding: 4 },
@@ -216,8 +208,7 @@ const styles = StyleSheet.create({
   },
   planName: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#3c3c3c"
+    fontWeight: "700"
   },
 
   // Status Badge
@@ -248,7 +239,6 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 14,
-    color: "#3c3c3c",
     fontWeight: "500",
     marginLeft: 8
   },
@@ -264,7 +254,6 @@ const styles = StyleSheet.create({
   },
   roleText: {
     fontSize: 14,
-    color: "#0D47A1",
     fontWeight: "600",
     marginLeft: 8
   }

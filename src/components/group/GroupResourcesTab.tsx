@@ -9,6 +9,7 @@ import { GroupLinkAdd } from "./section/GroupLinkAdd";
 import { InputBox } from "./section/InputBox";
 import { FileUpload } from "./section/FileUpload";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface GroupResourcesTabProps {
   groupId?: string;
@@ -16,6 +17,7 @@ interface GroupResourcesTabProps {
 
 export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [files, setFiles] = useState<FileInterface[]>(null);
   const [links, setLinks] = useState<LinkInterface[]>(null);
   const [pendingFileSave, setPendingFileSave] = useState(false);
@@ -112,10 +114,10 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
         <Text>{t("groups.usedSpace", { used: formatSize(usedSpace), total: "100MB" })}</Text>
         <View style={styles.progressContainer}>
           <View style={styles.progressBarWrapper}>
-            <ProgressBar progress={percent} color="#0D47A1" style={styles.progressBar} />
+            <ProgressBar progress={percent} color={colors.primary} style={styles.progressBar} />
           </View>
           <View style={styles.percentWrapper}>
-            <Text style={styles.percentText}>{`${Math.round(percent * 100)}%`}</Text>
+            <Text style={[styles.percentText, { color: colors.textMuted }]}>{`${Math.round(percent * 100)}%`}</Text>
           </View>
         </View>
       </View>
@@ -147,7 +149,6 @@ const styles = StyleSheet.create({
   aboutContainer: { minHeight: 200 },
   markdownStyles: {
     body: {
-      color: "#3c3c3c",
       fontSize: 16,
       lineHeight: 24
     }
@@ -158,17 +159,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24
   },
   emptyIcon: {
-    backgroundColor: "#F6F6F8",
     marginBottom: 16
   },
   emptyTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center"
   },
   emptySubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
   },
@@ -195,7 +193,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-end"
   },
   percentText: {
-    fontSize: 12,
-    color: "#555"
+    fontSize: 12
   }
 });

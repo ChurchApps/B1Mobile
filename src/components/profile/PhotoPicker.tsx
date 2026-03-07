@@ -7,6 +7,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 import { Avatar } from "../common/Avatar";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface PhotoPickerProps {
   currentPhotoUri?: string;
@@ -20,6 +21,7 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({
   personName
 }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const { showActionSheetWithOptions } = useActionSheet();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -117,8 +119,8 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({
     <TouchableOpacity style={styles.container} onPress={handlePress} disabled={isLoading}>
       <View style={styles.avatarContainer}>
         {isLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#0D47A1" />
+          <View style={[styles.loadingContainer, { backgroundColor: colors.iconBackground }]}>
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         ) : (
           <Avatar
@@ -126,14 +128,14 @@ export const PhotoPicker: React.FC<PhotoPickerProps> = ({
             photoUrl={currentPhotoUri}
             firstName={firstName}
             lastName={lastName}
-            style={styles.avatar}
+            style={[styles.avatar, { borderColor: colors.primary }]}
           />
         )}
-        <View style={styles.editBadge}>
-          <MaterialIcons name="camera-alt" size={20} color="#FFFFFF" />
+        <View style={[styles.editBadge, { backgroundColor: colors.primary, borderColor: colors.white }]}>
+          <MaterialIcons name="camera-alt" size={20} color={colors.onPrimary} />
         </View>
       </View>
-      <Text variant="bodySmall" style={styles.hint}>
+      <Text variant="bodySmall" style={[styles.hint, { color: colors.disabled }]}>
         {t("profileEdit.tapToChangePhoto")}
       </Text>
     </TouchableOpacity>
@@ -147,14 +149,12 @@ const styles = StyleSheet.create({
   },
   avatarContainer: { position: "relative" },
   avatar: {
-    borderWidth: 3,
-    borderColor: "#0D47A1"
+    borderWidth: 3
   },
   loadingContainer: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: "#F6F6F8",
     justifyContent: "center",
     alignItems: "center"
   },
@@ -165,14 +165,11 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#0D47A1",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 3,
-    borderColor: "#FFFFFF"
+    borderWidth: 3
   },
   hint: {
-    marginTop: 8,
-    color: "#9E9E9E"
+    marginTop: 8
   }
 });

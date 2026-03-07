@@ -5,6 +5,7 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Constants, EnvironmentHelper } from "../../helpers";
 import { InlineLoader } from "../common/LoadingComponents";
+import { useThemeColors } from "../../theme";
 
 interface GroupMember {
   id: string;
@@ -27,6 +28,7 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
   isLoading
 }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   const handleMemberPress = (member: GroupMember) => {
     const memberData = {
@@ -54,11 +56,11 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
     return (
       <View style={styles.membersContainer}>
         <View style={styles.emptyState}>
-          <Avatar.Icon size={64} icon="account-group" style={styles.emptyIcon} />
-          <Text variant="titleMedium" style={styles.emptyTitle}>
+          <Avatar.Icon size={64} icon="account-group" style={[styles.emptyIcon, { backgroundColor: colors.iconBackground }]} />
+          <Text variant="titleMedium" style={[styles.emptyTitle, { color: colors.text }]}>
             {t("groups.noMembersFound")}
           </Text>
-          <Text variant="bodyMedium" style={styles.emptySubtitle}>
+          <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: colors.disabled }]}>
             {t("groups.membersWillAppear")}
           </Text>
         </View>
@@ -69,18 +71,18 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
   return (
     <View style={styles.membersContainer}>
       {members.map((item: GroupMember) => (
-        <Card key={item?.id} style={styles.modernMemberCard}>
+        <Card key={item?.id} style={[styles.modernMemberCard, { backgroundColor: colors.card, shadowColor: colors.shadowBlack }]}>
           <TouchableOpacity style={styles.memberCardContent} onPress={() => handleMemberPress(item)}>
             <Avatar.Image size={56} source={item?.person?.photo ? { uri: EnvironmentHelper.ContentRoot + item.person.photo } : Constants.Images.ic_member} />
             <View style={styles.memberInfo}>
-              <Text variant="titleMedium" style={styles.memberName}>
+              <Text variant="titleMedium" style={[styles.memberName, { color: colors.text }]}>
                 {item?.person?.name?.display}
               </Text>
-              <Text variant="bodySmall" style={styles.memberRole}>
+              <Text variant="bodySmall" style={[styles.memberRole, { color: colors.disabled }]}>
                 {t("groups.groupMember")}
               </Text>
             </View>
-            <IconButton icon="chevron-right" size={20} iconColor="#9E9E9E" />
+            <IconButton icon="chevron-right" size={20} iconColor={colors.disabled} />
           </TouchableOpacity>
         </Card>
       ))}
@@ -93,11 +95,9 @@ const styles = StyleSheet.create({
   modernMemberCard: {
     borderRadius: 12,
     elevation: 1,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
-    backgroundColor: "#FFFFFF",
     marginBottom: 8
   },
   memberCardContent: {
@@ -111,28 +111,24 @@ const styles = StyleSheet.create({
     marginLeft: 16
   },
   memberName: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 2
   },
-  memberRole: { color: "#9E9E9E" },
+  memberRole: {},
   emptyState: {
     alignItems: "center",
     paddingVertical: 32,
     paddingHorizontal: 24
   },
   emptyIcon: {
-    backgroundColor: "#F6F6F8",
     marginBottom: 16
   },
   emptyTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center"
   },
   emptySubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
   }

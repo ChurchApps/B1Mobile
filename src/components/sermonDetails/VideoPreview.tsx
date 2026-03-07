@@ -4,6 +4,7 @@ import { Text, Card } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { OptimizedImage } from "../OptimizedImage";
 import { SermonInterface } from "@churchapps/helpers";
+import { useThemeColors } from "../../theme";
 
 interface VideoPreviewProps {
   sermon: SermonInterface;
@@ -13,10 +14,11 @@ interface VideoPreviewProps {
 }
 
 export const VideoPreview: React.FC<VideoPreviewProps> = ({ sermon, onPlay, visible, formatDuration }) => {
+  const colors = useThemeColors();
   if (!visible) return null;
 
   return (
-    <Card style={styles.previewCard}>
+    <Card style={[styles.previewCard, { shadowColor: colors.shadowBlack }]}>
       <TouchableOpacity style={styles.previewContainer} onPress={onPlay}>
         <OptimizedImage
           source={{ uri: sermon.thumbnail || "" }}
@@ -24,12 +26,12 @@ export const VideoPreview: React.FC<VideoPreviewProps> = ({ sermon, onPlay, visi
           contentFit="cover"
         />
         <View style={styles.previewOverlay}>
-          <View style={styles.playButton}>
-            <MaterialIcons name="play-arrow" size={48} color="#FFFFFF" />
+          <View style={[styles.playButton, { shadowColor: colors.primary }]}>
+            <MaterialIcons name="play-arrow" size={48} color={colors.onPrimary} />
           </View>
           {sermon.duration && (
             <View style={styles.durationBadge}>
-              <Text variant="bodyMedium" style={styles.durationText}>
+              <Text variant="bodyMedium" style={[styles.durationText, { color: colors.white }]}>
                 {formatDuration(sermon.duration)}
               </Text>
             </View>
@@ -46,7 +48,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     elevation: 4,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6
@@ -77,7 +78,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4
@@ -91,8 +91,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6
   },
-  durationText: {
-    color: "#FFFFFF",
-    fontWeight: "600"
-  }
+  durationText: { fontWeight: "600" }
 });

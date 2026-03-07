@@ -2,7 +2,6 @@ import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleProp, ViewStyle, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Constants } from "../../helpers";
 import { CommonStyles } from "../../theme/CommonStyles";
 import { Button } from "./Button";
 import { useThemeColors } from "../../theme";
@@ -61,7 +60,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
           )}
           {showCloseButton && (
             <TouchableOpacity onPress={onClose} style={{ padding: 4 }}>
-              <Ionicons name="close" size={24} color={Constants.Colors.text_dark} />
+              <Ionicons name="close" size={24} color={tc.text} />
             </TouchableOpacity>
           )}
         </View>
@@ -88,7 +87,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
               padding: 16,
               paddingBottom: insets.bottom || 16,
               borderTopWidth: 1,
-              borderTopColor: Constants.Colors.gray_bg
+              borderTopColor: tc.border
             },
             actions.length > 1 ? CommonStyles.row : {}
           ]}
@@ -140,7 +139,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
       <TouchableOpacity
         style={{
           flex: 1,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          backgroundColor: tc.modalOverlay,
           justifyContent: "center",
           alignItems: "center"
         }}
@@ -158,7 +157,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                   backgroundColor: tc.surface,
                   borderRadius: 12,
                   maxHeight: "80%",
-                  shadowColor: "#000",
+                  shadowColor: tc.shadowBlack,
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.2,
                   shadowRadius: 8,
@@ -197,12 +196,13 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   cancelText,
   onConfirm
 }) => {
+  const tc = useThemeColors();
   const getIcon = () => {
     switch (type) {
-      case "success": return <Ionicons name="checkmark-circle" size={48} color={Constants.Colors.button_dark_green} />;
-      case "warning": return <Ionicons name="warning" size={48} color={Constants.Colors.button_yellow} />;
-      case "error": return <Ionicons name="close-circle" size={48} color={Constants.Colors.button_red} />;
-      default: return <Ionicons name="information-circle" size={48} color={Constants.Colors.primary} />;
+      case "success": return <Ionicons name="checkmark-circle" size={48} color={tc.success} />;
+      case "warning": return <Ionicons name="warning" size={48} color={tc.warning} />;
+      case "error": return <Ionicons name="close-circle" size={48} color={tc.error} />;
+      default: return <Ionicons name="information-circle" size={48} color={tc.primary} />;
     }
   };
 

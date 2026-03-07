@@ -1,6 +1,7 @@
 import React from "react";
 import { Avatar as PaperAvatar } from "react-native-paper";
 import { EnvironmentHelper } from "../../helpers";
+import { useThemeColors } from "../../theme";
 
 interface AvatarProps {
   size?: number;
@@ -17,10 +18,16 @@ export const Avatar: React.FC<AvatarProps> = ({
   photoUrl,
   firstName,
   lastName,
-  backgroundColor = "#0D47A1", // Default blue from theme
-  textColor = "#FFFFFF",
+  backgroundColor,
+  textColor,
   style
 }) => {
+  const colors = useThemeColors();
+
+  // Use theme colors as defaults if not provided
+  const bgColor = backgroundColor ?? colors.primary;
+  const txtColor = textColor ?? colors.onPrimary;
+
   // Generate initials from first and last name
   const getInitials = () => {
     const firstInitial = firstName?.[0] || "";
@@ -35,5 +42,5 @@ export const Avatar: React.FC<AvatarProps> = ({
   }
 
   // Otherwise, use Avatar.Text with initials
-  return <PaperAvatar.Text size={size} label={getInitials()} style={[{ backgroundColor }, style]} labelStyle={{ color: textColor }} />;
+  return <PaperAvatar.Text size={size} label={getInitials()} style={[{ backgroundColor: bgColor }, style]} labelStyle={{ color: txtColor }} />;
 };

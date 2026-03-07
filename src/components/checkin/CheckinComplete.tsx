@@ -1,7 +1,7 @@
 import { UserHelper } from "@/helpers/UserHelper";
 import React, { useEffect } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
-import { useAppTheme } from "../../../src/theme";
+import { useAppTheme, useThemeColors } from "../../../src/theme";
 import { Text } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -15,6 +15,7 @@ interface Props {
 export const CheckinComplete = (props: Props) => {
   const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
+  const colors = useThemeColors();
   const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
@@ -26,24 +27,24 @@ export const CheckinComplete = (props: Props) => {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.background}>
+      <LinearGradient colors={[colors.primary, colors.secondary]} style={styles.background}>
         <View style={styles.content}>
           {/* Success Icon */}
           <View style={styles.iconContainer}>
-            <View style={styles.successIconBackground}>
-              <MaterialIcons name="check-circle" size={80} color="#70DC87" />
+            <View style={[styles.successIconBackground, { backgroundColor: "rgba(255, 255, 255, 0.9)", shadowColor: colors.shadowBlack }]}>
+              <MaterialIcons name="check-circle" size={80} color={colors.success} />
             </View>
           </View>
 
           {/* Success Message */}
           <View style={styles.messageContainer}>
-            <Text variant="headlineLarge" style={styles.successTitle}>
+            <Text variant="headlineLarge" style={[styles.successTitle, { color: colors.white }]}>
               {t("checkin.checkinComplete")}
             </Text>
-            <Text variant="bodyLarge" style={styles.successSubtitle}>
+            <Text variant="bodyLarge" style={[styles.successSubtitle, { color: colors.white }]}>
               {t("checkin.successfullyCheckedIn")}
             </Text>
-            <Text variant="bodyMedium" style={styles.successDetails}>
+            <Text variant="bodyMedium" style={[styles.successDetails, { color: colors.white }]}>
               {t("checkin.thankYouCommunity")}
             </Text>
           </View>
@@ -79,11 +80,9 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
     justifyContent: "center",
     alignItems: "center",
     elevation: 8,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8
@@ -93,7 +92,6 @@ const styles = StyleSheet.create({
     marginBottom: 32
   },
   successTitle: {
-    color: "#FFFFFF",
     fontWeight: "800",
     textAlign: "center",
     marginBottom: 16,
@@ -102,7 +100,6 @@ const styles = StyleSheet.create({
     textShadowRadius: 4
   },
   successSubtitle: {
-    color: "#FFFFFF",
     textAlign: "center",
     marginBottom: 12,
     opacity: 0.9,
@@ -111,7 +108,6 @@ const styles = StyleSheet.create({
     textShadowRadius: 2
   },
   successDetails: {
-    color: "#FFFFFF",
     textAlign: "center",
     opacity: 0.8,
     textShadowColor: "rgba(0, 0, 0, 0.2)",

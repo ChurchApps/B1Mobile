@@ -49,11 +49,11 @@ const styles = StyleSheet.create({
   searchCard: {
     borderRadius: 16,
     elevation: 3,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6
   },
   searchContent: { padding: 20 },
-  searchInput: { backgroundColor: "#FFFFFF" }
+  searchInput: {}
 });

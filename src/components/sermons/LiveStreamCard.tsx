@@ -4,6 +4,7 @@ import { Text, Card, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import { DateHelper } from "../../helpers";
+import { useThemeColors } from "../../theme";
 
 export interface LiveStreamData {
   isLive: boolean;
@@ -26,28 +27,29 @@ interface LiveStreamCardProps {
 
 export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, timeUntilStream, onWatchLive }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   if (liveStreamData.isLive) {
     return (
-      <Card style={styles.liveCard}>
+      <Card style={[styles.liveCard, { shadowColor: colors.error }]}>
         <LinearGradient colors={["#D32F2F", "#F44336"]} style={styles.liveGradient}>
           <View style={styles.liveContent}>
             <View style={styles.liveIndicator}>
-              <View style={styles.liveDot} />
-              <Text variant="titleMedium" style={styles.liveText}>
+              <View style={[styles.liveDot, { backgroundColor: colors.white }]} />
+              <Text variant="titleMedium" style={[styles.liveText, { color: colors.white }]}>
                 {t("sermons.liveNow")}
               </Text>
             </View>
-            <Text variant="headlineSmall" style={styles.liveTitle}>
+            <Text variant="headlineSmall" style={[styles.liveTitle, { color: colors.white }]}>
               {liveStreamData.streamTitle}
             </Text>
-            <Text variant="bodyMedium" style={styles.liveDescription}>
+            <Text variant="bodyMedium" style={[styles.liveDescription, { color: colors.white }]}>
               {liveStreamData.streamDescription}
             </Text>
             <Button
               mode="contained"
-              style={styles.watchButton}
-              labelStyle={styles.watchButtonText}
+              style={[styles.watchButton, { backgroundColor: colors.white }]}
+              labelStyle={[styles.watchButtonText, { color: colors.error }]}
               icon="play-circle"
               onPress={onWatchLive || (() => {})}>
               {t("sermons.watchLive")}
@@ -59,47 +61,47 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
   }
 
   return (
-    <Card style={styles.countdownCard}>
+    <Card style={[styles.countdownCard, { shadowColor: colors.primary }]}>
       <LinearGradient colors={["#0D47A1", "#1976D2"]} style={styles.countdownGradient}>
         <View style={styles.countdownContent}>
-          <Text variant="titleMedium" style={styles.countdownLabel}>
+          <Text variant="titleMedium" style={[styles.countdownLabel, { color: colors.white }]}>
             {t("sermons.nextServiceIn")}
           </Text>
           <View style={styles.countdownTimer}>
             {timeUntilStream.days > 0 && (
               <View style={styles.timeUnit}>
-                <Text variant="displaySmall" style={styles.timeNumber}>
+                <Text variant="displaySmall" style={[styles.timeNumber, { color: colors.white }]}>
                   {timeUntilStream.days}
                 </Text>
-                <Text variant="bodyMedium" style={styles.timeLabel}>
+                <Text variant="bodyMedium" style={[styles.timeLabel, { color: colors.white }]}>
                   {timeUntilStream.days === 1 ? t("sermons.day") : t("sermons.days")}
                 </Text>
               </View>
             )}
             <View style={styles.timeUnit}>
-              <Text variant="displaySmall" style={styles.timeNumber}>
+              <Text variant="displaySmall" style={[styles.timeNumber, { color: colors.white }]}>
                 {timeUntilStream.hours}
               </Text>
-              <Text variant="bodyMedium" style={styles.timeLabel}>
+              <Text variant="bodyMedium" style={[styles.timeLabel, { color: colors.white }]}>
                 {timeUntilStream.hours === 1 ? t("sermons.hour") : t("sermons.hours")}
               </Text>
             </View>
             <View style={styles.timeUnit}>
-              <Text variant="displaySmall" style={styles.timeNumber}>
+              <Text variant="displaySmall" style={[styles.timeNumber, { color: colors.white }]}>
                 {timeUntilStream.minutes}
               </Text>
-              <Text variant="bodyMedium" style={styles.timeLabel}>
+              <Text variant="bodyMedium" style={[styles.timeLabel, { color: colors.white }]}>
                 {timeUntilStream.minutes === 1 ? t("sermons.minute") : t("sermons.minutes")}
               </Text>
             </View>
           </View>
-          <Text variant="titleMedium" style={styles.streamTitle}>
+          <Text variant="titleMedium" style={[styles.streamTitle, { color: colors.white }]}>
             {liveStreamData.streamTitle}
           </Text>
-          <Text variant="bodyMedium" style={styles.streamDescription}>
+          <Text variant="bodyMedium" style={[styles.streamDescription, { color: colors.white }]}>
             {liveStreamData.streamDescription}
           </Text>
-          <Text variant="bodySmall" style={styles.streamTime}>
+          <Text variant="bodySmall" style={[styles.streamTime, { color: colors.white }]}>
             {DateHelper.prettyDate(liveStreamData.nextStreamDate)} at {DateHelper.prettyTime(liveStreamData.nextStreamDate)}
           </Text>
         </View>
@@ -114,7 +116,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#D32F2F",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8
@@ -133,41 +134,32 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "#FFFFFF",
     marginRight: 8
   },
   liveText: {
-    color: "#FFFFFF",
     fontWeight: "800",
     letterSpacing: 1
   },
   liveTitle: {
-    color: "#FFFFFF",
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 8
   },
   liveDescription: {
-    color: "#FFFFFF",
     opacity: 0.9,
     textAlign: "center",
     marginBottom: 20
   },
   watchButton: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 25,
     paddingHorizontal: 24
   },
-  watchButtonText: {
-    color: "#D32F2F",
-    fontWeight: "700"
-  },
+  watchButtonText: { fontWeight: "700" },
   countdownCard: {
     marginBottom: 24,
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -178,7 +170,6 @@ const styles = StyleSheet.create({
   },
   countdownContent: { alignItems: "center" },
   countdownLabel: {
-    color: "#FFFFFF",
     fontWeight: "600",
     marginBottom: 20,
     textTransform: "uppercase",
@@ -192,32 +183,27 @@ const styles = StyleSheet.create({
   },
   timeUnit: { alignItems: "center" },
   timeNumber: {
-    color: "#FFFFFF",
     fontWeight: "800",
     fontSize: 36,
     marginBottom: 4
   },
   timeLabel: {
-    color: "#FFFFFF",
     opacity: 0.8,
     fontSize: 12,
     fontWeight: "600",
     textTransform: "uppercase"
   },
   streamTitle: {
-    color: "#FFFFFF",
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 8
   },
   streamDescription: {
-    color: "#FFFFFF",
     opacity: 0.9,
     textAlign: "center",
     marginBottom: 12
   },
   streamTime: {
-    color: "#FFFFFF",
     opacity: 0.8,
     textAlign: "center",
     fontSize: 14

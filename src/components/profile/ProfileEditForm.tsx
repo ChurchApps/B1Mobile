@@ -6,6 +6,7 @@ import { DateHelper } from "../../helpers/DateHelper";
 import { PhotoPicker } from "./PhotoPicker";
 import DatePicker from "react-native-date-picker";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface ProfileEditFormProps {
   person: PersonInterface;
@@ -21,6 +22,7 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
   onPhotoChange
 }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [showDatePicker, setShowDatePicker] = React.useState(false);
 
   const getFieldValue = (key: string): string => {
@@ -53,11 +55,11 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
         onChangeText={(text) => onFieldChange(key, text)}
         keyboardType={options?.keyboardType || "default"}
         multiline={options?.multiline}
-        style={styles.input}
-        outlineColor={isModified(key) ? "#FFC107" : "#E0E0E0"}
-        activeOutlineColor="#0D47A1"
+        style={[styles.input, { backgroundColor: colors.surface }]}
+        outlineColor={isModified(key) ? colors.warning : colors.divider}
+        activeOutlineColor={colors.primary}
       />
-      {isModified(key) && <View style={styles.modifiedIndicator} />}
+      {isModified(key) && <View style={[styles.modifiedIndicator, { backgroundColor: colors.warning }]} />}
     </View>
   );
 
@@ -73,9 +75,9 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       />
 
       {/* Name Section */}
-      <Card style={styles.section}>
+      <Card style={[styles.section, { backgroundColor: colors.surface }]}>
         <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>
+          <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text, borderBottomColor: colors.border }]}>
             {t("profileEdit.name")}
           </Text>
           <View style={styles.row}>
@@ -91,9 +93,9 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       </Card>
 
       {/* Contact Section */}
-      <Card style={styles.section}>
+      <Card style={[styles.section, { backgroundColor: colors.surface }]}>
         <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>
+          <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text, borderBottomColor: colors.border }]}>
             {t("profileEdit.contact")}
           </Text>
           <View style={styles.row}>
@@ -106,20 +108,20 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
               value={getFieldValue("birthDate")}
               onFocus={() => setShowDatePicker(true)}
               showSoftInputOnFocus={false}
-              style={styles.input}
-              outlineColor={isModified("birthDate") ? "#FFC107" : "#E0E0E0"}
-              activeOutlineColor="#0D47A1"
+              style={[styles.input, { backgroundColor: colors.surface }]}
+              outlineColor={isModified("birthDate") ? colors.warning : colors.divider}
+              activeOutlineColor={colors.primary}
               right={<TextInput.Icon icon="calendar" onPress={() => setShowDatePicker(true)} />}
             />
-            {isModified("birthDate") && <View style={styles.modifiedIndicator} />}
+            {isModified("birthDate") && <View style={[styles.modifiedIndicator, { backgroundColor: colors.warning }]} />}
           </View>
         </Card.Content>
       </Card>
 
       {/* Address Section */}
-      <Card style={styles.section}>
+      <Card style={[styles.section, { backgroundColor: colors.surface }]}>
         <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>
+          <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text, borderBottomColor: colors.border }]}>
             {t("profileEdit.address")}
           </Text>
           <View style={styles.row}>
@@ -143,9 +145,9 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       </Card>
 
       {/* Phone Section */}
-      <Card style={styles.section}>
+      <Card style={[styles.section, { backgroundColor: colors.surface }]}>
         <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>
+          <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text, borderBottomColor: colors.border }]}>
             {t("profileEdit.phone")}
           </Text>
           <View style={styles.row}>
@@ -184,15 +186,12 @@ const styles = StyleSheet.create({
     padding: 16
   },
   section: {
-    marginBottom: 16,
-    backgroundColor: "#FFFFFF"
+    marginBottom: 16
   },
   sectionTitle: {
     fontWeight: "600",
-    color: "#3c3c3c",
     marginBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
     paddingBottom: 8
   },
   row: { marginBottom: 12 },
@@ -209,9 +208,8 @@ const styles = StyleSheet.create({
     right: 8,
     width: 8,
     height: 8,
-    borderRadius: 4,
-    backgroundColor: "#FFC107"
+    borderRadius: 4
   },
-  input: { backgroundColor: "#FFFFFF" },
+  input: {},
   bottomPadding: { height: 100 }
 });

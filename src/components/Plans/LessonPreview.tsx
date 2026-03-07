@@ -2,9 +2,10 @@ import React, { useState, useCallback } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { PlanHelper, type PlanItemInterface } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants, ExternalVenueRefInterface } from "../../../src/helpers";
+import { ExternalVenueRefInterface } from "../../../src/helpers";
 import { ActionDialog } from "./ActionDialog";
 import { LessonDialog } from "./LessonDialog";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   lessonItems: PlanItemInterface[];
@@ -28,6 +29,7 @@ function isClickableSection(item: PlanItemInterface): boolean {
 }
 
 export const LessonPreview = React.memo((props: Props) => {
+  const colors = useThemeColors();
   const [actionItem, setActionItem] = useState<PlanItemInterface | null>(null);
   const [sectionItem, setSectionItem] = useState<PlanItemInterface | null>(null);
 
@@ -44,10 +46,10 @@ export const LessonPreview = React.memo((props: Props) => {
       const sectionDuration = PlanHelper.getSectionDuration(item);
       return (
         <View key={item.id} style={styles.headerSection}>
-          <View style={styles.headerRow}>
-            <Text style={styles.headerLabel}>{item.label}</Text>
+          <View style={[styles.headerRow, { backgroundColor: colors.inputBg }]}>
+            <Text style={[styles.headerLabel, { color: colors.text }]}>{item.label}</Text>
             {sectionDuration > 0 && (
-              <Text style={styles.headerTime}>{PlanHelper.formatTime(sectionDuration)}</Text>
+              <Text style={[styles.headerTime, { color: colors.text }]}>{PlanHelper.formatTime(sectionDuration)}</Text>
             )}
           </View>
           {item.children?.map((child) => renderPreviewItem(child, true))}
@@ -65,24 +67,24 @@ export const LessonPreview = React.memo((props: Props) => {
     };
 
     return (
-      <View key={item.id} style={[styles.itemRow, isChild && styles.childItem]}>
+      <View key={item.id} style={[styles.itemRow, { borderBottomColor: colors.divider }, isChild && styles.childItem]}>
         {item.thumbnailUrl && (
           <Image source={{ uri: item.thumbnailUrl }} style={styles.thumbnail} resizeMode="cover" />
         )}
         <View style={styles.itemContent}>
           {isClickable ? (
             <TouchableOpacity onPress={handleClick}>
-              <Text style={styles.itemLabelLink}>{item.label}</Text>
+              <Text style={[styles.itemLabelLink, { color: colors.primary }]}>{item.label}</Text>
             </TouchableOpacity>
           ) : (
-            <Text style={styles.itemLabel}>{item.label}</Text>
+            <Text style={[styles.itemLabel, { color: colors.text }]}>{item.label}</Text>
           )}
           {item.description ? (
-            <Text style={styles.itemDescription}>{item.description}</Text>
+            <Text style={[styles.itemDescription, { color: colors.text }]}>{item.description}</Text>
           ) : null}
         </View>
         {(item.seconds ?? 0) > 0 && (
-          <Text style={styles.itemTime}>{PlanHelper.formatTime(item.seconds ?? 0)}</Text>
+          <Text style={[styles.itemTime, { color: colors.text }]}>{PlanHelper.formatTime(item.seconds ?? 0)}</Text>
         )}
       </View>
     );
@@ -91,7 +93,7 @@ export const LessonPreview = React.memo((props: Props) => {
   return (
     <>
       <View style={styles.container}>
-        <Text style={styles.venueLabel}>Lesson: {props.venueName}</Text>
+        <Text style={[styles.venueLabel, { color: colors.text }]}>Lesson: {props.venueName}</Text>
         <View style={styles.previewContent}>
           {props.lessonItems.map((item) => renderPreviewItem(item))}
         </View>
@@ -128,7 +130,6 @@ const styles = StyleSheet.create({
   container: { paddingHorizontal: DimensionHelper.wp(2) },
   venueLabel: {
     fontSize: DimensionHelper.wp(3.5),
-    color: Constants.Colors.Dark_Gray,
     marginBottom: DimensionHelper.hp(1),
     opacity: 0.7
   },
@@ -138,18 +139,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#f5f5f5",
     padding: DimensionHelper.wp(2),
     borderRadius: 4
   },
   headerLabel: {
     fontSize: DimensionHelper.wp(4),
-    fontWeight: "600",
-    color: Constants.Colors.Dark_Gray
+    fontWeight: "600"
   },
   headerTime: {
     fontSize: DimensionHelper.wp(3.5),
-    color: Constants.Colors.Dark_Gray,
     opacity: 0.7
   },
   itemRow: {
@@ -158,8 +156,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingVertical: DimensionHelper.hp(1),
     paddingHorizontal: DimensionHelper.wp(2),
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0"
+    borderBottomWidth: 1
   },
   childItem: { paddingLeft: DimensionHelper.wp(4) },
   thumbnail: {
@@ -169,25 +166,19 @@ const styles = StyleSheet.create({
     marginRight: DimensionHelper.wp(2)
   },
   itemContent: { flex: 1 },
-  itemLabel: {
-    fontSize: DimensionHelper.wp(3.5),
-    color: Constants.Colors.Dark_Gray
-  },
+  itemLabel: { fontSize: DimensionHelper.wp(3.5) },
   itemLabelLink: {
     fontSize: DimensionHelper.wp(3.5),
-    color: Constants.Colors.app_color,
     textDecorationLine: "underline"
   },
   itemDescription: {
     fontSize: DimensionHelper.wp(3),
-    color: Constants.Colors.Dark_Gray,
     opacity: 0.7,
     fontStyle: "italic",
     marginTop: DimensionHelper.hp(0.3)
   },
   itemTime: {
     fontSize: DimensionHelper.wp(3.5),
-    color: Constants.Colors.Dark_Gray,
     opacity: 0.7,
     marginLeft: DimensionHelper.wp(2)
   }

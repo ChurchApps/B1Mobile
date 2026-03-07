@@ -1,6 +1,5 @@
 import React from "react";
 import { View, ActivityIndicator, Text, StyleProp, ViewStyle, TouchableOpacity } from "react-native";
-import { Constants } from "../../helpers";
 import { CommonStyles } from "../../theme/CommonStyles";
 import { Button } from "./Button";
 import { useThemeColors } from "../../theme";
@@ -58,10 +57,11 @@ export const LoadingView: React.FC<LoadingViewProps> = ({
   isEmpty = false,
   style
 }) => {
+  const tc = useThemeColors();
   if (loading) {
     return (
       <View style={[CommonStyles.centerContainer, style]}>
-        <ActivityIndicator size="large" color={Constants.Colors.primary || "#0D47A1"} />
+        <ActivityIndicator size="large" color={tc.primary} />
       </View>
     );
   }
@@ -74,7 +74,7 @@ export const LoadingView: React.FC<LoadingViewProps> = ({
         </Text>
         {onRetry && (
           <TouchableOpacity onPress={onRetry} style={{ marginTop: 16 }}>
-            <Text style={{ color: Constants.Colors.primary, fontSize: 16 }}>
+            <Text style={{ color: tc.primary, fontSize: 16 }}>
               Tap to retry
             </Text>
           </TouchableOpacity>

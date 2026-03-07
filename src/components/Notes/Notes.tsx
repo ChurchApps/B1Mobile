@@ -5,6 +5,7 @@ import { MessageInterface } from "@churchapps/helpers";
 import { Chip } from "react-native-paper";
 import { Avatar } from "../common/Avatar";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface NotesInterface {
   item: any;
@@ -16,6 +17,7 @@ interface NotesInterface {
 
 const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const displayDuration = dayjs(message?.timeSent).fromNow();
   const isEdited = message.timeUpdated && message.timeUpdated !== message.timeSent;
   const replyCount = item?.postCount ? item.postCount - 1 : 0;
@@ -24,29 +26,29 @@ const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface
     <View style={styles.messageContainer}>
       {/* Main Message */}
       <View style={styles.messageContent}>
-        <Avatar size={40} photoUrl={message?.person?.photo} firstName={message?.person?.name?.first} lastName={message?.person?.name?.last} style={styles.avatar} />
+        <Avatar size={40} photoUrl={message?.person?.photo} firstName={message?.person?.name?.first} lastName={message?.person?.name?.last} style={[styles.avatar, { shadowColor: colors.shadowBlack }]} />
 
         <View style={styles.messageBody}>
           <View style={styles.messageHeader}>
-            <Text style={styles.userName}>{message?.displayName}</Text>
-            <Text style={styles.timestamp}>{displayDuration}</Text>
+            <Text style={[styles.userName, { color: colors.primary }]}>{message?.displayName}</Text>
+            <Text style={[styles.timestamp, { color: colors.disabled }]}>{displayDuration}</Text>
             {isEdited && (
-              <Chip icon="pencil" textStyle={styles.editedChip} style={styles.editedChipContainer}>
+              <Chip icon="pencil" textStyle={[styles.editedChip, { color: colors.disabled }]} style={[styles.editedChipContainer, { backgroundColor: `${colors.disabled}1A` }]}>
                 {t("messages.edited")}
               </Chip>
             )}
           </View>
 
-          <Text style={styles.messageText}>{message?.content}</Text>
+          <Text style={[styles.messageText, { color: colors.text }]}>{message?.content}</Text>
 
           {/* Action Row */}
           <View style={styles.actionRow}>
-            <TouchableOpacity style={[styles.replyButton, showReplyBox === idx && styles.replyButtonActive]} onPress={() => (showReplyBox === idx ? handleReply(null) : handleReply(idx))}>
-              <Text style={[styles.replyText, showReplyBox === idx && styles.replyTextActive]}>{showReplyBox === idx ? t("common.cancel") : t("messages.reply")}</Text>
+            <TouchableOpacity style={[styles.replyButton, { backgroundColor: colors.iconBackground }, showReplyBox === idx && { backgroundColor: colors.primaryLight, borderWidth: 1, borderColor: colors.primary }]} onPress={() => (showReplyBox === idx ? handleReply(null) : handleReply(idx))}>
+              <Text style={[styles.replyText, { color: colors.disabled }, showReplyBox === idx && { color: colors.primary }]}>{showReplyBox === idx ? t("common.cancel") : t("messages.reply")}</Text>
             </TouchableOpacity>
 
             {replyCount > 0 && (
-              <Chip icon="chat-outline" textStyle={styles.replyCountText} style={styles.replyCountChip}>
+              <Chip icon="chat-outline" textStyle={[styles.replyCountText, { color: colors.primary }]} style={[styles.replyCountChip, { backgroundColor: `${colors.primary}1A` }]}>
                 {t("messages.replyCount", { count: replyCount })}
               </Chip>
             )}
@@ -67,7 +69,6 @@ const styles = StyleSheet.create({
   avatar: {
     marginRight: 12,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2
@@ -84,27 +85,22 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: 14,
-    fontWeight: "700",
-    color: "#0D47A1"
+    fontWeight: "700"
   },
   timestamp: {
     fontSize: 12,
-    color: "#9E9E9E",
     fontWeight: "500"
   },
   editedChipContainer: {
-    backgroundColor: "rgba(158, 158, 158, 0.1)",
     height: 20
   },
   editedChip: {
     fontSize: 10,
-    color: "#9E9E9E",
     lineHeight: 12
   },
   messageText: {
     fontSize: 15,
     lineHeight: 20,
-    color: "#3c3c3c",
     marginBottom: 8
   },
   actionRow: {
@@ -116,27 +112,19 @@ const styles = StyleSheet.create({
   replyButton: {
     paddingHorizontal: 12,
     paddingVertical: 4,
-    borderRadius: 16,
-    backgroundColor: "#F6F6F8"
+    borderRadius: 16
   },
-  replyButtonActive: {
-    backgroundColor: "#E3F2FD",
-    borderWidth: 1,
-    borderColor: "#0D47A1"
-  },
+  replyButtonActive: {},
   replyText: {
     fontSize: 12,
-    fontWeight: "600",
-    color: "#9E9E9E"
+    fontWeight: "600"
   },
-  replyTextActive: { color: "#0D47A1" },
+  replyTextActive: {},
   replyCountChip: {
-    backgroundColor: "rgba(21, 101, 192, 0.1)",
     height: 24
   },
   replyCountText: {
     fontSize: 11,
-    color: "#0D47A1",
     fontWeight: "600"
   }
 });

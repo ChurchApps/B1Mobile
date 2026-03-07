@@ -1,5 +1,6 @@
 import dayjs from "../../helpers/dayjsConfig";
 import { EventHelper, EventInterface } from "@churchapps/helpers";
+import { designSystem } from "../../theme/designSystem";
 
 export class EventProcessor {
   private static monthCache = new Map<string, { events: EventInterface[]; timestamp: number }>();
@@ -377,7 +378,7 @@ export class EventProcessor {
           marked[dateString] = { dots: [], events: [] };
         }
 
-        marked[dateString].dots.push({ color: "#0D47A1" });
+        marked[dateString].dots.push({ color: designSystem.colors.primary[500] });
         marked[dateString].events.push(event);
         marked[dateString].marked = true;
       });

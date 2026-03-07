@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Text, Card, Chip } from "react-native-paper";
 import { OptimizedImage } from "../OptimizedImage";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface GroupHeroSectionProps {
   name: string;
@@ -18,14 +19,15 @@ export const GroupHeroSection: React.FC<GroupHeroSectionProps> = ({
   isLeader
 }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   return (
     <View style={styles.heroSection}>
       {photoUrl ? (
-        <Card style={styles.heroCard}>
+        <Card style={[styles.heroCard, { shadowColor: colors.primary }]}>
           <View style={styles.heroImageContainer}>
             <OptimizedImage source={{ uri: photoUrl }} style={styles.heroImage} contentFit="cover" priority="high" />
             <View style={styles.heroOverlay}>
-              <Text variant="headlineLarge" style={styles.heroTitle}>
+              <Text variant="headlineLarge" style={[styles.heroTitle, { color: colors.white }]}>
                 {name}
               </Text>
               <View style={styles.heroStats}>
@@ -42,10 +44,10 @@ export const GroupHeroSection: React.FC<GroupHeroSectionProps> = ({
           </View>
         </Card>
       ) : (
-        <Card style={styles.heroCard}>
-          <View style={[styles.heroImageContainer, styles.noImageHero]}>
+        <Card style={[styles.heroCard, { shadowColor: colors.primary }]}>
+          <View style={[styles.heroImageContainer, styles.noImageHero, { backgroundColor: colors.primary }]}>
             <View style={styles.heroOverlay}>
-              <Text variant="headlineLarge" style={styles.heroTitle}>
+              <Text variant="headlineLarge" style={[styles.heroTitle, { color: colors.white }]}>
                 {name}
               </Text>
               <View style={styles.heroStats}>
@@ -76,7 +78,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -86,7 +87,6 @@ const styles = StyleSheet.create({
     position: "relative"
   },
   noImageHero: {
-    backgroundColor: "#0D47A1",
     justifyContent: "center"
   },
   heroImage: {
@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20
   },
   heroTitle: {
-    color: "#FFFFFF",
     fontWeight: "800",
     marginBottom: 12,
     textShadowColor: "rgba(0, 0, 0, 0.4)",

@@ -10,6 +10,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { RRule, Weekday, rrulestr } from "rrule";
 import { globalStyles } from "../../../src/helpers";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   start: Date;
@@ -19,6 +20,7 @@ interface Props {
 
 export default function RRuleEditor(props: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const initialOptions = props.rRule?.length > 0 ? rrulestr(props.rRule).options : new RRule({ dtstart: props.start }).options;
   initialOptions.byhour = [];
   initialOptions.byminute = [];
@@ -101,11 +103,11 @@ export default function RRuleEditor(props: Props) {
     return (
       <TouchableOpacity
         key={value.toString()}
-        style={[styles.dayButton, selected && styles.selectedDayButton]}
+        style={[styles.dayButton, { borderColor: colors.inputBorder }, selected && { backgroundColor: colors.primary, borderColor: colors.primary }]}
         onPress={() => {
           handleWeekDayClick(value);
         }}>
-        <Text style={[styles.dayButtonText, selected && styles.selectedDayText]}>{label}</Text>
+        <Text style={[styles.dayButtonText, { color: colors.text }, selected && { color: colors.white }]}>{label}</Text>
       </TouchableOpacity>
     );
   };
@@ -131,8 +133,6 @@ export default function RRuleEditor(props: Props) {
       case RRule.MONTHLY.toString(): {
         const daysOfWeek = [t("events.sunday"), t("events.monday"), t("events.tuesday"), t("events.wednesday"), t("events.thursday"), t("events.friday"), t("events.saturday")];
         const ordinals = [t("events.first"), t("events.second"), t("events.third"), t("events.fourth"), t("events.last")];
-        // const dayOfMonth = props.start.getDate() || 1;
-        // const dayOfWeek = props.start.getDay() || 0;
         const startDate = new Date(props.start);
         const dayOfMonth = startDate.getDate() || 1;
         const dayOfWeek = startDate.getDay() || 0;
@@ -140,7 +140,7 @@ export default function RRuleEditor(props: Props) {
         result = (
           <>
             <View>
-              <Text style={styles.label}>{t("events.on")}</Text>
+              <Text style={[styles.label, { color: colors.text }]}>{t("events.on")}</Text>
               <DropDownPicker
                 listMode="MODAL"
                 open={isFrequencyOnDropDownOpen}
@@ -205,7 +205,7 @@ export default function RRuleEditor(props: Props) {
         result = (
           <>
             <Text style={styles.labelText}>{t("events.endDate")}</Text>
-            <View style={styles.dateConatiner}>
+            <View style={[styles.dateConatiner, { borderColor: colors.inputBorder }]}>
               <Text style={styles.dateText} numberOfLines={1}>
                 {dayjs(onEndDate).format("L")}
               </Text>
@@ -240,7 +240,7 @@ export default function RRuleEditor(props: Props) {
                   borderWidth: 1,
                   padding: 10,
                   borderRadius: 10,
-                  borderColor: "lightgray",
+                  borderColor: colors.inputBorder,
                   marginTop: DimensionHelper.wp(1)
                 }
               ]}
@@ -248,7 +248,7 @@ export default function RRuleEditor(props: Props) {
               autoCapitalize="none"
               autoCorrect={false}
               keyboardType="numeric"
-              placeholderTextColor={"lightgray"}
+              placeholderTextColor={colors.inputBorder}
               value={occurances}
               onChangeText={text => {
                 (setOccurances(text), handleEndFollowupChange("count", text));
@@ -348,33 +348,25 @@ const styles = StyleSheet.create({
   buttonGroup: {
     flexDirection: "row",
     justifyContent: "space-around",
-    // marginVertical: 10,
     marginTop: DimensionHelper.wp(3.5)
-    // marginBottom: 0
   },
   label: {
     fontSize: DimensionHelper.wp(4),
     marginBottom: DimensionHelper.wp(1),
-    color: "#333",
     marginTop: DimensionHelper.wp(3.5),
     fontWeight: "600"
   },
   dayButton: {
     padding: 10,
     borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "lightgray"
+    borderWidth: 1
   },
-  selectedDayButton: {
-    backgroundColor: "#2196F3",
-    borderColor: "#1976D2"
-  },
-  dayButtonText: { color: "#000" },
-  selectedDayText: { color: "#fff" },
+  selectedDayButton: {},
+  dayButtonText: {},
+  selectedDayText: {},
   dateConatiner: {
     borderWidth: 1,
     paddingHorizontal: DimensionHelper.wp(2),
-    borderColor: "lightgray",
     borderRadius: DimensionHelper.wp(2),
     height: DimensionHelper.wp(12),
     marginTop: DimensionHelper.wp(2),

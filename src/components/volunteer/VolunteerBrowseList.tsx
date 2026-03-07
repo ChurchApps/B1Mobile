@@ -6,6 +6,7 @@ import { DateHelper } from "@churchapps/helpers";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { SignupPlanData } from "@/interfaces";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   signupPlans: SignupPlanData[];
@@ -20,13 +21,14 @@ const getTotalSlots = (positions: SignupPlanData["positions"]) => {
 export function VolunteerBrowseList({ signupPlans }: Props) {
   const { t } = useTranslation();
   const router = useRouter();
+  const colors = useThemeColors();
 
   if (signupPlans.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <MaterialIcons name="volunteer-activism" size={48} color="#9E9E9E" />
-        <Text style={styles.emptyTitle}>{t("volunteer.browseOpportunities")}</Text>
-        <Text style={styles.emptyText}>{t("volunteer.noOpportunities")}</Text>
+        <MaterialIcons name="volunteer-activism" size={48} color={colors.disabled} />
+        <Text style={[styles.emptyTitle, { color: colors.text }]}>{t("volunteer.browseOpportunities")}</Text>
+        <Text style={[styles.emptyText, { color: colors.disabled }]}>{t("volunteer.noOpportunities")}</Text>
       </View>
     );
   }
@@ -38,19 +40,19 @@ export function VolunteerBrowseList({ signupPlans }: Props) {
         const progress = total > 0 ? (filled / total) * 100 : 0;
 
         return (
-          <Card key={plan.id} style={styles.card}>
+          <Card key={plan.id} style={[styles.card, { shadowColor: colors.shadowBlack }]}>
             <Card.Content>
               <View style={styles.headerRow}>
                 <View style={styles.headerText}>
-                  <Text style={styles.planName}>{plan.name}</Text>
-                  <Text style={styles.planDate}>
+                  <Text style={[styles.planName, { color: colors.text }]}>{plan.name}</Text>
+                  <Text style={[styles.planDate, { color: colors.textMuted }]}>
                     {DateHelper.prettyDate(new Date(plan.serviceDate!))}
                     {times.length > 0 && (" \u00b7 " + times.map(t => t.displayName).join(", "))}
                   </Text>
                 </View>
                 <Chip
-                  style={[styles.statusChip, remaining > 0 ? styles.openChip : styles.fullChip]}
-                  textStyle={[styles.chipText, remaining > 0 ? styles.openChipText : styles.fullChipText]}
+                  style={[styles.statusChip, remaining > 0 ? { backgroundColor: colors.successLight } : { backgroundColor: colors.inputBg }]}
+                  textStyle={[styles.chipText, remaining > 0 ? styles.openChipText : { color: colors.disabled }]}
                   compact
                 >
                   {remaining > 0 ? t("volunteer.spotsOpen", { count: remaining }) : t("volunteer.full")}
@@ -58,10 +60,10 @@ export function VolunteerBrowseList({ signupPlans }: Props) {
               </View>
 
               <View style={styles.progressContainer}>
-                <View style={styles.progressTrack}>
-                  <View style={[styles.progressBar, { width: `${Math.min(progress, 100)}%` }]} />
+                <View style={[styles.progressTrack, { backgroundColor: colors.divider }]}>
+                  <View style={[styles.progressBar, { width: `${Math.min(progress, 100)}%`, backgroundColor: colors.primary }]} />
                 </View>
-                <Text style={styles.progressText}>
+                <Text style={[styles.progressText, { color: colors.disabled }]}>
                   {t("volunteer.positionsFilledOf", { filled, total })}
                 </Text>
               </View>
@@ -72,8 +74,8 @@ export function VolunteerBrowseList({ signupPlans }: Props) {
                   return (
                     <Chip
                       key={p.id}
-                      style={[styles.positionChip, open > 0 ? styles.positionOpen : styles.positionFull]}
-                      textStyle={styles.positionChipText}
+                      style={[styles.positionChip, open > 0 ? { backgroundColor: colors.primaryLight } : { backgroundColor: colors.inputBg }]}
+                      textStyle={[styles.positionChipText, { color: colors.text }]}
                       compact
                     >
                       {p.name} ({t("volunteer.openSlots", { count: open })})
@@ -87,7 +89,7 @@ export function VolunteerBrowseList({ signupPlans }: Props) {
                   <Button
                     mode="contained"
                     compact
-                    style={styles.signupButton}
+                    style={[styles.signupButton, { backgroundColor: colors.primary }]}
                     labelStyle={styles.signupButtonLabel}
                     onPress={() => router.push(`/volunteerSignup/${plan.id}`)}
                   >
@@ -113,20 +115,17 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#3c3c3c",
     marginTop: 16,
     marginBottom: 8
   },
   emptyText: {
     fontSize: 14,
-    color: "#9E9E9E",
     textAlign: "center"
   },
   card: {
     marginBottom: 16,
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
@@ -143,25 +142,20 @@ const styles = StyleSheet.create({
   planName: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#3c3c3c",
     marginBottom: 4
   },
   planDate: {
-    fontSize: 14,
-    color: "#666"
+    fontSize: 14
   },
   statusChip: {
     borderRadius: 12,
     height: 28
   },
-  openChip: { backgroundColor: "#E8F5E9" },
-  fullChip: { backgroundColor: "#F5F5F5" },
   chipText: {
     fontSize: 12,
     fontWeight: "600"
   },
   openChipText: { color: "#388E3C" },
-  fullChipText: { color: "#9E9E9E" },
   progressContainer: {
     marginTop: 16,
     marginBottom: 8
@@ -169,17 +163,14 @@ const styles = StyleSheet.create({
   progressTrack: {
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#E0E0E0",
     overflow: "hidden"
   },
   progressBar: {
     height: 8,
-    borderRadius: 4,
-    backgroundColor: "#0D47A1"
+    borderRadius: 4
   },
   progressText: {
     fontSize: 12,
-    color: "#9E9E9E",
     marginTop: 4
   },
   positionChips: {
@@ -192,19 +183,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     height: 28
   },
-  positionOpen: { backgroundColor: "#E3F2FD" },
-  positionFull: { backgroundColor: "#F5F5F5" },
   positionChipText: {
-    fontSize: 11,
-    color: "#3c3c3c"
+    fontSize: 11
   },
   buttonRow: {
     alignItems: "flex-end",
     marginTop: 16
   },
   signupButton: {
-    borderRadius: 8,
-    backgroundColor: "#0D47A1"
+    borderRadius: 8
   },
   signupButtonLabel: {
     fontSize: 14,

@@ -5,6 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { CurrencyHelper, DateHelper } from "../../../helpers";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../../theme";
 
 interface GivingStats {
   ytd: number;
@@ -21,20 +22,21 @@ interface GivingOverviewProps {
 
 export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onDonatePress, onHistoryPress }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <>
       {/* Hero Stats Card */}
-      <Card style={styles.heroCard}>
-        <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
+      <Card style={[styles.heroCard, { shadowColor: colors.primary }]}>
+        <LinearGradient colors={[colors.primary, colors.secondary]} style={styles.heroGradient}>
           <View style={styles.heroContent}>
-            <Text variant="headlineSmall" style={styles.heroTitle}>
+            <Text variant="headlineSmall" style={[styles.heroTitle, { color: colors.white }]}>
               {t("donations.yourGivingImpact")}
             </Text>
-            <Text variant="displaySmall" style={styles.heroAmount}>
+            <Text variant="displaySmall" style={[styles.heroAmount, { color: colors.white }]}>
               {CurrencyHelper.formatCurrency(givingStats.ytd)}
             </Text>
-            <Text variant="bodyMedium" style={styles.heroSubtitle}>
+            <Text variant="bodyMedium" style={[styles.heroSubtitle, { color: colors.white }]}>
               {t("donations.totalThisYear")} • {givingStats.totalGifts} {t("donations.gifts")}
             </Text>
           </View>
@@ -44,32 +46,32 @@ export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onD
       {/* Recent Activity */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text variant="titleLarge" style={styles.sectionTitle}>
+          <Text variant="titleLarge" style={[styles.sectionTitle, { color: colors.text }]}>
             {t("donations.recentActivity")}
           </Text>
-          <Button mode="text" onPress={onHistoryPress} labelStyle={{ color: "#0D47A1" }}>
+          <Button mode="text" onPress={onHistoryPress} labelStyle={{ color: colors.primary }}>
             {t("common.viewAll")}
           </Button>
         </View>
 
-        <Card style={styles.activityCard}>
+        <Card style={[styles.activityCard, { shadowColor: colors.shadowBlack }]}>
           <Card.Content style={styles.activityContent}>
-            <View style={styles.activityIcon}>
-              <MaterialIcons name="favorite" size={24} color="#70DC87" />
+            <View style={[styles.activityIcon, { backgroundColor: colors.iconBackground }]}>
+              <MaterialIcons name="favorite" size={24} color={colors.success} />
             </View>
             <View style={styles.activityDetails}>
-              <Text variant="titleMedium" style={styles.activityTitle}>
+              <Text variant="titleMedium" style={[styles.activityTitle, { color: colors.text }]}>
                 {t("donations.lastGift")}
               </Text>
-              <Text variant="bodyMedium" style={styles.activityAmount}>
+              <Text variant="bodyMedium" style={[styles.activityAmount, { color: colors.primary }]}>
                 {CurrencyHelper.formatCurrency(givingStats.lastGift)}
               </Text>
-              <Text variant="bodySmall" style={styles.activityDate}>
+              <Text variant="bodySmall" style={[styles.activityDate, { color: colors.disabled }]}>
                 {givingStats.lastGiftDate ? DateHelper.prettyDate(givingStats.lastGiftDate) : t("donations.noRecentGift")}
               </Text>
             </View>
             <TouchableOpacity style={styles.repeatButton} onPress={onDonatePress}>
-              <Text variant="labelMedium" style={styles.repeatButtonText}>
+              <Text variant="labelMedium" style={[styles.repeatButtonText, { color: colors.primary }]}>
                 {t("donations.repeat")}
               </Text>
             </TouchableOpacity>
@@ -78,16 +80,16 @@ export const GivingOverview: React.FC<GivingOverviewProps> = ({ givingStats, onD
       </View>
 
       {/* CTA Section */}
-      <Card style={styles.ctaCard}>
+      <Card style={[styles.ctaCard, { shadowColor: colors.shadowBlack }]}>
         <Card.Content style={styles.ctaContent}>
-          <MaterialIcons name="volunteer-activism" size={48} color="#0D47A1" style={styles.ctaIcon} />
-          <Text variant="titleLarge" style={styles.ctaTitle}>
+          <MaterialIcons name="volunteer-activism" size={48} color={colors.primary} style={styles.ctaIcon} />
+          <Text variant="titleLarge" style={[styles.ctaTitle, { color: colors.text }]}>
             {t("donations.makeDifferenceToday")}
           </Text>
-          <Text variant="bodyMedium" style={styles.ctaSubtitle}>
+          <Text variant="bodyMedium" style={[styles.ctaSubtitle, { color: colors.disabled }]}>
             {t("donations.generosityHelps")}
           </Text>
-          <Button mode="contained" onPress={onDonatePress} style={styles.ctaButton} labelStyle={styles.ctaButtonText}>
+          <Button mode="contained" onPress={onDonatePress} style={[styles.ctaButton, { backgroundColor: colors.primary, shadowColor: colors.primary }]} labelStyle={[styles.ctaButtonText, { color: colors.white }]}>
             {t("donations.giveNow")}
           </Button>
         </Card.Content>
@@ -102,7 +104,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -117,18 +118,15 @@ const styles = StyleSheet.create({
     flex: 1
   },
   heroTitle: {
-    color: "#FFFFFF",
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center"
   },
   heroAmount: {
-    color: "#FFFFFF",
     fontWeight: "800",
     marginBottom: 8
   },
   heroSubtitle: {
-    color: "#FFFFFF",
     opacity: 0.9,
     textAlign: "center"
   },
@@ -140,14 +138,12 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
   sectionTitle: {
-    color: "#3c3c3c",
     fontWeight: "700",
     fontSize: 20
   },
   activityCard: {
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
@@ -161,23 +157,20 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#F6F6F8",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16
   },
   activityDetails: { flex: 1 },
   activityTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 2
   },
   activityAmount: {
-    color: "#0D47A1",
     fontWeight: "700",
     marginBottom: 2
   },
-  activityDate: { color: "#9E9E9E" },
+  activityDate: {},
   repeatButton: {
     backgroundColor: "rgba(21, 101, 192, 0.1)",
     paddingHorizontal: 16,
@@ -185,13 +178,11 @@ const styles = StyleSheet.create({
     borderRadius: 20
   },
   repeatButtonText: {
-    color: "#0D47A1",
     fontWeight: "600"
   },
   ctaCard: {
     borderRadius: 20,
     elevation: 3,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6,
@@ -204,29 +195,24 @@ const styles = StyleSheet.create({
   },
   ctaIcon: { marginBottom: 16 },
   ctaTitle: {
-    color: "#3c3c3c",
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 8
   },
   ctaSubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     marginBottom: 24,
     paddingHorizontal: 16
   },
   ctaButton: {
-    backgroundColor: "#0D47A1",
     borderRadius: 12,
     paddingHorizontal: 32,
     elevation: 3,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4
   },
   ctaButtonText: {
-    color: "#FFFFFF",
     fontWeight: "700",
     fontSize: 16
   }

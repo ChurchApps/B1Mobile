@@ -4,11 +4,12 @@ import { WebView } from "react-native-webview";
 import Markdown from "@ronradtke/react-native-markdown-display";
 import { PlanHelper } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants, ExternalVenueRefInterface } from "../../../src/helpers";
+import { ExternalVenueRefInterface } from "../../../src/helpers";
 import { EnvironmentHelper } from "../../../src/helpers/EnvironmentHelper";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import { useProviderContent, type ProviderContentChild } from "./hooks/useProviderContent";
 import { ContentRenderer } from "./ContentRenderer";
+import { useThemeColors } from "../../theme";
 
 function detectMediaType(url: string): "video" | "image" | "iframe" {
   const lowerUrl = url.toLowerCase();
@@ -32,6 +33,7 @@ interface Props {
 }
 
 export const LessonDialog = (props: Props) => {
+  const colors = useThemeColors();
   const [selectedChild, setSelectedChild] = useState<ProviderContentChild | null>(null);
 
   const hasProviderData = !!(props.providerId && props.providerPath && props.providerContentPath) || !!props.downloadUrl;
@@ -67,7 +69,7 @@ export const LessonDialog = (props: Props) => {
             {selectedChild.description ? (
               <Markdown>{selectedChild.description}</Markdown>
             ) : (
-              <Text style={styles.noContentText}>No preview available for this item.</Text>
+              <Text style={[styles.noContentText, { color: colors.text }]}>No preview available for this item.</Text>
             )}
           </ScrollView>
         );
@@ -95,20 +97,20 @@ export const LessonDialog = (props: Props) => {
             {content.children!.map((child, index) => (
               <TouchableOpacity
                 key={child.id || index.toString()}
-                style={[styles.childRow, index > 0 && styles.childRowBorder]}
+                style={[styles.childRow, index > 0 && [styles.childRowBorder, { borderTopColor: colors.divider }]]}
                 onPress={() => setSelectedChild(child)}
               >
                 {child.thumbnailUrl && (
                   <Image source={{ uri: child.thumbnailUrl }} style={styles.childThumbnail} resizeMode="cover" />
                 )}
                 <View style={styles.childContent}>
-                  <Text style={styles.childLabel}>{child.label}</Text>
-                  {child.description ? <Text style={styles.childDescription} numberOfLines={2}>{child.description}</Text> : null}
+                  <Text style={[styles.childLabel, { color: colors.primary }]}>{child.label}</Text>
+                  {child.description ? <Text style={[styles.childDescription, { color: colors.text }]} numberOfLines={2}>{child.description}</Text> : null}
                 </View>
                 {(child.seconds ?? 0) > 0 && (
-                  <Text style={styles.childTime}>{PlanHelper.formatTime(child.seconds ?? 0)}</Text>
+                  <Text style={[styles.childTime, { color: colors.textMuted }]}>{PlanHelper.formatTime(child.seconds ?? 0)}</Text>
                 )}
-                <Icons name="chevron-right" size={20} color="#999" />
+                <Icons name="chevron-right" size={20} color={colors.textHint} />
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -142,26 +144,26 @@ export const LessonDialog = (props: Props) => {
 
   return (
     <Modal visible={!!props.sectionId} animationType="slide" transparent={true} onRequestClose={props.onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.dialog}>
-          <View style={styles.header}>
+      <View style={[styles.overlay, { backgroundColor: colors.modalOverlay }]}>
+        <View style={[styles.dialog, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]}>
+          <View style={[styles.header, { borderBottomColor: colors.divider }]}>
             {selectedChild && (
               <TouchableOpacity style={styles.backButton} onPress={() => setSelectedChild(null)}>
-                <Icons name="arrow-back" size={24} color={Constants.Colors.Dark_Gray} />
+                <Icons name="arrow-back" size={24} color={colors.iconColor} />
               </TouchableOpacity>
             )}
-            <Text style={styles.title} numberOfLines={1}>
+            <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>
               {selectedChild ? selectedChild.label : (props.sectionName || "Lesson Section")}
             </Text>
             <TouchableOpacity style={styles.closeButton} onPress={props.onClose}>
-              <Icons name="close" size={28} color={Constants.Colors.Dark_Gray} />
+              <Icons name="close" size={28} color={colors.iconColor} />
             </TouchableOpacity>
           </View>
           <View style={styles.contentArea}>
             {renderContent()}
           </View>
-          <TouchableOpacity style={styles.closeButtonBottom} onPress={selectedChild ? () => setSelectedChild(null) : props.onClose}>
-            <Text style={styles.closeButtonText}>{selectedChild ? "Back" : "Close"}</Text>
+          <TouchableOpacity style={[styles.closeButtonBottom, { backgroundColor: colors.inputBg, borderTopColor: colors.divider }]} onPress={selectedChild ? () => setSelectedChild(null) : props.onClose}>
+            <Text style={[styles.closeButtonText, { color: colors.primary }]}>{selectedChild ? "Back" : "Close"}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -174,16 +176,13 @@ const { height: screenHeight } = Dimensions.get("window");
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center"
   },
   dialog: {
     width: "95%",
     height: screenHeight * 0.85,
-    backgroundColor: "white",
     borderRadius: 16,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -196,14 +195,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: DimensionHelper.wp(4),
     paddingVertical: DimensionHelper.hp(1.5),
-    borderBottomWidth: 1,
-    borderBottomColor: "#e0e0e0"
+    borderBottomWidth: 1
   },
   backButton: { marginRight: 8, padding: 4 },
   title: {
     fontSize: DimensionHelper.wp(4.5),
     fontWeight: "600",
-    color: Constants.Colors.Dark_Gray,
     flex: 1,
     marginRight: 10
   },
@@ -221,7 +218,6 @@ const styles = StyleSheet.create({
     padding: DimensionHelper.wp(8)
   },
   noContentText: {
-    color: Constants.Colors.Dark_Gray,
     fontSize: DimensionHelper.wp(3.5),
     textAlign: "center",
     opacity: 0.7
@@ -233,8 +229,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: DimensionHelper.wp(4)
   },
   childRowBorder: {
-    borderTopWidth: 1,
-    borderTopColor: "#e0e0e0"
+    borderTopWidth: 1
   },
   childThumbnail: {
     width: 48,
@@ -245,30 +240,24 @@ const styles = StyleSheet.create({
   childContent: { flex: 1 },
   childLabel: {
     fontSize: DimensionHelper.wp(3.8),
-    color: Constants.Colors.app_color,
     fontWeight: "500"
   },
   childDescription: {
     fontSize: DimensionHelper.wp(3.2),
-    color: Constants.Colors.Dark_Gray,
     opacity: 0.7,
     marginTop: 2
   },
   childTime: {
     fontSize: DimensionHelper.wp(3.2),
-    color: "#666",
     marginHorizontal: DimensionHelper.wp(2)
   },
   closeButtonBottom: {
-    backgroundColor: "#f5f5f5",
     paddingVertical: DimensionHelper.hp(1.5),
     alignItems: "center",
-    borderTopWidth: 1,
-    borderTopColor: "#e0e0e0"
+    borderTopWidth: 1
   },
   closeButtonText: {
     fontSize: DimensionHelper.wp(4),
-    color: Constants.Colors.app_color,
     fontWeight: "500"
   }
 });

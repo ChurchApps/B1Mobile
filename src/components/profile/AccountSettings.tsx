@@ -8,9 +8,11 @@ import { useTranslation } from "react-i18next";
 import { FormField } from "../common/FormField";
 import { useUser, useUserStore } from "../../stores/useUserStore";
 import { SecureStorageHelper } from "../../helpers/SecureStorageHelper";
+import { useThemeColors } from "../../theme";
 
 export const AccountSettings: React.FC = () => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const user = useUser();
 
   // Display Name state
@@ -148,11 +150,11 @@ export const AccountSettings: React.FC = () => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Display Name Section */}
-      <Card style={styles.section}>
+      <Card style={[styles.section, { backgroundColor: colors.surface }]}>
         <Card.Content>
-          <View style={styles.sectionHeader}>
-            <MaterialIcons name="person" size={24} color="#0D47A1" />
-            <Text variant="titleMedium" style={styles.sectionTitle}>
+          <View style={[styles.sectionHeader, { borderBottomColor: colors.border }]}>
+            <MaterialIcons name="person" size={24} color={colors.primary} />
+            <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
               {t("profileEdit.displayName")}
             </Text>
           </View>
@@ -186,8 +188,8 @@ export const AccountSettings: React.FC = () => {
               loading={nameMutation.isPending}
               disabled={nameMutation.isPending}
               style={styles.saveButton}
-              buttonColor="#0D47A1"
-              textColor="#FFFFFF">
+              buttonColor={colors.primary}
+              textColor={colors.onPrimary}>
               {t("common.save")}
             </Button>
           )}
@@ -195,16 +197,16 @@ export const AccountSettings: React.FC = () => {
       </Card>
 
       {/* Email Section */}
-      <Card style={styles.section}>
+      <Card style={[styles.section, { backgroundColor: colors.surface }]}>
         <Card.Content>
-          <View style={styles.sectionHeader}>
-            <MaterialIcons name="email" size={24} color="#0D47A1" />
-            <Text variant="titleMedium" style={styles.sectionTitle}>
+          <View style={[styles.sectionHeader, { borderBottomColor: colors.border }]}>
+            <MaterialIcons name="email" size={24} color={colors.primary} />
+            <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
               {t("profileEdit.changeEmail")}
             </Text>
           </View>
 
-          <Text variant="bodySmall" style={styles.currentValue}>
+          <Text variant="bodySmall" style={[styles.currentValue, { color: colors.disabled }]}>
             {t("profileEdit.email")}: {user?.email}
           </Text>
 
@@ -225,19 +227,19 @@ export const AccountSettings: React.FC = () => {
             loading={emailMutation.isPending}
             disabled={emailMutation.isPending || !newEmail}
             style={styles.saveButton}
-            buttonColor="#0D47A1"
-            textColor="#FFFFFF">
+            buttonColor={colors.primary}
+            textColor={colors.onPrimary}>
             {t("common.save")}
           </Button>
         </Card.Content>
       </Card>
 
       {/* Password Section */}
-      <Card style={styles.section}>
+      <Card style={[styles.section, { backgroundColor: colors.surface }]}>
         <Card.Content>
-          <View style={styles.sectionHeader}>
-            <MaterialIcons name="lock" size={24} color="#0D47A1" />
-            <Text variant="titleMedium" style={styles.sectionTitle}>
+          <View style={[styles.sectionHeader, { borderBottomColor: colors.border }]}>
+            <MaterialIcons name="lock" size={24} color={colors.primary} />
+            <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
               {t("profileEdit.changePassword")}
             </Text>
           </View>
@@ -264,7 +266,7 @@ export const AccountSettings: React.FC = () => {
             error={passwordErrors.confirm}
           />
 
-          <Text variant="bodySmall" style={styles.hint}>
+          <Text variant="bodySmall" style={[styles.hint, { color: colors.disabled }]}>
             {t("profileEdit.passwordRequirements")}
           </Text>
 
@@ -274,8 +276,8 @@ export const AccountSettings: React.FC = () => {
             loading={passwordMutation.isPending}
             disabled={passwordMutation.isPending || !newPassword || !confirmPassword}
             style={styles.saveButton}
-            buttonColor="#0D47A1"
-            textColor="#FFFFFF">
+            buttonColor={colors.primary}
+            textColor={colors.onPrimary}>
             {t("common.save")}
           </Button>
         </Card.Content>
@@ -293,8 +295,7 @@ const styles = StyleSheet.create({
     padding: 16
   },
   section: {
-    marginBottom: 16,
-    backgroundColor: "#FFFFFF"
+    marginBottom: 16
   },
   sectionHeader: {
     flexDirection: "row",
@@ -302,19 +303,15 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
     paddingBottom: 8
   },
   sectionTitle: {
-    fontWeight: "600",
-    color: "#3c3c3c"
+    fontWeight: "600"
   },
   currentValue: {
-    color: "#9E9E9E",
     marginBottom: 16
   },
   hint: {
-    color: "#9E9E9E",
     marginBottom: 8
   },
   saveButton: { marginTop: 8 }

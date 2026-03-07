@@ -7,6 +7,7 @@ import dayjs from "../../helpers/dayjsConfig";
 import { EventModal } from "../eventCalendar/EventModal";
 import { EventInterface } from "@churchapps/helpers";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
+import { useThemeColors } from "../../theme";
 
 interface GroupEventModalProps {
   isVisible: boolean;
@@ -19,6 +20,7 @@ interface GroupEventModalProps {
 
 export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onClose, selectedDate, selectedEvents, groupId, isLeader }) => {
   const currentUserChurch = useCurrentUserChurch();
+  const colors = useThemeColors();
 
   const handleRegister = (event: EventInterface) => {
     onClose();
@@ -41,9 +43,9 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onC
 
   return (
     <EventModal isVisible={isVisible} close={onClose}>
-      <View style={styles.eventModalContent}>
+      <View style={[styles.eventModalContent, { backgroundColor: colors.card }]}>
         <View style={styles.eventModalHeader}>
-          <Text variant="headlineSmall" style={styles.eventModalTitle}>
+          <Text variant="headlineSmall" style={[styles.eventModalTitle, { color: colors.text }]}>
             {dayjs(selectedDate).format("LL")}
           </Text>
           <IconButton icon="close" size={24} onPress={onClose} style={styles.eventModalClose} />
@@ -54,40 +56,40 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onC
         <View style={styles.eventsContainer}>
           {selectedEvents &&
             selectedEvents.map((event: EventInterface, index: number) => (
-              <Card key={event.id || index} style={styles.eventCard}>
+              <Card key={event.id || index} style={[styles.eventCard, { backgroundColor: colors.card, shadowColor: colors.shadowBlack }]}>
                 <Card.Content style={styles.eventCardContent}>
                   <View style={styles.eventHeader}>
-                    <Text variant="titleMedium" style={styles.eventTitle}>
+                    <Text variant="titleMedium" style={[styles.eventTitle, { color: colors.text }]}>
                       {event.title}
                     </Text>
                     <View style={styles.eventHeaderActions}>
                       {event.visibility === "private" && (
-                        <Chip compact icon="lock" style={styles.privateChip}>
+                        <Chip compact icon="lock" style={[styles.privateChip, { backgroundColor: colors.warningBg, borderColor: colors.warning }]}>
                           Private
                         </Chip>
                       )}
-                      {isLeader && <IconButton icon="pencil" size={20} iconColor="#0D47A1" onPress={() => handleEditEvent(event)} style={styles.editEventButton} mode="contained-tonal" />}
+                      {isLeader && <IconButton icon="pencil" size={20} iconColor={colors.primary} onPress={() => handleEditEvent(event)} style={styles.editEventButton} mode="contained-tonal" />}
                     </View>
                   </View>
 
                   {event.description && (
-                    <Text variant="bodyMedium" style={styles.eventDescription}>
+                    <Text variant="bodyMedium" style={[styles.eventDescription, { color: colors.textMuted }]}>
                       {event.description}
                     </Text>
                   )}
 
                   <View style={styles.eventDetails}>
                     <View style={styles.eventTime}>
-                      <MaterialIcons name="access-time" size={16} color="#666" />
-                      <Text variant="bodySmall" style={styles.eventTimeText}>
+                      <MaterialIcons name="access-time" size={16} color={colors.textMuted} />
+                      <Text variant="bodySmall" style={[styles.eventTimeText, { color: colors.textMuted }]}>
                         {event.allDay ? "All day" : `${dayjs(event.start).format("LT")} - ${dayjs(event.end).format("LT")}`}
                       </Text>
                     </View>
 
                     {event.recurrenceRule && (
                       <View style={styles.eventRecurrence}>
-                        <MaterialIcons name="repeat" size={16} color="#666" />
-                        <Text variant="bodySmall" style={styles.eventRecurrenceText}>
+                        <MaterialIcons name="repeat" size={16} color={colors.textMuted} />
+                        <Text variant="bodySmall" style={[styles.eventRecurrenceText, { color: colors.textMuted }]}>
                           Recurring
                         </Text>
                       </View>
@@ -95,7 +97,7 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onC
                   </View>
 
                   {event.registrationEnabled && (
-                    <Button mode="contained" icon="account-check" onPress={() => handleRegister(event)} style={styles.registerButton} compact>
+                    <Button mode="contained" icon="account-check" onPress={() => handleRegister(event)} style={[styles.registerButton, { backgroundColor: colors.primary }]} compact>
                       Register
                     </Button>
                   )}
@@ -110,7 +112,6 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onC
 
 const styles = StyleSheet.create({
   eventModalContent: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     padding: 0,
     maxHeight: "80%",
@@ -124,7 +125,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16
   },
   eventModalTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     flex: 1
   },
@@ -136,10 +136,8 @@ const styles = StyleSheet.create({
   },
   eventCard: {
     marginBottom: 12,
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 4
@@ -152,7 +150,6 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   eventTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     flex: 1,
     marginRight: 8
@@ -164,11 +161,9 @@ const styles = StyleSheet.create({
   },
   editEventButton: { margin: 0 },
   privateChip: {
-    backgroundColor: "#FFF3E0",
-    borderColor: "#FF9800"
+    borderWidth: 1
   },
   eventDescription: {
-    color: "#666",
     marginBottom: 12,
     lineHeight: 20
   },
@@ -183,7 +178,6 @@ const styles = StyleSheet.create({
     gap: 4
   },
   eventTimeText: {
-    color: "#666",
     fontSize: 12
   },
   eventRecurrence: {
@@ -192,12 +186,10 @@ const styles = StyleSheet.create({
     gap: 4
   },
   eventRecurrenceText: {
-    color: "#666",
     fontSize: 12
   },
   registerButton: {
     marginTop: 12,
-    backgroundColor: "#0D47A1",
     alignSelf: "flex-start"
   }
 });

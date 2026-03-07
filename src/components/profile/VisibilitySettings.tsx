@@ -9,11 +9,13 @@ import { useCurrentUserChurch } from "../../stores/useUserStore";
 import DropDownPicker from "react-native-dropdown-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 type VisibilityOption = "everyone" | "members" | "groups";
 
 export const VisibilitySettings: React.FC = () => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const queryClient = useQueryClient();
   const currentUserChurch = useCurrentUserChurch();
 
@@ -130,34 +132,34 @@ export const VisibilitySettings: React.FC = () => {
   return (
     <LoadingWrapper loading={isLoading}>
       <View style={styles.container}>
-        <Card style={styles.section}>
+        <Card style={[styles.section, { backgroundColor: colors.surface }]}>
           <Card.Content>
-            <View style={styles.sectionHeader}>
-              <MaterialIcons name="visibility" size={24} color="#0D47A1" />
-              <Text variant="titleMedium" style={styles.sectionTitle}>
+            <View style={[styles.sectionHeader, { borderBottomColor: colors.border }]}>
+              <MaterialIcons name="visibility" size={24} color={colors.primary} />
+              <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
                 {t("profileEdit.visibilityPreferences")}
               </Text>
             </View>
 
-            <Text variant="bodyMedium" style={styles.description}>
+            <Text variant="bodyMedium" style={[styles.description, { color: colors.disabled }]}>
               {t("profileEdit.visibilityDescription")}
             </Text>
 
             {/* Hide from Directory */}
-            <View style={styles.switchContainer}>
-              <Text variant="bodyMedium" style={styles.switchLabel}>
+            <View style={[styles.switchContainer, { borderBottomColor: colors.border }]}>
+              <Text variant="bodyMedium" style={[styles.switchLabel, { color: colors.text }]}>
                 {t("profileEdit.hideFromDirectory")}
               </Text>
               <Switch
                 value={optedOut}
                 onValueChange={setOptedOut}
-                color="#0D47A1"
+                color={colors.primary}
               />
             </View>
 
             {/* Address Visibility */}
             <View style={[styles.dropdownContainer, { zIndex: 3000 }]}>
-              <Text variant="labelLarge" style={styles.dropdownLabel}>
+              <Text variant="labelLarge" style={[styles.dropdownLabel, { color: colors.text }]}>
                 {t("profileEdit.addressVisibility")}
               </Text>
               <DropDownPicker
@@ -170,16 +172,16 @@ export const VisibilitySettings: React.FC = () => {
                   setPhoneOpen(false);
                   setEmailOpen(false);
                 }}
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownList}
-                textStyle={styles.dropdownText}
+                style={[styles.dropdown, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                textStyle={[styles.dropdownText, { color: colors.text }]}
                 listMode="SCROLLVIEW"
               />
             </View>
 
             {/* Phone Visibility */}
             <View style={[styles.dropdownContainer, { zIndex: 2000 }]}>
-              <Text variant="labelLarge" style={styles.dropdownLabel}>
+              <Text variant="labelLarge" style={[styles.dropdownLabel, { color: colors.text }]}>
                 {t("profileEdit.phoneVisibility")}
               </Text>
               <DropDownPicker
@@ -192,16 +194,16 @@ export const VisibilitySettings: React.FC = () => {
                   setAddressOpen(false);
                   setEmailOpen(false);
                 }}
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownList}
-                textStyle={styles.dropdownText}
+                style={[styles.dropdown, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                textStyle={[styles.dropdownText, { color: colors.text }]}
                 listMode="SCROLLVIEW"
               />
             </View>
 
             {/* Email Visibility */}
             <View style={[styles.dropdownContainer, { zIndex: 1000 }]}>
-              <Text variant="labelLarge" style={styles.dropdownLabel}>
+              <Text variant="labelLarge" style={[styles.dropdownLabel, { color: colors.text }]}>
                 {t("profileEdit.emailVisibility")}
               </Text>
               <DropDownPicker
@@ -214,9 +216,9 @@ export const VisibilitySettings: React.FC = () => {
                   setAddressOpen(false);
                   setPhoneOpen(false);
                 }}
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownList}
-                textStyle={styles.dropdownText}
+                style={[styles.dropdown, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                textStyle={[styles.dropdownText, { color: colors.text }]}
                 listMode="SCROLLVIEW"
               />
             </View>
@@ -227,42 +229,42 @@ export const VisibilitySettings: React.FC = () => {
                 onPress={handleSave}
                 loading={saveMutation.isPending || optedOutMutation.isPending}
                 disabled={saveMutation.isPending || optedOutMutation.isPending}
-                style={styles.saveButton}>
+                style={[styles.saveButton, { backgroundColor: colors.primary }]}>
                 {t("common.save")}
               </Button>
             )}
           </Card.Content>
         </Card>
 
-        <Card style={styles.infoCard}>
+        <Card style={[styles.infoCard, { backgroundColor: colors.iconBackground }]}>
           <Card.Content>
             <View style={styles.infoHeader}>
-              <MaterialIcons name="info-outline" size={20} color="#0D47A1" />
-              <Text variant="titleSmall" style={styles.infoTitle}>
+              <MaterialIcons name="info-outline" size={20} color={colors.primary} />
+              <Text variant="titleSmall" style={[styles.infoTitle, { color: colors.primary }]}>
                 {t("profileEdit.visibilityLevels")}
               </Text>
             </View>
             <View style={styles.infoItem}>
-              <Text variant="labelMedium" style={styles.infoLabel}>
+              <Text variant="labelMedium" style={[styles.infoLabel, { color: colors.text }]}>
                 {t("profileEdit.everyone")}:
               </Text>
-              <Text variant="bodySmall" style={styles.infoText}>
+              <Text variant="bodySmall" style={[styles.infoText, { color: colors.disabled }]}>
                 {t("profileEdit.everyoneDescription")}
               </Text>
             </View>
             <View style={styles.infoItem}>
-              <Text variant="labelMedium" style={styles.infoLabel}>
+              <Text variant="labelMedium" style={[styles.infoLabel, { color: colors.text }]}>
                 {t("profileEdit.membersOnly")}:
               </Text>
-              <Text variant="bodySmall" style={styles.infoText}>
+              <Text variant="bodySmall" style={[styles.infoText, { color: colors.disabled }]}>
                 {t("profileEdit.membersDescription")}
               </Text>
             </View>
             <View style={styles.infoItem}>
-              <Text variant="labelMedium" style={styles.infoLabel}>
+              <Text variant="labelMedium" style={[styles.infoLabel, { color: colors.text }]}>
                 {t("profileEdit.myGroupsOnly")}:
               </Text>
-              <Text variant="bodySmall" style={styles.infoText}>
+              <Text variant="bodySmall" style={[styles.infoText, { color: colors.disabled }]}>
                 {t("profileEdit.groupsDescription")}
               </Text>
             </View>
@@ -279,8 +281,7 @@ const styles = StyleSheet.create({
     padding: 16
   },
   section: {
-    marginBottom: 16,
-    backgroundColor: "#FFFFFF"
+    marginBottom: 16
   },
   sectionHeader: {
     flexDirection: "row",
@@ -288,15 +289,12 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
     paddingBottom: 8
   },
   sectionTitle: {
-    fontWeight: "600",
-    color: "#3c3c3c"
+    fontWeight: "600"
   },
   description: {
-    color: "#9E9E9E",
     marginBottom: 20
   },
   switchContainer: {
@@ -305,33 +303,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
     marginBottom: 20
   },
   switchLabel: {
-    color: "#3c3c3c",
     flex: 1
   },
   dropdownContainer: { marginBottom: 20 },
   dropdownLabel: {
-    color: "#3c3c3c",
     marginBottom: 8,
     fontWeight: "600"
   },
-  dropdown: {
-    borderColor: "#E0E0E0",
-    backgroundColor: "#FFFFFF"
-  },
-  dropdownList: {
-    borderColor: "#E0E0E0",
-    backgroundColor: "#FFFFFF"
-  },
-  dropdownText: { color: "#3c3c3c" },
+  dropdown: {},
+  dropdownList: {},
+  dropdownText: {},
   saveButton: {
-    marginTop: 8,
-    backgroundColor: "#0D47A1"
+    marginTop: 8
   },
-  infoCard: { backgroundColor: "#F6F6F8" },
+  infoCard: {},
   infoHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -339,16 +327,13 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   infoTitle: {
-    color: "#0D47A1",
     fontWeight: "600"
   },
   infoItem: { marginBottom: 8 },
   infoLabel: {
-    color: "#3c3c3c",
     fontWeight: "600"
   },
   infoText: {
-    color: "#9E9E9E",
     marginTop: 2
   }
 });

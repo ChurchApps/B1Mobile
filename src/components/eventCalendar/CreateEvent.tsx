@@ -9,6 +9,7 @@ import EditRecurringModal from "./EditRecurringModal";
 import RRuleEditor from "./RRuleEditor";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   event: EventInterface;
@@ -17,6 +18,7 @@ interface Props {
 
 export default function CreateEvent(props: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   const getInitialEvent = () => {
     const baseEvent = { ...props.event };
@@ -292,12 +294,12 @@ export default function CreateEvent(props: Props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Content */}
       <ScrollView ref={scrollViewRef} style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Title */}
         <View style={styles.fieldContainer}>
-          <Text variant="titleMedium" style={styles.fieldLabel}>
+          <Text variant="titleMedium" style={[styles.fieldLabel, { color: colors.text }]}>
             {t("events.eventTitle")}
           </Text>
           <TextInput
@@ -308,14 +310,14 @@ export default function CreateEvent(props: Props) {
               setTitle(text);
               setEvent(prev => ({ ...prev, title: text }));
             }}
-            style={styles.textInput}
+            style={[styles.textInput, { backgroundColor: colors.surface }]}
             error={!title.trim()}
           />
         </View>
 
         {/* Description */}
         <View style={styles.fieldContainer}>
-          <Text variant="titleMedium" style={styles.fieldLabel}>
+          <Text variant="titleMedium" style={[styles.fieldLabel, { color: colors.text }]}>
             {t("events.description")}
           </Text>
           <TextInput
@@ -328,34 +330,34 @@ export default function CreateEvent(props: Props) {
             }}
             multiline
             numberOfLines={3}
-            style={styles.textInput}
+            style={[styles.textInput, { backgroundColor: colors.surface }]}
           />
         </View>
 
         {/* Date and Time */}
         <View style={styles.fieldContainer}>
-          <Text variant="titleMedium" style={styles.fieldLabel}>
+          <Text variant="titleMedium" style={[styles.fieldLabel, { color: colors.text }]}>
             {allDay ? t("events.date") : t("events.dateTime")}
           </Text>
 
           <View style={styles.dateTimeContainer}>
             <View style={styles.dateTimeRow}>
-              <Text variant="bodyMedium" style={styles.dateTimeLabel}>
+              <Text variant="bodyMedium" style={[styles.dateTimeLabel, { color: colors.text }]}>
                 {t("events.start")}
               </Text>
               <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
-                <MaterialIcons name="event" size={16} color="#0D47A1" />
-                <Text style={styles.dateTimeText}>{allDay ? dayjs(startDate).format("ll") : dayjs(startDate).format("lll")}</Text>
+                <MaterialIcons name="event" size={16} color={colors.primary} />
+                <Text style={[styles.dateTimeText, { color: colors.text }]}>{allDay ? dayjs(startDate).format("ll") : dayjs(startDate).format("lll")}</Text>
               </Button>
             </View>
 
             <View style={styles.dateTimeRow}>
-              <Text variant="bodyMedium" style={styles.dateTimeLabel}>
+              <Text variant="bodyMedium" style={[styles.dateTimeLabel, { color: colors.text }]}>
                 {t("events.end")}
               </Text>
               <Button mode="outlined" onPress={() => setOpenEndPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
-                <MaterialIcons name="event" size={16} color="#0D47A1" />
-                <Text style={styles.dateTimeText}>{allDay ? dayjs(endDate).format("ll") : dayjs(endDate).format("lll")}</Text>
+                <MaterialIcons name="event" size={16} color={colors.primary} />
+                <Text style={[styles.dateTimeText, { color: colors.text }]}>{allDay ? dayjs(endDate).format("ll") : dayjs(endDate).format("lll")}</Text>
               </Button>
             </View>
           </View>
@@ -363,15 +365,15 @@ export default function CreateEvent(props: Props) {
 
         {/* Options */}
         <View style={styles.fieldContainer}>
-          <Text variant="titleMedium" style={styles.fieldLabel}>
+          <Text variant="titleMedium" style={[styles.fieldLabel, { color: colors.text }]}>
             {t("events.options")}
           </Text>
-          <View style={styles.optionRow}>
+          <View style={[styles.optionRow, { borderBottomColor: colors.border }]}>
             <View style={styles.optionInfo}>
-              <Text variant="bodyLarge" style={styles.optionTitle}>
+              <Text variant="bodyLarge" style={[styles.optionTitle, { color: colors.text }]}>
                 {t("events.allDayEvent")}
               </Text>
-              <Text variant="bodySmall" style={styles.optionSubtitle}>
+              <Text variant="bodySmall" style={[styles.optionSubtitle, { color: colors.disabled }]}>
                 {t("events.eventLastsEntireDay")}
               </Text>
             </View>
@@ -381,16 +383,16 @@ export default function CreateEvent(props: Props) {
                 setAllDay(value);
                 setEvent({ ...event, allDay: value });
               }}
-              color="#0D47A1"
+              color={colors.primary}
             />
           </View>
 
-          <View style={styles.optionRow}>
+          <View style={[styles.optionRow, { borderBottomColor: colors.border }]}>
             <View style={styles.optionInfo}>
-              <Text variant="bodyLarge" style={styles.optionTitle}>
+              <Text variant="bodyLarge" style={[styles.optionTitle, { color: colors.text }]}>
                 {t("events.excludeFromCuratedCalendars")}
               </Text>
-              <Text variant="bodySmall" style={styles.optionSubtitle}>
+              <Text variant="bodySmall" style={[styles.optionSubtitle, { color: colors.disabled }]}>
                 {t("events.hideFromPublicListings")}
               </Text>
             </View>
@@ -403,27 +405,27 @@ export default function CreateEvent(props: Props) {
                   visibility: value ? "private" : "public"
                 }));
               }}
-              color="#0D47A1"
+              color={colors.primary}
             />
           </View>
 
-          <View style={styles.optionRow}>
+          <View style={[styles.optionRow, { borderBottomColor: colors.border }]}>
             <View style={styles.optionInfo}>
-              <Text variant="bodyLarge" style={styles.optionTitle}>
+              <Text variant="bodyLarge" style={[styles.optionTitle, { color: colors.text }]}>
                 {t("events.recurringEvent")}
               </Text>
-              <Text variant="bodySmall" style={styles.optionSubtitle}>
+              <Text variant="bodySmall" style={[styles.optionSubtitle, { color: colors.disabled }]}>
                 {t("events.eventRepeatsOnSchedule")}
               </Text>
             </View>
-            <Switch value={recurring} onValueChange={handleToggleRecurring} color="#0D47A1" />
+            <Switch value={recurring} onValueChange={handleToggleRecurring} color={colors.primary} />
           </View>
         </View>
 
         {/* Recurrence Rule Editor */}
         {recurring && (
           <View style={styles.fieldContainer}>
-            <Text variant="titleMedium" style={styles.fieldLabel}>
+            <Text variant="titleMedium" style={[styles.fieldLabel, { color: colors.text }]}>
               {t("events.recurrencePattern")}
             </Text>
             <RRuleEditor
@@ -439,7 +441,7 @@ export default function CreateEvent(props: Props) {
 
       {/* Fixed Bottom Actions - Hide when recurring edit modal is open */}
       {!showEventEditModal && (
-        <View style={styles.bottomActions}>
+        <View style={[styles.bottomActions, { backgroundColor: colors.surface, borderTopColor: colors.divider }]}>
           <Button mode="outlined" onPress={() => props.onDone?.()} style={styles.actionButton}>
             {t("common.cancel")}
           </Button>
@@ -491,14 +493,9 @@ export default function CreateEvent(props: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F6F6F8"
-  },
+  container: { flex: 1 },
   header: {
-    backgroundColor: "#FFFFFF",
     elevation: 4,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4
@@ -510,26 +507,23 @@ const styles = StyleSheet.create({
   },
   fieldContainer: { marginVertical: 16 },
   fieldLabel: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 8
   },
-  textInput: { backgroundColor: "#FFFFFF" },
+  textInput: {},
   optionRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
+    borderBottomWidth: 1
   },
   optionInfo: { flex: 1 },
   optionTitle: {
-    color: "#3c3c3c",
     fontWeight: "500",
     marginBottom: 2
   },
-  optionSubtitle: { color: "#9E9E9E" },
+  optionSubtitle: {},
   dateTimeContainer: { marginTop: 8 },
   dateTimeRow: {
     flexDirection: "row",
@@ -538,7 +532,6 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   dateTimeLabel: {
-    color: "#3c3c3c",
     fontWeight: "500",
     minWidth: 50
   },
@@ -553,7 +546,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8
   },
   dateTimeText: {
-    color: "#3c3c3c",
     marginLeft: 8,
     fontSize: 14
   },
@@ -563,9 +555,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
-    backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
-    borderTopColor: "#E0E0E0",
     gap: 12
   },
   actionButton: {

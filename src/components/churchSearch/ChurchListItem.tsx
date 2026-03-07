@@ -39,7 +39,7 @@ export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress,
   return (
     <Card style={styles.churchCard} onPress={() => !isSelecting && onPress(church)}>
       <Card.Content style={styles.churchContent}>
-        <View style={styles.churchImageContainer}>
+        <View style={[styles.churchImageContainer, { backgroundColor: tc.iconBackground }]}>
           <OptimizedImage
             source={churchImage}
             style={styles.churchImage}
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   churchCard: {
     borderRadius: 12,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
@@ -83,8 +83,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     overflow: "hidden",
-    marginRight: 16,
-    backgroundColor: "#F6F6F8"
+    marginRight: 16
   },
   churchImage: {
     width: "100%",
@@ -92,9 +91,8 @@ const styles = StyleSheet.create({
   },
   churchDetails: { flex: 1 },
   churchName: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 4
   },
-  churchSubtitle: { color: "#9E9E9E" }
+  churchSubtitle: {}
 });

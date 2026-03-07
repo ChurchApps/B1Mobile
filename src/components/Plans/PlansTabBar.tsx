@@ -16,18 +16,18 @@ export const PlansTabBar: React.FC<PlansTabBarProps> = ({ activeSection, onTabCh
   return (
     <View style={[styles.tabContainer, { backgroundColor: tc.surface, borderBottomColor: tc.border }]}>
       <TouchableOpacity
-        style={[styles.tab, activeSection === "upcoming" && styles.activeTab]}
+        style={[styles.tab, activeSection === "upcoming" && { borderBottomColor: tc.primary }]}
         onPress={() => onTabChange("upcoming")}
       >
-        <Text variant="labelLarge" style={[styles.tabText, { color: tc.textSecondary }, activeSection === "upcoming" && styles.activeTabText]}>
+        <Text variant="labelLarge" style={[styles.tabText, { color: activeSection === "upcoming" ? tc.primary : tc.textSecondary }, activeSection === "upcoming" && styles.activeTabText]}>
           {t("plans.upcoming")}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.tab, activeSection === "past" && styles.activeTab]}
+        style={[styles.tab, activeSection === "past" && { borderBottomColor: tc.primary }]}
         onPress={() => onTabChange("past")}
       >
-        <Text variant="labelLarge" style={[styles.tabText, { color: tc.textSecondary }, activeSection === "past" && styles.activeTabText]}>
+        <Text variant="labelLarge" style={[styles.tabText, { color: activeSection === "past" ? tc.primary : tc.textSecondary }, activeSection === "past" && styles.activeTabText]}>
           {t("plans.past")}
         </Text>
       </TouchableOpacity>
@@ -38,10 +38,8 @@ export const PlansTabBar: React.FC<PlansTabBarProps> = ({ activeSection, onTabCh
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
-    backgroundColor: "#FFFFFF",
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
+    borderBottomWidth: 1
   },
   tab: {
     flex: 1,
@@ -50,13 +48,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent"
   },
-  activeTab: { borderBottomColor: "#0D47A1" },
-  tabText: {
-    color: "#9E9E9E",
-    fontWeight: "500"
-  },
-  activeTabText: {
-    color: "#0D47A1",
-    fontWeight: "700"
-  }
+  tabText: { fontWeight: "500" },
+  activeTabText: { fontWeight: "700" }
 });

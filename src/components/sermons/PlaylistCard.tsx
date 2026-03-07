@@ -6,6 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "../OptimizedImage";
 import { DateHelper } from "../../helpers";
 import { PlaylistInterface } from "@churchapps/helpers";
+import { useThemeColors } from "../../theme";
 
 interface PlaylistCardProps {
   playlist: PlaylistInterface;
@@ -13,11 +14,12 @@ interface PlaylistCardProps {
 }
 
 export const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onPress }) => {
+  const colors = useThemeColors();
   const hasImage = playlist.thumbnail && playlist.thumbnail.trim() !== "";
 
   return (
     <TouchableOpacity onPress={() => onPress(playlist)}>
-      <Card style={styles.playlistCard}>
+      <Card style={[styles.playlistCard, { shadowColor: colors.shadowBlack }]}>
         <View style={styles.playlistContent}>
           <View style={styles.playlistImageContainer}>
             {hasImage ? (
@@ -29,26 +31,26 @@ export const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onPress })
                   <View style={styles.playlistCircle2} />
                 </View>
                 <View style={styles.playlistIcon}>
-                  <MaterialIcons name="playlist-play" size={32} color="#FFFFFF" opacity={0.9} />
+                  <MaterialIcons name="playlist-play" size={32} color={colors.onPrimary} opacity={0.9} />
                 </View>
               </LinearGradient>
             )}
           </View>
           <View style={styles.playlistOverlay}>
             <View style={styles.playlistInfo}>
-              <Text variant="titleMedium" style={styles.playlistTitle} numberOfLines={2}>
+              <Text variant="titleMedium" style={[styles.playlistTitle, { color: colors.white }]} numberOfLines={2}>
                 {playlist.title}
               </Text>
               {playlist.description && (
-                <Text variant="bodySmall" style={styles.playlistDescription} numberOfLines={2}>
+                <Text variant="bodySmall" style={[styles.playlistDescription, { color: colors.white }]} numberOfLines={2}>
                   {playlist.description}
                 </Text>
               )}
-              <Text variant="bodySmall" style={styles.playlistDate}>
+              <Text variant="bodySmall" style={[styles.playlistDate, { color: colors.white }]}>
                 {playlist.publishDate ? DateHelper.prettyDate(DateHelper.toDate(playlist.publishDate)) : ""}
               </Text>
             </View>
-            <MaterialIcons name="chevron-right" size={24} color="#FFFFFF" />
+            <MaterialIcons name="chevron-right" size={24} color={colors.white} />
           </View>
         </View>
       </Card>
@@ -61,7 +63,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -131,19 +132,16 @@ const styles = StyleSheet.create({
     marginRight: 12
   },
   playlistTitle: {
-    color: "#FFFFFF",
     fontWeight: "600",
     marginBottom: 4,
     fontSize: 16
   },
   playlistDescription: {
-    color: "#FFFFFF",
     opacity: 0.9,
     marginBottom: 4,
     fontSize: 14
   },
   playlistDate: {
-    color: "#FFFFFF",
     opacity: 0.8,
     fontSize: 12
   }

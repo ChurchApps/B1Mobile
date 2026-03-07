@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { Card, Text, Button, Modal, Portal } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StripePaymentMethod } from "../../interfaces";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   show: boolean;
@@ -16,18 +17,20 @@ const paymentMethods = [
     title: "Credit or Debit Card",
     subtitle: "Visa, Mastercard, American Express",
     icon: "credit-card",
-    color: "#0D47A1"
+    colorKey: "primary" as const
   },
   {
     type: "bank",
     title: "Bank Account",
     subtitle: "Direct bank transfer (ACH)",
     icon: "account-balance",
-    color: "#70DC87"
+    colorKey: "success" as const
   }
 ];
 
 export function EnhancedPaymentMethodModal({ show, close, onSelect }: Props) {
+  const colors = useThemeColors();
+
   const handleSelect = (type: string) => {
     onSelect(new StripePaymentMethod({ type }));
     close();
@@ -35,55 +38,58 @@ export function EnhancedPaymentMethodModal({ show, close, onSelect }: Props) {
 
   return (
     <Portal>
-      <Modal visible={show} onDismiss={close} contentContainerStyle={styles.modalContainer}>
-        <Card style={styles.card}>
+      <Modal visible={show} onDismiss={close} contentContainerStyle={[styles.modalContainer, { backgroundColor: colors.modalOverlay }]}>
+        <Card style={[styles.card, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]}>
           <Card.Content style={styles.cardContent}>
             {/* Header */}
             <View style={styles.header}>
-              <Text variant="headlineSmall" style={styles.headerTitle}>
+              <Text variant="headlineSmall" style={[styles.headerTitle, { color: colors.text }]}>
                 Add Payment Method
               </Text>
-              <TouchableOpacity style={styles.closeButton} onPress={close}>
-                <MaterialIcons name="close" size={24} color="#9E9E9E" />
+              <TouchableOpacity style={[styles.closeButton, { backgroundColor: colors.iconBackground }]} onPress={close}>
+                <MaterialIcons name="close" size={24} color={colors.iconColor} />
               </TouchableOpacity>
             </View>
 
-            <Text variant="bodyMedium" style={styles.subtitle}>
+            <Text variant="bodyMedium" style={[styles.subtitle, { color: colors.disabled }]}>
               Choose how you'd like to give. Both options are secure and encrypted.
             </Text>
 
             {/* Payment Method Options */}
             <View style={styles.methodsContainer}>
-              {paymentMethods.map(method => (
-                <TouchableOpacity key={method.type} style={styles.methodCard} onPress={() => handleSelect(method.type)} activeOpacity={0.7}>
-                  <View style={[styles.iconContainer, { backgroundColor: `${method.color}15` }]}>
-                    <MaterialIcons name={method.icon as any} size={28} color={method.color} />
-                  </View>
+              {paymentMethods.map(method => {
+                const methodColor = colors[method.colorKey];
+                return (
+                  <TouchableOpacity key={method.type} style={[styles.methodCard, { backgroundColor: colors.iconBackground }]} onPress={() => handleSelect(method.type)} activeOpacity={0.7}>
+                    <View style={[styles.iconContainer, { backgroundColor: `${methodColor}15` }]}>
+                      <MaterialIcons name={method.icon as any} size={28} color={methodColor} />
+                    </View>
 
-                  <View style={styles.methodContent}>
-                    <Text variant="titleMedium" style={styles.methodTitle}>
-                      {method.title}
-                    </Text>
-                    <Text variant="bodySmall" style={styles.methodSubtitle}>
-                      {method.subtitle}
-                    </Text>
-                  </View>
+                    <View style={styles.methodContent}>
+                      <Text variant="titleMedium" style={[styles.methodTitle, { color: colors.text }]}>
+                        {method.title}
+                      </Text>
+                      <Text variant="bodySmall" style={[styles.methodSubtitle, { color: colors.disabled }]}>
+                        {method.subtitle}
+                      </Text>
+                    </View>
 
-                  <MaterialIcons name="arrow-forward-ios" size={16} color="#9E9E9E" />
-                </TouchableOpacity>
-              ))}
+                    <MaterialIcons name="arrow-forward-ios" size={16} color={colors.iconColor} />
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             {/* Security Notice */}
             <View style={styles.securityNotice}>
-              <MaterialIcons name="security" size={20} color="#70DC87" />
-              <Text variant="bodySmall" style={styles.securityText}>
+              <MaterialIcons name="security" size={20} color={colors.success} />
+              <Text variant="bodySmall" style={[styles.securityText, { color: colors.success }]}>
                 Your payment information is encrypted and secure
               </Text>
             </View>
 
             {/* Cancel Button */}
-            <Button mode="outlined" onPress={close} style={styles.cancelButton} labelStyle={styles.cancelButtonText}>
+            <Button mode="outlined" onPress={close} style={[styles.cancelButton, { borderColor: colors.divider }]} labelStyle={[styles.cancelButtonText, { color: colors.disabled }]}>
               Cancel
             </Button>
           </Card.Content>
@@ -100,7 +106,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20
   },
   card: {
@@ -108,11 +113,9 @@ const styles = StyleSheet.create({
     maxHeight: screenHeight * 0.8,
     borderRadius: 24,
     elevation: 8,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
-    shadowRadius: 12,
-    backgroundColor: "#FFFFFF"
+    shadowRadius: 12
   },
   cardContent: { padding: 0 },
 
@@ -126,19 +129,16 @@ const styles = StyleSheet.create({
     paddingBottom: 8
   },
   headerTitle: {
-    color: "#3c3c3c",
     fontWeight: "700"
   },
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#F6F6F8",
     justifyContent: "center",
     alignItems: "center"
   },
   subtitle: {
-    color: "#9E9E9E",
     paddingHorizontal: 24,
     marginBottom: 24,
     lineHeight: 20
@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 20,
     paddingHorizontal: 20,
-    backgroundColor: "#F6F6F8",
     borderRadius: 16,
     borderWidth: 1,
     borderColor: "transparent"
@@ -169,12 +168,10 @@ const styles = StyleSheet.create({
   },
   methodContent: { flex: 1 },
   methodTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 2
   },
   methodSubtitle: {
-    color: "#9E9E9E",
     lineHeight: 16
   },
 
@@ -188,18 +185,15 @@ const styles = StyleSheet.create({
     gap: 8
   },
   securityText: {
-    color: "#70DC87",
     fontWeight: "500"
   },
 
   // Cancel Button
   cancelButton: {
     marginHorizontal: 24,
-    marginBottom: 24,
-    borderColor: "#E0E0E0"
+    marginBottom: 24
   },
   cancelButtonText: {
-    color: "#9E9E9E",
     fontWeight: "600"
   }
 });

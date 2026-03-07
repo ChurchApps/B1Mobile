@@ -3,7 +3,7 @@ import { ScrollView, View, StyleSheet, Alert, Linking } from "react-native";
 import { Button, Chip } from "react-native-paper";
 import { Calendar, DateData } from "react-native-calendars";
 import { router } from "expo-router";
-import { useAppTheme } from "../../theme";
+import { useAppTheme, useThemeColors } from "../../theme";
 import { InlineLoader } from "../common/LoadingComponents";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { EnvironmentHelper } from "../../helpers";
@@ -24,6 +24,7 @@ interface GroupCalendarTabProps {
 
 export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isLeader, isLoading, selected, markedDates, onDayPress, onMonthChange, tags, selectedTags, onToggleTag, onClearTags }) => {
   const { theme } = useAppTheme();
+  const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
 
   const handleSubscribe = async () => {
@@ -83,7 +84,7 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
   return (
     <View style={styles.calendarContainer}>
       {isLeader && (
-        <Button mode="contained" icon="calendar-plus" onPress={handleAddEvent} style={styles.addEventButton}>
+        <Button mode="contained" icon="calendar-plus" onPress={handleAddEvent} style={styles.addEventButton} buttonColor={colors.success}>
           Add Event
         </Button>
       )}
@@ -143,8 +144,7 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
 const styles = StyleSheet.create({
   calendarContainer: { minHeight: 350 },
   addEventButton: {
-    marginBottom: 16,
-    backgroundColor: "#70DC87"
+    marginBottom: 16
   },
   subscribeButton: { marginBottom: 16 },
   loadingOverlay: {

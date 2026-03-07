@@ -28,14 +28,20 @@ export const ProfileTabBar: React.FC<ProfileTabBarProps> = ({ activeSection, onT
       {tabs.map(tab => (
         <TouchableOpacity
           key={tab.key}
-          style={[styles.tab, activeSection === tab.key && styles.activeTab]}
+          style={[styles.tab, activeSection === tab.key && { borderBottomColor: tc.primary }]}
           onPress={() => onTabChange(tab.key)}>
           <View style={styles.tabContent}>
-            <Text variant="labelLarge" style={[styles.tabText, { color: tc.textSecondary }, activeSection === tab.key && styles.activeTabText]}>
+            <Text
+              variant="labelLarge"
+              style={[
+                styles.tabText,
+                { color: tc.textSecondary },
+                activeSection === tab.key && { color: tc.primary, fontWeight: "700" }
+              ]}>
               {tab.label}
             </Text>
             {tab.key === "profile" && hasChanges && (
-              <View style={styles.changeIndicator} />
+              <View style={[styles.changeIndicator, { backgroundColor: tc.warning }]} />
             )}
           </View>
         </TouchableOpacity>
@@ -47,10 +53,8 @@ export const ProfileTabBar: React.FC<ProfileTabBarProps> = ({ activeSection, onT
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
-    backgroundColor: "#FFFFFF",
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
+    borderBottomWidth: 1
   },
   tab: {
     flex: 1,
@@ -59,24 +63,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent"
   },
-  activeTab: { borderBottomColor: "#0D47A1" },
   tabContent: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6
   },
   tabText: {
-    color: "#9E9E9E",
     fontWeight: "500"
-  },
-  activeTabText: {
-    color: "#0D47A1",
-    fontWeight: "700"
   },
   changeIndicator: {
     width: 8,
     height: 8,
-    borderRadius: 4,
-    backgroundColor: "#FFC107"
+    borderRadius: 4
   }
 });

@@ -6,6 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "../OptimizedImage";
 import { DateHelper } from "../../helpers";
 import { SermonInterface } from "@churchapps/helpers";
+import { useThemeColors } from "../../theme";
 
 interface FeaturedSermonProps {
   sermon: SermonInterface;
@@ -13,11 +14,12 @@ interface FeaturedSermonProps {
 }
 
 export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress }) => {
+  const colors = useThemeColors();
   const hasImage = sermon.thumbnail && sermon.thumbnail.trim() !== "";
 
   return (
     <TouchableOpacity onPress={() => onPress(sermon)}>
-      <Card style={styles.heroCard}>
+      <Card style={[styles.heroCard, { shadowColor: colors.shadowBlack }]}>
         <View style={styles.heroContainer}>
           {hasImage ? (
             <OptimizedImage source={{ uri: sermon.thumbnail }} style={styles.heroImage} contentFit="cover" />
@@ -29,30 +31,30 @@ export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress 
                 <View style={styles.heroCircle3} />
               </View>
               <View style={styles.heroIcon}>
-                <MaterialIcons name="video-library" size={48} color="#FFFFFF" opacity={0.9} />
+                <MaterialIcons name="video-library" size={48} color={colors.onPrimary} opacity={0.9} />
               </View>
             </LinearGradient>
           )}
           <View style={styles.heroOverlay}>
             <View style={styles.heroContent}>
-              <Text variant="labelMedium" style={styles.heroLabel}>
+              <Text variant="labelMedium" style={[styles.heroLabel, { color: colors.white }]}>
                 Latest Sermon
               </Text>
-              <Text variant="headlineSmall" style={styles.heroTitle} numberOfLines={2}>
+              <Text variant="headlineSmall" style={[styles.heroTitle, { color: colors.white }]} numberOfLines={2}>
                 {sermon.title || "Untitled Sermon"}
               </Text>
-              <Text variant="bodyMedium" style={styles.heroDate}>
+              <Text variant="bodyMedium" style={[styles.heroDate, { color: colors.white }]}>
                 {sermon.publishDate ? DateHelper.prettyDate(DateHelper.toDate(sermon.publishDate)) : ""}
               </Text>
               {(sermon.duration && (
-                <Text variant="bodySmall" style={styles.heroDuration}>
+                <Text variant="bodySmall" style={[styles.heroDuration, { color: colors.white }]}>
                   {Math.floor(sermon.duration / 60)}:{(sermon.duration % 60).toString().padStart(2, "0")}
                 </Text>
               )) ||
                 null}
             </View>
-            <View style={styles.playButton}>
-              <MaterialIcons name="play-arrow" size={32} color="#FFFFFF" />
+            <View style={[styles.playButton, { shadowColor: colors.primary }]}>
+              <MaterialIcons name="play-arrow" size={32} color={colors.onPrimary} />
             </View>
           </View>
         </View>
@@ -67,7 +69,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -144,26 +145,20 @@ const styles = StyleSheet.create({
     marginRight: 16
   },
   heroLabel: {
-    color: "#FFFFFF",
     opacity: 0.9,
     marginBottom: 8,
     textTransform: "uppercase",
     letterSpacing: 1
   },
   heroTitle: {
-    color: "#FFFFFF",
     fontWeight: "700",
     marginBottom: 8
   },
   heroDate: {
-    color: "#FFFFFF",
     opacity: 0.9,
     marginBottom: 4
   },
-  heroDuration: {
-    color: "#FFFFFF",
-    opacity: 0.8
-  },
+  heroDuration: { opacity: 0.8 },
   playButton: {
     width: 64,
     height: 64,
@@ -172,7 +167,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 4

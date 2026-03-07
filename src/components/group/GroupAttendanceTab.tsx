@@ -8,6 +8,7 @@ import { ApiHelper } from "@churchapps/helpers";
 import { Constants, EnvironmentHelper } from "../../helpers";
 import { DateHelper } from "../../helpers/DateHelper";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
+import { useThemeColors } from "../../theme";
 
 interface SessionInterface {
   id?: string;
@@ -64,6 +65,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
 }) => {
   const { t } = useTranslation();
   const currentUserChurch = useCurrentUserChurch();
+  const colors = useThemeColors();
 
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -327,7 +329,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
 
     return (
       <TouchableOpacity
-        style={styles.memberCard}
+        style={[styles.memberCard, { backgroundColor: colors.background }]}
         onPress={() => toggleMember(item.id)}
         activeOpacity={0.7}
       >
@@ -339,10 +341,10 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
           }
         />
         <View style={styles.memberInfo}>
-          <Text variant="bodyLarge" style={styles.memberName}>
+          <Text variant="bodyLarge" style={[styles.memberName, { color: colors.text }]}>
             {item.name?.display}
           </Text>
-          <Text variant="bodySmall" style={[styles.statusText, isPresent && styles.presentText]}>
+          <Text variant="bodySmall" style={[styles.statusText, { color: colors.textHint }, isPresent && { color: colors.success }]}>
             {isPresent ? t("groups.present") : t("groups.absent")}
             {!item.isMember && ` (${t("groups.guest")})`}
           </Text>
@@ -350,7 +352,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
         <Checkbox
           status={isPresent ? "checked" : "unchecked"}
           onPress={() => toggleMember(item.id)}
-          color="#2563EB"
+          color={colors.primary}
         />
       </TouchableOpacity>
     );
@@ -361,7 +363,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
 
     return (
       <TouchableOpacity
-        style={[styles.searchResultCard, isAlreadyInList && styles.searchResultDisabled]}
+        style={[styles.searchResultCard, { backgroundColor: colors.background }, isAlreadyInList && styles.searchResultDisabled]}
         onPress={() => !isAlreadyInList && addPersonToAttendance(item)}
         activeOpacity={isAlreadyInList ? 1 : 0.7}
       >
@@ -373,15 +375,15 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
           }
         />
         <View style={styles.searchResultInfo}>
-          <Text variant="bodyMedium" style={styles.searchResultName}>
+          <Text variant="bodyMedium" style={[styles.searchResultName, { color: colors.text }]}>
             {item.name?.display}
           </Text>
         </View>
         {!isAlreadyInList && (
-          <IconButton icon="plus" size={18} iconColor="#2563EB" />
+          <IconButton icon="plus" size={18} iconColor={colors.primary} />
         )}
         {isAlreadyInList && (
-          <Text style={styles.alreadyAddedText}>{t("common.added")}</Text>
+          <Text style={[styles.alreadyAddedText, { color: colors.textHint }]}>{t("common.added")}</Text>
         )}
       </TouchableOpacity>
     );
@@ -391,14 +393,14 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
     <View style={styles.container}>
       {/* Date Selection */}
       <TouchableOpacity
-        style={styles.dateButton}
+        style={[styles.dateButton, { backgroundColor: colors.background }]}
         onPress={() => setShowDatePicker(true)}
       >
-        <IconButton icon="calendar" size={20} iconColor="#2563EB" style={styles.dateIcon} />
-        <Text style={styles.dateButtonText}>
+        <IconButton icon="calendar" size={20} iconColor={colors.primary} style={styles.dateIcon} />
+        <Text style={[styles.dateButtonText, { color: colors.text }]}>
           {dayjs(selectedDate).format("LL")}
         </Text>
-        <IconButton icon="chevron-down" size={18} iconColor="#6B7280" />
+        <IconButton icon="chevron-down" size={18} iconColor={colors.textMuted} />
       </TouchableOpacity>
 
       <DatePicker
@@ -414,7 +416,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
 
       {/* Stats and Actions */}
       <View style={styles.statsSection}>
-        <Text style={styles.statsText}>
+        <Text style={[styles.statsText, { color: colors.textMuted }]}>
           {t("groups.presentCount", { present: presentCount, total: allPeople.length })}
         </Text>
         <View style={styles.actionButtons}>
@@ -458,11 +460,11 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
               placeholder={t("groups.searchForPerson")}
               value={searchText}
               onChangeText={setSearchText}
-              style={styles.searchInput}
+              style={[styles.searchInput, { backgroundColor: colors.card }]}
               dense
               onSubmitEditing={handleSearch}
-              outlineColor="#E5E7EB"
-              activeOutlineColor="#2563EB"
+              outlineColor={colors.borderLight}
+              activeOutlineColor={colors.primary}
             />
             <Button
               mode="contained"
@@ -471,7 +473,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
               disabled={isSearching || !searchText.trim()}
               compact
               style={styles.searchButton}
-              buttonColor="#2563EB"
+              buttonColor={colors.primary}
             >
               {t("common.search")}
             </Button>
@@ -488,24 +490,24 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
           )}
 
           {searchResults.length === 0 && searchText && !isSearching && (
-            <Text style={styles.noResultsText}>{t("common.noResultsFound")}</Text>
+            <Text style={[styles.noResultsText, { color: colors.textHint }]}>{t("common.noResultsFound")}</Text>
           )}
         </View>
       )}
 
-      <Divider style={styles.divider} />
+      <Divider style={[styles.divider, { backgroundColor: colors.borderLight }]} />
 
       {/* Member List */}
       {isLoading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2563EB" />
-          <Text style={styles.loadingText}>{t("groups.loadingAttendance")}</Text>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={[styles.loadingText, { color: colors.textMuted }]}>{t("groups.loadingAttendance")}</Text>
         </View>
       ) : allPeople.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Avatar.Icon size={56} icon="account-group" style={styles.emptyIcon} />
-          <Text style={styles.emptyText}>{t("groups.noMembersYet")}</Text>
-          <Text style={styles.emptySubtext}>{t("groups.useAddToSearch")}</Text>
+          <Avatar.Icon size={56} icon="account-group" style={[styles.emptyIcon, { backgroundColor: colors.background }]} />
+          <Text style={[styles.emptyText, { color: colors.textMuted }]}>{t("groups.noMembersYet")}</Text>
+          <Text style={[styles.emptySubtext, { color: colors.textHint }]}>{t("groups.useAddToSearch")}</Text>
         </View>
       ) : (
         <FlatList
@@ -520,14 +522,14 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
 
       {/* Messages */}
       {error && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
+        <View style={[styles.errorContainer, { backgroundColor: colors.errorBg }]}>
+          <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
         </View>
       )}
 
       {successMessage && (
-        <View style={styles.successContainer}>
-          <Text style={styles.successText}>{successMessage}</Text>
+        <View style={[styles.successContainer, { backgroundColor: colors.successLight }]}>
+          <Text style={[styles.successText, { color: colors.success }]}>{successMessage}</Text>
         </View>
       )}
 
@@ -538,7 +540,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
         style={styles.saveButton}
         loading={isSaving}
         disabled={isLoading || isSaving}
-        buttonColor="#2563EB"
+        buttonColor={colors.primary}
       >
         {t("groups.saveAttendance")}
       </Button>
@@ -551,7 +553,6 @@ const styles = StyleSheet.create({
   dateButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F3F4F6",
     borderRadius: 10,
     paddingVertical: 4,
     paddingRight: 4,
@@ -561,8 +562,7 @@ const styles = StyleSheet.create({
   dateButtonText: {
     flex: 1,
     fontSize: 15,
-    fontWeight: "500",
-    color: "#1F2937"
+    fontWeight: "500"
   },
   statsSection: {
     flexDirection: "row",
@@ -572,7 +572,6 @@ const styles = StyleSheet.create({
   },
   statsText: {
     fontSize: 13,
-    color: "#6B7280",
     fontWeight: "500"
   },
   actionButtons: { flexDirection: "row" },
@@ -585,7 +584,6 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
     height: 40
   },
   searchButton: {
@@ -599,7 +597,6 @@ const styles = StyleSheet.create({
   searchResultCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
     borderRadius: 8,
     padding: 8,
     marginBottom: 4
@@ -609,27 +606,23 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 10
   },
-  searchResultName: { color: "#1F2937" },
+  searchResultName: {},
   alreadyAddedText: {
-    color: "#9CA3AF",
     fontSize: 12,
     marginRight: 8
   },
   noResultsText: {
     textAlign: "center",
-    color: "#9CA3AF",
     marginTop: 12,
     fontSize: 13
   },
   divider: {
-    marginVertical: 12,
-    backgroundColor: "#E5E7EB"
+    marginVertical: 12
   },
   memberList: { marginBottom: 16 },
   memberCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FAFB",
     borderRadius: 10,
     padding: 10,
     marginBottom: 6
@@ -639,22 +632,18 @@ const styles = StyleSheet.create({
     marginLeft: 12
   },
   memberName: {
-    color: "#1F2937",
     fontWeight: "500"
   },
   statusText: {
-    color: "#9CA3AF",
     marginTop: 1
   },
-  presentText: { color: "#10B981" },
   loadingContainer: {
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 40
   },
   loadingText: {
-    marginTop: 12,
-    color: "#6B7280"
+    marginTop: 12
   },
   emptyContainer: {
     alignItems: "center",
@@ -662,39 +651,32 @@ const styles = StyleSheet.create({
     paddingVertical: 32
   },
   emptyIcon: {
-    backgroundColor: "#F3F4F6",
     marginBottom: 12
   },
   emptyText: {
-    color: "#6B7280",
     textAlign: "center",
     fontWeight: "500"
   },
   emptySubtext: {
-    color: "#9CA3AF",
     textAlign: "center",
     marginTop: 4,
     fontSize: 13
   },
   errorContainer: {
-    backgroundColor: "#FEE2E2",
     borderRadius: 8,
     padding: 12,
     marginBottom: 12
   },
   errorText: {
-    color: "#DC2626",
     textAlign: "center",
     fontSize: 13
   },
   successContainer: {
-    backgroundColor: "#D1FAE5",
     borderRadius: 8,
     padding: 12,
     marginBottom: 12
   },
   successText: {
-    color: "#059669",
     textAlign: "center",
     fontSize: 13
   },

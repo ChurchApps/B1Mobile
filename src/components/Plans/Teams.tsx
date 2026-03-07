@@ -4,6 +4,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { AssignmentInterface, PersonInterface, PositionInterface } from "../../../src/helpers";
 import { Card } from "react-native-paper";
 import { Avatar } from "../common/Avatar";
+import { useThemeColors } from "../../theme";
 
 interface TeamMemberInterface {
   id?: string;
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export const Teams = React.memo(({ positions, assignments, people, name }: Props) => {
+  const colors = useThemeColors();
   const teamData = useMemo(() => {
     if (!people || !positions || !assignments) return [];
     const data: TeamMemberInterface[] = [];
@@ -45,28 +47,28 @@ export const Teams = React.memo(({ positions, assignments, people, name }: Props
 
   const renderItem = useCallback(
     (item: any) => (
-      <Card key={item.id} style={styles.memberCard} mode="outlined">
+      <Card key={item.id} style={[styles.memberCard, { backgroundColor: colors.surface }]} mode="outlined">
         <Card.Content style={styles.memberContent}>
           <View style={styles.memberInfo}>
             <Avatar size={48} photoUrl={item?.item?.photo} firstName={people.find(p => p.id === item?.item?.personId)?.name?.first} lastName={people.find(p => p.id === item?.item?.personId)?.name?.last} style={styles.avatar} />
             <View style={styles.memberDetails}>
-              <Text style={styles.memberName}>{item?.item?.name}</Text>
-              <Text style={styles.memberPosition}>{item?.item?.position}</Text>
+              <Text style={[styles.memberName, { color: colors.text }]}>{item?.item?.name}</Text>
+              <Text style={[styles.memberPosition, { color: colors.iconColor }]}>{item?.item?.position}</Text>
             </View>
           </View>
-          <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
+          <MaterialIcons name="chevron-right" size={24} color={colors.iconColor} />
         </Card.Content>
       </Card>
     ),
-    []
+    [colors, people]
   );
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialIcons name="group" size={24} color="#0D47A1" style={styles.headerIcon} />
-        <Text style={styles.headerTitle}>{name}</Text>
-        <View style={styles.memberCount}>
+        <MaterialIcons name="group" size={24} color={colors.primary} style={styles.headerIcon} />
+        <Text style={[styles.headerTitle, { color: colors.primary }]}>{name}</Text>
+        <View style={[styles.memberCount, { backgroundColor: colors.primary }]}>
           <Text style={styles.memberCountText}>{teamData.length}</Text>
         </View>
       </View>
@@ -92,11 +94,9 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#0D47A1",
     flex: 1
   },
   memberCount: {
-    backgroundColor: "#0D47A1",
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
   membersList: { backgroundColor: "transparent" },
   memberCard: {
     borderRadius: 12,
-    backgroundColor: "#FFFFFF",
     borderColor: "rgba(21, 101, 192, 0.1)"
   },
   memberContent: {
@@ -130,12 +129,10 @@ const styles = StyleSheet.create({
   memberName: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#3c3c3c",
     marginBottom: 2
   },
   memberPosition: {
     fontSize: 14,
-    color: "#9E9E9E",
     fontWeight: "500"
   },
   separator: { height: 8 }

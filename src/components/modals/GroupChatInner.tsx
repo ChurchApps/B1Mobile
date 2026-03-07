@@ -10,6 +10,7 @@ import { Avatar } from "../common/Avatar";
 import dayjs from "../../helpers/dayjsConfig";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TextInput as PaperTextInput } from "react-native-paper";
+import { useThemeColors } from "../../theme";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -32,6 +33,7 @@ const PAGE_SIZE = 20;
 
 const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, visible, contentType = "group", canPost = true }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [page, setPage] = useState(1);
@@ -265,7 +267,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
         style={[
           styles.messageContainer,
           item.isOwn && styles.ownMessageContainer,
-          isSelected && { backgroundColor: "#E3F2FD", borderRadius: 10 },
+          isSelected && { backgroundColor: colors.primaryLight, borderRadius: 10 },
           editingMessage && !isBeingEdited && { opacity: 0.5 }
         ]}
         onLongPress={() => handleLongPress(item)}
@@ -277,13 +279,13 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
           </View>
         )}
 
-        <View style={[styles.messageBubble, item.isOwn ? styles.ownBubble : styles.otherBubble]}>
-          {showName && <Text style={styles.senderName}>{item.person?.name?.display || item.displayName}</Text>}
+        <View style={[styles.messageBubble, item.isOwn ? [styles.ownBubble, { backgroundColor: colors.primary }] : [styles.otherBubble, { backgroundColor: colors.surface }]]}>
+          {showName && <Text style={[styles.senderName, { color: colors.primary }]}>{item.person?.name?.display || item.displayName}</Text>}
           <View style={styles.messageContentContainer}>
-            <Text style={[styles.messageText, item.isOwn && styles.ownMessageText]}>
-              {item.content} {item.edited && <Text style={{ fontSize: 10, color: "#888" }}>(edited)</Text>}
+            <Text style={[styles.messageText, { color: colors.text }, item.isOwn && { color: colors.white }]}>
+              {item.content} {item.edited && <Text style={{ fontSize: 10, color: colors.textHint }}>(edited)</Text>}
             </Text>
-            <Text style={[styles.timestamp, item.isOwn && styles.ownTimestamp]}>{formatRelative(item.timeSent)}</Text>
+            <Text style={[styles.timestamp, { color: colors.disabled }, item.isOwn && { color: "rgba(255, 255, 255, 0.7)" }]}>{formatRelative(item.timeSent)}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -294,9 +296,9 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
     <>
       {!loadingMore && (
         <View style={styles.emptyState}>
-          <PaperAvatar.Icon size={64} icon="chat-outline" style={styles.emptyIcon} />
-          <Text style={styles.emptyTitle}>{t("groups.startConversation")}</Text>
-          <Text style={styles.emptySubtitle}>{t("groups.beFirstToShare")}</Text>
+          <PaperAvatar.Icon size={64} icon="chat-outline" style={[styles.emptyIcon, { backgroundColor: colors.iconBackground }]} />
+          <Text style={[styles.emptyTitle, { color: colors.text }]}>{t("groups.startConversation")}</Text>
+          <Text style={[styles.emptySubtitle, { color: colors.disabled }]}>{t("groups.beFirstToShare")}</Text>
         </View>
       )}
     </>
@@ -305,7 +307,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
   return (
     <>
       <KeyboardAvoidingView style={styles.mainContainer} behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}>
-        {loadingMore && <ActivityIndicator size="small" color="#175ec1" />}
+        {loadingMore && <ActivityIndicator size="small" color={colors.primary} />}
         <FlatList
           ref={flatListRef}
           data={messages}
@@ -319,7 +321,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
         />
 
         {canPost && (
-          <Surface style={[styles.inputBar, { paddingBottom: insets.bottom || 8 }]}>
+          <Surface style={[styles.inputBar, { backgroundColor: colors.surface, paddingBottom: insets.bottom || 8, shadowColor: colors.shadowBlack }]}>
             {editingMessage && (
               <IconButton
                 icon="close"
@@ -340,7 +342,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
               maxLength={500}
               style={styles.textInput}
               contentStyle={styles.inputContent}
-              outlineStyle={styles.inputOutline}
+              outlineStyle={[styles.inputOutline, { borderColor: colors.borderLight }]}
               onSubmitEditing={sendMessage}
               blurOnSubmit={false}
             />
@@ -349,8 +351,8 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
               size={24}
               onPress={sendMessage}
               disabled={!newMessage.trim()}
-              style={[styles.sendButton, newMessage.trim() && styles.sendButtonActive]}
-              iconColor={newMessage.trim() ? "#FFFFFF" : "#9E9E9E"}
+              style={[styles.sendButton, { backgroundColor: colors.iconBackground }, newMessage.trim() && { backgroundColor: colors.primary }]}
+              iconColor={newMessage.trim() ? colors.white : colors.disabled}
             />
           </Surface>
         )}
@@ -364,7 +366,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
               bottom: 100,
               left: 0,
               right: 0,
-              backgroundColor: "#fff",
+              backgroundColor: colors.surface,
               padding: 16,
               borderRadius: 12,
               marginHorizontal: 40,
@@ -385,7 +387,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
                     }, 100);
                   }
                 }}>
-                <Text style={{ fontSize: 16 }}>{t("common.edit")}</Text>
+                <Text style={{ fontSize: 16, color: colors.text }}>{t("common.edit")}</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity style={{ paddingHorizontal: 12 }}
@@ -397,7 +399,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
                   deleteMessage(msgToEdit);
                 }
               }}>
-              <Text style={{ fontSize: 16, color: "red" }}>{t("common.delete")}</Text>
+              <Text style={{ fontSize: 16, color: colors.error }}>{t("common.delete")}</Text>
             </TouchableOpacity>
           </View>
         </Pressable>
@@ -441,33 +443,28 @@ const styles = StyleSheet.create({
     marginHorizontal: 4
   },
   otherBubble: {
-    backgroundColor: "#FFFFFF",
     alignSelf: "flex-start",
     borderBottomLeftRadius: 4
   },
   ownBubble: {
-    backgroundColor: "#0D47A1",
     alignSelf: "flex-end",
     borderBottomRightRadius: 4
   },
   senderName: {
     fontSize: 12,
     fontWeight: "600",
-    color: "#0D47A1",
     marginBottom: 2
   },
   messageText: {
     fontSize: 15,
-    lineHeight: 20,
-    color: "#3c3c3c"
+    lineHeight: 20
   },
-  ownMessageText: { color: "#FFFFFF" },
+  ownMessageText: {},
   timestamp: {
     fontSize: 12,
-    color: "#9E9E9E",
     marginTop: 4
   },
-  ownTimestamp: { color: "rgba(255, 255, 255, 0.7)" },
+  ownTimestamp: {},
   emptyState: {
     flex: 1,
     justifyContent: "center",
@@ -475,19 +472,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32
   },
   emptyIcon: {
-    backgroundColor: "#F6F6F8",
     marginBottom: 16
   },
   emptyTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#3c3c3c",
     marginBottom: 8,
     textAlign: "center"
   },
   emptySubtitle: {
     fontSize: 14,
-    color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
   },
@@ -496,9 +490,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 8,
     paddingVertical: 8,
-    backgroundColor: "#FFFFFF",
     elevation: 8,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 4
@@ -514,16 +506,13 @@ const styles = StyleSheet.create({
     textAlignVertical: "center"
   },
   inputOutline: {
-    borderColor: "#E9ECEF",
     borderWidth: 1,
     borderRadius: 20
   },
   sendButton: {
     margin: 0,
-    marginLeft: 8,
-    backgroundColor: "#F6F6F8"
-  },
-  sendButtonActive: { backgroundColor: "#0D47A1" }
+    marginLeft: 8
+  }
 });
 
 export default GroupChatInner;

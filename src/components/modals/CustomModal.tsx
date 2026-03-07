@@ -2,6 +2,7 @@ import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React from "react";
 import { View } from "react-native";
 import Modal from "react-native-modal";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   isVisible: boolean;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function CustomModal({ isVisible, close, children, width, height }: Props) {
+  const colors = useThemeColors();
   return (
     <Modal isVisible={isVisible} onBackdropPress={() => close()} backdropOpacity={0.5} useNativeDriverForBackdrop={true} animationIn="zoomIn" animationOut="zoomOut">
       <View
@@ -20,7 +22,7 @@ export function CustomModal({ isVisible, close, children, width, height }: Props
           alignItems: "center",
           flex: 1
         }}>
-        <View style={{ backgroundColor: "#fff", padding: DimensionHelper.wp(3), borderRadius: 8, height, width }}>{children}</View>
+        <View style={{ backgroundColor: colors.surface, padding: DimensionHelper.wp(3), borderRadius: 8, height, width }}>{children}</View>
       </View>
     </Modal>
   );

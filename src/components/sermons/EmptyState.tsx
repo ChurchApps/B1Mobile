@@ -2,27 +2,29 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Text, Card } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useThemeColors } from "../../theme";
 
 interface EmptyStateProps {
   type: "playlists" | "sermons";
 }
 
 export const EmptyState: React.FC<EmptyStateProps> = ({ type }) => {
+  const colors = useThemeColors();
   const isPlaylists = type === "playlists";
 
   return (
-    <Card style={styles.emptyCard}>
+    <Card style={[styles.emptyCard, { shadowColor: colors.shadowBlack }]}>
       <Card.Content style={styles.emptyContent}>
         <MaterialIcons
           name={isPlaylists ? "playlist-add" : "video-library"}
           size={48}
-          color="#9E9E9E"
+          color={colors.iconColor}
           style={styles.emptyIcon}
         />
-        <Text variant="titleMedium" style={styles.emptyTitle}>
+        <Text variant="titleMedium" style={[styles.emptyTitle, { color: colors.text }]}>
           {isPlaylists ? "No Sermon Series Available" : "No Recent Sermons"}
         </Text>
-        <Text variant="bodyMedium" style={styles.emptySubtitle}>
+        <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: colors.disabled }]}>
           {isPlaylists
             ? "Check back later for new sermon series from your church."
             : "Check back later for new sermons from your church."}
@@ -36,7 +38,6 @@ const styles = StyleSheet.create({
   emptyCard: {
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
@@ -47,13 +48,11 @@ const styles = StyleSheet.create({
   },
   emptyIcon: { marginBottom: 16 },
   emptyTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     textAlign: "center",
     marginBottom: 8
   },
   emptySubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
   }

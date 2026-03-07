@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { FlatList, RefreshControl, View, Text, ActivityIndicator, StyleProp, ViewStyle, ListRenderItem, TouchableOpacity } from "react-native";
-import { Constants } from "../../helpers";
+import { useThemeColors } from "../../theme";
 
 interface DataListProps<T> {
   data: T[];
@@ -41,6 +41,8 @@ export function DataList<T>({
   onEndReached,
   onEndReachedThreshold = 0.5
 }: DataListProps<T>) {
+  const colors = useThemeColors();
+
   const defaultKeyExtractor = useCallback((item: T, index: number) => {
     if (keyExtractor) return keyExtractor(item, index);
     return index.toString();
@@ -50,7 +52,7 @@ export function DataList<T>({
     if (loading) {
       return (
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: 50 }}>
-          <ActivityIndicator size="large" color={Constants.Colors.primary} />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       );
     }
@@ -61,7 +63,7 @@ export function DataList<T>({
 
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: 50 }}>
-        <Text style={{ fontSize: 16, color: Constants.Colors.text_gray, textAlign: "center" }}>
+        <Text style={{ fontSize: 16, color: colors.textMuted, textAlign: "center" }}>
           {emptyMessage}
         </Text>
       </View>
@@ -78,8 +80,8 @@ export function DataList<T>({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={[Constants.Colors.primary]}
-            tintColor={Constants.Colors.primary}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
           />
         ) : undefined
       }
@@ -110,13 +112,15 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ children, onPress, style, padding = 16 }) => {
+  const colors = useThemeColors();
+
   const cardStyle: ViewStyle = {
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.surface,
     borderRadius: 8,
     padding,
     marginHorizontal: 16,
     marginVertical: 8,
-    shadowColor: "#000",
+    shadowColor: colors.shadowBlack,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,

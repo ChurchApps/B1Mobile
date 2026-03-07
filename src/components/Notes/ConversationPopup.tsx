@@ -5,7 +5,7 @@ import { ApiHelper, ConversationInterface } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import Notes from "./Notes";
 import { TextInput, Text, Avatar, Card } from "react-native-paper";
-import { useAppTheme } from "../../../src/theme";
+import { useThemeColors } from "../../../src/theme";
 import { useUser } from "../../stores/useUserStore";
 import { useTranslation } from "react-i18next";
 
@@ -16,7 +16,7 @@ interface NewConversation {
 }
 
 const ConversationPopup = ({ conversations, loadConversations, groupId }: any) => {
-  const { theme } = useAppTheme();
+  const colors = useThemeColors();
   const { t } = useTranslation();
   const [newMessage] = useState<MessageInterface>();
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
@@ -84,34 +84,34 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
   );
 
   const RenderContent = ({ item, idx }: any) => (
-    <Card style={styles.messageCard}>
+    <Card style={[styles.messageCard, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]}>
       <Card.Content style={styles.messageContent}>
         <Notes item={item} message={item.messages[0]} idx={idx} showReplyBox={showReplyBox} handleReply={handleReply} />
         {idx === showReplyBox && <RenderNewConversation placeholder={t("messages.reply")} type="reply" message={item.messages[0]} />}
-        <View style={styles.repliesContainer}>{getNotes(item)}</View>
+        <View style={[styles.repliesContainer, { borderLeftColor: colors.borderLight }]}>{getNotes(item)}</View>
       </Card.Content>
     </Card>
   );
 
   const RenderNewConversation = ({ placeholder, type, message }: NewConversation) => (
-    <Card style={[styles.inputCard, type === "new" && styles.newConversationCard]}>
+    <Card style={[styles.inputCard, type === "new" && styles.newConversationCard, { backgroundColor: colors.surface, shadowColor: colors.primary }]}>
       <Card.Content style={styles.inputContent}>
         <View style={styles.inputContainer}>
-          <TextInput mode="outlined" onChangeText={text => (textRef.current = text)} placeholder={placeholder} multiline={true} numberOfLines={1} maxLength={500} style={[styles.textInput, type === "reply" && styles.replyInput]} contentStyle={styles.inputText} outlineStyle={styles.inputOutline} blurOnSubmit={false} onSubmitEditing={() => Keyboard.dismiss()} value={newMessage?.content} right={<TextInput.Icon icon="send" onPress={() => handleSave(message)} iconColor={theme.colors.primary} style={styles.sendIcon} />} />
+          <TextInput mode="outlined" onChangeText={text => (textRef.current = text)} placeholder={placeholder} multiline={true} numberOfLines={1} maxLength={500} style={[styles.textInput, type === "reply" && styles.replyInput]} contentStyle={styles.inputText} outlineStyle={[styles.inputOutline, { borderColor: colors.borderLight }]} blurOnSubmit={false} onSubmitEditing={() => Keyboard.dismiss()} value={newMessage?.content} right={<TextInput.Icon icon="send" onPress={() => handleSave(message)} iconColor={colors.primary} style={styles.sendIcon} />} />
         </View>
       </Card.Content>
     </Card>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Avatar.Icon size={32} icon="chat" style={styles.headerIcon} />
-        <Text variant="titleMedium" style={styles.headerTitle}>
+      <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.borderLight }]}>
+        <Avatar.Icon size={32} icon="chat" style={[styles.headerIcon, { backgroundColor: colors.primary }]} />
+        <Text variant="titleMedium" style={[styles.headerTitle, { color: colors.text }]}>
           {t("groups.groupChat")}
         </Text>
-        <Text variant="bodySmall" style={styles.headerSubtitle}>
+        <Text variant="bodySmall" style={[styles.headerSubtitle, { color: colors.disabled }]}>
           {conversations.length} conversation{conversations.length !== 1 ? "s" : ""}
         </Text>
       </View>
@@ -122,11 +122,11 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
           <FlatList data={conversations} showsVerticalScrollIndicator={false} renderItem={({ item, index }) => renderConversations(item, index)} keyExtractor={item => item.id.toString()} contentContainerStyle={styles.messagesList} ItemSeparatorComponent={() => <View style={styles.messageSeparator} />} />
         ) : (
           <View style={styles.emptyState}>
-            <Avatar.Icon size={64} icon="chat-outline" style={styles.emptyIcon} />
-            <Text variant="titleMedium" style={styles.emptyTitle}>
+            <Avatar.Icon size={64} icon="chat-outline" style={[styles.emptyIcon, { backgroundColor: colors.iconBackground }]} />
+            <Text variant="titleMedium" style={[styles.emptyTitle, { color: colors.text }]}>
               {t("groups.noMessagesYet")}
             </Text>
-            <Text variant="bodyMedium" style={styles.emptySubtitle}>
+            <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: colors.disabled }]}>
               {t("groups.startConversationToConnect")}
             </Text>
           </View>
@@ -141,26 +141,22 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#F6F6F8"
+    flex: 1
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
     borderBottomWidth: 1,
-    borderBottomColor: "#E9ECEF",
     gap: 12
   },
-  headerIcon: { backgroundColor: "#0D47A1" },
+  headerIcon: {},
   headerTitle: {
-    color: "#3c3c3c",
     fontWeight: "700",
     flex: 1
   },
-  headerSubtitle: { color: "#9E9E9E" },
+  headerSubtitle: {},
   messagesContainer: {
     flex: 1,
     maxHeight: DimensionHelper.hp(50)
@@ -173,11 +169,9 @@ const styles = StyleSheet.create({
   messageCard: {
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
-    backgroundColor: "#FFFFFF",
     marginHorizontal: 2
   },
   messageContent: {
@@ -188,19 +182,16 @@ const styles = StyleSheet.create({
     marginLeft: 48,
     marginTop: 8,
     paddingLeft: 12,
-    borderLeftWidth: 2,
-    borderLeftColor: "#E9ECEF"
+    borderLeftWidth: 2
   },
   inputCard: {
     marginHorizontal: 12,
     marginVertical: 8,
     borderRadius: 20,
     elevation: 4,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 6,
-    backgroundColor: "#FFFFFF"
+    shadowRadius: 6
   },
   newConversationCard: { marginBottom: 16 },
   inputContent: {
@@ -223,7 +214,6 @@ const styles = StyleSheet.create({
     paddingTop: 8
   },
   inputOutline: {
-    borderColor: "#E9ECEF",
     borderWidth: 1
   },
   sendIcon: { marginRight: 4 },
@@ -235,17 +225,14 @@ const styles = StyleSheet.create({
     paddingVertical: 48
   },
   emptyIcon: {
-    backgroundColor: "#F6F6F8",
     marginBottom: 16
   },
   emptyTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center"
   },
   emptySubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
   }
