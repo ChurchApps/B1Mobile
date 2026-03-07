@@ -1,7 +1,7 @@
 import React from "react";
 import { Drawer } from "expo-router/drawer";
 import { DrawerActions } from "@react-navigation/native";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { IconButton } from "react-native-paper";
 import { useRouter } from "expo-router";
@@ -9,7 +9,8 @@ import { useRouter } from "expo-router";
 import { CustomDrawer } from "../../src/components/CustomDrawer";
 import { ErrorBoundary } from "../../src/components/ErrorBoundary";
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
-import { useCurrentUserChurch } from "@/stores/useUserStore";
+import { Avatar } from "@/components/common/Avatar";
+import { useCurrentUserChurch, useUser } from "@/stores/useUserStore";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "@/theme";
 
@@ -17,6 +18,7 @@ export default function DrawerLayout() {
   const { t } = useTranslation();
   const router = useRouter();
   const currentChurch = useCurrentUserChurch();
+  const user = useUser();
   const tc = useThemeColors();
 
   // Helper: get current route name
@@ -68,17 +70,35 @@ export default function DrawerLayout() {
           return {
             ...commonHeaderOptions,
             headerLeft: () => renderHeaderLeft(navigation, currentRouteName),
-            headerRight: () => <HeaderBell toggleNotifications={toggleNotifications} />
+            headerRight: () => (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <HeaderBell toggleNotifications={toggleNotifications} />
+                {user && (
+                  <TouchableOpacity onPress={() => router.push("/(drawer)/profileEdit")} style={{ marginRight: 8 }}>
+                    <Avatar size={30} photoUrl={currentChurch?.person?.photo} firstName={user.firstName} lastName={user.lastName} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )
           };
         }}
         drawerContent={props => <CustomDrawer {...props} />}>
-        <Drawer.Screen name="dashboard" options={{ title: t("navigation.home") }} />
+        <Drawer.Screen name="dashboard" options={{ title: currentChurch?.church?.name || t("navigation.home") }} />
         <Drawer.Screen name="myGroups" options={{ title: t("navigation.myGroups") }} />
         <Drawer.Screen
           name="notifications"
           options={{
             title: t("navigation.notifications"),
-            headerRight: () => <HeaderBell name="person-add" toggleNotifications={() => toggleNotifications("notifications")} />
+            headerRight: () => (
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <HeaderBell name="person-add" toggleNotifications={() => toggleNotifications("notifications")} />
+                {user && (
+                  <TouchableOpacity onPress={() => router.push("/(drawer)/profileEdit")} style={{ marginRight: 8 }}>
+                    <Avatar size={30} photoUrl={currentChurch?.person?.photo} firstName={user.firstName} lastName={user.lastName} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )
           }}
         />
         <Drawer.Screen name="votd" options={{ title: t("navigation.verseOfTheDay") }} />

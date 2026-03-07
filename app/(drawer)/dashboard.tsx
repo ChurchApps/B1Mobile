@@ -7,8 +7,6 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { DrawerActions } from "@react-navigation/native";
 import { router } from "expo-router";
 import { Card, Text } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -17,11 +15,10 @@ import { NavigationUtils } from "../../src/helpers/NavigationUtils";
 import { LinkInterface } from "../../src/helpers/Interfaces";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
-import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { CardSkeleton } from "../../src/components/common/Skeleton";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
-import { useUserStore, useCurrentChurch, useChurchAppearance, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
+import { useUserStore, useCurrentChurch, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
 import { useTranslation } from "react-i18next";
 import { HapticsHelper } from "../../src/helpers/HapticsHelper";
 import { useThemeColors } from "@/theme";
@@ -31,10 +28,7 @@ const Dashboard = () => {
   const [isLoading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const navigation = useNavigation();
-
   const currentChurch = useCurrentChurch();
-  const churchAppearance = useChurchAppearance();
   const { links } = useUserStore();
   const linkViewCounts = useLinkViewCounts();
   const incrementLinkViewCount = useIncrementLinkViewCount();
@@ -232,38 +226,10 @@ const Dashboard = () => {
     );
   }, [isLoading, filteredLinks, getBackgroundImage, handleLinkPress, generateLinkId, tc]);
 
-  const welcomeSection = useMemo(
-    () => (
-      <View style={[styles.welcomeSection, { backgroundColor: tc.surface }]}>
-        <View style={styles.welcomeContent}>
-          <Text variant="headlineMedium" style={[styles.welcomeTitle, { color: tc.textSecondary }]}>
-            {t("dashboard.welcomeTo")}
-          </Text>
-          {(tc.isDark ? (churchAppearance?.logoDark || churchAppearance?.logoLight) : churchAppearance?.logoLight) ? (
-            <OptimizedImage source={{ uri: (tc.isDark ? churchAppearance?.logoDark || churchAppearance?.logoLight : churchAppearance?.logoLight)! }} style={styles.churchLogo} contentFit="contain" priority="high" />
-          ) : (
-            <Text variant="headlineLarge" style={[styles.churchName, { color: tc.primary }]}>
-              {currentChurch?.name || ""}
-            </Text>
-          )}
-          <Text variant="bodyLarge" style={[styles.welcomeSubtitle, { color: tc.text }]}>
-            {t("dashboard.stayConnected")}
-          </Text>
-        </View>
-      </View>
-    ),
-    [churchAppearance?.logoLight, churchAppearance?.logoDark, currentChurch?.name, t, tc]
-  );
-
-  const handleDrawerOpen = useCallback(() => {
-    navigation.dispatch(DrawerActions.openDrawer());
-  }, [navigation]);
-
   return (
     <SafeAreaProvider>
       <LoadingWrapper loading={isLoading}>
         <View style={[styles.container, { backgroundColor: tc.background }]}>
-          <MainHeader title={t("dashboard.home")} openDrawer={handleDrawerOpen} />
           <View style={[styles.contentContainer, { backgroundColor: tc.background }]}>
             <ScrollView
               style={styles.scrollView}
@@ -273,7 +239,6 @@ const Dashboard = () => {
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#175ec1" />
               }
             >
-              {welcomeSection}
               {featuredContent}
             </ScrollView>
           </View>
@@ -295,36 +260,8 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
+    paddingTop: 16,
     paddingBottom: 24
-  },
-
-  // Welcome Section
-  welcomeSection: {
-    padding: 24,
-    backgroundColor: "#FFFFFF",
-    marginBottom: 16
-  },
-  welcomeContent: { alignItems: "center" },
-  welcomeTitle: {
-    color: "#9E9E9E",
-    marginBottom: 8,
-    fontWeight: "400"
-  },
-  churchLogo: {
-    width: "70%",
-    height: 80,
-    marginBottom: 12
-  },
-  churchName: {
-    color: "#0D47A1",
-    fontWeight: "700",
-    marginBottom: 12,
-    textAlign: "center"
-  },
-  welcomeSubtitle: {
-    color: "#3c3c3c",
-    textAlign: "center",
-    opacity: 0.8
   },
 
   // Hero Section
