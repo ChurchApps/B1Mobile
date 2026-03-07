@@ -67,7 +67,7 @@ const ChurchSearch = () => {
       addRecentChurch(churchData);
 
       // Check if we're switching to a different church
-      const currentChurch = useUserStore.getState().currentUserChurch?.church;
+      const currentChurch = useChurchStore.getState().currentUserChurch?.church;
       const isSwitchingChurch = currentChurch?.id !== churchData.id;
 
       // Only clear cached data if switching to a different church
