@@ -7,7 +7,9 @@ import { useEffect, useState } from "react";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Avatar, Button, Divider, List, Surface, Text, TouchableRipple } from "react-native-paper";
-import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
+import { useUser, useCurrentChurch } from "../../src/stores/useUserStore";
+import { useChurchStore } from "../../src/stores/useChurchStore";
+import { useAuthStore } from "../../src/stores/useAuthStore";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import type { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -36,8 +38,8 @@ export function CustomDrawer(props?: any) {
   // Use hooks instead of local state
   const user = useUser();
   const currentChurch = useCurrentChurch();
-  const links = useUserStore(state => state.links);
-  const loadChurchLinks = useUserStore(state => state.loadChurchLinks);
+  const links = useChurchStore(state => state.links);
+  const loadChurchLinks = useChurchStore(state => state.loadChurchLinks);
   const pathname = usePathname();
   const params = useGlobalSearchParams();
 
@@ -114,7 +116,7 @@ export function CustomDrawer(props?: any) {
       }
 
       // Use the store's logout method
-      await useUserStore.getState().logout();
+      await useAuthStore.getState().logout();
 
       // Clear AsyncStorage (except church data to preserve church selection)
       await AsyncStorage.getAllKeys()
@@ -182,7 +184,7 @@ export function CustomDrawer(props?: any) {
   );
 
   const getUserInfo = () => {
-    const currentUserChurch = useUserStore.getState().currentUserChurch;
+    const currentUserChurch = useChurchStore.getState().currentUserChurch;
     if (!currentUserChurch?.person || !user) return null;
 
 

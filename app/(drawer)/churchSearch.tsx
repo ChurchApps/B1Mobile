@@ -9,7 +9,9 @@ import { View, StyleSheet, FlatList } from "react-native";
 import { Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
-import { useUserStore, useRecentChurches, useUserChurches } from "../../src/stores/useUserStore";
+import { useRecentChurches, useUserChurches } from "../../src/stores/useUserStore";
+import { useChurchStore } from "../../src/stores/useChurchStore";
+import { useEngagementStore } from "../../src/stores/useEngagementStore";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -29,7 +31,8 @@ const ChurchSearch = () => {
   const [selectingChurch, setSelectingChurch] = useState(false);
   const recentChurches = useRecentChurches();
   const userChurches = useUserChurches();
-  const { addRecentChurch, selectChurch } = useUserStore();
+  const selectChurch = useChurchStore(state => state.selectChurch);
+  const addRecentChurch = useEngagementStore(state => state.addRecentChurch);
 
   // Use react-query for church search - only search when text is provided
   const { data: searchList = [], isLoading: loading } = useQuery({

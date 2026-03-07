@@ -18,7 +18,8 @@ import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { CardSkeleton } from "../../src/components/common/Skeleton";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
-import { useUserStore, useCurrentChurch, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
+import { useCurrentChurch, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
+import { useChurchStore } from "../../src/stores/useChurchStore";
 import { useTranslation } from "react-i18next";
 import { HapticsHelper } from "../../src/helpers/HapticsHelper";
 import { useThemeColors } from "@/theme";
@@ -29,7 +30,7 @@ const Dashboard = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const currentChurch = useCurrentChurch();
-  const { links } = useUserStore();
+  const links = useChurchStore(state => state.links);
   const linkViewCounts = useLinkViewCounts();
   const incrementLinkViewCount = useIncrementLinkViewCount();
   const tc = useThemeColors();
@@ -116,7 +117,7 @@ const Dashboard = () => {
     (item: LinkInterface) => {
       const linkId = generateLinkId(item);
       incrementLinkViewCount(linkId);
-      NavigationUtils.navigateToScreen(item, currentChurch, "home");
+      NavigationUtils.navigateToScreen(item, currentChurch);
     },
     [generateLinkId, incrementLinkViewCount, currentChurch]
   );

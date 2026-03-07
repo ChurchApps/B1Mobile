@@ -9,7 +9,7 @@ import { ApiHelper, globalStyles, SecureStorageHelper } from "../../src/helpers"
 import { MainHeader } from "./wrapper/MainHeader";
 import { UserHelper } from "../helpers/UserHelper";
 import { eventBus } from "@/helpers/PushNotificationHelper";
-import { useUserStore } from "@/stores/useUserStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { Loader } from "./Loader";
 
 interface WebsiteScreenProps {
@@ -25,7 +25,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
   const webviewRef = useRef<WebView>(null);
   const navigationMain = useNavigation();
-  const user = useUserStore();
+  const authStore = useAuthStore;
 
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });
@@ -66,7 +66,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
     // Attempt to re-authenticate with JWT
     const data = await ApiHelper.postAnonymous("/users/login", { jwt: await SecureStorageHelper.getSecureItem("default_jwt") }, "MembershipApi");
     if (data.user != null) {
-      await user.handleLogin(data);
+      await authStore.getState().handleLogin(data);
     }
     setIsLoading(false);
     navigation.goBack();

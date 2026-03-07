@@ -1,6 +1,5 @@
-import { ApiHelper, CheckinHelper, PersonInterface, UserHelper } from "../../../src/helpers";
-import { ArrayHelper } from "@churchapps/helpers";
-import React, { useEffect, useState } from "react";
+import { UserHelper } from "../../../src/helpers";
+import React, { useEffect } from "react";
 import { FlatList, View, StyleSheet, Dimensions, TouchableOpacity, ActivityIndicator } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { useAppTheme, useThemeColors } from "../../../src/theme";
@@ -9,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
+import { useCheckinFlow } from "../../hooks/useCheckinFlow";
 
 interface Props {
   onDone: () => void;
@@ -19,13 +19,9 @@ export const CheckinServices = (props: Props) => {
   const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const colors = useThemeColors();
-  const [loading, setLoading] = useState(false);
   const currentUserChurch = useCurrentUserChurch();
   const screenWidth = Dimensions.get("window").width;
-  const [selectServiceLoading, setSelectServiceLoading] = useState({
-    isLoading: false,
-    campusId: ""
-  });
+  const { selectService, selectServiceLoading } = useCheckinFlow(props.onDone);
 
   // Use react-query for services
   const {
@@ -44,121 +40,8 @@ export const CheckinServices = (props: Props) => {
     UserHelper.addOpenScreenEvent("ServiceScreen");
   }, []);
 
-  const ServiceSelection = async (item: any) => {
-    setSelectServiceLoading({
-      isLoading: true,
-      campusId: item?.campusId
-    });
-    try {
-      await getMemberData(item.id);
-    } catch (error) {
-      console.error("Error selecting service:", error);
-      setSelectServiceLoading({
-        isLoading: false,
-        campusId: ""
-      });
-    }
-  };
-
-  const getMemberData = async (serviceId: any) => {
-    const personId = currentUserChurch?.person?.id;
-    let householdId = currentUserChurch?.person?.householdId;
-
-    if (personId) {
-      try {
-        // If no householdId in the user object, fetch the person to get it
-        if (!householdId) {
-          const person: PersonInterface = await ApiHelper.get("/people/" + personId, "MembershipApi");
-          householdId = person.householdId;
-        }
-
-        if (!householdId) {
-          householdId = personId;
-        }
-
-        // Step 1: Load service times and groups in parallel (like Chums)
-        const [serviceTimes, groups] = await Promise.all([ApiHelper.get("/serviceTimes?serviceId=" + serviceId, "AttendanceApi"), ApiHelper.get("/groups", "MembershipApi")]);
-
-        CheckinHelper.serviceTimes = serviceTimes;
-        CheckinHelper.serviceId = serviceId;
-
-        // Step 2: Load household members using the householdId
-        CheckinHelper.householdMembers = await ApiHelper.get("/people/household/" + householdId, "MembershipApi");
-
-        // If still no household members, create array with just the current person
-        if (!CheckinHelper.householdMembers || CheckinHelper.householdMembers.length === 0) {
-          const currentPerson = currentUserChurch?.person;
-          if (currentPerson) {
-            CheckinHelper.householdMembers = [currentPerson];
-          }
-        }
-
-        // Step 3: Create group tree
-        const group_tree = createGroupTree(groups);
-        CheckinHelper.groupTree = group_tree;
-
-        // Step 4: Assign service times to each household member
-        CheckinHelper.householdMembers?.forEach((member: any) => {
-          member.serviceTimes = CheckinHelper.serviceTimes;
-        });
-
-        // Step 5: Get people IDs for existing visits check
-        CheckinHelper.peopleIds = ArrayHelper.getIds(CheckinHelper.householdMembers, "id");
-
-        // Step 6: Load existing attendance
-        await loadExistingAttendance(serviceId);
-      } catch (error) {
-        console.error("Error loading member data:", error);
-        setLoading(false);
-        setSelectServiceLoading({
-          isLoading: false,
-          campusId: ""
-        });
-      }
-    } else {
-      setLoading(false);
-      setSelectServiceLoading({
-        isLoading: false,
-        campusId: ""
-      });
-      // Could implement anonymous check-in flow here
-    }
-  };
-
-  // Remove this function as it's now integrated into getMemberData
-
-  const loadExistingAttendance = async (serviceId: string) => {
-    try {
-      const peopleIdsString = CheckinHelper.peopleIds.join(",");
-      const data = await ApiHelper.get("/visits/checkin?serviceId=" + serviceId + "&peopleIds=" + encodeURIComponent(peopleIdsString) + "&include=visitSessions", "AttendanceApi");
-      CheckinHelper.setExistingAttendance(data);
-    } catch (error) {
-      console.error("Error loading existing attendance:", error);
-    } finally {
-      setLoading(false);
-      // Now that all data is loaded, navigate to the next screen
-      props.onDone();
-    }
-  };
-
-  const createGroupTree = (groups: any) => {
-    let category = "";
-    const group_tree: any[] = [];
-
-    const sortedGroups = groups.sort((a: any, b: any) => ((a.categoryName || "") > (b.categoryName || "") ? 1 : -1));
-
-    sortedGroups?.forEach((group: any) => {
-      if (group.categoryName !== category) group_tree.push({ key: group_tree.length, name: group.categoryName || "", items: [] });
-      group_tree[group_tree.length - 1].items.push(group);
-      category = group.categoryName || "";
-    });
-    return group_tree;
-  };
-
-  // Remove this function as it's now integrated into getMemberData
-
   const renderServiceItem = (item: any) => (
-    <TouchableOpacity style={[styles.serviceCard, { backgroundColor: colors.card, shadowColor: colors.shadowBlack }]} onPress={() => ServiceSelection(item)} activeOpacity={0.7}>
+    <TouchableOpacity style={[styles.serviceCard, { backgroundColor: colors.card, shadowColor: colors.shadowBlack }]} onPress={() => selectService(item)} activeOpacity={0.7}>
       <View style={styles.serviceContent}>
         <View style={[styles.serviceIconContainer, { backgroundColor: colors.iconBackground }]}>
           <MaterialIcons name="church" size={28} color={colors.primary} />
@@ -182,7 +65,7 @@ export const CheckinServices = (props: Props) => {
   );
 
   return (
-    <LoadingWrapper loading={loading}>
+    <LoadingWrapper loading={false}>
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         {/* Header Section */}
         <View style={[styles.headerSection, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
