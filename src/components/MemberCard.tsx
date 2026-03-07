@@ -44,7 +44,7 @@ export const MemberCard = React.memo<MemberCardProps>(({ member, onPress, showAc
   const { firstName, lastName } = formatName(member.name.display);
 
   return (
-    <Card style={[cardStyle, { backgroundColor: tc.surface }]} onPress={handlePress}>
+    <Card style={[cardStyle, { backgroundColor: tc.surface, shadowColor: tc.shadowBlack }]} onPress={handlePress}>
       <Card.Content style={styles.memberContent}>
         <View style={styles.memberInfo}>
           <Avatar size={avatarSize} photoUrl={member.photo} firstName={member.name.first || firstName} lastName={member.name.last || lastName} style={styles.memberAvatar} />
@@ -102,31 +102,25 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderRadius: 12,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 3,
-    backgroundColor: "#FFFFFF"
+    shadowRadius: 3
   },
   smallCard: {
     marginBottom: 6,
     borderRadius: 10,
     elevation: 1,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 0.5 },
     shadowOpacity: 0.05,
-    shadowRadius: 2,
-    backgroundColor: "#FFFFFF"
+    shadowRadius: 2
   },
   largeCard: {
     marginBottom: 12,
     borderRadius: 16,
     elevation: 3,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    backgroundColor: "#FFFFFF"
+    shadowRadius: 4
   },
   memberContent: {
     flexDirection: "row",
@@ -147,17 +141,14 @@ const styles = StyleSheet.create({
     alignItems: "baseline"
   },
   memberName: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 2
   },
   memberLastName: {
-    color: "#3c3c3c",
     fontWeight: "800",
     marginBottom: 2
   },
   memberSubtitle: {
-    color: "#9E9E9E",
     fontSize: 12
   },
   actions: {
@@ -173,7 +164,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: "#F6F6F8",
     justifyContent: "center",
     alignItems: "center"
   }

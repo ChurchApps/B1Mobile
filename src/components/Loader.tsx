@@ -1,6 +1,7 @@
 import { globalStyles } from "../../src/helpers";
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
+import { useThemeColors } from "../theme";
 
 interface Props {
   isLoading: boolean;
@@ -9,13 +10,14 @@ interface Props {
   style?: any;
 }
 
-export function Loader({ isLoading, size = "large", color = "#0D47A1", style }: Props) {
+export function Loader({ isLoading, size = "large", color, style }: Props) {
+  const colors = useThemeColors();
   return (
     <View style={[{ padding: 16 }, style]}>
       <ActivityIndicator
         style={globalStyles.indicatorStyle}
         size={size}
-        color={color}
+        color={color ?? colors.primary}
         animating={isLoading}
       />
     </View>

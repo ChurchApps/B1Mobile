@@ -92,7 +92,7 @@ export const HeaderBell = (props: Props) => {
   if (props?.name) {
     return (
       <View style={{ marginRight: props?.isDetail ? -12 : 0 }}>
-        <MaterialIcons name={props.name as any} size={24} onPress={handlePress} style={componentStyles.button} color="#FFFFFF" />
+        <MaterialIcons name={props.name as any} size={24} onPress={handlePress} style={componentStyles.button} color={theme.colors.onPrimary} />
       </View>
     );
   }

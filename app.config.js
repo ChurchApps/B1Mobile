@@ -1,8 +1,10 @@
+const { version } = require("./package.json");
+
 module.exports = {
   expo: {
     name: "B1Mobile",
     slug: "B1Mobile",
-    version: "3.8.0",
+    version,
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -49,7 +51,7 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png"
     },
-    runtimeVersion: "3.8.0",
+    runtimeVersion: version,
     plugins: [
       [
         "@sentry/react-native/expo",

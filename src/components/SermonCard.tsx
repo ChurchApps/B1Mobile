@@ -6,6 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "./OptimizedImage";
 import { DateHelper } from "../helpers";
 import { SermonInterface } from "@churchapps/helpers";
+import { useThemeColors } from "../theme";
 
 interface SermonCardProps {
   sermon: SermonInterface;
@@ -14,6 +15,7 @@ interface SermonCardProps {
 }
 
 export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDuration = true }) => {
+  const colors = useThemeColors();
   const hasImage = sermon.thumbnail && sermon.thumbnail.trim() !== "";
 
   const formatDuration = (seconds?: number) => {
@@ -25,12 +27,13 @@ export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDur
 
   return (
     <TouchableOpacity onPress={() => onPress(sermon)}>
-      <Card style={styles.sermonCard}>
+      <Card style={[styles.sermonCard, { shadowColor: colors.shadowBlack }]}>
         <View style={styles.sermonContent}>
           <View style={styles.sermonImageContainer}>
             {hasImage ? (
               <OptimizedImage source={{ uri: sermon.thumbnail }} style={styles.sermonImage} contentFit="cover" />
             ) : (
+              // Gradient uses brand color shades — intentional design, not semantic tokens
               <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.sermonImage, styles.sermonFallback]}>
                 <View style={styles.fallbackPattern}>
                   <View style={styles.patternCircle1} />
@@ -38,30 +41,30 @@ export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDur
                   <View style={styles.patternCircle3} />
                 </View>
                 <View style={styles.fallbackIcon}>
-                  <MaterialIcons name="play-circle-outline" size={32} color="#FFFFFF" opacity={0.9} />
+                  <MaterialIcons name="play-circle-outline" size={32} color={colors.white} opacity={0.9} />
                 </View>
               </LinearGradient>
             )}
 
             {/* Play button overlay */}
             <View style={styles.playOverlay}>
-              <MaterialIcons name="play-circle-filled" size={24} color="#FFFFFF" />
+              <MaterialIcons name="play-circle-filled" size={24} color={colors.white} />
             </View>
 
             {/* Duration badge */}
             {showDuration && sermon.duration ? (
               <View style={styles.durationBadge}>
-                <Text style={styles.durationText}>{formatDuration(sermon.duration)}</Text>
+                <Text style={[styles.durationText, { color: colors.white }]}>{formatDuration(sermon.duration)}</Text>
               </View>
             ) : null}
 
             {/* Text overlay at bottom */}
             <View style={styles.textOverlay}>
               <View style={styles.sermonInfo}>
-                <Text variant="titleMedium" style={styles.sermonTitle} numberOfLines={2}>
+                <Text variant="titleMedium" style={[styles.sermonTitle, { color: colors.white }]} numberOfLines={2}>
                   {sermon.title || "Untitled Sermon"}
                 </Text>
-                <Text variant="bodySmall" style={styles.sermonDate}>
+                <Text variant="bodySmall" style={[styles.sermonDate, { color: colors.white }]}>
                   {sermon.publishDate ? DateHelper.prettyDate(DateHelper.toDate(sermon.publishDate)) : ""}
                 </Text>
               </View>
@@ -78,7 +81,6 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -155,7 +157,6 @@ const styles = StyleSheet.create({
     paddingVertical: 4
   },
   durationText: {
-    color: "#FFFFFF",
     fontSize: 12,
     fontWeight: "600"
   },
@@ -169,12 +170,10 @@ const styles = StyleSheet.create({
   },
   sermonInfo: { flex: 1 },
   sermonTitle: {
-    color: "#FFFFFF",
     fontWeight: "600",
     marginBottom: 4
   },
   sermonDate: {
-    color: "#FFFFFF",
     opacity: 0.9
   }
 });

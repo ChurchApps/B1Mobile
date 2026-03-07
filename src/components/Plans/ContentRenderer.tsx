@@ -3,7 +3,7 @@ import { View, Text, Image, ActivityIndicator, ScrollView, StyleSheet, Dimension
 import { WebView } from "react-native-webview";
 import Markdown from "@ronradtke/react-native-markdown-display";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants } from "../../../src/helpers/Constants";
+import { useThemeColors } from "../../../src/theme";
 
 interface ContentRendererProps {
   url?: string;
@@ -36,10 +36,12 @@ export const ContentRenderer: React.FC<ContentRendererProps> = ({
   loading,
   error
 }) => {
+  const colors = useThemeColors();
+
   if (loading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color={Constants.Colors.app_color} />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -47,8 +49,8 @@ export const ContentRenderer: React.FC<ContentRendererProps> = ({
   if (error) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>{error}</Text>
-        <Text style={styles.errorSubText}>
+        <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>
+        <Text style={[styles.errorSubText, { color: colors.textMuted }]}>
           Unable to load preview. The content may require authentication or is temporarily unavailable.
         </Text>
       </View>
@@ -62,14 +64,14 @@ export const ContentRenderer: React.FC<ContentRendererProps> = ({
           {description ? (
             <Markdown>{description}</Markdown>
           ) : (
-            <Text style={styles.noContentText}>No content to display.</Text>
+            <Text style={[styles.noContentText, { color: colors.textMuted }]}>No content to display.</Text>
           )}
         </ScrollView>
       );
     }
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.noContentText}>Preview not available for this content.</Text>
+        <Text style={[styles.noContentText, { color: colors.textMuted }]}>Preview not available for this content.</Text>
       </View>
     );
   }
@@ -115,7 +117,7 @@ export const ContentRenderer: React.FC<ContentRendererProps> = ({
           {description ? (
             <Markdown>{description}</Markdown>
           ) : (
-            <Text style={styles.noContentText}>No text content to display.</Text>
+            <Text style={[styles.noContentText, { color: colors.textMuted }]}>No text content to display.</Text>
           )}
         </ScrollView>
       );
@@ -146,19 +148,16 @@ const styles = StyleSheet.create({
   scrollContainer: { flex: 1 },
   paddedContent: { padding: DimensionHelper.wp(4) },
   errorText: {
-    color: "red",
     fontSize: DimensionHelper.wp(4),
     marginBottom: DimensionHelper.hp(1),
     textAlign: "center"
   },
   errorSubText: {
-    color: Constants.Colors.Dark_Gray,
     fontSize: DimensionHelper.wp(3.5),
     textAlign: "center",
     opacity: 0.7
   },
   noContentText: {
-    color: Constants.Colors.Dark_Gray,
     fontSize: DimensionHelper.wp(3.5),
     textAlign: "center",
     opacity: 0.7

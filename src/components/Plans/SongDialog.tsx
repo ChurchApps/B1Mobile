@@ -3,10 +3,10 @@ import { Modal, View, Text, StyleSheet, TouchableOpacity, ScrollView, Linking, A
 import { OptimizedImage } from "../OptimizedImage";
 import { ApiHelper } from "../../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants } from "../../../src/helpers/Constants";
 import Icons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../../src/theme";
 
 interface SongDetail {
   id?: string;
@@ -43,6 +43,7 @@ interface Props {
 
 export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [loading, setLoading] = useState(false);
   const [songDetail, setSongDetail] = useState<SongDetail | null>(null);
   const [arrangement, setArrangement] = useState<Arrangement | null>(null);
@@ -79,103 +80,103 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
 
   return (
     <Modal visible={!!arrangementKeyId} animationType="slide" transparent={true} onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.dialog}>
+      <View style={[styles.overlay, { backgroundColor: colors.modalOverlay }]}>
+        <View style={[styles.dialog, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Icons name="close" size={28} color={Constants.Colors.Dark_Gray} />
+            <Icons name="close" size={28} color={colors.text} />
           </TouchableOpacity>
           {loading ? (
-            <ActivityIndicator size="large" color={Constants.Colors.app_color} />
+            <ActivityIndicator size="large" color={colors.primary} />
           ) : songDetail ? (
             <ScrollView contentContainerStyle={styles.content}>
-              <Text style={styles.title}>{songDetail.title}</Text>
+              <Text style={[styles.title, { color: colors.primary }]}>{songDetail.title}</Text>
               {songDetail.thumbnail ? <OptimizedImage source={{ uri: songDetail.thumbnail }} style={styles.thumbnail} contentFit="contain" priority="normal" /> : null}
               <View style={styles.detailsTable}>
                 {songDetail.artist && (
-                  <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>{t("songs.artist")}: </Text>
+                  <Text style={[styles.detailRow, { color: colors.text }]}>
+                    <Text style={[styles.detailLabel, { color: colors.primary }]}>{t("songs.artist")}: </Text>
                     {songDetail.artist}
                   </Text>
                 )}
                 {songDetail.album && (
-                  <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>{t("songs.album")}: </Text>
+                  <Text style={[styles.detailRow, { color: colors.text }]}>
+                    <Text style={[styles.detailLabel, { color: colors.primary }]}>{t("songs.album")}: </Text>
                     {songDetail.album}
                   </Text>
                 )}
                 {songDetail.language && (
-                  <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>{t("songs.language")}: </Text>
+                  <Text style={[styles.detailRow, { color: colors.text }]}>
+                    <Text style={[styles.detailLabel, { color: colors.primary }]}>{t("songs.language")}: </Text>
                     {songDetail.language}
                   </Text>
                 )}
                 {songDetail.bpm && (
-                  <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>{t("songs.bpm")}: </Text>
+                  <Text style={[styles.detailRow, { color: colors.text }]}>
+                    <Text style={[styles.detailLabel, { color: colors.primary }]}>{t("songs.bpm")}: </Text>
                     {songDetail.bpm}
                   </Text>
                 )}
                 {songDetail.keySignature && (
-                  <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>{t("songs.key")}: </Text>
+                  <Text style={[styles.detailRow, { color: colors.text }]}>
+                    <Text style={[styles.detailLabel, { color: colors.primary }]}>{t("songs.key")}: </Text>
                     {songDetail.keySignature}
                   </Text>
                 )}
                 {songDetail.tones && (
-                  <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>{t("songs.keys")}: </Text>
+                  <Text style={[styles.detailRow, { color: colors.text }]}>
+                    <Text style={[styles.detailLabel, { color: colors.primary }]}>{t("songs.keys")}: </Text>
                     {songDetail.tones}
                   </Text>
                 )}
                 {songDetail.meter && (
-                  <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>{t("songs.meter")}: </Text>
+                  <Text style={[styles.detailRow, { color: colors.text }]}>
+                    <Text style={[styles.detailLabel, { color: colors.primary }]}>{t("songs.meter")}: </Text>
                     {songDetail.meter}
                   </Text>
                 )}
                 {songDetail.seconds && (
-                  <Text style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>{t("songs.length")}: </Text>
+                  <Text style={[styles.detailRow, { color: colors.text }]}>
+                    <Text style={[styles.detailLabel, { color: colors.primary }]}>{t("songs.length")}: </Text>
                     {Math.floor(songDetail.seconds / 60)}:{(songDetail.seconds % 60).toString().padStart(2, "0")}
                   </Text>
                 )}
               </View>
               {externalLinks.length > 0 && (
                 <View style={styles.linksSection}>
-                  <Text style={styles.linksTitle}>{t("songs.externalLinks")}</Text>
+                  <Text style={[styles.linksTitle, { color: colors.primary }]}>{t("songs.externalLinks")}</Text>
                   {externalLinks.map((l, i) => (
                     <TouchableOpacity key={l.id || i} onPress={() => Linking.openURL(l.url)} style={styles.linkRow}>
                       {getServiceIcon(l.service)}
-                      <Text style={styles.link}>{l.service || l.text || l.url}</Text>
+                      <Text style={[styles.link, { color: colors.primary }]}>{l.service || l.text || l.url}</Text>
                     </TouchableOpacity>
                   ))}
                   {songDetail?.praiseChartsId && (
                     <TouchableOpacity key="praisecharts" onPress={() => Linking.openURL(`https://www.praisecharts.com/songs/details/${songDetail.praiseChartsId}?XID=churchapps`)} style={styles.linkRow}>
                       {getServiceIcon("PraiseCharts")}
-                      <Text style={styles.link}>{t("songs.praiseCharts")}</Text>
+                      <Text style={[styles.link, { color: colors.primary }]}>{t("songs.praiseCharts")}</Text>
                     </TouchableOpacity>
                   )}
                 </View>
               )}
               {arrangement?.lyrics ? (
                 <View style={styles.lyricsSection}>
-                  <Text style={styles.lyricsTitle}>{t("songs.lyrics")}</Text>
-                  <Text style={styles.lyrics}>{arrangement.lyrics}</Text>
+                  <Text style={[styles.lyricsTitle, { color: colors.primary }]}>{t("songs.lyrics")}</Text>
+                  <Text style={[styles.lyrics, { color: colors.text }]}>{arrangement.lyrics}</Text>
                 </View>
               ) : null}
               {links.length > 0 && (
                 <View style={styles.linksSection}>
-                  <Text style={styles.linksTitle}>{t("songs.links")}</Text>
+                  <Text style={[styles.linksTitle, { color: colors.primary }]}>{t("songs.links")}</Text>
                   {links.map((l, i) => (
                     <TouchableOpacity key={l.id || i} onPress={() => Linking.openURL(l.url)}>
-                      <Text style={styles.link}>{l.text || l.service || l.url}</Text>
+                      <Text style={[styles.link, { color: colors.primary }]}>{l.text || l.service || l.url}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
               )}
             </ScrollView>
           ) : (
-            <Text style={styles.errorText}>{t("songs.songDetailsNotFound")}</Text>
+            <Text style={[styles.errorText, { color: colors.error }]}>{t("songs.songDetailsNotFound")}</Text>
           )}
         </View>
       </View>
@@ -186,17 +187,14 @@ export const SongDialog = ({ arrangementKeyId, onClose }: Props) => {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center"
   },
   dialog: {
     width: "90%",
     maxHeight: "85%",
-    backgroundColor: "white",
     borderRadius: 16,
     padding: DimensionHelper.wp(4),
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -215,7 +213,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: DimensionHelper.wp(5),
     fontWeight: "bold",
-    color: Constants.Colors.app_color,
     textAlign: "center",
     marginBottom: 10
   },
@@ -229,12 +226,10 @@ const styles = StyleSheet.create({
   detailsTable: { marginBottom: 10 },
   detailRow: {
     fontSize: DimensionHelper.wp(3.7),
-    marginBottom: 2,
-    color: Constants.Colors.Dark_Gray
+    marginBottom: 2
   },
   detailLabel: {
-    fontWeight: "bold",
-    color: Constants.Colors.app_color
+    fontWeight: "bold"
   },
   lyricsSection: {
     marginTop: 10,
@@ -243,28 +238,23 @@ const styles = StyleSheet.create({
   lyricsTitle: {
     fontWeight: "bold",
     fontSize: DimensionHelper.wp(4),
-    color: Constants.Colors.app_color,
     marginBottom: 4
   },
   lyrics: {
-    fontSize: DimensionHelper.wp(3.7),
-    color: Constants.Colors.Dark_Gray
+    fontSize: DimensionHelper.wp(3.7)
   },
   linksSection: { marginTop: 10 },
   linksTitle: {
     fontWeight: "bold",
     fontSize: DimensionHelper.wp(4),
-    color: Constants.Colors.app_color,
     marginBottom: 4
   },
   link: {
-    color: Constants.Colors.app_color,
     fontSize: DimensionHelper.wp(3.7),
     marginBottom: 2,
     textDecorationLine: "underline"
   },
   errorText: {
-    color: "red",
     textAlign: "center",
     marginTop: 40
   },

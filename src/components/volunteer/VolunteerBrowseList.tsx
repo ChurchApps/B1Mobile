@@ -52,7 +52,7 @@ export function VolunteerBrowseList({ signupPlans }: Props) {
                 </View>
                 <Chip
                   style={[styles.statusChip, remaining > 0 ? { backgroundColor: colors.successLight } : { backgroundColor: colors.inputBg }]}
-                  textStyle={[styles.chipText, remaining > 0 ? styles.openChipText : { color: colors.disabled }]}
+                  textStyle={[styles.chipText, remaining > 0 ? { color: colors.success } : { color: colors.disabled }]}
                   compact
                 >
                   {remaining > 0 ? t("volunteer.spotsOpen", { count: remaining }) : t("volunteer.full")}
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600"
   },
-  openChipText: { color: "#388E3C" },
+  openChipText: {},
   progressContainer: {
     marginTop: 16,
     marginBottom: 8

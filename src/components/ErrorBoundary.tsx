@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { Constants } from "../helpers";
 import i18n from "../i18n";
 
 interface ErrorBoundaryState {
@@ -53,36 +52,38 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 }
 
+// Primary color (#0D47A1) and related values are static here because
+// ErrorBoundary is a class component and cannot use hooks.
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#fff"
+    backgroundColor: "#FFFFFF"
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: Constants.Colors.church_primary,
+    color: "#0D47A1",
     marginBottom: 16,
     textAlign: "center"
   },
   message: {
     fontSize: 16,
-    color: "#666",
+    color: "#666666",
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24
   },
   button: {
-    backgroundColor: Constants.Colors.church_primary,
+    backgroundColor: "#0D47A1",
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 8
   },
   buttonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600"
   }

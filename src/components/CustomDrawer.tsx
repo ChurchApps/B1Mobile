@@ -147,7 +147,7 @@ export function CustomDrawer(props?: any) {
         accessibilityRole="menuitem"
         accessibilityLabel={item.text}
         title={item.text}
-        left={() => (topItem ? <Image source={{ uri: item.photo }} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={isActive ? "#FFF" : tc.primary} style={styles.drawerIcon} />)}
+        left={() => (topItem ? <Image source={{ uri: item.photo }} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={isActive ? tc.white : tc.primary} style={styles.drawerIcon} />)}
         onPress={() => {
           HapticsHelper.selection();
           NavigationUtils.navigateToScreen(item, currentChurch);
@@ -164,8 +164,8 @@ export function CustomDrawer(props?: any) {
             }
           }, 100);
         }}
-        style={[styles.listItem, { backgroundColor: tc.surface, borderBottomColor: tc.border }, isActive && styles.activeMenuItem]}
-        titleStyle={[styles.listItemText, { color: tc.text }, isActive && styles.activeMenuText]}
+        style={[styles.listItem, { backgroundColor: tc.surface, borderBottomColor: tc.border }, isActive && { backgroundColor: tc.primary }]}
+        titleStyle={[styles.listItemText, { color: tc.text }, isActive && { color: tc.white, fontWeight: "600" }]}
       />
     );
   };
@@ -174,7 +174,7 @@ export function CustomDrawer(props?: any) {
     <Surface style={[styles.headerContainer, { backgroundColor: tc.surface, borderBottomColor: tc.border }]} elevation={2}>
       <View style={styles.headerContent}>
         {getUserInfo()}
-        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor={tc.isDark ? "#2D2D2D" : "#FFFFFF"} textColor={tc.primary} icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color={tc.primary} />} accessibilityRole="button">
+        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor={tc.isDark ? tc.border : tc.surface} textColor={tc.primary} icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color={tc.primary} />} accessibilityRole="button">
           {!currentChurch ? t("churchSearch.findChurch") : (currentChurch.name || t("churchSearch.selectChurch"))}
         </Button>
       </View>
@@ -191,7 +191,7 @@ export function CustomDrawer(props?: any) {
         <View style={styles.userRow}>
           <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={48} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={48} label={`${user.firstName?.[0] || "U"}${user.lastName?.[0] || "S"}`} />}</View>
           <View style={styles.userTextContainer}>
-            <Text variant="titleMedium" numberOfLines={1} style={[styles.userName, { color: tc.text }]}>
+            <Text variant="titleMedium" numberOfLines={1} style={[styles.userName, { color: tc.text, fontSize: 18 }]}>
               {`${user.firstName} ${user.lastName}`}
             </Text>
             <TouchableRipple
@@ -240,7 +240,7 @@ export function CustomDrawer(props?: any) {
         <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color={tc.primary} />} loading={isLoggingOut} disabled={isLoggingOut} accessibilityLabel={user ? "Log out" : "Log in"} accessibilityRole="button">
           {isLoggingOut ? t("drawer.signingOut") : user ? t("drawer.logout") : t("drawer.login")}
         </Button>
-        <Text variant="bodySmall" style={styles.versionText}>
+        <Text variant="bodySmall" style={[styles.versionText, { color: tc.disabled }]}>
           Version {pkg.version}
         </Text>
       </Surface>
@@ -270,13 +270,10 @@ export function CustomDrawer(props?: any) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#FFF"
+    flex: 1
   },
   headerContainer: {
-    backgroundColor: "#FFFFFF", // Clean white background
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
+    borderBottomWidth: 1
   },
   headerContent: { padding: 16 },
   userInfoSection: { marginBottom: 16 },
@@ -292,16 +289,14 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: "600",
-    fontSize: 18, // H3 from style guide
+    fontSize: 18,
     lineHeight: 24,
-    marginBottom: 4,
-    color: "#3c3c3c" // Dark gray from style guide
+    marginBottom: 4
   },
   profileButton: {
     paddingVertical: 6,
     paddingHorizontal: 8,
-    borderRadius: 4,
-    backgroundColor: "#F6F6F8"
+    borderRadius: 4
   },
   profileButtonContent: {
     flexDirection: "row",
@@ -310,8 +305,7 @@ const styles = StyleSheet.create({
   },
   profileButtonText: {
     fontSize: 14,
-    fontWeight: "500",
-    color: "#0D47A1"
+    fontWeight: "500"
   },
   churchButton: {
     borderRadius: 8,
@@ -321,16 +315,13 @@ const styles = StyleSheet.create({
     shadowRadius: 2
   },
   menuContainer: {
-    backgroundColor: "#FFFFFF",
     marginTop: 8
   },
   listItem: {
-    minHeight: 48, // Style guide menu item height
+    minHeight: 48,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
+    borderBottomWidth: 1
   },
   tabIcon: {
     width: 24,
@@ -340,38 +331,33 @@ const styles = StyleSheet.create({
   scrollContainer: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 16 // Reduced padding following 8px grid
+    paddingBottom: 16
   },
   footerContainer: {
     padding: 16,
-    marginTop: "auto", // Push to bottom
-    backgroundColor: "#FFFFFF",
-    borderTopWidth: 1,
-    borderTopColor: "#F0F0F0"
+    marginTop: "auto",
+    borderTopWidth: 1
   },
   themeToggleButton: { marginBottom: 8 },
   logoutButton: { marginBottom: 8 },
   versionText: {
-    textAlign: "center",
-    color: "#9E9E9E" // Medium gray from style guide
+    textAlign: "center"
   },
   drawerIcon: {
     marginLeft: 0,
-    marginRight: 16, // 16px right margin from style guide
+    marginRight: 16,
     alignSelf: "center"
   },
   listItemText: {
-    fontSize: 16, // Body text from style guide
-    fontWeight: "500",
-    color: "#3c3c3c" // Dark gray from style guide
+    fontSize: 16,
+    fontWeight: "500"
   },
   separator: {
     marginVertical: 8,
     height: 1
   },
-  activeMenuItem: { backgroundColor: "#0D47A1" },
+  activeMenuItem: {},
   activeMenuText: {
-    color: "#fff",
     fontWeight: "600"
   }
 });

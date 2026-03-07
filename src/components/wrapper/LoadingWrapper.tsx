@@ -119,17 +119,14 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   loaderContainer: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(248, 249, 250, 0.8)",
     justifyContent: "center",
     alignItems: "center",
     zIndex: 999
   },
   loaderCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     padding: 24,
     elevation: 4,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,

@@ -1,8 +1,8 @@
-import { Constants } from "@/helpers/Constants";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useThemeColors } from "../theme";
 
 interface Props {
   isChecked: boolean;
@@ -11,14 +11,15 @@ interface Props {
 }
 
 const CheckBox = (props: Props) => {
+  const colors = useThemeColors();
   const iconName = props.isChecked ? "checkbox-marked" : "checkbox-blank-outline";
 
   return (
     <View style={styles.container}>
       <Pressable onPress={props.onPress}>
-        <MaterialCommunityIcons name={iconName} size={DimensionHelper.wp(8)} color={Constants.Colors.app_color} />
+        <MaterialCommunityIcons name={iconName} size={DimensionHelper.wp(8)} color={colors.primary} />
       </Pressable>
-      <Text style={styles.title}>{props.title}</Text>
+      <Text style={[styles.title, { color: colors.text }]}>{props.title}</Text>
     </View>
   );
 };
@@ -36,8 +37,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    color: "#000",
     marginLeft: 5
-    // fontWeight: "600",
   }
 });

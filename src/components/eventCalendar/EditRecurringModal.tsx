@@ -5,6 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { RadioButtonGroup } from "../RadioButton";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../../src/theme";
 
 const values = ["this", "future", "all"];
 
@@ -16,6 +17,7 @@ interface Props {
 
 export default function EditRecurringModal(props: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [selectedOption, setSelectedOption] = useState(values[0]);
   const [editType, setEditType] = useState(values[0]);
 
@@ -24,12 +26,12 @@ export default function EditRecurringModal(props: Props) {
   return (
     <View>
       <View style={styles.labelContainer}>
-        <Text style={styles.labelText}>{props.action === "delete" ? t("events.deleteRecurringEvents") : t("events.editRecurringEvents")}</Text>
+        <Text style={[styles.labelText, { color: colors.text }]}>{props.action === "delete" ? t("events.deleteRecurringEvents") : t("events.editRecurringEvents")}</Text>
         <TouchableOpacity
           onPress={() => {
             if (props.setModal) props.setModal(false);
           }}>
-          <MaterialIcons name={"close"} style={globalStyles.closeIcon} size={DimensionHelper.wp(6)} />
+          <MaterialIcons name={"close"} style={[globalStyles.closeIcon, { color: colors.textMuted }]} size={DimensionHelper.wp(6)} />
         </TouchableOpacity>
       </View>
       <RadioButtonGroup
@@ -47,7 +49,7 @@ export default function EditRecurringModal(props: Props) {
           onPress={() => {
             if (props.onDone) props.onDone(editType);
           }}>
-          <Text style={styles.buttonsText}>{t("common.save").toUpperCase()}</Text>
+          <Text style={[styles.buttonsText, { color: colors.primary }]}>{t("common.save").toUpperCase()}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -68,7 +70,6 @@ const styles = StyleSheet.create({
     alignSelf: "center"
   },
   buttonsText: {
-    color: Constants.Colors.app_color,
     fontSize: DimensionHelper.wp(3.8),
     fontFamily: Constants.Fonts.RobotoMedium
   },

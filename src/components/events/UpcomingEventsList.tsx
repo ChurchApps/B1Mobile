@@ -63,7 +63,7 @@ export const UpcomingEventsList: React.FC = () => {
                 </Text>
               ) : null}
             </View>
-            <Button mode="contained" compact onPress={() => handleRegister(event)} style={styles.registerButton}>
+            <Button mode="contained" compact onPress={() => handleRegister(event)} style={[styles.registerButton, { backgroundColor: tc.success }]}>
               {t("events.register")}
             </Button>
           </View>
@@ -112,6 +112,5 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   registerButton: {
-    backgroundColor: "#70DC87"
   }
 });

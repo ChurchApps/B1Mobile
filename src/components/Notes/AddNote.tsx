@@ -3,10 +3,11 @@ import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useEffect, useState } from "react";
 import { Keyboard, Text, TextInput, TouchableOpacity, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { ApiHelper, Constants, globalStyles } from "../../../src/helpers";
+import { ApiHelper, globalStyles } from "../../../src/helpers";
 import { ApiErrorHandler } from "../../../src/helpers/ApiErrorHandler";
 import { useTranslation } from "react-i18next";
 import { HapticsHelper } from "../../helpers/HapticsHelper";
+import { useThemeColors } from "../../../src/theme";
 
 type Props = {
   messageId?: any;
@@ -18,6 +19,7 @@ type Props = {
 
 export function AddNote({ ...props }: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [message, setMessage] = useState<MessageInterface | null>();
   const [errors, setErrors] = React.useState<string[]>([]);
   useEffect(() => {
@@ -91,13 +93,13 @@ export function AddNote({ ...props }: Props) {
         <TextInput
           accessibilityLabel="Message text"
           onChangeText={text => handleChange(text)}
-          placeholderTextColor={"gray"}
+          placeholderTextColor={colors.textMuted}
           style={[
             {
               ...globalStyles.fundInput,
               fontSize: DimensionHelper.hp(1.6),
               borderBottomWidth: 1,
-              borderColor: "lightgray",
+              borderColor: colors.inputBorder,
               marginLeft: props.type === "new" ? 8 : 50,
               width: props.type === "new" ? DimensionHelper.wp(80) : props.type == "reply" && props.messageId ? DimensionHelper.wp(60) : DimensionHelper.wp(65),
               paddingTop: DimensionHelper.hp(1.8)
@@ -119,11 +121,11 @@ export function AddNote({ ...props }: Props) {
             justifyContent: props.messageId ? "space-between" : "center"
           }}>
           <TouchableOpacity onPress={() => handleSave()} accessibilityLabel="Send message" accessibilityRole="button">
-            <MaterialIcons name={"send"} color={Constants.Colors.app_color} size={DimensionHelper.wp(5)} />
+            <MaterialIcons name={"send"} color={colors.primary} size={DimensionHelper.wp(5)} />
           </TouchableOpacity>
           {props.messageId && (
             <TouchableOpacity onPress={() => deleteNote()} accessibilityLabel="Delete message" accessibilityRole="button">
-              <MaterialIcons name={"delete"} color={Constants.Colors.app_color} size={DimensionHelper.wp(6.2)} />
+              <MaterialIcons name={"delete"} color={colors.primary} size={DimensionHelper.wp(6.2)} />
             </TouchableOpacity>
           )}
         </View>
@@ -131,7 +133,7 @@ export function AddNote({ ...props }: Props) {
       {errors && errors.length > 0 && (
         <View style={{ marginLeft: DimensionHelper.wp(15) }}>
           {errors.map((error: string) => (
-            <Text key={`error-${error.toLowerCase().replace(/\s+/g, "-")}`} style={{ color: Constants.Colors.button_red }}>
+            <Text key={`error-${error.toLowerCase().replace(/\s+/g, "-")}`} style={{ color: colors.error }}>
               {error}
             </Text>
           ))}

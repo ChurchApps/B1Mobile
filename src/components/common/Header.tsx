@@ -40,20 +40,20 @@ export const Header: React.FC<HeaderProps> = ({
 
   const getBackgroundColor = () => {
     switch (variant) {
-      case "blue": return Constants.Colors.app_color;
+      case "blue": return tc.primary;
       case "white": return tc.surface;
       case "simple": return tc.surface;
-      case "transparent": return "transparent";
-      default: return Constants.Colors.app_color;
+      case "transparent": return tc.transparent;
+      default: return tc.primary;
     }
   };
 
   const getTextColor = () => {
-    return variant === "blue" || variant === "transparent" ? "#ffffff" : tc.text;
+    return variant === "blue" || variant === "transparent" ? tc.white : tc.text;
   };
 
   const getIconColor = () => {
-    return variant === "blue" || variant === "transparent" ? "#ffffff" : tc.text;
+    return variant === "blue" || variant === "transparent" ? tc.white : tc.text;
   };
 
   const handleBackPress = () => {

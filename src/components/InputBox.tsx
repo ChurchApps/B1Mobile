@@ -1,8 +1,9 @@
-import { Constants, globalStyles } from "../../src/helpers";
+import { globalStyles } from "../../src/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { useThemeColors } from "../theme";
 
 interface Props {
   title: string;
@@ -16,13 +17,14 @@ interface Props {
 
 export function InputBox({ title, headerIcon, children, cancelFunction, deleteFunction, saveFunction, isSubmitting = false }: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const buttons: React.ReactElement[] = [];
 
   const widthClass = deleteFunction ? DimensionHelper.wp(33.33) : DimensionHelper.wp(50);
   if (cancelFunction) {
     buttons.push(
       <TouchableOpacity
-        style={{ ...globalStyles.actionButtons, backgroundColor: Constants.Colors.button_yellow, width: widthClass }}
+        style={{ ...globalStyles.actionButtons, backgroundColor: colors.warning, width: widthClass }}
         onPress={() => {
           cancelFunction();
         }}
@@ -35,7 +37,7 @@ export function InputBox({ title, headerIcon, children, cancelFunction, deleteFu
   if (deleteFunction) {
     buttons.push(
       <TouchableOpacity
-        style={{ ...globalStyles.actionButtons, backgroundColor: Constants.Colors.button_red, width: widthClass }}
+        style={{ ...globalStyles.actionButtons, backgroundColor: colors.error, width: widthClass }}
         onPress={() => {
           deleteFunction();
         }}
@@ -46,7 +48,7 @@ export function InputBox({ title, headerIcon, children, cancelFunction, deleteFu
   }
   if (saveFunction) {
     buttons.push(
-      <TouchableOpacity style={{ ...globalStyles.actionButtons, backgroundColor: Constants.Colors.button_dark_green, width: widthClass }} onPress={() => saveFunction()} disabled={isSubmitting}>
+      <TouchableOpacity style={{ ...globalStyles.actionButtons, backgroundColor: colors.success, width: widthClass }} onPress={() => saveFunction()} disabled={isSubmitting}>
         {isSubmitting ? <ActivityIndicator size="small" color="gray" animating={isSubmitting} /> : <Text style={globalStyles.previewBtnText}>{t("common.save")}</Text>}
       </TouchableOpacity>
     );

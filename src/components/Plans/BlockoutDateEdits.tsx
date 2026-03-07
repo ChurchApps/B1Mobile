@@ -7,10 +7,11 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { ModalDatePicker } from "react-native-material-date-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { BlockoutDateInterface, Constants, globalStyles } from "../../../src/helpers";
+import { BlockoutDateInterface, globalStyles } from "../../../src/helpers";
 import { ApiErrorHandler } from "../../../src/helpers/ApiErrorHandler";
 import { CustomModal } from "../modals/CustomModal";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../../src/theme";
 
 interface Props {
   blockoutDate: any;
@@ -21,6 +22,7 @@ interface Props {
 
 export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: Props) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [BlockoutDate, setBlockoutDate] = useState<BlockoutDateInterface>(blockoutDate);
   const blockOutEndDate = BlockoutDate.endDate;
   const blockOutStartDate = BlockoutDate.startDate;
@@ -66,8 +68,8 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
         <View style={{ paddingHorizontal: DimensionHelper.wp(1) }}>
           <View style={[globalStyles.donationPreviewView, { borderBottomWidth: 0 }]}>
             <View style={globalStyles.PlanIconTitleView}>
-              <MaterialCommunityIcons name="block-helper" style={{ color: Constants.Colors.app_color }} size={DimensionHelper.wp(5.5)} />
-              <Text style={globalStyles.PlanTitleTextStyle}>{t("plans.blockoutDates")}</Text>
+              <MaterialCommunityIcons name="block-helper" style={{ color: colors.primary }} size={DimensionHelper.wp(5.5)} />
+              <Text style={[globalStyles.PlanTitleTextStyle, { color: colors.primary }]}>{t("plans.blockoutDates")}</Text>
             </View>
           </View>
 
@@ -108,21 +110,21 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
               onPress={() => {
                 onClose();
               }}>
-              <Text style={[globalStyles.ButtonTextStyle, { color: Constants.Colors.button_red }]}>{t("common.cancel").toUpperCase()}</Text>
+              <Text style={[globalStyles.ButtonTextStyle, { color: colors.error }]}>{t("common.cancel").toUpperCase()}</Text>
             </TouchableOpacity>
             {Object.keys(blockoutDate).length > 0 ? (
-              <TouchableOpacity onPress={() => onPressDeleteButton(blockoutDate.id)} style={globalStyles.DeleteButtonStyle}>
-                <Text style={[globalStyles.ButtonTextStyle, { color: Constants.Colors.button_red }]}>{t("common.delete").toUpperCase()}</Text>
+              <TouchableOpacity onPress={() => onPressDeleteButton(blockoutDate.id)} style={[globalStyles.DeleteButtonStyle, { borderColor: colors.error }]}>
+                <Text style={[globalStyles.ButtonTextStyle, { color: colors.error }]}>{t("common.delete").toUpperCase()}</Text>
               </TouchableOpacity>
             ) : null}
-            <TouchableOpacity onPress={() => onPressSaveButton()} style={globalStyles.SaveButtonStyle}>
-              <Text style={[globalStyles.ButtonTextStyle, { color: Constants.Colors.white_color }]}>{t("common.save").toUpperCase()}</Text>
+            <TouchableOpacity onPress={() => onPressSaveButton()} style={[globalStyles.SaveButtonStyle, { backgroundColor: colors.primary }]}>
+              <Text style={[globalStyles.ButtonTextStyle, { color: colors.white }]}>{t("common.save").toUpperCase()}</Text>
             </TouchableOpacity>
           </View>
           {errors.length > 0 && (
             <View>
               {errors.map((error: string) => (
-                <Text key={`error-${error.toLowerCase().replace(/\s+/g, "-")}`} style={{ color: Constants.Colors.button_red }}>
+                <Text key={`error-${error.toLowerCase().replace(/\s+/g, "-")}`} style={{ color: colors.error }}>
                   {error}
                 </Text>
               ))}
