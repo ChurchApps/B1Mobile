@@ -209,11 +209,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   const actions: ModalAction[] = [];
 
   if (cancelText) {
-    actions.push({
-      text: cancelText,
-      onPress: onClose,
-      variant: "secondary"
-    });
+    actions.push({ text: cancelText, onPress: onClose, variant: "secondary" });
   }
 
   actions.push({

@@ -61,24 +61,9 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
     const endTime = new Date(tomorrow);
     endTime.setHours(15, 0, 0, 0); // 3:00 PM
 
-    const newEvent = {
-      start: startTime,
-      end: endTime,
-      allDay: false,
-      groupId: groupId,
-      visibility: "public",
-      title: "",
-      description: "",
-      recurrenceRule: ""
-    };
+    const newEvent = { start: startTime, end: endTime, allDay: false, groupId: groupId, visibility: "public", title: "", description: "", recurrenceRule: "" };
 
-    router.navigate({
-      pathname: "/createEventRoot",
-      params: {
-        event: JSON.stringify(newEvent),
-        groupId: groupId
-      }
-    });
+    router.navigate({ pathname: "/createEventRoot", params: { event: JSON.stringify(newEvent), groupId: groupId } });
   };
 
   return (
@@ -143,9 +128,7 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
 
 const styles = StyleSheet.create({
   calendarContainer: { minHeight: 350 },
-  addEventButton: {
-    marginBottom: 16
-  },
+  addEventButton: { marginBottom: 16 },
   subscribeButton: { marginBottom: 16 },
   loadingOverlay: {
     position: "absolute",

@@ -148,9 +148,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     marginBottom: 2
   },
-  memberSubtitle: {
-    fontSize: 12
-  },
+  memberSubtitle: { fontSize: 12 },
   actions: {
     justifyContent: "center",
     alignItems: "center"

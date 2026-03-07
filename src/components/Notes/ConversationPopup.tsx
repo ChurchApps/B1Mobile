@@ -55,14 +55,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
   };
 
   const createConversation = async () => {
-    const conv: any = {
-      groupId,
-      allowAnonymousPosts: false,
-      contentType: "group",
-      contentId: groupId,
-      title: user?.firstName + " " + user?.lastName + " Conversation",
-      visibility: "hidden"
-    };
+    const conv: any = { groupId, allowAnonymousPosts: false, contentType: "group", contentId: groupId, title: user?.firstName + " " + user?.lastName + " Conversation", visibility: "hidden" };
     const result: ConversationInterface[] = await ApiHelper.post("/conversations", [conv], "MessagingApi");
 
     if (!result || result.length === 0) {
@@ -140,9 +133,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -213,9 +204,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingTop: 8
   },
-  inputOutline: {
-    borderWidth: 1
-  },
+  inputOutline: { borderWidth: 1 },
   sendIcon: { marginRight: 4 },
   emptyState: {
     flex: 1,
@@ -224,9 +213,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingVertical: 48
   },
-  emptyIcon: {
-    marginBottom: 16
-  },
+  emptyIcon: { marginBottom: 16 },
   emptyTitle: {
     fontWeight: "600",
     marginBottom: 8,

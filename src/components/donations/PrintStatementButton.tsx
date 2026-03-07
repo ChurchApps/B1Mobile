@@ -30,14 +30,7 @@ export function PrintStatementButton() {
       const donations = allDonations.filter(d =>
         DateHelper.toDate(d.donationDate).getFullYear() === year);
 
-      const html = generateStatementHtml({
-        year,
-        person: currentUserChurch?.person as any,
-        church: currentUserChurch?.church,
-        funds,
-        fundDonations,
-        donations
-      });
+      const html = generateStatementHtml({ year, person: currentUserChurch?.person as any, church: currentUserChurch?.church, funds, fundDonations, donations });
 
       await Print.printAsync({ html });
     } catch (err) {
@@ -105,9 +98,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   segmented: { marginBottom: 12 },
-  button: {
-    borderRadius: 8
-  },
+  button: { borderRadius: 8 },
   buttonLabel: {
     fontSize: 14,
     fontWeight: "600"

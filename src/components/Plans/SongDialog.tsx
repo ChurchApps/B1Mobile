@@ -228,9 +228,7 @@ const styles = StyleSheet.create({
     fontSize: DimensionHelper.wp(3.7),
     marginBottom: 2
   },
-  detailLabel: {
-    fontWeight: "bold"
-  },
+  detailLabel: { fontWeight: "bold" },
   lyricsSection: {
     marginTop: 10,
     marginBottom: 10
@@ -240,9 +238,7 @@ const styles = StyleSheet.create({
     fontSize: DimensionHelper.wp(4),
     marginBottom: 4
   },
-  lyrics: {
-    fontSize: DimensionHelper.wp(3.7)
-  },
+  lyrics: { fontSize: DimensionHelper.wp(3.7) },
   linksSection: { marginTop: 10 },
   linksTitle: {
     fontWeight: "bold",

@@ -271,32 +271,18 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
     // Create user and person first
     await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
 
-    const personData = {
-      churchId: churchId,
-      firstName,
-      lastName,
-      email
-    };
+    const personData = { churchId: churchId, firstName, lastName, email };
     const personResult = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
 
     // Create payment method
-    const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType: "Card",
-      ...cardDetails
-    });
+    const stripePaymentMethod = await createPaymentMethod({ paymentMethodType: "Card", ...cardDetails });
 
     if (stripePaymentMethod.error) {
       throw new Error(stripePaymentMethod.error.message);
     }
 
     // Call addcard to get customerId (like AppHelper does)
-    const pm = {
-      id: stripePaymentMethod.paymentMethod.id,
-      personId: personResult.id,
-      email: email,
-      name: `${firstName} ${lastName}`,
-      churchId: churchId
-    };
+    const pm = { id: stripePaymentMethod.paymentMethod.id, personId: personResult.id, email: email, name: `${firstName} ${lastName}`, churchId: churchId };
 
     const result = await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi");
 
@@ -340,12 +326,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       // Create user and person first
       await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
 
-      const personData = {
-        churchId: churchId,
-        firstName,
-        lastName,
-        email
-      };
+      const personData = { churchId: churchId, firstName, lastName, email };
       const personResult = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
 
       // Get ACH setup intent from anonymous endpoint
@@ -431,11 +412,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
 
     if (result?.status === "succeeded" || result?.status === "pending" || result?.status === "active") {
       // Store completion data
-      setCompletionData({
-        amount: CurrencyHelper.formatCurrency(calculateTotal()),
-        isRecurring: isRecurring,
-        interval: selectedInterval
-      });
+      setCompletionData({ amount: CurrencyHelper.formatCurrency(calculateTotal()), isRecurring: isRecurring, interval: selectedInterval });
 
       // Reset form
       setAmount("");
@@ -725,9 +702,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 16
   },
-  amountInput: {
-    width: "100%"
-  },
+  amountInput: { width: "100%" },
   amountInputText: {
     fontSize: 32,
     fontWeight: "700",
@@ -751,9 +726,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 16
   },
-  guestInput: {
-    marginBottom: 12
-  },
+  guestInput: { marginBottom: 12 },
   nameRow: {
     flexDirection: "row",
     gap: 12
@@ -780,9 +753,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1
   },
-  selectorText: {
-    fontWeight: "500"
-  },
+  selectorText: { fontWeight: "500" },
 
   // Switch Rows
   switchRow: {
@@ -798,9 +769,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 4
   },
-  switchSubtitle: {
-    fontSize: 14
-  },
+  switchSubtitle: { fontSize: 14 },
 
   // Interval Section
   intervalSection: {
@@ -826,9 +795,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 16
   },
-  totalLabel: {
-    fontWeight: "800"
-  },
+  totalLabel: { fontWeight: "800" },
 
   // Give Button
   giveButton: {
@@ -850,9 +817,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1
   },
-  dateTimeText: {
-    fontSize: 14
-  },
+  dateTimeText: { fontSize: 14 },
 
   // Payment Type Selector for Guests
   paymentTypeLabel: {
@@ -873,9 +838,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 8
   },
-  bankConnectionSubtext: {
-    textAlign: "center"
-  },
+  bankConnectionSubtext: { textAlign: "center" },
   bankConnectingRow: {
     flexDirection: "row",
     alignItems: "center",

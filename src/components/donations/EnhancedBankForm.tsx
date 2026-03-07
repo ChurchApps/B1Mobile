@@ -164,13 +164,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
         return;
       }
 
-      const paymentMethod: PaymentMethodInterface = {
-        id: tokenResult.token.id,
-        customerId,
-        personId: person?.id || "",
-        email: person?.contactInfo?.email || "",
-        name: person?.name?.display || ""
-      };
+      const paymentMethod: PaymentMethodInterface = { id: tokenResult.token.id, customerId, personId: person?.id || "", email: person?.contactInfo?.email || "", name: person?.name?.display || "" };
 
       const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi");
       if (result?.raw?.message) {
@@ -194,11 +188,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
       return;
     }
 
-    const verifyPayload: StripeBankAccountVerifyInterface = {
-      paymentMethodId: bank.id,
-      customerId,
-      amountData: { amounts: [firstDeposit, secondDeposit] }
-    };
+    const verifyPayload: StripeBankAccountVerifyInterface = { paymentMethodId: bank.id, customerId, amountData: { amounts: [firstDeposit, secondDeposit] } };
 
     try {
       const response = await ApiHelper.post("/paymentmethods/verifyBank", verifyPayload, "GivingApi");
@@ -367,9 +357,7 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
+  container: { flex: 1 },
 
   // Header
   header: {
@@ -443,9 +431,7 @@ const styles = StyleSheet.create({
   },
 
   // Form Elements
-  input: {
-    marginBottom: 16
-  },
+  input: { marginBottom: 16 },
   fieldLabel: {
     fontWeight: "600",
     marginBottom: 8,
@@ -463,9 +449,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 16
   },
-  selectorText: {
-    fontWeight: "500"
-  },
+  selectorText: { fontWeight: "500" },
 
   // Deposit Fields
   depositRow: {
@@ -520,9 +504,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 8
   },
-  securityText: {
-    lineHeight: 20
-  },
+  securityText: { lineHeight: 20 },
 
   // Banner
   infoBanner: {
@@ -530,9 +512,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: "rgba(21, 101, 192, 0.05)"
   },
-  bannerText: {
-    lineHeight: 20
-  },
+  bannerText: { lineHeight: 20 },
 
   // Action Buttons
   actionButtons: {
@@ -541,19 +521,13 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     gap: 12
   },
-  cancelButton: {
-    flex: 1
-  },
-  cancelButtonText: {
-    fontWeight: "600"
-  },
+  cancelButton: { flex: 1 },
+  cancelButtonText: { fontWeight: "600" },
   saveButton: {
     flex: 2,
     elevation: 2
   },
-  saveButtonText: {
-    fontWeight: "700"
-  },
+  saveButtonText: { fontWeight: "700" },
 
   // Delete Button
   divider: { marginHorizontal: 16 },
@@ -561,7 +535,5 @@ const styles = StyleSheet.create({
     margin: 16,
     marginTop: 8
   },
-  deleteButtonText: {
-    fontWeight: "600"
-  }
+  deleteButtonText: { fontWeight: "600" }
 });

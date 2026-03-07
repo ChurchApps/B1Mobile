@@ -4,11 +4,7 @@ import { ApiHelper } from "@churchapps/helpers";
 import { HybridCachePersister } from "./HybridCachePersister";
 
 // Initialize hybrid cache persister for optimized storage
-const hybridPersister = new HybridCachePersister({
-  useSQL: true,
-  maxAsyncStorageSize: 2048, // 2MB limit for AsyncStorage
-  sqliteThreshold: 50 // Use SQLite for entries > 50KB
-});
+const hybridPersister = new HybridCachePersister({ useSQL: true, maxAsyncStorageSize: 2048, sqliteThreshold: 50 });
 
 // Legacy constants - keeping for backward compatibility
 const CACHE_KEY = "REACT_QUERY_CACHE";

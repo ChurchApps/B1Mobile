@@ -148,9 +148,7 @@ const styles = StyleSheet.create({
     marginBottom: 24
   },
   avatarContainer: { position: "relative" },
-  avatar: {
-    borderWidth: 3
-  },
+  avatar: { borderWidth: 3 },
   loadingContainer: {
     width: 120,
     height: 120,
@@ -169,7 +167,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 3
   },
-  hint: {
-    marginTop: 8
-  }
+  hint: { marginTop: 8 }
 });

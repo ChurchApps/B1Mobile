@@ -74,10 +74,7 @@ const MyGroups = () => {
   const mergedTimelineData = useMemo(() => {
     if (timelineData?.posts?.length && timelineData?.groups?.length && timelineData.posts.length > 0 && timelineData.groups.length > 0) {
       return timelineData.posts.map(item1 => {
-        const value = {
-          ...item1,
-          ...ArrayHelper.getOne(timelineData.groups, "id", item1.groupId)
-        };
+        const value = { ...item1, ...ArrayHelper.getOne(timelineData.groups, "id", item1.groupId) };
         return { item: value };
       });
     }

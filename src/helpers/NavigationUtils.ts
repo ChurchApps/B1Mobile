@@ -13,24 +13,12 @@ export class NavigationUtils {
     switch (item.linkType) {
       case "stream": {
         UserHelper.addOpenScreenEvent("StreamScreen");
-        router.push({
-          pathname: "/streamRoot",
-          params: {
-            url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") + "/stream",
-            title: item.text
-          }
-        });
+        router.push({ pathname: "/streamRoot", params: { url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") + "/stream", title: item.text } });
         break;
       }
       case "lessons": {
         const jwt = uc?.jwt;
-        router.push({
-          pathname: "/lessonRoot",
-          params: {
-            url: EnvironmentHelper.LessonsRoot + "/login?jwt=" + jwt + "&returnUrl=/b1/person&churchId=" + currentChurch?.id,
-            title: item.text
-          }
-        });
+        router.push({ pathname: "/lessonRoot", params: { url: EnvironmentHelper.LessonsRoot + "/login?jwt=" + jwt + "&returnUrl=/b1/person&churchId=" + currentChurch?.id, title: item.text } });
         break;
       }
       case "bible": {
@@ -54,18 +42,12 @@ export class NavigationUtils {
       }
       case "url": {
         UserHelper.addOpenScreenEvent("WebsiteScreen");
-        router.push({
-          pathname: "/websiteUrlRoot",
-          params: { url: item.url, title: item.text }
-        });
+        router.push({ pathname: "/websiteUrlRoot", params: { url: item.url, title: item.text } });
         break;
       }
       case "page": {
         UserHelper.addOpenScreenEvent("PageScreen");
-        router.push({
-          pathname: "/pageRoot",
-          params: { url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") + item.url, title: item.text }
-        });
+        router.push({ pathname: "/pageRoot", params: { url: EnvironmentHelper.B1WebRoot.replace("{subdomain}", currentChurch?.subDomain || "") + item.url, title: item.text } });
         break;
       }
       case "directory": {

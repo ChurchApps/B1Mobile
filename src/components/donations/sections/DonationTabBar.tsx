@@ -57,7 +57,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent"
   },
-  tabText: {
-    fontWeight: "500"
-  }
+  tabText: { fontWeight: "500" }
 });

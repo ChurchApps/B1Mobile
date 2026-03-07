@@ -5,10 +5,7 @@ import { useCurrentUserChurch } from "../stores/useUserStore";
 
 export function useCheckinFlow(onDone: () => void) {
   const currentUserChurch = useCurrentUserChurch();
-  const [selectServiceLoading, setSelectServiceLoading] = useState({
-    isLoading: false,
-    campusId: ""
-  });
+  const [selectServiceLoading, setSelectServiceLoading] = useState({ isLoading: false, campusId: "" });
 
   const createGroupTree = useCallback((groups: any) => {
     let category = "";

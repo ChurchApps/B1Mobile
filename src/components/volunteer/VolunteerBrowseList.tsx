@@ -144,9 +144,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 4
   },
-  planDate: {
-    fontSize: 14
-  },
+  planDate: { fontSize: 14 },
   statusChip: {
     borderRadius: 12,
     height: 28
@@ -183,16 +181,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     height: 28
   },
-  positionChipText: {
-    fontSize: 11
-  },
+  positionChipText: { fontSize: 11 },
   buttonRow: {
     alignItems: "flex-end",
     marginTop: 16
   },
-  signupButton: {
-    borderRadius: 8
-  },
+  signupButton: { borderRadius: 8 },
   signupButtonLabel: {
     fontSize: 14,
     fontWeight: "600"

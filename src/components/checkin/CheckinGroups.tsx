@@ -123,9 +123,7 @@ export const CheckinGroups = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
+  container: { flex: 1 },
   headerSection: {
     padding: 24,
     alignItems: "center",
@@ -191,12 +189,8 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   groupsContainer: {},
-  divider: {
-    height: 1
-  },
-  groupItem: {
-    borderBottomWidth: 1
-  },
+  divider: { height: 1 },
+  groupItem: { borderBottomWidth: 1 },
   groupContent: {
     flexDirection: "row",
     alignItems: "center",
@@ -223,9 +217,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     height: 48
   },
-  skipButtonText: {
-    fontWeight: "600"
-  },
+  skipButtonText: { fontWeight: "600" },
   emptyCard: {
     borderRadius: 16,
     elevation: 2,

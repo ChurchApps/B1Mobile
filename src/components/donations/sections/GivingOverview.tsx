@@ -177,9 +177,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20
   },
-  repeatButtonText: {
-    fontWeight: "600"
-  },
+  repeatButtonText: { fontWeight: "600" },
   ctaCard: {
     borderRadius: 20,
     elevation: 3,

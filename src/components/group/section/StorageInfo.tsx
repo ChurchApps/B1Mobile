@@ -131,9 +131,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     width: "100%" // ensures textAlign works inside DataTable.Cell
   },
-  linkText: {
-    textDecorationLine: "underline"
-  },
+  linkText: { textDecorationLine: "underline" },
   navButtonIcon: { marginBottom: 4 },
   navButtonText: {
     fontWeight: "700",

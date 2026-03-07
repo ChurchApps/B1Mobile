@@ -61,60 +61,29 @@ export function useStaleWhileRevalidate<T = any>({
 // All data is considered immediately stale but cached for 30 days
 
 export function useChurchData(churchId: string) {
-  return useStaleWhileRevalidate({
-    queryKey: ["church", churchId],
-    apiEndpoint: `/churches/${churchId}`
-    // No custom stale time - use immediate staleness
-  });
+  return useStaleWhileRevalidate({ queryKey: ["church", churchId], apiEndpoint: `/churches/${churchId}` });
 }
 
 export function useChurchAppearance(churchId: string) {
-  return useStaleWhileRevalidate({
-    queryKey: ["appearance", churchId],
-    apiEndpoint: `/settings/public/${churchId}`
-    // No custom stale time - use immediate staleness
-  });
+  return useStaleWhileRevalidate({ queryKey: ["appearance", churchId], apiEndpoint: `/settings/public/${churchId}` });
 }
 
 export function useUserData() {
-  return useStaleWhileRevalidate({
-    queryKey: ["user"],
-    apiEndpoint: "/users/current"
-    // No custom stale time - use immediate staleness
-  });
+  return useStaleWhileRevalidate({ queryKey: ["user"], apiEndpoint: "/users/current" });
 }
 
 export function useGroups() {
-  return useStaleWhileRevalidate({
-    queryKey: ["groups"],
-    apiEndpoint: "/groups"
-    // No custom stale time - use immediate staleness
-  });
+  return useStaleWhileRevalidate({ queryKey: ["groups"], apiEndpoint: "/groups" });
 }
 
 export function usePlans() {
-  return useStaleWhileRevalidate({
-    queryKey: ["plans"],
-    apiEndpoint: "/plans",
-    apiType: "DoingApi"
-    // No custom stale time - use immediate staleness
-  });
+  return useStaleWhileRevalidate({ queryKey: ["plans"], apiEndpoint: "/plans", apiType: "DoingApi" });
 }
 
 export function useSermons(churchId: string) {
-  return useStaleWhileRevalidate({
-    queryKey: ["sermons", churchId],
-    apiEndpoint: `/playlists/public/${churchId}`,
-    apiType: "ContentApi"
-    // No custom stale time - use immediate staleness
-  });
+  return useStaleWhileRevalidate({ queryKey: ["sermons", churchId], apiEndpoint: `/playlists/public/${churchId}`, apiType: "ContentApi" });
 }
 
 export function useDonationFunds(churchId: string) {
-  return useStaleWhileRevalidate({
-    queryKey: ["funds", churchId],
-    apiEndpoint: `/funds/churchId/${churchId}`,
-    apiType: "GivingApi"
-    // No custom stale time - use immediate staleness
-  });
+  return useStaleWhileRevalidate({ queryKey: ["funds", churchId], apiEndpoint: `/funds/churchId/${churchId}`, apiType: "GivingApi" });
 }

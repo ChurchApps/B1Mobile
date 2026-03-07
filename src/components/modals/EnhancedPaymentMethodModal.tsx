@@ -128,9 +128,7 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 8
   },
-  headerTitle: {
-    fontWeight: "700"
-  },
+  headerTitle: { fontWeight: "700" },
   closeButton: {
     width: 32,
     height: 32,
@@ -171,9 +169,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 2
   },
-  methodSubtitle: {
-    lineHeight: 16
-  },
+  methodSubtitle: { lineHeight: 16 },
 
   // Security Notice
   securityNotice: {
@@ -184,16 +180,12 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     gap: 8
   },
-  securityText: {
-    fontWeight: "500"
-  },
+  securityText: { fontWeight: "500" },
 
   // Cancel Button
   cancelButton: {
     marginHorizontal: 24,
     marginBottom: 24
   },
-  cancelButtonText: {
-    fontWeight: "600"
-  }
+  cancelButtonText: { fontWeight: "600" }
 });

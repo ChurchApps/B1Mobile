@@ -208,64 +208,64 @@ const PlanDetails = () => {
   return (
     <SafeAreaProvider>
       <View style={[styles.container, { backgroundColor: tc.background }]}>
-          <MainHeader title={t("navigation.planDetails")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
+        <MainHeader title={t("navigation.planDetails")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigation.goBack} />
 
-          {/* Tab Navigation */}
-          <View style={[styles.tabContainer, { backgroundColor: tc.surface }]}>
-            <TouchableOpacity style={[styles.tab, selectedTab === "overview" && styles.activeTab]} onPress={() => setSelectedTab("overview")}>
-              <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "overview" && styles.activeTabText]}>{t("plans.overview")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.tab, selectedTab === "serviceOrder" && styles.activeTab]} onPress={() => setSelectedTab("serviceOrder")}>
-              <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "serviceOrder" && styles.activeTabText]}>{t("plans.serviceOrder")}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.tab, selectedTab === "teams" && styles.activeTab]} onPress={() => setSelectedTab("teams")}>
-              <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "teams" && styles.activeTabText]}>{t("plans.teams")}</Text>
-            </TouchableOpacity>
+        {/* Tab Navigation */}
+        <View style={[styles.tabContainer, { backgroundColor: tc.surface }]}>
+          <TouchableOpacity style={[styles.tab, selectedTab === "overview" && styles.activeTab]} onPress={() => setSelectedTab("overview")}>
+            <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "overview" && styles.activeTabText]}>{t("plans.overview")}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tab, selectedTab === "serviceOrder" && styles.activeTab]} onPress={() => setSelectedTab("serviceOrder")}>
+            <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "serviceOrder" && styles.activeTabText]}>{t("plans.serviceOrder")}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.tab, selectedTab === "teams" && styles.activeTab]} onPress={() => setSelectedTab("teams")}>
+            <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "teams" && styles.activeTabText]}>{t("plans.teams")}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {errorMessage ? (
+          <View style={styles.errorContainer}>
+            <MaterialIcons name="error-outline" size={48} color="#B0120C" />
+            <Text style={styles.errorText}>{errorMessage}</Text>
           </View>
-
-          {errorMessage ? (
-            <View style={styles.errorContainer}>
-              <MaterialIcons name="error-outline" size={48} color="#B0120C" />
-              <Text style={styles.errorText}>{errorMessage}</Text>
-            </View>
-          ) : (
-            <ScrollView style={[styles.scrollView, { backgroundColor: tc.background }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              {selectedTab === "overview" && renderOverviewSection()}
-              {selectedTab === "serviceOrder" && (
-                <View style={styles.contentSection}>
-                  <Card style={styles.serviceOrderCard}>
-                    <Card.Content>
-                      <View style={styles.sectionHeader}>
-                        <MaterialIcons name="format-list-numbered" size={24} color="#0D47A1" />
-                        <Text style={[styles.sectionTitle, { color: tc.text }]}>{t("plans.serviceOrder")}</Text>
-                      </View>
-                      {planLoading ? (
-                        <InlineLoader size="large" text={t("plans.loadingServiceOrder")} />
-                      ) : plan ? (
-                        <ServiceOrder plan={plan} />
-                      ) : (
-                        <Text style={styles.noDataText}>{t("plans.serviceOrderNotAvailable")}</Text>
-                      )}
+        ) : (
+          <ScrollView style={[styles.scrollView, { backgroundColor: tc.background }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            {selectedTab === "overview" && renderOverviewSection()}
+            {selectedTab === "serviceOrder" && (
+              <View style={styles.contentSection}>
+                <Card style={styles.serviceOrderCard}>
+                  <Card.Content>
+                    <View style={styles.sectionHeader}>
+                      <MaterialIcons name="format-list-numbered" size={24} color="#0D47A1" />
+                      <Text style={[styles.sectionTitle, { color: tc.text }]}>{t("plans.serviceOrder")}</Text>
+                    </View>
+                    {planLoading ? (
+                      <InlineLoader size="large" text={t("plans.loadingServiceOrder")} />
+                    ) : plan ? (
+                      <ServiceOrder plan={plan} />
+                    ) : (
+                      <Text style={styles.noDataText}>{t("plans.serviceOrderNotAvailable")}</Text>
+                    )}
+                  </Card.Content>
+                </Card>
+              </View>
+            )}
+            {selectedTab === "teams" && (
+              <View style={styles.contentSection}>
+                {assignmentsLoading || positionsLoading || peopleLoading ? (
+                  <Card style={styles.loadingCard}>
+                    <Card.Content style={styles.loadingCardContent}>
+                      <InlineLoader size="large" text={t("plans.loadingTeams")} />
                     </Card.Content>
                   </Card>
-                </View>
-              )}
-              {selectedTab === "teams" && (
-                <View style={styles.contentSection}>
-                  {assignmentsLoading || positionsLoading || peopleLoading ? (
-                    <Card style={styles.loadingCard}>
-                      <Card.Content style={styles.loadingCardContent}>
-                        <InlineLoader size="large" text={t("plans.loadingTeams")} />
-                      </Card.Content>
-                    </Card>
-                  ) : (
-                    getTeams()
-                  )}
-                </View>
-              )}
-            </ScrollView>
-          )}
-        </View>
+                ) : (
+                  getTeams()
+                )}
+              </View>
+            )}
+          </ScrollView>
+        )}
+      </View>
     </SafeAreaProvider>
   );
 };

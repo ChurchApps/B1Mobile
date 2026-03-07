@@ -5,9 +5,9 @@ import { useThemeColors } from "@/theme";
 const Bible = () => {
   const tc = useThemeColors();
   return (
-  <View style={[styles.container, { backgroundColor: tc.surface }]}>
-    <BibleReaderView appName="B1 Church" signInMessage="Sign in with YouVersion to access your highlights and bookmarks" />
-  </View>
+    <View style={[styles.container, { backgroundColor: tc.surface }]}>
+      <BibleReaderView appName="B1 Church" signInMessage="Sign in with YouVersion to access your highlights and bookmarks" />
+    </View>
   );
 };
 

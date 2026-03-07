@@ -39,14 +39,7 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
 
     const category = forGroupLeader ? "groupLeaderLink" : "groupLink";
 
-    const link: LinkInterface = {
-      category,
-      url,
-      linkType: "url",
-      text,
-      linkData: groupId,
-      icon: ""
-    };
+    const link: LinkInterface = { category, url, linkType: "url", text, linkData: groupId, icon: "" };
 
     try {
       const response = await ApiHelper.post("/links", [link], "ContentApi");

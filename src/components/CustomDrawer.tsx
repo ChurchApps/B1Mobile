@@ -271,12 +271,8 @@ export function CustomDrawer(props?: any) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  headerContainer: {
-    borderBottomWidth: 1
-  },
+  container: { flex: 1 },
+  headerContainer: { borderBottomWidth: 1 },
   headerContent: { padding: 16 },
   userInfoSection: { marginBottom: 16 },
   userRow: {
@@ -316,9 +312,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2
   },
-  menuContainer: {
-    marginTop: 8
-  },
+  menuContainer: { marginTop: 8 },
   listItem: {
     minHeight: 48,
     paddingHorizontal: 16,
@@ -342,9 +336,7 @@ const styles = StyleSheet.create({
   },
   themeToggleButton: { marginBottom: 8 },
   logoutButton: { marginBottom: 8 },
-  versionText: {
-    textAlign: "center"
-  },
+  versionText: { textAlign: "center" },
   drawerIcon: {
     marginLeft: 0,
     marginRight: 16,
@@ -359,7 +351,5 @@ const styles = StyleSheet.create({
     height: 1
   },
   activeMenuItem: {},
-  activeMenuText: {
-    fontWeight: "600"
-  }
+  activeMenuText: { fontWeight: "600" }
 });

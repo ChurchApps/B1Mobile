@@ -24,21 +24,12 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onC
 
   const handleRegister = (event: EventInterface) => {
     onClose();
-    router.navigate({
-      pathname: "/registerEventRoot",
-      params: { eventId: event.id, churchId: currentUserChurch?.church?.id || "" }
-    });
+    router.navigate({ pathname: "/registerEventRoot", params: { eventId: event.id, churchId: currentUserChurch?.church?.id || "" } });
   };
 
   const handleEditEvent = (event: EventInterface) => {
     onClose();
-    router.navigate({
-      pathname: "/createEventRoot",
-      params: {
-        event: JSON.stringify(event),
-        groupId: groupId
-      }
-    });
+    router.navigate({ pathname: "/createEventRoot", params: { event: JSON.stringify(event), groupId: groupId } });
   };
 
   return (
@@ -160,9 +151,7 @@ const styles = StyleSheet.create({
     gap: 8
   },
   editEventButton: { margin: 0 },
-  privateChip: {
-    borderWidth: 1
-  },
+  privateChip: { borderWidth: 1 },
   eventDescription: {
     marginBottom: 12,
     lineHeight: 20
@@ -177,17 +166,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 4
   },
-  eventTimeText: {
-    fontSize: 12
-  },
+  eventTimeText: { fontSize: 12 },
   eventRecurrence: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4
   },
-  eventRecurrenceText: {
-    fontSize: 12
-  },
+  eventRecurrenceText: { fontSize: 12 },
   registerButton: {
     marginTop: 12,
     alignSelf: "flex-start"

@@ -185,9 +185,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16
   },
-  section: {
-    marginBottom: 16
-  },
+  section: { marginBottom: 16 },
   sectionTitle: {
     fontWeight: "600",
     marginBottom: 16,

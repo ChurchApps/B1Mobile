@@ -38,10 +38,7 @@ export const GroupMembersTab: React.FC<GroupMembersTabProps> = ({
       householdId: member?.person?.householdId,
       contactInfo: member?.person?.contactInfo
     };
-    router.navigate({
-      pathname: "/memberDetailRoot",
-      params: { member: JSON.stringify(memberData) }
-    });
+    router.navigate({ pathname: "/memberDetailRoot", params: { member: JSON.stringify(memberData) } });
   };
 
   if (isLoading) {
@@ -120,9 +117,7 @@ const styles = StyleSheet.create({
     paddingVertical: 32,
     paddingHorizontal: 24
   },
-  emptyIcon: {
-    marginBottom: 16
-  },
+  emptyIcon: { marginBottom: 16 },
   emptyTitle: {
     fontWeight: "600",
     marginBottom: 8,

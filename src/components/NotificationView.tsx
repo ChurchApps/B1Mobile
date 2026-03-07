@@ -226,10 +226,7 @@ export function NotificationTab() {
     </View>
   );
 
-  const renderScene = SceneMap({
-    first: MessagesRoute,
-    second: NotificationRoute
-  });
+  const renderScene = SceneMap({ first: MessagesRoute, second: NotificationRoute });
 
   const renderTabBar = (props: any) => (
     <TabBar
@@ -255,12 +252,8 @@ export function NotificationTab() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  tabContainer: {
-    flex: 1
-  },
+  container: { flex: 1 },
+  tabContainer: { flex: 1 },
   tabBar: {
     elevation: 2,
     shadowOffset: { width: 0, height: 1 },
@@ -307,9 +300,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 4
   },
-  messagePreview: {
-    lineHeight: 20
-  },
+  messagePreview: { lineHeight: 20 },
   // Notification Card Styles
   notificationCard: {
     marginHorizontal: 16,
@@ -344,9 +335,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between"
   },
   timeChip: {},
-  timeText: {
-    fontSize: 12
-  },
+  timeText: { fontSize: 12 },
   // Empty State Styles
   emptyContainer: {
     flex: 1,
@@ -373,7 +362,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     borderRadius: 8
   },
-  actionButtonText: {
-    fontWeight: "600"
-  }
+  actionButtonText: { fontWeight: "600" }
 });

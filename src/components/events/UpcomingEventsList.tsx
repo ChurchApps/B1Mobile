@@ -26,10 +26,7 @@ export const UpcomingEventsList: React.FC = () => {
   if (events.length === 0) return null;
 
   const handleRegister = (event: EventInterface) => {
-    router.navigate({
-      pathname: "/registerEventRoot",
-      params: { eventId: event.id, churchId: currentUserChurch?.church?.id || "" }
-    });
+    router.navigate({ pathname: "/registerEventRoot", params: { eventId: event.id, churchId: currentUserChurch?.church?.id || "" } });
   };
 
   const formatEventTime = (event: EventInterface) => {
@@ -108,9 +105,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 2
   },
-  description: {
-    fontSize: 12
-  },
-  registerButton: {
-  }
+  description: { fontSize: 12 },
+  registerButton: {}
 });

@@ -43,11 +43,7 @@ export const AccountSettings: React.FC = () => {
       // Update local user state
       const currentUser = useUserStore.getState().user;
       if (currentUser) {
-        useUserStore.getState().setUser({
-          ...currentUser,
-          firstName,
-          lastName
-        });
+        useUserStore.getState().setUser({ ...currentUser, firstName, lastName });
       }
       Alert.alert(t("common.success"), t("profileEdit.nameUpdated"));
     },
@@ -65,10 +61,7 @@ export const AccountSettings: React.FC = () => {
       // Update local user state with new email
       const currentUser = useUserStore.getState().user;
       if (currentUser) {
-        useUserStore.getState().setUser({
-          ...currentUser,
-          email: newEmail
-        });
+        useUserStore.getState().setUser({ ...currentUser, email: newEmail });
       }
 
       // If a new JWT was returned, update it
@@ -294,9 +287,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16
   },
-  section: {
-    marginBottom: 16
-  },
+  section: { marginBottom: 16 },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -305,14 +296,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingBottom: 8
   },
-  sectionTitle: {
-    fontWeight: "600"
-  },
-  currentValue: {
-    marginBottom: 16
-  },
-  hint: {
-    marginBottom: 8
-  },
+  sectionTitle: { fontWeight: "600" },
+  currentValue: { marginBottom: 16 },
+  hint: { marginBottom: 8 },
   saveButton: { marginTop: 8 }
 });

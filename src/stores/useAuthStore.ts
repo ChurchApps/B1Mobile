@@ -45,11 +45,7 @@ export const useAuthStore = create<AuthState>()(
 
         const churches = data.userChurches.map(uc => uc.church);
 
-        set({
-          user: data.user,
-          userChurches: data.userChurches,
-          churches
-        });
+        set({ user: data.user, userChurches: data.userChurches, churches });
 
         ApiHelper.setDefaultPermissions(currentChurch?.jwt || "");
         currentChurch?.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
@@ -81,11 +77,7 @@ export const useAuthStore = create<AuthState>()(
         ApiHelper.setDefaultPermissions("");
         await SecureStorageHelper.removeSecureItem("default_jwt");
 
-        set({
-          user: null,
-          churches: [],
-          userChurches: []
-        });
+        set({ user: null, churches: [], userChurches: [] });
 
         if (currentChurch) {
           await churchStore.setAnonymousChurch(currentChurch);
@@ -109,9 +101,7 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: state => ({
-        user: state.user
-      })
+      partialize: state => ({ user: state.user })
     }
   )
 );

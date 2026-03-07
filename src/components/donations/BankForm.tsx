@@ -174,13 +174,7 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
         return;
       }
 
-      const paymentMethod: PaymentMethodInterface = {
-        id: tokenResult.token.id,
-        customerId,
-        personId: person.id,
-        email: person.contactInfo.email,
-        name: person.name.display
-      };
+      const paymentMethod: PaymentMethodInterface = { id: tokenResult.token.id, customerId, personId: person.id, email: person.contactInfo.email, name: person.name.display };
 
       const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi");
       if (result?.raw?.message) {
@@ -203,11 +197,7 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
       return;
     }
 
-    const verifyPayload: StripeBankAccountVerifyInterface = {
-      paymentMethodId: bank.id,
-      customerId,
-      amountData: { amounts: [firstDeposit, secondDeposit] }
-    };
+    const verifyPayload: StripeBankAccountVerifyInterface = { paymentMethodId: bank.id, customerId, amountData: { amounts: [firstDeposit, secondDeposit] } };
 
     const response = await ApiHelper.post("/paymentmethods/verifyBank", verifyPayload, "GivingApi");
     if (response?.raw?.message) {

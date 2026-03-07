@@ -102,12 +102,8 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8
   },
-  headerText: {
-    fontWeight: "600"
-  },
-  description: {
-    marginBottom: 16
-  },
+  headerText: { fontWeight: "600" },
+  description: { marginBottom: 16 },
   changesList: {
     maxHeight: 200,
     marginBottom: 16
@@ -130,10 +126,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12
   },
-  cancelButton: {
-    flex: 1
-  },
-  submitButton: {
-    flex: 2
-  }
+  cancelButton: { flex: 1 },
+  submitButton: { flex: 2 }
 });

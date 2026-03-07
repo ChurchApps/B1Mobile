@@ -78,12 +78,7 @@ export class TimelineHelper {
           postCount: conv.postCount ?? 0,
           messages: conv.messages ?? []
         };
-        allPosts.push({
-          postId: conv.contentId,
-          postType: conv.contentType,
-          groupId: conv.groupId,
-          conversation
-        });
+        allPosts.push({ postId: conv.contentId, postType: conv.contentType, groupId: conv.groupId, conversation });
       }
     });
   }

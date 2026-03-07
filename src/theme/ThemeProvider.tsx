@@ -10,10 +10,7 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType>({
-  theme: "light",
-  toggleTheme: () => {}
-});
+const ThemeContext = createContext<ThemeContextType>({ theme: "light", toggleTheme: () => {} });
 
 export const useThemeContext = () => useContext(ThemeContext);
 
@@ -46,10 +43,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [theme]);
 
-  const value = {
-    theme,
-    toggleTheme
-  };
+  const value = { theme, toggleTheme };
 
   return (
     <ThemeContext.Provider value={value}>

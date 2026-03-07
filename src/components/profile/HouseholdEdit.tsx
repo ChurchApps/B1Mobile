@@ -170,9 +170,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16
   },
-  section: {
-    marginBottom: 16
-  },
+  section: { marginBottom: 16 },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -181,9 +179,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingBottom: 8
   },
-  sectionTitle: {
-    fontWeight: "600"
-  },
+  sectionTitle: { fontWeight: "600" },
   emptyText: {
     fontStyle: "italic",
     textAlign: "center",
@@ -199,21 +195,15 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     flex: 1
   },
-  memberName: {
-    fontWeight: "600"
-  },
+  memberName: { fontWeight: "600" },
   memberRole: {},
-  helperText: {
-    marginBottom: 16
-  },
+  helperText: { marginBottom: 16 },
   addMemberRow: {
     flexDirection: "row",
     gap: 12,
     alignItems: "flex-start"
   },
-  nameInput: {
-    flex: 1
-  },
+  nameInput: { flex: 1 },
   addButton: { marginTop: 6 },
   addButtonContent: { paddingHorizontal: 8 },
   pendingSection: {
@@ -234,9 +224,7 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   pendingIcon: { marginRight: 8 },
-  pendingName: {
-    flex: 1
-  },
+  pendingName: { flex: 1 },
   removeButton: { margin: 0 },
   pendingNote: {
     fontStyle: "italic",

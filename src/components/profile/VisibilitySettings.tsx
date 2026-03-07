@@ -108,12 +108,7 @@ export const VisibilitySettings: React.FC = () => {
       email !== (originalPrefs?.email || "members");
 
     if (prefsChanged) {
-      promises.push(saveMutation.mutateAsync({
-        ...preferences,
-        address,
-        phoneNumber,
-        email
-      }));
+      promises.push(saveMutation.mutateAsync({ ...preferences, address, phoneNumber, email }));
     }
 
     if (optedOut !== originalOptedOut) {
@@ -280,9 +275,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16
   },
-  section: {
-    marginBottom: 16
-  },
+  section: { marginBottom: 16 },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -291,12 +284,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingBottom: 8
   },
-  sectionTitle: {
-    fontWeight: "600"
-  },
-  description: {
-    marginBottom: 20
-  },
+  sectionTitle: { fontWeight: "600" },
+  description: { marginBottom: 20 },
   switchContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -305,9 +294,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginBottom: 20
   },
-  switchLabel: {
-    flex: 1
-  },
+  switchLabel: { flex: 1 },
   dropdownContainer: { marginBottom: 20 },
   dropdownLabel: {
     marginBottom: 8,
@@ -316,9 +303,7 @@ const styles = StyleSheet.create({
   dropdown: {},
   dropdownList: {},
   dropdownText: {},
-  saveButton: {
-    marginTop: 8
-  },
+  saveButton: { marginTop: 8 },
   infoCard: {},
   infoHeader: {
     flexDirection: "row",
@@ -326,14 +311,8 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 12
   },
-  infoTitle: {
-    fontWeight: "600"
-  },
+  infoTitle: { fontWeight: "600" },
   infoItem: { marginBottom: 8 },
-  infoLabel: {
-    fontWeight: "600"
-  },
-  infoText: {
-    marginTop: 2
-  }
+  infoLabel: { fontWeight: "600" },
+  infoText: { marginTop: 2 }
 });

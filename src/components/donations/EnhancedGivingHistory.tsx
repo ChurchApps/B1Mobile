@@ -690,9 +690,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20
   },
-  summaryTitle: {
-    fontWeight: "700"
-  },
+  summaryTitle: { fontWeight: "700" },
   periodSelector: {
     flexDirection: "row",
     alignItems: "center",
@@ -710,9 +708,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     marginBottom: 4
   },
-  statLabel: {
-    fontWeight: "500"
-  },
+  statLabel: { fontWeight: "500" },
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-between"
@@ -725,9 +721,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     marginBottom: 2
   },
-  miniStatLabel: {
-    textAlign: "center"
-  },
+  miniStatLabel: { textAlign: "center" },
 
   // Section
   section: { gap: 12 },
@@ -791,16 +785,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 2
   },
-  transactionDate: {
-    marginBottom: 4
-  },
+  transactionDate: { marginBottom: 4 },
   recurringChip: {
     alignSelf: "flex-start",
     height: 24
   },
-  recurringChipText: {
-    fontSize: 10
-  },
+  recurringChipText: { fontSize: 10 },
   transactionAmount: { alignItems: "flex-end" },
   amountText: {
     fontWeight: "700",
@@ -835,9 +825,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20
   },
-  detailTitle: {
-    fontWeight: "700"
-  },
+  detailTitle: { fontWeight: "700" },
   detailAmount: {
     alignItems: "center",
     marginBottom: 24
@@ -853,9 +841,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 12
   },
-  statusText: {
-    marginLeft: 6
-  },
+  statusText: { marginLeft: 6 },
   detailBreakdown: {
     marginBottom: 24,
     paddingVertical: 16,
@@ -869,16 +855,10 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   detailLabel: {},
-  detailValue: {
-    fontWeight: "500"
-  },
+  detailValue: { fontWeight: "500" },
   detailDivider: { marginVertical: 8 },
-  detailTotalLabel: {
-    fontWeight: "700"
-  },
-  detailTotalValue: {
-    fontWeight: "700"
-  },
+  detailTotalLabel: { fontWeight: "700" },
+  detailTotalValue: { fontWeight: "700" },
   detailInfo: { gap: 8 },
 
   // Recurring Management
@@ -917,9 +897,7 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     gap: 12
   },
-  loadingText: {
-    textAlign: "center"
-  },
+  loadingText: { textAlign: "center" },
 
   // Login Prompt
   loginPromptCard: {
@@ -977,9 +955,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginTop: 4
   },
-  metaText: {
-    fontSize: 14
-  },
+  metaText: { fontSize: 14 },
   emptyText: {},
   dropdownStyle: {
     overflow: "hidden",

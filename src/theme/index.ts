@@ -144,6 +144,6 @@ export const useThemeColors = () => {
     // Common explicit colors
     white: "#FFFFFF",
     black: "#000000",
-    transparent: "transparent",
+    transparent: "transparent"
   };
 };

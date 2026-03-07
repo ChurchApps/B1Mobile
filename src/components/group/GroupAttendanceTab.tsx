@@ -296,11 +296,7 @@ export const GroupAttendanceTab: React.FC<GroupAttendanceTabProps> = ({
       });
 
       for (const personId of toAdd) {
-        const visit = {
-          checkinTime: new Date(),
-          personId: personId,
-          visitSessions: [{ sessionId: sessionId }]
-        };
+        const visit = { checkinTime: new Date(), personId: personId, visitSessions: [{ sessionId: sessionId }] };
         await ApiHelper.post("/visitsessions/log", visit, "AttendanceApi");
       }
 
@@ -616,9 +612,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
     fontSize: 13
   },
-  divider: {
-    marginVertical: 12
-  },
+  divider: { marginVertical: 12 },
   memberList: { marginBottom: 16 },
   memberCard: {
     flexDirection: "row",
@@ -631,28 +625,20 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12
   },
-  memberName: {
-    fontWeight: "500"
-  },
-  statusText: {
-    marginTop: 1
-  },
+  memberName: { fontWeight: "500" },
+  statusText: { marginTop: 1 },
   loadingContainer: {
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 40
   },
-  loadingText: {
-    marginTop: 12
-  },
+  loadingText: { marginTop: 12 },
   emptyContainer: {
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 32
   },
-  emptyIcon: {
-    marginBottom: 12
-  },
+  emptyIcon: { marginBottom: 12 },
   emptyText: {
     textAlign: "center",
     fontWeight: "500"

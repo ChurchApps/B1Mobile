@@ -163,9 +163,7 @@ export const CheckinHousehold = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
+  container: { flex: 1 },
   headerSection: {
     padding: 24,
     alignItems: "center",
@@ -227,20 +225,14 @@ const styles = StyleSheet.create({
     gap: 6
   },
   summaryChip: {},
-  summaryChipText: {
-    fontSize: 12
-  },
-  noSelectionText: {
-    fontStyle: "italic"
-  },
+  summaryChipText: { fontSize: 12 },
+  noSelectionText: { fontStyle: "italic" },
   expandIcon: {
     justifyContent: "center",
     alignItems: "center"
   },
   serviceTimesContainer: {},
-  divider: {
-    height: 1
-  },
+  divider: { height: 1 },
   serviceTimeItem: {
     flexDirection: "row",
     alignItems: "center",

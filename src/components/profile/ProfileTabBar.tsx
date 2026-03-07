@@ -68,9 +68,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 6
   },
-  tabText: {
-    fontWeight: "500"
-  },
+  tabText: { fontWeight: "500" },
   changeIndicator: {
     width: 8,
     height: 8,

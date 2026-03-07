@@ -86,9 +86,7 @@ const styles = StyleSheet.create({
     height: 220,
     position: "relative"
   },
-  noImageHero: {
-    justifyContent: "center"
-  },
+  noImageHero: { justifyContent: "center" },
   heroImage: {
     width: "100%",
     height: "100%"

@@ -169,14 +169,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
     try {
       let conversationId = rawConversations[0]?.id;
       if (!conversationId) {
-        const conv = {
-          groupId,
-          allowAnonymousPosts: false,
-          contentType: contentType,
-          contentId: groupId,
-          title: `${groupName} ${contentType === "groupAnnouncement" ? "Announcements" : "Chat"}`,
-          visibility: "hidden"
-        };
+        const conv = { groupId, allowAnonymousPosts: false, contentType: contentType, contentId: groupId, title: `${groupName} ${contentType === "groupAnnouncement" ? "Announcements" : "Chat"}`, visibility: "hidden" };
         const result: ConversationInterface[] = await ApiHelper.post(
           "/conversations",
           [conv],
@@ -185,12 +178,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
         conversationId = result[0].id;
       }
 
-      const payload = {
-        conversationId,
-        content: optimisticMsg.content,
-        personId: optimisticMsg.personId,
-        id: editingMessage ? editingMessage.id : ""
-      };
+      const payload = { conversationId, content: optimisticMsg.content, personId: optimisticMsg.personId, id: editingMessage ? editingMessage.id : "" };
 
       const savedMsg = await ApiHelper.post("/messages", [payload], "MessagingApi");
 
@@ -246,11 +234,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
   const scrollToMessage = (messageId: string) => {
     const index = messages.findIndex(m => m.id === messageId);
     if (index !== -1 && flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        index,
-        animated: true,
-        viewPosition: 0.05
-      });
+      flatListRef.current.scrollToIndex({ index, animated: true, viewPosition: 0.05 });
     }
   };
 
@@ -471,9 +455,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 32
   },
-  emptyIcon: {
-    marginBottom: 16
-  },
+  emptyIcon: { marginBottom: 16 },
   emptyTitle: {
     fontSize: 18,
     fontWeight: "600",

@@ -91,9 +91,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "500"
   },
-  editedChipContainer: {
-    height: 20
-  },
+  editedChipContainer: { height: 20 },
   editedChip: {
     fontSize: 10,
     lineHeight: 12
@@ -120,9 +118,7 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
   replyTextActive: {},
-  replyCountChip: {
-    height: 24
-  },
+  replyCountChip: { height: 24 },
   replyCountText: {
     fontSize: 11,
     fontWeight: "600"

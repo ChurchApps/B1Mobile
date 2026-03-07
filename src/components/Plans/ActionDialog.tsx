@@ -24,12 +24,7 @@ export const ActionDialog = (props: Props) => {
   const colors = useThemeColors();
   const hasProviderData = !!(props.providerId && props.providerPath && props.providerContentPath) || !!props.downloadUrl;
 
-  const { content, loading, error } = useProviderContent({
-    providerId: hasProviderData ? props.providerId : undefined,
-    providerPath: hasProviderData ? props.providerPath : undefined,
-    providerContentPath: hasProviderData ? props.providerContentPath : undefined,
-    fallbackUrl: props.downloadUrl
-  });
+  const { content, loading, error } = useProviderContent({ providerId: hasProviderData ? props.providerId : undefined, providerPath: hasProviderData ? props.providerPath : undefined, providerContentPath: hasProviderData ? props.providerContentPath : undefined, fallbackUrl: props.downloadUrl });
 
   const renderContent = () => {
     if (hasProviderData) {

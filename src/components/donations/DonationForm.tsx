@@ -154,10 +154,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       return;
     }
 
-    const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType: "Card",
-      ...cardDetails
-    });
+    const stripePaymentMethod = await createPaymentMethod({ paymentMethodType: "Card", ...cardDetails });
 
     if (stripePaymentMethod.error) {
       Alert.alert("Failed", stripePaymentMethod.error.message);

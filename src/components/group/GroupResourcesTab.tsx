@@ -158,9 +158,7 @@ const styles = StyleSheet.create({
     paddingVertical: 32,
     paddingHorizontal: 24
   },
-  emptyIcon: {
-    marginBottom: 16
-  },
+  emptyIcon: { marginBottom: 16 },
   emptyTitle: {
     fontWeight: "600",
     marginBottom: 8,
@@ -192,7 +190,5 @@ const styles = StyleSheet.create({
     minWidth: 35,
     alignItems: "flex-end"
   },
-  percentText: {
-    fontSize: 12
-  }
+  percentText: { fontSize: 12 }
 });

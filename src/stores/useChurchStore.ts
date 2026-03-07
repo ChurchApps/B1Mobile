@@ -3,7 +3,6 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface } from "../helpers/Interfaces";
 import { ApiHelper } from "@churchapps/helpers";
-import { SecureStorageHelper } from "../helpers/SecureStorageHelper";
 import { PushNotificationHelper } from "../helpers/PushNotificationHelper";
 import { useEngagementStore } from "./useEngagementStore";
 
@@ -144,11 +143,7 @@ export const useChurchStore = create<ChurchState>()(
       },
 
       clearChurchState: () => {
-        set({
-          currentUserChurch: null,
-          churchAppearance: null,
-          links: []
-        });
+        set({ currentUserChurch: null, churchAppearance: null, links: [] });
       },
 
       initializeFromPersistence: async () => {

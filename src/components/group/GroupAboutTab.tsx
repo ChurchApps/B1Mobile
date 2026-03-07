@@ -38,9 +38,7 @@ const styles = StyleSheet.create({
     paddingVertical: 32,
     paddingHorizontal: 24
   },
-  emptyIcon: {
-    marginBottom: 16
-  },
+  emptyIcon: { marginBottom: 16 },
   emptyTitle: {
     fontWeight: "600",
     marginBottom: 8,

@@ -111,9 +111,7 @@ export const CheckinServices = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
+  container: { flex: 1 },
   headerSection: {
     padding: 24,
     alignItems: "center",
@@ -170,9 +168,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 4
   },
-  campusName: {
-    fontWeight: "500"
-  },
+  campusName: { fontWeight: "500" },
   serviceArrow: {
     justifyContent: "center",
     alignItems: "center"
@@ -204,7 +200,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 48
   },
-  loadingText: {
-    marginTop: 16
-  }
+  loadingText: { marginTop: 16 }
 });

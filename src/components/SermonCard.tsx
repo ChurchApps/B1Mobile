@@ -173,7 +173,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginBottom: 4
   },
-  sermonDate: {
-    opacity: 0.9
-  }
+  sermonDate: { opacity: 0.9 }
 });

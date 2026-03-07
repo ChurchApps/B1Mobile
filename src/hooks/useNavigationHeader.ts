@@ -13,10 +13,7 @@ export function useScreenHeader({ title, placeholder, headerRight, dependencies 
 
   useFocusEffect(
     useCallback(() => {
-      navigation.setOptions({
-        title: title || placeholder || "Screen",
-        headerRight
-      });
+      navigation.setOptions({ title: title || placeholder || "Screen", headerRight });
     }, [navigation, title, placeholder, headerRight, ...dependencies])
   );
 }
