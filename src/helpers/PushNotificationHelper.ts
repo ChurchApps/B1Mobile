@@ -261,9 +261,11 @@ export class PushNotificationHelper {
 }
 
 export const eventBus = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   emit(eventName: string, data?: any) {
     DeviceEventEmitter.emit(eventName, data);
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addListener(eventName: string, callback: (data?: any) => void) {
     return DeviceEventEmitter.addListener(eventName, callback);
   },

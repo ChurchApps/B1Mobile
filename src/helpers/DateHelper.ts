@@ -3,7 +3,7 @@ import { ErrorHelper } from "./ErrorHelper";
 
 export class DateHelper {
   //Fixes timezone issues when you just need the date.
-  static toDate(input: any) {
+  static toDate(input: Date | string) {
     const str = input.toString();
     const dateOnlyMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (dateOnlyMatch) {

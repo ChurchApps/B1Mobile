@@ -129,7 +129,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
           return;
         })
         .then(async userData => {
-          const personData = { churchId: CacheHelper.church!.id, firstName, lastName, email };
+          const personData = { churchId, firstName, lastName, email };
           const person = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
           saveCard(userData, person);
         });
@@ -141,7 +141,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         type: method?.type,
         billing_cycle_anchor: +new Date(date),
         amount: parseFloat(total.toFixed(2)),
-        church: { subDomain: CacheHelper.church?.subDomain }
+        church: { subDomain: currentUserChurch?.church?.subDomain }
       };
       saveDonation(payload, "");
     }
@@ -162,7 +162,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       Alert.alert("Failed", stripePaymentMethod.error.message);
       return;
     } else {
-      const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId: CacheHelper.church!.id };
+      const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId };
       await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi").then(result => {
         if (result?.raw?.message) {
           Alert.alert("Failed", result.raw.message);
@@ -175,12 +175,12 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             type: d.paymentMethod?.type,
             // amount: donation.amount,
             amount: parseFloat(total.toFixed(2)),
-            churchId: CacheHelper.church!.id,
+            churchId,
             funds: donation.funds,
             person: donation.person,
             billing_cycle_anchor: +new Date(date),
             interval: donation.interval,
-            church: { subDomain: CacheHelper.church?.subDomain }
+            church: { subDomain: currentUserChurch?.church?.subDomain }
           };
           saveDonation(payload, "");
         }

@@ -68,16 +68,20 @@ export class ApiErrorHandler {
     }
   }
 
-  static formatErrorMessage(error: any): string {
+  static formatErrorMessage(error: unknown): string {
     if (typeof error === "string") return error;
-    if (error?.message) return error.message;
-    if (error?.raw?.message) return error.raw.message;
-    if (error?.error) return error.error;
+    if (error && typeof error === "object") {
+      const err = error as Record<string, unknown>;
+      if (typeof err.message === "string") return err.message;
+      const raw = err.raw as Record<string, unknown> | undefined;
+      if (typeof raw?.message === "string") return raw.message;
+      if (typeof err.error === "string") return err.error;
+    }
     return "An unexpected error occurred";
   }
 
 
-  static showErrorAlert(error: any, title: string = "Error"): void {
+  static showErrorAlert(error: unknown, title: string = "Error"): void {
     Alert.alert(title, this.formatErrorMessage(error));
   }
 

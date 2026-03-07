@@ -7,7 +7,6 @@ import { CardField, CardFieldInput, createPaymentMethod, collectBankAccountForSe
 import { ApiHelper, CurrencyHelper } from "../../helpers";
 import { FundInterface, StripeDonationInterface, StripePaymentMethod } from "../../interfaces";
 import { useUser, useCurrentUserChurch } from "../../stores/useUserStore";
-import { CacheHelper } from "../../helpers";
 import { DonationComplete } from "./DonationComplete";
 import DatePicker from "react-native-date-picker";
 import dayjs from "../../helpers/dayjsConfig";
@@ -215,7 +214,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
             interval: getIntervalType(selectedInterval)
           }
           : undefined,
-        church: { subDomain: CacheHelper.church?.subDomain || "" }
+        church: { subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || "" }
       };
 
 
@@ -232,12 +231,12 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         const enhancedDonation = {
           ...donation,
           gatewayId: gateway?.id,
-          churchId: churchId || CacheHelper.church?.id,
+          churchId: churchId,
           notes: "",
           church: {
-            name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
-            subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
-            churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
+            name: churchData?.name || currentUserChurch?.church?.name,
+            subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
+            churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
           }
         };
         await makeDonation(enhancedDonation);
@@ -273,7 +272,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
     await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
 
     const personData = {
-      churchId: churchId || CacheHelper.church?.id || "",
+      churchId: churchId,
       firstName,
       lastName,
       email
@@ -296,7 +295,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       personId: personResult.id,
       email: email,
       name: `${firstName} ${lastName}`,
-      churchId: churchId || CacheHelper.church?.id || ""
+      churchId: churchId
     };
 
     const result = await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi");
@@ -314,7 +313,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       customerId: result.customerId || "",
       type: result.paymentMethod?.type || "card",
       gatewayId: gateway?.id, // Add gatewayId as required by API
-      churchId: churchId || CacheHelper.church?.id,
+      churchId: churchId,
       person: {
         id: personResult.id,
         email: email,
@@ -325,9 +324,9 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       billing_cycle_anchor: donation.billing_cycle_anchor,
       interval: donation.interval,
       church: {
-        name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
-        subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
-        churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
+        name: churchData?.name || currentUserChurch?.church?.name,
+        subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
+        churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
       }
     };
 
@@ -342,7 +341,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
 
       const personData = {
-        churchId: churchId || CacheHelper.church?.id || "",
+        churchId: churchId,
         firstName,
         lastName,
         email
@@ -354,7 +353,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       const setupResponse = await ApiHelper.postAnonymous("/paymentmethods/ach-setup-intent-anon", {
         email,
         name: `${firstName} ${lastName}`,
-        churchId: churchId || CacheHelper.church?.id || "",
+        churchId: churchId,
         gatewayId: gateway?.id
       }, "GivingApi");
 
@@ -404,7 +403,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         customerId: setupResponse.customerId,
         type: "bank",
         gatewayId: gateway?.id,
-        churchId: churchId || CacheHelper.church?.id,
+        churchId: churchId,
         person: {
           id: personResult.id,
           email: email,
@@ -413,9 +412,9 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         notes: "",
         funds: donation.funds || [],
         church: {
-          name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
-          subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
-          churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
+          name: churchData?.name || currentUserChurch?.church?.name,
+          subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
+          churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
         }
       };
 

@@ -2,12 +2,12 @@ import { Alert, Linking, Platform } from "react-native";
 import { router } from "expo-router";
 import { EnvironmentHelper } from "./EnvironmentHelper";
 import { UserHelper } from "./UserHelper";
-import { LinkInterface } from "./Interfaces";
+import { ChurchInterface, LinkInterface } from "./Interfaces";
 import { Permissions } from "@churchapps/helpers";
 import { useUserStore } from "../stores/useUserStore";
 
 export class NavigationUtils {
-  static navigateToScreen(item: LinkInterface, currentChurch?: any, from?: "home" | "drawer") {
+  static navigateToScreen(item: LinkInterface, currentChurch?: ChurchInterface, from?: "home" | "drawer") {
     const uc = useUserStore.getState().currentUserChurch;
     const isFromHome = from === "home";
 
@@ -120,7 +120,7 @@ export class NavigationUtils {
     }
   }
 
-  private static handleDonationNavigation(isFromHome: boolean, currentChurch?: any) {
+  private static handleDonationNavigation(isFromHome: boolean, currentChurch?: ChurchInterface) {
     UserHelper.addOpenScreenEvent("DonationScreen");
     const uc = useUserStore.getState().currentUserChurch;
 

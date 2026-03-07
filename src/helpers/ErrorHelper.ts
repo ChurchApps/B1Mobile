@@ -12,11 +12,11 @@ export class ErrorHelper {
     //FirebaseAnalyticsHelper.trackEvent("Error", { source, message });
   }
 
-  static onJavaError(event: any) {
+  static onJavaError(event: { source: string; message: string }) {
     ErrorHelper.logError(event.source, event.message);
   }
 
-  static onJavaEvent(event: any) {
+  static onJavaEvent(event: { eventType: string; source: string; message: string }) {
     ErrorHelper.logEvent(event.eventType, event.source, event.message);
   }
 

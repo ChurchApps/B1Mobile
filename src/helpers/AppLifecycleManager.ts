@@ -1,4 +1,4 @@
-import { AppState, AppStateStatus } from "react-native";
+import { AppState, AppStateStatus, NativeEventSubscription } from "react-native";
 import { ApiHelper } from "@churchapps/helpers";
 import { SecureStorageHelper } from "./SecureStorageHelper";
 import { UserHelper } from "./UserHelper";
@@ -6,7 +6,7 @@ import { useUserStore } from "../stores/useUserStore";
 
 
 export class AppLifecycleManager {
-  private static appStateSubscription: any = null;
+  private static appStateSubscription: NativeEventSubscription | null = null;
   private static currentAppState: AppStateStatus = AppState.currentState;
   private static isInitialized = false;
 
