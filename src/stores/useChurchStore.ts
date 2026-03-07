@@ -6,14 +6,30 @@ import { ApiHelper } from "@churchapps/helpers";
 import { PushNotificationHelper } from "../helpers/PushNotificationHelper";
 import { useEngagementStore } from "./useEngagementStore";
 
+export interface AppThemeModeColors {
+  background: string;
+  surface: string;
+  primary: string;
+  primaryContrast: string;
+  secondary: string;
+  textColor: string;
+}
+
+export interface AppThemeConfig {
+  light: AppThemeModeColors;
+  dark: AppThemeModeColors;
+}
+
 interface ChurchState {
   currentUserChurch: LoginUserChurchInterface | null;
   churchAppearance: AppearanceInterface | null;
+  appTheme: AppThemeConfig | null;
   links: any[];
   fcmToken: string;
 
   setCurrentUserChurch: (userChurch: LoginUserChurchInterface, appearance?: AppearanceInterface) => Promise<void>;
   setChurchAppearance: (appearance: AppearanceInterface) => void;
+  setAppTheme: (theme: AppThemeConfig | null) => void;
   setLinks: (links: any[]) => void;
   setFcmToken: (token: string) => void;
   selectChurch: (church: ChurchInterface) => Promise<void>;
@@ -29,6 +45,7 @@ export const useChurchStore = create<ChurchState>()(
     (set, get) => ({
       currentUserChurch: null,
       churchAppearance: null,
+      appTheme: null,
       links: [],
       fcmToken: "",
 
@@ -37,9 +54,13 @@ export const useChurchStore = create<ChurchState>()(
 
         if (appearance) {
           set({ churchAppearance: appearance });
+          extractAppTheme(appearance, set);
         } else {
           ApiHelper.getAnonymous(`/settings/public/${userChurch.church.id}`, "MembershipApi")
-            .then((fetchedAppearance: AppearanceInterface) => set({ churchAppearance: fetchedAppearance }))
+            .then((publicSettings: any) => {
+              set({ churchAppearance: publicSettings as AppearanceInterface });
+              extractAppTheme(publicSettings, set);
+            })
             .catch((error: any) => console.error("Failed to fetch church appearance:", error));
         }
 
@@ -51,6 +72,7 @@ export const useChurchStore = create<ChurchState>()(
       },
 
       setChurchAppearance: appearance => set({ churchAppearance: appearance }),
+      setAppTheme: theme => set({ appTheme: theme }),
       setLinks: links => set({ links }),
       setFcmToken: token => set({ fcmToken: token }),
 
@@ -83,7 +105,10 @@ export const useChurchStore = create<ChurchState>()(
         useEngagementStore.getState().addRecentChurch(church);
 
         ApiHelper.getAnonymous(`/settings/public/${church.id}`, "MembershipApi")
-          .then(appearance => set({ churchAppearance: appearance }))
+          .then((publicSettings: any) => {
+            set({ churchAppearance: publicSettings as AppearanceInterface });
+            extractAppTheme(publicSettings, set);
+          })
           .catch(error => console.error("Failed to fetch church appearance:", error));
 
         get().loadChurchLinks(church.id || "").catch(error => console.error("Failed to load church links:", error));
@@ -143,7 +168,7 @@ export const useChurchStore = create<ChurchState>()(
       },
 
       clearChurchState: () => {
-        set({ currentUserChurch: null, churchAppearance: null, links: [] });
+        set({ currentUserChurch: null, churchAppearance: null, appTheme: null, links: [] });
       },
 
       initializeFromPersistence: async () => {
@@ -152,12 +177,13 @@ export const useChurchStore = create<ChurchState>()(
         if (state.currentUserChurch?.church) {
           const churchId = state.currentUserChurch.church.id;
 
-          if (!state.churchAppearance) {
+          if (!state.churchAppearance || !state.appTheme) {
             try {
-              const appearance = await ApiHelper.getAnonymous(`/settings/public/${churchId}`, "MembershipApi");
-              set({ churchAppearance: appearance });
+              const publicSettings = await ApiHelper.getAnonymous(`/settings/public/${churchId}`, "MembershipApi");
+              if (!state.churchAppearance) set({ churchAppearance: publicSettings });
+              if (!state.appTheme) extractAppTheme(publicSettings, set);
             } catch (error) {
-              console.error("Failed to load church appearance:", error);
+              console.error("Failed to load church settings:", error);
             }
           }
 
@@ -187,6 +213,19 @@ export const useChurchStore = create<ChurchState>()(
     }
   )
 );
+
+function extractAppTheme(publicSettings: any, set: (state: Partial<ChurchState>) => void) {
+  try {
+    if (publicSettings?.appTheme) {
+      const theme: AppThemeConfig = typeof publicSettings.appTheme === "string"
+        ? JSON.parse(publicSettings.appTheme)
+        : publicSettings.appTheme;
+      if (theme && theme.light) set({ appTheme: theme });
+    }
+  } catch (error) {
+    console.error("Failed to parse app theme:", error);
+  }
+}
 
 async function storeSecureTokens(userChurch: LoginUserChurchInterface): Promise<void> {
   try {

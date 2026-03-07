@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useMemo } from "react";
 import { PaperProvider } from "react-native-paper";
-import { lightTheme, darkTheme } from "./index";
+import { createAppTheme } from "./index";
+import { useChurchStore } from "../stores/useChurchStore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type ThemeType = "light" | "dark";
@@ -16,6 +17,7 @@ export const useThemeContext = () => useContext(ThemeContext);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<ThemeType>("light");
+  const appTheme = useChurchStore(state => state.appTheme);
 
   // Load saved theme preference
   React.useEffect(() => {
@@ -43,11 +45,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [theme]);
 
+  // Build Paper theme dynamically based on mode + church colors
+  const paperTheme = useMemo(
+    () => createAppTheme(theme, appTheme?.[theme] || null),
+    [theme, appTheme]
+  );
+
   const value = { theme, toggleTheme };
 
   return (
     <ThemeContext.Provider value={value}>
-      <PaperProvider theme={theme === "light" ? lightTheme : darkTheme}>{children}</PaperProvider>
+      <PaperProvider theme={paperTheme}>{children}</PaperProvider>
     </ThemeContext.Provider>
   );
 };
