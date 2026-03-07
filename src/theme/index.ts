@@ -54,6 +54,8 @@ export const darkTheme = {
   colors: {
     ...MD3DarkTheme.colors,
     ...customColors,
+    primary: "#64B5F6",
+    onPrimary: "#0D47A1",
     background: "#121212",
     surface: "#1E1E1E",
     surfaceVariant: "#2D2D2D",
@@ -107,7 +109,7 @@ export const useThemeColors = () => {
     textHint: isDark ? "#777777" : "#999999",
     // Brand
     primary: theme.colors.primary,
-    primaryLight: designSystem.colors.primary[50],
+    primaryLight: isDark ? "#1a3a5c" : designSystem.colors.primary[50],
     secondary: designSystem.colors.secondary[500],
     onPrimary: theme.colors.onPrimary,
     // Status
