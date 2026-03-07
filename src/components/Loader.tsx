@@ -15,7 +15,7 @@ export function Loader({ isLoading, size = "large", color, style }: Props) {
   return (
     <View style={[{ padding: 16 }, style]}>
       <ActivityIndicator
-        style={globalStyles.indicatorStyle}
+        style={[globalStyles.indicatorStyle, { backgroundColor: colors.overlay }]}
         size={size}
         color={color ?? colors.primary}
         animating={isLoading}

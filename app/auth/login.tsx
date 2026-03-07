@@ -105,7 +105,7 @@ const Login = () => {
                     {currentChurch ? (
                       <>
                         {churchAppearance?.logoLight ? (
-                          <View style={styles.churchLogoContainer}>
+                          <View style={[styles.churchLogoContainer, { backgroundColor: tc.surface }]}>
                             <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.churchLogo} contentFit="contain" priority="high" />
                           </View>
                         ) : (

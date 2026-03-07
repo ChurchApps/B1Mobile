@@ -7,6 +7,7 @@ import { useNavigation as useReactNavigation } from "expo-router";
 import { useQuery } from "@tanstack/react-query";
 import { ApiHelper } from "@churchapps/helpers";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "@/theme";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useNavigation } from "../../src/hooks";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
@@ -15,6 +16,7 @@ import { VolunteerBrowseList } from "../../src/components/volunteer/VolunteerBro
 import { SignupPlanData } from "../../src/interfaces";
 
 const VolunteerBrowse = () => {
+  const tc = useThemeColors();
   const { t } = useTranslation();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack } = useNavigation();
@@ -31,7 +33,7 @@ const VolunteerBrowse = () => {
 
   return (
     <SafeAreaProvider>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: tc.background }]}>
         <MainHeader
           title={t("volunteer.browseOpportunities")}
           openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())}

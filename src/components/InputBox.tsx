@@ -55,7 +55,7 @@ export function InputBox({ title, headerIcon, children, cancelFunction, deleteFu
   }
 
   return (
-    <View style={globalStyles.paymentTitleContainer}>
+    <View style={[globalStyles.paymentTitleContainer, { backgroundColor: colors.surface }]}>
       <View style={{ width: DimensionHelper.wp(100) }}>
         <View style={globalStyles.paymentTitleHeaderLine} />
         <View style={globalStyles.paymentTitleView}>

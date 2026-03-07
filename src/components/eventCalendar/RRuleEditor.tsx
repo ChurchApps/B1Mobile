@@ -241,6 +241,7 @@ export default function RRuleEditor(props: Props) {
                   padding: 10,
                   borderRadius: 10,
                   borderColor: colors.inputBorder,
+                  color: colors.inputText,
                   marginTop: DimensionHelper.wp(1)
                 }
               ]}
@@ -278,7 +279,8 @@ export default function RRuleEditor(props: Props) {
             borderWidth: 1,
             padding: 10,
             borderRadius: 10,
-            borderColor: "lightgray",
+            borderColor: colors.inputBorder,
+            color: colors.inputText,
             marginTop: DimensionHelper.wp(1)
           }
         ]}

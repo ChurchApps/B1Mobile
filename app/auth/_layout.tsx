@@ -14,8 +14,8 @@ export default function AuthLayout() {
 
   // Common header style for all screens
   const commonHeaderOptions = {
-    headerStyle: { backgroundColor: "#0D47A1" },
-    headerTintColor: "#FFF",
+    headerStyle: { backgroundColor: theme.colors.primary },
+    headerTintColor: theme.colors.onPrimary,
     headerTitleAlign: "center" as const,
     headerLeft: () => (
       <TouchableOpacity onPress={navigationBackNormal} style={{ marginHorizontal: 10 }}>

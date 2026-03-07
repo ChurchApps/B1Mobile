@@ -26,7 +26,7 @@ const Note = React.memo(({ message, showEditNote }: NotesInterface) => {
 
   return (
     <>
-      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70) }]}>
+      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70), backgroundColor: colors.surface }]}>
         <Avatar size={DimensionHelper.wp(12)} photoUrl={message?.person?.photo} firstName={message?.person?.name?.first} lastName={message?.person?.name?.last} style={globalStyles.memberListIcon} />
         <View style={[globalStyles.NoteTextInputView, { backgroundColor: colors.border }]}>
           <View>

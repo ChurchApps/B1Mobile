@@ -11,6 +11,7 @@ import { UserHelper } from "../helpers/UserHelper";
 import { eventBus } from "@/helpers/PushNotificationHelper";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Loader } from "./Loader";
+import { useThemeColors } from "../theme";
 
 interface WebsiteScreenProps {
   url: string;
@@ -19,6 +20,7 @@ interface WebsiteScreenProps {
 
 export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
@@ -126,7 +128,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   };
 
   return (
-    <View style={globalStyles.homeContainer}>
+    <View style={[globalStyles.homeContainer, { backgroundColor: colors.surface }]}>
       <MainHeader title={title || "Home"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
       <View style={globalStyles.webViewContainer} onLayout={() => setIsLayoutReady(true)}>
         {isLayoutReady && (

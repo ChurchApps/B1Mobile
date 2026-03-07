@@ -75,7 +75,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
 
           <View style={globalStyles.InputBtnView}>
             <View style={globalStyles.InputView}>
-              <Text style={globalStyles.PassInputTextStyle}>{dayjs(startDate).format("L")}</Text>
+              <Text style={[globalStyles.PassInputTextStyle, { color: colors.text }]}>{dayjs(startDate).format("L")}</Text>
             </View>
             <ModalDatePicker
               button={<MaterialIcons name={"calendar-today"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}
@@ -91,7 +91,7 @@ export const BlockoutDateEdits = ({ onClose, visible, blockoutDate, onUpdate }: 
           </View>
           <View style={globalStyles.InputBtnView}>
             <View style={globalStyles.InputView}>
-              <Text style={globalStyles.PassInputTextStyle}>{dayjs(endDate).format("L")}</Text>
+              <Text style={[globalStyles.PassInputTextStyle, { color: colors.text }]}>{dayjs(endDate).format("L")}</Text>
             </View>
             <ModalDatePicker
               button={<MaterialIcons name={"calendar-today"} style={globalStyles.selectionIcon} size={DimensionHelper.wp(6)} />}

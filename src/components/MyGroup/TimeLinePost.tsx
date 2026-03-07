@@ -9,6 +9,7 @@ import { Menu, IconButton } from "react-native-paper";
 import { OptimizedImage } from "../OptimizedImage";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   item: { item: TimelinePostInterface; index: number };
@@ -18,6 +19,7 @@ interface Props {
 
 const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
 
   const dateCalculations = useMemo(() => {
@@ -64,7 +66,7 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
 
   const title = item?.item?.postType == "event" || item?.item?.postType == "group" || item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? item?.item?.name : item?.item?.groupName;
   return (
-    <View style={globalStyles.FlatlistViewStyle} key={item.index}>
+    <View style={[globalStyles.FlatlistViewStyle, { backgroundColor: colors.surface }]} key={item.index}>
       {title && (
         <View style={globalStyles.TitleStyle}>
           <Text style={globalStyles.TitleTextStyle}>{title}</Text>
@@ -81,21 +83,21 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
         <View style={globalStyles.postTitleView}>
           <View style={globalStyles.mainTitleView}>
             <Text>
-              <Text style={globalStyles.eventTextStyle}>{item?.item?.postType == "event" ? "Event:" : item?.item?.postType == "task" ? "Task:" : null}</Text>
+              <Text style={[globalStyles.eventTextStyle, { color: colors.text }]}>{item?.item?.postType == "event" ? "Event:" : item?.item?.postType == "task" ? "Task:" : null}</Text>
               {item?.item?.postType == "venue" ? (
                 <Text>
-                  <Text style={globalStyles.eventTextStyle}> {item?.item?.data?.studyName ?? ""}</Text>
+                  <Text style={[globalStyles.eventTextStyle, { color: colors.text }]}> {item?.item?.data?.studyName ?? ""}</Text>
                   <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}> {item?.item?.data?.name ?? ""}</Text>
                 </Text>
               ) : (
-                <Text style={globalStyles.eventTextStyle}> {item?.item?.data?.title ?? ""}</Text>
+                <Text style={[globalStyles.eventTextStyle, { color: colors.text }]}> {item?.item?.data?.title ?? ""}</Text>
               )}
 
-              {item?.item?.postType == "event" ? <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> - {formattedDate ?? ""}</Text> : null}
+              {item?.item?.postType == "event" ? <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }]}> - {formattedDate ?? ""}</Text> : null}
             </Text>
           </View>
           <View>
-            <Text style={[globalStyles.eventTextStyle, { textAlign: "right" }]}>{timeDifference >= 24 ? `${dayDiff}d` : timeDifference >= 1 ? `${timeDifference}h` : `${MinDifference}m`}</Text>
+            <Text style={[globalStyles.eventTextStyle, { textAlign: "right", color: colors.text }]}>{timeDifference >= 24 ? `${dayDiff}d` : timeDifference >= 1 ? `${timeDifference}h` : `${MinDifference}m`}</Text>
           </View>
         </View>
       ) : item?.item?.postType == "group" ? (
@@ -103,12 +105,12 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
           <View style={globalStyles.TitleView}>
             <View style={globalStyles.mainTitleView}>
               <Text>
-                <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}>{t("notes.conversationFor")}</Text>
+                <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }]}>{t("notes.conversationFor")}</Text>
                 <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}> {item?.item?.name}</Text>
-                <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> {t("notes.group")}</Text>
+                <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }]}> {t("notes.group")}</Text>
               </Text>
             </View>
-            <Text style={[globalStyles.eventTextStyle, { textAlign: "right" }]}>{timeDifference >= 24 ? `${dayDiff}d` : timeDifference >= 1 ? `${timeDifference}h` : `${MinDifference}m`}</Text>
+            <Text style={[globalStyles.eventTextStyle, { textAlign: "right", color: colors.text }]}>{timeDifference >= 24 ? `${dayDiff}d` : timeDifference >= 1 ? `${timeDifference}h` : `${MinDifference}m`}</Text>
           </View>
         </View>
       ) : item?.item?.postType == "sermon" ? (
@@ -117,7 +119,7 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
             <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.title ?? item?.item?.data?.title}</Text>
           </View>
           <View>
-            <Text style={[globalStyles.eventTextStyle, { textAlign: "right" }]}>{timeDifference >= 24 ? `${dayDiff}d` : `${timeDifference}h`}</Text>
+            <Text style={[globalStyles.eventTextStyle, { textAlign: "right", color: colors.text }]}>{timeDifference >= 24 ? `${dayDiff}d` : `${timeDifference}h`}</Text>
           </View>
         </View>
       ) : null}
@@ -125,9 +127,9 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
         <View style={globalStyles.PostTitleViewStyle}>
           <Text>
             <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.createdByLabel}</Text>
-            <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> {t("notes.hasRequestedFrom")} </Text>
+            <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }]}> {t("notes.hasRequestedFrom")} </Text>
             <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.assignedToLabel}</Text>
-            <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor]}> {t("notes.onBehalfOf")} </Text>
+            <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }]}> {t("notes.onBehalfOf")} </Text>
             <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.associatedWithLabel}</Text>
           </Text>
         </View>
@@ -135,7 +137,7 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
 
       {item?.item?.postType == "sermon" || item?.item?.postType == "event" || (item?.item?.postType == "venue" && item?.item?.data?.description != null) ? (
         <View style={globalStyles.PostTitleViewStyle}>
-          <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? globalStyles.tabTextColor : null]}>{item?.item?.data?.description}</Text>
+          <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }, item?.item?.postType == "sermon" || item?.item?.postType == "venue" ? globalStyles.tabTextColor : null]}>{item?.item?.data?.description}</Text>
         </View>
       ) : null}
       <UserConversations conversationId={item?.item?.conversation?.id} groupId={item?.item?.conversation?.groupId} key={item?.item?.conversation?.id} conversation={item?.item?.conversation} createConversation={createConversation} onUpdate={onUpdate} />

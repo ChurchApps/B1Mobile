@@ -25,9 +25,11 @@ import {
 } from "../../src/interfaces";
 import { useTranslation } from "react-i18next";
 import { useFormWithDirtyTracking } from "../../src/hooks/useFormWithDirtyTracking";
+import { useThemeColors } from "../../src/theme";
 
 const ProfileEdit = () => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
   const isFocused = useIsFocused();
@@ -221,7 +223,7 @@ const ProfileEdit = () => {
   return (
     <SafeAreaProvider>
       <LoadingWrapper loading={isLoading}>
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
           <ProfileTabBar
             activeSection={activeTab}
             onTabChange={setActiveTab}

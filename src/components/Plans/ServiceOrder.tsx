@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PlanItem } from "./PlanItem";
 import { LessonPreview } from "./LessonPreview";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   plan: PlanInterface;
@@ -52,6 +53,7 @@ function instructionToPlanItem(item: InstructionItem, providerId?: string, provi
 }
 
 export const ServiceOrder = (props: Props) => {
+  const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
 
   const lessonsProvider = useMemo(() => new LessonsContentProvider(), []);
@@ -157,7 +159,7 @@ export const ServiceOrder = (props: Props) => {
   };
 
   return (
-    <View style={[globalStyles.FlatlistViewStyle, styles.serviceOrderContainer]}>
+    <View style={[globalStyles.FlatlistViewStyle, styles.serviceOrderContainer, { backgroundColor: colors.surface }]}>
       <View style={styles.contentContainer}>{renderContent()}</View>
     </View>
   );

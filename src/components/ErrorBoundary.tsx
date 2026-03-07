@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { useTheme } from "react-native-paper";
 import i18n from "../i18n";
 
 interface ErrorBoundaryState {
@@ -10,6 +11,21 @@ interface ErrorBoundaryState {
 interface ErrorBoundaryProps {
   children: React.ReactNode;
   fallback?: React.ComponentType<{ error?: Error; retry: () => void }>;
+}
+
+function DefaultErrorFallback({ error, retry }: { error?: Error; retry: () => void }) {
+  const theme = useTheme();
+  const isDark = theme.dark;
+
+  return (
+    <View style={[styles.container, { backgroundColor: isDark ? "#121212" : "#FFFFFF" }]}>
+      <Text style={styles.title}>{i18n.t("common.somethingWentWrong")}</Text>
+      <Text style={[styles.message, { color: isDark ? "#CCCCCC" : "#666666" }]}>{error?.message || i18n.t("common.unexpectedError")}</Text>
+      <TouchableOpacity style={styles.button} onPress={retry}>
+        <Text style={styles.buttonText}>{i18n.t("common.tryAgain")}</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
 
 export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -37,15 +53,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
         return <FallbackComponent error={this.state.error} retry={this.retry} />;
       }
 
-      return (
-        <View style={styles.container}>
-          <Text style={styles.title}>{i18n.t("common.somethingWentWrong")}</Text>
-          <Text style={styles.message}>{this.state.error?.message || i18n.t("common.unexpectedError")}</Text>
-          <TouchableOpacity style={styles.button} onPress={this.retry}>
-            <Text style={styles.buttonText}>{i18n.t("common.tryAgain")}</Text>
-          </TouchableOpacity>
-        </View>
-      );
+      return <DefaultErrorFallback error={this.state.error} retry={this.retry} />;
     }
 
     return this.props.children;
@@ -59,8 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
-    backgroundColor: "#FFFFFF"
+    padding: 20
   },
   title: {
     fontSize: 24,
@@ -71,7 +78,6 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 16,
-    color: "#666666",
     textAlign: "center",
     marginBottom: 32,
     lineHeight: 24

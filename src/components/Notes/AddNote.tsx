@@ -97,6 +97,7 @@ export function AddNote({ ...props }: Props) {
           style={[
             {
               ...globalStyles.fundInput,
+              color: colors.inputText,
               fontSize: DimensionHelper.hp(1.6),
               borderBottomWidth: 1,
               borderColor: colors.inputBorder,

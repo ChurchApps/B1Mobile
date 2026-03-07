@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useThemeColors } from "@/theme";
 import { BlockoutDates } from "../../src/components/Plans/BlockoutDates";
 import { PlansTabBar } from "../../src/components/Plans/PlansTabBar";
 import { ServingTimes } from "../../src/components/Plans/ServingTimes";
@@ -22,6 +23,7 @@ import { useTranslation } from "react-i18next";
 import dayjs from "../../src/helpers/dayjsConfig";
 
 const Plan = () => {
+  const tc = useThemeColors();
   const { t } = useTranslation();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const currentUserChurch = useCurrentUserChurch();
@@ -199,10 +201,10 @@ const Plan = () => {
 
   return (
     <SafeAreaProvider>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: tc.background }]}>
         <MainHeader title={t("plans.plans")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
         <PlansTabBar activeSection={activeSection} onTabChange={setActiveSection} />
-        <View style={styles.contentContainer}>
+        <View style={[styles.contentContainer, { backgroundColor: tc.background }]}>
           <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             {activeSection === "upcoming" && (
               <>

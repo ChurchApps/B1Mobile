@@ -39,8 +39,8 @@ export default function DrawerLayout() {
   // Common header options
   const commonHeaderOptions = {
     headerShown: true,
-    headerStyle: { backgroundColor: "#0D47A1" },
-    headerTintColor: "#FFF",
+    headerStyle: { backgroundColor: tc.headerBg },
+    headerTintColor: tc.white,
     headerTitleAlign: "center" as const,
     drawerStyle: { width: 280, backgroundColor: tc.surface },
     drawerType: "slide" as const,
@@ -54,8 +54,8 @@ export default function DrawerLayout() {
 
     return (
       <View style={{ flexDirection: "row", alignItems: "center", paddingLeft: !isDashboard ? 10 : 0 }}>
-        {!isDashboard && <MaterialIcons name="chevron-left" size={27} color="#FFF" onPress={() => router.replace("/(drawer)/dashboard")} />}
-        <IconButton icon="menu" size={27} iconColor="#FFF" onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+        {!isDashboard && <MaterialIcons name="chevron-left" size={27} color={tc.white} onPress={() => router.replace("/(drawer)/dashboard")} />}
+        <IconButton icon="menu" size={27} iconColor={tc.white} onPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
       </View>
     );
   };
