@@ -2,7 +2,8 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Text, Card } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useThemeColors } from "../../theme";
+import { useThemeColors, CommonStyles } from "../../theme";
+import { designSystem } from "../../theme/designSystem";
 
 interface EmptyStateProps {
   type: "playlists" | "sermons";
@@ -14,17 +15,17 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ type }) => {
 
   return (
     <Card style={[styles.emptyCard, { shadowColor: colors.shadowBlack }]}>
-      <Card.Content style={styles.emptyContent}>
+      <Card.Content style={CommonStyles.columnCenter}>
         <MaterialIcons
           name={isPlaylists ? "playlist-add" : "video-library"}
           size={48}
           color={colors.iconColor}
           style={styles.emptyIcon}
         />
-        <Text variant="titleMedium" style={[styles.emptyTitle, { color: colors.text }]}>
+        <Text variant="titleMedium" style={[CommonStyles.titleText, CommonStyles.textCenter, { color: colors.text, marginBottom: 8 }]}>
           {isPlaylists ? "No Sermon Series Available" : "No Recent Sermons"}
         </Text>
-        <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: colors.disabled }]}>
+        <Text variant="bodyMedium" style={[CommonStyles.emptyStateText, { color: colors.disabled, lineHeight: 20 }]}>
           {isPlaylists
             ? "Check back later for new sermon series from your church."
             : "Check back later for new sermons from your church."}
@@ -36,24 +37,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ type }) => {
 
 const styles = StyleSheet.create({
   emptyCard: {
-    borderRadius: 16,
-    elevation: 2,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08,
-    shadowRadius: 3
+    borderRadius: designSystem.borderRadius.xl,
+    ...designSystem.shadows.sm
   },
-  emptyContent: {
-    alignItems: "center",
-    padding: 32
-  },
-  emptyIcon: { marginBottom: 16 },
-  emptyTitle: {
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 8
-  },
-  emptySubtitle: {
-    textAlign: "center",
-    lineHeight: 20
-  }
+  emptyIcon: { marginBottom: 16 }
 });

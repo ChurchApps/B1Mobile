@@ -13,7 +13,7 @@ import { router } from "expo-router";
 import { useCurrentUserChurch } from "../stores/useUserStore";
 import { Avatar } from "./common/Avatar";
 import { useTranslation } from "react-i18next";
-import { useThemeColors } from "../theme";
+import { useThemeColors, CommonStyles } from "../theme";
 
 export function NotificationTab() {
   const { t } = useTranslation();
@@ -105,7 +105,7 @@ export function NotificationTab() {
     return (
       <Card style={[styles.messageCard, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]} mode="elevated" onPress={() => router.push({ pathname: "/messageScreenRoot", params: { userDetails: JSON.stringify(userchatDetails) } })} accessibilityLabel={"Message from " + item.displayName} accessibilityRole="button">
         <Card.Content style={styles.messageContent}>
-          <View style={styles.messageHeader}>
+          <View style={CommonStyles.row}>
             <View style={styles.avatarContainer}>
               <Avatar size={48} photoUrl={item.photo} firstName={item.firstName} lastName={item.lastName} style={[styles.avatar, { backgroundColor: colors.iconBackground }]} />
             </View>
@@ -165,7 +165,7 @@ export function NotificationTab() {
               <Text variant="bodyMedium" style={[styles.notificationMessage, { color: colors.text }]} numberOfLines={3}>
                 {item.message}
               </Text>
-              <View style={styles.notificationMeta}>
+              <View style={CommonStyles.rowBetween}>
                 <Chip mode="outlined" compact style={[styles.timeChip, { backgroundColor: colors.iconBackground, borderColor: colors.divider }]}>
                   <Text variant="bodySmall" style={[styles.timeText, { color: colors.disabled }]}>
                     {getTimeDisplay()}
@@ -186,13 +186,13 @@ export function NotificationTab() {
       ) : mergeData.length > 0 ? (
         <FlatList showsVerticalScrollIndicator={false} data={mergeData} renderItem={({ item }) => renderChatListItems(item)} keyExtractor={(item, index) => `message-${item.id}-${index}`} contentContainerStyle={styles.listContent} initialNumToRender={10} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
       ) : (
-        <ScrollView contentContainerStyle={styles.emptyContainer}>
+        <ScrollView contentContainerStyle={[CommonStyles.centerContainer, { paddingHorizontal: 24 }]}>
           <View style={styles.emptyState}>
             <MaterialIcons name="message" size={64} color={colors.divider} />
-            <Text variant="headlineSmall" style={[styles.emptyTitle, { color: colors.text }]}>
+            <Text variant="headlineSmall" style={[CommonStyles.titleText, CommonStyles.textCenter, { color: colors.text, marginTop: 16, marginBottom: 8 }]}>
               {t("notifications.noMessagesYet")}
             </Text>
-            <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: colors.disabled }]}>
+            <Text variant="bodyMedium" style={[CommonStyles.emptyStateText, { color: colors.disabled, marginBottom: 24, lineHeight: 20 }]}>
               {t("notifications.startConversation")}
             </Text>
             <Button mode="contained" onPress={() => router.push("/searchMessageUserRoot")} style={[styles.actionButton, { backgroundColor: colors.primary }]} accessibilityLabel="Find people to message">
@@ -211,13 +211,13 @@ export function NotificationTab() {
       ) : NotificationData.length > 0 ? (
         <FlatList showsVerticalScrollIndicator={false} data={NotificationData} renderItem={({ item }) => renderItems(item)} keyExtractor={(item, index) => `notification-${item.id}-${index}`} contentContainerStyle={styles.listContent} initialNumToRender={8} windowSize={8} removeClippedSubviews={true} maxToRenderPerBatch={4} updateCellsBatchingPeriod={100} />
       ) : (
-        <ScrollView contentContainerStyle={styles.emptyContainer}>
+        <ScrollView contentContainerStyle={[CommonStyles.centerContainer, { paddingHorizontal: 24 }]}>
           <View style={styles.emptyState}>
             <MaterialIcons name="notifications" size={64} color={colors.divider} />
-            <Text variant="headlineSmall" style={[styles.emptyTitle, { color: colors.text }]}>
+            <Text variant="headlineSmall" style={[CommonStyles.titleText, CommonStyles.textCenter, { color: colors.text, marginTop: 16, marginBottom: 8 }]}>
               {t("notifications.noNotificationsYet")}
             </Text>
-            <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: colors.disabled }]}>
+            <Text variant="bodyMedium" style={[CommonStyles.emptyStateText, { color: colors.disabled, marginBottom: 24, lineHeight: 20 }]}>
               {t("notifications.wellNotifyYou")}
             </Text>
           </View>
@@ -285,10 +285,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3
   },
   messageContent: { padding: 16 },
-  messageHeader: {
-    flexDirection: "row",
-    alignItems: "center"
-  },
   avatarContainer: { marginRight: 12 },
   avatar: {
     width: 48,
@@ -329,34 +325,12 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 8
   },
-  notificationMeta: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
   timeChip: {},
   timeText: { fontSize: 12 },
   // Empty State Styles
-  emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 24
-  },
   emptyState: {
     alignItems: "center",
     maxWidth: 300
-  },
-  emptyTitle: {
-    fontWeight: "600",
-    marginTop: 16,
-    marginBottom: 8,
-    textAlign: "center"
-  },
-  emptySubtitle: {
-    textAlign: "center",
-    marginBottom: 24,
-    lineHeight: 20
   },
   actionButton: {
     paddingHorizontal: 24,

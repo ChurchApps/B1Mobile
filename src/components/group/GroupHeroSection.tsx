@@ -3,7 +3,7 @@ import { View, StyleSheet } from "react-native";
 import { Text, Card, Chip } from "react-native-paper";
 import { OptimizedImage } from "../OptimizedImage";
 import { useTranslation } from "react-i18next";
-import { useThemeColors } from "../../theme";
+import { useThemeColors, CommonStyles } from "../../theme";
 
 interface GroupHeroSectionProps {
   name: string;
@@ -25,12 +25,12 @@ export const GroupHeroSection: React.FC<GroupHeroSectionProps> = ({
       {photoUrl ? (
         <Card style={[styles.heroCard, { shadowColor: colors.primary }]}>
           <View style={styles.heroImageContainer}>
-            <OptimizedImage source={{ uri: photoUrl }} style={styles.heroImage} contentFit="cover" priority="high" />
-            <View style={styles.heroOverlay}>
+            <OptimizedImage source={{ uri: photoUrl }} style={CommonStyles.fillImage} contentFit="cover" priority="high" />
+            <View style={[CommonStyles.absoluteBottom, { backgroundColor: "rgba(0, 0, 0, 0.6)", paddingHorizontal: 20, paddingVertical: 20 }]}>
               <Text variant="headlineLarge" style={[styles.heroTitle, { color: colors.white }]}>
                 {name}
               </Text>
-              <View style={styles.heroStats}>
+              <View style={[CommonStyles.row, { gap: 8 }]}>
                 <Chip icon="account-group" style={styles.statsChip}>
                   {memberCount} {t("groups.members")}
                 </Chip>
@@ -46,11 +46,11 @@ export const GroupHeroSection: React.FC<GroupHeroSectionProps> = ({
       ) : (
         <Card style={[styles.heroCard, { shadowColor: colors.primary }]}>
           <View style={[styles.heroImageContainer, styles.noImageHero, { backgroundColor: colors.primary }]}>
-            <View style={styles.heroOverlay}>
+            <View style={[CommonStyles.absoluteBottom, { backgroundColor: "rgba(0, 0, 0, 0.6)", paddingHorizontal: 20, paddingVertical: 20 }]}>
               <Text variant="headlineLarge" style={[styles.heroTitle, { color: colors.white }]}>
                 {name}
               </Text>
-              <View style={styles.heroStats}>
+              <View style={[CommonStyles.row, { gap: 8 }]}>
                 <Chip icon="account-group" style={styles.statsChip}>
                   {memberCount} {t("groups.members")}
                 </Chip>
@@ -87,29 +87,12 @@ const styles = StyleSheet.create({
     position: "relative"
   },
   noImageHero: { justifyContent: "center" },
-  heroImage: {
-    width: "100%",
-    height: "100%"
-  },
-  heroOverlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    paddingHorizontal: 20,
-    paddingVertical: 20
-  },
   heroTitle: {
     fontWeight: "800",
     marginBottom: 12,
     textShadowColor: "rgba(0, 0, 0, 0.4)",
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3
-  },
-  heroStats: {
-    flexDirection: "row",
-    gap: 8
   },
   statsChip: { backgroundColor: "rgba(255, 255, 255, 0.9)" },
   leaderChip: { backgroundColor: "rgba(255, 193, 7, 0.9)" }

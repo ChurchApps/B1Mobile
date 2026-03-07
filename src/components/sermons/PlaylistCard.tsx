@@ -6,7 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "../OptimizedImage";
 import { DateHelper } from "../../helpers";
 import { PlaylistInterface } from "@churchapps/helpers";
-import { useThemeColors } from "../../theme";
+import { useThemeColors, CommonStyles } from "../../theme";
 
 interface PlaylistCardProps {
   playlist: PlaylistInterface;
@@ -21,12 +21,12 @@ export const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onPress })
     <TouchableOpacity onPress={() => onPress(playlist)}>
       <Card style={[styles.playlistCard, { shadowColor: colors.shadowBlack }]}>
         <View style={styles.playlistContent}>
-          <View style={styles.playlistImageContainer}>
+          <View style={CommonStyles.absoluteFill}>
             {hasImage ? (
-              <OptimizedImage source={{ uri: playlist.thumbnail }} style={styles.playlistImage} contentFit="cover" />
+              <OptimizedImage source={{ uri: playlist.thumbnail }} style={CommonStyles.fillImage} contentFit="cover" />
             ) : (
-              <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.playlistImage, styles.playlistFallback]}>
-                <View style={styles.playlistPattern}>
+              <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[CommonStyles.fillImage, styles.playlistFallback]}>
+                <View style={[CommonStyles.absoluteFill, { opacity: 0.3 }]}>
                   <View style={styles.playlistCircle1} />
                   <View style={styles.playlistCircle2} />
                 </View>
@@ -36,7 +36,7 @@ export const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onPress })
               </LinearGradient>
             )}
           </View>
-          <View style={styles.playlistOverlay}>
+          <View style={[CommonStyles.absoluteBottom, CommonStyles.overlayDark, CommonStyles.rowBetween, { padding: 16 }]}>
             <View style={styles.playlistInfo}>
               <Text variant="titleMedium" style={[styles.playlistTitle, { color: colors.white }]} numberOfLines={2}>
                 {playlist.title}
@@ -72,30 +72,11 @@ const styles = StyleSheet.create({
     position: "relative",
     aspectRatio: 16 / 9
   },
-  playlistImageContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0
-  },
-  playlistImage: {
-    width: "100%",
-    height: "100%"
-  },
   playlistFallback: {
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
     overflow: "hidden"
-  },
-  playlistPattern: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.3
   },
   playlistCircle1: {
     position: "absolute",
@@ -116,17 +97,6 @@ const styles = StyleSheet.create({
     left: -15
   },
   playlistIcon: { zIndex: 2 },
-  playlistOverlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    padding: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
   playlistInfo: {
     flex: 1,
     marginRight: 12

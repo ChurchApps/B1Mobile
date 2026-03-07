@@ -1,3 +1,4 @@
+export { CommonStyles } from "./CommonStyles";
 import { MD3LightTheme, MD3DarkTheme, configureFonts, useTheme } from "react-native-paper";
 import { Platform } from "react-native";
 import { designSystem } from "./designSystem";

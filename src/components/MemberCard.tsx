@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { Avatar } from "./common/Avatar";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useThemeColors } from "../theme";
+import { useThemeColors, CommonStyles } from "../theme";
 
 interface Member {
   id: string;
@@ -45,8 +45,8 @@ export const MemberCard = React.memo<MemberCardProps>(({ member, onPress, showAc
 
   return (
     <Card style={[cardStyle, { backgroundColor: tc.surface, shadowColor: tc.shadowBlack }]} onPress={handlePress}>
-      <Card.Content style={styles.memberContent}>
-        <View style={styles.memberInfo}>
+      <Card.Content style={[CommonStyles.rowBetween, { paddingVertical: 12, paddingHorizontal: 16 }]}>
+        <View style={[CommonStyles.row, { flex: 1 }]}>
           <Avatar size={avatarSize} photoUrl={member.photo} firstName={member.name.first || firstName} lastName={member.name.last || lastName} style={styles.memberAvatar} />
           <View style={styles.memberDetails}>
             <View style={styles.nameContainer}>
@@ -73,21 +73,21 @@ export const MemberCard = React.memo<MemberCardProps>(({ member, onPress, showAc
           {showActions ? (
             <View style={styles.quickActions}>
               {onCall && (
-                <TouchableOpacity style={[styles.actionButton, { backgroundColor: tc.iconBackground }]} onPress={() => onCall(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <TouchableOpacity style={[CommonStyles.circularButton, { backgroundColor: tc.iconBackground }]} onPress={() => onCall(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                   <MaterialIcons name="phone" size={20} color={tc.primary} />
                 </TouchableOpacity>
               )}
               {onEmail && (
-                <TouchableOpacity style={[styles.actionButton, { backgroundColor: tc.iconBackground }]} onPress={() => onEmail(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+                <TouchableOpacity style={[CommonStyles.circularButton, { backgroundColor: tc.iconBackground }]} onPress={() => onEmail(member)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                   <MaterialIcons name="email" size={20} color={tc.primary} />
                 </TouchableOpacity>
               )}
-              <TouchableOpacity style={[styles.actionButton, { backgroundColor: tc.iconBackground }]} onPress={handlePress}>
+              <TouchableOpacity style={[CommonStyles.circularButton, { backgroundColor: tc.iconBackground }]} onPress={handlePress}>
                 <MaterialIcons name="chevron-right" size={20} color={tc.textSecondary} />
               </TouchableOpacity>
             </View>
           ) : (
-            <TouchableOpacity style={[styles.actionButton, { backgroundColor: tc.iconBackground }]} onPress={handlePress}>
+            <TouchableOpacity style={[CommonStyles.circularButton, { backgroundColor: tc.iconBackground }]} onPress={handlePress}>
               <MaterialIcons name="chevron-right" size={20} color={tc.textSecondary} />
             </TouchableOpacity>
           )}
@@ -122,17 +122,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4
   },
-  memberContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16
-  },
-  memberInfo: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center"
-  },
   memberAvatar: { marginRight: 16 },
   memberDetails: { flex: 1 },
   nameContainer: {
@@ -158,11 +147,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 8
   },
-  actionButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center"
-  }
 });

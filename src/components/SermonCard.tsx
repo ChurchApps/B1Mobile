@@ -6,7 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "./OptimizedImage";
 import { DateHelper } from "../helpers";
 import { SermonInterface } from "@churchapps/helpers";
-import { useThemeColors } from "../theme";
+import { useThemeColors, CommonStyles } from "../theme";
 
 interface SermonCardProps {
   sermon: SermonInterface;
@@ -31,11 +31,11 @@ export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDur
         <View style={styles.sermonContent}>
           <View style={styles.sermonImageContainer}>
             {hasImage ? (
-              <OptimizedImage source={{ uri: sermon.thumbnail }} style={styles.sermonImage} contentFit="cover" />
+              <OptimizedImage source={{ uri: sermon.thumbnail }} style={CommonStyles.fillImage} contentFit="cover" />
             ) : (
               // Gradient uses brand color shades — intentional design, not semantic tokens
-              <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.sermonImage, styles.sermonFallback]}>
-                <View style={styles.fallbackPattern}>
+              <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[CommonStyles.fillImage, styles.sermonFallback]}>
+                <View style={[CommonStyles.absoluteFill, { opacity: 0.3 }]}>
                   <View style={styles.patternCircle1} />
                   <View style={styles.patternCircle2} />
                   <View style={styles.patternCircle3} />
@@ -59,7 +59,7 @@ export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDur
             ) : null}
 
             {/* Text overlay at bottom */}
-            <View style={styles.textOverlay}>
+            <View style={[CommonStyles.absoluteBottom, CommonStyles.overlayDark, { padding: 16 }]}>
               <View style={styles.sermonInfo}>
                 <Text variant="titleMedium" style={[styles.sermonTitle, { color: colors.white }]} numberOfLines={2}>
                   {sermon.title || "Untitled Sermon"}
@@ -92,23 +92,11 @@ const styles = StyleSheet.create({
     aspectRatio: 16 / 9,
     width: "100%"
   },
-  sermonImage: {
-    width: "100%",
-    height: "100%"
-  },
   sermonFallback: {
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
     overflow: "hidden"
-  },
-  fallbackPattern: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.3
   },
   patternCircle1: {
     position: "absolute",
@@ -159,14 +147,6 @@ const styles = StyleSheet.create({
   durationText: {
     fontSize: 12,
     fontWeight: "600"
-  },
-  textOverlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    padding: 16
   },
   sermonInfo: { flex: 1 },
   sermonTitle: {

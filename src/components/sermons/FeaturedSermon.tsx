@@ -6,7 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "../OptimizedImage";
 import { DateHelper } from "../../helpers";
 import { SermonInterface } from "@churchapps/helpers";
-import { useThemeColors } from "../../theme";
+import { useThemeColors, CommonStyles } from "../../theme";
 
 interface FeaturedSermonProps {
   sermon: SermonInterface;
@@ -24,8 +24,8 @@ export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress 
           {hasImage ? (
             <OptimizedImage source={{ uri: sermon.thumbnail }} style={styles.heroImage} contentFit="cover" />
           ) : (
-            <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.heroImage, styles.heroFallback]}>
-              <View style={styles.heroPattern}>
+            <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[CommonStyles.absoluteFill, CommonStyles.fillImage, styles.heroFallback]}>
+              <View style={[CommonStyles.absoluteFill, { opacity: 0.2 }]}>
                 <View style={styles.heroCircle1} />
                 <View style={styles.heroCircle2} />
                 <View style={styles.heroCircle3} />
@@ -35,7 +35,7 @@ export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress 
               </View>
             </LinearGradient>
           )}
-          <View style={styles.heroOverlay}>
+          <View style={[CommonStyles.absoluteFill, { backgroundColor: "rgba(0,0,0,0.5)", padding: 24, justifyContent: "space-between", flexDirection: "row", alignItems: "flex-end" }]}>
             <View style={styles.heroContent}>
               <Text variant="labelMedium" style={[styles.heroLabel, { color: colors.white }]}>
                 Latest Sermon
@@ -53,7 +53,7 @@ export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress 
               )) ||
                 null}
             </View>
-            <View style={[styles.playButton, { shadowColor: colors.primary }]}>
+            <View style={[CommonStyles.circularButtonLg, styles.playButton, { shadowColor: colors.primary }]}>
               <MaterialIcons name="play-arrow" size={32} color={colors.onPrimary} />
             </View>
           </View>
@@ -92,14 +92,6 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden"
   },
-  heroPattern: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    opacity: 0.2
-  },
   heroCircle1: {
     position: "absolute",
     width: 200,
@@ -128,18 +120,6 @@ const styles = StyleSheet.create({
     left: "25%"
   },
   heroIcon: { zIndex: 2 },
-  heroOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    padding: 24,
-    justifyContent: "space-between",
-    flexDirection: "row",
-    alignItems: "flex-end"
-  },
   heroContent: {
     flex: 1,
     marginRight: 16
@@ -160,12 +140,7 @@ const styles = StyleSheet.create({
   },
   heroDuration: { opacity: 0.8 },
   playButton: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
     backgroundColor: "rgba(21, 101, 192, 0.9)",
-    justifyContent: "center",
-    alignItems: "center",
     elevation: 4,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
