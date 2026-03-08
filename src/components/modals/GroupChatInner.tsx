@@ -11,6 +11,7 @@ import dayjs from "../../helpers/dayjsConfig";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TextInput as PaperTextInput } from "react-native-paper";
 import { useThemeColors } from "../../theme";
+import { EmojiPicker } from "../EmojiPicker";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -36,6 +37,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
   const colors = useThemeColors();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [showEmojis, setShowEmojis] = useState(false);
   const [page, setPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -305,40 +307,50 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
         />
 
         {canPost && (
-          <Surface style={[styles.inputBar, { backgroundColor: colors.surface, paddingBottom: insets.bottom || 8, shadowColor: colors.shadowBlack }]}>
-            {editingMessage && (
-              <IconButton
-                icon="close"
-                size={24}
-                onPress={() => {
-                  setEditingMessage(null);
-                  setNewMessage("");
-                }}
+          <>
+            <EmojiPicker visible={showEmojis} onClose={() => setShowEmojis(false)} onSelect={(emoji) => setNewMessage(prev => prev + emoji)} />
+            <Surface style={[styles.inputBar, { backgroundColor: colors.surface, paddingBottom: insets.bottom || 8, shadowColor: colors.shadowBlack }]}>
+              {editingMessage && (
+                <IconButton
+                  icon="close"
+                  size={24}
+                  onPress={() => {
+                    setEditingMessage(null);
+                    setNewMessage("");
+                  }}
+                />
+              )}
+              <PaperTextInput
+                mode="outlined"
+                ref={inputRef}
+                placeholder={t("groups.sendMessage")}
+                value={newMessage}
+                onChangeText={setNewMessage}
+                onFocus={() => setShowEmojis(false)}
+                multiline
+                maxLength={500}
+                style={styles.textInput}
+                contentStyle={styles.inputContent}
+                outlineStyle={[styles.inputOutline, { borderColor: colors.borderLight }]}
+                onSubmitEditing={sendMessage}
+                blurOnSubmit={false}
               />
-            )}
-            <PaperTextInput
-              mode="outlined"
-              ref={inputRef}
-              placeholder={t("groups.sendMessage")}
-              value={newMessage}
-              onChangeText={setNewMessage}
-              multiline
-              maxLength={500}
-              style={styles.textInput}
-              contentStyle={styles.inputContent}
-              outlineStyle={[styles.inputOutline, { borderColor: colors.borderLight }]}
-              onSubmitEditing={sendMessage}
-              blurOnSubmit={false}
-            />
-            <IconButton
-              icon="send"
-              size={24}
-              onPress={sendMessage}
-              disabled={!newMessage.trim()}
-              style={[styles.sendButton, { backgroundColor: colors.iconBackground }, newMessage.trim() && { backgroundColor: colors.primary }]}
-              iconColor={newMessage.trim() ? colors.white : colors.disabled}
-            />
-          </Surface>
+              <IconButton
+                icon="emoticon-outline"
+                size={24}
+                onPress={() => setShowEmojis(!showEmojis)}
+                iconColor={colors.disabled}
+              />
+              <IconButton
+                icon="send"
+                size={24}
+                onPress={() => { setShowEmojis(false); sendMessage(); }}
+                disabled={!newMessage.trim()}
+                style={[styles.sendButton, { backgroundColor: colors.iconBackground }, newMessage.trim() && { backgroundColor: colors.primary }]}
+                iconColor={newMessage.trim() ? colors.white : colors.disabled}
+              />
+            </Surface>
+          </>
         )}
       </KeyboardAvoidingView>
 

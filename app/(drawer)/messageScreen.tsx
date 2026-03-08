@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppTheme } from "../../src/theme";
 import { IconButton, Surface, Text, TextInput } from "react-native-paper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
+import { EmojiPicker } from "../../src/components/EmojiPicker";
 import { useUser, useCurrentUserChurch } from "../../src/stores/useUserStore";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
 import { useTranslation } from "react-i18next";
@@ -42,6 +43,7 @@ const MessageScreen = () => {
 
   const { theme, spacing } = useAppTheme();
   const [messageText, setMessageText] = useState("");
+  const [showEmojis, setShowEmojis] = useState(false);
   const [messageList, setMessageList] = useState<MessageInterface[]>([]);
   const [editedMessage, setEditingMessage] = useState<MessageInterface | null>();
   const [currentConversation, setCurrentConversation] = useState<ConversationCheckInterface>();
@@ -339,20 +341,25 @@ const MessageScreen = () => {
   };
 
   const messageInputView = () => (
-    <Surface style={{ flexDirection: "row", alignItems: "center", padding: spacing.sm, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
-      <TextInput
-        style={{ flex: 1, backgroundColor: theme.colors.surface }}
-        mode="outlined"
-        placeholder={t("messages.enterMessage")}
-        value={messageText}
-        onChangeText={text => {
-          if (text == "") setEditingMessage(null);
-          setMessageText(text);
-        }}
-        left={<TextInput.Icon icon="message" />}
-      />
-      <IconButton icon="send" size={28} iconColor={theme.colors.primary} onPress={sendMessageInitiate} style={{ marginLeft: spacing.sm }} />
-    </Surface>
+    <>
+      <EmojiPicker visible={showEmojis} onClose={() => setShowEmojis(false)} onSelect={(emoji) => setMessageText(prev => prev + emoji)} />
+      <Surface style={{ flexDirection: "row", alignItems: "center", padding: spacing.sm, backgroundColor: theme.colors.surface, borderRadius: theme.roundness, margin: spacing.md, elevation: 2 }}>
+        <TextInput
+          style={{ flex: 1, backgroundColor: theme.colors.surface }}
+          mode="outlined"
+          placeholder={t("messages.enterMessage")}
+          value={messageText}
+          onChangeText={text => {
+            if (text == "") setEditingMessage(null);
+            setMessageText(text);
+          }}
+          onFocus={() => setShowEmojis(false)}
+          left={<TextInput.Icon icon="message" />}
+        />
+        <IconButton icon="emoticon-outline" size={28} iconColor={theme.colors.onSurfaceVariant} onPress={() => setShowEmojis(!showEmojis)} style={{ marginLeft: spacing.xs }} />
+        <IconButton icon="send" size={28} iconColor={theme.colors.primary} onPress={() => { setShowEmojis(false); sendMessageInitiate(); }} style={{ marginLeft: 0 }} />
+      </Surface>
+    </>
   );
 
   const messagesView = () => {
