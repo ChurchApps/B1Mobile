@@ -31,7 +31,7 @@ type ParamsType = {
   url?: string;
 };
 
-export function CustomDrawer(props?: any) {
+export function CustomDrawer(props?: any & { themeMode?: string }) {
   const { t } = useTranslation();
   // Use the drawer navigation prop if available, otherwise fallback to useNavigation
   const navigation = props?.navigation || useNavigation<DrawerNavigationProp<any>>();

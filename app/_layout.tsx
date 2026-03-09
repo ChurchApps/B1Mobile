@@ -14,7 +14,7 @@ import { NotificationNavigationHandler } from "../src/components/NotificationNav
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
 import { StatusBar } from "react-native";
 import { AppLifecycleManager } from "../src/helpers/AppLifecycleManager";
-import { designSystem } from "../src/theme/designSystem";
+import { useThemeColors } from "../src/theme";
 import { useThemeContext } from "../src/theme/ThemeProvider";
 import "../src/i18n";
 import * as Sentry from "@sentry/react-native";
@@ -23,7 +23,7 @@ import { YouVersionPlatform } from "@youversion/platform-react-native";
 
 function ThemedStatusBar() {
   const { theme } = useThemeContext();
-  return <StatusBar barStyle={theme === "dark" ? "light-content" : "light-content"} backgroundColor={theme === "dark" ? "#121212" : undefined} />;
+  return <StatusBar barStyle={theme === "dark" ? "light-content" : "dark-content"} backgroundColor={theme === "dark" ? "#121212" : undefined} />;
 }
 
 const youversionKey = Constants.expoConfig?.extra?.YOUVERSION_API_KEY;
@@ -48,20 +48,10 @@ Sentry.init({
   // spotlight: __DEV__,
 });
 
-export default Sentry.wrap(function RootLayout() {
+function ThemedStack() {
   const router = useRouter();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    const setupApp = async () => {
-      await initializeFirebase();
-      await UserHelper.loadSecureTokens();
-      await initializeQueryCache();
-      AppLifecycleManager.initialize();
-    };
-    setupApp();
-    return () => AppLifecycleManager.cleanup();
-  }, []);
+  const tc = useThemeColors();
 
   const toggleNotifications = (type?: string) => {
     if (type === "notifications") {
@@ -71,11 +61,11 @@ export default Sentry.wrap(function RootLayout() {
     }
   };
 
-  // Default header style for most screens
+  // Default header style for most screens - uses theme-aware colors
   const defaultHeaderOptions = {
     headerBackTitle: "Back",
-    headerStyle: { backgroundColor: designSystem.colors.primary[500] },
-    headerTintColor: "#FFF",
+    headerStyle: { backgroundColor: tc.headerBg },
+    headerTintColor: tc.onPrimary,
     headerTitleAlign: "center" as const,
     headerRight: () => <HeaderBell toggleNotifications={toggleNotifications} isDetail={true} />
   };
@@ -112,19 +102,38 @@ export default Sentry.wrap(function RootLayout() {
   ];
 
   return (
+    <>
+      <ThemedStatusBar />
+      <SafeAreaProvider>
+        <NotificationNavigationHandler />
+        <Stack screenOptions={{ headerShown: true, animation: "slide_from_right" }} initialRouteName="auth">
+          {screens.map(screen => (
+            <Stack.Screen key={screen.name} name={screen.name} options={screen.options} />
+          ))}
+        </Stack>
+      </SafeAreaProvider>
+    </>
+  );
+}
+
+export default Sentry.wrap(function RootLayout() {
+  useEffect(() => {
+    const setupApp = async () => {
+      await initializeFirebase();
+      await UserHelper.loadSecureTokens();
+      await initializeQueryCache();
+      AppLifecycleManager.initialize();
+    };
+    setupApp();
+    return () => AppLifecycleManager.cleanup();
+  }, []);
+
+  return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ActionSheetProvider>
           <ThemeProvider>
-            <ThemedStatusBar />
-            <SafeAreaProvider>
-              <NotificationNavigationHandler />
-              <Stack screenOptions={{ headerShown: true, animation: "slide_from_right" }} initialRouteName="auth">
-                {screens.map(screen => (
-                  <Stack.Screen key={screen.name} name={screen.name} options={screen.options} />
-                ))}
-              </Stack>
-            </SafeAreaProvider>
+            <ThemedStack />
           </ThemeProvider>
         </ActionSheetProvider>
       </QueryClientProvider>

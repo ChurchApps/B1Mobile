@@ -1,7 +1,7 @@
 {
   "name": "B1Mobile",
   "main": "expo-router/entry",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@churchapps/content-providers": "^0.1.6",
-    "@churchapps/helpers": "1.2.29",
+    "@churchapps/helpers": "1.2.30",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",

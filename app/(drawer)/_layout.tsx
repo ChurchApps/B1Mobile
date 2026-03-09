@@ -13,6 +13,7 @@ import { Avatar } from "@/components/common/Avatar";
 import { useCurrentUserChurch, useUser } from "@/stores/useUserStore";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "@/theme";
+import { useThemeContext } from "../../src/theme/ThemeProvider";
 
 export default function DrawerLayout() {
   const { t } = useTranslation();
@@ -20,6 +21,7 @@ export default function DrawerLayout() {
   const currentChurch = useCurrentUserChurch();
   const user = useUser();
   const tc = useThemeColors();
+  const { theme: themeMode } = useThemeContext();
 
   // Helper: get current route name
   const getCurrentRouteName = (state: any) => {
@@ -82,7 +84,7 @@ export default function DrawerLayout() {
             )
           };
         }}
-        drawerContent={props => <CustomDrawer {...props} />}>
+        drawerContent={props => <CustomDrawer {...props} themeMode={themeMode} />}>
         <Drawer.Screen name="dashboard" options={{ title: currentChurch?.church?.name || t("navigation.home") }} />
         <Drawer.Screen name="myGroups" options={{ title: t("navigation.myGroups") }} />
         <Drawer.Screen
