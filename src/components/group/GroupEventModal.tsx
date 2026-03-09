@@ -55,7 +55,7 @@ export const GroupEventModal: React.FC<GroupEventModalProps> = ({ isVisible, onC
                     </Text>
                     <View style={styles.eventHeaderActions}>
                       {event.visibility === "private" && (
-                        <Chip compact icon="lock" style={[styles.privateChip, { backgroundColor: colors.warningBg, borderColor: colors.warning }]}>
+                        <Chip compact icon="lock" style={[styles.privateChip, { backgroundColor: colors.warningBg, borderColor: colors.warning }]} textStyle={{ color: colors.warning }}>
                           Private
                         </Chip>
                       )}

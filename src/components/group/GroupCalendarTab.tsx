@@ -69,7 +69,7 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
   return (
     <View style={styles.calendarContainer}>
       {isLeader && (
-        <Button mode="contained" icon="calendar-plus" onPress={handleAddEvent} style={styles.addEventButton} buttonColor={colors.success}>
+        <Button mode="contained" icon="calendar-plus" onPress={handleAddEvent} style={styles.addEventButton} buttonColor={colors.success} textColor="#000000">
           Add Event
         </Button>
       )}

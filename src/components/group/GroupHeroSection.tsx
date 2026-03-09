@@ -31,11 +31,11 @@ export const GroupHeroSection: React.FC<GroupHeroSectionProps> = ({
                 {name}
               </Text>
               <View style={[CommonStyles.row, { gap: 8 }]}>
-                <Chip icon="account-group" style={styles.statsChip}>
+                <Chip icon="account-group" style={styles.statsChip} textStyle={styles.chipText}>
                   {memberCount} {t("groups.members")}
                 </Chip>
                 {isLeader && (
-                  <Chip icon="crown" style={[styles.statsChip, styles.leaderChip]}>
+                  <Chip icon="crown" style={[styles.statsChip, styles.leaderChip]} textStyle={styles.chipText}>
                     {t("groups.leader")}
                   </Chip>
                 )}
@@ -51,11 +51,11 @@ export const GroupHeroSection: React.FC<GroupHeroSectionProps> = ({
                 {name}
               </Text>
               <View style={[CommonStyles.row, { gap: 8 }]}>
-                <Chip icon="account-group" style={styles.statsChip}>
+                <Chip icon="account-group" style={styles.statsChip} textStyle={styles.chipText}>
                   {memberCount} {t("groups.members")}
                 </Chip>
                 {isLeader && (
-                  <Chip icon="crown" style={[styles.statsChip, styles.leaderChip]}>
+                  <Chip icon="crown" style={[styles.statsChip, styles.leaderChip]} textStyle={styles.chipText}>
                     {t("groups.leader")}
                   </Chip>
                 )}
@@ -95,5 +95,6 @@ const styles = StyleSheet.create({
     textShadowRadius: 3
   },
   statsChip: { backgroundColor: "rgba(255, 255, 255, 0.9)" },
-  leaderChip: { backgroundColor: "rgba(255, 193, 7, 0.9)" }
+  leaderChip: { backgroundColor: "rgba(255, 193, 7, 0.9)" },
+  chipText: { color: "#000000" }
 });

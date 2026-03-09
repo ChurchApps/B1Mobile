@@ -68,7 +68,7 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
   return (
     <View style={[globalStyles.FlatlistViewStyle, { backgroundColor: colors.surface }]} key={item.index}>
       {title && (
-        <View style={globalStyles.TitleStyle}>
+        <View style={[globalStyles.TitleStyle, { backgroundColor: colors.primary }]}>
           <Text style={globalStyles.TitleTextStyle}>{title}</Text>
         </View>
       )}
@@ -87,7 +87,7 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
               {item?.item?.postType == "venue" ? (
                 <Text>
                   <Text style={[globalStyles.eventTextStyle, { color: colors.text }]}> {item?.item?.data?.studyName ?? ""}</Text>
-                  <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}> {item?.item?.data?.name ?? ""}</Text>
+                  <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor, { color: colors.primary }]}> {item?.item?.data?.name ?? ""}</Text>
                 </Text>
               ) : (
                 <Text style={[globalStyles.eventTextStyle, { color: colors.text }]}> {item?.item?.data?.title ?? ""}</Text>
@@ -106,7 +106,7 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
             <View style={globalStyles.mainTitleView}>
               <Text>
                 <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }]}>{t("notes.conversationFor")}</Text>
-                <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}> {item?.item?.name}</Text>
+                <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor, { color: colors.primary }]}> {item?.item?.name}</Text>
                 <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }]}> {t("notes.group")}</Text>
               </Text>
             </View>
@@ -116,7 +116,7 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
       ) : item?.item?.postType == "sermon" ? (
         <View style={globalStyles.postTitleView}>
           <View style={globalStyles.mainTitleView}>
-            <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.title ?? item?.item?.data?.title}</Text>
+            <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor, { color: colors.primary }]}>{item?.item?.data?.title ?? item?.item?.data?.title}</Text>
           </View>
           <View>
             <Text style={[globalStyles.eventTextStyle, { textAlign: "right", color: colors.text }]}>{timeDifference >= 24 ? `${dayDiff}d` : `${timeDifference}h`}</Text>
@@ -126,11 +126,11 @@ const TimeLinePost = React.memo(({ item, onUpdate }: Props) => {
       {item?.item?.postType == "task" ? (
         <View style={globalStyles.PostTitleViewStyle}>
           <Text>
-            <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.createdByLabel}</Text>
+            <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor, { color: colors.primary }]}>{item?.item?.data?.createdByLabel}</Text>
             <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }]}> {t("notes.hasRequestedFrom")} </Text>
-            <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.assignedToLabel}</Text>
+            <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor, { color: colors.primary }]}>{item?.item?.data?.assignedToLabel}</Text>
             <Text style={[globalStyles.eventTextStyle, globalStyles.DateTextColor, { color: colors.text }]}> {t("notes.onBehalfOf")} </Text>
-            <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor]}>{item?.item?.data?.associatedWithLabel}</Text>
+            <Text style={[globalStyles.eventTextStyle, globalStyles.TaskCreatorColor, { color: colors.primary }]}>{item?.item?.data?.associatedWithLabel}</Text>
           </Text>
         </View>
       ) : null}
