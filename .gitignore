@@ -83,9 +83,7 @@ buck-out/
 # Env
 .env
 
-# Sentry auth tokens
-android/sentry.properties
-ios/sentry.properties
+# Sentry config (no secrets - auth token is in EAS secrets)
 
 # Firebase Config Files (sensitive)
 google-services.json
