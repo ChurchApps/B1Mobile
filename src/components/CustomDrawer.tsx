@@ -250,7 +250,7 @@ export function CustomDrawer(props?: any & { themeMode?: string }) {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: top, backgroundColor: tc.surface }]}>
+    <View key={themeMode} style={[styles.container, { paddingTop: top, backgroundColor: tc.surface }]}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {drawerHeaderComponent()}
         {links.length === 0 ? (
