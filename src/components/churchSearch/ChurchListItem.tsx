@@ -6,6 +6,7 @@ import { OptimizedImage } from "../OptimizedImage";
 import { ArrayHelper, Constants } from "../../helpers";
 import { ChurchInterface } from "../../helpers";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface ChurchListItemProps {
   church: ChurchInterface;
@@ -15,6 +16,7 @@ interface ChurchListItemProps {
 
 export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress, isSelecting }) => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const churchImage = (() => {
     // Default to B1 logo
     let image = Constants.Images.logoBlue;
@@ -37,7 +39,7 @@ export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress,
   return (
     <Card style={styles.churchCard} onPress={() => !isSelecting && onPress(church)}>
       <Card.Content style={styles.churchContent}>
-        <View style={styles.churchImageContainer}>
+        <View style={[styles.churchImageContainer, { backgroundColor: tc.iconBackground }]}>
           <OptimizedImage
             source={churchImage}
             style={styles.churchImage}
@@ -45,17 +47,17 @@ export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress,
           />
         </View>
         <View style={styles.churchDetails}>
-          <Text variant="titleMedium" style={styles.churchName} numberOfLines={2}>
+          <Text variant="titleMedium" style={[styles.churchName, { color: tc.text }]} numberOfLines={2}>
             {church.name}
           </Text>
-          <Text variant="bodySmall" style={styles.churchSubtitle}>
+          <Text variant="bodySmall" style={[styles.churchSubtitle, { color: tc.textSecondary }]}>
             {isSelecting ? t("churchSearch.connecting") : t("churchSearch.tapToConnect")}
           </Text>
         </View>
         {isSelecting ? (
-          <ActivityIndicator size="small" color="#0D47A1" />
+          <ActivityIndicator size="small" color={tc.primary} />
         ) : (
-          <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
+          <MaterialIcons name="chevron-right" size={24} color={tc.textSecondary} />
         )}
       </Card.Content>
     </Card>
@@ -66,7 +68,7 @@ const styles = StyleSheet.create({
   churchCard: {
     borderRadius: 12,
     elevation: 2,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
@@ -81,8 +83,7 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     overflow: "hidden",
-    marginRight: 16,
-    backgroundColor: "#F6F6F8"
+    marginRight: 16
   },
   churchImage: {
     width: "100%",
@@ -90,9 +91,8 @@ const styles = StyleSheet.create({
   },
   churchDetails: { flex: 1 },
   churchName: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 4
   },
-  churchSubtitle: { color: "#9E9E9E" }
+  churchSubtitle: {}
 });

@@ -113,12 +113,7 @@ export function useProviderContent(params: UseProviderContentParams): UseProvide
           }
 
           if (downloadUrl && !isSection) {
-            setContent({
-              url: downloadUrl,
-              mediaType: detectMediaType(downloadUrl),
-              description: item.content,
-              label: item.label
-            });
+            setContent({ url: downloadUrl, mediaType: detectMediaType(downloadUrl), description: item.content, label: item.label });
           } else if (item.children && item.children.length > 0) {
             const children: ProviderContentChild[] = item.children.map(child => {
               let childDownloadUrl = child.downloadUrl;

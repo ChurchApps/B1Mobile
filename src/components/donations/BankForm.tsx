@@ -8,6 +8,7 @@ import { InputBox } from "../InputBox";
 import { useStripe } from "@stripe/stripe-react-native";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   setMode: (mode: string) => void;
@@ -31,6 +32,7 @@ const getAccountTypes = (t: (key: string) => string) => [
 
 export function BankForm({ bank, customerId, setMode, updatedFunction, handleDelete, showVerifyForm }: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const accountTypes = getAccountTypes(t);
@@ -172,13 +174,7 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
         return;
       }
 
-      const paymentMethod: PaymentMethodInterface = {
-        id: tokenResult.token.id,
-        customerId,
-        personId: person.id,
-        email: person.contactInfo.email,
-        name: person.name.display
-      };
+      const paymentMethod: PaymentMethodInterface = { id: tokenResult.token.id, customerId, personId: person.id, email: person.contactInfo.email, name: person.name.display };
 
       const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi");
       if (result?.raw?.message) {
@@ -201,11 +197,7 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
       return;
     }
 
-    const verifyPayload: StripeBankAccountVerifyInterface = {
-      paymentMethodId: bank.id,
-      customerId,
-      amountData: { amounts: [firstDeposit, secondDeposit] }
-    };
+    const verifyPayload: StripeBankAccountVerifyInterface = { paymentMethodId: bank.id, customerId, amountData: { amounts: [firstDeposit, secondDeposit] } };
 
     const response = await ApiHelper.post("/paymentmethods/verifyBank", verifyPayload, "GivingApi");
     if (response?.raw?.message) {
@@ -234,18 +226,18 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
           <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", width: DimensionHelper.wp(95) }}>
             <View>
               <Text style={globalStyles.semiTitleText}>{t("donations.firstDeposit")}</Text>
-              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(40) }} keyboardType="number-pad" value={firstDeposit} onChangeText={text => setFirstDeposit(text)} />
+              <TextInput style={{ ...globalStyles.fundInput, color: colors.inputText, width: DimensionHelper.wp(40) }} keyboardType="number-pad" value={firstDeposit} onChangeText={text => setFirstDeposit(text)} />
             </View>
             <View>
               <Text style={globalStyles.semiTitleText}>{t("donations.secondDeposit")}</Text>
-              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(40) }} keyboardType="number-pad" value={secondDeposit} onChangeText={text => setSecondDeposit(text)} />
+              <TextInput style={{ ...globalStyles.fundInput, color: colors.inputText, width: DimensionHelper.wp(40) }} keyboardType="number-pad" value={secondDeposit} onChangeText={text => setSecondDeposit(text)} />
             </View>
           </View>
         </View>
       ) : (
         <View style={{ marginBottom: DimensionHelper.wp(5) }}>
           <Text style={globalStyles.semiTitleText}>{t("donations.accountHolderName")}</Text>
-          <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} keyboardType="default" value={name} onChangeText={text => setName(text)} />
+          <TextInput style={{ ...globalStyles.fundInput, color: colors.inputText, width: DimensionHelper.wp(90) }} keyboardType="default" value={name} onChangeText={text => setName(text)} />
           <Text style={globalStyles.semiTitleText}>{t("donations.accountHolderType")}</Text>
           <View style={{ width: DimensionHelper.wp(100), marginBottom: DimensionHelper.wp(12) }}>
             <DropDownPicker
@@ -271,10 +263,10 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
           {!bank.id && (
             <>
               <Text style={globalStyles.semiTitleText}>{t("donations.accountNumber")}</Text>
-              <TextInput style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }} keyboardType="number-pad" value={accountNumber} onChangeText={handleAccountNumberChange} placeholder={t("donations.enterAccountNumber")} maxLength={17} secureTextEntry={false} autoComplete="off" textContentType="none" />
+              <TextInput style={{ ...globalStyles.fundInput, color: colors.inputText, width: DimensionHelper.wp(90) }} keyboardType="number-pad" value={accountNumber} onChangeText={handleAccountNumberChange} placeholder={t("donations.enterAccountNumber")} maxLength={17} secureTextEntry={false} autoComplete="off" textContentType="none" />
               <Text style={globalStyles.semiTitleText}>{t("donations.routingNumber")}</Text>
               <TextInput
-                style={{ ...globalStyles.fundInput, width: DimensionHelper.wp(90) }}
+                style={{ ...globalStyles.fundInput, color: colors.inputText, width: DimensionHelper.wp(90) }}
                 keyboardType="number-pad"
                 value={formatRoutingNumber(routingNumber)}
                 onChangeText={handleRoutingNumberChange}

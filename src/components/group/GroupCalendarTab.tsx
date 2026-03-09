@@ -3,7 +3,7 @@ import { ScrollView, View, StyleSheet, Alert, Linking } from "react-native";
 import { Button, Chip } from "react-native-paper";
 import { Calendar, DateData } from "react-native-calendars";
 import { router } from "expo-router";
-import { useAppTheme } from "../../theme";
+import { useAppTheme, useThemeColors } from "../../theme";
 import { InlineLoader } from "../common/LoadingComponents";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { EnvironmentHelper } from "../../helpers";
@@ -24,6 +24,7 @@ interface GroupCalendarTabProps {
 
 export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isLeader, isLoading, selected, markedDates, onDayPress, onMonthChange, tags, selectedTags, onToggleTag, onClearTags }) => {
   const { theme } = useAppTheme();
+  const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
 
   const handleSubscribe = async () => {
@@ -60,30 +61,15 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
     const endTime = new Date(tomorrow);
     endTime.setHours(15, 0, 0, 0); // 3:00 PM
 
-    const newEvent = {
-      start: startTime,
-      end: endTime,
-      allDay: false,
-      groupId: groupId,
-      visibility: "public",
-      title: "",
-      description: "",
-      recurrenceRule: ""
-    };
+    const newEvent = { start: startTime, end: endTime, allDay: false, groupId: groupId, visibility: "public", title: "", description: "", recurrenceRule: "" };
 
-    router.navigate({
-      pathname: "/createEventRoot",
-      params: {
-        event: JSON.stringify(newEvent),
-        groupId: groupId
-      }
-    });
+    router.navigate({ pathname: "/createEventRoot", params: { event: JSON.stringify(newEvent), groupId: groupId } });
   };
 
   return (
     <View style={styles.calendarContainer}>
       {isLeader && (
-        <Button mode="contained" icon="calendar-plus" onPress={handleAddEvent} style={styles.addEventButton}>
+        <Button mode="contained" icon="calendar-plus" onPress={handleAddEvent} style={styles.addEventButton} buttonColor={colors.success} textColor="#000000">
           Add Event
         </Button>
       )}
@@ -142,10 +128,7 @@ export const GroupCalendarTab: React.FC<GroupCalendarTabProps> = ({ groupId, isL
 
 const styles = StyleSheet.create({
   calendarContainer: { minHeight: 350 },
-  addEventButton: {
-    marginBottom: 16,
-    backgroundColor: "#70DC87"
-  },
+  addEventButton: { marginBottom: 16 },
   subscribeButton: { marginBottom: 16 },
   loadingOverlay: {
     position: "absolute",

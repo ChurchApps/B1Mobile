@@ -3,11 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { type PlanItemInterface, PlanHelper } from "@churchapps/helpers";
 export type { PlanItemInterface };
 import { DimensionHelper } from "@/helpers/DimensionHelper";
-import { Constants } from "../../../src/helpers/Constants";
 import { SongDialog } from "./SongDialog";
 import { ActionDialog } from "./ActionDialog";
 import { LessonDialog } from "./LessonDialog";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   planItem: PlanItemInterface;
@@ -19,6 +19,7 @@ interface Props {
 }
 
 export const PlanItem = React.memo((props: Props) => {
+  const colors = useThemeColors();
   const [showSongDetails, setShowSongDetails] = React.useState(false);
   const [showActionDetails, setShowActionDetails] = React.useState(false);
   const [showLessonDetails, setShowLessonDetails] = React.useState(false);
@@ -60,45 +61,44 @@ export const PlanItem = React.memo((props: Props) => {
     const sectionDuration = PlanHelper.getSectionDuration(pi);
     return (
       <View style={styles.headerContainer}>
-        <View style={styles.headerRow}>
-          <Text style={styles.headerLabel}>{pi.label}</Text>
+        <View style={[styles.headerRow, { backgroundColor: colors.inputBg }]}>
+          <Text style={[styles.headerLabel, { color: colors.text }]}>{pi.label}</Text>
           {sectionDuration > 0 && (
             <View style={styles.durationContainer}>
-              <MaterialIcons name="schedule" size={14} color="#999" />
-              <Text style={styles.durationText}>{PlanHelper.formatTime(sectionDuration)}</Text>
+              <MaterialIcons name="schedule" size={14} color={colors.textHint} />
+              <Text style={[styles.durationText, { color: colors.textMuted }]}>{PlanHelper.formatTime(sectionDuration)}</Text>
             </View>
           )}
         </View>
         {renderedChildren}
       </View>
     );
-  }, [pi, renderedChildren]);
+  }, [pi, renderedChildren, colors]);
 
   const getGenericRow = useCallback((onPress?: () => void, dialogElement?: React.ReactNode) => (
-    <View style={itemContainerStyle}>
-      <Text style={styles.startTimeText}>{formattedStartTime}</Text>
+    <View style={[itemContainerStyle, { borderBottomColor: colors.border }]}>
+      <Text style={[styles.startTimeText, { color: colors.text }]}>{formattedStartTime}</Text>
       <View style={styles.contentContainer}>
         {onPress ? (
           <TouchableOpacity onPress={onPress}>
-            <Text style={[styles.labelText, styles.linkText]}>{pi.label}</Text>
+            <Text style={[styles.labelText, styles.linkText, { color: colors.primary }]}>{pi.label}</Text>
           </TouchableOpacity>
         ) : (
-          <Text style={styles.labelText}>{pi.label}</Text>
+          <Text style={[styles.labelText, { color: colors.text }]}>{pi.label}</Text>
         )}
-        {pi.description ? <Text style={styles.descriptionText}>{pi.description}</Text> : null}
+        {pi.description ? <Text style={[styles.descriptionText, { color: colors.text }]}>{pi.description}</Text> : null}
       </View>
       <View style={styles.durationContainer}>
-        <MaterialIcons name="schedule" size={14} color="#999" />
-        <Text style={styles.durationText}>{formattedTime}</Text>
+        <MaterialIcons name="schedule" size={14} color={colors.textHint} />
+        <Text style={[styles.durationText, { color: colors.textMuted }]}>{formattedTime}</Text>
       </View>
       {dialogElement}
     </View>
-  ), [itemContainerStyle, formattedStartTime, formattedTime, pi.label, pi.description]);
+  ), [itemContainerStyle, formattedStartTime, formattedTime, pi.label, pi.description, colors]);
 
   const planItemContent = useMemo(() => {
     switch (pi.itemType) {
-      case "header":
-        return getHeaderRow();
+      case "header": return getHeaderRow();
       case "song":
       case "arrangementKey":
         return getGenericRow(
@@ -178,26 +178,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: DimensionHelper.wp(2),
     paddingVertical: DimensionHelper.hp(0.5),
-    backgroundColor: "#f5f5f5",
     borderRadius: 4
   },
   headerLabel: {
     fontSize: DimensionHelper.wp(4),
-    fontWeight: "bold",
-    color: Constants.Colors.Dark_Gray
+    fontWeight: "bold"
   },
   itemContainer: {
     flexDirection: "row",
     paddingVertical: DimensionHelper.hp(1),
     paddingHorizontal: DimensionHelper.wp(2),
     borderBottomWidth: 1,
-    borderBottomColor: Constants.Colors.Dark_Gray,
     alignItems: "flex-start"
   },
   startTimeText: {
     width: DimensionHelper.wp(12),
     fontSize: DimensionHelper.wp(3.5),
-    color: Constants.Colors.Dark_Gray,
     textAlign: "left",
     marginRight: DimensionHelper.wp(2)
   },
@@ -205,14 +201,10 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 0
   },
-  labelText: {
-    fontSize: DimensionHelper.wp(4),
-    color: Constants.Colors.Dark_Gray
-  },
-  linkText: { color: Constants.Colors.app_color },
+  labelText: { fontSize: DimensionHelper.wp(4) },
+  linkText: {},
   descriptionText: {
     fontSize: DimensionHelper.wp(3.5),
-    color: Constants.Colors.Dark_Gray,
     marginTop: DimensionHelper.hp(0.5),
     opacity: 0.8,
     fontStyle: "italic"
@@ -224,7 +216,6 @@ const styles = StyleSheet.create({
   },
   durationText: {
     fontSize: DimensionHelper.wp(3.5),
-    color: "#666",
     minWidth: DimensionHelper.wp(10),
     textAlign: "right"
   }

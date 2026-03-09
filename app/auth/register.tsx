@@ -95,11 +95,11 @@ const Register = () => {
         </Banner>
       ) : null}
 
-      <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
+      <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} autoCorrect={false} autoComplete="given-name" textContentType="givenName" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
 
-      <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} autoCorrect={false} style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
+      <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} autoCorrect={false} autoComplete="family-name" textContentType="familyName" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="account" />} />
 
-      <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} onBlur={() => checkEmailForMatch(email)} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="email" />} />
+      <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} onBlur={() => checkEmailForMatch(email)} autoCapitalize="none" autoCorrect={false} autoComplete="email" textContentType="emailAddress" keyboardType="email-address" style={{ marginBottom: spacing.md, backgroundColor: theme.colors.surface }} left={<TextInput.Icon icon="email" />} />
 
       <Text variant="bodySmall" style={{ marginBottom: spacing.md }}>
         {t("auth.privacyConfirm")}{" "}

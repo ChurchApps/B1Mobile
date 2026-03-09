@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Alert, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import { Card, Button, SegmentedButtons } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import * as Print from "expo-print";
-import { ApiHelper, DonationInterface, FundDonationInterface, FundInterface, DateHelper, PersonInterface } from "@churchapps/helpers";
+import { ApiHelper, DonationInterface, FundDonationInterface, FundInterface, DateHelper } from "@churchapps/helpers";
 import { useTranslation } from "react-i18next";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { generateStatementHtml } from "./DonationStatementHtml";
+import { useThemeColors } from "../../theme";
 
 export function PrintStatementButton() {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
   const [loading, setLoading] = useState(false);
   const currentYear = new Date().getFullYear();
@@ -26,17 +28,9 @@ export function PrintStatementButton() {
       ]);
 
       const donations = allDonations.filter(d =>
-        DateHelper.toDate(d.donationDate).getFullYear() === year
-      );
+        DateHelper.toDate(d.donationDate).getFullYear() === year);
 
-      const html = generateStatementHtml({
-        year,
-        person: currentUserChurch?.person as any,
-        church: currentUserChurch?.church,
-        funds,
-        fundDonations,
-        donations
-      });
+      const html = generateStatementHtml({ year, person: currentUserChurch?.person as any, church: currentUserChurch?.church, funds, fundDonations, donations });
 
       await Print.printAsync({ html });
     } catch (err) {
@@ -47,13 +41,13 @@ export function PrintStatementButton() {
   };
 
   return (
-    <Card style={styles.card}>
+    <Card style={[styles.card, { shadowColor: colors.shadowBlack }]}>
       <Card.Content>
         <View style={styles.header}>
-          <MaterialIcons name="receipt-long" size={24} color="#0D47A1" />
-          <Text style={styles.title}>{t("donations.printStatement")}</Text>
+          <MaterialIcons name="receipt-long" size={24} color={colors.primary} />
+          <Text style={[styles.title, { color: colors.text }]}>{t("donations.printStatement")}</Text>
         </View>
-        <Text style={styles.subtitle}>{t("donations.annualGivingStatement")}</Text>
+        <Text style={[styles.subtitle, { color: colors.disabled }]}>{t("donations.annualGivingStatement")}</Text>
 
         <SegmentedButtons
           value={yearOffset}
@@ -68,7 +62,7 @@ export function PrintStatementButton() {
         <Button
           mode="contained"
           icon={loading ? undefined : "printer"}
-          style={styles.button}
+          style={[styles.button, { backgroundColor: colors.primary }]}
           labelStyle={styles.buttonLabel}
           onPress={handlePrint}
           disabled={loading}
@@ -85,7 +79,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
@@ -98,21 +91,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: "700",
-    color: "#3c3c3c"
+    fontWeight: "700"
   },
   subtitle: {
     fontSize: 13,
-    color: "#9E9E9E",
     marginBottom: 12
   },
-  segmented: {
-    marginBottom: 12
-  },
-  button: {
-    borderRadius: 8,
-    backgroundColor: "#0D47A1"
-  },
+  segmented: { marginBottom: 12 },
+  button: { borderRadius: 8 },
   buttonLabel: {
     fontSize: 14,
     fontWeight: "600"

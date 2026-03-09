@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { FlatList, StyleSheet, View, Alert } from "react-native";
-import { Button, Card, Chip, Divider, Provider as PaperProvider, Text, MD3LightTheme } from "react-native-paper";
+import { Button, Card, Chip, Divider, Text } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
@@ -10,28 +10,11 @@ import { useCurrentUserChurch } from "../../src/stores/useUserStore";
 import { ApiHelper } from "@churchapps/helpers";
 import dayjs from "../../src/helpers/dayjsConfig";
 import { RegistrationInterface } from "@churchapps/helpers";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#F6F6F8",
-    surface: "#FFFFFF",
-    background: "#F6F6F8",
-    elevation: {
-      level0: "transparent",
-      level1: "#FFFFFF",
-      level2: "#F6F6F8",
-      level3: "#F0F0F0",
-      level4: "#E9ECEF",
-      level5: "#E2E6EA"
-    }
-  }
-};
+import { useThemeColors } from "../../src/theme";
 
 const Registrations = () => {
   const navigation = useReactNavigation();
+  const tc = useThemeColors();
   const { navigateBack } = useNavigation();
   const currentUserChurch = useCurrentUserChurch();
   const [registrations, setRegistrations] = useState<RegistrationInterface[]>([]);
@@ -78,10 +61,10 @@ const Registrations = () => {
   const renderItem = ({ item }: { item: RegistrationInterface }) => {
     const isCancelled = item.status === "cancelled";
     return (
-      <Card style={[styles.card, isCancelled && styles.cancelledCard]}>
+      <Card style={[styles.card, isCancelled && styles.cancelledCard, { backgroundColor: tc.surface }]}>
         <Card.Content>
           <View style={styles.cardHeader}>
-            <Text variant="titleMedium" style={styles.eventTitle}>{item.event?.title || "Event"}</Text>
+            <Text variant="titleMedium" style={[styles.eventTitle, { color: tc.text }]}>{item.event?.title || "Event"}</Text>
             <Chip compact style={{ backgroundColor: getStatusColor(item.status) + "22" }} textStyle={{ color: getStatusColor(item.status), fontSize: 12 }}>
               {item.status}
             </Chip>
@@ -97,9 +80,9 @@ const Registrations = () => {
           {item.members && item.members.length > 0 && (
             <>
               <Divider style={styles.divider} />
-              <Text variant="bodySmall" style={styles.membersLabel}>Registered Members:</Text>
+              <Text variant="bodySmall" style={[styles.membersLabel, { color: tc.text }]}>Registered Members:</Text>
               {item.members.map((m, i) => (
-                <Text key={i} variant="bodySmall" style={styles.memberText}>{m.firstName} {m.lastName}</Text>
+                <Text key={i} variant="bodySmall" style={[styles.memberText, { color: tc.textSecondary }]}>{m.firstName} {m.lastName}</Text>
               ))}
             </>
           )}
@@ -125,27 +108,25 @@ const Registrations = () => {
   const allSorted = [...activeRegs, ...cancelledRegs];
 
   return (
-    <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        <MainHeader title="My Registrations" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
-        <LoadingWrapper loading={loading}>
-          {registrations.length === 0 ? (
-            <View style={styles.emptyState}>
-              <MaterialIcons name="event-available" size={48} color="#CCC" />
-              <Text variant="bodyMedium" style={styles.emptyText}>You haven't registered for any events yet.</Text>
-            </View>
-          ) : (
-            <FlatList
-              data={allSorted}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.listContent}
-              showsVerticalScrollIndicator={false}
-            />
-          )}
-        </LoadingWrapper>
-      </View>
-    </PaperProvider>
+    <View style={[styles.container, { backgroundColor: tc.background }]}>
+      <MainHeader title="My Registrations" openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+      <LoadingWrapper loading={loading}>
+        {registrations.length === 0 ? (
+          <View style={styles.emptyState}>
+            <MaterialIcons name="event-available" size={48} color="#CCC" />
+            <Text variant="bodyMedium" style={[styles.emptyText, { color: tc.textSecondary }]}>You haven't registered for any events yet.</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={allSorted}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContent}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+      </LoadingWrapper>
+    </View>
   );
 };
 

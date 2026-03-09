@@ -14,10 +14,17 @@ import { NotificationNavigationHandler } from "../src/components/NotificationNav
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
 import { StatusBar } from "react-native";
 import { AppLifecycleManager } from "../src/helpers/AppLifecycleManager";
+import { useThemeColors } from "../src/theme";
+import { useThemeContext } from "../src/theme/ThemeProvider";
 import "../src/i18n";
 import * as Sentry from "@sentry/react-native";
 import Constants from "expo-constants";
 import { YouVersionPlatform } from "@youversion/platform-react-native";
+
+function ThemedStatusBar() {
+  const { theme } = useThemeContext();
+  return <StatusBar barStyle={theme === "dark" ? "light-content" : "dark-content"} backgroundColor={theme === "dark" ? "#121212" : undefined} />;
+}
 
 const youversionKey = Constants.expoConfig?.extra?.YOUVERSION_API_KEY;
 if (youversionKey) YouVersionPlatform.configure(youversionKey);
@@ -41,20 +48,10 @@ Sentry.init({
   // spotlight: __DEV__,
 });
 
-export default Sentry.wrap(function RootLayout() {
+function ThemedStack() {
   const router = useRouter();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    const setupApp = async () => {
-      await initializeFirebase();
-      await UserHelper.loadSecureTokens();
-      await initializeQueryCache();
-      AppLifecycleManager.initialize();
-    };
-    setupApp();
-    return () => AppLifecycleManager.cleanup();
-  }, []);
+  const tc = useThemeColors();
 
   const toggleNotifications = (type?: string) => {
     if (type === "notifications") {
@@ -64,11 +61,12 @@ export default Sentry.wrap(function RootLayout() {
     }
   };
 
-  // Default header style for most screens
+  // Default header style for most screens - uses theme-aware colors
   const defaultHeaderOptions = {
     headerBackTitle: "Back",
-    headerStyle: { backgroundColor: "#0D47A1" },
-    headerTintColor: "#FFF",
+    headerStyle: { backgroundColor: tc.headerBg },
+    headerTintColor: tc.onPrimary,
+    headerTitleAlign: "center" as const,
     headerRight: () => <HeaderBell toggleNotifications={toggleNotifications} isDetail={true} />
   };
 
@@ -99,23 +97,43 @@ export default Sentry.wrap(function RootLayout() {
     { name: "donationRoot", options: { ...defaultHeaderOptions, title: t("donations.giving") } },
     { name: "planDetails/[id]/index", options: { ...defaultHeaderOptions, title: t("navigation.planDetails"), headerBackTitle: t("plans.plans") } },
     { name: "volunteerBrowseRoot", options: { ...defaultHeaderOptions, title: t("volunteer.browseOpportunities") } },
-    { name: "volunteerSignup/[planId]/index", options: { ...defaultHeaderOptions, title: t("volunteer.browseOpportunities"), headerBackTitle: t("plans.plans") } }
+    { name: "volunteerSignup/[planId]/index", options: { ...defaultHeaderOptions, title: t("volunteer.browseOpportunities"), headerBackTitle: t("plans.plans") } },
+    { name: "registrationsRoot", options: { ...defaultHeaderOptions, title: "Registrations" } }
   ];
+
+  return (
+    <>
+      <ThemedStatusBar />
+      <SafeAreaProvider>
+        <NotificationNavigationHandler />
+        <Stack screenOptions={{ headerShown: true, animation: "slide_from_right" }} initialRouteName="auth">
+          {screens.map(screen => (
+            <Stack.Screen key={screen.name} name={screen.name} options={screen.options} />
+          ))}
+        </Stack>
+      </SafeAreaProvider>
+    </>
+  );
+}
+
+export default Sentry.wrap(function RootLayout() {
+  useEffect(() => {
+    const setupApp = async () => {
+      await initializeFirebase();
+      await UserHelper.loadSecureTokens();
+      await initializeQueryCache();
+      AppLifecycleManager.initialize();
+    };
+    setupApp();
+    return () => AppLifecycleManager.cleanup();
+  }, []);
 
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ActionSheetProvider>
           <ThemeProvider>
-            <StatusBar barStyle={"light-content"} />
-            <SafeAreaProvider>
-              <NotificationNavigationHandler />
-              <Stack screenOptions={{ headerShown: true }} initialRouteName="auth">
-                {screens.map(screen => (
-                  <Stack.Screen key={screen.name} name={screen.name} options={screen.options} />
-                ))}
-              </Stack>
-            </SafeAreaProvider>
+            <ThemedStack />
           </ThemeProvider>
         </ActionSheetProvider>
       </QueryClientProvider>

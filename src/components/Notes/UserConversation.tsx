@@ -2,6 +2,7 @@ import { MessageInterface, ConversationInterface } from "@churchapps/helpers";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import React, { useCallback, useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
+import { useThemeColors } from "../../theme";
 import { ApiHelper, ArrayHelper } from "../../../src/helpers";
 import { AddNote } from "./AddNote";
 import Note from "./Note";
@@ -15,6 +16,7 @@ interface CustomConversationInterface {
 }
 
 const UserConversations = ({ conversation, conversationId, createConversation }: CustomConversationInterface) => {
+  const colors = useThemeColors();
   const [conversations, setConversations] = useState<{ messages?: MessageInterface[] }[]>([]);
   const [editMessageId, setEditMessageId] = React.useState("");
   const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
@@ -94,7 +96,7 @@ const UserConversations = ({ conversation, conversationId, createConversation }:
   const handleReply = (value: number) => setShowReplyBox(value);
 
   const RenderContent = ({ item, message, idx }: any) => (
-    <View style={{ borderBottomWidth: 1, borderBottomColor: "#EFEFEF" }}>
+    <View style={{ borderBottomWidth: 1, borderBottomColor: colors.border }}>
       <Notes item={item} message={message} idx={idx} showReplyBox={showReplyBox} handleReply={handleReply} />
       <View style={{ marginLeft: 50 }}>{getNotes(item)}</View>
     </View>

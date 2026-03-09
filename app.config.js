@@ -1,8 +1,10 @@
+const { version } = require("./package.json");
+
 module.exports = {
   expo: {
     name: "B1Mobile",
     slug: "B1Mobile",
-    version: "3.8.0",
+    version,
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
@@ -16,7 +18,7 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
-      buildNumber: "54",
+      buildNumber: "55",
       googleServicesFile: "./config/GoogleService-Info.plist",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
@@ -49,7 +51,7 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png"
     },
-    runtimeVersion: "3.8.0",
+    runtimeVersion: version,
     plugins: [
       [
         "@sentry/react-native/expo",
@@ -95,7 +97,7 @@ module.exports = {
       MEMBERSHIP_API: process.env.MEMBERSHIP_API || "https://api.churchapps.org/membership",
       MESSAGING_API: process.env.MESSAGING_API || "https://api.churchapps.org/messaging",
       STAGE: process.env.STAGE || "prod",
-      YOUVERSION_API_KEY: process.env.YOUVERSION_API_KEY || "kcjG9986IOT5ThXvd3lJT1DArk9RBlYt6gzAVNA8Lnb9a8Ld",
+      YOUVERSION_API_KEY: process.env.YOUVERSION_API_KEY,
       eas: {
         projectId: "f72e5911-b8d5-467c-ad9e-423c180e9938"
       }

@@ -4,6 +4,7 @@ import { Button, Card, HelperText } from "react-native-paper";
 import { ApiHelper, UserHelper } from "../../../../src/helpers";
 import { Permissions, LinkInterface } from "@churchapps/helpers";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../../../src/theme";
 
 interface Props {
   groupId: string;
@@ -13,6 +14,7 @@ interface Props {
 
 export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupLeader = false }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [text, setText] = useState("");
   const [url, setUrl] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
@@ -37,14 +39,7 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
 
     const category = forGroupLeader ? "groupLeaderLink" : "groupLink";
 
-    const link: LinkInterface = {
-      category,
-      url,
-      linkType: "url",
-      text,
-      linkData: groupId,
-      icon: ""
-    };
+    const link: LinkInterface = { category, url, linkType: "url", text, linkData: groupId, icon: "" };
 
     try {
       const response = await ApiHelper.post("/links", [link], "ContentApi");
@@ -75,11 +70,11 @@ export const GroupLinkAdd: React.FC<Props> = ({ groupId, saveCallback, forGroupL
             ))}
           </View>
         )}
-        <Text style={styles.note}>{t("groups.linkNote")}</Text>
+        <Text style={[styles.note, { color: colors.textMuted }]}>{t("groups.linkNote")}</Text>
 
-        <TextInput style={styles.input} autoCapitalize={"none"} placeholder={t("groups.linkText")} value={text} onChangeText={setText} accessibilityLabel="Link display text" />
+        <TextInput style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border }]} autoCapitalize={"none"} placeholder={t("groups.linkText")} value={text} onChangeText={setText} accessibilityLabel="Link display text" />
 
-        <TextInput style={styles.input} autoCapitalize={"none"} placeholder={t("groups.linkUrl")} value={url} onChangeText={setUrl} accessibilityLabel="Link URL" />
+        <TextInput style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border }]} autoCapitalize={"none"} placeholder={t("groups.linkUrl")} value={url} onChangeText={setUrl} accessibilityLabel="Link URL" />
 
         <Button mode="contained" onPress={handleAdd} style={styles.button}>
           {t("common.add")}
@@ -98,17 +93,14 @@ const styles = StyleSheet.create({
   },
   note: {
     fontSize: 14,
-    marginBottom: 12,
-    color: "#555"
+    marginBottom: 12
   },
   input: {
-    backgroundColor: "#fff",
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 6,
     marginBottom: 12,
-    borderWidth: 1,
-    borderColor: "#ccc"
+    borderWidth: 1
   },
   button: { marginTop: 8 },
   errorContainer: { marginBottom: 8 },

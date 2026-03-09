@@ -10,6 +10,7 @@ import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { DonationHelper } from "@churchapps/helpers";
 import { useTranslation } from "react-i18next";
 import { PrintStatementButton } from "./PrintStatementButton";
+import { useThemeColors } from "../../theme";
 
 interface DonationRecord {
   id: string;
@@ -32,6 +33,7 @@ interface Props {
 
 export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpactData, donationImpactLoading = false }: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
 
   const intervalTypes = [
@@ -119,17 +121,10 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     let cutoffDate: Date;
 
     switch (selectedPeriod) {
-      case "30d":
-        cutoffDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        break;
-      case "90d":
-        cutoffDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-        break;
-      case "ytd":
-        cutoffDate = new Date(now.getFullYear(), 0, 1);
-        break;
-      default:
-        return donations;
+      case "30d": cutoffDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000); break;
+      case "90d": cutoffDate = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000); break;
+      case "ytd": cutoffDate = new Date(now.getFullYear(), 0, 1); break;
+      default: return donations;
     }
 
     return donations.filter((d) => {
@@ -140,10 +135,6 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
   const givingStats = useMemo(() => {
     const total = filteredDonations.reduce((sum, d) => sum + (d.amount || 0), 0);
-    // const fees = filteredDonations.reduce((sum, d: any) => sum + (d.fees || 0), 0);
-    // const count = filteredDonations.length;
-    // const recurring = filteredDonations.filter((d) => d.recurring).length;
-
     return { total };
   }, [filteredDonations]);
 
@@ -180,20 +171,16 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed":
-        return "#70DC87";
-      case "pending":
-        return "#FEAA24";
-      case "failed":
-        return "#B0120C";
-      default:
-        return "#9E9E9E";
+      case "completed": return colors.success;
+      case "pending": return colors.warning;
+      case "failed": return colors.error;
+      default: return colors.disabled;
     }
   };
 
   const getPaymentMethod = (sub: SubscriptionInterface) => {
     const pm = paymentMethods.find((pm: StripePaymentMethod) => pm.id === (sub.default_payment_method || sub.default_source));
-    if (!pm) return <Text style={{ color: "red" }}>{t("donations.notFound")}</Text>;
+    if (!pm) return <Text style={{ color: colors.error }}>{t("donations.notFound")}</Text>;
     return `${pm.name} ****${pm.last4 || ""}`;
   };
 
@@ -268,21 +255,21 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     <TouchableOpacity
       // onPress={() => setSelectedTransaction(item)}
       style={styles.transactionItem}>
-      <View style={styles.transactionIcon}>
-        <MaterialIcons name="favorite" size={24} color="#0D47A1" />
+      <View style={[styles.transactionIcon, { backgroundColor: colors.iconBackground }]}>
+        <MaterialIcons name="favorite" size={24} color={colors.primary} />
       </View>
 
       <View style={styles.transactionDetails}>
-        <Text variant="titleMedium" style={styles.transactionFund}>
+        <Text variant="titleMedium" style={[styles.transactionFund, { color: colors.text }]}>
           {item.fund?.name}
         </Text>
-        <Text variant="bodySmall" style={styles.transactionDate}>
+        <Text variant="bodySmall" style={[styles.transactionDate, { color: colors.disabled }]}>
           {DateHelper.prettyDate(DateHelper.toDate(item.donationDate))} • {item.method} - {item.methodDetails}
         </Text>
       </View>
 
       <View style={styles.transactionAmount}>
-        <Text variant="titleMedium" style={styles.amountText}>
+        <Text variant="titleMedium" style={[styles.amountText, { color: colors.text }]}>
           {CurrencyHelper.formatCurrency(item.amount)}
         </Text>
         {/* <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.status) }]} /> */}
@@ -298,8 +285,8 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     return (
       <Card style={styles.card}>
         <Card.Content style={styles.row}>
-          <View style={styles.iconWrap}>
-            <MaterialIcons name="autorenew" size={24} color="#0D47A1" />
+          <View style={[styles.iconWrap, { backgroundColor: colors.iconBackground }]}>
+            <MaterialIcons name="autorenew" size={24} color={colors.primary} />
           </View>
 
           <View style={styles.detailsWrap}>
@@ -308,16 +295,16 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                 {fund.name} — {CurrencyHelper.formatCurrency(fund.amount)}
               </Text>
             ))}
-            <Text style={styles.recurringAmount}>{t("donations.totalLabel")}: {CurrencyHelper.formatCurrency(total)}</Text>
-            <Text style={styles.metaText}>{t("donations.every")} {interval}</Text>
-            <Text style={styles.metaText}>{getPaymentMethod(item)}</Text>
-            <Text style={styles.recurringNext}>{startDate}</Text>
+            <Text style={[styles.recurringAmount, { color: colors.primary }]}>{t("donations.totalLabel")}: {CurrencyHelper.formatCurrency(total)}</Text>
+            <Text style={[styles.metaText, { color: colors.black }]}>{t("donations.every")} {interval}</Text>
+            <Text style={[styles.metaText, { color: colors.black }]}>{getPaymentMethod(item)}</Text>
+            <Text style={[styles.recurringNext, { color: colors.disabled }]}>{startDate}</Text>
           </View>
           <Button
             mode="outlined"
             compact
             onPress={() => handleManageRecurring(item)}
-            style={styles.manageButton}
+            style={[styles.manageButton, { borderColor: colors.primary }]}
           >
             {t("donations.manage")}
           </Button>
@@ -330,11 +317,11 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
     return (
       <Card style={styles.loginPromptCard}>
         <Card.Content style={styles.loginPromptContent}>
-          <MaterialIcons name="login" size={48} color="#9E9E9E" style={styles.loginPromptIcon} />
-          <Text variant="titleMedium" style={styles.loginPromptTitle}>
+          <MaterialIcons name="login" size={48} color={colors.disabled} style={styles.loginPromptIcon} />
+          <Text variant="titleMedium" style={[styles.loginPromptTitle, { color: colors.text }]}>
             {t("auth.signIn")}
           </Text>
-          <Text variant="bodyMedium" style={styles.loginPromptSubtitle}>
+          <Text variant="bodyMedium" style={[styles.loginPromptSubtitle, { color: colors.disabled }]}>
             {t("donations.history")}
           </Text>
         </Card.Content>
@@ -345,21 +332,21 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
   return (
     <View style={styles.container}>
       {/* Summary Stats */}
-      <Card style={styles.summaryCard}>
+      <Card style={[styles.summaryCard, { shadowColor: colors.primary }]}>
         <Card.Content>
           <View style={styles.summaryHeader}>
-            <Text variant="titleLarge" style={styles.summaryTitle}>
+            <Text variant="titleLarge" style={[styles.summaryTitle, { color: colors.text }]}>
               {t("donations.giving")}
             </Text>
             <Menu
               visible={showPeriodMenu}
               onDismiss={() => setShowPeriodMenu(false)}
               anchor={
-                <TouchableOpacity style={styles.periodSelector} onPress={() => setShowPeriodMenu(true)}>
-                  <Text variant="bodyMedium" style={styles.periodText}>
+                <TouchableOpacity style={[styles.periodSelector, { backgroundColor: colors.iconBackground }]} onPress={() => setShowPeriodMenu(true)}>
+                  <Text variant="bodyMedium" style={[styles.periodText, { color: colors.primary }]}>
                     {getPeriodLabel(selectedPeriod)}
                   </Text>
-                  <MaterialIcons name="expand-more" size={20} color="#9E9E9E" />
+                  <MaterialIcons name="expand-more" size={20} color={colors.disabled} />
                 </TouchableOpacity>
               }>
               {periods.map(period => (
@@ -377,18 +364,18 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
           {donationsLoading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#0D47A1" />
-              <Text variant="bodyMedium" style={styles.loadingText}>
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text variant="bodyMedium" style={[styles.loadingText, { color: colors.disabled }]}>
                 {t("common.loading")}
               </Text>
             </View>
           ) : (
             <View style={styles.statsGrid}>
               <View style={styles.statItem}>
-                <Text variant="displaySmall" style={styles.statValue}>
+                <Text variant="displaySmall" style={[styles.statValue, { color: colors.primary }]}>
                   {CurrencyHelper.formatCurrency(givingStats.total)}
                 </Text>
-                <Text variant="bodyMedium" style={styles.statLabel}>
+                <Text variant="bodyMedium" style={[styles.statLabel, { color: colors.disabled }]}>
                   {t("donations.totalThisYear")}
                 </Text>
               </View>
@@ -403,13 +390,13 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
       {/* Recurring Donations */}
       {recurringLoading ? (
         <View style={styles.section}>
-          <Text variant="titleMedium" style={styles.sectionTitle}>
+          <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
             {t("donations.recurring")}
           </Text>
           <Card style={styles.loadingCard}>
             <Card.Content style={styles.loadingCardContent}>
-              <ActivityIndicator size="small" color="#0D47A1" />
-              <Text variant="bodyMedium" style={styles.loadingText}>
+              <ActivityIndicator size="small" color={colors.primary} />
+              <Text variant="bodyMedium" style={[styles.loadingText, { color: colors.disabled }]}>
                 {t("common.loading")}
               </Text>
             </Card.Content>
@@ -418,7 +405,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
       ) : (
         subscriptions.length > 0 && (
           <View style={styles.section}>
-            <Text variant="titleMedium" style={styles.sectionTitle}>
+            <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
               {t("donations.recurring")}
             </Text>
             <FlatList
@@ -429,7 +416,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
               showsVerticalScrollIndicator={false}
               ListEmptyComponent={!recurringLoading ? (
                 <View style={styles.emptyWrap}>
-                  <Text style={styles.emptyTitle}>{t("donations.noActiveRecurringGifts")}</Text>
+                  <Text style={[styles.emptyTitle, { color: colors.text }]}>{t("donations.noActiveRecurringGifts")}</Text>
                 </View>
               ) : null}
             />
@@ -439,14 +426,14 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
       {/* Transaction History */}
       <View style={styles.section}>
-        <Text variant="titleMedium" style={styles.sectionTitle}>
+        <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
           {t("donations.recentActivity")}
         </Text>
         <Card style={styles.transactionsCard}>
           {donationsLoading ? (
             <Card.Content style={styles.loadingCardContent}>
-              <ActivityIndicator size="small" color="#0D47A1" />
-              <Text variant="bodyMedium" style={styles.loadingText}>
+              <ActivityIndicator size="small" color={colors.primary} />
+              <Text variant="bodyMedium" style={[styles.loadingText, { color: colors.disabled }]}>
                 {t("common.loading")}
               </Text>
             </Card.Content>
@@ -460,7 +447,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
               ItemSeparatorComponent={() => <Divider style={styles.divider} />}
               ListEmptyComponent={!donationsLoading ? (
                 <View style={styles.emptyWrap}>
-                  <Text style={styles.emptyTitle}>{t("donations.noRecentTransactions")}</Text>
+                  <Text style={[styles.emptyTitle, { color: colors.text }]}>{t("donations.noRecentTransactions")}</Text>
                 </View>
               ) : null}
             />
@@ -470,56 +457,56 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
       {/* Transaction Detail Modal */}
       <Modal visible={selectedTransaction !== null} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSelectedTransaction(null)}>
-        <View style={styles.modalContainer}>
+        <View style={[styles.modalContainer, { backgroundColor: colors.modalOverlay }]}>
           <ScrollView style={styles.modalScrollView} contentContainerStyle={styles.modalContent}>
-            <Card style={styles.detailModal}>
+            <Card style={[styles.detailModal, { shadowColor: colors.shadowBlack, backgroundColor: colors.card }]}>
               <Card.Content>
                 <View style={styles.detailHeader}>
-                  <Text variant="titleLarge" style={styles.detailTitle}>
+                  <Text variant="titleLarge" style={[styles.detailTitle, { color: colors.text }]}>
                     {t("donations.history")}
                   </Text>
                   <TouchableOpacity onPress={() => setSelectedTransaction(null)}>
-                    <MaterialIcons name="close" size={24} color="#9E9E9E" />
+                    <MaterialIcons name="close" size={24} color={colors.disabled} />
                   </TouchableOpacity>
                 </View>
 
                 {selectedTransaction && (
                   <>
                     <View style={styles.detailAmount}>
-                      <Text variant="displayMedium" style={styles.detailAmountText}>
+                      <Text variant="displayMedium" style={[styles.detailAmountText, { color: colors.text }]}>
                         {CurrencyHelper.formatCurrency(selectedTransaction.amount)}
                       </Text>
-                      <View style={styles.statusBadge}>
+                      <View style={[styles.statusBadge, { backgroundColor: colors.iconBackground }]}>
                         <View style={[styles.statusDot, { backgroundColor: getStatusColor(selectedTransaction.status) }]} />
-                        <Text variant="labelMedium" style={styles.statusText}>
+                        <Text variant="labelMedium" style={[styles.statusText, { color: colors.text }]}>
                           {selectedTransaction.status.charAt(0).toUpperCase() + selectedTransaction.status.slice(1)}
                         </Text>
                       </View>
                     </View>
 
-                    <View style={styles.detailBreakdown}>
+                    <View style={[styles.detailBreakdown, { backgroundColor: colors.iconBackground }]}>
                       <View style={styles.detailRow}>
-                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                        <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                           {t("donations.giftAmount")}
                         </Text>
-                        <Text variant="bodyMedium" style={styles.detailValue}>
+                        <Text variant="bodyMedium" style={[styles.detailValue, { color: colors.text }]}>
                           {CurrencyHelper.formatCurrency(selectedTransaction.amount - selectedTransaction.fees)}
                         </Text>
                       </View>
                       <View style={styles.detailRow}>
-                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                        <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                           {t("donations.processingFee")}
                         </Text>
-                        <Text variant="bodyMedium" style={styles.detailValue}>
+                        <Text variant="bodyMedium" style={[styles.detailValue, { color: colors.text }]}>
                           {CurrencyHelper.formatCurrency(selectedTransaction.fees)}
                         </Text>
                       </View>
                       <Divider style={styles.detailDivider} />
                       <View style={styles.detailRow}>
-                        <Text variant="titleMedium" style={styles.detailTotalLabel}>
+                        <Text variant="titleMedium" style={[styles.detailTotalLabel, { color: colors.text }]}>
                           {t("donations.totalLabel")}
                         </Text>
-                        <Text variant="titleMedium" style={styles.detailTotalValue}>
+                        <Text variant="titleMedium" style={[styles.detailTotalValue, { color: colors.primary }]}>
                           {CurrencyHelper.formatCurrency(selectedTransaction.amount)}
                         </Text>
                       </View>
@@ -527,35 +514,35 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
                     <View style={styles.detailInfo}>
                       <View style={styles.detailRow}>
-                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                        <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                           {t("donations.fund")}
                         </Text>
-                        <Text variant="bodyMedium" style={styles.detailValue}>
+                        <Text variant="bodyMedium" style={[styles.detailValue, { color: colors.text }]}>
                           {selectedTransaction.fund}
                         </Text>
                       </View>
                       <View style={styles.detailRow}>
-                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                        <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                           {t("donations.date")}
                         </Text>
-                        <Text variant="bodyMedium" style={styles.detailValue}>
+                        <Text variant="bodyMedium" style={[styles.detailValue, { color: colors.text }]}>
                           {DateHelper.prettyDate(selectedTransaction.date)}
                         </Text>
                       </View>
                       <View style={styles.detailRow}>
-                        <Text variant="bodyMedium" style={styles.detailLabel}>
+                        <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                           {t("donations.method")}
                         </Text>
-                        <Text variant="bodyMedium" style={styles.detailValue}>
+                        <Text variant="bodyMedium" style={[styles.detailValue, { color: colors.text }]}>
                           {selectedTransaction.method}
                         </Text>
                       </View>
                       {selectedTransaction.recurring && (
                         <View style={styles.detailRow}>
-                          <Text variant="bodyMedium" style={styles.detailLabel}>
+                          <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                             {t("donations.frequency")}
                           </Text>
-                          <Text variant="bodyMedium" style={styles.detailValue}>
+                          <Text variant="bodyMedium" style={[styles.detailValue, { color: colors.text }]}>
                             {selectedTransaction.frequency}
                           </Text>
                         </View>
@@ -571,22 +558,22 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
 
       {/* Recurring Donation Management Modal */}
       <Modal transparent={true} visible={selectedRecurring !== null} animationType="slide" onRequestClose={() => setSelectedRecurring(null)}>
-        <View style={styles.modalContainer}>
-          <Card style={styles.detailModal}>
+        <View style={[styles.modalContainer, { backgroundColor: colors.modalOverlay }]}>
+          <Card style={[styles.detailModal, { shadowColor: colors.shadowBlack, backgroundColor: colors.card }]}>
             <Card.Content>
               <View style={styles.detailHeader}>
-                <Text variant="titleLarge" style={styles.detailTitle}>
+                <Text variant="titleLarge" style={[styles.detailTitle, { color: colors.text }]}>
                   {t("donations.manage")}
                 </Text>
                 <TouchableOpacity onPress={() => setSelectedRecurring(null)}>
-                  <MaterialIcons name="close" size={24} color="#9E9E9E" />
+                  <MaterialIcons name="close" size={24} color={colors.disabled} />
                 </TouchableOpacity>
               </View>
 
               {selectedRecurring && (
                 <>
                   <View style={styles.recurringInfo}>
-                    <Text variant="bodyMedium" style={styles.detailLabel}>
+                    <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                       {t("donations.selectPaymentMethod")}
                     </Text>
                     <DropDownPicker
@@ -601,15 +588,15 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                         handlePaymentMethodChange(value as string);
                       }}
                       containerStyle={{ marginTop: DimensionHelper.wp(1) }}
-                      style={{ borderColor: "#E5E7EB" }}
+                      style={{ borderColor: colors.borderLight }}
                       labelStyle={globalStyles.labelStyle}
-                      dropDownContainerStyle={styles.dropdownStyle}
+                      dropDownContainerStyle={[styles.dropdownStyle, { backgroundColor: colors.card, borderColor: colors.borderLight, shadowColor: colors.shadowBlack }]}
                       scrollViewProps={{ scrollEnabled: true }}
                       dropDownDirection="AUTO"
                       zIndex={3000}
                       zIndexInverse={1000}
                     />
-                    <Text variant="bodyMedium" style={styles.detailLabel}>
+                    <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                       {t("donations.selectInterval")}
                     </Text>
                     <DropDownPicker
@@ -634,9 +621,9 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                         }
                       }}
                       containerStyle={{ marginTop: DimensionHelper.wp(1) }}
-                      style={{ borderColor: "#E5E7EB" }}
+                      style={{ borderColor: colors.borderLight }}
                       labelStyle={globalStyles.labelStyle}
-                      dropDownContainerStyle={styles.dropdownStyle}
+                      dropDownContainerStyle={[styles.dropdownStyle, { backgroundColor: colors.card, borderColor: colors.borderLight, shadowColor: colors.shadowBlack }]}
                       scrollViewProps={{ scrollEnabled: true }}
                       dropDownDirection="AUTO"
                       zIndex={2000}
@@ -648,15 +635,15 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                     <Button
                       mode="text"
                       style={styles.stopButton}
-                      textColor="#ed6c02"
+                      textColor={colors.warning}
                       onPress={() => setSelectedRecurring(null)}
                     >
                       {t("common.cancel").toUpperCase()}
                     </Button>
                     <Button
                       mode="outlined"
-                      style={[styles.stopButton, { backgroundColor: "#fff", borderWidth: 1, borderColor: "#d32f2f80" }]}
-                      textColor="#d32f2f"
+                      style={[styles.stopButton, { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.error + "80" }]}
+                      textColor={colors.error}
                       onPress={handleDelete}
                       loading={loadingAction === "delete"}
                     >
@@ -665,8 +652,8 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                     <Button
                       mode="contained"
                       style={styles.stopButton}
-                      buttonColor="#1976d2"
-                      textColor="#FFFFFF"
+                      buttonColor={colors.primary}
+                      textColor={colors.white}
                       onPress={handleSave}
                       loading={loadingAction === "save"}
                     >
@@ -693,7 +680,6 @@ const styles = StyleSheet.create({
   summaryCard: {
     borderRadius: 20,
     elevation: 4,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6
@@ -704,34 +690,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20
   },
-  summaryTitle: {
-    color: "#3c3c3c",
-    fontWeight: "700"
-  },
+  summaryTitle: { fontWeight: "700" },
   periodSelector: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: "#F6F6F8",
     borderRadius: 20
   },
   periodText: {
-    color: "#0D47A1",
     fontWeight: "600",
     marginRight: 4
   },
   statsGrid: { gap: 16 },
   statItem: { alignItems: "center" },
   statValue: {
-    color: "#0D47A1",
     fontWeight: "800",
     marginBottom: 4
   },
-  statLabel: {
-    color: "#9E9E9E",
-    fontWeight: "500"
-  },
+  statLabel: { fontWeight: "500" },
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-between"
@@ -741,19 +718,14 @@ const styles = StyleSheet.create({
     flex: 1
   },
   miniStatValue: {
-    color: "#3c3c3c",
     fontWeight: "700",
     marginBottom: 2
   },
-  miniStatLabel: {
-    color: "#9E9E9E",
-    textAlign: "center"
-  },
+  miniStatLabel: { textAlign: "center" },
 
   // Section
   section: { gap: 12 },
   sectionTitle: {
-    color: "#3c3c3c",
     fontWeight: "700",
     marginLeft: 4
   },
@@ -773,24 +745,21 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#F6F6F8",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16
   },
   recurringDetails: { flex: 1 },
   recurringFund: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 2
   },
   recurringAmount: {
-    color: "#0D47A1",
     fontWeight: "600",
     marginBottom: 2
   },
-  recurringNext: { color: "#9E9E9E" },
-  manageButton: { borderColor: "#0D47A1" },
+  recurringNext: {},
+  manageButton: {},
 
   // Transactions
   transactionsCard: {
@@ -807,33 +776,23 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: "#F6F6F8",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16
   },
   transactionDetails: { flex: 1 },
   transactionFund: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 2
   },
-  transactionDate: {
-    color: "#9E9E9E",
-    marginBottom: 4
-  },
+  transactionDate: { marginBottom: 4 },
   recurringChip: {
     alignSelf: "flex-start",
-    height: 24,
-    borderColor: "#0D47A1"
+    height: 24
   },
-  recurringChipText: {
-    fontSize: 10,
-    color: "#0D47A1"
-  },
+  recurringChipText: { fontSize: 10 },
   transactionAmount: { alignItems: "flex-end" },
   amountText: {
-    color: "#3c3c3c",
     fontWeight: "700",
     marginBottom: 4
   },
@@ -846,23 +805,19 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
     paddingHorizontal: 16
   },
   modalScrollView: { flex: 1 },
   modalContent: {
     padding: 16,
     paddingTop: 50 // Safe area
-
   },
   detailModal: {
     borderRadius: 20,
     elevation: 8,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
-    shadowRadius: 8,
-    backgroundColor: "#FFFFFF"
+    shadowRadius: 8
   },
   detailHeader: {
     flexDirection: "row",
@@ -870,16 +825,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 20
   },
-  detailTitle: {
-    color: "#3c3c3c",
-    fontWeight: "700"
-  },
+  detailTitle: { fontWeight: "700" },
   detailAmount: {
     alignItems: "center",
     marginBottom: 24
   },
   detailAmountText: {
-    color: "#3c3c3c",
     fontWeight: "800",
     marginBottom: 8
   },
@@ -888,17 +839,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 4,
-    backgroundColor: "#F6F6F8",
     borderRadius: 12
   },
-  statusText: {
-    color: "#3c3c3c",
-    marginLeft: 6
-  },
+  statusText: { marginLeft: 6 },
   detailBreakdown: {
     marginBottom: 24,
     paddingVertical: 16,
-    backgroundColor: "#F6F6F8",
     borderRadius: 12,
     paddingHorizontal: 16
   },
@@ -908,25 +854,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 8
   },
-  detailLabel: { color: "#9E9E9E" },
-  detailValue: {
-    color: "#3c3c3c",
-    fontWeight: "500"
-  },
+  detailLabel: {},
+  detailValue: { fontWeight: "500" },
   detailDivider: { marginVertical: 8 },
-  detailTotalLabel: {
-    color: "#3c3c3c",
-    fontWeight: "700"
-  },
-  detailTotalValue: {
-    color: "#0D47A1",
-    fontWeight: "700"
-  },
+  detailTotalLabel: { fontWeight: "700" },
+  detailTotalValue: { fontWeight: "700" },
   detailInfo: { gap: 8 },
 
   // Recurring Management
   recurringFreqText: {
-    color: "#0D47A1",
     fontWeight: "600",
     textAlign: "center"
   },
@@ -961,10 +897,7 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
     gap: 12
   },
-  loadingText: {
-    color: "#9E9E9E",
-    textAlign: "center"
-  },
+  loadingText: { textAlign: "center" },
 
   // Login Prompt
   loginPromptCard: {
@@ -977,13 +910,11 @@ const styles = StyleSheet.create({
   },
   loginPromptIcon: { marginBottom: 16 },
   loginPromptTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     textAlign: "center",
     marginBottom: 8
   },
   loginPromptSubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
   },
@@ -994,7 +925,6 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#3c3c3c",
     marginBottom: 6
   },
   card: {
@@ -1011,7 +941,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 40 / 2,
-    backgroundColor: "#F6F6F8",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12
@@ -1026,17 +955,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginTop: 4
   },
-  metaText: {
-    fontSize: 14,
-    color: "#000"
-  },
-  emptyText: { color: "#777" },
+  metaText: { fontSize: 14 },
+  emptyText: {},
   dropdownStyle: {
-    backgroundColor: "#fff",
-    borderColor: "#E5E7EB",
     overflow: "hidden",
     elevation: 4,
-    shadowColor: "#000",
     shadowOpacity: 0.15,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 }

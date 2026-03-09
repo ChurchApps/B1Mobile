@@ -6,6 +6,7 @@ import { PaymentMethods } from "../LazyDonationComponents";
 import { StripePaymentMethod } from "../../../interfaces";
 import { UserInterface } from "../../../interfaces";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../../theme";
 
 interface ManagePaymentsProps {
   person: UserInterface | undefined;
@@ -25,16 +26,17 @@ export const ManagePayments: React.FC<ManagePaymentsProps> = ({
   loadData
 }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   if (!person?.id) {
     return (
-      <Card style={styles.loginPromptCard}>
+      <Card style={[styles.loginPromptCard, { shadowColor: colors.shadowBlack }]}>
         <Card.Content style={styles.loginPromptContent}>
-          <MaterialIcons name="login" size={48} color="#9E9E9E" style={styles.loginPromptIcon} />
-          <Text variant="titleMedium" style={styles.loginPromptTitle}>
+          <MaterialIcons name="login" size={48} color={colors.disabled} style={styles.loginPromptIcon} />
+          <Text variant="titleMedium" style={[styles.loginPromptTitle, { color: colors.text }]}>
             {t("auth.signIn")}
           </Text>
-          <Text variant="bodyMedium" style={styles.loginPromptSubtitle}>
+          <Text variant="bodyMedium" style={[styles.loginPromptSubtitle, { color: colors.disabled }]}>
             {t("donations.manage")}
           </Text>
         </Card.Content>
@@ -57,7 +59,6 @@ const styles = StyleSheet.create({
   loginPromptCard: {
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
@@ -68,13 +69,11 @@ const styles = StyleSheet.create({
   },
   loginPromptIcon: { marginBottom: 16 },
   loginPromptTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     textAlign: "center",
     marginBottom: 8
   },
   loginPromptSubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
   }

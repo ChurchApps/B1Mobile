@@ -3,8 +3,11 @@ import React from "react";
 import { Text, View, StyleSheet } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ApiHelper, PositionInterface, TimeInterface } from "../../../src/helpers";
+import { ApiErrorHandler } from "../../../src/helpers/ApiErrorHandler";
 import { Card, Button } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { HapticsHelper } from "../../helpers/HapticsHelper";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   position: PositionInterface;
@@ -15,6 +18,7 @@ interface Props {
 
 export const PositionDetails = ({ position, assignment, times, onUpdate }: Props) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   // Early return if required props are null
   if (!position || !assignment) {
@@ -24,37 +28,27 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
   const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "accepted":
-      case "confirmed":
-        return "#388E3C";
-      case "declined":
-        return "#B0120C";
-      default:
-        return "#FEAA24";
+      case "confirmed": return colors.success;
+      case "declined": return colors.error;
+      default: return colors.warning;
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status?.toLowerCase()) {
       case "accepted":
-      case "confirmed":
-        return "check-circle";
-      case "declined":
-        return "cancel";
-      default:
-        return "schedule";
+      case "confirmed": return "check-circle";
+      case "declined": return "cancel";
+      default: return "schedule";
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status?.toLowerCase()) {
-      case "accepted":
-        return t("plans.accepted");
-      case "declined":
-        return t("plans.declined");
-      case "confirmed":
-        return t("plans.confirmed");
-      default:
-        return t("plans.pendingResponse");
+      case "accepted": return t("plans.accepted");
+      case "declined": return t("plans.declined");
+      case "confirmed": return t("plans.confirmed");
+      default: return t("plans.pendingResponse");
     }
   };
 
@@ -67,10 +61,10 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
       const formattedEndDate = formatTime(endDate);
       return (
         <View key={time?.id || Math.random()} style={styles.timeItem}>
-          <MaterialIcons name="access-time" size={16} color="#0D47A1" />
+          <MaterialIcons name="access-time" size={16} color={colors.primary} />
           <View style={styles.timeDetails}>
-            <Text style={styles.timeTitle}>{time.displayName}</Text>
-            <Text style={styles.timeText}>
+            <Text style={[styles.timeTitle, { color: colors.text }]}>{time.displayName}</Text>
+            <Text style={[styles.timeText, { color: colors.textMuted }]}>
               {formattedStartDate} - {formattedEndDate}
             </Text>
           </View>
@@ -82,26 +76,28 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
   const formatDate = (date: any) => date.format("lll");
   const formatTime = (date: any) => date.format("LT");
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
     if (!assignment?.id) return;
-    ApiHelper.post("/assignments/accept/" + assignment.id, [], "DoingApi")
-      .then(() => {
-        onUpdate();
-      })
-      .catch(error => {
-        console.error("Error accepting assignment:", error);
-      });
+    try {
+      await ApiHelper.post("/assignments/accept/" + assignment.id, [], "DoingApi");
+      HapticsHelper.success();
+      onUpdate();
+    } catch (error) {
+      console.error("Error accepting assignment:", error);
+      ApiErrorHandler.showErrorAlert(error, "Error");
+    }
   };
 
-  const handleDecline = () => {
+  const handleDecline = async () => {
     if (!assignment?.id) return;
-    ApiHelper.post("/assignments/decline/" + assignment.id, [], "DoingApi")
-      .then(() => {
-        onUpdate();
-      })
-      .catch(error => {
-        console.error("Error declining assignment:", error);
-      });
+    try {
+      await ApiHelper.post("/assignments/decline/" + assignment.id, [], "DoingApi");
+      HapticsHelper.light();
+      onUpdate();
+    } catch (error) {
+      console.error("Error declining assignment:", error);
+      ApiErrorHandler.showErrorAlert(error, "Error");
+    }
   };
 
   let latestTime = new Date();
@@ -112,16 +108,16 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
   const canRespond = assignment.status === "Unconfirmed" && (times.length === 0 || new Date() < latestTime);
 
   return (
-    <Card key={position?.id || Math.random()} style={styles.card} mode="elevated">
+    <Card key={position?.id || Math.random()} style={[styles.card, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]} mode="elevated">
       <Card.Content style={styles.cardContent}>
         {/* Position Header */}
         <View style={styles.positionHeader}>
           <View style={styles.positionInfo}>
-            <MaterialIcons name="assignment-ind" size={24} color="#0D47A1" />
-            <Text style={styles.positionName}>{position?.name}</Text>
+            <MaterialIcons name="assignment-ind" size={24} color={colors.primary} />
+            <Text style={[styles.positionName, { color: colors.text }]}>{position?.name}</Text>
           </View>
           <View style={[styles.statusBadge, { backgroundColor: getStatusColor(assignment.status) }]}>
-            <MaterialIcons name={getStatusIcon(assignment.status)} size={16} color="white" />
+            <MaterialIcons name={getStatusIcon(assignment.status)} size={16} color={colors.white} />
             <Text style={styles.statusText}>{getStatusText(assignment.status)}</Text>
           </View>
         </View>
@@ -129,7 +125,7 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
         {/* Times Section */}
         {times.length > 0 && (
           <View style={styles.timesSection}>
-            <Text style={styles.sectionTitle}>{t("plans.serviceTimes")}</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>{t("plans.serviceTimes")}</Text>
             <View style={styles.timesList}>{getTimes()}</View>
           </View>
         )}
@@ -137,10 +133,10 @@ export const PositionDetails = ({ position, assignment, times, onUpdate }: Props
         {/* Action Buttons */}
         {canRespond && (
           <View style={styles.actionsContainer}>
-            <Button mode="outlined" onPress={handleDecline} style={styles.declineButton} labelStyle={styles.declineButtonText} icon="close">
+            <Button mode="outlined" onPress={handleDecline} style={[styles.declineButton, { borderColor: colors.error }]} labelStyle={[styles.declineButtonText, { color: colors.error }]} icon="close" accessibilityLabel="Decline assignment">
               {t("plans.decline")}
             </Button>
-            <Button mode="contained" onPress={handleAccept} style={styles.acceptButton} labelStyle={styles.acceptButtonText} icon="check">
+            <Button mode="contained" onPress={handleAccept} style={[styles.acceptButton, { backgroundColor: colors.success }]} labelStyle={styles.acceptButtonText} icon="check" accessibilityLabel="Accept assignment">
               {t("plans.accept")}
             </Button>
           </View>
@@ -154,12 +150,10 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
-    marginBottom: 16,
-    backgroundColor: "#FFFFFF"
+    marginBottom: 16
   },
   cardContent: { padding: 4 },
 
@@ -178,7 +172,6 @@ const styles = StyleSheet.create({
   positionName: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#3c3c3c",
     marginLeft: 8,
     flex: 1
   },
@@ -203,7 +196,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#3c3c3c",
     marginBottom: 12
   },
   timesList: { gap: 8 },
@@ -221,12 +213,10 @@ const styles = StyleSheet.create({
   timeTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: "#3c3c3c",
     marginBottom: 2
   },
   timeText: {
     fontSize: 13,
-    color: "#666",
     lineHeight: 18
   },
 
@@ -238,17 +228,14 @@ const styles = StyleSheet.create({
   },
   declineButton: {
     flex: 1,
-    borderColor: "#B0120C",
     borderRadius: 8
   },
   declineButtonText: {
-    color: "#B0120C",
     fontSize: 14,
     fontWeight: "600"
   },
   acceptButton: {
     flex: 1,
-    backgroundColor: "#388E3C",
     borderRadius: 8
   },
   acceptButtonText: {

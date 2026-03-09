@@ -10,6 +10,7 @@ import { Card, Button } from "react-native-paper";
 import { InlineLoader } from "../common/LoadingComponents";
 import { ApiHelper } from "@churchapps/helpers";
 import { DateHelper } from "../../helpers/DateHelper";
+import { useThemeColors } from "../../theme";
 
 interface BlockoutDate {
   churchId: string;
@@ -22,6 +23,7 @@ interface BlockoutDate {
 
 export const BlockoutDates = () => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const fadeAnim = new Animated.Value(0);
   const currentUserChurch = useCurrentUserChurch();
 
@@ -69,10 +71,7 @@ export const BlockoutDates = () => {
 
   const saveBlockout = async () => {
     try {
-      const blockoutDate = {
-        startDate: DateHelper.formatHtml5Date(startDate),
-        endDate: DateHelper.formatHtml5Date(endDate)
-      };
+      const blockoutDate = { startDate: DateHelper.formatHtml5Date(startDate), endDate: DateHelper.formatHtml5Date(endDate) };
       await ApiHelper.post("/blockoutDates", [blockoutDate], "DoingApi");
       setShowForm(false);
     } catch (err) {
@@ -83,18 +82,18 @@ export const BlockoutDates = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <MaterialIcons name="event-busy" style={styles.headerIcon} size={24} />
-        <Text style={styles.headerTitle}>{t("plans.blockoutDates")}</Text>
+        <MaterialIcons name="event-busy" style={[styles.headerIcon, { color: colors.primary }]} size={24} />
+        <Text style={[styles.headerTitle, { color: colors.text }]}>{t("plans.blockoutDates")}</Text>
       </View>
 
-      <Card style={styles.contentCard}>
+      <Card style={[styles.contentCard, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]}>
         <Card.Content>
           {showLoading ? (
             <InlineLoader size="large" text={t("plans.loadingBlockoutDates")} />
           ) : showForm ? (
             <View>
               <Text style={styles.formLabel}>{t("plans.startDate")}</Text>
-              <TouchableOpacity style={styles.input} onPress={() => setOpenStartPicker(true)}>
+              <TouchableOpacity style={[styles.input, { borderColor: colors.border }]} onPress={() => setOpenStartPicker(true)}>
                 <Text>{dayjs(startDate).format("YYYY-MM-DD")}</Text>
               </TouchableOpacity>
               <DatePicker
@@ -110,7 +109,7 @@ export const BlockoutDates = () => {
               />
 
               <Text style={styles.formLabel}>{t("plans.endDate")}</Text>
-              <TouchableOpacity style={styles.input} onPress={() => setOpenEndPicker(true)}>
+              <TouchableOpacity style={[styles.input, { borderColor: colors.border }]} onPress={() => setOpenEndPicker(true)}>
                 <Text>{dayjs(endDate).format("YYYY-MM-DD")}</Text>
               </TouchableOpacity>
               <DatePicker
@@ -136,31 +135,31 @@ export const BlockoutDates = () => {
             </View>
           ) : upcomingBlockoutDates.length === 0 ? (
             <View style={styles.emptyStateContent}>
-              <MaterialIcons name="event-busy" size={48} color="#9E9E9E" />
-              <Text style={styles.emptyStateText}>{t("plans.noBlockoutDatesSet")}</Text>
-              <Text style={styles.emptyStateSubtext}>{t("plans.blockDatesUnavailable")}</Text>
-              <Button mode="contained" onPress={() => setShowForm(true)} style={styles.addButton} labelStyle={styles.addButtonText} icon="plus">
+              <MaterialIcons name="event-busy" size={48} color={colors.disabled} />
+              <Text style={[styles.emptyStateText, { color: colors.text }]}>{t("plans.noBlockoutDatesSet")}</Text>
+              <Text style={[styles.emptyStateSubtext, { color: colors.disabled }]}>{t("plans.blockDatesUnavailable")}</Text>
+              <Button mode="contained" onPress={() => setShowForm(true)} style={[styles.addButton, { backgroundColor: colors.primary }]} labelStyle={styles.addButtonText} icon="plus">
                 {t("plans.addBlockoutDate")}
               </Button>
             </View>
           ) : (
             <View style={styles.cardsList}>
               <View style={styles.listHeader}>
-                <Text style={styles.listHeaderText}>
+                <Text style={[styles.listHeaderText, { color: colors.disabled }]}>
                   {t("plans.blockoutDateCount", { count: upcomingBlockoutDates.length })}
                 </Text>
-                <Button mode="text" onPress={() => setShowForm(true)} labelStyle={{ color: "#0D47A1" }} icon="plus">
+                <Button mode="text" onPress={() => setShowForm(true)} labelStyle={{ color: colors.primary }} icon="plus">
                   {t("plans.addNew")}
                 </Button>
               </View>
 
               {upcomingBlockoutDates.map((date: BlockoutDate) => (
-                <Card key={date.id} style={styles.blockoutCard} mode="elevated">
+                <Card key={date.id} style={[styles.blockoutCard, { backgroundColor: colors.surface }]} mode="elevated">
                   <Card.Content style={styles.cardContent}>
                     <View style={styles.dateSection}>
                       <View style={styles.dateHeader}>
-                        <MaterialIcons name="event-busy" size={20} color="#B0120C" />
-                        <Text style={styles.dateRange}>
+                        <MaterialIcons name="event-busy" size={20} color={colors.error} />
+                        <Text style={[styles.dateRange, { color: colors.text }]}>
                           {dayjs(date.startDate).format("ll")}
                           {date.endDate && date.endDate !== date.startDate && ` - ${dayjs(date.endDate).format("ll")}`}
                         </Text>
@@ -168,13 +167,13 @@ export const BlockoutDates = () => {
 
                       {date.notes && (
                         <View style={styles.notesContainer}>
-                          <MaterialIcons name="note" size={16} color="#9E9E9E" />
-                          <Text style={styles.notesText}>{date.notes}</Text>
+                          <MaterialIcons name="note" size={16} color={colors.iconColor} />
+                          <Text style={[styles.notesText, { color: colors.textMuted }]}>{date.notes}</Text>
                         </View>
                       )}
                     </View>
                     <TouchableOpacity style={styles.deleteButton} onPress={() => deleteBlockout(date.id)}>
-                      <MaterialIcons name="delete-outline" size={24} color="#B0120C" />
+                      <MaterialIcons name="delete-outline" size={24} color={colors.error} />
                     </TouchableOpacity>
                   </Card.Content>
                 </Card>
@@ -195,23 +194,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingLeft: 4
   },
-  headerIcon: {
-    color: "#0D47A1",
-    marginRight: 8
-  },
+  headerIcon: { marginRight: 8 },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "700",
-    color: "#3c3c3c"
+    fontWeight: "700"
   },
   contentCard: {
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
-    shadowRadius: 3,
-    backgroundColor: "#FFFFFF"
+    shadowRadius: 3
   },
   emptyStateContent: {
     alignItems: "center",
@@ -220,19 +213,14 @@ const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#3c3c3c",
     marginTop: 16
   },
   emptyStateSubtext: {
     fontSize: 14,
-    color: "#9E9E9E",
     marginTop: 8,
     marginBottom: 24
   },
-  addButton: {
-    backgroundColor: "#0D47A1",
-    borderRadius: 12
-  },
+  addButton: { borderRadius: 12 },
   addButtonText: {
     color: "white",
     fontSize: 14,
@@ -247,13 +235,11 @@ const styles = StyleSheet.create({
   },
   listHeaderText: {
     fontSize: 14,
-    color: "#9E9E9E",
     fontWeight: "500"
   },
   blockoutCard: {
     borderRadius: 16,
-    elevation: 2,
-    backgroundColor: "#FFFFFF"
+    elevation: 2
   },
   cardContent: {
     flexDirection: "row",
@@ -272,7 +258,6 @@ const styles = StyleSheet.create({
   dateRange: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#3c3c3c",
     marginLeft: 8
   },
   notesContainer: {
@@ -285,7 +270,6 @@ const styles = StyleSheet.create({
   },
   notesText: {
     fontSize: 14,
-    color: "#666",
     marginLeft: 8
   },
   deleteButton: {
@@ -294,7 +278,6 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
     padding: 12,
     borderRadius: 8,
     marginTop: 4,

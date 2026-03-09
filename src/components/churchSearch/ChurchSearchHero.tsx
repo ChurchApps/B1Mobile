@@ -5,26 +5,28 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 export const ChurchSearchHero: React.FC = () => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <View style={styles.heroSection}>
       <Card style={styles.heroCard}>
         <LinearGradient
-          colors={["#0D47A1", "#2196F3"]}
+          colors={[colors.primary, colors.secondary]}
           style={styles.heroGradient}
         >
           <View style={styles.heroContent}>
             <MaterialIcons
               name="church"
               size={DimensionHelper.wp(12)}
-              color="#FFFFFF"
+              color={colors.onPrimary}
               style={styles.heroIcon}
             />
-            <Text style={styles.heroTitle}>{t("churchSearch.findYourChurch")}</Text>
-            <Text style={styles.heroSubtitle}>
+            <Text style={[styles.heroTitle, { color: colors.onPrimary }]}>{t("churchSearch.findYourChurch")}</Text>
+            <Text style={[styles.heroSubtitle, { color: colors.onPrimary }]}>
               {t("churchSearch.connectWithCommunity")}
             </Text>
           </View>
@@ -43,7 +45,7 @@ const styles = StyleSheet.create({
     borderRadius: DimensionHelper.wp(5),
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#0D47A1",
+    shadowColor: "#0D47A1", // intentional branded shadow — not a semantic token
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -60,14 +62,12 @@ const styles = StyleSheet.create({
   },
   heroIcon: { marginBottom: DimensionHelper.hp(2) },
   heroTitle: {
-    color: "#FFFFFF",
     fontWeight: "700",
     fontSize: DimensionHelper.wp(5.2),
     marginBottom: DimensionHelper.hp(1),
     textAlign: "center"
   },
   heroSubtitle: {
-    color: "#FFFFFF",
     opacity: 0.9,
     fontSize: DimensionHelper.wp(4),
     textAlign: "center"

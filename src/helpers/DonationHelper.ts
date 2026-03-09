@@ -40,7 +40,7 @@ export class DonationHelper {
   /**
    * Finds a gateway with the specified provider (case-insensitive)
    */
-  static findGatewayByProvider(gateways: any[], provider: "stripe" | "paypal"): any {
+  static findGatewayByProvider(gateways: { provider: string; id?: string; [key: string]: unknown }[], provider: "stripe" | "paypal") {
     return gateways.find(g => this.isProvider(g.provider, provider));
   }
 

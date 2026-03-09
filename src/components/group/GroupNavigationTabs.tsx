@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { View, TouchableOpacity, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from "react-native";
 import { Text } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useThemeColors } from "../../theme";
 
 interface TabItem {
   key: string;
@@ -26,6 +27,7 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
   tabWidth = 64,
   isLeader = false
 }) => {
+  const tc = useThemeColors();
   const scrollRef = useRef<ScrollView>(null);
   const [showLeftGradient, setShowLeftGradient] = useState(false);
   const [showRightGradient, setShowRightGradient] = useState(false);
@@ -66,7 +68,7 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.tabBar}>
+      <View style={[styles.tabBar, { backgroundColor: tc.surface, shadowColor: tc.shadowBlack }]}>
         <ScrollView
           ref={scrollRef}
           horizontal
@@ -93,20 +95,20 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
                 }}
                 activeOpacity={0.7}
               >
-                <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
+                <View style={[styles.iconContainer, { backgroundColor: tc.iconBackground }, isActive && { backgroundColor: tc.primary, shadowColor: tc.primary, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 4 }]}>
                   <MaterialCommunityIcons
                     name={tab.icon as any}
                     size={22}
-                    color={isActive ? "#FFFFFF" : "#6B7280"}
+                    color={isActive ? tc.white : tc.textSecondary}
                   />
                 </View>
                 <Text
-                  style={[styles.label, isActive && styles.activeLabel]}
+                  style={[styles.label, { color: tc.textSecondary }, isActive && { color: tc.primary, fontWeight: "700" }]}
                   numberOfLines={1}
                 >
                   {tab.label}
                 </Text>
-                {isActive && <View style={styles.activeIndicator} />}
+                {isActive && <View style={[styles.activeIndicator, { backgroundColor: tc.primary }]} />}
               </TouchableOpacity>
             );
           })}
@@ -114,10 +116,10 @@ export const GroupNavigationTabs: React.FC<GroupNavigationTabsProps> = ({
 
         {/* Gradient fade indicators */}
         {showLeftGradient && (
-          <View style={[styles.gradientOverlay, styles.leftGradient]} pointerEvents="none" />
+          <View style={[styles.gradientOverlay, styles.leftGradient, { backgroundColor: tc.isDark ? "rgba(30,30,30,0.9)" : "rgba(255,255,255,0.9)" }]} pointerEvents="none" />
         )}
         {showRightGradient && (
-          <View style={[styles.gradientOverlay, styles.rightGradient]} pointerEvents="none" />
+          <View style={[styles.gradientOverlay, styles.rightGradient, { backgroundColor: tc.isDark ? "rgba(30,30,30,0.9)" : "rgba(255,255,255,0.9)" }]} pointerEvents="none" />
         )}
       </View>
     </View>
@@ -130,11 +132,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 16
   },
   tabBar: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     paddingVertical: 12,
     paddingHorizontal: 8,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -157,36 +157,21 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "#F3F4F6",
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 6
   },
-  activeIconContainer: {
-    backgroundColor: "#2563EB",
-    shadowColor: "#2563EB",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4
-  },
   label: {
     fontSize: 11,
     fontWeight: "500",
-    color: "#6B7280",
     textAlign: "center",
     letterSpacing: -0.2
-  },
-  activeLabel: {
-    color: "#2563EB",
-    fontWeight: "700"
   },
   activeIndicator: {
     position: "absolute",
     bottom: 0,
     width: 20,
     height: 3,
-    backgroundColor: "#2563EB",
     borderRadius: 1.5
   },
   gradientOverlay: {
@@ -198,13 +183,11 @@ const styles = StyleSheet.create({
   },
   leftGradient: {
     left: 0,
-    backgroundColor: "rgba(255,255,255,0.9)",
     borderTopLeftRadius: 16,
     borderBottomLeftRadius: 16
   },
   rightGradient: {
     right: 0,
-    backgroundColor: "rgba(255,255,255,0.9)",
     borderTopRightRadius: 16,
     borderBottomRightRadius: 16
   }

@@ -1,12 +1,15 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, ActivityIndicator } from "react-native-paper";
+import { useThemeColors } from "../../theme";
 
 export const SearchLoadingIndicator: React.FC = () => {
+  const colors = useThemeColors();
+
   return (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#0D47A1" />
-      <Text variant="bodyMedium" style={styles.loadingText}>
+      <ActivityIndicator size="large" color={colors.primary} />
+      <Text variant="bodyMedium" style={[styles.loadingText, { color: colors.textHint }]}>
         Searching churches...
       </Text>
     </View>
@@ -19,7 +22,6 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   loadingText: {
-    color: "#9E9E9E",
     marginTop: 16,
     textAlign: "center"
   }

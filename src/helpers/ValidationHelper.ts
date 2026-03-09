@@ -14,7 +14,7 @@ export class ValidationHelper {
     return null;
   }
 
-  static required(value: any, fieldName: string = "This field"): string | null {
+  static required(value: unknown, fieldName: string = "This field"): string | null {
     if (!value || (typeof value === "string" && !value.trim())) {
       return `${fieldName} is required`;
     }
@@ -106,7 +106,7 @@ export class ValidationHelper {
     return null;
   }
 
-  static validateForm(values: Record<string, any>, validators: Record<string, (value: any) => string | null>): Record<string, string> {
+  static validateForm(values: Record<string, unknown>, validators: Record<string, (value: unknown) => string | null>): Record<string, string> {
     const errors: Record<string, string> = {};
 
     Object.keys(validators).forEach(key => {

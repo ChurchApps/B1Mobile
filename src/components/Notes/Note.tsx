@@ -3,10 +3,11 @@ import dayjs from "../../helpers/dayjsConfig";
 import React, { useMemo, useCallback } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { Constants, globalStyles } from "../../../src/helpers";
+import { globalStyles } from "../../../src/helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { PersonHelper } from "../../../src/helpers";
 import { Avatar } from "../common/Avatar";
+import { useThemeColors } from "../../../src/theme";
 
 interface NotesInterface {
   message: MessageInterface;
@@ -14,6 +15,7 @@ interface NotesInterface {
 }
 
 const Note = React.memo(({ message, showEditNote }: NotesInterface) => {
+  const colors = useThemeColors();
   const displayDuration = useMemo(() => dayjs(message?.timeSent).fromNow(), [message?.timeSent]);
 
   const photoUrl = useMemo(() => (message?.person?.photo && message.person ? PersonHelper.getPhotoUrl(message.person) : null), [message?.person?.photo, message?.person]);
@@ -24,15 +26,15 @@ const Note = React.memo(({ message, showEditNote }: NotesInterface) => {
 
   return (
     <>
-      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70) }]}>
+      <View style={[globalStyles.conversationList, { width: DimensionHelper.wp(70), backgroundColor: colors.surface }]}>
         <Avatar size={DimensionHelper.wp(12)} photoUrl={message?.person?.photo} firstName={message?.person?.name?.first} lastName={message?.person?.name?.last} style={globalStyles.memberListIcon} />
-        <View style={globalStyles.NoteTextInputView}>
+        <View style={[globalStyles.NoteTextInputView, { backgroundColor: colors.border }]}>
           <View>
             <Text style={globalStyles.name}>{message?.displayName}</Text>
-            <Text>{message?.content}</Text>
+            <Text style={{ color: colors.text }}>{message?.content}</Text>
           </View>
           <TouchableOpacity style={globalStyles.EditIconStyles} onPress={handleEditPress}>
-            <Icon name="edit" color={Constants.Colors.app_color} size={DimensionHelper.wp(5)} />
+            <Icon name="edit" color={colors.primary} size={DimensionHelper.wp(5)} />
           </TouchableOpacity>
         </View>
       </View>
@@ -47,7 +49,8 @@ const Note = React.memo(({ message, showEditNote }: NotesInterface) => {
             fontSize: 11,
             width: DimensionHelper.wp(100),
             left: 72,
-            top: -4
+            top: -4,
+            color: colors.textMuted
           }
         ]}>
         <Text>{displayDuration}</Text>

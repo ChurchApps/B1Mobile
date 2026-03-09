@@ -3,6 +3,7 @@ import { View, Linking, StyleSheet } from "react-native";
 import { Text, DataTable, IconButton, Card } from "react-native-paper";
 import { FileInterface, LinkItem } from "../../../helpers";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../../theme";
 
 interface Props {
   files?: FileInterface[];
@@ -37,16 +38,17 @@ const openSafeURL = async (url: string) => {
 
 const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, handleDelete, handleLinkDelete, formatSize }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   return (
     <View style={styles.container}>
       <Card style={styles.contentCard}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={[styles.navButtonText]}>{t("groups.addedLinks")}</Text>
+          <Text style={[styles.navButtonText, { color: colors.black }]}>{t("groups.addedLinks")}</Text>
         </View>
 
         {links && links.length === 0 && (
           <View style={{ alignItems: "center", marginTop: 10 }}>
-            <Text style={[styles.navButtonText]}>{t("groups.noData")}</Text>
+            <Text style={[styles.navButtonText, { color: colors.black }]}>{t("groups.noData")}</Text>
           </View>
         )}
 
@@ -62,7 +64,7 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
             {links?.map(link => (
               <DataTable.Row key={link.id}>
                 <DataTable.Cell>
-                  <Text style={styles.linkText} onPress={() => openSafeURL(link.url)}>
+                  <Text style={[styles.linkText, { color: colors.primary }]} onPress={() => openSafeURL(link.url)}>
                     {link.text}
                   </Text>
                 </DataTable.Cell>
@@ -79,11 +81,11 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
 
       <Card style={styles.contentCard}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={[styles.navButtonText]}>{t("groups.addedFiles")}</Text>
+          <Text style={[styles.navButtonText, { color: colors.black }]}>{t("groups.addedFiles")}</Text>
         </View>
         {files && files.length === 0 && (
           <View style={{ alignItems: "center", marginTop: 10 }}>
-            <Text style={[styles.navButtonText]}>{t("groups.noData")}</Text>
+            <Text style={[styles.navButtonText, { color: colors.black }]}>{t("groups.noData")}</Text>
           </View>
         )}
         {files && files.length > 0 && (
@@ -97,7 +99,7 @@ const ResourcesTable: React.FC<Props> = ({ files, links, canEditGroupResources, 
             {files?.map(file => (
               <DataTable.Row key={file.id}>
                 <DataTable.Cell>
-                  <Text style={styles.linkText} onPress={() => Linking.openURL(file.contentPath)}>
+                  <Text style={[styles.linkText, { color: colors.primary }]} onPress={() => Linking.openURL(file.contentPath)}>
                     {file.fileName}
                   </Text>
                 </DataTable.Cell>
@@ -129,19 +131,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     width: "100%" // ensures textAlign works inside DataTable.Cell
   },
-  linkText: {
-    color: "#0D47A1",
-    textDecorationLine: "underline"
-  },
+  linkText: { textDecorationLine: "underline" },
   navButtonIcon: { marginBottom: 4 },
   navButtonText: {
-    color: "#000000",
     fontWeight: "700",
     fontSize: 18,
     marginLeft: 10,
     alignItems: "center"
   },
-  navButtonAvatar: { backgroundColor: "#9E9E9E" }
+  navButtonAvatar: {}
 });
 
 export default ResourcesTable;

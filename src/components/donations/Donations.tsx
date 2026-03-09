@@ -7,6 +7,7 @@ import { ActivityIndicator, ScrollView, View, FlatList } from "react-native";
 import { Card, IconButton, List, Portal, Modal, Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { useAppTheme } from "../../../src/theme";
+import { useThemeColors } from "../../../src/theme";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 export function Donations() {
@@ -17,6 +18,7 @@ export function Donations() {
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
   const { spacing, theme } = useAppTheme();
+  const colors = useThemeColors();
 
   // Use react-query for donations
   const { data: donations = [], isLoading } = useQuery<DonationInterface[]>({
@@ -35,7 +37,7 @@ export function Donations() {
         description={donation.status === "pending" ? `${donation.fund?.name} (Pending)` : donation.fund?.name}
         right={() => (
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text variant="bodyLarge" style={{ marginRight: spacing.md, color: donation.status === "pending" ? "#f59e0b" : undefined }}>
+            <Text variant="bodyLarge" style={{ marginRight: spacing.md, color: donation.status === "pending" ? colors.warning : undefined }}>
               {CurrencyHelper.formatCurrency(donation.fund?.amount || 0)}
             </Text>
             <IconButton
@@ -89,7 +91,7 @@ export function Donations() {
           visible={showDonationModal}
           onDismiss={() => setShowDonationModal(false)}
           contentContainerStyle={{
-            backgroundColor: "white",
+            backgroundColor: colors.card,
             padding: spacing.md,
             margin: spacing.md,
             borderRadius: 8,
@@ -109,7 +111,7 @@ export function Donations() {
                 <List.Item
                   title={t("donations.status")}
                   description="Pending - ACH transfers typically take 4-5 business days"
-                  descriptionStyle={{ color: "#f59e0b" }}
+                  descriptionStyle={{ color: colors.warning }}
                 />
               )}
             </List.Section>

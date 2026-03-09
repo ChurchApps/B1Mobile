@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { Card, ActivityIndicator } from "react-native-paper";
 import { WebView } from "react-native-webview";
+import { useThemeColors } from "../../theme";
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -9,15 +10,16 @@ interface VideoPlayerProps {
 }
 
 export const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, visible }) => {
+  const colors = useThemeColors();
   console.log("VideoPlayer - visible:", visible, "videoUrl:", videoUrl);
   if (!visible) return null;
 
   if (!videoUrl) {
     return (
-      <Card style={styles.videoCard}>
-        <View style={styles.videoContainer}>
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#0D47A1" />
+      <Card style={[styles.videoCard, { shadowColor: colors.shadowBlack }]}>
+        <View style={[styles.videoContainer, { backgroundColor: colors.black }]}>
+          <View style={[styles.loadingContainer, { backgroundColor: colors.black }]}>
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         </View>
       </Card>
@@ -25,8 +27,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, visible }) =
   }
 
   return (
-    <Card style={styles.videoCard}>
-      <View style={styles.videoContainer}>
+    <Card style={[styles.videoCard, { shadowColor: colors.shadowBlack }]}>
+      <View style={[styles.videoContainer, { backgroundColor: colors.black }]}>
         <WebView
           source={{
             uri: videoUrl,
@@ -40,8 +42,8 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({ videoUrl, visible }) =
           domStorageEnabled={true}
           startInLoadingState={true}
           renderLoading={() => (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#0D47A1" />
+            <View style={[styles.loadingContainer, { backgroundColor: colors.black }]}>
+              <ActivityIndicator size="large" color={colors.primary} />
             </View>
           )}
           allowsInlineMediaPlayback={true}
@@ -64,15 +66,11 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     overflow: "hidden",
     elevation: 4,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6
   },
-  videoContainer: {
-    aspectRatio: 16 / 9,
-    backgroundColor: "#000"
-  },
+  videoContainer: { aspectRatio: 16 / 9 },
   webView: { flex: 1 },
   loadingContainer: {
     position: "absolute",
@@ -81,7 +79,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#000"
+    alignItems: "center"
   }
 });

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, StyleProp, ViewStyle } from "react-native";
 import { TextInput } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Constants } from "../../helpers";
+import { useThemeColors } from "../../theme";
 
 interface FormFieldProps {
   label: string;
@@ -43,6 +43,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   maxLength,
   autoFocus = false
 }) => {
+  const colors = useThemeColors();
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
 
@@ -60,6 +61,24 @@ export const FormField: React.FC<FormFieldProps> = ({
     return autoCapitalize;
   };
 
+  const getAutoComplete = () => {
+    switch (type) {
+      case "email": return "email" as const;
+      case "password": return "password" as const;
+      case "phone": return "tel" as const;
+      default: return "off" as const;
+    }
+  };
+
+  const getTextContentType = () => {
+    switch (type) {
+      case "email": return "emailAddress" as const;
+      case "password": return "password" as const;
+      case "phone": return "telephoneNumber" as const;
+      default: return "none" as const;
+    }
+  };
+
   return (
     <View style={[{ marginBottom: 16 }, style]}>
       <TextInput
@@ -72,17 +91,19 @@ export const FormField: React.FC<FormFieldProps> = ({
         secureTextEntry={isPassword && !showPassword}
         keyboardType={getKeyboardType()}
         autoCapitalize={getAutoCapitalize()}
+        autoComplete={getAutoComplete()}
+        textContentType={getTextContentType()}
         editable={editable}
         multiline={multiline}
         numberOfLines={numberOfLines}
         maxLength={maxLength}
         autoFocus={autoFocus}
-        outlineColor={Constants.Colors.gray_bg}
-        activeOutlineColor={error ? Constants.Colors.button_red : Constants.Colors.primary}
+        outlineColor={colors.border}
+        activeOutlineColor={error ? colors.error : colors.primary}
         left={
           leftIcon ? (
             <TextInput.Icon
-              icon={() => <Ionicons name={leftIcon as any} size={20} color={Constants.Colors.text_gray} />}
+              icon={() => <Ionicons name={leftIcon as any} size={20} color={colors.inputText} />}
             />
           ) : undefined
         }
@@ -93,22 +114,22 @@ export const FormField: React.FC<FormFieldProps> = ({
                 <Ionicons
                   name={showPassword ? "eye-off" : "eye"}
                   size={20}
-                  color={Constants.Colors.text_gray}
+                  color={colors.inputText}
                 />
               )}
               onPress={() => setShowPassword(!showPassword)}
             />
           ) : rightIcon ? (
             <TextInput.Icon
-              icon={() => <Ionicons name={rightIcon as any} size={20} color={Constants.Colors.text_gray} />}
+              icon={() => <Ionicons name={rightIcon as any} size={20} color={colors.inputText} />}
               onPress={onRightIconPress}
             />
           ) : undefined
         }
-        style={{ backgroundColor: editable ? "#ffffff" : "#f5f5f5" }}
+        style={{ backgroundColor: editable ? colors.surface : colors.inputBg }}
       />
       {error && (
-        <Text style={{ color: Constants.Colors.button_red, fontSize: 12, marginTop: 4 }}>
+        <Text style={{ color: colors.error, fontSize: 12, marginTop: 4 }}>
           {error}
         </Text>
       )}
@@ -135,6 +156,8 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   required = false,
   style
 }) => {
+  const colors = useThemeColors();
+
   return (
     <View style={[{ marginBottom: 16 }, style]}>
       <TextInput
@@ -145,17 +168,17 @@ export const SelectField: React.FC<SelectFieldProps> = ({
         error={!!error}
         editable={false}
         onPressIn={onPress}
-        outlineColor={Constants.Colors.gray_bg}
-        activeOutlineColor={error ? Constants.Colors.button_red : Constants.Colors.primary}
+        outlineColor={colors.border}
+        activeOutlineColor={error ? colors.error : colors.primary}
         right={
           <TextInput.Icon
-            icon={() => <Ionicons name="chevron-down" size={20} color={Constants.Colors.text_gray} />}
+            icon={() => <Ionicons name="chevron-down" size={20} color={colors.inputText} />}
           />
         }
-        style={{ backgroundColor: "#ffffff" }}
+        style={{ backgroundColor: colors.surface }}
       />
       {error && (
-        <Text style={{ color: Constants.Colors.button_red, fontSize: 12, marginTop: 4 }}>
+        <Text style={{ color: colors.error, fontSize: 12, marginTop: 4 }}>
           {error}
         </Text>
       )}

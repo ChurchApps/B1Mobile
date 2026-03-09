@@ -6,6 +6,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { Constants, globalStyles } from "../../../src/helpers";
 import { StripePaymentMethod } from "../../../src/interfaces";
 import { CustomModal } from "./CustomModal";
+import { useThemeColors } from "../../../src/theme";
 
 interface Props {
   show: boolean;
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export function PaymentMethodModal({ show, close, onSelect }: Props) {
+  const colors = useThemeColors();
   const methods: string[] = ["card", "bank"];
 
   return (
@@ -29,16 +31,17 @@ export function PaymentMethodModal({ show, close, onSelect }: Props) {
             }}
             style={{ flexDirection: "row", alignItems: "center" }}>
             {index == 0 ? (
-              <MaterialIcons name="credit-card" style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp(4) }} size={DimensionHelper.wp(6)} />
+              <MaterialIcons name="credit-card" style={{ color: colors.success, marginHorizontal: DimensionHelper.wp(4) }} size={DimensionHelper.wp(6)} />
             ) : (
-              <MaterialCommunityIcons name="bank" style={{ color: Constants.Colors.button_green, marginHorizontal: DimensionHelper.wp(4) }} size={DimensionHelper.wp(6)} />
+              <MaterialCommunityIcons name="bank" style={{ color: colors.success, marginHorizontal: DimensionHelper.wp(4) }} size={DimensionHelper.wp(6)} />
             )}
             <Text
               style={{
                 fontSize: DimensionHelper.wp(4.8),
                 fontFamily: Constants.Fonts.RobotoRegular,
                 textAlign: "center",
-                paddingVertical: DimensionHelper.wp(2)
+                paddingVertical: DimensionHelper.wp(2),
+                color: colors.text
               }}>
               Add {item[0].toUpperCase() + item.slice(1).toLowerCase()}
             </Text>

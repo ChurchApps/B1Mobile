@@ -1,7 +1,7 @@
 {
   "name": "B1Mobile",
   "main": "expo-router/entry",
-  "version": "3.8.0",
+  "version": "3.10.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -10,6 +10,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "eslint --fix src/ app/",
+    "bump-version": "node scripts/bump-version.js",
     "build:android": "eas build --platform android",
     "build:ios": "eas build --platform ios",
     "update:development": "eas update --channel development",
@@ -21,7 +22,7 @@
   },
   "dependencies": {
     "@churchapps/content-providers": "^0.1.6",
-    "@churchapps/helpers": "1.2.29",
+    "@churchapps/helpers": "1.2.30",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",
@@ -113,6 +114,7 @@
     "@typescript-eslint/parser": "^8.36.0",
     "eslint": "^9.28.0",
     "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-native": "^5.0.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "expo-dev-launcher": "~6.0.20",

@@ -13,10 +13,7 @@ export const NotificationNavigationHandler = () => {
       try {
         if (data?.chatId) {
           // Navigate to message screen with chat ID
-          router.push({
-            pathname: "/messageScreenRoot",
-            params: { chatId: data.chatId }
-          });
+          router.push({ pathname: "/messageScreenRoot", params: { chatId: data.chatId } });
         } else {
           // Fallback: navigate to notifications screen to find messages
           router.push("/(drawer)/notifications");
@@ -37,13 +34,13 @@ export const NotificationNavigationHandler = () => {
     };
 
     // Add event listeners
-    eventBus.addListener("navigateToChat", handleChatNavigation);
-    eventBus.addListener("navigateToNotification", handleNotificationNavigation);
+    const chatSub = eventBus.addListener("navigateToChat", handleChatNavigation);
+    const notifSub = eventBus.addListener("navigateToNotification", handleNotificationNavigation);
 
     // Cleanup on unmount
     return () => {
-      eventBus.removeListener("navigateToChat");
-      eventBus.removeListener("navigateToNotification");
+      chatSub.remove();
+      notifSub.remove();
     };
   }, []);
 

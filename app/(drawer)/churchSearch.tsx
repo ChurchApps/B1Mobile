@@ -1,14 +1,17 @@
 import React from "react";
+import { useThemeColors } from "@/theme";
 import { ChurchInterface, UserHelper } from "../../src/helpers";
 import { ErrorHelper } from "../../src/helpers/ErrorHelper";
 import { ApiHelper } from "@churchapps/helpers";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { Text, Provider as PaperProvider, MD3LightTheme } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
-import { useUserStore, useRecentChurches, useUserChurches } from "../../src/stores/useUserStore";
+import { useRecentChurches, useUserChurches } from "../../src/stores/useUserStore";
+import { useChurchStore } from "../../src/stores/useChurchStore";
+import { useEngagementStore } from "../../src/stores/useEngagementStore";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -21,34 +24,15 @@ import {
 } from "../../src/components/churchSearch/exports";
 import { useTranslation } from "react-i18next";
 
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#f0f2f5",
-    surface: "#ffffff",
-    background: "#F6F6F8",
-    onSurface: "#3c3c3c",
-    onBackground: "#3c3c3c",
-    elevation: {
-      level0: "transparent",
-      level1: "#ffffff",
-      level2: "#f8f9fa",
-      level3: "#f0f2f5",
-      level4: "#e9ecef",
-      level5: "#e2e6ea"
-    }
-  }
-};
-
 const ChurchSearch = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const [searchText, setSearchText] = useState("");
   const [selectingChurch, setSelectingChurch] = useState(false);
   const recentChurches = useRecentChurches();
   const userChurches = useUserChurches();
-  const { addRecentChurch, selectChurch } = useUserStore();
+  const selectChurch = useChurchStore(state => state.selectChurch);
+  const addRecentChurch = useEngagementStore(state => state.addRecentChurch);
 
   // Use react-query for church search - only search when text is provided
   const { data: searchList = [], isLoading: loading } = useQuery({
@@ -83,7 +67,7 @@ const ChurchSearch = () => {
       addRecentChurch(churchData);
 
       // Check if we're switching to a different church
-      const currentChurch = useUserStore.getState().currentUserChurch?.church;
+      const currentChurch = useChurchStore.getState().currentUserChurch?.church;
       const isSwitchingChurch = currentChurch?.id !== churchData.id;
 
       // Only clear cached data if switching to a different church
@@ -125,48 +109,46 @@ const ChurchSearch = () => {
   const displayedChurches = searchText.length < 3 ? recentChurches.slice().reverse() : searchList;
 
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaView style={styles.container}>
-        <ChurchSelectionOverlay visible={selectingChurch} />
-        <View style={styles.content}>
-          <ChurchSearchHero />
+    <SafeAreaView style={[styles.container, { backgroundColor: tc.background }]}>
+      <ChurchSelectionOverlay visible={selectingChurch} />
+      <View style={styles.content}>
+        <ChurchSearchHero />
 
-          <ChurchSearchInput
-            searchText={searchText}
-            onSearchTextChange={setSearchText}
-          />
+        <ChurchSearchInput
+          searchText={searchText}
+          onSearchTextChange={setSearchText}
+        />
 
-          {loading && <SearchLoadingIndicator />}
+        {loading && <SearchLoadingIndicator />}
 
-          {/* Results Section */}
-          <View style={styles.resultsSection}>
-            {!loading && (
-              <>
-                <View style={styles.sectionHeader}>
-                  <Text variant="titleLarge" style={styles.sectionTitle}>
-                    {searchText.length < 3 ? t("churchSearch.recentChurches") : t("churchSearch.searchResults")}
+        {/* Results Section */}
+        <View style={styles.resultsSection}>
+          {!loading && (
+            <>
+              <View style={styles.sectionHeader}>
+                <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
+                  {searchText.length < 3 ? t("churchSearch.recentChurches") : t("churchSearch.searchResults")}
+                </Text>
+                {searchText.length < 3 && recentChurches.length === 0 && (
+                  <Text variant="bodyMedium" style={[styles.emptyText, { color: tc.textSecondary }]}>
+                    {t("churchSearch.noRecentChurches")}
                   </Text>
-                  {searchText.length < 3 && recentChurches.length === 0 && (
-                    <Text variant="bodyMedium" style={styles.emptyText}>
-                      {t("churchSearch.noRecentChurches")}
-                    </Text>
-                  )}
-                  {searchText.length >= 3 && displayedChurches.length === 0 && !loading && (
-                    <Text variant="bodyMedium" style={styles.emptyText}>
-                      {t("churchSearch.noChurchesFound")}
-                    </Text>
-                  )}
-                </View>
+                )}
+                {searchText.length >= 3 && displayedChurches.length === 0 && !loading && (
+                  <Text variant="bodyMedium" style={[styles.emptyText, { color: tc.textSecondary }]}>
+                    {t("churchSearch.noChurchesFound")}
+                  </Text>
+                )}
+              </View>
 
-                {displayedChurches.length > 0 && <FlatList data={displayedChurches} renderItem={renderChurchItem} keyExtractor={item => item.id || item.name || Math.random().toString()} showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent} ItemSeparatorComponent={() => <View style={styles.separator} />} />}
-              </>
-            )}
-          </View>
-
-          {searchText.length < 3 && recentChurches.length === 0 && <GettingStartedHelper />}
+              {displayedChurches.length > 0 && <FlatList data={displayedChurches} renderItem={renderChurchItem} keyExtractor={item => item.id || item.name || Math.random().toString()} showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContent} ItemSeparatorComponent={() => <View style={styles.separator} />} />}
+            </>
+          )}
         </View>
-      </SafeAreaView>
-    </PaperProvider>
+
+        {searchText.length < 3 && recentChurches.length === 0 && <GettingStartedHelper />}
+      </View>
+    </SafeAreaView>
   );
 };
 

@@ -40,10 +40,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
       return;
     }
 
-    const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType: "Card",
-      ...cardDetails
-    });
+    const stripePaymentMethod = await createPaymentMethod({ paymentMethodType: "Card", ...cardDetails });
 
     if (stripePaymentMethod.error) {
       Alert.alert(t("donations.failed"), stripePaymentMethod.error.message);
@@ -51,13 +48,7 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
       return;
     }
 
-    const paymentMethod: PaymentMethodInterface = {
-      id: stripePaymentMethod.paymentMethod.id,
-      customerId,
-      personId: person.id,
-      email: person?.contactInfo?.email,
-      name: cardHolderName || person?.name?.display
-    };
+    const paymentMethod: PaymentMethodInterface = { id: stripePaymentMethod.paymentMethod.id, customerId, personId: person.id, email: person?.contactInfo?.email, name: cardHolderName || person?.name?.display };
     const result = await ApiHelper.post("/paymentmethods/addcard", paymentMethod, "GivingApi");
     if (result?.raw?.message) {
       Alert.alert(t("donations.failedToCreatePaymentMethod"), result?.raw?.message);

@@ -23,11 +23,7 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
 
   const handlePickFile = async () => {
     try {
-      const res = await DocumentPicker.getDocumentAsync({
-        type: "*/*",
-        copyToCacheDirectory: true,
-        multiple: false
-      });
+      const res = await DocumentPicker.getDocumentAsync({ type: "*/*", copyToCacheDirectory: true, multiple: false });
 
       if (!res.canceled && res.assets.length > 0) {
         setUploadedFile(res?.assets[0]);
@@ -71,14 +67,7 @@ export const FileUpload: React.FC<Props> = ({ pendingSave, saveCallback, content
   const handleSave = async () => {
     if (!uploadedFile) return;
 
-    const f: FileInterface = {
-      ...file,
-      size: uploadedFile.size ?? 0,
-      fileType: uploadedFile.mimeType ?? "application/octet-stream",
-      fileName: uploadedFile.name,
-      contentType,
-      contentId
-    };
+    const f: FileInterface = { ...file, size: uploadedFile.size ?? 0, fileType: uploadedFile.mimeType ?? "application/octet-stream", fileName: uploadedFile.name, contentType, contentId };
 
     try {
       setUploadInProgress(true);

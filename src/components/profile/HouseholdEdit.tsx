@@ -8,6 +8,7 @@ import { LoadingWrapper } from "../wrapper/LoadingWrapper";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface HouseholdEditProps {
   householdId?: string;
@@ -23,6 +24,7 @@ export const HouseholdEdit: React.FC<HouseholdEditProps> = ({
   onFamilyMembersChange
 }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [newMemberName, setNewMemberName] = useState("");
   const currentUserChurch = useCurrentUserChurch();
 
@@ -54,22 +56,22 @@ export const HouseholdEdit: React.FC<HouseholdEditProps> = ({
     <LoadingWrapper loading={isLoading}>
       <View style={styles.container}>
         {/* Current Household Members */}
-        <Card style={styles.section}>
+        <Card style={[styles.section, { backgroundColor: colors.surface }]}>
           <Card.Content>
-            <View style={styles.sectionHeader}>
-              <MaterialIcons name="people" size={24} color="#0D47A1" />
-              <Text variant="titleMedium" style={styles.sectionTitle}>
+            <View style={[styles.sectionHeader, { borderBottomColor: colors.border }]}>
+              <MaterialIcons name="people" size={24} color={colors.primary} />
+              <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
                 {t("profileEdit.currentHousehold")}
               </Text>
             </View>
 
             {otherMembers.length === 0 ? (
-              <Text variant="bodyMedium" style={styles.emptyText}>
+              <Text variant="bodyMedium" style={[styles.emptyText, { color: colors.disabled }]}>
                 {t("profileEdit.noOtherHouseholdMembers")}
               </Text>
             ) : (
               otherMembers.map((member) => (
-                <View key={member.id} style={styles.memberItem}>
+                <View key={member.id} style={[styles.memberItem, { borderBottomColor: colors.border }]}>
                   <Avatar
                     size={48}
                     photoUrl={member.photo}
@@ -77,11 +79,11 @@ export const HouseholdEdit: React.FC<HouseholdEditProps> = ({
                     lastName={member.name?.last}
                   />
                   <View style={styles.memberInfo}>
-                    <Text variant="titleSmall" style={styles.memberName}>
+                    <Text variant="titleSmall" style={[styles.memberName, { color: colors.text }]}>
                       {member.name?.display}
                     </Text>
                     {member.householdRole && (
-                      <Text variant="bodySmall" style={styles.memberRole}>
+                      <Text variant="bodySmall" style={[styles.memberRole, { color: colors.disabled }]}>
                         {member.householdRole}
                       </Text>
                     )}
@@ -93,16 +95,16 @@ export const HouseholdEdit: React.FC<HouseholdEditProps> = ({
         </Card>
 
         {/* Add Family Member */}
-        <Card style={styles.section}>
+        <Card style={[styles.section, { backgroundColor: colors.surface }]}>
           <Card.Content>
-            <View style={styles.sectionHeader}>
-              <MaterialIcons name="person-add" size={24} color="#0D47A1" />
-              <Text variant="titleMedium" style={styles.sectionTitle}>
+            <View style={[styles.sectionHeader, { borderBottomColor: colors.border }]}>
+              <MaterialIcons name="person-add" size={24} color={colors.primary} />
+              <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
                 {t("profileEdit.addFamilyMember")}
               </Text>
             </View>
 
-            <Text variant="bodySmall" style={styles.helperText}>
+            <Text variant="bodySmall" style={[styles.helperText, { color: colors.disabled }]}>
               {t("profileEdit.addFamilyMemberDescription")}
             </Text>
 
@@ -112,17 +114,17 @@ export const HouseholdEdit: React.FC<HouseholdEditProps> = ({
                 label={t("profileEdit.firstName")}
                 value={newMemberName}
                 onChangeText={setNewMemberName}
-                style={styles.nameInput}
-                outlineColor="#E0E0E0"
-                activeOutlineColor="#0D47A1"
+                style={[styles.nameInput, { backgroundColor: colors.surface }]}
+                outlineColor={colors.divider}
+                activeOutlineColor={colors.primary}
               />
               <Button
                 mode="contained"
                 onPress={handleAddMember}
                 disabled={!newMemberName.trim()}
                 style={styles.addButton}
-                buttonColor="#0D47A1"
-                textColor="#FFFFFF"
+                buttonColor={colors.primary}
+                textColor={colors.onPrimary}
                 contentStyle={styles.addButtonContent}>
                 {t("common.add")}
               </Button>
@@ -130,28 +132,28 @@ export const HouseholdEdit: React.FC<HouseholdEditProps> = ({
 
             {/* Pending Family Members */}
             {pendingFamilyMembers.length > 0 && (
-              <View style={styles.pendingSection}>
-                <Text variant="labelLarge" style={styles.pendingLabel}>
+              <View style={[styles.pendingSection, { borderTopColor: colors.warningLight }]}>
+                <Text variant="labelLarge" style={[styles.pendingLabel, { color: colors.text }]}>
                   {t("profileEdit.pendingFamilyMembers")}
                 </Text>
                 {pendingFamilyMembers.map((name, index) => (
-                  <View key={index} style={styles.pendingItem}>
+                  <View key={index} style={[styles.pendingItem, { backgroundColor: colors.warningLight }]}>
                     <View style={styles.pendingIcon}>
-                      <MaterialIcons name="person-outline" size={20} color="#FFC107" />
+                      <MaterialIcons name="person-outline" size={20} color={colors.warning} />
                     </View>
-                    <Text variant="bodyMedium" style={styles.pendingName}>
+                    <Text variant="bodyMedium" style={[styles.pendingName, { color: colors.text }]}>
                       {name}
                     </Text>
                     <IconButton
                       icon="close"
                       size={20}
-                      iconColor="#E53935"
+                      iconColor={colors.error}
                       onPress={() => handleRemoveMember(index)}
                       style={styles.removeButton}
                     />
                   </View>
                 ))}
-                <Text variant="bodySmall" style={styles.pendingNote}>
+                <Text variant="bodySmall" style={[styles.pendingNote, { color: colors.disabled }]}>
                   {t("profileEdit.pendingMembersNote")}
                 </Text>
               </View>
@@ -168,25 +170,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16
   },
-  section: {
-    marginBottom: 16,
-    backgroundColor: "#FFFFFF"
-  },
+  section: { marginBottom: 16 },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
     marginBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
     paddingBottom: 8
   },
-  sectionTitle: {
-    fontWeight: "600",
-    color: "#3c3c3c"
-  },
+  sectionTitle: { fontWeight: "600" },
   emptyText: {
-    color: "#9E9E9E",
     fontStyle: "italic",
     textAlign: "center",
     paddingVertical: 16
@@ -195,61 +189,44 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
+    borderBottomWidth: 1
   },
   memberInfo: {
     marginLeft: 12,
     flex: 1
   },
-  memberName: {
-    color: "#3c3c3c",
-    fontWeight: "600"
-  },
-  memberRole: { color: "#9E9E9E" },
-  helperText: {
-    color: "#9E9E9E",
-    marginBottom: 16
-  },
+  memberName: { fontWeight: "600" },
+  memberRole: {},
+  helperText: { marginBottom: 16 },
   addMemberRow: {
     flexDirection: "row",
     gap: 12,
     alignItems: "flex-start"
   },
-  nameInput: {
-    flex: 1,
-    backgroundColor: "#FFFFFF"
-  },
+  nameInput: { flex: 1 },
   addButton: { marginTop: 6 },
   addButtonContent: { paddingHorizontal: 8 },
   pendingSection: {
     marginTop: 20,
     paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#FFE082"
+    borderTopWidth: 1
   },
   pendingLabel: {
-    color: "#795548",
     fontWeight: "600",
     marginBottom: 12
   },
   pendingItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFF8E1",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginBottom: 8
   },
   pendingIcon: { marginRight: 8 },
-  pendingName: {
-    flex: 1,
-    color: "#3c3c3c"
-  },
+  pendingName: { flex: 1 },
   removeButton: { margin: 0 },
   pendingNote: {
-    color: "#9E9E9E",
     fontStyle: "italic",
     marginTop: 8
   }

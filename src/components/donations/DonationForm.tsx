@@ -10,6 +10,7 @@ import { PreviewModal } from "../modals/PreviewModal";
 import { FundDonations } from "./FundDonations";
 import { useUser, useCurrentUserChurch } from "../../../src/stores/useUserStore";
 import { useTranslation } from "react-i18next";
+import { useMenuToggle } from "../../../src/hooks/useMenuToggle";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -35,10 +36,10 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [showPreviewModal, setShowPreviewModal] = useState<boolean>(false);
   const [selectedInterval, setSelectedInterval] = useState<string>("one_week");
-  const [showIntervalMenu, setShowIntervalMenu] = useState(false);
-  const [showMethodMenu, setShowMethodMenu] = useState(false);
+  const previewModal = useMenuToggle();
+  const intervalMenu = useMenuToggle();
+  const methodMenu = useMenuToggle();
 
   // Determine church ID for funds query
   const churchId = currentUserChurch?.church?.id || "";
@@ -91,13 +92,9 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       Alert.alert(t("donations.minAmount"));
     } else {
       if (!currentUserChurch?.person?.id) {
-        donation.person = {
-          id: "",
-          email: email,
-          name: firstName + " " + lastName
-        };
+        donation.person = { id: "", email: email, name: firstName + " " + lastName };
       }
-      setShowPreviewModal(true);
+      previewModal.open();
     }
   };
 
@@ -133,7 +130,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
           return;
         })
         .then(async userData => {
-          const personData = { churchId: CacheHelper.church!.id, firstName, lastName, email };
+          const personData = { churchId, firstName, lastName, email };
           const person = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
           saveCard(userData, person);
         });
@@ -145,7 +142,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         type: method?.type,
         billing_cycle_anchor: +new Date(date),
         amount: parseFloat(total.toFixed(2)),
-        church: { subDomain: CacheHelper.church?.subDomain }
+        church: { subDomain: currentUserChurch?.church?.subDomain }
       };
       saveDonation(payload, "");
     }
@@ -157,38 +154,31 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       return;
     }
 
-    const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType: "Card",
-      ...cardDetails
-    });
+    const stripePaymentMethod = await createPaymentMethod({ paymentMethodType: "Card", ...cardDetails });
 
     if (stripePaymentMethod.error) {
       Alert.alert("Failed", stripePaymentMethod.error.message);
       return;
     } else {
-      const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId: CacheHelper.church!.id };
+      const pm = { id: stripePaymentMethod.paymentMethod.id, personId: person.id, email: email, name: person.name.display, churchId };
       await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi").then(result => {
         if (result?.raw?.message) {
           Alert.alert("Failed", result.raw.message);
         } else {
           const d: { paymentMethod: StripePaymentMethod; customerId: string } = result;
-          donation.person = {
-            name: firstName + " " + lastName,
-            id: person.id!,
-            email: email
-          };
+          donation.person = { name: firstName + " " + lastName, id: person.id!, email: email };
           const payload: StripeDonationInterface = {
             id: d.paymentMethod.id,
             customerId: d.customerId,
             type: d.paymentMethod?.type,
             // amount: donation.amount,
             amount: parseFloat(total.toFixed(2)),
-            churchId: CacheHelper.church!.id,
+            churchId,
             funds: donation.funds,
             person: donation.person,
             billing_cycle_anchor: +new Date(date),
             interval: donation.interval,
-            church: { subDomain: CacheHelper.church?.subDomain }
+            church: { subDomain: currentUserChurch?.church?.subDomain }
           };
           saveDonation(payload, "");
         }
@@ -202,7 +192,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
     if (donationType === "recurring") results = await ApiHelper.post("/donate/subscribe/", payload, "GivingApi");
 
     if (results?.status === "succeeded" || results?.status === "pending" || results?.status === "active") {
-      setShowPreviewModal(false);
+      previewModal.close();
       setDonationType("");
       setTotal(0);
       setFundDonations([{ fundId: funds[0]?.id }]);
@@ -214,7 +204,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
       Alert.alert(t("donations.thankYou"), _message, [{ text: "OK", onPress: () => updatedFunction() }]);
     }
     if (results?.raw?.message) {
-      setShowPreviewModal(false);
+      previewModal.close();
       Alert.alert(t("donations.failed"), results?.raw?.message);
     }
   };
@@ -300,10 +290,10 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             {pm.length > 0 ? (
               <View style={{ marginBottom: spacing.md }}>
                 <Menu
-                  visible={showMethodMenu}
-                  onDismiss={() => setShowMethodMenu(false)}
+                  visible={methodMenu.visible}
+                  onDismiss={methodMenu.close}
                   anchor={
-                    <Button mode="outlined" onPress={() => setShowMethodMenu(true)} style={{ marginBottom: spacing.sm }}>
+                    <Button mode="outlined" onPress={methodMenu.open} style={{ marginBottom: spacing.sm }}>
                       {selectedMethod ? getMethodLabel(pm.find(m => m.id === selectedMethod)!) : t("donations.selectPaymentMethod")}
                     </Button>
                   }>
@@ -312,7 +302,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       key={method.id}
                       onPress={() => {
                         setSelectedMethod(method.id);
-                        setShowMethodMenu(false);
+                        methodMenu.close();
                       }}
                       title={getMethodLabel(method)}
                     />
@@ -326,10 +316,10 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
             {donationType === "recurring" && (
               <View style={{ marginBottom: spacing.md }}>
                 <Menu
-                  visible={showIntervalMenu}
-                  onDismiss={() => setShowIntervalMenu(false)}
+                  visible={intervalMenu.visible}
+                  onDismiss={intervalMenu.close}
                   anchor={
-                    <Button mode="outlined" onPress={() => setShowIntervalMenu(true)} style={{ marginBottom: spacing.sm }}>
+                    <Button mode="outlined" onPress={intervalMenu.open} style={{ marginBottom: spacing.sm }}>
                       {intervalTypes.find(i => i.value === selectedInterval)?.label || t("donations.selectInterval")}
                     </Button>
                   }>
@@ -339,7 +329,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
                       onPress={() => {
                         setSelectedInterval(interval.value);
                         handleIntervalChange("type", interval.value);
-                        setShowIntervalMenu(false);
+                        intervalMenu.close();
                       }}
                       title={interval.label}
                     />
@@ -382,7 +372,7 @@ export function DonationForm({ paymentMethods: pm, customerId, updatedFunction }
         )}
       </Card.Content>
 
-      <PreviewModal show={showPreviewModal} close={() => setShowPreviewModal(false)} donation={donation} paymentMethodName={getMethodLabel(pm.find(m => m.id === selectedMethod)!)} donationType={donationType} handleDonate={makeDonation} isChecked={isChecked} transactionFee={transactionFee} />
+      <PreviewModal show={previewModal.visible} close={previewModal.close} donation={donation} paymentMethodName={getMethodLabel(pm.find(m => m.id === selectedMethod)!)} donationType={donationType} handleDonate={makeDonation} isChecked={isChecked} transactionFee={transactionFee} />
     </Card>
   );
 }

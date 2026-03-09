@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 import { TextInput, Card } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface ChurchSearchInputProps {
   searchText: string;
@@ -10,6 +11,7 @@ interface ChurchSearchInputProps {
 
 export const ChurchSearchInput: React.FC<ChurchSearchInputProps> = ({ searchText, onSearchTextChange }) => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
 
   return (
     <View style={styles.searchSection}>
@@ -21,7 +23,7 @@ export const ChurchSearchInput: React.FC<ChurchSearchInputProps> = ({ searchText
             placeholder={t("churchSearch.searchPlaceholder")}
             value={searchText}
             onChangeText={onSearchTextChange}
-            style={styles.searchInput}
+            style={[styles.searchInput, { backgroundColor: tc.surface }]}
             left={<TextInput.Icon icon="magnify" />}
             right={
               searchText.length > 0 ? (
@@ -32,12 +34,6 @@ export const ChurchSearchInput: React.FC<ChurchSearchInputProps> = ({ searchText
                 />
               ) : null
             }
-            theme={{
-              colors: {
-                primary: "#0D47A1",
-                outline: "rgba(0, 0, 0, 0.12)"
-              }
-            }}
           />
         </Card.Content>
       </Card>
@@ -53,11 +49,11 @@ const styles = StyleSheet.create({
   searchCard: {
     borderRadius: 16,
     elevation: 3,
-    shadowColor: "#000",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6
   },
   searchContent: { padding: 20 },
-  searchInput: { backgroundColor: "#FFFFFF" }
+  searchInput: {}
 });

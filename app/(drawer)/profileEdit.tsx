@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, Alert } from "react-native";
-import { Provider as PaperProvider, MD3LightTheme } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { ApiHelper } from "@churchapps/helpers";
@@ -25,33 +24,47 @@ import {
   fieldDefinitions
 } from "../../src/interfaces";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#F6F6F8",
-    surface: "#FFFFFF",
-    background: "#F6F6F8",
-    onSurface: "#3c3c3c",
-    onBackground: "#3c3c3c"
-  }
-};
+import { useFormWithDirtyTracking } from "../../src/hooks/useFormWithDirtyTracking";
+import { useThemeColors } from "../../src/theme";
 
 const ProfileEdit = () => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
   const isFocused = useIsFocused();
 
   const [activeTab, setActiveTab] = useState<ProfileTabSection>("profile");
-  const [editedPerson, setEditedPerson] = useState<PersonInterface | null>(null);
-  const originalPersonRef = useRef<PersonInterface | null>(null);
-  const [modifiedFields, setModifiedFields] = useState<Set<string>>(new Set());
   const [pendingFamilyMembers, setPendingFamilyMembers] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  const getFieldValue = useCallback((obj: PersonInterface, key: string): string => {
+    const parts = key.split(".");
+    let value: any = obj;
+    for (const part of parts) {
+      value = value?.[part];
+    }
+    if (key === "birthDate" && value) {
+      return new Date(value).toISOString().split("T")[0];
+    }
+    return value || "";
+  }, []);
+
+  const setFieldValue = useCallback((obj: PersonInterface, key: string, value: string): PersonInterface => {
+    const newObj = JSON.parse(JSON.stringify(obj));
+    const parts = key.split(".");
+    let target: any = newObj;
+    for (let i = 0; i < parts.length - 1; i++) {
+      if (!target[parts[i]]) target[parts[i]] = {};
+      target = target[parts[i]];
+    }
+    target[parts[parts.length - 1]] = value;
+    return newObj;
+  }, []);
+
+  const form = useFormWithDirtyTracking<PersonInterface>({ getFieldValue, setFieldValue });
+  const { editedData: editedPerson, setEditedData: setEditedPerson, modifiedFields, setModifiedFields, handleFieldChange } = form;
 
   // Fetch full person data
   const { data: personData, isLoading } = useQuery<PersonInterface>({
@@ -67,60 +80,14 @@ const ProfileEdit = () => {
 
   useEffect(() => {
     if (personData && !editedPerson) {
-      setEditedPerson({ ...personData });
-      originalPersonRef.current = JSON.parse(JSON.stringify(personData));
+      form.initialize(personData);
     }
   }, [personData]);
 
-  const getFieldValue = (obj: PersonInterface, key: string): string => {
-    const parts = key.split(".");
-    let value: any = obj;
-    for (const part of parts) {
-      value = value?.[part];
-    }
-    if (key === "birthDate" && value) {
-      return new Date(value).toISOString().split("T")[0];
-    }
-    return value || "";
-  };
-
-  const setFieldValue = (obj: PersonInterface, key: string, value: string): PersonInterface => {
-    const newObj = JSON.parse(JSON.stringify(obj));
-    const parts = key.split(".");
-    let target: any = newObj;
-    for (let i = 0; i < parts.length - 1; i++) {
-      if (!target[parts[i]]) target[parts[i]] = {};
-      target = target[parts[i]];
-    }
-    target[parts[parts.length - 1]] = value;
-    return newObj;
-  };
-
-  const handleFieldChange = (key: string, value: string) => {
-    if (!editedPerson || !originalPersonRef.current) return;
-
-    const newPerson = setFieldValue(editedPerson, key, value);
-    setEditedPerson(newPerson);
-
-    const originalValue = getFieldValue(originalPersonRef.current, key);
-    const newModified = new Set(modifiedFields);
-
-    if (value !== originalValue) {
-      newModified.add(key);
-    } else {
-      newModified.delete(key);
-    }
-    setModifiedFields(newModified);
-  };
-
   const handlePhotoChange = (photoUri: string) => {
     if (!editedPerson) return;
-    const newPerson = { ...editedPerson, photo: photoUri };
-    setEditedPerson(newPerson);
-
-    const newModified = new Set(modifiedFields);
-    newModified.add("photo");
-    setModifiedFields(newModified);
+    setEditedPerson({ ...editedPerson, photo: photoUri });
+    form.markFieldModified("photo");
   };
 
   const buildChanges = (): ProfileChange[] => {
@@ -132,7 +99,7 @@ const ProfileEdit = () => {
         changes.push({
           field: key,
           label: fieldDef.label,
-          value: key === "photo" ? editedPerson.photo || "" : getFieldValue(editedPerson, key)
+          value: key === "photo" ? editedPerson.photo || "" : form.getField(key)
         });
       }
     });
@@ -203,7 +170,7 @@ const ProfileEdit = () => {
   };
 
   const handleCancel = () => {
-    if (modifiedFields.size > 0 || pendingFamilyMembers.length > 0) {
+    if (form.hasChanges || pendingFamilyMembers.length > 0) {
       Alert.alert(
         t("profileEdit.discardChanges"),
         t("profileEdit.discardChangesMessage"),
@@ -213,11 +180,8 @@ const ProfileEdit = () => {
             text: t("profileEdit.discard"),
             style: "destructive",
             onPress: () => {
-              setModifiedFields(new Set());
+              form.resetForm();
               setPendingFamilyMembers([]);
-              if (originalPersonRef.current) {
-                setEditedPerson(JSON.parse(JSON.stringify(originalPersonRef.current)));
-              }
             }
           }
         ]
@@ -225,7 +189,7 @@ const ProfileEdit = () => {
     }
   };
 
-  const hasChanges = modifiedFields.size > 0 || pendingFamilyMembers.length > 0;
+  const hasChanges = form.hasChanges || pendingFamilyMembers.length > 0;
   const changes = buildChanges();
 
   const renderContent = () => {
@@ -257,33 +221,31 @@ const ProfileEdit = () => {
   };
 
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaProvider>
-        <LoadingWrapper loading={isLoading}>
-          <View style={styles.container}>
-            <ProfileTabBar
-              activeSection={activeTab}
-              onTabChange={setActiveTab}
-              hasChanges={hasChanges}
-            />
+    <SafeAreaProvider>
+      <LoadingWrapper loading={isLoading}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+          <ProfileTabBar
+            activeSection={activeTab}
+            onTabChange={setActiveTab}
+            hasChanges={hasChanges}
+          />
 
-            <View style={styles.content}>
-              {renderContent()}
-            </View>
-
-            {/* Pending Changes Footer */}
-            {hasChanges && activeTab !== "visibility" && (
-              <PendingChangesView
-                changes={changes}
-                onSubmit={handleSubmit}
-                onCancel={handleCancel}
-                isSubmitting={isSubmitting}
-              />
-            )}
+          <View style={styles.content}>
+            {renderContent()}
           </View>
-        </LoadingWrapper>
-      </SafeAreaProvider>
-    </PaperProvider>
+
+          {/* Pending Changes Footer */}
+          {hasChanges && activeTab !== "visibility" && (
+            <PendingChangesView
+              changes={changes}
+              onSubmit={handleSubmit}
+              onCancel={handleCancel}
+              isSubmitting={isSubmitting}
+            />
+          )}
+        </View>
+      </LoadingWrapper>
+    </SafeAreaProvider>
   );
 };
 

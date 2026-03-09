@@ -7,12 +7,12 @@ import { CardField, CardFieldInput, createPaymentMethod, collectBankAccountForSe
 import { ApiHelper, CurrencyHelper } from "../../helpers";
 import { FundInterface, StripeDonationInterface, StripePaymentMethod } from "../../interfaces";
 import { useUser, useCurrentUserChurch } from "../../stores/useUserStore";
-import { CacheHelper } from "../../helpers";
 import { DonationComplete } from "./DonationComplete";
 import DatePicker from "react-native-date-picker";
 import dayjs from "../../helpers/dayjsConfig";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface Props {
   paymentMethods: StripePaymentMethod[];
@@ -27,6 +27,7 @@ interface Props {
 
 export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayData, updatedFunction, initialDonation }: Props) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const user = useUser();
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
@@ -213,7 +214,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
             interval: getIntervalType(selectedInterval)
           }
           : undefined,
-        church: { subDomain: CacheHelper.church?.subDomain || "" }
+        church: { subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || "" }
       };
 
 
@@ -230,12 +231,12 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         const enhancedDonation = {
           ...donation,
           gatewayId: gateway?.id,
-          churchId: churchId || CacheHelper.church?.id,
+          churchId: churchId,
           notes: "",
           church: {
-            name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
-            subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
-            churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
+            name: churchData?.name || currentUserChurch?.church?.name,
+            subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
+            churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
           }
         };
         await makeDonation(enhancedDonation);
@@ -270,32 +271,18 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
     // Create user and person first
     await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
 
-    const personData = {
-      churchId: churchId || CacheHelper.church?.id || "",
-      firstName,
-      lastName,
-      email
-    };
+    const personData = { churchId: churchId, firstName, lastName, email };
     const personResult = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
 
     // Create payment method
-    const stripePaymentMethod = await createPaymentMethod({
-      paymentMethodType: "Card",
-      ...cardDetails
-    });
+    const stripePaymentMethod = await createPaymentMethod({ paymentMethodType: "Card", ...cardDetails });
 
     if (stripePaymentMethod.error) {
       throw new Error(stripePaymentMethod.error.message);
     }
 
     // Call addcard to get customerId (like AppHelper does)
-    const pm = {
-      id: stripePaymentMethod.paymentMethod.id,
-      personId: personResult.id,
-      email: email,
-      name: `${firstName} ${lastName}`,
-      churchId: churchId || CacheHelper.church?.id || ""
-    };
+    const pm = { id: stripePaymentMethod.paymentMethod.id, personId: personResult.id, email: email, name: `${firstName} ${lastName}`, churchId: churchId };
 
     const result = await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi");
 
@@ -312,7 +299,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       customerId: result.customerId || "",
       type: result.paymentMethod?.type || "card",
       gatewayId: gateway?.id, // Add gatewayId as required by API
-      churchId: churchId || CacheHelper.church?.id,
+      churchId: churchId,
       person: {
         id: personResult.id,
         email: email,
@@ -323,9 +310,9 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       billing_cycle_anchor: donation.billing_cycle_anchor,
       interval: donation.interval,
       church: {
-        name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
-        subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
-        churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
+        name: churchData?.name || currentUserChurch?.church?.name,
+        subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
+        churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
       }
     };
 
@@ -339,12 +326,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       // Create user and person first
       await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
 
-      const personData = {
-        churchId: churchId || CacheHelper.church?.id || "",
-        firstName,
-        lastName,
-        email
-      };
+      const personData = { churchId: churchId, firstName, lastName, email };
       const personResult = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
 
       // Get ACH setup intent from anonymous endpoint
@@ -352,7 +334,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       const setupResponse = await ApiHelper.postAnonymous("/paymentmethods/ach-setup-intent-anon", {
         email,
         name: `${firstName} ${lastName}`,
-        churchId: churchId || CacheHelper.church?.id || "",
+        churchId: churchId,
         gatewayId: gateway?.id
       }, "GivingApi");
 
@@ -402,7 +384,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         customerId: setupResponse.customerId,
         type: "bank",
         gatewayId: gateway?.id,
-        churchId: churchId || CacheHelper.church?.id,
+        churchId: churchId,
         person: {
           id: personResult.id,
           email: email,
@@ -411,9 +393,9 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         notes: "",
         funds: donation.funds || [],
         church: {
-          name: churchData?.name || currentUserChurch?.church?.name || CacheHelper.church?.name,
-          subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain,
-          churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain || CacheHelper.church?.subDomain}.staging.b1.church`
+          name: churchData?.name || currentUserChurch?.church?.name,
+          subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
+          churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
         }
       };
 
@@ -430,11 +412,7 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
 
     if (result?.status === "succeeded" || result?.status === "pending" || result?.status === "active") {
       // Store completion data
-      setCompletionData({
-        amount: CurrencyHelper.formatCurrency(calculateTotal()),
-        isRecurring: isRecurring,
-        interval: selectedInterval
-      });
+      setCompletionData({ amount: CurrencyHelper.formatCurrency(calculateTotal()), isRecurring: isRecurring, interval: selectedInterval });
 
       // Reset form
       setAmount("");
@@ -469,27 +447,27 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
     <View style={styles.container}>
       {/* Amount Input */}
       <View style={styles.amountSection}>
-        <Text variant="titleMedium" style={styles.amountLabel}>
+        <Text variant="titleMedium" style={[styles.amountLabel, { color: colors.text }]}>
           {t("donations.donate")}
         </Text>
-        <TextInput mode="outlined" value={amount} onChangeText={setAmount} keyboardType="numeric" style={styles.amountInput} contentStyle={styles.amountInputText} placeholder="0.00" left={<TextInput.Icon icon={() => <Text style={styles.dollarSign}>$</Text>} />} outlineStyle={styles.amountInputOutline} onFocus={() => { if (amount === "0.00" || amount === "0" || parseFloat(amount || "0") === 0) setAmount(""); }} />
+        <TextInput mode="outlined" value={amount} onChangeText={setAmount} keyboardType="numeric" style={[styles.amountInput, { backgroundColor: colors.card }]} contentStyle={[styles.amountInputText, { color: colors.primary }]} placeholder="0.00" left={<TextInput.Icon icon={() => <Text style={[styles.dollarSign, { color: colors.primary }]}>$</Text>} />} outlineStyle={[styles.amountInputOutline, { borderColor: colors.primary }]} onFocus={() => { if (amount === "0.00" || amount === "0" || parseFloat(amount || "0") === 0) setAmount(""); }} />
       </View>
 
       {/* Guest User Fields */}
       {!currentUserChurch?.person?.id && (
         <Card style={styles.guestCard}>
           <Card.Content>
-            <Text variant="titleMedium" style={styles.guestTitle}>
+            <Text variant="titleMedium" style={[styles.guestTitle, { color: colors.text }]}>
               {t("auth.email")}
             </Text>
-            <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} style={styles.guestInput} />
+            <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} style={[styles.guestInput, { backgroundColor: colors.card }]} />
             <View style={styles.nameRow}>
-              <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} style={[styles.guestInput, styles.nameInput]} />
-              <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} style={[styles.guestInput, styles.nameInput]} />
+              <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} style={[styles.guestInput, styles.nameInput, { backgroundColor: colors.card }]} />
+              <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} style={[styles.guestInput, styles.nameInput, { backgroundColor: colors.card }]} />
             </View>
 
             {/* Payment Type Selector for Guests */}
-            <Text variant="titleSmall" style={styles.paymentTypeLabel}>
+            <Text variant="titleSmall" style={[styles.paymentTypeLabel, { color: colors.text }]}>
               {t("donations.selectPaymentMethod")}
             </Text>
             <SegmentedButtons
@@ -512,20 +490,20 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       )}
 
       {/* Fund Selection */}
-      <Card style={styles.sectionCard}>
+      <Card style={[styles.sectionCard, { backgroundColor: colors.card }]}>
         <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>
+          <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
             {t("donations.donate")}
           </Text>
           <Menu
             visible={showFundMenu}
             onDismiss={() => setShowFundMenu(false)}
             anchor={
-              <TouchableOpacity style={styles.selector} onPress={() => setShowFundMenu(true)}>
-                <Text variant="bodyLarge" style={styles.selectorText}>
+              <TouchableOpacity style={[styles.selector, { backgroundColor: colors.background, borderColor: colors.divider }]} onPress={() => setShowFundMenu(true)}>
+                <Text variant="bodyLarge" style={[styles.selectorText, { color: colors.text }]}>
                   {getFundLabel(selectedFund)}
                 </Text>
-                <MaterialIcons name="expand-more" size={24} color="#9E9E9E" />
+                <MaterialIcons name="expand-more" size={24} color={colors.disabled} />
               </TouchableOpacity>
             }>
             {funds.map(fund => (
@@ -544,35 +522,35 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
 
       {/* Recurring Toggle - Hidden for guest bank payments (one-time only) */}
       {!((!currentUserChurch?.person?.id) && guestPaymentType === "bank") && (
-        <Card style={styles.sectionCard}>
+        <Card style={[styles.sectionCard, { backgroundColor: colors.card }]}>
           <Card.Content>
             <View style={styles.switchRow}>
               <View style={styles.switchContent}>
-                <Text variant="titleMedium" style={styles.switchTitle}>
+                <Text variant="titleMedium" style={[styles.switchTitle, { color: colors.text }]}>
                   {t("donations.recurring")}
                 </Text>
-                <Text variant="bodyMedium" style={styles.switchSubtitle}>
+                <Text variant="bodyMedium" style={[styles.switchSubtitle, { color: colors.disabled }]}>
                   {t("donations.donate")}
                 </Text>
               </View>
-              <Switch value={isRecurring} onValueChange={setIsRecurring} thumbColor={isRecurring ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
+              <Switch value={isRecurring} onValueChange={setIsRecurring} thumbColor={isRecurring ? colors.primary : "#f4f3f4"} trackColor={{ false: "#767577", true: colors.primary }} />
             </View>
 
             {isRecurring && (
-              <View style={styles.intervalSection}>
+              <View style={[styles.intervalSection, { borderTopColor: colors.border }]}>
                 <View style={{ width: DimensionHelper.wp(35) }}>
-                  <Text variant="titleSmall" style={styles.intervalLabel}>
+                  <Text variant="titleSmall" style={[styles.intervalLabel, { color: colors.text }]}>
                     {t("donations.selectInterval")}
                   </Text>
                   <Menu
                     visible={showIntervalMenu}
                     onDismiss={() => setShowIntervalMenu(false)}
                     anchor={
-                      <TouchableOpacity style={styles.selector} onPress={() => setShowIntervalMenu(true)}>
-                        <Text variant="bodyLarge" style={styles.selectorText}>
+                      <TouchableOpacity style={[styles.selector, { backgroundColor: colors.background, borderColor: colors.divider }]} onPress={() => setShowIntervalMenu(true)}>
+                        <Text variant="bodyLarge" style={[styles.selectorText, { color: colors.text }]}>
                           {getIntervalLabel(selectedInterval)}
                         </Text>
-                        <MaterialIcons name="expand-more" size={24} color="#9E9E9E" />
+                        <MaterialIcons name="expand-more" size={24} color={colors.disabled} />
                       </TouchableOpacity>
                     }>
                     {intervalTypes.map(interval => (
@@ -588,11 +566,11 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
                   </Menu>
                 </View>
                 <View style={{ width: DimensionHelper.wp(35) }}>
-                  <Text variant="titleSmall" style={styles.intervalLabel}>
+                  <Text variant="titleSmall" style={[styles.intervalLabel, { color: colors.text }]}>
                   Start Date
                   </Text>
-                  <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton}>
-                    <Text style={styles.dateTimeText}>{dayjs(startDate).format("ll")}</Text>
+                  <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={[styles.dateTimeButton, { backgroundColor: colors.background, borderColor: colors.divider }]}>
+                    <Text style={[styles.dateTimeText, { color: colors.text }]}>{dayjs(startDate).format("ll")}</Text>
                   </Button>
                   <DatePicker
                     modal
@@ -613,9 +591,9 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       )}
 
       {/* Payment Method */}
-      <Card style={styles.sectionCard}>
+      <Card style={[styles.sectionCard, { backgroundColor: colors.card }]}>
         <Card.Content>
-          <Text variant="titleMedium" style={styles.sectionTitle}>
+          <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
             {t("donations.selectPaymentMethod")}
           </Text>
 
@@ -624,11 +602,11 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
               visible={showMethodMenu}
               onDismiss={() => setShowMethodMenu(false)}
               anchor={
-                <TouchableOpacity style={styles.selector} onPress={() => setShowMethodMenu(true)}>
-                  <Text variant="bodyLarge" style={styles.selectorText}>
+                <TouchableOpacity style={[styles.selector, { backgroundColor: colors.background, borderColor: colors.divider }]} onPress={() => setShowMethodMenu(true)}>
+                  <Text variant="bodyLarge" style={[styles.selectorText, { color: colors.text }]}>
                     {getMethodLabel(pm.find(m => m.id === selectedMethod)!)}
                   </Text>
-                  <MaterialIcons name="expand-more" size={24} color="#9E9E9E" />
+                  <MaterialIcons name="expand-more" size={24} color={colors.disabled} />
                 </TouchableOpacity>
               }>
               {pm.map(method => (
@@ -643,17 +621,17 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
               ))}
             </Menu>
           ) : guestPaymentType === "bank" ? (
-            <View style={styles.bankConnectionContainer}>
-              <Text variant="bodyMedium" style={styles.bankConnectionText}>
+            <View style={[styles.bankConnectionContainer, { backgroundColor: colors.background, borderColor: colors.divider }]}>
+              <Text variant="bodyMedium" style={[styles.bankConnectionText, { color: colors.text }]}>
                 Securely connect your bank account using Stripe Financial Connections.
               </Text>
-              <Text variant="bodySmall" style={styles.bankConnectionSubtext}>
+              <Text variant="bodySmall" style={[styles.bankConnectionSubtext, { color: colors.disabled }]}>
                 You'll log in to your bank to authorize the connection. Your credentials are never shared.
               </Text>
               {bankConnecting && (
                 <View style={styles.bankConnectingRow}>
-                  <ActivityIndicator size="small" color="#0D47A1" />
-                  <Text variant="bodyMedium" style={styles.bankConnectingText}>
+                  <ActivityIndicator size="small" color={colors.primary} />
+                  <Text variant="bodyMedium" style={[styles.bankConnectingText, { color: colors.primary }]}>
                     Connecting to your bank...
                   </Text>
                 </View>
@@ -664,11 +642,11 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
               postalCodeEnabled={false}
               placeholders={{ number: "4242 4242 4242 4242" }}
               cardStyle={{
-                backgroundColor: "#FFFFFF",
+                backgroundColor: colors.card,
                 borderRadius: 8,
                 borderWidth: 1,
-                borderColor: "#E0E0E0",
-                textColor: "#3c3c3c"
+                borderColor: colors.divider,
+                textColor: colors.text
               }}
               style={styles.cardField}
               onCardChange={details => setCardDetails(details)}
@@ -678,31 +656,31 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       </Card>
 
       {/* Transaction Fee */}
-      <Card style={styles.sectionCard}>
+      <Card style={[styles.sectionCard, { backgroundColor: colors.card }]}>
         <Card.Content>
           <View style={styles.switchRow}>
             <View style={styles.switchContent}>
-              <Text variant="titleMedium" style={styles.switchTitle}>
+              <Text variant="titleMedium" style={[styles.switchTitle, { color: colors.text }]}>
                 {t("donations.coverFees")}
               </Text>
-              <Text variant="bodyMedium" style={styles.switchSubtitle}>
+              <Text variant="bodyMedium" style={[styles.switchSubtitle, { color: colors.disabled }]}>
                 {t("donations.transactionFee", { amount: CurrencyHelper.formatCurrency(transactionFee) })}
               </Text>
             </View>
-            <Switch value={coverFees} onValueChange={setCoverFees} thumbColor={coverFees ? "#0D47A1" : "#f4f3f4"} trackColor={{ false: "#767577", true: "#0D47A1" }} />
+            <Switch value={coverFees} onValueChange={setCoverFees} thumbColor={coverFees ? colors.primary : "#f4f3f4"} trackColor={{ false: "#767577", true: colors.primary }} />
           </View>
         </Card.Content>
       </Card>
 
       {/* Total */}
       <View style={styles.totalSection}>
-        <Text variant="headlineSmall" style={styles.totalLabel}>
+        <Text variant="headlineSmall" style={[styles.totalLabel, { color: colors.primary }]}>
           {t("donations.total", { amount: CurrencyHelper.formatCurrency(calculateTotal()) })}
         </Text>
       </View>
 
       {/* Give Button */}
-      <Button mode="contained" onPress={handleGive} style={styles.giveButton} labelStyle={styles.giveButtonText} disabled={!amount || parseFloat(amount) < 0.5} buttonColor="#0D47A1" textColor="#FFFFFF">
+      <Button mode="contained" onPress={handleGive} style={[styles.giveButton, { shadowColor: colors.primary }]} labelStyle={styles.giveButtonText} disabled={!amount || parseFloat(amount) < 0.5} buttonColor={colors.primary} textColor={colors.white}>
         {isRecurring ? `${t("donations.giveNow")} ${CurrencyHelper.formatCurrency(calculateTotal())} ${getIntervalLabel(selectedInterval)}` : `${t("donations.giveNow")} ${CurrencyHelper.formatCurrency(calculateTotal())}`}
       </Button>
     </View>
@@ -721,29 +699,22 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   amountLabel: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 16
   },
-  amountInput: {
-    width: "100%",
-    backgroundColor: "#FFFFFF"
-  },
+  amountInput: { width: "100%" },
   amountInputText: {
     fontSize: 32,
     fontWeight: "700",
-    textAlign: "center",
-    color: "#0D47A1"
+    textAlign: "center"
   },
   amountInputOutline: {
     borderWidth: 2,
-    borderColor: "#0D47A1",
     borderRadius: 12
   },
   dollarSign: {
     fontSize: 32,
-    fontWeight: "700",
-    color: "#0D47A1"
+    fontWeight: "700"
   },
 
   // Guest User Section
@@ -752,14 +723,10 @@ const styles = StyleSheet.create({
     elevation: 2
   },
   guestTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 16
   },
-  guestInput: {
-    marginBottom: 12,
-    backgroundColor: "#FFFFFF"
-  },
+  guestInput: { marginBottom: 12 },
   nameRow: {
     flexDirection: "row",
     gap: 12
@@ -769,11 +736,9 @@ const styles = StyleSheet.create({
   // Section Cards
   sectionCard: {
     borderRadius: 16,
-    elevation: 2,
-    backgroundColor: "#FFFFFF"
+    elevation: 2
   },
   sectionTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 16
   },
@@ -785,15 +750,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 16,
     paddingHorizontal: 16,
-    backgroundColor: "#F6F6F8",
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E0E0E0"
+    borderWidth: 1
   },
-  selectorText: {
-    color: "#3c3c3c",
-    fontWeight: "500"
-  },
+  selectorText: { fontWeight: "500" },
 
   // Switch Rows
   switchRow: {
@@ -806,26 +766,20 @@ const styles = StyleSheet.create({
     marginRight: 16
   },
   switchTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 4
   },
-  switchSubtitle: {
-    color: "#9E9E9E",
-    fontSize: 14
-  },
+  switchSubtitle: { fontSize: 14 },
 
   // Interval Section
   intervalSection: {
     marginTop: 16,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
     flexDirection: "row",
     justifyContent: "space-between"
   },
   intervalLabel: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 12
   },
@@ -841,17 +795,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 16
   },
-  totalLabel: {
-    color: "#0D47A1",
-    fontWeight: "800"
-  },
+  totalLabel: { fontWeight: "800" },
 
   // Give Button
   giveButton: {
     borderRadius: 12,
     paddingVertical: 8,
     elevation: 4,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4
@@ -864,19 +814,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 8,
-    backgroundColor: "#F6F6F8",
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E0E0E0"
+    borderWidth: 1
   },
-  dateTimeText: {
-    color: "#3c3c3c",
-    fontSize: 14
-  },
+  dateTimeText: { fontSize: 14 },
 
   // Payment Type Selector for Guests
   paymentTypeLabel: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginTop: 8,
     marginBottom: 8
@@ -886,26 +830,20 @@ const styles = StyleSheet.create({
   // Bank Connection UI
   bankConnectionContainer: {
     padding: 16,
-    backgroundColor: "#F6F6F8",
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
     alignItems: "center"
   },
   bankConnectionText: {
-    color: "#3c3c3c",
     textAlign: "center",
     marginBottom: 8
   },
-  bankConnectionSubtext: {
-    color: "#9E9E9E",
-    textAlign: "center"
-  },
+  bankConnectionSubtext: { textAlign: "center" },
   bankConnectingRow: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 16,
     gap: 8
   },
-  bankConnectingText: { color: "#0D47A1" }
+  bankConnectingText: {}
 });

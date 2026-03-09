@@ -9,8 +9,9 @@ import { ApiHelper, globalStyles, SecureStorageHelper } from "../../src/helpers"
 import { MainHeader } from "./wrapper/MainHeader";
 import { UserHelper } from "../helpers/UserHelper";
 import { eventBus } from "@/helpers/PushNotificationHelper";
-import { useUserStore } from "@/stores/useUserStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { Loader } from "./Loader";
+import { useThemeColors } from "../theme";
 
 interface WebsiteScreenProps {
   url: string;
@@ -19,17 +20,17 @@ interface WebsiteScreenProps {
 
 export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [currentUrl, setCurrentUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const webviewRef = useRef<WebView>(null);
   const navigationMain = useNavigation();
-  const user = useUserStore();
+  const authStore = useAuthStore;
 
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });
-    //if (!CacheHelper.church) router.navigate("/(drawer)/churchSearch");
     UserHelper.addOpenScreenEvent("Website Screen", { url });
 
     const timer = setTimeout(() => {
@@ -67,7 +68,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
     // Attempt to re-authenticate with JWT
     const data = await ApiHelper.postAnonymous("/users/login", { jwt: await SecureStorageHelper.getSecureItem("default_jwt") }, "MembershipApi");
     if (data.user != null) {
-      await user.handleLogin(data);
+      await authStore.getState().handleLogin(data);
     }
     setIsLoading(false);
     navigation.goBack();
@@ -127,7 +128,7 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   };
 
   return (
-    <View style={globalStyles.homeContainer}>
+    <View style={[globalStyles.homeContainer, { backgroundColor: colors.surface }]}>
       <MainHeader title={title || "Home"} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
       <View style={globalStyles.webViewContainer} onLayout={() => setIsLayoutReady(true)}>
         {isLayoutReady && (

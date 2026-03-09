@@ -1,6 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, ActivityIndicator, StyleProp, ViewStyle, TextStyle } from "react-native";
-import { Constants } from "../../helpers";
+import { useThemeColors } from "../../theme";
 
 interface ButtonProps {
   variant?: "primary" | "secondary" | "danger" | "warning" | "success" | "outline";
@@ -25,25 +25,26 @@ export const Button: React.FC<ButtonProps> = ({
   textStyle,
   fullWidth = false
 }) => {
+  const colors = useThemeColors();
   const isDisabled = disabled || loading;
 
   const getBackgroundColor = () => {
-    if (isDisabled) return "#cccccc";
+    if (isDisabled) return colors.disabledBg;
 
     switch (variant) {
-      case "primary": return Constants.Colors.button_bg;
-      case "secondary": return Constants.Colors.button_yellow;
-      case "danger": return Constants.Colors.button_red;
-      case "warning": return Constants.Colors.button_yellow;
-      case "success": return Constants.Colors.button_dark_green;
-      case "outline": return "transparent";
-      default: return Constants.Colors.button_bg;
+      case "primary": return colors.primary;
+      case "secondary": return colors.warning;
+      case "danger": return colors.error;
+      case "warning": return colors.warning;
+      case "success": return colors.success;
+      case "outline": return colors.transparent;
+      default: return colors.primary;
     }
   };
 
   const getTextColor = () => {
-    if (variant === "outline") return Constants.Colors.button_bg;
-    return "#ffffff";
+    if (variant === "outline") return colors.primary;
+    return colors.white;
   };
 
   const getPadding = () => {
@@ -78,7 +79,7 @@ export const Button: React.FC<ButtonProps> = ({
           ...getPadding(),
           ...(variant === "outline" && {
             borderWidth: 2,
-            borderColor: Constants.Colors.button_bg
+            borderColor: colors.primary
           }),
           ...(fullWidth && { width: "100%" })
         },
@@ -124,6 +125,8 @@ export const IconButton: React.FC<IconButtonProps> = ({
   style,
   variant = "ghost"
 }) => {
+  const colors = useThemeColors();
+
   const getSize = () => {
     switch (size) {
       case "small": return 32;
@@ -134,10 +137,10 @@ export const IconButton: React.FC<IconButtonProps> = ({
   };
 
   const getBackgroundColor = () => {
-    if (variant === "ghost") return "transparent";
-    if (variant === "primary") return Constants.Colors.button_bg;
-    if (variant === "secondary") return Constants.Colors.gray_bg;
-    return "transparent";
+    if (variant === "ghost") return colors.transparent;
+    if (variant === "primary") return colors.primary;
+    if (variant === "secondary") return colors.border;
+    return colors.transparent;
   };
 
   const buttonSize = getSize();

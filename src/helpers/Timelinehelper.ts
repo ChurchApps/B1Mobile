@@ -19,7 +19,7 @@ export class TimelineHelper {
   }
 
   static async loadRelatedData(initialConversations: ConversationInterface[], groupId?: string | null) {
-    const promises: any = [];
+    const promises: Promise<unknown[]>[] = [];
     const taskIds: string[] = [];
     const eventIds: string[] = [];
     const venueIds: string[] = [];
@@ -45,9 +45,9 @@ export class TimelineHelper {
     await promises.push(ApiHelper.getAnonymous("/sermons/timeline?sermonIds=" + sermonIds.join(","), "ContentApi"));
     const results = await Promise.all(promises);
     const allPosts: TimelinePostInterface[] = [];
-    results.forEach((result: any[]) => {
-      result.forEach(r => {
-        allPosts.push({ postId: r.postId, postType: r.postType, groupId: r.groupId, data: r });
+    results.forEach((result) => {
+      (result as Record<string, unknown>[]).forEach(r => {
+        allPosts.push({ postId: r.postId as string, postType: r.postType as string, groupId: r.groupId as string, data: r as Record<string, unknown> });
       });
     });
     return allPosts;
@@ -78,12 +78,7 @@ export class TimelineHelper {
           postCount: conv.postCount ?? 0,
           messages: conv.messages ?? []
         };
-        allPosts.push({
-          postId: conv.contentId,
-          postType: conv.contentType,
-          groupId: conv.groupId,
-          conversation
-        });
+        allPosts.push({ postId: conv.contentId, postType: conv.contentType, groupId: conv.groupId, conversation });
       }
     });
   }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { ScrollView, View, StyleSheet, Share, Alert, Linking } from "react-native";
-import { Provider as PaperProvider, Text, MD3LightTheme, Button, FAB } from "react-native-paper";
+import { Text, Button, FAB } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
@@ -16,30 +16,11 @@ import { UserHelper, EnvironmentHelper } from "../../../src/helpers";
 import { SermonInterface } from "@churchapps/helpers";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
 import { useCurrentChurch } from "../../../src/stores/useUserStore";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#f0f2f5",
-    surface: "#ffffff",
-    background: "#F6F6F8",
-    onSurface: "#3c3c3c",
-    onBackground: "#3c3c3c",
-    elevation: {
-      level0: "transparent",
-      level1: "#ffffff",
-      level2: "#f8f9fa",
-      level3: "#f0f2f5",
-      level4: "#e9ecef",
-      level5: "#e2e6ea"
-    }
-  }
-};
+import { useThemeColors } from "../../../src/theme";
 
 const SermonDetails = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const currentChurch = useCurrentChurch();
   const { id, title, playlistTitle } = useLocalSearchParams<{
@@ -81,16 +62,11 @@ const SermonDetails = () => {
     if (!sermon?.videoData || !sermon?.videoType) return null;
 
     switch (sermon.videoType) {
-      case "youtube":
-        return `https://www.youtube.com/embed/${sermon.videoData}?autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1`;
-      case "youtube_channel":
-        return `https://www.youtube.com/embed/live_stream?channel=${sermon.videoData}&autoplay=1`;
-      case "vimeo":
-        return `https://player.vimeo.com/video/${sermon.videoData}?autoplay=1`;
-      case "facebook":
-        return `https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fvideo.php%3Fv%3D${sermon.videoData}&show_text=0&autoplay=1&allowFullScreen=1`;
-      default:
-        return sermon.videoData; // Custom URL
+      case "youtube": return `https://www.youtube.com/embed/${sermon.videoData}?autoplay=1&controls=1&showinfo=0&rel=0&modestbranding=1`;
+      case "youtube_channel": return `https://www.youtube.com/embed/live_stream?channel=${sermon.videoData}&autoplay=1`;
+      case "vimeo": return `https://player.vimeo.com/video/${sermon.videoData}?autoplay=1`;
+      case "facebook": return `https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fvideo.php%3Fv%3D${sermon.videoData}&show_text=0&autoplay=1&allowFullScreen=1`;
+      default: return sermon.videoData; // Custom URL
     }
   }, [sermon]);
 
@@ -157,46 +133,42 @@ const SermonDetails = () => {
 
   if (error) {
     return (
-      <PaperProvider theme={theme}>
-        <SafeAreaView style={styles.container}>
-          <MainHeader title={title || t("sermons.sermon")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
-          <View style={styles.errorContainer}>
-            <MaterialIcons name="error-outline" size={48} color="#B0120C" />
-            <Text variant="titleMedium" style={styles.errorTitle}>
-              Unable to Load Sermon
-            </Text>
-            <Text variant="bodyMedium" style={styles.errorMessage}>
-              Please check your connection and try again.
-            </Text>
-            <Button mode="contained" onPress={() => router.back()} style={styles.errorButton}>
-              Go Back
-            </Button>
-          </View>
-        </SafeAreaView>
-      </PaperProvider>
+      <SafeAreaView style={[styles.container, { backgroundColor: tc.background }]}>
+        <MainHeader title={title || t("sermons.sermon")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
+        <View style={styles.errorContainer}>
+          <MaterialIcons name="error-outline" size={48} color="#B0120C" />
+          <Text variant="titleMedium" style={styles.errorTitle}>
+            Unable to Load Sermon
+          </Text>
+          <Text variant="bodyMedium" style={[styles.errorMessage, { color: tc.textSecondary }]}>
+            Please check your connection and try again.
+          </Text>
+          <Button mode="contained" onPress={() => router.back()} style={styles.errorButton}>
+            Go Back
+          </Button>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <PaperProvider theme={theme}>
-      <View style={styles.container}>
-        <LoadingWrapper loading={isLoading}>
-          <View style={styles.content}>
-            <MainHeader title={sermon?.title || title || t("sermons.sermon")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
+    <View style={[styles.container, { backgroundColor: tc.background }]}>
+      <LoadingWrapper loading={isLoading}>
+        <View style={styles.content}>
+          <MainHeader title={sermon?.title || title || t("sermons.sermon")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => router.back()} />
 
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              {renderVideoPreview()}
-              {renderVideoPlayer()}
-              {renderSermonInfo()}
-              {renderActionButtons()}
-            </ScrollView>
+          <ScrollView style={[styles.scrollView, { backgroundColor: tc.background }]} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            {renderVideoPreview()}
+            {renderVideoPlayer()}
+            {renderSermonInfo()}
+            {renderActionButtons()}
+          </ScrollView>
 
-            {/* Floating Action Button for video toggle */}
-            {showVideo && <FAB icon={() => <MaterialIcons name="close" size={24} color="#FFFFFF" />} style={styles.fab} onPress={() => setShowVideo(false)} label={t("sermons.closeVideo")} />}
-          </View>
-        </LoadingWrapper>
-      </View>
-    </PaperProvider>
+          {/* Floating Action Button for video toggle */}
+          {showVideo && <FAB icon={() => <MaterialIcons name="close" size={24} color="#FFFFFF" />} style={styles.fab} onPress={() => setShowVideo(false)} label={t("sermons.closeVideo")} />}
+        </View>
+      </LoadingWrapper>
+    </View>
   );
 };
 

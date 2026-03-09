@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useThemeColors } from "@/theme";
 import { BlockoutDates } from "../../src/components/Plans/BlockoutDates";
 import { PlansTabBar } from "../../src/components/Plans/PlansTabBar";
 import { ServingTimes } from "../../src/components/Plans/ServingTimes";
@@ -14,33 +15,15 @@ import { useNavigation } from "../../src/hooks";
 import { Text, View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
-import { Provider as PaperProvider, Card, MD3LightTheme } from "react-native-paper";
+import { Card } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { InlineLoader } from "../../src/components/common/LoadingComponents";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import dayjs from "../../src/helpers/dayjsConfig";
 
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#F6F6F8",
-    surface: "#FFFFFF",
-    background: "#F6F6F8",
-    elevation: {
-      level0: "transparent",
-      level1: "#FFFFFF",
-      level2: "#F6F6F8",
-      level3: "#F0F0F0",
-      level4: "#E9ECEF",
-      level5: "#E2E6EA"
-    }
-  }
-};
-
 const Plan = () => {
+  const tc = useThemeColors();
   const { t } = useTranslation();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const currentUserChurch = useCurrentUserChurch();
@@ -217,42 +200,40 @@ const Plan = () => {
   );
 
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaProvider>
-        <View style={styles.container}>
-          <MainHeader title={t("plans.plans")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
-          <PlansTabBar activeSection={activeSection} onTabChange={setActiveSection} />
-          <View style={styles.contentContainer}>
-            <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-              {activeSection === "upcoming" && (
-                <>
-                  {renderHeroSection()}
-                  {renderStatsCards()}
-                  <ServingTimes assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} isLoading={isLoading} />
-                  {/* <UpcomingDates assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} times={times} isLoading={isLoading} /> */}
-                  <BlockoutDates />
-                  <Card style={styles.volunteerCard}>
-                    <TouchableOpacity onPress={() => router.push("/(drawer)/volunteerBrowse")} activeOpacity={0.7}>
-                      <Card.Content style={styles.volunteerContent}>
-                        <MaterialIcons name="volunteer-activism" size={32} color="#0D47A1" />
-                        <View style={{ flex: 1, marginLeft: 12 }}>
-                          <Text style={styles.volunteerTitle}>{t("volunteer.browseVolunteer")}</Text>
-                          <Text style={styles.volunteerSubtitle}>{t("volunteer.browseOpportunities")}</Text>
-                        </View>
-                        <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
-                      </Card.Content>
-                    </TouchableOpacity>
-                  </Card>
-                </>
-              )}
-              {activeSection === "past" && (
-                <UpcomingDates assignments={pastAssignments} positions={pastPositions} plans={pastPlans} times={pastTimes} isLoading={isLoading} isPast={true} />
-              )}
-            </ScrollView>
-          </View>
+    <SafeAreaProvider>
+      <View style={[styles.container, { backgroundColor: tc.background }]}>
+        <MainHeader title={t("plans.plans")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+        <PlansTabBar activeSection={activeSection} onTabChange={setActiveSection} />
+        <View style={[styles.contentContainer, { backgroundColor: tc.background }]}>
+          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+            {activeSection === "upcoming" && (
+              <>
+                {renderHeroSection()}
+                {renderStatsCards()}
+                <ServingTimes assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} isLoading={isLoading} />
+                {/* <UpcomingDates assignments={upcomingAssignments} positions={positions} plans={upcomingPlans} times={times} isLoading={isLoading} /> */}
+                <BlockoutDates />
+                <Card style={styles.volunteerCard}>
+                  <TouchableOpacity onPress={() => router.push("/(drawer)/volunteerBrowse")} activeOpacity={0.7}>
+                    <Card.Content style={styles.volunteerContent}>
+                      <MaterialIcons name="volunteer-activism" size={32} color="#0D47A1" />
+                      <View style={{ flex: 1, marginLeft: 12 }}>
+                        <Text style={styles.volunteerTitle}>{t("volunteer.browseVolunteer")}</Text>
+                        <Text style={styles.volunteerSubtitle}>{t("volunteer.browseOpportunities")}</Text>
+                      </View>
+                      <MaterialIcons name="chevron-right" size={24} color="#9E9E9E" />
+                    </Card.Content>
+                  </TouchableOpacity>
+                </Card>
+              </>
+            )}
+            {activeSection === "past" && (
+              <UpcomingDates assignments={pastAssignments} positions={pastPositions} plans={pastPlans} times={pastTimes} isLoading={isLoading} isPast={true} />
+            )}
+          </ScrollView>
         </View>
-      </SafeAreaProvider>
-    </PaperProvider>
+      </View>
+    </SafeAreaProvider>
   );
 };
 

@@ -4,6 +4,7 @@ import { Text, Button, Card } from "react-native-paper";
 import { ProfileChange } from "../../interfaces";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface PendingChangesViewProps {
   changes: ProfileChange[];
@@ -19,6 +20,7 @@ export const PendingChangesView: React.FC<PendingChangesViewProps> = ({
   isSubmitting
 }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   if (changes.length === 0) {
     return null;
@@ -35,30 +37,30 @@ export const PendingChangesView: React.FC<PendingChangesViewProps> = ({
       );
     }
     return (
-      <Text variant="bodyMedium" style={styles.changeValue} numberOfLines={2}>
+      <Text variant="bodyMedium" style={[styles.changeValue, { color: colors.text }]} numberOfLines={2}>
         {change.value || t("profileEdit.empty")}
       </Text>
     );
   };
 
   return (
-    <Card style={styles.container}>
+    <Card style={[styles.container, { backgroundColor: colors.warningLight, borderColor: colors.warning }]}>
       <Card.Content>
         <View style={styles.header}>
-          <MaterialIcons name="pending-actions" size={24} color="#FFC107" />
-          <Text variant="titleMedium" style={styles.headerText}>
+          <MaterialIcons name="pending-actions" size={24} color={colors.warning} />
+          <Text variant="titleMedium" style={[styles.headerText, { color: colors.text }]}>
             {t("profileEdit.pendingChanges")}
           </Text>
         </View>
 
-        <Text variant="bodySmall" style={styles.description}>
+        <Text variant="bodySmall" style={[styles.description, { color: colors.disabled }]}>
           {t("profileEdit.pendingChangesDescription")}
         </Text>
 
         <ScrollView style={styles.changesList} nestedScrollEnabled>
           {changes.map((change, index) => (
-            <View key={`${change.field}-${index}`} style={styles.changeItem}>
-              <Text variant="labelMedium" style={styles.changeLabel}>
+            <View key={`${change.field}-${index}`} style={[styles.changeItem, { borderBottomColor: colors.warningBg }]}>
+              <Text variant="labelMedium" style={[styles.changeLabel, { color: colors.text }]}>
                 {change.label}
               </Text>
               {renderChangeValue(change)}
@@ -70,14 +72,14 @@ export const PendingChangesView: React.FC<PendingChangesViewProps> = ({
           <Button
             mode="outlined"
             onPress={onCancel}
-            style={styles.cancelButton}
+            style={[styles.cancelButton, { borderColor: colors.disabled }]}
             disabled={isSubmitting}>
             {t("common.cancel")}
           </Button>
           <Button
             mode="contained"
             onPress={onSubmit}
-            style={styles.submitButton}
+            style={[styles.submitButton, { backgroundColor: colors.primary }]}
             loading={isSubmitting}
             disabled={isSubmitting}>
             {t("profileEdit.submitForApproval")}
@@ -92,9 +94,7 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 16,
     marginVertical: 16,
-    backgroundColor: "#FFF8E1",
-    borderWidth: 1,
-    borderColor: "#FFC107"
+    borderWidth: 1
   },
   header: {
     flexDirection: "row",
@@ -102,29 +102,21 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8
   },
-  headerText: {
-    color: "#3c3c3c",
-    fontWeight: "600"
-  },
-  description: {
-    color: "#9E9E9E",
-    marginBottom: 16
-  },
+  headerText: { fontWeight: "600" },
+  description: { marginBottom: 16 },
   changesList: {
     maxHeight: 200,
     marginBottom: 16
   },
   changeItem: {
     paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: "#FFE082"
+    borderBottomWidth: 1
   },
   changeLabel: {
-    color: "#795548",
     fontWeight: "600",
     marginBottom: 4
   },
-  changeValue: { color: "#3c3c3c" },
+  changeValue: {},
   photoPreview: {
     width: 60,
     height: 45,
@@ -134,12 +126,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 12
   },
-  cancelButton: {
-    flex: 1,
-    borderColor: "#9E9E9E"
-  },
-  submitButton: {
-    flex: 2,
-    backgroundColor: "#0D47A1"
-  }
+  cancelButton: { flex: 1 },
+  submitButton: { flex: 2 }
 });

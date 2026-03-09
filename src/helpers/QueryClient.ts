@@ -4,11 +4,7 @@ import { ApiHelper } from "@churchapps/helpers";
 import { HybridCachePersister } from "./HybridCachePersister";
 
 // Initialize hybrid cache persister for optimized storage
-const hybridPersister = new HybridCachePersister({
-  useSQL: true,
-  maxAsyncStorageSize: 2048, // 2MB limit for AsyncStorage
-  sqliteThreshold: 50 // Use SQLite for entries > 50KB
-});
+const hybridPersister = new HybridCachePersister({ useSQL: true, maxAsyncStorageSize: 2048, sqliteThreshold: 50 });
 
 // Legacy constants - keeping for backward compatibility
 const CACHE_KEY = "REACT_QUERY_CACHE";
@@ -49,14 +45,11 @@ const persistCache = async (queryClient: QueryClient, onlyCritical = false) => {
       }
     }));
 
-    const cacheData = {
-      version: CACHE_VERSION,
-      timestamp: Date.now(),
-      queries: serializedQueries
-    };
+    const cacheData = { version: CACHE_VERSION, timestamp: Date.now(), queries: serializedQueries };
 
     // Use hybrid persister for intelligent storage selection
-    await hybridPersister.persistClient(cacheData);
+    // Custom shape with version/timestamp/queries - cast for persister compatibility
+    await hybridPersister.persistClient(cacheData as unknown as import("@tanstack/react-query-persist-client").PersistedClient);
   } catch (error) {
     console.warn("Failed to persist React Query cache:", error);
   }
@@ -65,7 +58,8 @@ const persistCache = async (queryClient: QueryClient, onlyCritical = false) => {
 // Function to restore cache using hybrid persister
 const restoreCache = async (queryClient: QueryClient) => {
   try {
-    const cacheData = await hybridPersister.restoreClient();
+    // Custom shape with version/timestamp/queries - cast from persister type
+    const cacheData = await hybridPersister.restoreClient() as unknown as { version: string; timestamp: number; queries: { queryKey: unknown[]; state: Record<string, unknown> }[] } | undefined;
     if (!cacheData) return;
 
     // Check cache version and age (don't restore if older than 30 days)
@@ -76,7 +70,7 @@ const restoreCache = async (queryClient: QueryClient) => {
 
     // Restore queries
     const cache = queryClient.getQueryCache();
-    cacheData.queries.forEach(({ queryKey, state }: any) => {
+    cacheData.queries.forEach(({ queryKey, state }: { queryKey: unknown[]; state: Record<string, unknown> }) => {
       try {
         cache
           .build(queryClient, {
@@ -230,35 +224,33 @@ const invalidateRelatedQueries = (endpoint: string) => {
   queryClient.invalidateQueries();
 };
 
-// Wrapper for ApiHelper.post that invalidates all queries
-const originalPost = ApiHelper.post;
-ApiHelper.post = async (...args: any[]) => {
-  const result = await originalPost.apply(ApiHelper, args);
-  // Use smart invalidation based on endpoint
-  const endpoint = args[0] || "";
-  invalidateRelatedQueries(endpoint);
-  return result;
-};
+// Wrap ApiHelper mutation methods to invalidate queries after changes
+const wrapApiMethods = () => {
+  const originalPost = ApiHelper.post.bind(ApiHelper);
+  ApiHelper.post = async (...args: Parameters<typeof originalPost>) => {
+    const result = await originalPost(...args);
+    invalidateRelatedQueries(args[0] as string);
+    return result;
+  };
 
-// Also wrap other mutation methods
-const originalPut = ApiHelper.put;
-ApiHelper.put = async (...args: any[]) => {
-  const result = await originalPut.apply(ApiHelper, args);
-  const endpoint = args[0] || "";
-  invalidateRelatedQueries(endpoint);
-  return result;
-};
+  const originalPut = ApiHelper.put.bind(ApiHelper);
+  ApiHelper.put = async (...args: Parameters<typeof originalPut>) => {
+    const result = await originalPut(...args);
+    invalidateRelatedQueries(args[0] as string);
+    return result;
+  };
 
-const originalDelete = ApiHelper.delete;
-ApiHelper.delete = async (...args: any[]) => {
-  const result = await originalDelete.apply(ApiHelper, args);
-  const endpoint = args[0] || "";
-  invalidateRelatedQueries(endpoint);
-  return result;
+  const originalDelete = ApiHelper.delete.bind(ApiHelper);
+  ApiHelper.delete = async (...args: Parameters<typeof originalDelete>) => {
+    const result = await originalDelete(...args);
+    invalidateRelatedQueries(args[0] as string);
+    return result;
+  };
 };
 
 // Restore cache on initialization with migration support
 export const initializeQueryCache = async () => {
+  wrapApiMethods();
   await restoreCache(queryClient);
 
   // Migrate existing AsyncStorage cache to SQLite if needed

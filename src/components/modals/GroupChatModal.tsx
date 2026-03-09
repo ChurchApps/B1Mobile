@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import GroupChatInner from "./GroupChatInner";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { ApiHelper, ConversationInterface } from "../../helpers";
+import { useThemeColors } from "../../theme";
 
 interface GroupChatModalProps {
   visible: boolean;
@@ -18,6 +19,7 @@ type ChatTab = "discussions" | "announcements";
 
 const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, groupId, groupName }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [activeTab, setActiveTab] = useState<ChatTab>("discussions");
   const currentUserChurch = useCurrentUserChurch();
 
@@ -53,20 +55,20 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
       </Appbar.Header>
 
       {showTabBar && (
-        <View style={styles.tabContainer}>
+        <View style={[styles.tabContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
           <TouchableOpacity
-            style={[styles.tab, activeTab === "discussions" && styles.activeTab]}
+            style={[styles.tab, activeTab === "discussions" && { borderBottomColor: colors.primary }]}
             onPress={() => setActiveTab("discussions")}
           >
-            <Text variant="labelLarge" style={[styles.tabText, activeTab === "discussions" && styles.activeTabText]}>
+            <Text variant="labelLarge" style={[styles.tabText, { color: colors.disabled }, activeTab === "discussions" && { color: colors.primary, fontWeight: "700" }]}>
               {t("groups.discussions") || "Discussions"}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.tab, activeTab === "announcements" && styles.activeTab]}
+            style={[styles.tab, activeTab === "announcements" && { borderBottomColor: colors.primary }]}
             onPress={() => setActiveTab("announcements")}
           >
-            <Text variant="labelLarge" style={[styles.tabText, activeTab === "announcements" && styles.activeTabText]}>
+            <Text variant="labelLarge" style={[styles.tabText, { color: colors.disabled }, activeTab === "announcements" && { color: colors.primary, fontWeight: "700" }]}>
               {t("groups.announcements") || "Announcements"}
             </Text>
           </TouchableOpacity>
@@ -85,10 +87,8 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
 const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: "row",
-    backgroundColor: "#FFFFFF",
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
+    borderBottomWidth: 1
   },
   tab: {
     flex: 1,
@@ -97,15 +97,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent"
   },
-  activeTab: { borderBottomColor: "#0D47A1" },
-  tabText: {
-    color: "#9E9E9E",
-    fontWeight: "500"
-  },
-  activeTabText: {
-    color: "#0D47A1",
-    fontWeight: "700"
-  }
+  tabText: { fontWeight: "500" }
 });
 
 export default GroupChatModal;

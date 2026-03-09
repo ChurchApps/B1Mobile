@@ -261,12 +261,15 @@ export class PushNotificationHelper {
 }
 
 export const eventBus = {
+
   emit(eventName: string, data?: any) {
     DeviceEventEmitter.emit(eventName, data);
   },
+
   addListener(eventName: string, callback: (data?: any) => void) {
-    DeviceEventEmitter.addListener(eventName, callback);
+    return DeviceEventEmitter.addListener(eventName, callback);
   },
+  /** @deprecated Use the subscription returned by addListener().remove() instead */
   removeListener(eventName: string) {
     DeviceEventEmitter.removeAllListeners(eventName);
   }

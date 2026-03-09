@@ -19,7 +19,7 @@ import { EventInterface } from "@churchapps/helpers";
 import { MainHeader } from "../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import GroupChatModal from "../../../src/components/modals/GroupChatModal";
-import { useAppTheme } from "../../../src/theme";
+import { useAppTheme, useThemeColors } from "../../../src/theme";
 import { useCurrentUserChurch } from "../../../src/stores/useUserStore";
 import {
   GroupHeroSection,
@@ -38,6 +38,7 @@ import { useTranslation } from "react-i18next";
 const GroupDetails = () => {
   const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
+  const tc = useThemeColors();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigationBackNormal } = useNavigation();
   const { id, activeTab: initialActiveTab } = useLocalSearchParams<{ id: string; activeTab?: string }>();
@@ -241,7 +242,7 @@ const GroupDetails = () => {
   if (groupDetailsLoading || (!groupDetails && !groupDetailsError)) {
     return (
       <LoadingWrapper loading={true}>
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: tc.background }]}>
           <SafeAreaView style={{ flex: 1 }}>
             <MainHeader title="Loading..." openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigationBackNormal} />
           </SafeAreaView>
@@ -322,7 +323,7 @@ const GroupDetails = () => {
 
   return (
     <>
-      <View style={[styles.container, (showEventModal || showChatModal) && { display: "none" }]}>
+      <View style={[styles.container, { backgroundColor: tc.background }, (showEventModal || showChatModal) && { display: "none" }]}>
         <MainHeader title={name} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={navigationBackNormal} />
 
         <FlatList

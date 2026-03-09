@@ -7,13 +7,18 @@ import { useEffect, useState } from "react";
 import { clearAllCachedData } from "../../src/helpers/QueryClient";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Avatar, Button, Divider, List, Surface, Text, TouchableRipple } from "react-native-paper";
-import { useUser, useCurrentChurch, useUserStore } from "../../src/stores/useUserStore";
+import { useUser, useCurrentChurch } from "../../src/stores/useUserStore";
+import { useChurchStore } from "../../src/stores/useChurchStore";
+import { useAuthStore } from "../../src/stores/useAuthStore";
 import { DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 import type { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { eventBus } from "@/helpers/PushNotificationHelper";
+import { useThemeContext } from "../theme/ThemeProvider";
+import { useThemeColors } from "../theme/index";
 import { useTranslation } from "react-i18next";
+import { HapticsHelper } from "../helpers/HapticsHelper";
 import pkg from "../../package.json";
 
 type ItemType = {
@@ -26,19 +31,21 @@ type ParamsType = {
   url?: string;
 };
 
-export function CustomDrawer(props?: any) {
+export function CustomDrawer(props?: any & { themeMode?: string }) {
   const { t } = useTranslation();
   // Use the drawer navigation prop if available, otherwise fallback to useNavigation
   const navigation = props?.navigation || useNavigation<DrawerNavigationProp<any>>();
   // Use hooks instead of local state
   const user = useUser();
   const currentChurch = useCurrentChurch();
-  const links = useUserStore(state => state.links);
-  const loadChurchLinks = useUserStore(state => state.loadChurchLinks);
+  const links = useChurchStore(state => state.links);
+  const loadChurchLinks = useChurchStore(state => state.loadChurchLinks);
   const pathname = usePathname();
   const params = useGlobalSearchParams();
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { theme: themeMode, toggleTheme } = useThemeContext();
+  const tc = useThemeColors();
 
   const { top } = useSafeAreaInsets();
 
@@ -53,10 +60,10 @@ export function CustomDrawer(props?: any) {
     const handleLogout = () => {
       logoutAction();
     };
-    eventBus.addListener("do_logout", handleLogout);
+    const subscription = eventBus.addListener("do_logout", handleLogout);
 
     return () => {
-      eventBus.removeListener("do_logout");
+      subscription.remove();
     };
   }, []);
 
@@ -109,7 +116,7 @@ export function CustomDrawer(props?: any) {
       }
 
       // Use the store's logout method
-      await useUserStore.getState().logout();
+      await useAuthStore.getState().logout();
 
       // Clear AsyncStorage (except church data to preserve church selection)
       await AsyncStorage.getAllKeys()
@@ -139,9 +146,12 @@ export function CustomDrawer(props?: any) {
 
     return (
       <List.Item
+        accessibilityRole="menuitem"
+        accessibilityLabel={item.text}
         title={item.text}
-        left={() => (topItem ? <Image source={{ uri: item.photo }} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={isActive ? "#FFF" : "#0D47A1"} style={styles.drawerIcon} />)}
+        left={() => (topItem ? <Image source={{ uri: item.photo }} style={styles.tabIcon} /> : <MaterialIcons name={iconName} size={24} color={isActive ? tc.white : tc.primary} style={styles.drawerIcon} />)}
         onPress={() => {
+          HapticsHelper.selection();
           NavigationUtils.navigateToScreen(item, currentChurch);
           // Use setTimeout to ensure navigation completes before closing drawer
           setTimeout(() => {
@@ -156,17 +166,17 @@ export function CustomDrawer(props?: any) {
             }
           }, 100);
         }}
-        style={[styles.listItem, isActive && styles.activeMenuItem]}
-        titleStyle={[styles.listItemText, isActive && styles.activeMenuText]}
+        style={[styles.listItem, { backgroundColor: tc.surface, borderBottomColor: tc.border }, isActive && { backgroundColor: tc.primary }]}
+        titleStyle={[styles.listItemText, { color: tc.text }, isActive && { color: tc.white, fontWeight: "600" }]}
       />
     );
   };
 
   const drawerHeaderComponent = () => (
-    <Surface style={styles.headerContainer} elevation={2}>
+    <Surface style={[styles.headerContainer, { backgroundColor: tc.surface, borderBottomColor: tc.border }]} elevation={2}>
       <View style={styles.headerContent}>
         {getUserInfo()}
-        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor="#FFFFFF" textColor="#0D47A1" icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color="#0D47A1" />}>
+        <Button mode="contained" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.churchButton} buttonColor={tc.isDark ? tc.border : tc.surface} textColor={tc.primary} icon={() => <MaterialIcons name={!currentChurch ? "search" : "church"} size={20} color={tc.primary} />} accessibilityRole="button">
           {!currentChurch ? t("churchSearch.findChurch") : (currentChurch.name || t("churchSearch.selectChurch"))}
         </Button>
       </View>
@@ -174,7 +184,7 @@ export function CustomDrawer(props?: any) {
   );
 
   const getUserInfo = () => {
-    const currentUserChurch = useUserStore.getState().currentUserChurch;
+    const currentUserChurch = useChurchStore.getState().currentUserChurch;
     if (!currentUserChurch?.person || !user) return null;
 
 
@@ -183,15 +193,17 @@ export function CustomDrawer(props?: any) {
         <View style={styles.userRow}>
           <View style={styles.avatarContainer}>{currentUserChurch.person.photo ? <Avatar.Image size={48} source={{ uri: EnvironmentHelper.ContentRoot + currentUserChurch.person.photo }} /> : <Avatar.Text size={48} label={`${user.firstName?.[0] || "U"}${user.lastName?.[0] || "S"}`} />}</View>
           <View style={styles.userTextContainer}>
-            <Text variant="titleMedium" numberOfLines={1} style={styles.userName}>
+            <Text variant="titleMedium" numberOfLines={1} style={[styles.userName, { color: tc.text, fontSize: 18 }]}>
               {`${user.firstName} ${user.lastName}`}
             </Text>
             <TouchableRipple
-              style={styles.profileButton}
-              onPress={editDirectoryListingAction}>
+              style={[styles.profileButton, { backgroundColor: tc.iconBackground }]}
+              onPress={editDirectoryListingAction}
+              accessibilityLabel="Edit profile"
+              accessibilityRole="button">
               <View style={styles.profileButtonContent}>
-                <MaterialIcons name="edit" size={16} color="#0D47A1" />
-                <Text style={styles.profileButtonText}>{t("navigation.editProfile")}</Text>
+                <MaterialIcons name="edit" size={16} color={tc.primary} />
+                <Text style={[styles.profileButtonText, { color: tc.primary }]}>{t("navigation.editProfile")}</Text>
               </View>
             </TouchableRipple>
           </View>
@@ -223,11 +235,14 @@ export function CustomDrawer(props?: any) {
 
   const drawerFooterComponent = () => {
     return (
-      <Surface style={styles.footerContainer} elevation={1}>
-        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color="#0D47A1" />} loading={isLoggingOut} disasbled={isLoggingOut}>
+      <Surface style={[styles.footerContainer, { backgroundColor: tc.surface, borderTopColor: tc.border }]} elevation={1}>
+        <Button mode="outlined" onPress={toggleTheme} style={styles.themeToggleButton} icon={() => <MaterialIcons name={themeMode === "dark" ? "light-mode" : "dark-mode"} size={24} color={tc.primary} />} accessibilityLabel={themeMode === "dark" ? "Switch to light mode" : "Switch to dark mode"} accessibilityRole="button">
+          {themeMode === "dark" ? t("drawer.lightMode") : t("drawer.darkMode")}
+        </Button>
+        <Button mode="outlined" onPress={user ? logoutAction : () => router.navigate("/auth/login")} style={styles.logoutButton} icon={() => <MaterialIcons name={user ? "logout" : "login"} size={24} color={tc.primary} />} loading={isLoggingOut} disabled={isLoggingOut} accessibilityLabel={user ? "Log out" : "Log in"} accessibilityRole="button">
           {isLoggingOut ? t("drawer.signingOut") : user ? t("drawer.logout") : t("drawer.login")}
         </Button>
-        <Text variant="bodySmall" style={styles.versionText}>
+        <Text variant="bodySmall" style={[styles.versionText, { color: tc.disabled }]}>
           Version {pkg.version}
         </Text>
       </Surface>
@@ -235,7 +250,7 @@ export function CustomDrawer(props?: any) {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: top }]}>
+    <View key={themeMode} style={[styles.container, { paddingTop: top, backgroundColor: tc.surface }]}>
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {drawerHeaderComponent()}
         {links.length === 0 ? (
@@ -243,7 +258,7 @@ export function CustomDrawer(props?: any) {
             <Text>{t("navigation.loadingNavigation")}</Text>
           </View>
         ) : (
-          <View style={styles.menuContainer}>
+          <View style={[styles.menuContainer, { backgroundColor: tc.surface }]}>
             {links.map((item, index) => (
               <View key={item.id || index}>{listItem(!!(item as any).photo, item)}</View>
             ))}
@@ -256,15 +271,8 @@ export function CustomDrawer(props?: any) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFF"
-  },
-  headerContainer: {
-    backgroundColor: "#FFFFFF", // Clean white background
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
-  },
+  container: { flex: 1 },
+  headerContainer: { borderBottomWidth: 1 },
   headerContent: { padding: 16 },
   userInfoSection: { marginBottom: 16 },
   userRow: {
@@ -279,16 +287,14 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: "600",
-    fontSize: 18, // H3 from style guide
+    fontSize: 18,
     lineHeight: 24,
-    marginBottom: 4,
-    color: "#3c3c3c" // Dark gray from style guide
+    marginBottom: 4
   },
   profileButton: {
     paddingVertical: 6,
     paddingHorizontal: 8,
-    borderRadius: 4,
-    backgroundColor: "#F6F6F8"
+    borderRadius: 4
   },
   profileButtonContent: {
     flexDirection: "row",
@@ -297,8 +303,7 @@ const styles = StyleSheet.create({
   },
   profileButtonText: {
     fontSize: 14,
-    fontWeight: "500",
-    color: "#0D47A1"
+    fontWeight: "500"
   },
   churchButton: {
     borderRadius: 8,
@@ -307,17 +312,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2
   },
-  menuContainer: {
-    backgroundColor: "#FFFFFF",
-    marginTop: 8
-  },
+  menuContainer: { marginTop: 8 },
   listItem: {
-    minHeight: 48, // Style guide menu item height
+    minHeight: 48,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
+    borderBottomWidth: 1
   },
   tabIcon: {
     width: 24,
@@ -327,38 +327,29 @@ const styles = StyleSheet.create({
   scrollContainer: { flex: 1 },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 16 // Reduced padding following 8px grid
+    paddingBottom: 16
   },
   footerContainer: {
     padding: 16,
-    marginTop: "auto", // Push to bottom
-    backgroundColor: "#FFFFFF",
-    borderTopWidth: 1,
-    borderTopColor: "#F0F0F0"
+    marginTop: "auto",
+    borderTopWidth: 1
   },
+  themeToggleButton: { marginBottom: 8 },
   logoutButton: { marginBottom: 8 },
-  versionText: {
-    textAlign: "center",
-    color: "#9E9E9E" // Medium gray from style guide
-  },
+  versionText: { textAlign: "center" },
   drawerIcon: {
     marginLeft: 0,
-    marginRight: 16, // 16px right margin from style guide
+    marginRight: 16,
     alignSelf: "center"
   },
   listItemText: {
-    fontSize: 16, // Body text from style guide
-    fontWeight: "500",
-    color: "#3c3c3c" // Dark gray from style guide
+    fontSize: 16,
+    fontWeight: "500"
   },
   separator: {
     marginVertical: 8,
-    backgroundColor: "#F0F0F0",
     height: 1
   },
-  activeMenuItem: { backgroundColor: "#0D47A1" },
-  activeMenuText: {
-    color: "#fff",
-    fontWeight: "600"
-  }
+  activeMenuItem: {},
+  activeMenuText: { fontWeight: "600" }
 });

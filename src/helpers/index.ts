@@ -1,7 +1,6 @@
 export { ApiHelper, ArrayHelper, DateHelper as ChurchAppsDateHelper, Permissions } from "@churchapps/helpers";
 export { ErrorHelper } from "./ErrorHelper";
 export { AppLifecycleManager } from "./AppLifecycleManager";
-export { CacheHelper } from "./CacheHelper";
 export { CheckinHelper } from "./CheckinHelper";
 export { Constants } from "./Constants";
 export { CurrencyHelper } from "./CurrencyHelper";

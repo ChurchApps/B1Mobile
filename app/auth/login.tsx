@@ -1,39 +1,20 @@
 import React from "react";
+import { useThemeColors } from "@/theme";
 import { ApiHelper, EnvironmentHelper, LoginResponseInterface, CheckEmailResponseInterface } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Linking, SafeAreaView, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
-import { TextInput, Button, Text, Provider as PaperProvider, MD3LightTheme, Card } from "react-native-paper";
+import { TextInput, Button, Text, Card } from "react-native-paper";
 import { useUserStore, useCurrentChurch, useChurchAppearance } from "../../src/stores/useUserStore";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1",
-    secondary: "#f0f2f5",
-    surface: "#ffffff",
-    background: "#F6F6F8",
-    onSurface: "#3c3c3c",
-    onBackground: "#3c3c3c",
-    elevation: {
-      level0: "transparent",
-      level1: "#ffffff",
-      level2: "#f8f9fa",
-      level3: "#f0f2f5",
-      level4: "#e9ecef",
-      level5: "#e2e6ea"
-    }
-  }
-};
-
 const Login = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -112,148 +93,140 @@ const Login = () => {
   const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
 
   return (
-    <PaperProvider theme={theme}>
-      <LoadingWrapper loading={loading}>
-        <View style={styles.container}>
-          <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            <SafeAreaView style={styles.safeArea}>
-              {/* Hero Section */}
-              <View style={styles.heroSection}>
-                <Card style={styles.heroCard}>
-                  <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
-                    <View style={styles.heroContent}>
-                      {currentChurch ? (
-                        <>
-                          {churchAppearance?.logoLight ? (
-                            <View style={styles.churchLogoContainer}>
-                              <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.churchLogo} contentFit="contain" priority="high" />
-                            </View>
-                          ) : (
-                            <MaterialIcons name="church" size={48} color="#FFFFFF" style={styles.heroIcon} />
-                          )}
-                          <Text variant="headlineMedium" style={styles.heroTitle}>
-                            {t("auth.welcomeBack")}
-                          </Text>
-                          <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                            {t("auth.signInTo", { churchName: currentChurch.name })}
-                          </Text>
-                        </>
-                      ) : (
-                        <>
-                          <OptimizedImage source={require("../../src/assets/images/logoWhite.png")} style={styles.b1Logo} contentFit="contain" priority="high" />
-                          <Text variant="headlineMedium" style={styles.heroTitle}>
-                            {t("auth.welcomeToB1")}
-                          </Text>
-                          <Text variant="bodyLarge" style={styles.heroSubtitle}>
-                            {t("auth.signInToAccess")}
-                          </Text>
-                        </>
-                      )}
-                    </View>
-                  </LinearGradient>
-                </Card>
-              </View>
+    <LoadingWrapper loading={loading}>
+      <View style={[styles.container, { backgroundColor: tc.background }]}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <SafeAreaView style={styles.safeArea}>
+            {/* Hero Section */}
+            <View style={styles.heroSection}>
+              <Card style={styles.heroCard}>
+                <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
+                  <View style={styles.heroContent}>
+                    {currentChurch ? (
+                      <>
+                        {churchAppearance?.logoLight ? (
+                          <View style={[styles.churchLogoContainer, { backgroundColor: tc.surface }]}>
+                            <OptimizedImage source={{ uri: churchAppearance.logoLight }} style={styles.churchLogo} contentFit="contain" priority="high" />
+                          </View>
+                        ) : (
+                          <MaterialIcons name="church" size={48} color="#FFFFFF" style={styles.heroIcon} />
+                        )}
+                        <Text variant="headlineMedium" style={styles.heroTitle}>
+                          {t("auth.welcomeBack")}
+                        </Text>
+                        <Text variant="bodyLarge" style={styles.heroSubtitle}>
+                          {t("auth.signInTo", { churchName: currentChurch.name })}
+                        </Text>
+                      </>
+                    ) : (
+                      <>
+                        <OptimizedImage source={require("../../src/assets/images/logoWhite.png")} style={styles.b1Logo} contentFit="contain" priority="high" />
+                        <Text variant="headlineMedium" style={styles.heroTitle}>
+                          {t("auth.welcomeToB1")}
+                        </Text>
+                        <Text variant="bodyLarge" style={styles.heroSubtitle}>
+                          {t("auth.signInToAccess")}
+                        </Text>
+                      </>
+                    )}
+                  </View>
+                </LinearGradient>
+              </Card>
+            </View>
 
-              {/* Login Form */}
-              <View style={styles.formSection}>
-                <Card style={styles.formCard}>
-                  <Card.Content style={styles.formContent}>
-                    <View style={styles.inputContainer}>
-                      <TextInput
-                        mode="outlined"
-                        label={t("auth.emailLabel")}
-                        placeholder={t("auth.emailPlaceholder")}
-                        value={email}
-                        onChangeText={setEmail}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        keyboardType="email-address"
-                        style={styles.input}
-                        left={<TextInput.Icon icon="email" />}
-                        theme={{
-                          colors: {
-                            primary: "#0D47A1",
-                            outline: "rgba(0, 0, 0, 0.12)"
-                          }
-                        }}
-                      />
+            {/* Login Form */}
+            <View style={styles.formSection}>
+              <Card style={[styles.formCard, { backgroundColor: tc.surface }]}>
+                <Card.Content style={styles.formContent}>
+                  <View style={styles.inputContainer}>
+                    <TextInput
+                      mode="outlined"
+                      label={t("auth.emailLabel")}
+                      placeholder={t("auth.emailPlaceholder")}
+                      value={email}
+                      onChangeText={setEmail}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      autoComplete="email"
+                      textContentType="emailAddress"
+                      keyboardType="email-address"
+                      style={[styles.input, { backgroundColor: tc.surface }]}
+                      left={<TextInput.Icon icon="email" />}
+                      accessibilityLabel="Email address"
+                    />
 
-                      <TextInput
-                        mode="outlined"
-                        label={t("auth.passwordLabel")}
-                        placeholder={t("auth.passwordPlaceholder")}
-                        value={password}
-                        onChangeText={setPassword}
-                        secureTextEntry={!showPassword}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        style={styles.input}
-                        left={<TextInput.Icon icon="lock" />}
-                        right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />}
-                        theme={{
-                          colors: {
-                            primary: "#0D47A1",
-                            outline: "rgba(0, 0, 0, 0.12)"
-                          }
-                        }}
-                      />
-                    </View>
+                    <TextInput
+                      mode="outlined"
+                      label={t("auth.passwordLabel")}
+                      placeholder={t("auth.passwordPlaceholder")}
+                      value={password}
+                      onChangeText={setPassword}
+                      secureTextEntry={!showPassword}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      autoComplete="password"
+                      textContentType="password"
+                      style={[styles.input, { backgroundColor: tc.surface }]}
+                      left={<TextInput.Icon icon="lock" />}
+                      right={<TextInput.Icon icon={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />}
+                      accessibilityLabel="Password"
+                    />
+                  </View>
 
-                    <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => Linking.openURL(forgotLink)}>
-                      <Text variant="bodyMedium" style={styles.forgotPasswordText}>
-                        {t("auth.forgotPassword")}
+                  <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => Linking.openURL(forgotLink)} accessibilityLabel="Forgot password" accessibilityRole="link">
+                    <Text variant="bodyMedium" style={[styles.forgotPasswordText, { color: tc.primary }]}>
+                      {t("auth.forgotPassword")}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <Button mode="contained" onPress={() => validateDetails() && loginApiCall()} loading={loading} style={styles.loginButton} labelStyle={styles.loginButtonText} disabled={loading} accessibilityLabel="Sign in">
+                    {t("auth.signIn")}
+                  </Button>
+
+                  <View style={styles.privacySection}>
+                    <Text variant="bodySmall" style={[styles.privacyText, { color: tc.textSecondary }]}>
+                      {t("auth.privacyConsent")}{" "}
+                      <Text variant="bodySmall" style={[styles.privacyLink, { color: tc.primary }]} onPress={() => router.navigate("/auth/privacy")}>
+                        {t("auth.privacyPolicy")}
                       </Text>
-                    </TouchableOpacity>
+                    </Text>
+                  </View>
 
-                    <Button mode="contained" onPress={() => validateDetails() && loginApiCall()} loading={loading} style={styles.loginButton} labelStyle={styles.loginButtonText} disabled={loading}>
-                      {t("auth.signIn")}
+                  <View style={styles.registerSection}>
+                    <Text variant="bodyMedium" style={[styles.registerText, { color: tc.text }]}>
+                      {t("auth.noAccount")}{" "}
+                      <Text variant="bodyMedium" style={[styles.registerLink, { color: tc.primary }]} onPress={() => router.navigate("/auth/register")} accessibilityLabel="Create an account" accessibilityRole="link">
+                        {t("auth.register")}
+                      </Text>
+                    </Text>
+                  </View>
+                </Card.Content>
+              </Card>
+            </View>
+
+            {/* Help Section */}
+            {!currentChurch && (
+              <View style={styles.helpSection}>
+                <Card style={[styles.helpCard, { backgroundColor: tc.surface }]}>
+                  <Card.Content style={styles.helpContent}>
+                    <MaterialIcons name="help-outline" size={32} color="#9E9E9E" style={styles.helpIcon} />
+                    <Text variant="titleMedium" style={[styles.helpTitle, { color: tc.text }]}>
+                      {t("auth.newToB1")}
+                    </Text>
+                    <Text variant="bodyMedium" style={[styles.helpText, { color: tc.textSecondary }]}>
+                      {t("auth.findChurchFirst")}
+                    </Text>
+                    <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.helpButton} labelStyle={styles.helpButtonText}>
+                      {t("auth.findYourChurch")}
                     </Button>
-
-                    <View style={styles.privacySection}>
-                      <Text variant="bodySmall" style={styles.privacyText}>
-                        {t("auth.privacyConsent")}{" "}
-                        <Text variant="bodySmall" style={styles.privacyLink} onPress={() => router.navigate("/auth/privacy")}>
-                          {t("auth.privacyPolicy")}
-                        </Text>
-                      </Text>
-                    </View>
-
-                    <View style={styles.registerSection}>
-                      <Text variant="bodyMedium" style={styles.registerText}>
-                        {t("auth.noAccount")}{" "}
-                        <Text variant="bodyMedium" style={styles.registerLink} onPress={() => router.navigate("/auth/register")}>
-                          {t("auth.register")}
-                        </Text>
-                      </Text>
-                    </View>
                   </Card.Content>
                 </Card>
               </View>
-
-              {/* Help Section */}
-              {!currentChurch && (
-                <View style={styles.helpSection}>
-                  <Card style={styles.helpCard}>
-                    <Card.Content style={styles.helpContent}>
-                      <MaterialIcons name="help-outline" size={32} color="#9E9E9E" style={styles.helpIcon} />
-                      <Text variant="titleMedium" style={styles.helpTitle}>
-                        {t("auth.newToB1")}
-                      </Text>
-                      <Text variant="bodyMedium" style={styles.helpText}>
-                        {t("auth.findChurchFirst")}
-                      </Text>
-                      <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.helpButton} labelStyle={styles.helpButtonText}>
-                        {t("auth.findYourChurch")}
-                      </Button>
-                    </Card.Content>
-                  </Card>
-                </View>
-              )}
-            </SafeAreaView>
-          </ScrollView>
-        </View>
-      </LoadingWrapper>
-    </PaperProvider>
+            )}
+          </SafeAreaView>
+        </ScrollView>
+      </View>
+    </LoadingWrapper>
   );
 };
 

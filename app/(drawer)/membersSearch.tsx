@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { useThemeColors } from "@/theme";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { UserHelper } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -6,7 +7,7 @@ import { useNavigation as useReactNavigation, DrawerActions } from "@react-navig
 import { router } from "expo-router";
 import { useNavigation } from "../../src/hooks";
 import { View, StyleSheet, SectionList } from "react-native";
-import { Surface, Text, TextInput, MD3LightTheme } from "react-native-paper";
+import { Surface, Text, TextInput, useTheme } from "react-native-paper";
 import { useQuery } from "@tanstack/react-query";
 import { MemberCard } from "../../src/components/MemberCard";
 import { useCurrentUserChurch } from "../../src/stores/useUserStore";
@@ -14,28 +15,6 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1", // Primary Blue from style guide
-    secondary: "#F6F6F8", // Background from style guide
-    surface: "#FFFFFF", // Card Background from style guide
-    background: "#F6F6F8", // Background from style guide
-    onSurface: "#3c3c3c", // Dark Gray from style guide
-    onBackground: "#3c3c3c", // Dark Gray from style guide
-    onSurfaceVariant: "#9E9E9E", // Medium Gray from style guide
-    elevation: {
-      level0: "transparent",
-      level1: "#FFFFFF",
-      level2: "#F6F6F8",
-      level3: "#F0F0F0",
-      level4: "#E9ECEF",
-      level5: "#E2E6EA"
-    }
-  }
-};
 
 interface Member {
   id: string;
@@ -55,6 +34,8 @@ interface MemberSection {
 
 const MembersSearch = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
+  const theme = useTheme();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigateBack } = useNavigation();
   const [searchText, setSearchText] = useState("");
@@ -143,41 +124,41 @@ const MembersSearch = () => {
   const renderSectionHeader = useCallback(
     ({ section }: { section: MemberSection }) => (
       <View style={styles.sectionHeader}>
-        <Text variant="titleMedium" style={styles.sectionTitle}>
+        <Text variant="titleMedium" style={[styles.sectionTitle, { color: tc.primary }]}>
           {section.title}
         </Text>
-        <View style={styles.sectionDivider} />
+        <View style={[styles.sectionDivider, { backgroundColor: tc.border }]} />
       </View>
     ),
-    []
+    [tc]
   );
 
   const renderEmptyState = useCallback(
     () => (
       <View style={styles.emptyState}>
         <MaterialIcons name="people-outline" size={64} color={theme.colors.onSurfaceVariant} />
-        <Text variant="headlineSmall" style={styles.emptyTitle}>
+        <Text variant="headlineSmall" style={[styles.emptyTitle, { color: tc.text }]}>
           {searchText ? t("members.noMembersFound") : t("navigation.directory")}
         </Text>
-        <Text variant="bodyMedium" style={styles.emptySubtitle}>
+        <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: tc.textSecondary }]}>
           {searchText ? t("members.tryAdjusting") : t("members.searchForMembers")}
         </Text>
       </View>
     ),
-    [searchText, theme.colors.onSurfaceVariant, t]
+    [searchText, theme.colors.onSurfaceVariant, tc, t]
   );
 
   return (
     <SafeAreaProvider>
       <LoadingWrapper loading={isLoading}>
-        <Surface style={styles.container}>
+        <Surface style={[styles.container, { backgroundColor: tc.background }]}>
           <MainHeader title={t("navigation.directory")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
 
           <View style={styles.content}>
             {/* Search Header */}
-            <View style={styles.searchSection}>
+            <View style={[styles.searchSection, { backgroundColor: tc.surface, borderBottomColor: tc.border }]}>
               <View style={styles.searchContainer}>
-                <TextInput mode="outlined" label={t("members.searchMembers")} placeholder={t("members.enterName")} value={searchText} onChangeText={handleSearchChange} style={styles.searchInput} left={<TextInput.Icon icon="magnify" />} right={searchText ? <TextInput.Icon icon="close" onPress={() => setSearchText("")} /> : undefined} />
+                <TextInput mode="outlined" label={t("members.searchMembers")} placeholder={t("members.enterName")} value={searchText} onChangeText={handleSearchChange} style={[styles.searchInput, { backgroundColor: tc.surface }]} left={<TextInput.Icon icon="magnify" />} right={searchText ? <TextInput.Icon icon="close" onPress={() => setSearchText("")} /> : undefined} />
               </View>
             </View>
 

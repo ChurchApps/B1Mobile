@@ -9,6 +9,7 @@ import { GroupLinkAdd } from "./section/GroupLinkAdd";
 import { InputBox } from "./section/InputBox";
 import { FileUpload } from "./section/FileUpload";
 import { useTranslation } from "react-i18next";
+import { useThemeColors } from "../../theme";
 
 interface GroupResourcesTabProps {
   groupId?: string;
@@ -16,6 +17,7 @@ interface GroupResourcesTabProps {
 
 export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId }) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [files, setFiles] = useState<FileInterface[]>(null);
   const [links, setLinks] = useState<LinkInterface[]>(null);
   const [pendingFileSave, setPendingFileSave] = useState(false);
@@ -28,28 +30,25 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
     loadData();
   }, [groupId]);
 
-  const loadData = useCallback(() => {
-    ApiHelper.get("/files/group/" + groupId, "ContentApi")
-      .then(data => {
-        // alert("Files loaded: " + (data?.length || 0));
-        setFiles(data);
-      })
-      .catch((error: any) => {
-        console.error("Error fetching messages:", error);
-      });
+  const loadData = useCallback(async () => {
+    try {
+      const data = await ApiHelper.get("/files/group/" + groupId, "ContentApi");
+      setFiles(data);
+    } catch (error) {
+      console.error("Error fetching files:", error);
+    }
 
-    ApiHelper.get("/links?category=groupLink", "ContentApi")
-      .then((data: LinkInterface[]) => {
-        const result: LinkInterface[] = [];
-        data?.forEach(l => {
-          if (l.linkData === groupId) result.push(l);
-        });
-        setLinks(result);
-      })
-      .catch((error: any) => {
-        console.error("Error fetching group links:", error);
+    try {
+      const data: LinkInterface[] = await ApiHelper.get("/links?category=groupLink", "ContentApi");
+      const result: LinkInterface[] = [];
+      data?.forEach(l => {
+        if (l.linkData === groupId) result.push(l);
       });
-  }, []);
+      setLinks(result);
+    } catch (error) {
+      console.error("Error fetching group links:", error);
+    }
+  }, [groupId]);
 
   const handleDelete = async (file: FileInterface) => {
     Alert.alert(t("groups.confirmDeleteFile", { name: file.fileName }), "", [
@@ -115,10 +114,10 @@ export const GroupResourcesTab: React.FC<GroupResourcesTabProps> = ({ groupId })
         <Text>{t("groups.usedSpace", { used: formatSize(usedSpace), total: "100MB" })}</Text>
         <View style={styles.progressContainer}>
           <View style={styles.progressBarWrapper}>
-            <ProgressBar progress={percent} color="#0D47A1" style={styles.progressBar} />
+            <ProgressBar progress={percent} color={colors.primary} style={styles.progressBar} />
           </View>
           <View style={styles.percentWrapper}>
-            <Text style={styles.percentText}>{`${Math.round(percent * 100)}%`}</Text>
+            <Text style={[styles.percentText, { color: colors.textMuted }]}>{`${Math.round(percent * 100)}%`}</Text>
           </View>
         </View>
       </View>
@@ -150,7 +149,6 @@ const styles = StyleSheet.create({
   aboutContainer: { minHeight: 200 },
   markdownStyles: {
     body: {
-      color: "#3c3c3c",
       fontSize: 16,
       lineHeight: 24
     }
@@ -160,18 +158,13 @@ const styles = StyleSheet.create({
     paddingVertical: 32,
     paddingHorizontal: 24
   },
-  emptyIcon: {
-    backgroundColor: "#F6F6F8",
-    marginBottom: 16
-  },
+  emptyIcon: { marginBottom: 16 },
   emptyTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 8,
     textAlign: "center"
   },
   emptySubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
   },
@@ -197,8 +190,5 @@ const styles = StyleSheet.create({
     minWidth: 35,
     alignItems: "flex-end"
   },
-  percentText: {
-    fontSize: 12,
-    color: "#555"
-  }
+  percentText: { fontSize: 12 }
 });

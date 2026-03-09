@@ -20,11 +20,11 @@ export class UserHelper {
     return result;
   }
 
-  static async addAnalyticsEvent(eventName: string, dataBody: any) {
+  static async addAnalyticsEvent(eventName: string, dataBody: Record<string, unknown>) {
     await logAnalyticsEvent(eventName, dataBody);
   }
 
-  static async addOpenScreenEvent(screenName: string, parameters?: any) {
+  static async addOpenScreenEvent(screenName: string, parameters?: Record<string, unknown>) {
     await logAnalyticsEvent("page_view", {
       id: Date.now(),
       device: Platform.OS,

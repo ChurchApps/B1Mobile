@@ -10,3 +10,7 @@ DOING_API=https://api.staging.churchapps.org/doing
 CONTENT_API=https://api.churchapps.org/content
 
 LESSONS_ROOT=https://staging.lessons.church
+
+# Secrets (do NOT commit .env.local with real values)
+SENTRY_AUTH_TOKEN=
+YOUVERSION_API_KEY=

@@ -6,6 +6,7 @@ import { ApiHelper } from "@churchapps/helpers";
 import { EventInterface, RegistrationInterface } from "@churchapps/helpers";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import dayjs from "../../helpers/dayjsConfig";
+import { useThemeColors, CommonStyles } from "../../theme";
 
 interface GuestMember {
   firstName: string;
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, onDone }) => {
+  const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
   const isLoggedIn = !!currentUserChurch?.person?.id;
 
@@ -51,22 +53,22 @@ export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, on
     load();
   }, [eventId, churchId]);
 
-  if (loading) return <View style={styles.center}><Text>Loading...</Text></View>;
-  if (!event) return <View style={styles.center}><Text>Event not found.</Text></View>;
+  if (loading) return <View style={[CommonStyles.centerContainer, { padding: 32 }]}><Text>Loading...</Text></View>;
+  if (!event) return <View style={[CommonStyles.centerContainer, { padding: 32 }]}><Text>Event not found.</Text></View>;
 
   const isFull = event.capacity ? activeCount >= event.capacity : false;
   const now = new Date();
   const isOpen = (!event.registrationOpenDate || new Date(event.registrationOpenDate) <= now)
     && (!event.registrationCloseDate || new Date(event.registrationCloseDate) >= now);
 
-  if (!event.registrationEnabled) return <View style={styles.center}><Text>Registration is not available for this event.</Text></View>;
+  if (!event.registrationEnabled) return <View style={[CommonStyles.centerContainer, { padding: 32 }]}><Text>Registration is not available for this event.</Text></View>;
 
   if (!isOpen) {
     return (
-      <View style={styles.center}>
-        <MaterialIcons name="event-busy" size={48} color="#999" />
-        <Text variant="titleMedium" style={styles.statusTitle}>Registration Not Open</Text>
-        <Text variant="bodySmall" style={styles.statusText}>
+      <View style={[CommonStyles.centerContainer, { padding: 32 }]}>
+        <MaterialIcons name="event-busy" size={48} color={colors.textHint} />
+        <Text variant="titleMedium" style={[styles.statusTitle, { color: colors.text }]}>Registration Not Open</Text>
+        <Text variant="bodySmall" style={[CommonStyles.textCenter, { color: colors.textMuted, marginBottom: 8 }]}>
           {event.registrationOpenDate && new Date(event.registrationOpenDate) > now
             ? `Registration opens ${dayjs(event.registrationOpenDate).format("LL")}`
             : "Registration for this event has closed."}
@@ -77,10 +79,10 @@ export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, on
 
   if (isFull) {
     return (
-      <View style={styles.center}>
-        <MaterialIcons name="group-off" size={48} color="#F44336" />
-        <Text variant="titleMedium" style={styles.statusTitle}>Event Full</Text>
-        <Text variant="bodySmall" style={styles.statusText}>
+      <View style={[CommonStyles.centerContainer, { padding: 32 }]}>
+        <MaterialIcons name="group-off" size={48} color={colors.error} />
+        <Text variant="titleMedium" style={[styles.statusTitle, { color: colors.text }]}>Event Full</Text>
+        <Text variant="bodySmall" style={[CommonStyles.textCenter, { color: colors.textMuted, marginBottom: 8 }]}>
           This event has reached its capacity of {event.capacity}.
         </Text>
       </View>
@@ -91,28 +93,28 @@ export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, on
   if (step === "confirm" && registration) {
     return (
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.center}>
-          <MaterialIcons name="check-circle" size={48} color="#4CAF50" />
-          <Text variant="headlineSmall" style={styles.confirmTitle}>Registration Confirmed!</Text>
-          <Text variant="bodyMedium" style={styles.statusText}>You are registered for {event.title}</Text>
+        <View style={[CommonStyles.centerContainer, { padding: 32 }]}>
+          <MaterialIcons name="check-circle" size={48} color={colors.success} />
+          <Text variant="headlineSmall" style={[styles.confirmTitle, { color: colors.text }]}>Registration Confirmed!</Text>
+          <Text variant="bodyMedium" style={[CommonStyles.textCenter, { color: colors.textMuted, marginBottom: 8 }]}>You are registered for {event.title}</Text>
         </View>
-        <Card style={styles.card}>
+        <Card style={[styles.card, { backgroundColor: colors.surface }]}>
           <Card.Content>
             <Text variant="bodyMedium"><Text style={styles.bold}>Event: </Text>{event.title}</Text>
-            {event.start && <Text variant="bodySmall" style={styles.detailText}>{dayjs(event.start).format("LLL")}</Text>}
-            <Chip compact style={styles.statusChip} textStyle={{ color: "#4CAF50" }}>{registration.status}</Chip>
+            {event.start && <Text variant="bodySmall" style={[styles.detailText, { color: colors.textMuted }]}>{dayjs(event.start).format("LLL")}</Text>}
+            <Chip compact style={[styles.statusChip, { backgroundColor: `${colors.success}22` }]} textStyle={{ color: colors.success }}>{registration.status}</Chip>
             {registration.members && registration.members.length > 0 && (
               <>
                 <Divider style={styles.divider} />
                 <Text variant="bodySmall" style={styles.bold}>Registered Members:</Text>
                 {registration.members.map((m, i) => (
-                  <Text key={i} variant="bodySmall" style={styles.memberText}>- {m.firstName} {m.lastName}</Text>
+                  <Text key={i} variant="bodySmall" style={[styles.memberText, { color: colors.textMuted }]}>- {m.firstName} {m.lastName}</Text>
                 ))}
               </>
             )}
           </Card.Content>
         </Card>
-        <Button mode="contained" onPress={onDone} style={styles.actionButton}>Done</Button>
+        <Button mode="contained" onPress={onDone} style={[styles.actionButton, { backgroundColor: colors.primary }]}>Done</Button>
       </ScrollView>
     );
   }
@@ -155,12 +157,7 @@ export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, on
       if (isLoggedIn) {
         payload.personId = currentUserChurch.person.id;
       } else {
-        payload.guestInfo = {
-          firstName: guestFirstName.trim(),
-          lastName: guestLastName.trim(),
-          email: guestEmail.trim(),
-          phone: guestPhone.trim() || undefined
-        };
+        payload.guestInfo = { firstName: guestFirstName.trim(), lastName: guestLastName.trim(), email: guestEmail.trim(), phone: guestPhone.trim() || undefined };
       }
       if (members.length > 0) {
         payload.members = members.map((m) => ({ firstName: m.firstName.trim(), lastName: m.lastName.trim() }));
@@ -180,14 +177,14 @@ export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, on
   if (step === "members") {
     return (
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text variant="headlineSmall" style={styles.sectionTitle}>Additional Members</Text>
-        <Text variant="bodySmall" style={styles.statusText}>Optionally register additional family members for this event.</Text>
+        <Text variant="headlineSmall" style={[styles.sectionTitle, { color: colors.text }]}>Additional Members</Text>
+        <Text variant="bodySmall" style={[CommonStyles.textCenter, { color: colors.textMuted, marginBottom: 8 }]}>Optionally register additional family members for this event.</Text>
 
         {members.map((member, index) => (
-          <View key={index} style={styles.memberRow}>
-            <View style={styles.memberInputs}>
-              <TextInput label="First Name" value={member.firstName} onChangeText={(v) => updateMember(index, "firstName", v)} mode="outlined" dense style={styles.input} />
-              <TextInput label="Last Name" value={member.lastName} onChangeText={(v) => updateMember(index, "lastName", v)} mode="outlined" dense style={styles.input} />
+          <View key={index} style={[CommonStyles.row, { marginBottom: 8 }]}>
+            <View style={[CommonStyles.row, { flex: 1, gap: 8 }]}>
+              <TextInput label="First Name" value={member.firstName} onChangeText={(v) => updateMember(index, "firstName", v)} mode="outlined" dense style={[styles.input, { backgroundColor: colors.surface }]} />
+              <TextInput label="Last Name" value={member.lastName} onChangeText={(v) => updateMember(index, "lastName", v)} mode="outlined" dense style={[styles.input, { backgroundColor: colors.surface }]} />
             </View>
             <IconButton icon="close" size={20} onPress={() => removeMember(index)} />
           </View>
@@ -197,9 +194,9 @@ export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, on
           Add Member
         </Button>
 
-        <View style={styles.buttonRow}>
+        <View style={[CommonStyles.row, { gap: 8, marginTop: 16 }]}>
           <Button mode="outlined" onPress={() => setStep("info")} style={styles.backButton}>Back</Button>
-          <Button mode="contained" onPress={handleSubmit} loading={isSubmitting} disabled={isSubmitting} style={styles.submitButton} icon="check">
+          <Button mode="contained" onPress={handleSubmit} loading={isSubmitting} disabled={isSubmitting} style={[styles.submitButton, { backgroundColor: colors.primary }]} icon="check">
             {isSubmitting ? "Registering..." : "Complete Registration"}
           </Button>
         </View>
@@ -212,52 +209,52 @@ export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, on
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
-      <Card style={styles.card}>
+      <Card style={[styles.card, { backgroundColor: colors.surface }]}>
         <Card.Content>
-          <Text variant="headlineSmall" style={styles.sectionTitle}>{event.title}</Text>
+          <Text variant="headlineSmall" style={[styles.sectionTitle, { color: colors.text }]}>{event.title}</Text>
           {event.start && (
-            <View style={styles.timeRow}>
-              <MaterialIcons name="access-time" size={16} color="#666" />
-              <Text variant="bodySmall" style={styles.timeText}>
+            <View style={[CommonStyles.row, { gap: 4, marginBottom: 8 }]}>
+              <MaterialIcons name="access-time" size={16} color={colors.textMuted} />
+              <Text variant="bodySmall" style={[styles.timeText, { color: colors.textMuted }]}>
                 {event.allDay ? dayjs(event.start).format("LL") : `${dayjs(event.start).format("LLL")} - ${dayjs(event.end).format("LT")}`}
               </Text>
             </View>
           )}
-          {event.description && <Text variant="bodyMedium" style={styles.description}>{event.description}</Text>}
+          {event.description && <Text variant="bodyMedium" style={[styles.description, { color: colors.text }]}>{event.description}</Text>}
 
           {event.capacity && (
             <View style={styles.capacitySection}>
-              <Text variant="bodySmall" style={styles.capacityText}>{activeCount} / {event.capacity} spots filled</Text>
-              <ProgressBar progress={capacityPct} color={capacityPct >= 0.9 ? "#FF9800" : "#0D47A1"} style={styles.progressBar} />
+              <Text variant="bodySmall" style={[styles.capacityText, { color: colors.textMuted }]}>{activeCount} / {event.capacity} spots filled</Text>
+              <ProgressBar progress={capacityPct} color={capacityPct >= 0.9 ? colors.warning : colors.primary} style={styles.progressBar} />
             </View>
           )}
         </Card.Content>
       </Card>
 
-      <Card style={styles.card}>
+      <Card style={[styles.card, { backgroundColor: colors.surface }]}>
         <Card.Content>
           {isLoggedIn ? (
             <>
-              <Text variant="bodySmall" style={styles.label}>Registering as:</Text>
-              <Text variant="titleMedium" style={styles.registrantName}>{currentUserChurch?.person?.name?.display || ""}</Text>
+              <Text variant="bodySmall" style={[styles.label, { color: colors.textMuted }]}>Registering as:</Text>
+              <Text variant="titleMedium" style={[styles.registrantName, { color: colors.text }]}>{currentUserChurch?.person?.name?.display || ""}</Text>
             </>
           ) : (
             <>
-              <Text variant="bodySmall" style={styles.label}>Your Information:</Text>
-              <View style={styles.nameRow}>
-                <TextInput label="First Name" value={guestFirstName} onChangeText={setGuestFirstName} mode="outlined" dense style={styles.input} />
-                <TextInput label="Last Name" value={guestLastName} onChangeText={setGuestLastName} mode="outlined" dense style={styles.input} />
+              <Text variant="bodySmall" style={[styles.label, { color: colors.textMuted }]}>Your Information:</Text>
+              <View style={[CommonStyles.row, { gap: 8, marginBottom: 8 }]}>
+                <TextInput label="First Name" value={guestFirstName} onChangeText={setGuestFirstName} mode="outlined" dense style={[styles.input, { backgroundColor: colors.surface }]} />
+                <TextInput label="Last Name" value={guestLastName} onChangeText={setGuestLastName} mode="outlined" dense style={[styles.input, { backgroundColor: colors.surface }]} />
               </View>
-              <View style={styles.nameRow}>
-                <TextInput label="Email" value={guestEmail} onChangeText={setGuestEmail} mode="outlined" dense style={styles.input} keyboardType="email-address" autoCapitalize="none" />
-                <TextInput label="Phone" value={guestPhone} onChangeText={setGuestPhone} mode="outlined" dense style={styles.input} keyboardType="phone-pad" />
+              <View style={[CommonStyles.row, { gap: 8, marginBottom: 8 }]}>
+                <TextInput label="Email" value={guestEmail} onChangeText={setGuestEmail} mode="outlined" dense style={[styles.input, { backgroundColor: colors.surface }]} keyboardType="email-address" autoCapitalize="none" />
+                <TextInput label="Phone" value={guestPhone} onChangeText={setGuestPhone} mode="outlined" dense style={[styles.input, { backgroundColor: colors.surface }]} keyboardType="phone-pad" />
               </View>
             </>
           )}
         </Card.Content>
       </Card>
 
-      <Button mode="contained" onPress={handleContinue} style={styles.actionButton} icon="arrow-right" contentStyle={styles.buttonContent}>
+      <Button mode="contained" onPress={handleContinue} style={[styles.actionButton, { backgroundColor: colors.primary }]} icon="arrow-right" contentStyle={styles.buttonContent}>
         Continue
       </Button>
     </ScrollView>
@@ -266,33 +263,26 @@ export const EventRegistrationScreen: React.FC<Props> = ({ eventId, churchId, on
 
 const styles = StyleSheet.create({
   scrollContent: { padding: 16, paddingBottom: 32 },
-  center: { flex: 1, justifyContent: "center", alignItems: "center", padding: 32 },
-  card: { marginBottom: 16, backgroundColor: "#FFF", borderRadius: 12, elevation: 2 },
-  sectionTitle: { fontWeight: "700", color: "#3c3c3c", marginBottom: 8 },
-  statusTitle: { fontWeight: "600", color: "#3c3c3c", marginTop: 12 },
-  statusText: { color: "#666", textAlign: "center", marginBottom: 8 },
-  confirmTitle: { fontWeight: "700", color: "#3c3c3c", marginTop: 12, marginBottom: 4 },
-  statusChip: { backgroundColor: "#4CAF5022", alignSelf: "flex-start", marginTop: 8 },
-  timeRow: { flexDirection: "row", alignItems: "center", gap: 4, marginBottom: 8 },
-  timeText: { color: "#666" },
-  description: { color: "#3c3c3c", marginVertical: 8, lineHeight: 20 },
+  card: { marginBottom: 16, borderRadius: 12, elevation: 2 },
+  sectionTitle: { fontWeight: "700", marginBottom: 8 },
+  statusTitle: { fontWeight: "600", marginTop: 12 },
+  confirmTitle: { fontWeight: "700", marginTop: 12, marginBottom: 4 },
+  statusChip: { alignSelf: "flex-start", marginTop: 8 },
+  timeText: {},
+  description: { marginVertical: 8, lineHeight: 20 },
   capacitySection: { marginTop: 8 },
-  capacityText: { color: "#666", marginBottom: 4 },
+  capacityText: { marginBottom: 4 },
   progressBar: { height: 6, borderRadius: 3 },
-  label: { color: "#666", marginBottom: 4 },
-  registrantName: { fontWeight: "600", color: "#3c3c3c" },
-  nameRow: { flexDirection: "row", gap: 8, marginBottom: 8 },
-  input: { flex: 1, backgroundColor: "#FFF" },
-  actionButton: { marginTop: 8, backgroundColor: "#0D47A1" },
+  label: { marginBottom: 4 },
+  registrantName: { fontWeight: "600" },
+  input: { flex: 1 },
+  actionButton: { marginTop: 8 },
   buttonContent: { flexDirection: "row-reverse" },
-  memberRow: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
-  memberInputs: { flex: 1, flexDirection: "row", gap: 8 },
   addButton: { marginBottom: 16, alignSelf: "flex-start" },
-  buttonRow: { flexDirection: "row", gap: 8, marginTop: 16 },
   backButton: { flex: 0 },
-  submitButton: { flex: 1, backgroundColor: "#0D47A1" },
+  submitButton: { flex: 1 },
   divider: { marginVertical: 8 },
   bold: { fontWeight: "600" },
-  memberText: { color: "#666", marginLeft: 8 },
-  detailText: { color: "#666", marginTop: 4 }
+  memberText: { marginLeft: 8 },
+  detailText: { marginTop: 4 }
 });

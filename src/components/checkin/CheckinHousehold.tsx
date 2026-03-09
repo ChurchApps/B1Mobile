@@ -5,6 +5,7 @@ import { ErrorHelper } from "../../helpers/ErrorHelper";
 import React, { useState } from "react";
 import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
+import { useThemeColors } from "../../../src/theme";
 import { Button, Divider, Card, Text, Chip } from "react-native-paper";
 import { Avatar } from "../common/Avatar";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -18,6 +19,7 @@ interface Props {
 
 export const CheckinHousehold = (props: Props) => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -48,7 +50,7 @@ export const CheckinHousehold = (props: Props) => {
   };
 
   const renderMemberItem = (item: any) => (
-    <Card style={styles.memberCard}>
+    <Card style={[styles.memberCard, { backgroundColor: colors.card, shadowColor: colors.shadowBlack }]}>
       <TouchableOpacity onPress={() => setSelected(selected != item.id ? item.id : null)} activeOpacity={0.7} style={styles.memberHeader}>
         <View style={styles.memberHeaderContent}>
           <View style={styles.memberImageContainer}>
@@ -56,7 +58,7 @@ export const CheckinHousehold = (props: Props) => {
           </View>
 
           <View style={styles.memberInfo}>
-            <Text variant="titleLarge" style={styles.memberName}>
+            <Text variant="titleLarge" style={[styles.memberName, { color: colors.text }]}>
               {item.name.display}
             </Text>
             {selected !== item.id && (
@@ -64,12 +66,12 @@ export const CheckinHousehold = (props: Props) => {
                 {item.serviceTimes
                   .filter((time: any) => time.selectedGroup)
                   .map((time: any, index: number) => (
-                    <Chip key={index} mode="outlined" style={styles.summaryChip} textStyle={styles.summaryChipText}>
+                    <Chip key={index} mode="outlined" style={[styles.summaryChip, { backgroundColor: colors.primary + "1A", borderColor: colors.primary }]} textStyle={[styles.summaryChipText, { color: colors.primary }]}>
                       {time.selectedGroup.name}
                     </Chip>
                   ))}
                 {item.serviceTimes.filter((time: any) => time.selectedGroup).length === 0 && (
-                  <Text variant="bodyMedium" style={styles.noSelectionText}>
+                  <Text variant="bodyMedium" style={[styles.noSelectionText, { color: colors.textMuted }]}>
                     {t("checkin.tapToSelectGroups")}
                   </Text>
                 )}
@@ -78,30 +80,30 @@ export const CheckinHousehold = (props: Props) => {
           </View>
 
           <View style={styles.expandIcon}>
-            <MaterialIcons name={selected === item.id ? "expand-less" : "expand-more"} size={24} color="#9E9E9E" />
+            <MaterialIcons name={selected === item.id ? "expand-less" : "expand-more"} size={24} color={colors.iconColor} />
           </View>
         </View>
       </TouchableOpacity>
 
       {selected === item.id && item.serviceTimes && (
-        <View style={styles.serviceTimesContainer}>
-          <Divider style={styles.divider} />
+        <View style={[styles.serviceTimesContainer, { backgroundColor: colors.background }]}>
+          <Divider style={[styles.divider, { backgroundColor: colors.border }]} />
           {item.serviceTimes.map((item_time: any) => (
-            <View key={`service-time-${item_time.id}`} style={styles.serviceTimeItem}>
+            <View key={`service-time-${item_time.id}`} style={[styles.serviceTimeItem, { borderBottomColor: colors.border }]}>
               <View style={styles.serviceTimeInfo}>
-                <View style={styles.serviceTimeIconContainer}>
-                  <MaterialIcons name="schedule" size={20} color="#0D47A1" />
+                <View style={[styles.serviceTimeIconContainer, { backgroundColor: colors.card }]}>
+                  <MaterialIcons name="schedule" size={20} color={colors.primary} />
                 </View>
                 <View style={styles.serviceTimeDetails}>
-                  <Text variant="titleMedium" style={styles.serviceTimeName}>
+                  <Text variant="titleMedium" style={[styles.serviceTimeName, { color: colors.text }]}>
                     {item_time.name}
                   </Text>
-                  <Text variant="bodyMedium" style={styles.selectedGroupText}>
+                  <Text variant="bodyMedium" style={[styles.selectedGroupText, { color: colors.textMuted }]}>
                     {item_time.selectedGroup ? item_time.selectedGroup.name : t("checkin.noGroupSelected")}
                   </Text>
                 </View>
               </View>
-              <Button mode={item_time.selectedGroup ? "contained" : "outlined"} onPress={() => !item_time.selection && props.showGroups(item, item_time)} style={[styles.selectGroupButton, item_time.selectedGroup && styles.selectedGroupButton]} labelStyle={[styles.selectGroupButtonText, item_time.selectedGroup && styles.selectedGroupButtonText]} disabled={item_time.selection}>
+              <Button mode={item_time.selectedGroup ? "contained" : "outlined"} onPress={() => !item_time.selection && props.showGroups(item, item_time)} style={[styles.selectGroupButton, item_time.selectedGroup && { backgroundColor: colors.success }]} labelStyle={[styles.selectGroupButtonText, item_time.selectedGroup && { color: colors.white }]} disabled={item_time.selection}>
                 {item_time.selectedGroup ? t("checkin.change") : t("checkin.selectGroup")}
               </Button>
             </View>
@@ -113,16 +115,16 @@ export const CheckinHousehold = (props: Props) => {
 
   return (
     <LoadingWrapper loading={loading}>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         {/* Header Section */}
-        <View style={styles.headerSection}>
-          <View style={styles.iconHeaderContainer}>
-            <MaterialIcons name="people" size={48} color="#0D47A1" />
+        <View style={[styles.headerSection, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+          <View style={[styles.iconHeaderContainer, { backgroundColor: colors.iconBackground }]}>
+            <MaterialIcons name="people" size={48} color={colors.primary} />
           </View>
-          <Text variant="headlineLarge" style={styles.headerTitle}>
+          <Text variant="headlineLarge" style={[styles.headerTitle, { color: colors.text }]}>
             {t("checkin.householdMembers")}
           </Text>
-          <Text variant="bodyLarge" style={styles.headerSubtitle}>
+          <Text variant="bodyLarge" style={[styles.headerSubtitle, { color: colors.textMuted }]}>
             {t("checkin.selectGroupsForFamily")}
           </Text>
         </View>
@@ -130,13 +132,13 @@ export const CheckinHousehold = (props: Props) => {
         {/* Members List */}
         <View style={styles.contentSection}>
           {!CheckinHelper.householdMembers || CheckinHelper.householdMembers.length === 0 ? (
-            <Card style={styles.emptyCard}>
+            <Card style={[styles.emptyCard, { backgroundColor: colors.card, shadowColor: colors.shadowBlack }]}>
               <View style={styles.emptyContent}>
-                <MaterialIcons name="person-off" size={64} color="#9E9E9E" />
-                <Text variant="titleMedium" style={styles.emptyTitle}>
+                <MaterialIcons name="person-off" size={64} color={colors.iconColor} />
+                <Text variant="titleMedium" style={[styles.emptyTitle, { color: colors.text }]}>
                   {t("checkin.noHouseholdMembers")}
                 </Text>
-                <Text variant="bodyMedium" style={styles.emptySubtitle}>
+                <Text variant="bodyMedium" style={[styles.emptySubtitle, { color: colors.textMuted }]}>
                   {t("checkin.noHouseholdMembersMessage")}
                 </Text>
               </View>
@@ -147,11 +149,11 @@ export const CheckinHousehold = (props: Props) => {
         </View>
 
         {/* Bottom Action */}
-        <View style={styles.bottomSection}>
-          <Button mode="contained" onPress={props?.handleBack} style={styles.checkinButton} labelStyle={styles.checkinButtonText}>
-            <MaterialIcons name="arrow-back" size={24} color="#FFF" style={{ marginRight: 8 }} />
+        <View style={[styles.bottomSection, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
+          <Button mode="contained" onPress={props?.handleBack} style={[styles.checkinButton, { backgroundColor: colors.primary, shadowColor: colors.primary }]} labelStyle={[styles.checkinButtonText, { color: colors.onPrimary }]}>
+            <MaterialIcons name="arrow-back" size={24} color={colors.onPrimary} style={{ marginRight: 8 }} />
           </Button>
-          <Button mode="contained" onPress={submitAttendance} style={[styles.checkinButton, { flex: 1 }]} labelStyle={styles.checkinButtonText} icon="check-circle">
+          <Button mode="contained" onPress={submitAttendance} style={[styles.checkinButton, { flex: 1, backgroundColor: colors.primary, shadowColor: colors.primary }]} labelStyle={[styles.checkinButtonText, { color: colors.onPrimary }]} icon="check-circle">
             {t("checkin.completeCheckin")}
           </Button>
         </View>
@@ -161,35 +163,27 @@ export const CheckinHousehold = (props: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F6F6F8"
-  },
+  container: { flex: 1 },
   headerSection: {
-    backgroundColor: "#FFFFFF",
     padding: 24,
     alignItems: "center",
     borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0",
     marginBottom: 16
   },
   iconHeaderContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#F6F6F8",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 16
   },
   headerTitle: {
-    color: "#3c3c3c",
     fontWeight: "700",
     textAlign: "center",
     marginBottom: 8
   },
   headerSubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     maxWidth: "80%"
   },
@@ -200,11 +194,9 @@ const styles = StyleSheet.create({
   membersList: { flex: 1 },
   membersContent: { paddingBottom: 16 },
   memberCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 12,
     marginBottom: 12,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3,
@@ -224,7 +216,6 @@ const styles = StyleSheet.create({
   },
   memberInfo: { flex: 1 },
   memberName: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 8
   },
@@ -233,34 +224,21 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 6
   },
-  summaryChip: {
-    backgroundColor: "rgba(13, 71, 161, 0.1)",
-    borderColor: "#0D47A1"
-  },
-  summaryChipText: {
-    color: "#0D47A1",
-    fontSize: 12
-  },
-  noSelectionText: {
-    color: "#9E9E9E",
-    fontStyle: "italic"
-  },
+  summaryChip: {},
+  summaryChipText: { fontSize: 12 },
+  noSelectionText: { fontStyle: "italic" },
   expandIcon: {
     justifyContent: "center",
     alignItems: "center"
   },
-  serviceTimesContainer: { backgroundColor: "#F6F6F8" },
-  divider: {
-    height: 1,
-    backgroundColor: "#F0F0F0"
-  },
+  serviceTimesContainer: {},
+  divider: { height: 1 },
   serviceTimeItem: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#F0F0F0"
+    borderBottomWidth: 1
   },
   serviceTimeInfo: {
     flex: 1,
@@ -271,58 +249,47 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#FFFFFF",
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12
   },
   serviceTimeDetails: { flex: 1 },
   serviceTimeName: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginBottom: 2
   },
-  selectedGroupText: { color: "#9E9E9E" },
+  selectedGroupText: {},
   selectGroupButton: {
     borderRadius: 8,
     minWidth: 100
   },
-  selectedGroupButton: { backgroundColor: "#70DC87" },
   selectGroupButtonText: {
     fontSize: 12,
     fontWeight: "600"
   },
-  selectedGroupButtonText: { color: "#FFFFFF" },
   bottomSection: {
     padding: 16,
-    backgroundColor: "#FFFFFF",
     borderTopWidth: 1,
-    borderTopColor: "#F0F0F0",
     flexDirection: "row",
     alignItems: "center",
     gap: 6
   },
   checkinButton: {
-    backgroundColor: "#0D47A1",
     borderRadius: 12,
     height: 56,
     justifyContent: "center",
     elevation: 3,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4
   },
   checkinButtonText: {
-    color: "#FFFFFF",
     fontWeight: "700",
     fontSize: 16
   },
   emptyCard: {
-    backgroundColor: "#FFFFFF",
     borderRadius: 16,
     elevation: 2,
-    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 3
@@ -332,14 +299,12 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   emptyTitle: {
-    color: "#3c3c3c",
     fontWeight: "600",
     marginTop: 16,
     marginBottom: 8,
     textAlign: "center"
   },
   emptySubtitle: {
-    color: "#9E9E9E",
     textAlign: "center",
     lineHeight: 20
   }

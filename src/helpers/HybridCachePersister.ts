@@ -103,12 +103,7 @@ export class HybridCachePersister implements Persister {
     sqliteEntryCount: number;
     location: "AsyncStorage" | "SQLite" | "None";
   }> {
-    const stats = {
-      asyncStorageSize: 0,
-      sqliteSize: 0,
-      sqliteEntryCount: 0,
-      location: "None" as "AsyncStorage" | "SQLite" | "None"
-    };
+    const stats = { asyncStorageSize: 0, sqliteSize: 0, sqliteEntryCount: 0, location: "None" as "AsyncStorage" | "SQLite" | "None" };
 
     try {
       // Check AsyncStorage

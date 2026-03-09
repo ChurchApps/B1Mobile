@@ -1,18 +1,18 @@
 import { DimensionHelper } from "./DimensionHelper";
 import { StyleSheet } from "react-native";
 import { Constants } from "../helpers/Constants";
+import { designSystem } from "../theme/designSystem";
 
 export const globalStyles = StyleSheet.create({
   //Global Styles
-  appContainer: { flex: 1, backgroundColor: Constants.Colors.app_color },
-  grayContainer: { flex: 1, backgroundColor: Constants.Colors.gray_bg },
+  appContainer: { flex: 1, backgroundColor: designSystem.colors.primary[500] },
+  grayContainer: { flex: 1, backgroundColor: designSystem.colors.neutral[50] },
   textInputView: {
     height: DimensionHelper.wp(12),
     flexDirection: "row",
     alignItems: "center",
     marginTop: DimensionHelper.wp(5.5),
     marginHorizontal: DimensionHelper.wp(5),
-    backgroundColor: "white",
     borderRadius: DimensionHelper.wp(2),
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
@@ -20,14 +20,14 @@ export const globalStyles = StyleSheet.create({
     elevation: 5,
     alignSelf: "center"
   },
-  textInputStyle: { height: DimensionHelper.wp(10), fontSize: DimensionHelper.wp(3.8), color: "gray", alignItems: "center", justifyContent: "center" },
+  textInputStyle: { height: DimensionHelper.wp(10), fontSize: DimensionHelper.wp(3.8), alignItems: "center", justifyContent: "center" },
   roundBlueButton: {
     height: DimensionHelper.wp(12),
     borderRadius: DimensionHelper.wp(2),
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    backgroundColor: Constants.Colors.button_bg,
+    backgroundColor: "#2196F3",
     marginTop: DimensionHelper.wp(5)
   },
   roundBlueButtonText: { color: "white", fontSize: DimensionHelper.wp(3.8), fontFamily: Constants.Fonts.RobotoMedium },
@@ -35,7 +35,6 @@ export const globalStyles = StyleSheet.create({
   listTextView: { height: DimensionHelper.wp(12), justifyContent: "space-evenly", width: DimensionHelper.wp(70) },
   listTitleText: { fontSize: DimensionHelper.wp(4.2), fontFamily: Constants.Fonts.RobotoMedium },
   listMainView: {
-    backgroundColor: "white",
     alignSelf: "center",
     justifyContent: "flex-start",
     alignItems: "center",
@@ -45,21 +44,21 @@ export const globalStyles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: DimensionHelper.wp(1.5),
     elevation: 5,
-    shadowColor: Constants.Colors.app_color,
+    shadowColor: designSystem.colors.primary[500],
     flexDirection: "row"
   },
   listContainerStyle: { marginVertical: DimensionHelper.wp(3) },
-  selectionIcon: { color: "gray", marginLeft: DimensionHelper.wp(3) },
-  groupListTitle: { fontSize: DimensionHelper.wp(4.5), fontFamily: Constants.Fonts.RobotoMedium, color: Constants.Colors.app_color },
+  selectionIcon: { marginLeft: DimensionHelper.wp(3) },
+  groupListTitle: { fontSize: DimensionHelper.wp(4.5), fontFamily: Constants.Fonts.RobotoMedium, color: designSystem.colors.primary[500] },
   safeAreaContainer: { alignItems: "center", justifyContent: "center" },
   tabStyle: { borderRadius: 10, borderColor: "transparent", fontSize: 18, margin: 5 },
   tabTextStyle: { color: "#818181", fontSize: 18 },
-  activeTabStyle: { backgroundColor: "white", borderRadius: 10, borderColor: "transparent", margin: 5, borderBottomColor: Constants.Colors.Active_TabColor, borderBottomWidth: 1 },
-  activeTabTextStyle: { color: "black", fontSize: 18 },
+  activeTabStyle: { borderRadius: 10, borderColor: "transparent", margin: 5, borderBottomColor: designSystem.colors.primary[500], borderBottomWidth: 1 },
+  activeTabTextStyle: { fontSize: 18 },
   textStyle: { color: "white", fontSize: 20, fontWeight: "700", marginTop: 40 },
-  tabContainerViewStyle: { backgroundColor: "white", width: "100%", paddingVertical: 5, borderRadius: 10 },
+  tabContainerViewStyle: { width: "100%", paddingVertical: 5, borderRadius: 10 },
   loginLinks: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center", marginTop: 150 },
-  simpleLink: { textDecorationLine: "underline", color: Constants.Colors.button_bg },
+  simpleLink: { textDecorationLine: "underline", color: "#2196F3" },
   privacyPolicyView: { flexDirection: "row", alignItems: "center" },
 
   //Splash
@@ -78,16 +77,16 @@ export const globalStyles = StyleSheet.create({
   recentText: { marginHorizontal: DimensionHelper.wp(5), marginTop: DimensionHelper.wp(5), fontSize: DimensionHelper.wp(4), fontFamily: Constants.Fonts.RobotoRegular },
 
   //Home
-  homeContainer: { flex: 1, backgroundColor: "white", position: "relative" },
+  homeContainer: { flex: 1, position: "relative" },
   menuIcon: { width: DimensionHelper.wp(6), height: DimensionHelper.wp(6), margin: DimensionHelper.wp(5), tintColor: "white" },
   headerText: { color: "white", textAlign: "center", fontSize: DimensionHelper.hp(3.5), fontWeight: "bold" },
-  TabIndicatorStyle: { backgroundColor: Constants.Colors.white_color, shadowOffset: { height: 0, width: 0 }, shadowColor: "transparent", shadowOpacity: 0, elevation: 0 },
+  TabIndicatorStyle: { shadowOffset: { height: 0, width: 0 }, shadowColor: "transparent", shadowOpacity: 0, elevation: 0 },
   text: { color: "white", fontSize: 20 },
   tabBar: { height: "100%", top: 0 },
-  MessagetabView: { position: "relative", height: "100%", backgroundColor: Constants.Colors.white_color },
-  NotificationtabView: { height: "100%", backgroundColor: Constants.Colors.white_color, marginTop: DimensionHelper.hp(2) },
-  activeTabTextColor: { color: Constants.Colors.Active_TabColor },
-  tabTextColor: { color: Constants.Colors.Dark_Gray, fontFamily: Constants.Fonts.RobotoBold },
+  MessagetabView: { position: "relative", height: "100%" },
+  NotificationtabView: { height: "100%", marginTop: DimensionHelper.hp(2) },
+  activeTabTextColor: { color: designSystem.colors.primary[500] },
+  tabTextColor: { color: designSystem.colors.neutral[500], fontFamily: Constants.Fonts.RobotoBold },
   BadgeIconStyle: { width: DimensionHelper.wp(6), height: DimensionHelper.wp(6) },
   BadgemenuIcon: { width: DimensionHelper.wp(6), height: DimensionHelper.wp(6), marginLeft: DimensionHelper.wp(4), tintColor: "white" },
   BadgeDot: { position: "absolute", right: 25, width: DimensionHelper.wp(2.5), backgroundColor: "red", height: DimensionHelper.wp(2.5), borderRadius: DimensionHelper.wp(1.25) },
@@ -99,8 +98,8 @@ export const globalStyles = StyleSheet.create({
   //Household
   memberListIcon: { width: DimensionHelper.wp(16), height: DimensionHelper.wp(16), marginRight: DimensionHelper.wp(1), marginVertical: DimensionHelper.wp(2), borderRadius: DimensionHelper.wp(1.5) },
   memberListTextView: { width: DimensionHelper.wp(62), marginVertical: DimensionHelper.wp(2), justifyContent: "space-evenly" },
-  memberListTitle: { color: Constants.Colors.app_color, marginLeft: DimensionHelper.wp(2), width: DimensionHelper.wp(65) },
-  timeIcon: { fontSize: DimensionHelper.wp(5), color: Constants.Colors.app_color, marginHorizontal: DimensionHelper.wp(1) },
+  memberListTitle: { color: designSystem.colors.primary[500], marginLeft: DimensionHelper.wp(2), width: DimensionHelper.wp(65) },
+  timeIcon: { fontSize: DimensionHelper.wp(5), color: designSystem.colors.primary[500], marginHorizontal: DimensionHelper.wp(1) },
   classesView: {
     flexDirection: "row",
     alignSelf: "center",
@@ -120,12 +119,12 @@ export const globalStyles = StyleSheet.create({
     borderRadius: DimensionHelper.wp(2)
   },
   classesTimeView: { flexDirection: "row", justifyContent: "center", alignItems: "center" },
-  classesTimeText: { textAlign: "center", fontSize: DimensionHelper.wp(3.7), color: Constants.Colors.app_color },
+  classesTimeText: { textAlign: "center", fontSize: DimensionHelper.wp(3.7), color: designSystem.colors.primary[500] },
   selectedText: {
     width: DimensionHelper.wp(62),
     textAlign: "left",
     fontSize: DimensionHelper.wp(3.4),
-    color: Constants.Colors.button_green,
+    color: designSystem.colors.success[500],
     marginLeft: DimensionHelper.wp(2),
     marginVertical: DimensionHelper.wp(0.5)
   },
@@ -145,10 +144,10 @@ export const globalStyles = StyleSheet.create({
   },
   groupBtn: { width: DimensionHelper.wp(75), height: DimensionHelper.wp(8), alignItems: "flex-start", justifyContent: "center" },
   groupText: {
-    color: Constants.Colors.app_color,
+    color: designSystem.colors.primary[500],
     fontSize: DimensionHelper.wp(4.2),
     marginHorizontal: DimensionHelper.wp(2.5),
-    shadowColor: Constants.Colors.app_color,
+    shadowColor: designSystem.colors.primary[500],
     shadowOffset: { width: 10, height: 10 },
     shadowOpacity: 1.0,
     shadowRadius: 3,
@@ -159,20 +158,19 @@ export const globalStyles = StyleSheet.create({
     borderRadius: DimensionHelper.wp(0.8),
     paddingBottom: DimensionHelper.wp(3),
     width: DimensionHelper.wp(94),
-    shadowColor: Constants.Colors.Dark_Gray,
+    shadowColor: designSystem.colors.neutral[500],
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.1,
     shadowRadius: DimensionHelper.wp(1.5),
     elevation: 5,
     marginVertical: DimensionHelper.wp(1),
-    backgroundColor: Constants.Colors.white_color,
     alignSelf: "center"
   },
 
   ImageStyle: { height: "100%", width: "100%" },
   groupImageStyle: { height: "100%", width: "100%" },
   TitleStyle: {
-    backgroundColor: Constants.Colors.app_color,
+    backgroundColor: designSystem.colors.primary[500],
     alignItems: "center",
     width: "100%",
     borderTopLeftRadius: DimensionHelper.wp(0.8),
@@ -186,23 +184,22 @@ export const globalStyles = StyleSheet.create({
   GroupImageView: { marginHorizontal: DimensionHelper.wp(3) },
   TitleView: { flexDirection: "row", justifyContent: "space-between", width: "100%" },
   postTitleView: { flexDirection: "row", marginTop: DimensionHelper.wp(4), justifyContent: "space-between", marginHorizontal: DimensionHelper.wp(3) },
-  TitleTextStyle: { fontSize: DimensionHelper.wp(4), color: Constants.Colors.white_color, fontFamily: Constants.Fonts.RobotoMedium, paddingVertical: 3 },
-  eventTextStyle: { fontSize: DimensionHelper.wp(4), color: "black", fontFamily: Constants.Fonts.RobotoMedium },
+  TitleTextStyle: { fontSize: DimensionHelper.wp(4), color: "#FFFFFF", fontFamily: Constants.Fonts.RobotoMedium, paddingVertical: 3 },
+  eventTextStyle: { fontSize: DimensionHelper.wp(4), fontFamily: Constants.Fonts.RobotoMedium },
   DateTextColor: { fontFamily: Constants.Fonts.RobotoRegular },
-  planTextStyle: { fontSize: DimensionHelper.wp(4), color: "black", fontFamily: Constants.Fonts.RobotoRegular },
+  planTextStyle: { fontSize: DimensionHelper.wp(4), fontFamily: Constants.Fonts.RobotoRegular },
   ErrorMessageView: { flex: 1, justifyContent: "center", alignItems: "center" },
-  TaskCreatorColor: { color: Constants.Colors.app_color, fontFamily: Constants.Fonts.RobotoMedium },
+  TaskCreatorColor: { color: designSystem.colors.primary[500], fontFamily: Constants.Fonts.RobotoMedium },
   //Complete
-  successIcon: { fontSize: DimensionHelper.wp(20), color: Constants.Colors.button_green },
-  successText: { fontFamily: Constants.Fonts.RobotoLight, fontSize: DimensionHelper.wp(5), color: "black", marginVertical: DimensionHelper.wp(5) },
+  successIcon: { fontSize: DimensionHelper.wp(20), color: designSystem.colors.success[500] },
+  successText: { fontFamily: Constants.Fonts.RobotoLight, fontSize: DimensionHelper.wp(5), marginVertical: DimensionHelper.wp(5) },
 
   //Member Details
   memberIcon: { width: DimensionHelper.wp(25), height: DimensionHelper.wp(25), borderRadius: DimensionHelper.wp(12.5), alignSelf: "center", marginTop: DimensionHelper.wp(8) },
   // memberName: { marginHorizontal: DimensionHelper.wp('5%'), marginBottom: DimensionHelper.wp('2%'), fontSize: DimensionHelper.wp('4.8%'), fontFamily: Constants.Fonts.RobotoRegular, alignSelf: 'center', marginTop: DimensionHelper.wp('4%') },
   memberDetailContainer: {
     marginVertical: DimensionHelper.wp(2),
-    backgroundColor: "white",
-    shadowColor: Constants.Colors.app_color,
+    shadowColor: designSystem.colors.primary[500],
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.15,
     shadowRadius: DimensionHelper.wp(1),
@@ -216,12 +213,12 @@ export const globalStyles = StyleSheet.create({
   detailValue: { marginHorizontal: DimensionHelper.wp(5), marginBottom: DimensionHelper.wp(2), fontSize: DimensionHelper.wp(4.4), fontFamily: Constants.Fonts.RobotoRegular },
   nameMsgContainer: { flexDirection: "row", justifyContent: "center", alignItems: "center" },
   memberName: { marginHorizontal: DimensionHelper.wp(5), fontSize: DimensionHelper.wp(4.8), fontFamily: Constants.Fonts.RobotoRegular, alignSelf: "center" },
-  msgButtonContainer: { paddingHorizontal: DimensionHelper.wp(2.5), paddingVertical: DimensionHelper.wp(2), backgroundColor: Constants.Colors.app_color, borderRadius: DimensionHelper.wp(1.5) },
+  msgButtonContainer: { paddingHorizontal: DimensionHelper.wp(2.5), paddingVertical: DimensionHelper.wp(2), backgroundColor: designSystem.colors.primary[500], borderRadius: DimensionHelper.wp(1.5) },
   msgText: { color: "#fff", fontSize: DimensionHelper.wp(3.5) },
 
   //BlueLogo
-  headerContainer: { backgroundColor: Constants.Colors.gray_bg },
-  blueLogoView: { borderBottomLeftRadius: DimensionHelper.wp(8), borderBottomRightRadius: DimensionHelper.wp(8), backgroundColor: Constants.Colors.app_color },
+  headerContainer: { backgroundColor: designSystem.colors.neutral[50] },
+  blueLogoView: { borderBottomLeftRadius: DimensionHelper.wp(8), borderBottomRightRadius: DimensionHelper.wp(8), backgroundColor: designSystem.colors.primary[500] },
   blueMainIcon: { width: DimensionHelper.wp(55), height: DimensionHelper.wp(55), margin: DimensionHelper.wp(5), resizeMode: "contain", alignSelf: "center" },
   blueMainBackIcon: { position: "absolute", zIndex: 1 },
 
@@ -230,7 +227,7 @@ export const globalStyles = StyleSheet.create({
   classesText: { color: "white", fontSize: DimensionHelper.wp(4.2), marginHorizontal: DimensionHelper.wp(2.5), textAlign: "center" },
 
   //CustomDrawer
-  drawerStyle: { backgroundColor: Constants.Colors.app_color, color: "white" },
+  drawerStyle: { backgroundColor: designSystem.colors.primary[500], color: "white" },
   userIcon: { width: DimensionHelper.wp(6), height: DimensionHelper.wp(6), margin: DimensionHelper.wp(2), borderRadius: DimensionHelper.wp(2) },
   headerView: { marginLeft: DimensionHelper.wp(5), flexDirection: "row", justifyContent: "flex-start", alignItems: "center" },
   userNameText: { fontSize: DimensionHelper.wp(4), fontFamily: Constants.Fonts.RobotoRegular, color: "white" },
@@ -258,7 +255,7 @@ export const globalStyles = StyleSheet.create({
     position: "absolute",
     left: 0,
     top: 0,
-    backgroundColor: "rgba(255,255,255,0.5)",
+    backgroundColor: "rgba(0,0,0,0.3)",
     width: DimensionHelper.wp(100),
     height: DimensionHelper.hp(100),
     alignItems: "center",
@@ -266,15 +263,14 @@ export const globalStyles = StyleSheet.create({
   },
 
   //MainHeader
-  headerViewStyle: { flex: 0, flexDirection: "row", zIndex: 30, alignItems: "center", justifyContent: "space-between", backgroundColor: Constants.Colors.app_color },
-  componentStyle: { color: Constants.Colors.app_color, alignSelf: "center", justifyContent: "center" },
+  headerViewStyle: { flex: 0, flexDirection: "row", zIndex: 30, alignItems: "center", justifyContent: "space-between", backgroundColor: designSystem.colors.primary[500] },
+  componentStyle: { color: designSystem.colors.primary[500], alignSelf: "center", justifyContent: "center" },
 
   //WhiteLogo
   headerLogoView: {
     borderBottomLeftRadius: DimensionHelper.wp(8),
     borderBottomRightRadius: DimensionHelper.wp(8),
-    backgroundColor: "white",
-    shadowColor: Constants.Colors.app_color,
+    shadowColor: designSystem.colors.primary[500],
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.2,
     shadowRadius: DimensionHelper.wp(1.5),
@@ -303,14 +299,13 @@ export const globalStyles = StyleSheet.create({
   },
   methodContainer: { flexDirection: "row", width: DimensionHelper.wp(90), justifyContent: "space-between", alignSelf: "center", marginVertical: DimensionHelper.wp(4) },
   methodButton: {
-    backgroundColor: "white",
     alignSelf: "center",
     alignItems: "center",
     marginVertical: DimensionHelper.wp(2),
     borderRadius: DimensionHelper.wp(2),
     shadowOffset: { width: 0, height: 0 },
     elevation: 5,
-    shadowColor: Constants.Colors.app_color,
+    shadowColor: designSystem.colors.primary[500],
     flexDirection: "row",
     height: DimensionHelper.wp(15),
     width: DimensionHelper.wp(42.5),
@@ -318,10 +313,9 @@ export const globalStyles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: DimensionHelper.wp(2)
   },
-  methodBtnText: { fontFamily: Constants.Fonts.RobotoMedium, color: Constants.Colors.app_color, width: DimensionHelper.wp(40), textAlign: "center", fontSize: DimensionHelper.wp(4.2) },
+  methodBtnText: { fontFamily: Constants.Fonts.RobotoMedium, color: designSystem.colors.primary[500], width: DimensionHelper.wp(40), textAlign: "center", fontSize: DimensionHelper.wp(4.2) },
   fundView: { width: DimensionHelper.wp(100), flexDirection: "row", justifyContent: "space-between" },
   fundInput: {
-    color: "gray",
     fontFamily: Constants.Fonts.RobotoMedium,
     height: DimensionHelper.wp(12),
     width: DimensionHelper.wp(40),
@@ -390,7 +384,7 @@ export const globalStyles = StyleSheet.create({
     textAlignVertical: "top"
   },
   semiTitleText: { marginHorizontal: DimensionHelper.wp(5), fontSize: DimensionHelper.wp(4.5), fontFamily: Constants.Fonts.RobotoLight, marginTop: DimensionHelper.wp(5) },
-  addMoreText: { color: Constants.Colors.app_color, fontSize: DimensionHelper.wp(4), marginHorizontal: DimensionHelper.wp(5), marginTop: DimensionHelper.wp(2) },
+  addMoreText: { color: designSystem.colors.primary[500], fontSize: DimensionHelper.wp(4), marginHorizontal: DimensionHelper.wp(5), marginTop: DimensionHelper.wp(2) },
   previewBtnView: { flexDirection: "row", justifyContent: "space-evenly", width: DimensionHelper.wp(100), marginTop: DimensionHelper.wp(2) },
   previewBtn: { height: DimensionHelper.wp(12), width: DimensionHelper.wp(50), justifyContent: "center" },
   previewBtnText: { textAlign: "center", width: DimensionHelper.wp(50), color: "white", fontSize: DimensionHelper.wp(4.7), fontFamily: Constants.Fonts.RobotoMedium },
@@ -412,7 +406,7 @@ export const globalStyles = StyleSheet.create({
   donationContainer: { width: DimensionHelper.wp(100), alignItems: "center", marginVertical: DimensionHelper.wp(2) },
   feesContainer: { flexDirection: "row", justifyContent: "center", alignItems: "center", marginHorizontal: DimensionHelper.wp(5.8), marginTop: DimensionHelper.wp(3) },
   checkBox: { marginHorizontal: DimensionHelper.wp(3) },
-  feesText: { fontSize: DimensionHelper.wp(4.5), fontFamily: Constants.Fonts.RobotoLight, color: "gray" },
+  feesText: { fontSize: DimensionHelper.wp(4.5), fontFamily: Constants.Fonts.RobotoLight },
 
   previewView: { flexDirection: "row", paddingVertical: DimensionHelper.wp(3), borderBottomWidth: 1, borderBottomColor: "lightgray" },
   previewTitleText: { width: DimensionHelper.wp(30), fontFamily: Constants.Fonts.RobotoRegular, fontSize: DimensionHelper.wp(4.2) },
@@ -440,21 +434,20 @@ export const globalStyles = StyleSheet.create({
   donationListView: { width: DimensionHelper.wp(90), marginVertical: DimensionHelper.wp(5), alignSelf: "center" },
 
   paymentTitleContainer: {
-    backgroundColor: "white",
     borderRadius: DimensionHelper.wp(3.5),
     justifyContent: "space-between",
     marginVertical: DimensionHelper.wp(5),
     shadowOffset: { width: 0, height: 0 },
     elevation: 5,
-    shadowColor: Constants.Colors.app_color,
+    shadowColor: designSystem.colors.primary[500],
     shadowOpacity: 0.1,
     shadowRadius: DimensionHelper.wp(2)
   },
   paymentDetailText: { fontSize: DimensionHelper.wp(4.2), textAlign: "left", fontFamily: Constants.Fonts.RobotoRegular, alignSelf: "center", marginVertical: DimensionHelper.wp(4), padding: 10 },
-  paymentTitleHeaderLine: { height: DimensionHelper.wp(1.5), backgroundColor: Constants.Colors.app_color, alignSelf: "center" },
+  paymentTitleHeaderLine: { height: DimensionHelper.wp(1.5), backgroundColor: designSystem.colors.primary[500], alignSelf: "center" },
   paymentTitleView: { flexDirection: "row", height: DimensionHelper.wp(12), justifyContent: "space-between", borderBottomColor: "gray", borderBottomWidth: 1, alignItems: "center" },
   paymentTitleText: { fontSize: DimensionHelper.wp(4.5), textAlign: "left", fontFamily: Constants.Fonts.RobotoMedium },
-  LatestUpdateTextStyle: { color: "black", fontSize: DimensionHelper.wp(4.5), fontFamily: Constants.Fonts.RobotoMedium },
+  LatestUpdateTextStyle: { fontSize: DimensionHelper.wp(4.5), fontFamily: Constants.Fonts.RobotoMedium },
   donationIcon: { width: DimensionHelper.wp(7), height: DimensionHelper.wp(7) },
 
   donationRowContainer: { width: DimensionHelper.wp(90), display: "flex", flexDirection: "row" },
@@ -465,7 +458,6 @@ export const globalStyles = StyleSheet.create({
     alignItems: "center",
     marginTop: DimensionHelper.wp(5.5),
     marginHorizontal: DimensionHelper.wp(5),
-    backgroundColor: "white",
     borderRadius: DimensionHelper.wp(2),
     borderColor: "lightgray",
     borderWidth: 1
@@ -483,10 +475,9 @@ export const globalStyles = StyleSheet.create({
   messageInputStyle: {
     height: DimensionHelper.wp(10),
     width: DimensionHelper.wp(75),
-    borderColor: Constants.Colors.app_color,
+    borderColor: designSystem.colors.primary[500],
     borderWidth: 1,
     fontSize: DimensionHelper.wp(3.8),
-    color: "gray",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: DimensionHelper.wp(2),
@@ -499,15 +490,15 @@ export const globalStyles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 100,
-    borderColor: Constants.Colors.app_color,
+    borderColor: designSystem.colors.primary[500],
     borderWidth: 2,
-    backgroundColor: Constants.Colors.app_color
+    backgroundColor: designSystem.colors.primary[500]
   },
   messageContainer: { flexDirection: "row", justifyContent: "flex-start", alignItems: "flex-start", paddingVertical: DimensionHelper.wp(1), marginVertical: DimensionHelper.wp(2) },
   senderNameText: { fontSize: 16, fontWeight: "bold", paddingVertical: DimensionHelper.wp(0.5) },
   messageView: {
     fontSize: 15,
-    backgroundColor: Constants.Colors.app_color_light,
+    backgroundColor: designSystem.colors.secondary[500],
     borderWidth: 1,
     borderRadius: 5,
     borderColor: "transparent",
@@ -526,10 +517,10 @@ export const globalStyles = StyleSheet.create({
   replyBtn: {
     fontSize: 10,
     fontWeight: "bold",
-    color: Constants.Colors.app_color
+    color: designSystem.colors.primary[500]
   },
   NoteTextInputView: {
-    backgroundColor: Constants.Colors.gray_bg,
+    backgroundColor: designSystem.colors.neutral[50],
     flexDirection: "row",
     justifyContent: "space-between",
     width: DimensionHelper.wp(60),
@@ -541,7 +532,7 @@ export const globalStyles = StyleSheet.create({
 
   // My Group Screen
   groupImage: { width: DimensionHelper.wp(92), height: DimensionHelper.wp(40), borderRadius: DimensionHelper.wp(1.5) },
-  conversationList: { backgroundColor: "white", justifyContent: "flex-start", alignItems: "center", flexDirection: "row", paddingVertical: 12 },
+  conversationList: { justifyContent: "flex-start", alignItems: "center", flexDirection: "row", paddingVertical: 12 },
 
   //Notification screen
   NotificationView: {
@@ -557,7 +548,7 @@ export const globalStyles = StyleSheet.create({
     paddingRight: DimensionHelper.wp(1)
   },
   bellIcon: { width: DimensionHelper.wp(6), height: DimensionHelper.wp(6) },
-  NotificationText: { fontSize: DimensionHelper.wp(1.5), color: "black", fontFamily: Constants.Fonts.RobotoMedium },
+  NotificationText: { fontSize: DimensionHelper.wp(1.5), fontFamily: Constants.Fonts.RobotoMedium },
   bellIconView: { flex: 0.1, alignItems: "center" },
   notimsgView: { flex: 0.8 },
   timeSentView: { flex: 0.1, alignItems: "flex-end" },
@@ -565,7 +556,7 @@ export const globalStyles = StyleSheet.create({
   InputBtnView: {
     borderRadius: DimensionHelper.wp(1.1),
     alignSelf: "center",
-    backgroundColor: Constants.Colors.gray_bg,
+    backgroundColor: designSystem.colors.neutral[50],
     paddingHorizontal: DimensionHelper.wp(3),
     paddingVertical: DimensionHelper.wp(1.5),
     marginVertical: DimensionHelper.wp(0.5),
@@ -576,22 +567,21 @@ export const globalStyles = StyleSheet.create({
   InputView: { width: DimensionHelper.wp(66) },
   PassInputTextStyle: {
     fontFamily: Constants.Fonts.RobotoMedium,
-    color: "black",
     fontSize: DimensionHelper.wp(1.8),
     alignItems: "flex-start"
   },
   ScrollViewStyles: { flexGrow: 1, marginBottom: DimensionHelper.wp(5) },
   StatusFont: { fontFamily: Constants.Fonts.RobotoBold, fontSize: DimensionHelper.wp(1.5) },
-  PlanTitleTextStyle: { paddingLeft: DimensionHelper.wp(3), color: Constants.Colors.app_color, fontSize: DimensionHelper.wp(2), fontFamily: Constants.Fonts.RobotoMedium },
+  PlanTitleTextStyle: { paddingLeft: DimensionHelper.wp(3), color: designSystem.colors.primary[500], fontSize: DimensionHelper.wp(2), fontFamily: Constants.Fonts.RobotoMedium },
   BlockOutDatesView: { marginHorizontal: DimensionHelper.wp(2), marginVertical: DimensionHelper.wp(2), flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   StatusTextStyle: { fontFamily: Constants.Fonts.RobotoBold, marginLeft: DimensionHelper.wp(2) },
   neededTimeView: { width: "95%", alignSelf: "center", marginTop: DimensionHelper.wp(1.5) },
   PlanIconTitleView: { alignItems: "center", justifyContent: "space-between", flexDirection: "row" },
-  TableHeaderTitle: { fontSize: DimensionHelper.wp(1.7), color: "black", fontFamily: Constants.Fonts.RobotoMedium },
+  TableHeaderTitle: { fontSize: DimensionHelper.wp(1.7), fontFamily: Constants.Fonts.RobotoMedium },
   CancelAddbuttonView: { alignItems: "center", marginVertical: DimensionHelper.wp(2), flexDirection: "row", alignSelf: "flex-end" },
   SaveButtonStyle: {
     marginLeft: DimensionHelper.wp(3),
-    backgroundColor: Constants.Colors.app_color,
+    backgroundColor: designSystem.colors.primary[500],
     borderRadius: DimensionHelper.wp(1.5),
     paddingVertical: DimensionHelper.wp(1),
     paddingHorizontal: DimensionHelper.wp(2)
@@ -599,11 +589,11 @@ export const globalStyles = StyleSheet.create({
   DeleteButtonStyle: {
     marginLeft: DimensionHelper.wp(3),
     borderWidth: DimensionHelper.wp(0.5),
-    borderColor: Constants.Colors.button_red,
+    borderColor: designSystem.colors.error[500],
     borderRadius: DimensionHelper.wp(1.5),
     padding: DimensionHelper.wp(1.5)
   },
-  ButtonTextStyle: { color: "black", fontFamily: Constants.Fonts.RobotoMedium, fontSize: DimensionHelper.wp(4) },
+  ButtonTextStyle: { fontFamily: Constants.Fonts.RobotoMedium, fontSize: DimensionHelper.wp(4) },
   planTitleView: { marginLeft: DimensionHelper.wp(2), marginVertical: DimensionHelper.wp(2), flexDirection: "row", alignItems: "center" },
   statusView: { marginHorizontal: DimensionHelper.wp(2), flexDirection: "row", alignItems: "center", padding: DimensionHelper.wp(1.5) },
   BorderSeparatorView: {

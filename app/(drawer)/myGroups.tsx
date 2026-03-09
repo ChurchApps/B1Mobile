@@ -1,36 +1,19 @@
 import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { useThemeColors } from "@/theme";
 import { FlatList, StyleSheet, View } from "react-native";
-import { Provider as PaperProvider, Card, Text, MD3LightTheme } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useQuery } from "@tanstack/react-query";
 import { ArrayHelper, UserPostInterface } from "../../src/helpers";
 import { TimelineHelper } from "../../src/helpers/Timelinehelper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
+import { UpcomingEventsList } from "../../src/components/events/UpcomingEventsList";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useUser, useGroupViewCounts, useIncrementGroupViewCount } from "../../src/stores/useUserStore";
 import { useNavigation as useReactNavigation, DrawerActions } from "@react-navigation/native";
 import { useNavigation } from "../../src/hooks";
 import { useTranslation } from "react-i18next";
-
-const theme = {
-  ...MD3LightTheme,
-  colors: {
-    ...MD3LightTheme.colors,
-    primary: "#0D47A1", // Primary Blue from style guide
-    secondary: "#F6F6F8", // Background from style guide
-    surface: "#FFFFFF", // Card Background from style guide
-    background: "#F6F6F8", // Background from style guide
-    elevation: {
-      level0: "transparent",
-      level1: "#FFFFFF",
-      level2: "#F6F6F8",
-      level3: "#F0F0F0",
-      level4: "#E9ECEF",
-      level5: "#E2E6EA"
-    }
-  }
-};
 
 interface Group {
   id: string;
@@ -41,6 +24,7 @@ interface Group {
 
 const MyGroups = () => {
   const { t } = useTranslation();
+  const tc = useThemeColors();
   const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
   const navigation = useReactNavigation();
   const { navigateBack, router } = useNavigation();
@@ -90,10 +74,7 @@ const MyGroups = () => {
   const mergedTimelineData = useMemo(() => {
     if (timelineData?.posts?.length && timelineData?.groups?.length && timelineData.posts.length > 0 && timelineData.groups.length > 0) {
       return timelineData.posts.map(item1 => {
-        const value = {
-          ...item1,
-          ...ArrayHelper.getOne(timelineData.groups, "id", item1.groupId)
-        };
+        const value = { ...item1, ...ArrayHelper.getOne(timelineData.groups, "id", item1.groupId) };
         return { item: value };
       });
     }
@@ -116,7 +97,7 @@ const MyGroups = () => {
       if (type === "hero") {
         // Hero layout (large full-width card like dashboard)
         return (
-          <Card style={styles.heroCard} onPress={handlePress}>
+          <Card style={[styles.heroCard, { backgroundColor: tc.surface }]} onPress={handlePress}>
             <View style={styles.heroImageContainer}>
               <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.heroImage} />
               <View style={styles.heroOverlay}>
@@ -135,7 +116,7 @@ const MyGroups = () => {
       if (type === "featured") {
         // Featured layout (side-by-side cards like dashboard)
         return (
-          <Card style={styles.featuredCard} onPress={handlePress}>
+          <Card style={[styles.featuredCard, { backgroundColor: tc.surface }]} onPress={handlePress}>
             <View style={styles.featuredImageContainer}>
               <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.featuredImage} />
               <View style={styles.featuredOverlay}>
@@ -150,16 +131,16 @@ const MyGroups = () => {
 
       // Regular layout (compact list items)
       return (
-        <Card style={styles.regularGroupCard} onPress={handlePress}>
+        <Card style={[styles.regularGroupCard, { backgroundColor: tc.surface }]} onPress={handlePress}>
           <View style={styles.regularGroupContent}>
             <View style={styles.regularGroupImageContainer}>
               <Card.Cover source={item.photoUrl ? { uri: item.photoUrl } : require("../../src/assets/images/dash_worship.png")} style={styles.regularGroupImage} />
             </View>
             <View style={styles.regularGroupTextContainer}>
-              <Text variant="titleMedium" style={styles.regularGroupName} numberOfLines={2}>
+              <Text variant="titleMedium" style={[styles.regularGroupName, { color: tc.text }]} numberOfLines={2}>
                 {item.name}
               </Text>
-              <Text variant="bodySmall" style={styles.regularGroupSubtitle}>
+              <Text variant="bodySmall" style={[styles.regularGroupSubtitle, { color: tc.textSecondary }]}>
                 {t("common.tapToExplore")}
               </Text>
             </View>
@@ -167,7 +148,7 @@ const MyGroups = () => {
         </Card>
       );
     },
-    [incrementGroupViewCount]
+    [incrementGroupViewCount, tc]
   );
 
   const renderItems = useCallback((item: any) => <TimeLinePost item={item} onUpdate={loadData} />, [loadData]);
@@ -206,7 +187,7 @@ const MyGroups = () => {
         {/* Featured Groups */}
         {featured.length > 0 && (
           <View style={styles.featuredSection}>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
+            <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
               {t("common.featured")}
             </Text>
             <View style={styles.featuredGrid}>
@@ -222,7 +203,7 @@ const MyGroups = () => {
         {/* Other Groups */}
         {regular.length > 0 && (
           <View style={styles.regularSection}>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
+            <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
               {t("groups.otherGroups")}
             </Text>
             <View style={styles.regularGroupsList}>
@@ -234,30 +215,30 @@ const MyGroups = () => {
             </View>
           </View>
         )}
+        <UpcomingEventsList />
+
         {mergeData.length > 0 && (
           <View style={styles.regularSectionTop}>
-            <Text variant="titleLarge" style={styles.sectionTitle}>
+            <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
               {t("groups.latestUpdates")}
             </Text>
           </View>
         )}
       </View>
     );
-  }, [sortedGroups, showGroups, mergeData]);
+  }, [sortedGroups, showGroups, mergeData, tc]);
 
   return (
-    <PaperProvider theme={theme}>
-      <SafeAreaProvider>
-        <LoadingWrapper loading={loading}>
-          <View style={styles.container}>
-            <MainHeader title={t("groups.myGroups")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
-            <View style={styles.contentContainer}>
-              <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListHeaderComponent={() => <View style={styles.groupsContainer}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={() => `key-${Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
-            </View>
+    <SafeAreaProvider>
+      <LoadingWrapper loading={loading}>
+        <View style={[styles.container, { backgroundColor: tc.background }]}>
+          <MainHeader title={t("groups.myGroups")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
+          <View style={[styles.contentContainer, { backgroundColor: tc.background }]}>
+            <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListHeaderComponent={() => <View style={[styles.groupsContainer, { backgroundColor: tc.background }]}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={() => `key-${Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
           </View>
-        </LoadingWrapper>
-      </SafeAreaProvider>
-    </PaperProvider>
+        </View>
+      </LoadingWrapper>
+    </SafeAreaProvider>
   );
 };
 
