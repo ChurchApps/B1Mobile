@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { ApiHelper, ConversationInterface, ArrayHelper } from "../../helpers";
 import { MessageInterface } from "@churchapps/helpers";
 import { useQuery } from "@tanstack/react-query";
-import { useCurrentChurch, useCurrentUserChurch } from "../../stores/useUserStore";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { Avatar } from "../common/Avatar";
 import dayjs from "../../helpers/dayjsConfig";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -48,7 +48,6 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
   const flatListRef = useRef<FlatList>(null);
   const currentUserChurch = useCurrentUserChurch();
   const insets = useSafeAreaInsets();
-  const currentChurch = useCurrentChurch();
   const inputRef = useRef<React.ComponentRef<typeof PaperTextInput>>(null);
 
   const { data: rawConversations = [], refetch } = useQuery<ConversationInterface[]>({
@@ -124,16 +123,15 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
   };
 
   const deleteMessage = async (obj: ChatMessage) => {
+    const previousMessages = [...messages];
     try {
-      setMessages(prev =>
-        prev.filter(item => item.id !== obj.id));
+      setMessages(prev => prev.filter(item => item.id !== obj.id));
       setEditingMessage(null);
       setNewMessage("");
-      await ApiHelper.delete(`/messages/${currentChurch?.id}/${editingMessage?.id}`, "MessagingApi");
-    } catch (_err) {
-      // silently handle error
-    } finally {
-      // cleanup
+      await ApiHelper.delete(`/messages/${obj.id}`, "MessagingApi");
+    } catch (err) {
+      console.error("Error deleting message:", err);
+      setMessages(previousMessages);
     }
   };
 

@@ -337,6 +337,8 @@ const MessageScreen = () => {
         setEditingMessage(null);
         getConversations();
       }
+    }).catch((err: any) => {
+      console.error("Error deleting message:", err);
     });
   };
 
