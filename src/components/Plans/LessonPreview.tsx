@@ -10,6 +10,7 @@ import { useThemeColors } from "../../theme";
 interface Props {
   lessonItems: PlanItemInterface[];
   venueName: string;
+  planName?: string;
   externalRef?: ExternalVenueRefInterface | null;
   associatedProviderId?: string;
   associatedVenueId?: string;
@@ -93,7 +94,7 @@ export const LessonPreview = React.memo((props: Props) => {
   return (
     <>
       <View style={styles.container}>
-        <Text style={[styles.venueLabel, { color: colors.text }]}>Lesson: {props.venueName}</Text>
+        <Text style={[styles.venueLabel, { color: colors.text }]}>{props.planName || props.venueName}</Text>
         <View style={styles.previewContent}>
           {props.lessonItems.map((item) => renderPreviewItem(item))}
         </View>

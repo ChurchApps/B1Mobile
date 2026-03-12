@@ -445,7 +445,7 @@ const MessageScreen = () => {
     <LoadingWrapper loading={loading}>
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <View style={{ flex: 1 }}>{messagesView()}</View>
-        <KeyboardAvoidingView keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <KeyboardAvoidingView keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 25} behavior="padding">
           {messageInputView()}
         </KeyboardAvoidingView>
       </SafeAreaView>

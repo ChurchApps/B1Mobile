@@ -302,6 +302,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
           inverted={messages?.length > 0}
           onEndReachedThreshold={0.1}
           onEndReached={handleLoadMore}
+          style={{ flex: 1 }}
           contentContainerStyle={styles.messagesList}
           ListEmptyComponent={renderEmptyState}
         />

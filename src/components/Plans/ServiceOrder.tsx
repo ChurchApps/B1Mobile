@@ -145,6 +145,7 @@ export const ServiceOrder = (props: Props) => {
         <LessonPreview
           lessonItems={lessonPreviewData.items}
           venueName={lessonPreviewData.venueName}
+          planName={props.plan?.providerPlanName || props.plan?.name}
           externalRef={externalRef}
           associatedProviderId={props.plan?.providerId}
           associatedVenueId={props.plan?.providerPlanId}
