@@ -21,8 +21,8 @@
     "preset": "jest-expo"
   },
   "dependencies": {
-    "@churchapps/content-providers": "^0.1.6",
-    "@churchapps/helpers": "1.2.30",
+    "@churchapps/content-providers": "0.1.8",
+    "@churchapps/helpers": "1.2.31",
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",
