@@ -30,7 +30,7 @@ const Notes = ({ item, message, idx, showReplyBox, handleReply }: NotesInterface
 
         <View style={styles.messageBody}>
           <View style={styles.messageHeader}>
-            <Text style={[styles.userName, { color: colors.primary }]}>{message?.displayName}</Text>
+            <Text style={[styles.userName, { color: colors.primary }]}>{message?.person?.name?.display || message?.displayName || t("common.unknown")}</Text>
             <Text style={[styles.timestamp, { color: colors.disabled }]}>{displayDuration}</Text>
             {isEdited && (
               <Chip icon="pencil" textStyle={[styles.editedChip, { color: colors.disabled }]} style={[styles.editedChipContainer, { backgroundColor: `${colors.disabled}1A` }]}>

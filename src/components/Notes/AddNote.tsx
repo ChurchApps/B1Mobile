@@ -8,6 +8,7 @@ import { ApiErrorHandler } from "../../../src/helpers/ApiErrorHandler";
 import { useTranslation } from "react-i18next";
 import { HapticsHelper } from "../../helpers/HapticsHelper";
 import { useThemeColors } from "../../../src/theme";
+import { useCurrentUserChurch } from "../../stores/useUserStore";
 
 type Props = {
   messageId?: any;
@@ -20,6 +21,7 @@ type Props = {
 export function AddNote({ ...props }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  const currentUserChurch = useCurrentUserChurch();
   const [message, setMessage] = useState<MessageInterface | null>();
   const [errors, setErrors] = React.useState<string[]>([]);
   useEffect(() => {
@@ -58,6 +60,7 @@ export function AddNote({ ...props }: Props) {
         if (!cId) cId = await props.createConversation();
         const m = { ...message };
         m.conversationId = cId;
+        m.displayName = currentUserChurch?.person?.name?.display || "";
         await ApiHelper.post("/messages", [m], "MessagingApi");
         props.onUpdate();
         setMessage({ conversationId: cId, content: "" } as MessageInterface);

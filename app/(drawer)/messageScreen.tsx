@@ -303,7 +303,7 @@ const MessageScreen = () => {
 
   const sendMessage = (conversationId: string) => {
     let params = {};
-    if (editedMessage == null) params = [{ conversationId: conversationId, content: messageText }];
+    if (editedMessage == null) params = [{ conversationId: conversationId, content: messageText, displayName: currentUserChurch?.person?.name?.display || "" }];
     else {
       params = [
         {

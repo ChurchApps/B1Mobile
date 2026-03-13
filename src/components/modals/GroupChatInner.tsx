@@ -178,7 +178,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
         conversationId = result[0].id;
       }
 
-      const payload = { conversationId, content: optimisticMsg.content, personId: optimisticMsg.personId, id: editingMessage ? editingMessage.id : "" };
+      const payload = { conversationId, content: optimisticMsg.content, personId: optimisticMsg.personId, displayName: optimisticMsg.displayName, id: editingMessage ? editingMessage.id : "" };
 
       const savedMsg = await ApiHelper.post("/messages", [payload], "MessagingApi");
 
@@ -264,7 +264,7 @@ const GroupChatInner: React.FC<GroupChatInnerProps> = ({ groupId, groupName, vis
         )}
 
         <View style={[styles.messageBubble, item.isOwn ? [styles.ownBubble, { backgroundColor: colors.primary }] : [styles.otherBubble, { backgroundColor: colors.surface }]]}>
-          {showName && <Text style={[styles.senderName, { color: colors.primary }]}>{item.person?.name?.display || item.displayName}</Text>}
+          {showName && <Text style={[styles.senderName, { color: colors.primary }]}>{item.person?.name?.display || item.displayName || t("common.unknown")}</Text>}
           <View style={styles.messageContentContainer}>
             <Text style={[styles.messageText, { color: colors.text }, item.isOwn && { color: colors.white }]}>
               {item.content} {item.edited && <Text style={{ fontSize: 10, color: colors.textHint }}>(edited)</Text>}

@@ -42,6 +42,7 @@ const ConversationPopup = ({ conversations, loadConversations, groupId }: any) =
         if (!cId) cId = await createConversation();
         const nM = { ...m };
         nM.conversationId = cId;
+        nM.displayName = user?.firstName ? `${user.firstName} ${user.lastName || ""}`.trim() : "";
         const data = await ApiHelper.post("/messages", [nM], "MessagingApi");
         if (data) {
           onUpdate();
