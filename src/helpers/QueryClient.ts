@@ -9,7 +9,7 @@ const hybridPersister = new HybridCachePersister({ useSQL: true, maxAsyncStorage
 // Legacy constants - keeping for backward compatibility
 const CACHE_KEY = "REACT_QUERY_CACHE";
 const CACHE_VERSION = "1.0";
-const LONG_TERM_CACHE_TIME = 30 * 24 * 60 * 60 * 1000; // 30 days
+const LONG_TERM_CACHE_TIME = 24 * 60 * 60 * 1000; // 24 hours
 const CRITICAL_QUERIES = ["/churches", "/user", "/appearance", "/settings/public"];
 
 // Function to save cache using hybrid persister
@@ -226,6 +226,7 @@ const invalidateRelatedQueries = (endpoint: string) => {
 
 // Wrap ApiHelper mutation methods to invalidate queries after changes
 const wrapApiMethods = () => {
+  if (!ApiHelper.post || !ApiHelper.put || !ApiHelper.delete) return;
   const originalPost = ApiHelper.post.bind(ApiHelper);
   ApiHelper.post = async (...args: Parameters<typeof originalPost>) => {
     const result = await originalPost(...args);

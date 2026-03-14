@@ -18,7 +18,7 @@ import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { OptimizedImage } from "../../src/components/OptimizedImage";
 import { CardSkeleton } from "../../src/components/common/Skeleton";
 import { updateCurrentScreen } from "../../src/helpers/PushNotificationHelper";
-import { useCurrentChurch, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
+import { useUserStore, useCurrentChurch, useLinkViewCounts, useIncrementLinkViewCount } from "../../src/stores/useUserStore";
 import { useChurchStore } from "../../src/stores/useChurchStore";
 import { useTranslation } from "react-i18next";
 import { HapticsHelper } from "../../src/helpers/HapticsHelper";
