@@ -23,7 +23,7 @@ const UserConversations = ({ conversation, conversationId, createConversation }:
 
   const loadConversations = useCallback(async () => {
     let conversations: ConversationInterface[] = [];
-    const userMessages: MessageInterface[] = conversation.id ? await ApiHelper.get("/messages/conversation/" + conversation.id, "MessagingApi") : [];
+    const userMessages: MessageInterface[] = conversation?.id ? await ApiHelper.get("/messages/conversation/" + conversation.id, "MessagingApi") : [];
     if (userMessages.length > 0) {
       const peopleIds: string[] = [];
       userMessages.forEach((message: any) => {
@@ -48,7 +48,7 @@ const UserConversations = ({ conversation, conversationId, createConversation }:
               const person = ArrayHelper.getOne(people, "id", msg.personId);
               return {
                 ...msg,
-                postCount: conversation.postCount,
+                postCount: conversation?.postCount,
                 person: person || null // Ensure we don't assign undefined
               };
             })
@@ -67,7 +67,7 @@ const UserConversations = ({ conversation, conversationId, createConversation }:
         conversations = Object.values(groupedMessages).map(messages => ({
           messages: (messages ?? []).map(msg => ({
             ...msg,
-            postCount: conversation.postCount,
+            postCount: conversation?.postCount,
             person: null // No person data available
           }))
         }));
@@ -78,7 +78,7 @@ const UserConversations = ({ conversation, conversationId, createConversation }:
   }, [conversation]);
 
   useEffect(() => {
-    loadConversations();
+    if (conversation) loadConversations();
   }, [conversation]);
 
   const renderConversations = (item: any, index: number) => (
@@ -107,7 +107,7 @@ const UserConversations = ({ conversation, conversationId, createConversation }:
       <View style={{ height: "auto", maxHeight: DimensionHelper.hp(100) }}>
         <FlatList data={conversations} renderItem={({ item, index }) => renderConversations(item, index)} keyExtractor={(item, index) => index.toString()} />
       </View>
-      {conversation && Array.isArray(conversation?.messages) && conversation.messages.length > 0 ? <AddNote type="reply" conversationId={conversation.id} onUpdate={loadConversations} createConversation={async () => conversation.id ?? ""} messageId={editMessageId} /> : <AddNote type="new" conversationId={conversationId} onUpdate={loadConversations} createConversation={async () => (await createConversation()) ?? ""} messageId={editMessageId} />}
+      {conversation && Array.isArray(conversation?.messages) && conversation.messages.length > 0 ? <AddNote type="reply" conversationId={conversation?.id} onUpdate={loadConversations} createConversation={async () => conversation?.id ?? ""} messageId={editMessageId} /> : <AddNote type="new" conversationId={conversationId} onUpdate={loadConversations} createConversation={async () => (await createConversation()) ?? ""} messageId={editMessageId} />}
     </View>
   );
 };
