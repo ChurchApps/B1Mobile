@@ -51,7 +51,7 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png"
     },
-    runtimeVersion: version,
+    runtimeVersion: { policy: "fingerprint" },
     plugins: [
       [
         "@sentry/react-native/expo",
