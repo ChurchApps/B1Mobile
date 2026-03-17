@@ -19,7 +19,6 @@ import { useThemeContext } from "../src/theme/ThemeProvider";
 import "../src/i18n";
 import * as Sentry from "@sentry/react-native";
 import Constants from "expo-constants";
-import { YouVersionPlatform } from "@youversion/platform-react-native";
 
 function ThemedStatusBar() {
   const { theme } = useThemeContext();
@@ -27,7 +26,17 @@ function ThemedStatusBar() {
 }
 
 const youversionKey = Constants.expoConfig?.extra?.YOUVERSION_API_KEY;
-if (youversionKey) YouVersionPlatform.configure(youversionKey);
+if (youversionKey) {
+  try {
+    // This package is optional / may not be linked in some builds.
+    // Avoid crashing the app if the native module isn't present.
+
+    const { YouVersionPlatform } = require("@youversion/platform-react-native");
+    YouVersionPlatform.configure(youversionKey);
+  } catch (error) {
+    console.warn("[YouVersion] Native module not available - skipping configuration.", error);
+  }
+}
 
 Sentry.init({
   dsn: "https://33dae282f3ce6781e2ae09f0e44b1dfa@o4510432524107776.ingest.us.sentry.io/4510440258469888",
@@ -116,7 +125,7 @@ function ThemedStack() {
   );
 }
 
-export default Sentry.wrap(function RootLayout() {
+function RootLayout() {
   useEffect(() => {
     const setupApp = async () => {
       await initializeFirebase();
@@ -139,4 +148,8 @@ export default Sentry.wrap(function RootLayout() {
       </QueryClientProvider>
     </ErrorBoundary>
   );
-});
+}
+
+// Keep Sentry instrumentation without breaking Expo Router’s root layout loading.
+// (The prior “missing default export” warning was caused by a native-module crash during import.)
+export default Sentry.wrap(RootLayout);

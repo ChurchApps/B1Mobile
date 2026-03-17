@@ -31,6 +31,4 @@ export const GroupAboutTab: React.FC<GroupAboutTabProps> = ({ about }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  aboutContainer: { minHeight: 200 }
-});
+const styles = StyleSheet.create({ aboutContainer: { minHeight: 200 } });
