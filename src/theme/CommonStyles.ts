@@ -68,39 +68,27 @@ export const CommonStyles = StyleSheet.create({
   },
 
   // Text styles
-  titleText: {
-    ...designSystem.typography.h2
-  },
+  titleText: { ...designSystem.typography.h2 },
 
-  bodyText: {
-    ...designSystem.typography.body
-  },
+  bodyText: { ...designSystem.typography.body },
 
-  captionText: {
-    ...designSystem.typography.caption
-  },
+  captionText: { ...designSystem.typography.caption },
 
-  labelText: {
-    ...designSystem.typography.label
-  },
+  labelText: { ...designSystem.typography.label },
 
   sectionTitle: {
     ...designSystem.typography.h2,
     marginBottom: designSystem.spacing.md
   },
 
-  errorText: {
-    ...designSystem.typography.body
-  },
+  errorText: { ...designSystem.typography.body },
 
   emptyStateText: {
     ...designSystem.typography.body,
     textAlign: "center"
   },
 
-  textCenter: {
-    textAlign: "center"
-  },
+  textCenter: { textAlign: "center" },
 
   // Row layouts
   row: {
@@ -143,9 +131,7 @@ export const CommonStyles = StyleSheet.create({
   },
 
   // Overlays & positioning
-  overlayDark: {
-    backgroundColor: "rgba(0,0,0,0.7)"
-  },
+  overlayDark: { backgroundColor: "rgba(0,0,0,0.7)" },
 
   badge: {
     borderRadius: designSystem.borderRadius.md,
