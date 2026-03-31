@@ -1,7 +1,7 @@
 import React from "react";
 import { Drawer } from "expo-router/drawer";
 import { DrawerActions } from "@react-navigation/native";
-import { TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { IconButton } from "react-native-paper";
 import { useRouter } from "expo-router";
@@ -10,15 +10,17 @@ import { CustomDrawer } from "../../src/components/CustomDrawer";
 import { ErrorBoundary } from "../../src/components/ErrorBoundary";
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
 import { Avatar } from "@/components/common/Avatar";
-import { useCurrentUserChurch, useUser } from "@/stores/useUserStore";
+import { useChurchAppearance, useCurrentUserChurch, useUser } from "@/stores/useUserStore";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "@/theme";
 import { useThemeContext } from "../../src/theme/ThemeProvider";
+import OptimizedImage from "@/components/OptimizedImage";
 
 export default function DrawerLayout() {
   const { t } = useTranslation();
   const router = useRouter();
   const currentChurch = useCurrentUserChurch();
+  const churchAppearance = useChurchAppearance();
   const user = useUser();
   const tc = useThemeColors();
   const { theme: themeMode } = useThemeContext();
@@ -48,6 +50,26 @@ export default function DrawerLayout() {
     drawerType: "slide" as const,
     overlayColor: "rgba(0, 0, 0, 0.5)",
     sceneStyle: { backgroundColor: tc.background }
+  };
+
+  const dashboardTitle = currentChurch?.church?.name || t("navigation.home");
+  const headerLogoUri = tc.isDark
+    ? (churchAppearance?.logoLight || churchAppearance?.logoDark)
+    : (churchAppearance?.logoDark || churchAppearance?.logoLight);
+
+  const renderDashboardTitle = () => {
+    if (!headerLogoUri) {
+      return (
+        <Text style={[styles.headerTitleText, { color: tc.white }]} numberOfLines={1}>
+          {dashboardTitle}
+        </Text>
+      );
+    }
+    return (
+      <View style={styles.headerTitleContainer}>
+        <OptimizedImage source={{ uri: headerLogoUri }} style={styles.headerLogo} contentFit="contain" priority="high" />
+      </View>
+    );
   };
 
   // Header left renderer
@@ -85,7 +107,13 @@ export default function DrawerLayout() {
           };
         }}
         drawerContent={props => <CustomDrawer {...props} themeMode={themeMode} />}>
-        <Drawer.Screen name="dashboard" options={{ title: currentChurch?.church?.name || t("navigation.home") }} />
+        <Drawer.Screen
+          name="dashboard"
+          options={{
+            title: dashboardTitle,
+            headerTitle: renderDashboardTitle
+          }}
+        />
         <Drawer.Screen name="myGroups" options={{ title: t("navigation.myGroups") }} />
         <Drawer.Screen
           name="notifications"
@@ -137,3 +165,16 @@ export default function DrawerLayout() {
     </ErrorBoundary>
   );
 }
+
+const styles = StyleSheet.create({
+  headerTitleContainer: { flexDirection: "row" },
+  headerLogo: {
+    height: 30,
+    width: "100%"
+  },
+  headerTitleText: {
+    fontSize: 16,
+    fontWeight: "600",
+    flexShrink: 1
+  }
+});
