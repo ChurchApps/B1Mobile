@@ -23,11 +23,10 @@ export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress,
 
     // Only use church logo if we have a valid setting with value
     if (church.settings && church.settings.length > 0) {
-      // Prefer logoDark over favicon
-      let setting = ArrayHelper.getOne(church.settings, "keyName", "logoDark");
-      if (!setting) {
-        setting = ArrayHelper.getOne(church.settings, "keyName", "favicon_400x400");
-      }
+      // Prefer favicon for circular display; fall back to logos
+      let setting = ArrayHelper.getOne(church.settings, "keyName", "favicon_400x400");
+      if (!setting) setting = ArrayHelper.getOne(church.settings, "keyName", "logoDark");
+      if (!setting) setting = ArrayHelper.getOne(church.settings, "keyName", "logoLight");
       if (!setting) setting = church.settings[0];
       if (setting?.value && setting.value.trim() !== "") {
         image = { uri: setting.value };
@@ -40,11 +39,7 @@ export const ChurchListItem: React.FC<ChurchListItemProps> = ({ church, onPress,
     <Card style={styles.churchCard} onPress={() => !isSelecting && onPress(church)}>
       <Card.Content style={styles.churchContent}>
         <View style={[styles.churchImageContainer, { backgroundColor: tc.iconBackground }]}>
-          <OptimizedImage
-            source={churchImage}
-            style={styles.churchImage}
-            placeholder={Constants.Images.logoBlue}
-          />
+          <OptimizedImage source={churchImage} style={styles.churchImage} placeholder={Constants.Images.logoBlue} contentFit="contain" />
         </View>
         <View style={styles.churchDetails}>
           <Text variant="titleMedium" style={[styles.churchName, { color: tc.text }]} numberOfLines={2}>
