@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Alert, ScrollView } from "react-native";
-import { Card, Text, TextInput, Button, Menu, Banner, Divider } from "react-native-paper";
+import { Card, Text, TextInput, Button, Menu, Divider } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { ApiHelper } from "../../helpers";
-import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../interfaces";
-import { useStripe } from "@stripe/stripe-react-native";
+import { StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../interfaces";
+import { collectBankAccountForSetup, confirmSetupIntent } from "@stripe/stripe-react-native";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { useThemeColors } from "../../theme";
 
@@ -32,15 +32,12 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
   const accountTypes = getAccountTypes(t);
   const [selectedType, setSelectedType] = useState(bank.account_holder_type || accountTypes[0].value);
   const [name, setName] = useState<string>(bank.account_holder_name || "");
-  const [accountNumber, setAccountNumber] = useState<string>("");
-  const [routingNumber, setRoutingNumber] = useState<string>("");
   const [firstDeposit, setFirstDeposit] = useState<string>("");
   const [secondDeposit, setSecondDeposit] = useState<string>("");
-  const [showBankDetails, setShowBankDetails] = useState<boolean>(false);
+  const [bankConnecting, setBankConnecting] = useState<boolean>(false);
 
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
-  const { createToken } = useStripe();
 
   // Pre-populate name for new bank accounts
   useEffect(() => {
@@ -48,35 +45,6 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
       setName(person.name.display);
     }
   }, [bank.id, person?.name?.display, name]);
-
-  // Input validation functions
-  const validateRoutingNumber = (routing: string): boolean => /^\d{9}$/.test(routing);
-  const validateAccountNumber = (account: string): boolean => /^\d{4,17}$/.test(account);
-
-  // Format routing number with visual grouping
-  const formatRoutingNumber = (value: string): string => {
-    const cleanValue = value.replace(/\D/g, "");
-    if (cleanValue.length <= 9) {
-      return cleanValue.replace(/(\d{3})(\d{3})(\d{0,3})/, (match, p1, p2, p3) => {
-        if (p3) return `${p1}-${p2}-${p3}`;
-        if (p2) return `${p1}-${p2}`;
-        return p1;
-      });
-    }
-    return cleanValue.slice(0, 9);
-  };
-
-  const handleRoutingNumberChange = (text: string): void => {
-    const cleaned = text.replace(/\D/g, "");
-    setRoutingNumber(cleaned);
-  };
-
-  const handleAccountNumberChange = (text: string): void => {
-    const cleaned = text.replace(/\D/g, "");
-    if (cleaned.length <= 17) {
-      setAccountNumber(cleaned);
-    }
-  };
 
   const getAccountTypeLabel = (value: string) => accountTypes.find(type => type.value === value)?.label || t("donations.individual");
 
@@ -127,57 +95,82 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
   };
 
   const createBank = async () => {
-    if (!routingNumber || !accountNumber || !name.trim()) {
-      setIsSubmitting(false);
-      Alert.alert(t("donations.requiredFields"), t("donations.fillAllRequiredFields"));
-      return;
-    }
-
-    if (!validateRoutingNumber(routingNumber)) {
-      setIsSubmitting(false);
-      Alert.alert(t("donations.invalidRoutingNumber"), t("donations.validRoutingNumber"));
-      return;
-    }
-
-    if (!validateAccountNumber(accountNumber)) {
-      setIsSubmitting(false);
-      Alert.alert(t("donations.invalidAccountNumber"), t("donations.validAccountNumber"));
-      return;
-    }
+    setBankConnecting(true);
 
     try {
-      const tokenResult = await createToken({
-        type: "BankAccount",
-        bankAccount: {
-          routingNumber: routingNumber,
-          accountNumber: accountNumber,
-          accountHolderType: selectedType as "Individual" | "Company",
-          accountHolderName: name,
-          country: "US",
-          currency: "usd"
-        }
-      });
+      // Step 1: Create ACH SetupIntent on the backend
+      const setupResponse = await ApiHelper.post("/paymentmethods/ach-setup-intent", {
+        personId: person?.id || "",
+        customerId,
+        email: person?.contactInfo?.email || "",
+        name: name.trim() || person?.name?.display || ""
+      }, "GivingApi");
 
-      if (tokenResult.error) {
-        Alert.alert(t("donations.error"), tokenResult.error.message);
+      if (setupResponse?.error) {
+        Alert.alert(t("donations.error"), setupResponse.error);
+        setBankConnecting(false);
         setIsSubmitting(false);
         return;
       }
 
-      const paymentMethod: PaymentMethodInterface = { id: tokenResult.token.id, customerId, personId: person?.id || "", email: person?.contactInfo?.email || "", name: person?.name?.display || "" };
+      // Step 2: Collect bank account using Financial Connections
+      const { setupIntent: collectedSetupIntent, error: collectError } = await collectBankAccountForSetup(
+        setupResponse.clientSecret,
+        {
+          paymentMethodType: "USBankAccount",
+          paymentMethodData: {
+            billingDetails: {
+              name: name.trim() || person?.name?.display || "",
+              email: person?.contactInfo?.email || ""
+            }
+          }
+        }
+      );
 
-      const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi");
-      if (result?.raw?.message) {
-        Alert.alert(t("donations.error"), result.raw.message);
-      } else {
+      if (collectError) {
+        Alert.alert(t("donations.error"), collectError.message || t("donations.failedCreateBank"));
+        setBankConnecting(false);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Check if user completed the flow
+      if (!collectedSetupIntent?.paymentMethod?.id) {
+        Alert.alert(t("donations.error"), t("donations.bankConnectionNotCompleted"));
+        setBankConnecting(false);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Step 3: Confirm the SetupIntent
+      const { setupIntent: confirmedIntent, error: confirmError } = await confirmSetupIntent(
+        setupResponse.clientSecret,
+        { paymentMethodType: "USBankAccount" }
+      );
+
+      if (confirmError) {
+        Alert.alert(t("donations.error"), confirmError.message || t("donations.failedCreateBank"));
+        setBankConnecting(false);
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (confirmedIntent?.status === "Succeeded") {
         Alert.alert(t("donations.success"), t("donations.bankAccountAdded"));
         setMode("display");
         await updatedFunction();
+      } else if (confirmedIntent?.status === "RequiresAction") {
+        Alert.alert(t("donations.success"), t("donations.bankAccountAddedVerifyRequired"));
+        setMode("display");
+        await updatedFunction();
+      } else {
+        Alert.alert(t("donations.error"), t("donations.unexpectedStatus"));
       }
     } catch (error: any) {
       Alert.alert(t("donations.error"), error.message || t("donations.failedCreateBank"));
     }
 
+    setBankConnecting(false);
     setIsSubmitting(false);
   };
 
@@ -259,89 +252,93 @@ export function EnhancedBankForm({ bank, customerId, setMode, updatedFunction, h
         </>
       ) : (
         <>
-          {/* Information Banner */}
-          {!isEditing && (
-            <Banner visible={true} icon={({ size }) => <MaterialIcons name="info" size={size} color={colors.primary} />} style={styles.infoBanner}>
-              <Text variant="bodyMedium" style={[styles.bannerText, { color: colors.text }]}>
-                {t("donations.bankVerificationInfo")}
-              </Text>
-            </Banner>
-          )}
-
-          {/* Account Holder Information */}
-          <Card style={[styles.formCard, { backgroundColor: colors.card }]}>
-            <Card.Content>
-              <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
-                {t("donations.accountHolderInfo")}
-              </Text>
-
-              <TextInput mode="outlined" label={t("donations.accountHolderName")} value={name} onChangeText={setName} style={[styles.input, { backgroundColor: colors.card }]} placeholder={t("donations.enterFullName")} />
-
-              <Text variant="titleSmall" style={[styles.fieldLabel, { color: colors.text }]}>
-                {t("donations.accountType")}
-              </Text>
-              <Menu
-                visible={showAccountTypeMenu}
-                onDismiss={() => setShowAccountTypeMenu(false)}
-                anchor={
-                  <TouchableOpacity style={[styles.selector, { backgroundColor: colors.background, borderColor: colors.divider }]} onPress={() => setShowAccountTypeMenu(true)}>
-                    <Text variant="bodyLarge" style={[styles.selectorText, { color: colors.text }]}>
-                      {getAccountTypeLabel(selectedType)}
-                    </Text>
-                    <MaterialIcons name="expand-more" size={24} color={colors.disabled} />
-                  </TouchableOpacity>
-                }>
-                {accountTypes.map(type => (
-                  <Menu.Item
-                    key={type.value}
-                    onPress={() => {
-                      setSelectedType(type.value);
-                      setShowAccountTypeMenu(false);
-                    }}
-                    title={type.label}
-                  />
-                ))}
-              </Menu>
-            </Card.Content>
-          </Card>
-
-          {/* Bank Account Details */}
-          {!isEditing && (
+          {/* Account Holder Information (for editing existing accounts) */}
+          {isEditing ? (
             <Card style={[styles.formCard, { backgroundColor: colors.card }]}>
               <Card.Content>
-                <View style={styles.sectionHeader}>
-                  <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
-                    {t("donations.bankAccountDetails")}
-                  </Text>
-                  <TouchableOpacity style={styles.toggleButton} onPress={() => setShowBankDetails(!showBankDetails)}>
-                    <MaterialIcons name={showBankDetails ? "visibility-off" : "visibility"} size={20} color={colors.primary} />
-                    <Text variant="labelMedium" style={[styles.toggleText, { color: colors.primary }]}>
-                      {showBankDetails ? t("donations.hide") : t("donations.show")}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
+                  {t("donations.accountHolderInfo")}
+                </Text>
 
-                <TextInput mode="outlined" label={t("donations.routingNumber")} value={formatRoutingNumber(routingNumber)} onChangeText={handleRoutingNumberChange} keyboardType="number-pad" style={[styles.input, { backgroundColor: colors.card }]} placeholder="123-456-789" maxLength={11} secureTextEntry={!showBankDetails} />
+                <TextInput mode="outlined" label={t("donations.accountHolderName")} value={name} onChangeText={setName} style={[styles.input, { backgroundColor: colors.card }]} placeholder={t("donations.enterFullName")} />
 
-                <TextInput mode="outlined" label={t("donations.accountNumber")} value={accountNumber} onChangeText={handleAccountNumberChange} keyboardType="number-pad" style={[styles.input, { backgroundColor: colors.card }]} placeholder={t("donations.enterAccountNumber")} maxLength={17} secureTextEntry={!showBankDetails} />
-
+                <Text variant="titleSmall" style={[styles.fieldLabel, { color: colors.text }]}>
+                  {t("donations.accountType")}
+                </Text>
+                <Menu
+                  visible={showAccountTypeMenu}
+                  onDismiss={() => setShowAccountTypeMenu(false)}
+                  anchor={
+                    <TouchableOpacity style={[styles.selector, { backgroundColor: colors.background, borderColor: colors.divider }]} onPress={() => setShowAccountTypeMenu(true)}>
+                      <Text variant="bodyLarge" style={[styles.selectorText, { color: colors.text }]}>
+                        {getAccountTypeLabel(selectedType)}
+                      </Text>
+                      <MaterialIcons name="expand-more" size={24} color={colors.disabled} />
+                    </TouchableOpacity>
+                  }>
+                  {accountTypes.map(type => (
+                    <Menu.Item
+                      key={type.value}
+                      onPress={() => {
+                        setSelectedType(type.value);
+                        setShowAccountTypeMenu(false);
+                      }}
+                      title={type.label}
+                    />
+                  ))}
+                </Menu>
+              </Card.Content>
+            </Card>
+          ) : (
+            /* Financial Connections flow for new bank accounts */
+            <Card style={[styles.formCard, { backgroundColor: colors.card }]}>
+              <Card.Content style={styles.connectContent}>
+                <MaterialIcons name="account-balance" size={48} color={colors.primary} />
+                <Text variant="titleMedium" style={[styles.connectTitle, { color: colors.text }]}>
+                  {t("donations.connectBankAccount")}
+                </Text>
+                <Text variant="bodyMedium" style={[styles.connectDescription, { color: colors.disabled }]}>
+                  {t("donations.financialConnectionsInfo")}
+                </Text>
+                <Button
+                  mode="contained"
+                  onPress={handleSave}
+                  loading={bankConnecting}
+                  disabled={bankConnecting || isSubmitting}
+                  style={styles.connectButton}
+                  labelStyle={[styles.saveButtonText, { color: colors.white }]}
+                  buttonColor={colors.primary}
+                  icon="bank"
+                >
+                  {bankConnecting ? t("donations.connecting") : t("donations.connectBank")}
+                </Button>
               </Card.Content>
             </Card>
           )}
-
         </>
       )}
 
-      {/* Action Buttons */}
-      <View style={styles.actionButtons}>
-        <Button mode="outlined" onPress={() => setMode("display")} style={[styles.cancelButton, { borderColor: colors.disabled }]} labelStyle={[styles.cancelButtonText, { color: colors.disabled }]}>
-          {t("common.cancel")}
-        </Button>
+      {/* Action Buttons — shown for editing existing accounts or verifying, not for new (Financial Connections handles its own flow) */}
+      {(isEditing || showVerifyForm) && (
+        <View style={styles.actionButtons}>
+          <Button mode="outlined" onPress={() => setMode("display")} style={[styles.cancelButton, { borderColor: colors.disabled }]} labelStyle={[styles.cancelButtonText, { color: colors.disabled }]}>
+            {t("common.cancel")}
+          </Button>
 
-        <Button mode="contained" onPress={handleSave} loading={isSubmitting} disabled={isSubmitting} style={styles.saveButton} labelStyle={[styles.saveButtonText, { color: colors.white }]} buttonColor={colors.primary}>
-          {showVerifyForm ? t("donations.verifyAccount") : isEditing ? t("donations.updateAccount") : t("donations.addAccount")}
-        </Button>
-      </View>
+          <Button mode="contained" onPress={handleSave} loading={isSubmitting} disabled={isSubmitting} style={styles.saveButton} labelStyle={[styles.saveButtonText, { color: colors.white }]} buttonColor={colors.primary}>
+            {showVerifyForm ? t("donations.verifyAccount") : t("donations.updateAccount")}
+          </Button>
+        </View>
+      )}
+
+      {/* Cancel button for new bank account flow */}
+      {!isEditing && !showVerifyForm && (
+        <View style={styles.actionButtons}>
+          <Button mode="outlined" onPress={() => setMode("display")} style={[styles.cancelButton, { borderColor: colors.disabled }]} labelStyle={[styles.cancelButtonText, { color: colors.disabled }]}>
+            {t("common.cancel")}
+          </Button>
+        </View>
+      )}
 
       {/* Delete Button for existing accounts */}
       {isEditing && !showVerifyForm && (
@@ -463,18 +460,26 @@ const styles = StyleSheet.create({
     fontWeight: "600"
   },
 
-  // Toggle Button
-  toggleButton: {
-    flexDirection: "row",
+  // Connect Bank Account
+  connectContent: {
     alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: "rgba(21, 101, 192, 0.1)",
-    borderRadius: 16
+    paddingVertical: 24
   },
-  toggleText: {
-    fontWeight: "600",
-    marginLeft: 4
+  connectTitle: {
+    fontWeight: "700",
+    marginTop: 12,
+    textAlign: "center"
+  },
+  connectDescription: {
+    textAlign: "center",
+    lineHeight: 22,
+    marginTop: 8,
+    marginBottom: 24,
+    paddingHorizontal: 16
+  },
+  connectButton: {
+    minWidth: 200,
+    elevation: 2
   },
 
   // Switch

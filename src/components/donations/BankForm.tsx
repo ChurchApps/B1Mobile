@@ -1,11 +1,11 @@
 import { ApiHelper, Constants, globalStyles } from "../../../src/helpers";
-import { PaymentMethodInterface, StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../../src/interfaces";
+import { StripeBankAccountUpdateInterface, StripeBankAccountVerifyInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { useState } from "react";
-import { Alert, Image, Text, TextInput, View } from "react-native";
+import { Alert, Image, Text, TextInput, View, ActivityIndicator } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { InputBox } from "../InputBox";
-import { useStripe } from "@stripe/stripe-react-native";
+import { collectBankAccountForSetup, confirmSetupIntent } from "@stripe/stripe-react-native";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../theme";
@@ -38,48 +38,11 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
   const accountTypes = getAccountTypes(t);
   const [selectedType, setSelectedType] = useState(bank.account_holder_type || accountTypes[0].value);
   const [name, setName] = useState<string>(bank.account_holder_name || "");
-  const [accountNumber, setAccountNumber] = useState<string>("");
-  const [routingNumber, setRoutingNumber] = useState<string>("");
   const [firstDeposit, setFirstDeposit] = useState<string>("");
   const [secondDeposit, setSecondDeposit] = useState<string>("");
+  const [bankConnecting, setBankConnecting] = useState<boolean>(false);
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
-  const { createToken } = useStripe();
-
-  // Input validation functions
-  const validateRoutingNumber = (routing: string): boolean =>
-    // 9 digits for US routing numbers
-    /^\d{9}$/.test(routing);
-  const validateAccountNumber = (account: string): boolean =>
-    // 4-17 digits for US account numbers
-    /^\d{4,17}$/.test(account);
-  // Format routing number with visual grouping
-  const formatRoutingNumber = (value: string): string => {
-    const cleanValue = value.replace(/\D/g, "");
-    if (cleanValue.length <= 9) {
-      return cleanValue.replace(/(\d{3})(\d{3})(\d{0,3})/, (match, p1, p2, p3) => {
-        if (p3) return `${p1}-${p2}-${p3}`;
-        if (p2) return `${p1}-${p2}`;
-        return p1;
-      });
-    }
-    return cleanValue.slice(0, 9);
-  };
-
-  // Handle routing number input with formatting
-  const handleRoutingNumberChange = (text: string): void => {
-    const cleaned = text.replace(/\D/g, "");
-    formatRoutingNumber(cleaned);
-    setRoutingNumber(cleaned); // Store clean value for API
-  };
-
-  // Handle account number input with length limit
-  const handleAccountNumberChange = (text: string): void => {
-    const cleaned = text.replace(/\D/g, "");
-    if (cleaned.length <= 17) {
-      setAccountNumber(cleaned);
-    }
-  };
 
   const handleSave = () => {
     setIsSubmitting(true);
@@ -135,58 +98,76 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
       return;
     }
 
-    if (!routingNumber || !accountNumber) {
-      setIsSubmitting(false);
-      Alert.alert(t("donations.cannotBeLeftBlank"), t("donations.accountRoutingRequired"));
-      return;
-    }
-
-    // Input validation
-    if (!validateRoutingNumber(routingNumber)) {
-      setIsSubmitting(false);
-      Alert.alert(t("donations.invalidRoutingNumber"), t("donations.invalidRoutingNumberMessage"));
-      return;
-    }
-
-    if (!validateAccountNumber(accountNumber)) {
-      setIsSubmitting(false);
-      Alert.alert(t("donations.invalidAccountNumber"), t("donations.invalidAccountNumberMessage"));
-      return;
-    }
+    setBankConnecting(true);
 
     try {
-      // Use modern Stripe React Native SDK
-      const tokenResult = await createToken({
-        type: "BankAccount",
-        bankAccount: {
-          routingNumber: routingNumber,
-          accountNumber: accountNumber,
-          accountHolderType: selectedType as "Individual" | "Company",
-          accountHolderName: name,
-          country: "US",
-          currency: "usd"
-        }
-      });
+      // Step 1: Create ACH SetupIntent on the backend
+      const setupResponse = await ApiHelper.post("/paymentmethods/ach-setup-intent", {
+        personId: person.id,
+        customerId,
+        email: person.contactInfo.email,
+        name: name.trim() || person.name.display
+      }, "GivingApi");
 
-      if (tokenResult.error) {
-        Alert.alert(t("donations.error"), tokenResult.error.message);
+      if (setupResponse?.error) {
+        Alert.alert(t("donations.error"), setupResponse.error);
+        setBankConnecting(false);
         setIsSubmitting(false);
         return;
       }
 
-      const paymentMethod: PaymentMethodInterface = { id: tokenResult.token.id, customerId, personId: person.id, email: person.contactInfo.email, name: person.name.display };
+      // Step 2: Collect bank account using Financial Connections
+      const { setupIntent: collectedSetupIntent, error: collectError } = await collectBankAccountForSetup(
+        setupResponse.clientSecret,
+        {
+          paymentMethodType: "USBankAccount",
+          paymentMethodData: {
+            billingDetails: {
+              name: name.trim() || person.name.display,
+              email: person.contactInfo.email
+            }
+          }
+        }
+      );
 
-      const result = await ApiHelper.post("/paymentmethods/addbankaccount", paymentMethod, "GivingApi");
-      if (result?.raw?.message) {
-        Alert.alert(t("donations.error"), result.raw.message);
-      } else {
+      if (collectError) {
+        Alert.alert(t("donations.error"), collectError.message || t("donations.failedToCreateBankToken"));
+        setBankConnecting(false);
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!collectedSetupIntent?.paymentMethod?.id) {
+        Alert.alert(t("donations.error"), t("donations.bankConnectionNotCompleted"));
+        setBankConnecting(false);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Step 3: Confirm the SetupIntent
+      const { setupIntent: confirmedIntent, error: confirmError } = await confirmSetupIntent(
+        setupResponse.clientSecret,
+        { paymentMethodType: "USBankAccount" }
+      );
+
+      if (confirmError) {
+        Alert.alert(t("donations.error"), confirmError.message || t("donations.failedToCreateBankToken"));
+        setBankConnecting(false);
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (confirmedIntent?.status === "Succeeded" || confirmedIntent?.status === "RequiresAction") {
         setMode("display");
         await updatedFunction();
+      } else {
+        Alert.alert(t("donations.error"), t("donations.unexpectedStatus"));
       }
     } catch (error: any) {
       Alert.alert(t("donations.error"), error.message || t("donations.failedToCreateBankToken"));
     }
 
+    setBankConnecting(false);
     setIsSubmitting(false);
   };
 
@@ -210,14 +191,8 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
     setIsSubmitting(false);
   };
 
-  const informationalText = !bank.id && (
-    <View style={{ marginTop: DimensionHelper.wp(5), flex: 1, alignItems: "center" }}>
-      <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5) }}>{t("donations.bankVerificationInfo")}</Text>
-    </View>
-  );
   return (
-    <InputBox title={bank.id ? `${bank.name.toUpperCase()} ****${bank.last4}` : t("donations.addNewBankAccount")} headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />} saveFunction={handleSave} cancelFunction={() => setMode("display")} deleteFunction={bank.id && !showVerifyForm ? handleDelete : undefined} isSubmitting={isSubmitting}>
-      {informationalText}
+    <InputBox title={bank.id ? `${bank.name.toUpperCase()} ****${bank.last4}` : t("donations.addNewBankAccount")} headerIcon={<Image source={Constants.Images.ic_give} style={globalStyles.donationIcon} />} saveFunction={bank.id || showVerifyForm ? handleSave : undefined} cancelFunction={() => setMode("display")} deleteFunction={bank.id && !showVerifyForm ? handleDelete : undefined} isSubmitting={isSubmitting}>
       {showVerifyForm ? (
         <View style={{ marginTop: DimensionHelper.wp(5), marginBottom: DimensionHelper.wp(5) }}>
           <View style={{ flex: 1, alignItems: "center" }}>
@@ -234,7 +209,7 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
             </View>
           </View>
         </View>
-      ) : (
+      ) : bank.id ? (
         <View style={{ marginBottom: DimensionHelper.wp(5) }}>
           <Text style={globalStyles.semiTitleText}>{t("donations.accountHolderName")}</Text>
           <TextInput style={{ ...globalStyles.fundInput, color: colors.inputText, width: DimensionHelper.wp(90) }} keyboardType="default" value={name} onChangeText={text => setName(text)} />
@@ -260,22 +235,24 @@ export function BankForm({ bank, customerId, setMode, updatedFunction, handleDel
               dropDownDirection="BOTTOM"
             />
           </View>
-          {!bank.id && (
-            <>
-              <Text style={globalStyles.semiTitleText}>{t("donations.accountNumber")}</Text>
-              <TextInput style={{ ...globalStyles.fundInput, color: colors.inputText, width: DimensionHelper.wp(90) }} keyboardType="number-pad" value={accountNumber} onChangeText={handleAccountNumberChange} placeholder={t("donations.enterAccountNumber")} maxLength={17} secureTextEntry={false} autoComplete="off" textContentType="none" />
-              <Text style={globalStyles.semiTitleText}>{t("donations.routingNumber")}</Text>
-              <TextInput
-                style={{ ...globalStyles.fundInput, color: colors.inputText, width: DimensionHelper.wp(90) }}
-                keyboardType="number-pad"
-                value={formatRoutingNumber(routingNumber)}
-                onChangeText={handleRoutingNumberChange}
-                placeholder={t("donations.routingNumberPlaceholder")}
-                maxLength={11} // Includes dashes
-                autoComplete="off"
-                textContentType="none"
-              />
-            </>
+        </View>
+      ) : (
+        <View style={{ marginTop: DimensionHelper.wp(5), marginBottom: DimensionHelper.wp(5), alignItems: "center" }}>
+          <Text style={{ width: DimensionHelper.wp(90), fontSize: DimensionHelper.wp(4.5), textAlign: "center", marginBottom: DimensionHelper.wp(3) }}>
+            {t("donations.financialConnectionsInfo")}
+          </Text>
+          {bankConnecting ? (
+            <View style={{ flexDirection: "row", alignItems: "center", marginTop: DimensionHelper.wp(3) }}>
+              <ActivityIndicator size="small" />
+              <Text style={{ marginLeft: DimensionHelper.wp(2) }}>{t("donations.connecting")}</Text>
+            </View>
+          ) : (
+            <Text
+              style={{ color: colors.primary, fontSize: DimensionHelper.wp(4.5), fontWeight: "600", marginTop: DimensionHelper.wp(3) }}
+              onPress={handleSave}
+            >
+              {t("donations.connectBank")}
+            </Text>
           )}
         </View>
       )}
