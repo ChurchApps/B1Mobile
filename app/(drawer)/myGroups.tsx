@@ -1,13 +1,13 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import React, { useMemo, useCallback } from "react";
 import { useThemeColors } from "@/theme";
 import { FlatList, StyleSheet, View } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
 import { useQuery } from "@tanstack/react-query";
-import { ArrayHelper, UserPostInterface } from "../../src/helpers";
-import { TimelineHelper } from "../../src/helpers/Timelinehelper";
+// import { ArrayHelper, UserPostInterface } from "../../src/helpers";
+// import { TimelineHelper } from "../../src/helpers/Timelinehelper";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
-import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
+// import TimeLinePost from "../../src/components/MyGroup/TimeLinePost";
 import { UpcomingEventsList } from "../../src/components/events/UpcomingEventsList";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useUser, useGroupViewCounts, useIncrementGroupViewCount } from "../../src/stores/useUserStore";
@@ -25,7 +25,7 @@ interface Group {
 const MyGroups = () => {
   const { t } = useTranslation();
   const tc = useThemeColors();
-  const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
+  // const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
   const navigation = useReactNavigation();
   const { navigateBack, router } = useNavigation();
 
@@ -38,8 +38,7 @@ const MyGroups = () => {
   // Use react-query for groups data
   const {
     data: groups = [],
-    isLoading: groupsLoading,
-    refetch: refetchGroups
+    isLoading: groupsLoading
   } = useQuery<Group[]>({
     queryKey: ["/groups/my", "MembershipApi"],
     enabled: !!user?.jwt, // Only run when authenticated
@@ -48,7 +47,12 @@ const MyGroups = () => {
     gcTime: 10 * 60 * 1000 // 10 minutes
   });
 
-  // Use react-query for timeline data
+  const loading = groupsLoading;
+
+  // Timeline feature is temporarily disabled
+  /*
+  const [mergeData, setMergedData] = useState<UserPostInterface[]>([]);
+
   const {
     data: timelineData,
     isLoading: timelineLoading,
@@ -59,10 +63,10 @@ const MyGroups = () => {
       const { posts, groups } = await TimelineHelper.loadForUser();
       return { posts, groups };
     },
-    enabled: !!user?.jwt, // Only run when authenticated
+    enabled: !!user?.jwt,
     placeholderData: { posts: [], groups: [] },
-    staleTime: 0, // Instant stale - timeline includes real-time conversations
-    gcTime: 5 * 60 * 1000 // 5 minutes
+    staleTime: 0,
+    gcTime: 5 * 60 * 1000
   });
 
   const loading = groupsLoading || timelineLoading;
@@ -84,6 +88,7 @@ const MyGroups = () => {
   useEffect(() => {
     setMergedData(mergedTimelineData);
   }, [mergedTimelineData]);
+  */
 
   const showGroups = useCallback(
     (item: any, type: "hero" | "featured" | "regular" = "regular") => {
@@ -151,7 +156,8 @@ const MyGroups = () => {
     [incrementGroupViewCount, tc]
   );
 
-  const renderItems = useCallback((item: any) => <TimeLinePost item={item} onUpdate={loadData} />, [loadData]);
+  // const renderItems = useCallback((item: any) => <TimeLinePost item={item} onUpdate={loadData} />, [loadData]);
+  const renderItems = useCallback(() => null, []);
 
   // Sort groups by view count and separate into hero, featured, and regular
   const sortedGroups = useMemo(() => {
@@ -217,16 +223,16 @@ const MyGroups = () => {
         )}
         <UpcomingEventsList />
 
-        {mergeData.length > 0 && (
+        {/* {mergeData.length > 0 && (
           <View style={styles.regularSectionTop}>
             <Text variant="titleLarge" style={[styles.sectionTitle, { color: tc.text }]}>
               {t("groups.latestUpdates")}
             </Text>
           </View>
-        )}
+        )} */}
       </View>
     );
-  }, [sortedGroups, showGroups, mergeData, tc]);
+  }, [sortedGroups, showGroups, tc]);
 
   return (
     <SafeAreaProvider>
@@ -234,7 +240,23 @@ const MyGroups = () => {
         <View style={[styles.container, { backgroundColor: tc.background }]}>
           <MainHeader title={t("groups.myGroups")} openDrawer={() => navigation.dispatch(DrawerActions.openDrawer())} back={() => navigateBack()} />
           <View style={[styles.contentContainer, { backgroundColor: tc.background }]}>
-            <FlatList data={mergeData} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListHeaderComponent={() => <View style={[styles.groupsContainer, { backgroundColor: tc.background }]}>{groupsGrid}</View>} renderItem={({ item }) => renderItems(item)} keyExtractor={() => `key-${Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
+            <FlatList data={[]} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false} scrollEnabled={true} ListHeaderComponent={() => <View style={[styles.groupsContainer, { backgroundColor: tc.background }]}>{groupsGrid}</View>} renderItem={renderItems} keyExtractor={() => `key-${Math.random()}`} initialNumToRender={8} windowSize={10} removeClippedSubviews={true} maxToRenderPerBatch={5} updateCellsBatchingPeriod={100} />
+            {/*
+            <FlatList
+              data={mergeData}
+              contentContainerStyle={styles.listContent}
+              showsVerticalScrollIndicator={false}
+              scrollEnabled={true}
+              ListHeaderComponent={() => <View style={[styles.groupsContainer, { backgroundColor: tc.background }]}>{groupsGrid}</View>}
+              renderItem={({ item }) => renderItems(item)}
+              keyExtractor={() => `key-${Math.random()}`}
+              initialNumToRender={8}
+              windowSize={10}
+              removeClippedSubviews={true}
+              maxToRenderPerBatch={5}
+              updateCellsBatchingPeriod={100}
+            />
+            */}
           </View>
         </View>
       </LoadingWrapper>
@@ -398,7 +420,9 @@ const styles = StyleSheet.create({
   regularGroupSubtitle: {
     color: "#9E9E9E",
     fontSize: 12
-  },
+  }
+  // Timeline styles removed while feature is disabled.
+  /*
   timelineSeparator: {
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -410,6 +434,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center"
   }
+  */
 });
 
 export default MyGroups;
