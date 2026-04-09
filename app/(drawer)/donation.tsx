@@ -31,8 +31,8 @@ const Donation = () => {
   const person = currentUserChurch?.person;
   const [selectedRepeatDonation, setSelectedRepeatDonation] = useState<{ amount: string; fundId?: string; } | null>(null);
 
-  // Example of stale-while-revalidate for donation funds
-  const { data: fundsData, showSkeleton: showFundsSkeleton, isRevalidating: fundsRevalidating } = useDonationFunds(currentUserChurch?.church?.id || "");
+  // Prefetch donation funds (used by child components)
+  useDonationFunds(currentUserChurch?.church?.id || "");
 
   // Use react-query for gateway data
   const {
@@ -91,8 +91,9 @@ const Donation = () => {
 
   useEffect(() => {
     if (gatewayData && gatewayData.length && gatewayData[0]?.publicKey) {
-      initStripe({ publishableKey: gatewayData[0].publicKey });
-      setPublishKey(gatewayData[0].publicKey);
+      initStripe({ publishableKey: gatewayData[0].publicKey }).then(() => {
+        setPublishKey(gatewayData[0].publicKey);
+      });
     }
   }, [gatewayData]);
 
@@ -156,7 +157,7 @@ const Donation = () => {
 
   const renderOverviewSection = () => <GivingOverview givingStats={givingStats} onDonatePress={handleRepeatDonation} onHistoryPress={() => setActiveSection("history")} />;
 
-  const renderDonateSection = () => <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} gatewayData={gatewayData} updatedFunction={loadData} initialDonation={selectedRepeatDonation} />;
+  const renderDonateSection = () => publishKey ? <EnhancedDonationForm paymentMethods={paymentMethods} customerId={customerId} gatewayData={gatewayData} updatedFunction={loadData} initialDonation={selectedRepeatDonation} /> : null;
 
   const renderManageSection = () => <ManagePayments person={person} customerId={customerId} paymentMethods={paymentMethods} isLoading={areMethodsLoading} publishKey={publishKey} loadData={loadData} />;
 
