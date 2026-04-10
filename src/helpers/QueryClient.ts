@@ -226,7 +226,7 @@ const invalidateRelatedQueries = (endpoint: string) => {
 
 // Wrap ApiHelper mutation methods to invalidate queries after changes
 const wrapApiMethods = () => {
-  if (!ApiHelper.post || !ApiHelper.put || !ApiHelper.delete) return;
+  if (typeof ApiHelper.post !== "function" || typeof ApiHelper.put !== "function" || typeof ApiHelper.delete !== "function") return;
   const originalPost = ApiHelper.post.bind(ApiHelper);
   ApiHelper.post = async (...args: Parameters<typeof originalPost>) => {
     const result = await originalPost(...args);

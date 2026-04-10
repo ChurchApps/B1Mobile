@@ -13,7 +13,8 @@
     "bump-version": "node scripts/bump-version.js",
     "build:android": "eas build --platform android",
     "build:ios": "eas build --platform ios",
-    "update:production": "eas update --channel production"
+    "update:production": "eas update --channel production",
+    "submit:ios": "eas submit --platform ios --profile production"
   },
   "jest": {
     "preset": "jest-expo"

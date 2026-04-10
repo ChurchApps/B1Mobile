@@ -411,7 +411,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
             <FlatList
               data={subscriptions}
               renderItem={renderRecurringItem}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item?.id?.toString() || ""}
               scrollEnabled={false}
               showsVerticalScrollIndicator={false}
               ListEmptyComponent={!recurringLoading ? (
@@ -441,7 +441,7 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
             <FlatList
               data={donationImpactData}
               renderItem={renderTransactionItem}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item?.id?.toString() || ""}
               scrollEnabled={false}
               showsVerticalScrollIndicator={false}
               ItemSeparatorComponent={() => <Divider style={styles.divider} />}

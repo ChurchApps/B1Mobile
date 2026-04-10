@@ -11,7 +11,7 @@
     }
   },
   "submit": {
-    "GooglePlay": {
+    "production": {
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json"
       }
