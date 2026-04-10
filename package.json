@@ -1,7 +1,7 @@
 {
   "name": "B1Mobile",
   "main": "expo-router/entry",
-  "version": "3.13.0",
+  "version": "3.15.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -13,8 +13,6 @@
     "bump-version": "node scripts/bump-version.js",
     "build:android": "eas build --platform android",
     "build:ios": "eas build --platform ios",
-    "update:development": "eas update --channel development",
-    "update:preview": "eas update --channel preview",
     "update:production": "eas update --channel production"
   },
   "jest": {
