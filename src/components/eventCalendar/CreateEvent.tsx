@@ -1,7 +1,7 @@
 import { EventHelper, ApiHelper, EventExceptionInterface, EventInterface } from "@churchapps/helpers";
 import dayjs from "../../helpers/dayjsConfig";
 import React, { useState, useRef } from "react";
-import { Alert, StyleSheet, View, ScrollView, SafeAreaView } from "react-native";
+import { Alert, StyleSheet, View, ScrollView, SafeAreaView, TouchableOpacity } from "react-native";
 import DatePicker from "react-native-date-picker";
 import { Text, TextInput, Button, Switch, Appbar } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -48,6 +48,7 @@ export default function CreateEvent(props: Props) {
   const [isPrivate, setIsPrivate] = useState(event.visibility === "private");
   const [title, setTitle] = useState(event.title || "");
   const [description, setDescription] = useState(event.description || "");
+  const [isDirty, setIsDirty] = useState(false);
 
   const [allDay, setAllDay] = useState(event.allDay ?? false);
   const [recurring, setRecurring] = useState((event.recurrenceRule?.length ?? 0) > 0);
@@ -307,11 +308,12 @@ export default function CreateEvent(props: Props) {
             placeholder={t("events.enterEventTitle")}
             value={title}
             onChangeText={text => {
+              setIsDirty(true);
               setTitle(text);
               setEvent(prev => ({ ...prev, title: text }));
             }}
             style={[styles.textInput, { backgroundColor: colors.surface }]}
-            error={!title.trim()}
+            error={isDirty && !title.trim()}
           />
         </View>
 
@@ -345,20 +347,28 @@ export default function CreateEvent(props: Props) {
               <Text variant="bodyMedium" style={[styles.dateTimeLabel, { color: colors.text }]}>
                 {t("events.start")}
               </Text>
-              <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
-                <MaterialIcons name="event" size={16} color={colors.primary} />
-                <Text style={[styles.dateTimeText, { color: colors.text }]}>{allDay ? dayjs(startDate).format("ll") : dayjs(startDate).format("lll")}</Text>
-              </Button>
+              <TouchableOpacity onPress={() => setOpenStartPicker(true)} activeOpacity={0.7} style={[styles.dateTimeButton, styles.dateTimePill, { borderColor: colors.borderLight, backgroundColor: colors.surface }]}>
+                <View style={styles.dateTimePillContent}>
+                  <View style={styles.dateTimeIcon}>
+                    <MaterialIcons name="event" size={18} color={colors.primary} />
+                  </View>
+                  <Text style={[styles.dateTimeText, { color: colors.text }]}>{allDay ? dayjs(startDate).format("ll") : dayjs(startDate).format("lll")}</Text>
+                </View>
+              </TouchableOpacity>
             </View>
 
             <View style={styles.dateTimeRow}>
               <Text variant="bodyMedium" style={[styles.dateTimeLabel, { color: colors.text }]}>
                 {t("events.end")}
               </Text>
-              <Button mode="outlined" onPress={() => setOpenEndPicker(true)} style={styles.dateTimeButton} contentStyle={styles.dateTimeButtonContent}>
-                <MaterialIcons name="event" size={16} color={colors.primary} />
-                <Text style={[styles.dateTimeText, { color: colors.text }]}>{allDay ? dayjs(endDate).format("ll") : dayjs(endDate).format("lll")}</Text>
-              </Button>
+              <TouchableOpacity onPress={() => setOpenEndPicker(true)} activeOpacity={0.7} style={[styles.dateTimeButton, styles.dateTimePill, { borderColor: colors.borderLight, backgroundColor: colors.surface }]}>
+                <View style={styles.dateTimePillContent}>
+                  <View style={styles.dateTimeIcon}>
+                    <MaterialIcons name="event" size={18} color={colors.primary} />
+                  </View>
+                  <Text style={[styles.dateTimeText, { color: colors.text }]}>{allDay ? dayjs(endDate).format("ll") : dayjs(endDate).format("lll")}</Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -537,13 +547,24 @@ const styles = StyleSheet.create({
   },
   dateTimeButton: {
     flex: 1,
-    marginLeft: 16
+    marginLeft: 16,
+    height: 60,
+    paddingHorizontal: 16
   },
-  dateTimeButtonContent: {
+  dateTimePill: {
+    borderWidth: 1,
+    borderRadius: 60,
+    justifyContent: "center"
+  },
+  dateTimePillContent: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingVertical: 8
+    height: "100%"
+  },
+  dateTimeIcon: {
+    width: 20,
+    height: 20,
+    alignItems: "center"
   },
   dateTimeText: {
     marginLeft: 8,
