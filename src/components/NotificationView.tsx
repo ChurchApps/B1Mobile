@@ -1,6 +1,4 @@
 import { ApiHelper, ConversationCheckInterface, UserSearchInterface } from "../../src/helpers";
-import { NavigationProps } from "../../src/interfaces";
-import { useNavigation } from "@react-navigation/native";
 import dayjs from "../helpers/dayjsConfig";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View, ScrollView } from "react-native";
@@ -18,7 +16,6 @@ import { useThemeColors, CommonStyles } from "../theme";
 export function NotificationTab() {
   const { t } = useTranslation();
   const colors = useThemeColors();
-  const navigation: NavigationProps = useNavigation();
   const currentUserChurch = useCurrentUserChurch();
 
   const [isLoading, setLoading] = useState(false);
@@ -135,9 +132,36 @@ export function NotificationTab() {
         case "plan":
         case "schedule": return "calendar-today";
         case "message": return "message";
+        case "privatemessage": return "message";
         case "group": return "group";
+        case "groupannouncement": return "group";
+        case "assignment": return "assignment";
         case "donation": return "payment";
+        case "senttext": return "message";
         default: return "notifications";
+      }
+    };
+
+    const handleNotificationPress = (data: any) => {
+      const contentId = data?.contentId;
+
+      if (!contentId) return;
+
+      const type = String(data?.contentType ?? data?.type ?? "").toLowerCase();
+
+      const routes: Record<string, () => void> = {
+        plan: () => router.push("/planDetails/" + contentId),
+        schedule: () => router.push("/planDetails/" + contentId),
+        groupannouncement: () =>
+          router.push({ pathname: "/groupDetails/[id]", params: { id: contentId, openChat: "1", chatTab: "announcements" } }),
+        group: () => router.push("/groupDetails/" + contentId),
+        assignment: () => router.push("/planRoot")
+      };
+
+      if (routes[type]) {
+        routes[type]();
+      } else {
+        return;
       }
     };
 
@@ -155,11 +179,11 @@ export function NotificationTab() {
     };
 
     return (
-      <Card style={[styles.notificationCard, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]} mode="elevated" onPress={() => navigation.navigate("PlanDetails", { id: item?.contentId })} accessibilityLabel={item.message} accessibilityRole="button">
+      <Card style={[styles.notificationCard, { backgroundColor: colors.surface, shadowColor: colors.shadowBlack }]} mode="elevated" onPress={() => handleNotificationPress(item)} accessibilityLabel={item.message} accessibilityRole="button">
         <Card.Content style={styles.notificationContent}>
           <View style={styles.notificationHeader}>
             <View style={[styles.notificationIcon, { backgroundColor: colors.iconBackground }]}>
-              <MaterialIcons name={getNotificationIcon(item?.type)} size={24} color={colors.primary} />
+              <MaterialIcons name={getNotificationIcon(item?.contentType ?? item?.type)} size={24} color={colors.primary} />
             </View>
             <View style={styles.notificationInfo}>
               <Text variant="bodyMedium" style={[styles.notificationMessage, { color: colors.text }]} numberOfLines={3}>
