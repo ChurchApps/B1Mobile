@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, View, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
 import { Appbar, Text } from "react-native-paper";
 import { useTranslation } from "react-i18next";
@@ -13,14 +13,15 @@ interface GroupChatModalProps {
   onDismiss: () => void;
   groupId: string;
   groupName: string;
+  initialTab?: ChatTab;
 }
 
 type ChatTab = "discussions" | "announcements";
 
-const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, groupId, groupName }) => {
+const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, groupId, groupName, initialTab }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
-  const [activeTab, setActiveTab] = useState<ChatTab>("discussions");
+  const [activeTab, setActiveTab] = useState<ChatTab>(initialTab ?? "discussions");
   const currentUserChurch = useCurrentUserChurch();
 
   const isLeader = currentUserChurch?.groups?.some(
@@ -45,6 +46,12 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
     StatusBar.setBarStyle("light-content");
     onDismiss();
   };
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="fullScreen" onRequestClose={handleDismiss}>
@@ -76,9 +83,9 @@ const GroupChatModal: React.FC<GroupChatModalProps> = ({ visible, onDismiss, gro
       )}
 
       {activeTab === "discussions" ? (
-        <GroupChatInner groupId={groupId} groupName={groupName} visible={visible} contentType="group" canPost={true} />
+        <GroupChatInner key={`group-${groupId}-discussions`} groupId={groupId} groupName={groupName} visible={visible} contentType="group" canPost={true} />
       ) : (
-        <GroupChatInner groupId={groupId} groupName={groupName} visible={visible} contentType="groupAnnouncement" canPost={isLeader} />
+        <GroupChatInner key={`group-${groupId}-announcements`} groupId={groupId} groupName={groupName} visible={visible} contentType="groupAnnouncement" canPost={isLeader} />
       )}
     </Modal>
   );

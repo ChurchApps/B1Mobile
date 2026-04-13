@@ -41,7 +41,7 @@ const GroupDetails = () => {
   const tc = useThemeColors();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const { navigationBackNormal } = useNavigation();
-  const { id, activeTab: initialActiveTab } = useLocalSearchParams<{ id: string; activeTab?: string }>();
+  const { id, activeTab: initialActiveTab, openChat, chatTab } = useLocalSearchParams<{ id: string; activeTab?: string; openChat?: string | string[]; chatTab?: string | string[] }>();
   const [activeTab, setActiveTab] = useState(initialActiveTab ? parseInt(initialActiveTab) : 0);
 
   const [selected, setSelected] = useState(dayjs().format("YYYY-MM-DD")); // Always default to today
@@ -49,6 +49,7 @@ const GroupDetails = () => {
   const [showEventModal, setShowEventModal] = useState<boolean>(false);
   const [selectedEvents, setSelectedEvents] = useState<any>(null);
   const [showChatModal, setShowChatModal] = useState<boolean>(false);
+  const [chatInitialTab, setChatInitialTab] = useState<"discussions" | "announcements">("discussions");
 
   const currentUserChurch = useCurrentUserChurch();
 
@@ -63,6 +64,17 @@ const GroupDetails = () => {
       }
     }, [refetchEvents, initialActiveTab])
   );
+
+  const normalizeParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] : value);
+  const openChatParam = normalizeParam(openChat);
+  const chatTabParam = normalizeParam(chatTab);
+
+  useEffect(() => {
+    if (openChatParam === "1" || openChatParam === "true") {
+      setChatInitialTab(chatTabParam === "announcements" ? "announcements" : "discussions");
+      setShowChatModal(true);
+    }
+  }, [openChatParam, chatTabParam]);
 
   // Use react-query for group details
   const {
@@ -409,7 +421,7 @@ const GroupDetails = () => {
       />
 
       {/* Group Chat Modal */}
-      <GroupChatModal visible={showChatModal} onDismiss={() => setShowChatModal(false)} groupId={id || ""} groupName={groupDetails?.name || t("groups.groupChat")} />
+      <GroupChatModal visible={showChatModal} onDismiss={() => setShowChatModal(false)} groupId={id || ""} groupName={groupDetails?.name || t("groups.groupChat")} initialTab={chatInitialTab} />
     </>
   );
 };
