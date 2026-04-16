@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { router } from "expo-router";
 import { eventBus } from "../helpers/PushNotificationHelper";
+import * as Notifications from "expo-notifications";
+import { canHandleNotification, markNotificationHandled, navigateFromNotificationData } from "../helpers/NotificationNavigation";
 
 /**
  * Component that handles navigation from push notifications
@@ -8,16 +9,20 @@ import { eventBus } from "../helpers/PushNotificationHelper";
  */
 export const NotificationNavigationHandler = () => {
   useEffect(() => {
+    const checkInitialNotification = async () => {
+      const response = await Notifications.getLastNotificationResponseAsync();
+      const notificationId = response?.notification?.request?.identifier;
+      const data = response?.notification?.request?.content?.data;
+
+      if (canHandleNotification(notificationId) && navigateFromNotificationData(data, "replace")) {
+        markNotificationHandled(notificationId);
+      }
+    };
+
     // Handle chat navigation events (for chat messages)
     const handleChatNavigation = (data: any) => {
       try {
-        if (data?.chatId) {
-          // Navigate to message screen with chat ID
-          router.push({ pathname: "/messageScreenRoot", params: { chatId: data.chatId } });
-        } else {
-          // Fallback: navigate to notifications screen to find messages
-          router.push("/(drawer)/notifications");
-        }
+        navigateFromNotificationData(data);
       } catch (error) {
         console.error("Error navigating to chat:", error);
       }
@@ -26,8 +31,7 @@ export const NotificationNavigationHandler = () => {
     // Handle general notification navigation events
     const handleNotificationNavigation = (data: any) => {
       try {
-        // For general notifications, navigate to notifications screen
-        router.push("/(drawer)/notifications");
+        navigateFromNotificationData(data);
       } catch (error) {
         console.error("Error navigating to notifications:", error);
       }
@@ -36,6 +40,7 @@ export const NotificationNavigationHandler = () => {
     // Add event listeners
     const chatSub = eventBus.addListener("navigateToChat", handleChatNavigation);
     const notifSub = eventBus.addListener("navigateToNotification", handleNotificationNavigation);
+    checkInitialNotification();
 
     // Cleanup on unmount
     return () => {
