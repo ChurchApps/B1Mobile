@@ -18,8 +18,8 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
-      buildNumber: "57",
-      googleServicesFile: "./config/GoogleService-Info.plist",
+      buildNumber: "58",
+      googleServicesFile: process.env.GOOGLE_SERVICES_INFO_PLIST ?? "./config/GoogleService-Info.plist",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         NSCameraUsageDescription: "B1 Church needs camera access to allow you to take photos for your profile and share with your church community.",
@@ -32,8 +32,8 @@ module.exports = {
     },
     android: {
       package: "church.b1.mobile",
-      versionCode: 34,
-      googleServicesFile: "./config/google-services.json",
+      versionCode: 35,
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./config/google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
@@ -86,6 +86,7 @@ module.exports = {
         }
       ],
       "expo-video",
+      "./plugins/withFirebaseStaticFramework",
       "@react-native-firebase/app"
       // "@react-native-firebase/analytics"
     ],

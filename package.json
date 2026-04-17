@@ -1,7 +1,7 @@
 {
   "name": "B1Mobile",
   "main": "expo-router/entry",
-  "version": "3.15.0",
+  "version": "3.16.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -26,8 +26,8 @@
     "@expo/ui": "~55.0.11",
     "@expo/vector-icons": "^15.1.1",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-native-firebase/analytics": "^24.0.0",
-    "@react-native-firebase/app": "^24.0.0",
+    "@react-native-firebase/analytics": "^22.4.0",
+    "@react-native-firebase/app": "^22.4.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/drawer": "^7.3.9",
     "@react-navigation/native": "^7.1.6",
