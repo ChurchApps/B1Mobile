@@ -237,7 +237,7 @@ const Dashboard = () => {
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
               refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#175ec1" />
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={tc.primary} />
               }
             >
               {featuredContent}

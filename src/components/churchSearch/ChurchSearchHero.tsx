@@ -13,7 +13,7 @@ export const ChurchSearchHero: React.FC = () => {
 
   return (
     <View style={styles.heroSection}>
-      <Card style={styles.heroCard}>
+      <Card style={[styles.heroCard, { shadowColor: colors.primary }]}>
         <LinearGradient
           colors={[colors.primary, colors.secondary]}
           style={styles.heroGradient}
@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
     borderRadius: DimensionHelper.wp(5),
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#0D47A1", // intentional branded shadow — not a semantic token
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8

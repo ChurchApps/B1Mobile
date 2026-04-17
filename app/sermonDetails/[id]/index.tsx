@@ -143,7 +143,7 @@ const SermonDetails = () => {
           <Text variant="bodyMedium" style={[styles.errorMessage, { color: tc.textSecondary }]}>
             Please check your connection and try again.
           </Text>
-          <Button mode="contained" onPress={() => router.back()} style={styles.errorButton}>
+          <Button mode="contained" onPress={() => router.back()} style={{ backgroundColor: tc.primary }}>
             Go Back
           </Button>
         </View>
@@ -165,7 +165,7 @@ const SermonDetails = () => {
           </ScrollView>
 
           {/* Floating Action Button for video toggle */}
-          {showVideo && <FAB icon={() => <MaterialIcons name="close" size={24} color="#FFFFFF" />} style={styles.fab} onPress={() => setShowVideo(false)} label={t("sermons.closeVideo")} />}
+          {!showVideo && <FAB icon={() => <MaterialIcons name="close" size={24} color="#FFFFFF" />} style={[styles.fab, { backgroundColor: tc.primary }]} onPress={() => setShowVideo(false)} label={t("sermons.closeVideo")} color={tc.surface} />}
         </View>
       </LoadingWrapper>
     </View>
@@ -190,8 +190,7 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     bottom: 16,
-    right: 16,
-    backgroundColor: "#0D47A1"
+    right: 16
   },
   errorContainer: {
     flex: 1,
@@ -210,8 +209,7 @@ const styles = StyleSheet.create({
     color: "#9E9E9E",
     textAlign: "center",
     marginBottom: 24
-  },
-  errorButton: { backgroundColor: "#0D47A1" }
+  }
 });
 
 export default SermonDetails;

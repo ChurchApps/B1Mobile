@@ -12,17 +12,20 @@ import { queryClient, initializeQueryCache } from "../src/helpers/QueryClient";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
 import { NotificationNavigationHandler } from "../src/components/NotificationNavigationHandler";
 import { HeaderBell } from "@/components/wrapper/HeaderBell";
-import { StatusBar } from "react-native";
+import { Platform, StatusBar } from "react-native";
 import { AppLifecycleManager } from "../src/helpers/AppLifecycleManager";
 import { useThemeColors } from "../src/theme";
-import { useThemeContext } from "../src/theme/ThemeProvider";
 import "../src/i18n";
 import * as Sentry from "@sentry/react-native";
 import Constants from "expo-constants";
 
 function ThemedStatusBar() {
-  const { theme } = useThemeContext();
-  return <StatusBar barStyle={theme === "dark" ? "light-content" : "dark-content"} backgroundColor={theme === "dark" ? "#121212" : undefined} />;
+  if (Platform.OS !== "android") return null;
+
+  const tc = useThemeColors();
+  const barStyle = tc.onPrimary.toLowerCase() === "#ffffff" ? "light-content" : "dark-content";
+
+  return <StatusBar barStyle={barStyle} backgroundColor={tc.headerBg} />;
 }
 
 const youversionKey = Constants.expoConfig?.extra?.YOUVERSION_API_KEY;

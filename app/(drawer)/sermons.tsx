@@ -204,7 +204,7 @@ const Sermons = () => {
               Church ID: {currentChurch?.id || "Not set"}
             </Text>
           )}
-          <Button mode="contained" onPress={() => navigateBack()} style={styles.errorButton}>
+          <Button mode="contained" onPress={() => navigateBack()} style={[styles.errorButton, { backgroundColor: tc.primary }]}>
             {t("sermons.goBack")}
           </Button>
         </View>
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 24
   },
-  errorButton: { backgroundColor: "#0D47A1" }
+  errorButton: {}
 });
 
 export default Sermons;

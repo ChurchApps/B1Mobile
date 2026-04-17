@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from "react";
-import { useThemeColors } from "@/theme";
+import { useAppTheme, useThemeColors } from "@/theme";
 import { BlockoutDates } from "../../src/components/Plans/BlockoutDates";
 import { PlansTabBar } from "../../src/components/Plans/PlansTabBar";
 import { ServingTimes } from "../../src/components/Plans/ServingTimes";
 import { UpcomingDates } from "../../src/components/Plans/UpcomingDates";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { ArrayHelper, DateHelper } from "@/helpers/index";
+import { ArrayHelper, DateHelper, adjustHexColor } from "@/helpers/index";
 import { AssignmentInterface, PlanInterface, PositionInterface, TimeInterface } from "@/helpers/Interfaces";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -24,6 +24,7 @@ import dayjs from "../../src/helpers/dayjsConfig";
 
 const Plan = () => {
   const tc = useThemeColors();
+  const { theme } = useAppTheme();
   const { t } = useTranslation();
   const navigation = useReactNavigation<DrawerNavigationProp<any>>();
   const currentUserChurch = useCurrentUserChurch();
@@ -74,6 +75,7 @@ const Plan = () => {
   });
 
   const isLoading = assignmentsLoading || positionsLoading || plansLoading || timesLoading;
+  const heroGradientColors = [adjustHexColor(theme.colors.primary, -12), adjustHexColor(theme.colors.primary, 18)] as const;
 
   // Get start of today for consistent filtering (includes events from earlier today in "upcoming")
   const startOfToday = useMemo(() => dayjs().startOf("day").toDate(), []);
@@ -130,13 +132,13 @@ const Plan = () => {
   }, [upcomingAssignments, upcomingPlans]);
 
   const renderHeroSection = () => (
-    <Card style={styles.heroCard}>
+    <Card style={[styles.heroCard, { shadowColor: theme.colors.primary }]}>
       {isLoading ? (
         <Card.Content style={styles.loadingHeroContent}>
           <InlineLoader size="large" text={t("plans.loadingSchedule")} />
         </Card.Content>
       ) : (
-        <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
+        <LinearGradient colors={heroGradientColors} style={styles.heroGradient}>
           <View style={styles.heroContent}>
             <MaterialIcons name="assignment" size={48} color="white" style={styles.heroIcon} />
             <Text style={styles.heroTitle}>{t("plans.yourServingSchedule")}</Text>
@@ -216,7 +218,7 @@ const Plan = () => {
                 <Card style={styles.volunteerCard}>
                   <TouchableOpacity onPress={() => router.push("/(drawer)/volunteerBrowse")} activeOpacity={0.7}>
                     <Card.Content style={styles.volunteerContent}>
-                      <MaterialIcons name="volunteer-activism" size={32} color="#0D47A1" />
+                      <MaterialIcons name="volunteer-activism" size={32} color={tc.primary} />
                       <View style={{ flex: 1, marginLeft: 12 }}>
                         <Text style={styles.volunteerTitle}>{t("volunteer.browseVolunteer")}</Text>
                         <Text style={styles.volunteerSubtitle}>{t("volunteer.browseOpportunities")}</Text>
@@ -259,7 +261,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
