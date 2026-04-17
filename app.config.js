@@ -32,6 +32,7 @@ module.exports = {
     },
     android: {
       package: "church.b1.mobile",
+      versionCode: 34,
       googleServicesFile: "./config/google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
@@ -51,7 +52,7 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png"
     },
-    runtimeVersion: "1",
+    runtimeVersion: "2",
     plugins: [
       [
         "@sentry/react-native/expo",
@@ -76,9 +77,15 @@ module.exports = {
           ios: {
             deploymentTarget: "17.0",
             useFrameworks: "static"
+          },
+          android: {
+            extraGradleProperties: {
+              "org.gradle.jvmargs": "-Xmx6144m -XX:MaxMetaspaceSize=1024m"
+            }
           }
         }
       ],
+      "expo-video",
       "@react-native-firebase/app"
       // "@react-native-firebase/analytics"
     ],

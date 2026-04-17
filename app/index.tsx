@@ -8,7 +8,7 @@ import { router } from "expo-router";
 import { useEffect } from "react";
 import { Platform, View, StatusBar, Dimensions } from "react-native";
 import { useUserStore } from "../src/stores/useUserStore";
-import { Video, ResizeMode } from "expo-av";
+import { useVideoPlayer, VideoView } from "expo-video";
 
 if (Platform.OS === "android") {
   // See https://github.com/expo/expo/issues/6536 for this issue.
@@ -21,6 +21,11 @@ EnvironmentHelper.init();
 
 const SplashScreen = () => {
   const [isInitialized, setIsInitialized] = React.useState(false);
+  const player = useVideoPlayer(require("../assets/B1Loop.mp4"), p => {
+    p.loop = true;
+    p.muted = true;
+    p.play();
+  });
 
   const init = async () => {
     // Prevent multiple initializations
@@ -165,16 +170,14 @@ const SplashScreen = () => {
     <>
       <StatusBar hidden={true} />
       <View style={{ flex: 1, backgroundColor: "black", justifyContent: "center", alignItems: "center" }}>
-        <Video
-          source={require("../assets/B1Loop.mp4")}
+        <VideoView
+          player={player}
           style={{
             width: maxDimension,
             height: maxDimension
           }}
-          resizeMode={ResizeMode.CONTAIN}
-          shouldPlay
-          isLooping
-          isMuted
+          contentFit="contain"
+          nativeControls={false}
         />
       </View>
     </>
