@@ -10,6 +10,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../theme";
+import { ScrollView } from "react-native-gesture-handler";
 
 type VisibilityOption = "everyone" | "members" | "groups";
 
@@ -125,148 +126,151 @@ export const VisibilitySettings: React.FC = () => {
   };
 
   return (
-    <LoadingWrapper loading={isLoading}>
-      <View style={styles.container}>
-        <Card style={[styles.section, { backgroundColor: colors.surface }]}>
-          <Card.Content>
-            <View style={[styles.sectionHeader, { borderBottomColor: colors.border }]}>
-              <MaterialIcons name="visibility" size={24} color={colors.primary} />
-              <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
-                {t("profileEdit.visibilityPreferences")}
-              </Text>
-            </View>
+    <ScrollView style={{ flex: 1 }}>
+      <LoadingWrapper loading={isLoading}>
+        <View style={styles.container}>
+          <View style={[styles.section, { backgroundColor: colors.surface }]}>
+            <View>
+              <View style={[styles.sectionHeader, { borderBottomColor: colors.border }]}>
+                <MaterialIcons name="visibility" size={24} color={colors.primary} />
+                <Text variant="titleMedium" style={[styles.sectionTitle, { color: colors.text }]}>
+                  {t("profileEdit.visibilityPreferences")}
+                </Text>
+              </View>
 
-            <Text variant="bodyMedium" style={[styles.description, { color: colors.disabled }]}>
-              {t("profileEdit.visibilityDescription")}
-            </Text>
+              <Text variant="bodyMedium" style={[styles.description, { color: colors.disabled }]}>
+                {t("profileEdit.visibilityDescription")}
+              </Text>
 
-            {/* Hide from Directory */}
-            <View style={[styles.switchContainer, { borderBottomColor: colors.border }]}>
-              <Text variant="bodyMedium" style={[styles.switchLabel, { color: colors.text }]}>
-                {t("profileEdit.hideFromDirectory")}
-              </Text>
-              <Switch
-                value={optedOut}
-                onValueChange={setOptedOut}
-                color={colors.primary}
-              />
-            </View>
+              {/* Hide from Directory */}
+              <View style={[styles.switchContainer, { borderBottomColor: colors.border }]}>
+                <Text variant="bodyMedium" style={[styles.switchLabel, { color: colors.text }]}>
+                  {t("profileEdit.hideFromDirectory")}
+                </Text>
+                <Switch
+                  value={optedOut}
+                  onValueChange={setOptedOut}
+                  color={colors.primary}
+                />
+              </View>
 
-            {/* Address Visibility */}
-            <View style={[styles.dropdownContainer, { zIndex: 3000 }]}>
-              <Text variant="labelLarge" style={[styles.dropdownLabel, { color: colors.text }]}>
-                {t("profileEdit.addressVisibility")}
-              </Text>
-              <DropDownPicker
-                open={addressOpen}
-                value={address}
-                items={visibilityOptions}
-                setOpen={setAddressOpen}
-                setValue={setAddress}
-                onOpen={() => {
-                  setPhoneOpen(false);
-                  setEmailOpen(false);
-                }}
-                style={[styles.dropdown, { borderColor: colors.divider, backgroundColor: colors.surface }]}
-                dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
-                textStyle={[styles.dropdownText, { color: colors.text }]}
-                listMode="SCROLLVIEW"
-              />
-            </View>
+              {/* Address Visibility */}
+              <View style={[styles.dropdownContainer, { zIndex: 3000 }]}>
+                <Text variant="labelLarge" style={[styles.dropdownLabel, { color: colors.text }]}>
+                  {t("profileEdit.addressVisibility")}
+                </Text>
+                <DropDownPicker
+                  open={addressOpen}
+                  value={address}
+                  items={visibilityOptions}
+                  setOpen={setAddressOpen}
+                  setValue={setAddress}
+                  onOpen={() => {
+                    setPhoneOpen(false);
+                    setEmailOpen(false);
+                  }}
+                  style={[styles.dropdown, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                  dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                  textStyle={[styles.dropdownText, { color: colors.text }]}
+                  listMode="SCROLLVIEW"
+                />
+              </View>
 
-            {/* Phone Visibility */}
-            <View style={[styles.dropdownContainer, { zIndex: 2000 }]}>
-              <Text variant="labelLarge" style={[styles.dropdownLabel, { color: colors.text }]}>
-                {t("profileEdit.phoneVisibility")}
-              </Text>
-              <DropDownPicker
-                open={phoneOpen}
-                value={phoneNumber}
-                items={visibilityOptions}
-                setOpen={setPhoneOpen}
-                setValue={setPhoneNumber}
-                onOpen={() => {
-                  setAddressOpen(false);
-                  setEmailOpen(false);
-                }}
-                style={[styles.dropdown, { borderColor: colors.divider, backgroundColor: colors.surface }]}
-                dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
-                textStyle={[styles.dropdownText, { color: colors.text }]}
-                listMode="SCROLLVIEW"
-              />
-            </View>
+              {/* Phone Visibility */}
+              <View style={[styles.dropdownContainer, { zIndex: 2000 }]}>
+                <Text variant="labelLarge" style={[styles.dropdownLabel, { color: colors.text }]}>
+                  {t("profileEdit.phoneVisibility")}
+                </Text>
+                <DropDownPicker
+                  open={phoneOpen}
+                  value={phoneNumber}
+                  items={visibilityOptions}
+                  setOpen={setPhoneOpen}
+                  setValue={setPhoneNumber}
+                  onOpen={() => {
+                    setAddressOpen(false);
+                    setEmailOpen(false);
+                  }}
+                  style={[styles.dropdown, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                  dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                  textStyle={[styles.dropdownText, { color: colors.text }]}
+                  listMode="SCROLLVIEW"
+                />
+              </View>
 
-            {/* Email Visibility */}
-            <View style={[styles.dropdownContainer, { zIndex: 1000 }]}>
-              <Text variant="labelLarge" style={[styles.dropdownLabel, { color: colors.text }]}>
-                {t("profileEdit.emailVisibility")}
-              </Text>
-              <DropDownPicker
-                open={emailOpen}
-                value={email}
-                items={visibilityOptions}
-                setOpen={setEmailOpen}
-                setValue={setEmail}
-                onOpen={() => {
-                  setAddressOpen(false);
-                  setPhoneOpen(false);
-                }}
-                style={[styles.dropdown, { borderColor: colors.divider, backgroundColor: colors.surface }]}
-                dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
-                textStyle={[styles.dropdownText, { color: colors.text }]}
-                listMode="SCROLLVIEW"
-              />
-            </View>
+              {/* Email Visibility */}
+              <View style={[styles.dropdownContainer, { zIndex: 1000 }]}>
+                <Text variant="labelLarge" style={[styles.dropdownLabel, { color: colors.text }]}>
+                  {t("profileEdit.emailVisibility")}
+                </Text>
+                <DropDownPicker
+                  open={emailOpen}
+                  value={email}
+                  items={visibilityOptions}
+                  setOpen={setEmailOpen}
+                  setValue={setEmail}
+                  onOpen={() => {
+                    setAddressOpen(false);
+                    setPhoneOpen(false);
+                  }}
+                  style={[styles.dropdown, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                  dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
+                  textStyle={[styles.dropdownText, { color: colors.text }]}
+                  listMode="SCROLLVIEW"
+                  dropDownDirection="BOTTOM"
+                />
+              </View>
 
-            {hasChanges && (
-              <Button
-                mode="contained"
-                onPress={handleSave}
-                loading={saveMutation.isPending || optedOutMutation.isPending}
-                disabled={saveMutation.isPending || optedOutMutation.isPending}
-                style={[styles.saveButton, { backgroundColor: colors.primary }]}>
-                {t("common.save")}
-              </Button>
-            )}
-          </Card.Content>
-        </Card>
+              {hasChanges && (
+                <Button
+                  mode="contained"
+                  onPress={handleSave}
+                  loading={saveMutation.isPending || optedOutMutation.isPending}
+                  disabled={saveMutation.isPending || optedOutMutation.isPending}
+                  style={[styles.saveButton, { backgroundColor: colors.primary }]}>
+                  {t("common.save")}
+                </Button>
+              )}
+            </View>
+          </View>
 
-        <Card style={[styles.infoCard, { backgroundColor: colors.iconBackground }]}>
-          <Card.Content>
-            <View style={styles.infoHeader}>
-              <MaterialIcons name="info-outline" size={20} color={colors.primary} />
-              <Text variant="titleSmall" style={[styles.infoTitle, { color: colors.primary }]}>
-                {t("profileEdit.visibilityLevels")}
-              </Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Text variant="labelMedium" style={[styles.infoLabel, { color: colors.text }]}>
-                {t("profileEdit.everyone")}:
-              </Text>
-              <Text variant="bodySmall" style={[styles.infoText, { color: colors.disabled }]}>
-                {t("profileEdit.everyoneDescription")}
-              </Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Text variant="labelMedium" style={[styles.infoLabel, { color: colors.text }]}>
-                {t("profileEdit.membersOnly")}:
-              </Text>
-              <Text variant="bodySmall" style={[styles.infoText, { color: colors.disabled }]}>
-                {t("profileEdit.membersDescription")}
-              </Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Text variant="labelMedium" style={[styles.infoLabel, { color: colors.text }]}>
-                {t("profileEdit.myGroupsOnly")}:
-              </Text>
-              <Text variant="bodySmall" style={[styles.infoText, { color: colors.disabled }]}>
-                {t("profileEdit.groupsDescription")}
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-      </View>
-    </LoadingWrapper>
+          <Card style={[styles.infoCard, { backgroundColor: colors.iconBackground }]}>
+            <Card.Content>
+              <View style={styles.infoHeader}>
+                <MaterialIcons name="info-outline" size={20} color={colors.primary} />
+                <Text variant="titleSmall" style={[styles.infoTitle, { color: colors.primary }]}>
+                  {t("profileEdit.visibilityLevels")}
+                </Text>
+              </View>
+              <View style={styles.infoItem}>
+                <Text variant="labelMedium" style={[styles.infoLabel, { color: colors.text }]}>
+                  {t("profileEdit.everyone")}:
+                </Text>
+                <Text variant="bodySmall" style={[styles.infoText, { color: colors.disabled }]}>
+                  {t("profileEdit.everyoneDescription")}
+                </Text>
+              </View>
+              <View style={styles.infoItem}>
+                <Text variant="labelMedium" style={[styles.infoLabel, { color: colors.text }]}>
+                  {t("profileEdit.membersOnly")}:
+                </Text>
+                <Text variant="bodySmall" style={[styles.infoText, { color: colors.disabled }]}>
+                  {t("profileEdit.membersDescription")}
+                </Text>
+              </View>
+              <View style={styles.infoItem}>
+                <Text variant="labelMedium" style={[styles.infoLabel, { color: colors.text }]}>
+                  {t("profileEdit.myGroupsOnly")}:
+                </Text>
+                <Text variant="bodySmall" style={[styles.infoText, { color: colors.disabled }]}>
+                  {t("profileEdit.groupsDescription")}
+                </Text>
+              </View>
+            </Card.Content>
+          </Card>
+        </View>
+      </LoadingWrapper>
+    </ScrollView>
   );
 };
 
@@ -275,7 +279,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16
   },
-  section: { marginBottom: 16 },
+  section: {
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 16,
+
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6
+  },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
