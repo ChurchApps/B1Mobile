@@ -9,6 +9,8 @@ import { useEffect } from "react";
 import { Platform, View, StatusBar, Dimensions } from "react-native";
 import { useUserStore } from "../src/stores/useUserStore";
 import { Video, ResizeMode } from "expo-av";
+import * as Notifications from "expo-notifications";
+import { canHandleNotification, markNotificationHandled, navigateFromNotificationData } from "../src/helpers/NotificationNavigation";
 
 if (Platform.OS === "android") {
   // See https://github.com/expo/expo/issues/6536 for this issue.
@@ -136,6 +138,14 @@ const SplashScreen = () => {
 
     const currentChurch = useUserStore.getState().currentUserChurch?.church;
     const user = useUserStore.getState().user;
+    const lastNotificationResponse = await Notifications.getLastNotificationResponseAsync();
+    const notificationId = lastNotificationResponse?.notification?.request?.identifier;
+    const notificationData = lastNotificationResponse?.notification?.request?.content?.data;
+
+    if (user && authenticationSuccessful && currentChurch && canHandleNotification(notificationId) && navigateFromNotificationData(notificationData, "replace")) {
+      markNotificationHandled(notificationId);
+      return;
+    }
 
     // Determine navigation based on authentication status
     if (!user || !authenticationSuccessful) {
