@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, ScrollView } from "react-native";
 import { Text, Card, Button, Switch } from "react-native-paper";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiHelper } from "@churchapps/helpers";
@@ -10,7 +10,6 @@ import DropDownPicker from "react-native-dropdown-picker";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useTranslation } from "react-i18next";
 import { useThemeColors } from "../../theme";
-import { ScrollView } from "react-native-gesture-handler";
 
 type VisibilityOption = "everyone" | "members" | "groups";
 
@@ -126,8 +125,8 @@ export const VisibilitySettings: React.FC = () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1 }}>
-      <LoadingWrapper loading={isLoading}>
+    <LoadingWrapper loading={isLoading}>
+      <ScrollView style={styles.scrollView}>
         <View style={styles.container}>
           <View style={[styles.section, { backgroundColor: colors.surface }]}>
             <View>
@@ -217,7 +216,6 @@ export const VisibilitySettings: React.FC = () => {
                   dropDownContainerStyle={[styles.dropdownList, { borderColor: colors.divider, backgroundColor: colors.surface }]}
                   textStyle={[styles.dropdownText, { color: colors.text }]}
                   listMode="SCROLLVIEW"
-                  dropDownDirection="BOTTOM"
                 />
               </View>
 
@@ -269,8 +267,8 @@ export const VisibilitySettings: React.FC = () => {
             </Card.Content>
           </Card>
         </View>
-      </LoadingWrapper>
-    </ScrollView>
+      </ScrollView>
+    </LoadingWrapper>
   );
 };
 
@@ -279,11 +277,15 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16
   },
+  scrollView: {
+    flex: 1
+  },
   section: {
     marginBottom: 16,
     padding: 16,
     borderRadius: 16,
-
+    elevation: 2,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 6
