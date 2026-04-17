@@ -19,9 +19,9 @@ function DefaultErrorFallback({ error, retry }: { error?: Error; retry: () => vo
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? "#121212" : "#FFFFFF" }]}>
-      <Text style={styles.title}>{i18n.t("common.somethingWentWrong")}</Text>
+      <Text style={[styles.title, { color: theme.colors.primary }]}>{i18n.t("common.somethingWentWrong")}</Text>
       <Text style={[styles.message, { color: isDark ? "#CCCCCC" : "#666666" }]}>{error?.message || i18n.t("common.unexpectedError")}</Text>
-      <TouchableOpacity style={styles.button} onPress={retry}>
+      <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary }]} onPress={retry}>
         <Text style={styles.buttonText}>{i18n.t("common.tryAgain")}</Text>
       </TouchableOpacity>
     </View>
@@ -60,8 +60,6 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 }
 
-// Primary color (#0D47A1) and related values are static here because
-// ErrorBoundary is a class component and cannot use hooks.
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -72,7 +70,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#0D47A1",
     marginBottom: 16,
     textAlign: "center"
   },
@@ -83,7 +80,6 @@ const styles = StyleSheet.create({
     lineHeight: 24
   },
   button: {
-    backgroundColor: "#0D47A1",
     paddingHorizontal: 32,
     paddingVertical: 16,
     borderRadius: 8

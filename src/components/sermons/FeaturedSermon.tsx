@@ -4,9 +4,9 @@ import { Text, Card } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "../OptimizedImage";
-import { DateHelper } from "../../helpers";
+import { DateHelper, adjustHexColor, hexToRgba } from "../../helpers";
 import { SermonInterface } from "@churchapps/helpers";
-import { useThemeColors, CommonStyles } from "../../theme";
+import { useAppTheme, useThemeColors, CommonStyles } from "../../theme";
 
 interface FeaturedSermonProps {
   sermon: SermonInterface;
@@ -15,7 +15,9 @@ interface FeaturedSermonProps {
 
 export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress }) => {
   const colors = useThemeColors();
+  const { theme } = useAppTheme();
   const hasImage = sermon.thumbnail && sermon.thumbnail.trim() !== "";
+  const fallbackGradientColors = [adjustHexColor(theme.colors.primary, -12), adjustHexColor(theme.colors.primary, 18), adjustHexColor(theme.colors.primary, 28)] as const;
 
   return (
     <TouchableOpacity onPress={() => onPress(sermon)}>
@@ -24,7 +26,7 @@ export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress 
           {hasImage ? (
             <OptimizedImage source={{ uri: sermon.thumbnail }} style={styles.heroImage} contentFit="cover" />
           ) : (
-            <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[CommonStyles.absoluteFill, CommonStyles.fillImage, styles.heroFallback]}>
+            <LinearGradient colors={fallbackGradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[CommonStyles.absoluteFill, CommonStyles.fillImage, styles.heroFallback]}>
               <View style={[CommonStyles.absoluteFill, { opacity: 0.2 }]}>
                 <View style={styles.heroCircle1} />
                 <View style={styles.heroCircle2} />
@@ -53,7 +55,7 @@ export const FeaturedSermon: React.FC<FeaturedSermonProps> = ({ sermon, onPress 
               )) ||
                 null}
             </View>
-            <View style={[CommonStyles.circularButtonLg, styles.playButton, { shadowColor: colors.primary }]}>
+            <View style={[CommonStyles.circularButtonLg, styles.playButton, { backgroundColor: hexToRgba(colors.primary, 0.9), shadowColor: colors.primary }]}>
               <MaterialIcons name="play-arrow" size={32} color={colors.onPrimary} />
             </View>
           </View>
@@ -140,7 +142,6 @@ const styles = StyleSheet.create({
   },
   heroDuration: { opacity: 0.8 },
   playButton: {
-    backgroundColor: "rgba(21, 101, 192, 0.9)",
     elevation: 4,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,

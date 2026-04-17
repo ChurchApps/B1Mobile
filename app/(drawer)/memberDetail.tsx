@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from "react";
-import { useThemeColors } from "@/theme";
+import { useAppTheme, useThemeColors } from "@/theme";
 import { MainHeader } from "../../src/components/wrapper/MainHeader";
-import { UserHelper } from "../../src/helpers";
+import { UserHelper, adjustHexColor } from "../../src/helpers";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
@@ -38,6 +38,7 @@ interface Member {
 
 const MemberDetail = () => {
   const theme = useTheme();
+  const { theme: appTheme } = useAppTheme();
   const tc = useThemeColors();
   const { t } = useTranslation();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -110,6 +111,7 @@ const MemberDetail = () => {
   const primaryPhone = memberinfo?.mobilePhone || memberinfo?.homePhone;
   const hasContactInfo = memberinfo?.email || primaryPhone || memberinfo?.address1;
   const isOwnProfile = currentUserChurch?.person?.id === parsedMember?.id;
+  const heroGradientColors = [adjustHexColor(appTheme.colors.primary, -12), adjustHexColor(appTheme.colors.primary, 18)] as const;
 
   return (
     <SafeAreaProvider>
@@ -119,8 +121,8 @@ const MemberDetail = () => {
 
           <ScrollView ref={scrollViewRef} style={styles.scrollView} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
             {/* Hero Section */}
-            <Card style={styles.heroCard}>
-              <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
+            <Card style={[styles.heroCard, { shadowColor: appTheme.colors.primary }]}>
+              <LinearGradient colors={heroGradientColors} style={styles.heroGradient}>
                 <View style={styles.heroContent}>
                   <Avatar size={120} photoUrl={parsedMember?.photo} firstName={parsedMember?.name?.display?.split(" ")[0]} lastName={parsedMember?.name?.display?.split(" ").slice(1).join(" ").split(" ")[0]} style={styles.heroAvatar} />
                   <Text variant="headlineMedium" style={styles.heroName}>
@@ -148,7 +150,7 @@ const MemberDetail = () => {
                 )}
 
                 <TouchableOpacity style={styles.quickActionButton} onPress={handleMessage}>
-                  <View style={styles.quickActionIcon}>
+                  <View style={[styles.quickActionIcon, { backgroundColor: appTheme.colors.primary, shadowColor: appTheme.colors.primary }]}>
                     <MaterialIcons name="message" size={24} color="#FFFFFF" />
                   </View>
                   <Text variant="labelMedium" style={styles.quickActionText}>
@@ -158,7 +160,7 @@ const MemberDetail = () => {
 
                 {primaryPhone && (
                   <TouchableOpacity style={styles.quickActionButton} onPress={() => handleCall(primaryPhone)}>
-                    <View style={styles.quickActionIcon}>
+                    <View style={[styles.quickActionIcon, { backgroundColor: appTheme.colors.primary, shadowColor: appTheme.colors.primary }]}>
                       <MaterialIcons name="phone" size={24} color="#FFFFFF" />
                     </View>
                     <Text variant="labelMedium" style={[styles.quickActionText, { color: tc.text }]}>
@@ -169,7 +171,7 @@ const MemberDetail = () => {
 
                 {memberinfo?.email && (
                   <TouchableOpacity style={styles.quickActionButton} onPress={() => handleEmail(memberinfo.email)}>
-                    <View style={styles.quickActionIcon}>
+                    <View style={[styles.quickActionIcon, { backgroundColor: appTheme.colors.primary, shadowColor: appTheme.colors.primary }]}>
                       <MaterialIcons name="email" size={24} color="#FFFFFF" />
                     </View>
                     <Text variant="labelMedium" style={[styles.quickActionText, { color: tc.text }]}>
@@ -289,7 +291,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -347,12 +348,10 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#0D47A1",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 8,
     elevation: 3,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4

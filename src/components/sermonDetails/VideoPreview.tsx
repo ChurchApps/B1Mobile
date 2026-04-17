@@ -5,6 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { OptimizedImage } from "../OptimizedImage";
 import { SermonInterface } from "@churchapps/helpers";
 import { useThemeColors } from "../../theme";
+import { hexToRgba } from "../../helpers";
 
 interface VideoPreviewProps {
   sermon: SermonInterface;
@@ -26,7 +27,7 @@ export const VideoPreview: React.FC<VideoPreviewProps> = ({ sermon, onPlay, visi
           contentFit="cover"
         />
         <View style={styles.previewOverlay}>
-          <View style={[styles.playButton, { shadowColor: colors.primary }]}>
+          <View style={[styles.playButton, { backgroundColor: hexToRgba(colors.primary, 0.9), shadowColor: colors.primary }]}>
             <MaterialIcons name="play-arrow" size={48} color={colors.onPrimary} />
           </View>
           {sermon.duration && (
@@ -74,7 +75,6 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "rgba(21, 101, 192, 0.9)",
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,

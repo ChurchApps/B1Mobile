@@ -3,8 +3,8 @@ import { View, StyleSheet } from "react-native";
 import { Text, Card, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
-import { DateHelper } from "../../helpers";
-import { useThemeColors } from "../../theme";
+import { DateHelper, adjustHexColor } from "../../helpers";
+import { useAppTheme, useThemeColors } from "../../theme";
 
 export interface LiveStreamData {
   isLive: boolean;
@@ -28,6 +28,8 @@ interface LiveStreamCardProps {
 export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, timeUntilStream, onWatchLive }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  const { theme } = useAppTheme();
+  const countdownGradientColors = [adjustHexColor(theme.colors.primary, -12), adjustHexColor(theme.colors.primary, 18)] as const;
 
   if (liveStreamData.isLive) {
     return (
@@ -62,7 +64,7 @@ export const LiveStreamCard: React.FC<LiveStreamCardProps> = ({ liveStreamData, 
 
   return (
     <Card style={[styles.countdownCard, { shadowColor: colors.primary }]}>
-      <LinearGradient colors={["#0D47A1", "#1976D2"]} style={styles.countdownGradient}>
+      <LinearGradient colors={countdownGradientColors} style={styles.countdownGradient}>
         <View style={styles.countdownContent}>
           <Text variant="titleMedium" style={[styles.countdownLabel, { color: colors.white }]}>
             {t("sermons.nextServiceIn")}

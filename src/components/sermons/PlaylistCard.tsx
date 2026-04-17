@@ -4,9 +4,9 @@ import { Text, Card } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "../OptimizedImage";
-import { DateHelper } from "../../helpers";
+import { DateHelper, getPrimaryGradientColors } from "../../helpers";
 import { PlaylistInterface } from "@churchapps/helpers";
-import { useThemeColors, CommonStyles } from "../../theme";
+import { useAppTheme, useThemeColors, CommonStyles } from "../../theme";
 
 interface PlaylistCardProps {
   playlist: PlaylistInterface;
@@ -15,7 +15,9 @@ interface PlaylistCardProps {
 
 export const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onPress }) => {
   const colors = useThemeColors();
+  const { theme } = useAppTheme();
   const hasImage = playlist.thumbnail && playlist.thumbnail.trim() !== "";
+  const fallbackGradientColors = getPrimaryGradientColors(theme.colors.primary, "three-stop");
 
   return (
     <TouchableOpacity onPress={() => onPress(playlist)}>
@@ -25,7 +27,7 @@ export const PlaylistCard: React.FC<PlaylistCardProps> = ({ playlist, onPress })
             {hasImage ? (
               <OptimizedImage source={{ uri: playlist.thumbnail }} style={CommonStyles.fillImage} contentFit="cover" />
             ) : (
-              <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[CommonStyles.fillImage, styles.playlistFallback]}>
+              <LinearGradient colors={fallbackGradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[CommonStyles.fillImage, styles.playlistFallback]}>
                 <View style={[CommonStyles.absoluteFill, { opacity: 0.3 }]}>
                   <View style={styles.playlistCircle1} />
                   <View style={styles.playlistCircle2} />

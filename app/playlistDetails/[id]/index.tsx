@@ -14,15 +14,16 @@ import { MainHeader } from "../../../src/components/wrapper/MainHeader";
 import { LoadingWrapper } from "../../../src/components/wrapper/LoadingWrapper";
 import { OptimizedImage } from "../../../src/components/OptimizedImage";
 import { SermonCard } from "../../../src/components/SermonCard";
-import { UserHelper, DateHelper } from "../../../src/helpers";
+import { UserHelper, DateHelper, adjustHexColor } from "../../../src/helpers";
 import { SermonInterface, PlaylistInterface } from "@churchapps/helpers";
 import { useCurrentChurch } from "../../../src/stores/useUserStore";
 import { useScreenHeader } from "@/hooks/useNavigationHeader";
-import { useThemeColors } from "../../../src/theme";
+import { useAppTheme, useThemeColors } from "../../../src/theme";
 
 const PlaylistDetails = () => {
   const { t } = useTranslation();
   const tc = useThemeColors();
+  const { theme } = useAppTheme();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id, title } = useLocalSearchParams<{ id: string; title: string }>();
   const currentChurch = useCurrentChurch();
@@ -68,6 +69,7 @@ const PlaylistDetails = () => {
   });
 
   const isLoading = playlistLoading || sermonsLoading;
+  const headerGradientColors = [adjustHexColor(theme.colors.primary, -12), adjustHexColor(theme.colors.primary, 18), adjustHexColor(theme.colors.primary, 28)] as const;
 
   const handleSermonPress = (sermon: SermonInterface) => {
     if (!sermon.id || !sermon.title) {
@@ -87,7 +89,7 @@ const PlaylistDetails = () => {
           {hasImage ? (
             <OptimizedImage source={{ uri: playlist.thumbnail }} style={styles.headerImage} contentFit="cover" />
           ) : (
-            <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.headerImage, styles.headerFallback]}>
+            <LinearGradient colors={headerGradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.headerImage, styles.headerFallback]}>
               <View style={styles.headerPattern}>
                 <View style={styles.headerCircle1} />
                 <View style={styles.headerCircle2} />

@@ -1,6 +1,6 @@
 import React from "react";
 import { useThemeColors } from "@/theme";
-import { ApiHelper, EnvironmentHelper, LoginResponseInterface, CheckEmailResponseInterface } from "../../src/helpers";
+import { ApiHelper, EnvironmentHelper, LoginResponseInterface, CheckEmailResponseInterface, adjustHexColor } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Alert, Linking, SafeAreaView, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
@@ -11,10 +11,12 @@ import { OptimizedImage } from "../../src/components/OptimizedImage";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
+import { useAppTheme } from "@/theme";
 
 const Login = () => {
   const { t } = useTranslation();
   const tc = useThemeColors();
+  const { theme } = useAppTheme();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -91,6 +93,7 @@ const Login = () => {
   };
 
   const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
+  const heroGradientColors = [adjustHexColor(theme.colors.primary, -12), adjustHexColor(theme.colors.primary, 18)] as const;
 
   return (
     <LoadingWrapper loading={loading}>
@@ -99,8 +102,8 @@ const Login = () => {
           <SafeAreaView style={styles.safeArea}>
             {/* Hero Section */}
             <View style={styles.heroSection}>
-              <Card style={styles.heroCard}>
-                <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.heroGradient}>
+              <Card style={[styles.heroCard, { shadowColor: theme.colors.primary }]}>
+                <LinearGradient colors={heroGradientColors} style={styles.heroGradient}>
                   <View style={styles.heroContent}>
                     {currentChurch ? (
                       <>
@@ -179,7 +182,15 @@ const Login = () => {
                     </Text>
                   </TouchableOpacity>
 
-                  <Button mode="contained" onPress={() => validateDetails() && loginApiCall()} loading={loading} style={styles.loginButton} labelStyle={styles.loginButtonText} disabled={loading} accessibilityLabel="Sign in">
+                  <Button
+                    mode="contained"
+                    onPress={() => validateDetails() && loginApiCall()}
+                    loading={loading}
+                    style={[styles.loginButton, { backgroundColor: theme.colors.primary, shadowColor: theme.colors.primary }]}
+                    labelStyle={styles.loginButtonText}
+                    disabled={loading}
+                    accessibilityLabel="Sign in"
+                  >
                     {t("auth.signIn")}
                   </Button>
 
@@ -216,7 +227,12 @@ const Login = () => {
                     <Text variant="bodyMedium" style={[styles.helpText, { color: tc.textSecondary }]}>
                       {t("auth.findChurchFirst")}
                     </Text>
-                    <Button mode="outlined" onPress={() => router.navigate("/(drawer)/churchSearch")} style={styles.helpButton} labelStyle={styles.helpButtonText}>
+                    <Button
+                      mode="outlined"
+                      onPress={() => router.navigate("/(drawer)/churchSearch")}
+                      style={[styles.helpButton, { borderColor: theme.colors.primary }]}
+                      labelStyle={[styles.helpButtonText, { color: theme.colors.primary }]}
+                    >
                       {t("auth.findYourChurch")}
                     </Button>
                   </Card.Content>
@@ -252,7 +268,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -323,17 +338,12 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     marginBottom: 24
   },
-  forgotPasswordText: {
-    color: "#0D47A1",
-    fontWeight: "500"
-  },
+  forgotPasswordText: { fontWeight: "500" },
   loginButton: {
-    backgroundColor: "#0D47A1",
     borderRadius: 12,
     paddingVertical: 4,
     marginBottom: 24,
     elevation: 3,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4
@@ -349,10 +359,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     lineHeight: 20
   },
-  privacyLink: {
-    color: "#0D47A1",
-    fontWeight: "500"
-  },
+  privacyLink: { fontWeight: "500" },
   registerSection: {
     alignItems: "center",
     marginTop: 16
@@ -361,10 +368,7 @@ const styles = StyleSheet.create({
     color: "#3c3c3c",
     textAlign: "center"
   },
-  registerLink: {
-    color: "#0D47A1",
-    fontWeight: "600"
-  },
+  registerLink: { fontWeight: "600" },
 
   // Help Section
   helpSection: {
@@ -396,14 +400,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 20
   },
-  helpButton: {
-    borderColor: "#0D47A1",
-    borderRadius: 8
-  },
-  helpButtonText: {
-    color: "#0D47A1",
-    fontWeight: "600"
-  }
+  helpButton: { borderRadius: 8 },
+  helpButtonText: { fontWeight: "600" }
 });
 
 export default Login;

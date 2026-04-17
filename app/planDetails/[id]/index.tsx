@@ -3,7 +3,7 @@ import { PositionDetails } from "../../../src/components/Plans/PositionDetails";
 import { Teams } from "../../../src/components/Plans/Teams";
 import { ServiceOrder } from "../../../src/components/Plans/ServiceOrder";
 import { MainHeader } from "../../../src/components/wrapper/MainHeader";
-import { ArrayHelper, AssignmentInterface, DateHelper, PersonInterface, PlanInterface, PositionInterface, TimeInterface } from "../../../src/helpers";
+import { ArrayHelper, AssignmentInterface, DateHelper, PersonInterface, PlanInterface, PositionInterface, TimeInterface, adjustHexColor, hexToRgba } from "../../../src/helpers";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useIsFocused, DrawerActions } from "@react-navigation/native";
@@ -18,11 +18,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import dayjs from "../../../src/helpers/dayjsConfig";
-import { useThemeColors } from "../../../src/theme";
+import { useAppTheme, useThemeColors } from "../../../src/theme";
 
 const PlanDetails = () => {
   const { t } = useTranslation();
   const tc = useThemeColors();
+  const { theme } = useAppTheme();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams<{ id: string }>();
   const planId = id;
@@ -95,6 +96,7 @@ const PlanDetails = () => {
   });
 
   const isLoading = planLoading || timesLoading || positionsLoading || assignmentsLoading || peopleLoading;
+  const heroGradientColors = [adjustHexColor(theme.colors.primary, -12), adjustHexColor(theme.colors.primary, 18)] as const;
 
   useEffect(() => {
     if (planError) {
@@ -133,7 +135,7 @@ const PlanDetails = () => {
             <InlineLoader size="large" text={t("plans.loadingPlanDetails")} />
           </Card.Content>
         ) : plan ? (
-          <LinearGradient colors={["#0D47A1", "#2196F3"]} style={styles.overviewHeroGradient}>
+          <LinearGradient colors={heroGradientColors} style={styles.overviewHeroGradient}>
             <View style={styles.overviewHeroContent}>
               <MaterialIcons name="assignment" size={48} color="white" style={styles.overviewHeroIcon} />
               <Text style={styles.overviewHeroTitle}>{plan.name}</Text>
@@ -150,11 +152,11 @@ const PlanDetails = () => {
 
       {/* My Position Details - Made Prominent */}
       <View style={styles.myPositionsSection}>
-        <View style={styles.myPositionsHeader}>
-          <MaterialIcons name="assignment-ind" size={24} color="#0D47A1" />
+        <View style={[styles.myPositionsHeader, { backgroundColor: hexToRgba(tc.primary, 0.08) }]}>
+          <MaterialIcons name="assignment-ind" size={24} color={tc.primary} />
           <Text style={[styles.myPositionsTitle, { color: tc.primary }]}>{t("plans.myAssignments")}</Text>
           {!assignmentsLoading && (
-            <View style={styles.assignmentCount}>
+            <View style={[styles.assignmentCount, { backgroundColor: tc.primary }]}>
               <Text style={styles.assignmentCountText}>{myAssignments.length}</Text>
             </View>
           )}
@@ -183,7 +185,7 @@ const PlanDetails = () => {
       <Card style={styles.overviewNotesCard}>
         <Card.Content>
           <View style={styles.overviewNotesHeader}>
-            <MaterialIcons name="note" size={24} color="#0D47A1" />
+            <MaterialIcons name="note" size={24} color={tc.primary} />
             <Text style={[styles.overviewNotesTitle, { color: tc.text }]}>{t("plans.planNotes")}</Text>
           </View>
           {planLoading ? (
@@ -200,7 +202,7 @@ const PlanDetails = () => {
 
   const renderLoadingIndicator = () => (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#0D47A1" />
+      <ActivityIndicator size="large" color={tc.primary} />
       <Text style={[styles.loadingText, { color: tc.textSecondary }]}>{t("plans.loadingPlanDetails")}</Text>
     </View>
   );
@@ -212,14 +214,14 @@ const PlanDetails = () => {
 
         {/* Tab Navigation */}
         <View style={[styles.tabContainer, { backgroundColor: tc.surface }]}>
-          <TouchableOpacity style={[styles.tab, selectedTab === "overview" && styles.activeTab]} onPress={() => setSelectedTab("overview")}>
-            <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "overview" && styles.activeTabText]}>{t("plans.overview")}</Text>
+          <TouchableOpacity style={[styles.tab, selectedTab === "overview" && { borderBottomColor: tc.primary }]} onPress={() => setSelectedTab("overview")}>
+            <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "overview" && { color: tc.primary, fontWeight: "700" }]}>{t("plans.overview")}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.tab, selectedTab === "serviceOrder" && styles.activeTab]} onPress={() => setSelectedTab("serviceOrder")}>
-            <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "serviceOrder" && styles.activeTabText]}>{t("plans.serviceOrder")}</Text>
+          <TouchableOpacity style={[styles.tab, selectedTab === "serviceOrder" && { borderBottomColor: tc.primary }]} onPress={() => setSelectedTab("serviceOrder")}>
+            <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "serviceOrder" && { color: tc.primary, fontWeight: "700" }]}>{t("plans.serviceOrder")}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.tab, selectedTab === "teams" && styles.activeTab]} onPress={() => setSelectedTab("teams")}>
-            <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "teams" && styles.activeTabText]}>{t("plans.teams")}</Text>
+          <TouchableOpacity style={[styles.tab, selectedTab === "teams" && { borderBottomColor: tc.primary }]} onPress={() => setSelectedTab("teams")}>
+            <Text style={[styles.tabText, { color: tc.textSecondary }, selectedTab === "teams" && { color: tc.primary, fontWeight: "700" }]}>{t("plans.teams")}</Text>
           </TouchableOpacity>
         </View>
 
@@ -236,7 +238,7 @@ const PlanDetails = () => {
                 <Card style={styles.serviceOrderCard}>
                   <Card.Content>
                     <View style={styles.sectionHeader}>
-                      <MaterialIcons name="format-list-numbered" size={24} color="#0D47A1" />
+                      <MaterialIcons name="format-list-numbered" size={24} color={tc.primary} />
                       <Text style={[styles.sectionTitle, { color: tc.text }]}>{t("plans.serviceOrder")}</Text>
                     </View>
                     {planLoading ? (
@@ -291,16 +293,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "transparent"
   },
-  activeTab: { borderBottomColor: "#0D47A1" },
   tabText: {
     color: "#9E9E9E",
     fontWeight: "500",
     fontSize: 14
   },
-  activeTabText: {
-    color: "#0D47A1",
-    fontWeight: "700"
-  },
+  activeTabText: { fontWeight: "700" },
 
   // Content
   scrollView: {
@@ -350,7 +348,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: "hidden",
     elevation: 6,
-    shadowColor: "#0D47A1",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8
@@ -384,7 +381,6 @@ const styles = StyleSheet.create({
   myPositionsHeader: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(21, 101, 192, 0.08)",
     padding: 16,
     borderRadius: 12,
     marginBottom: 16
@@ -392,12 +388,10 @@ const styles = StyleSheet.create({
   myPositionsTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: "#0D47A1",
     flex: 1,
     marginLeft: 8
   },
   assignmentCount: {
-    backgroundColor: "#0D47A1",
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 6,

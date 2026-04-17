@@ -4,9 +4,9 @@ import { Card, Text } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { OptimizedImage } from "./OptimizedImage";
-import { DateHelper } from "../helpers";
+import { DateHelper, adjustHexColor } from "../helpers";
 import { SermonInterface } from "@churchapps/helpers";
-import { useThemeColors, CommonStyles } from "../theme";
+import { useAppTheme, useThemeColors, CommonStyles } from "../theme";
 
 interface SermonCardProps {
   sermon: SermonInterface;
@@ -16,7 +16,9 @@ interface SermonCardProps {
 
 export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDuration = true }) => {
   const colors = useThemeColors();
+  const { theme } = useAppTheme();
   const hasImage = sermon.thumbnail && sermon.thumbnail.trim() !== "";
+  const fallbackGradientColors = [adjustHexColor(theme.colors.primary, -12), adjustHexColor(theme.colors.primary, 18), adjustHexColor(theme.colors.primary, 28)] as const;
 
   const formatDuration = (seconds?: number) => {
     if (!seconds) return "";
@@ -33,8 +35,7 @@ export const SermonCard: React.FC<SermonCardProps> = ({ sermon, onPress, showDur
             {hasImage ? (
               <OptimizedImage source={{ uri: sermon.thumbnail }} style={CommonStyles.fillImage} contentFit="cover" />
             ) : (
-              // Gradient uses brand color shades — intentional design, not semantic tokens
-              <LinearGradient colors={["#0D47A1", "#1976D2", "#2196F3"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[CommonStyles.fillImage, styles.sermonFallback]}>
+              <LinearGradient colors={fallbackGradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[CommonStyles.fillImage, styles.sermonFallback]}>
                 <View style={[CommonStyles.absoluteFill, { opacity: 0.3 }]}>
                   <View style={styles.patternCircle1} />
                   <View style={styles.patternCircle2} />
