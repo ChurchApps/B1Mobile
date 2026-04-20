@@ -76,6 +76,7 @@ module.exports = {
         {
           ios: {
             deploymentTarget: "17.0",
+            buildReactNativeFromSource: false,
             useFrameworks: "static"
           },
           android: {
@@ -86,6 +87,7 @@ module.exports = {
         }
       ],
       "expo-video",
+      "./plugins/withIosBundleIdentifier",
       "./plugins/withFirebaseStaticFramework",
       "@react-native-firebase/app"
       // "@react-native-firebase/analytics"
