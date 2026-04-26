@@ -42,15 +42,19 @@ export class EnvironmentHelper {
     ];
   };
 
+  private static applyApiBase = (base: string) => {
+    const trimmed = base.replace(/\/$/, "");
+    EnvironmentHelper.MembershipApi = trimmed + "/membership";
+    EnvironmentHelper.MessagingApi  = trimmed + "/messaging";
+    EnvironmentHelper.AttendanceApi = trimmed + "/attendance";
+    EnvironmentHelper.GivingApi     = trimmed + "/giving";
+    EnvironmentHelper.DoingApi      = trimmed + "/doing";
+    EnvironmentHelper.ContentApi    = trimmed + "/content";
+  };
+
   static initDev = () => {
-    // Hardcode staging URLs - don't read from extra since app.config.js defaults to prod
-    EnvironmentHelper.MembershipApi = "https://api.staging.churchapps.org/membership";
-    EnvironmentHelper.MessagingApi = "https://api.staging.churchapps.org/messaging";
-    EnvironmentHelper.AttendanceApi = "https://api.staging.churchapps.org/attendance";
-    EnvironmentHelper.GivingApi = "https://api.staging.churchapps.org/giving";
+    EnvironmentHelper.applyApiBase("https://api.staging.churchapps.org");
     EnvironmentHelper.LessonsApi = "https://api.staging.lessons.church";
-    EnvironmentHelper.DoingApi = "https://api.staging.churchapps.org/doing";
-    EnvironmentHelper.ContentApi = "https://api.staging.churchapps.org/content";
     EnvironmentHelper.ContentRoot = "https://content.staging.churchapps.org";
     EnvironmentHelper.LessonsRoot = "https://staging.lessons.church";
     EnvironmentHelper.B1WebRoot = "https://{subdomain}.staging.b1.church";
@@ -58,13 +62,8 @@ export class EnvironmentHelper {
 
   // NOTE - None of these values are secret
   static initProd = () => {
-    EnvironmentHelper.MembershipApi = "https://api.churchapps.org/membership";
-    EnvironmentHelper.MessagingApi = "https://api.churchapps.org/messaging";
-    EnvironmentHelper.AttendanceApi = "https://api.churchapps.org/attendance";
-    EnvironmentHelper.GivingApi = "https://api.churchapps.org/giving";
+    EnvironmentHelper.applyApiBase("https://api.churchapps.org");
     EnvironmentHelper.LessonsApi = "https://api.lessons.church";
-    EnvironmentHelper.DoingApi = "https://api.churchapps.org/doing";
-    EnvironmentHelper.ContentApi = "https://api.churchapps.org/content";
     EnvironmentHelper.ContentRoot = "https://content.churchapps.org";
     EnvironmentHelper.LessonsRoot = "https://lessons.church";
     EnvironmentHelper.B1WebRoot = "https://{subdomain}.b1.church";
