@@ -18,7 +18,7 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
-      buildNumber: "58",
+      buildNumber: "59",
       googleServicesFile: process.env.GOOGLE_SERVICES_INFO_PLIST ?? "./config/GoogleService-Info.plist",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
@@ -32,7 +32,7 @@ module.exports = {
     },
     android: {
       package: "church.b1.mobile",
-      versionCode: 35,
+      versionCode: 36,
       googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./config/google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
