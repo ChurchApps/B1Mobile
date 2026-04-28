@@ -1,0 +1,30 @@
+# Default to LF for all text files; let git auto-detect binary
+* text=auto eol=lf
+
+# Windows-only scripts must keep CRLF
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.ps1       text eol=crlf
+
+# Files explicitly required to be LF (sourced by bash on macOS during EAS build)
+ios/.xcode.env*    text eol=lf
+ios/Podfile        text eol=lf
+ios/Podfile.lock   text eol=lf
+*.sh               text eol=lf
+android/gradlew    text eol=lf
+
+# Binary assets — never touch
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.webp      binary
+*.ttf       binary
+*.otf       binary
+*.woff      binary
+*.woff2     binary
+*.keystore  binary
+*.jks       binary
+*.p12       binary
+*.mobileprovision binary

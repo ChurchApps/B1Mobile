@@ -51,6 +51,30 @@ export default function AuthLayout() {
             headerBackTitle: t("common.back")
           }}
         />
+        <Stack.Screen
+          name="verify"
+          options={{
+            ...commonHeaderOptions,
+            headerTitle: t("auth.enterCode"),
+            headerBackTitle: t("common.back")
+          }}
+        />
+        <Stack.Screen
+          name="setPassword"
+          options={{
+            ...commonHeaderOptions,
+            headerTitle: t("auth.setPassword"),
+            headerBackTitle: t("common.back")
+          }}
+        />
+        <Stack.Screen
+          name="forgot"
+          options={{
+            ...commonHeaderOptions,
+            headerTitle: t("auth.resetPassword"),
+            headerBackTitle: t("common.back")
+          }}
+        />
       </Stack>
     </ErrorBoundary>
   );

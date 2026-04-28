@@ -18,8 +18,8 @@ module.exports = {
     ios: {
       supportsTablet: true,
       bundleIdentifier: "church.b1.mobile",
-      buildNumber: "57",
-      googleServicesFile: "./config/GoogleService-Info.plist",
+      buildNumber: "59",
+      googleServicesFile: process.env.GOOGLE_SERVICES_INFO_PLIST ?? "./config/GoogleService-Info.plist",
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
         NSCameraUsageDescription: "B1 Church needs camera access to allow you to take photos for your profile and share with your church community.",
@@ -32,7 +32,8 @@ module.exports = {
     },
     android: {
       package: "church.b1.mobile",
-      googleServicesFile: "./config/google-services.json",
+      versionCode: 36,
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./config/google-services.json",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
@@ -51,7 +52,7 @@ module.exports = {
     web: {
       favicon: "./assets/favicon.png"
     },
-    runtimeVersion: "1",
+    runtimeVersion: "2",
     plugins: [
       [
         "@sentry/react-native/expo",
@@ -75,10 +76,19 @@ module.exports = {
         {
           ios: {
             deploymentTarget: "17.0",
+            buildReactNativeFromSource: false,
             useFrameworks: "static"
+          },
+          android: {
+            extraGradleProperties: {
+              "org.gradle.jvmargs": "-Xmx6144m -XX:MaxMetaspaceSize=1024m"
+            }
           }
         }
       ],
+      "expo-video",
+      "./plugins/withIosBundleIdentifier",
+      "./plugins/withFirebaseStaticFramework",
       "@react-native-firebase/app"
       // "@react-native-firebase/analytics"
     ],

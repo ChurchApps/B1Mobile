@@ -1,5 +1,4 @@
 import { DeviceEventEmitter } from "react-native";
-import { setJSExceptionHandler, setNativeExceptionHandler } from "react-native-exception-handler";
 
 export class ErrorHelper {
 
@@ -31,16 +30,10 @@ export class ErrorHelper {
   }
 
   static initUnhandled() {
-    setJSExceptionHandler(error => {
-      ErrorHelper.logError("Unhandled Javascript", error.toString());
+    const previous = ErrorUtils.getGlobalHandler();
+    ErrorUtils.setGlobalHandler((error, isFatal) => {
+      ErrorHelper.logError("Unhandled Javascript", error?.toString() ?? "");
+      previous?.(error, isFatal);
     });
-
-    setNativeExceptionHandler(
-      (exceptionString: string) => {
-        ErrorHelper.logError("Unhandled Native", exceptionString);
-      },
-      false,
-      true
-    );
   }
 }

@@ -1,9 +1,9 @@
 import React from "react";
 import { useThemeColors } from "@/theme";
-import { ApiHelper, EnvironmentHelper, LoginResponseInterface, CheckEmailResponseInterface, adjustHexColor } from "../../src/helpers";
+import { ApiHelper, LoginResponseInterface, CheckEmailResponseInterface, adjustHexColor } from "../../src/helpers";
 import { router } from "expo-router";
 import { useState } from "react";
-import { Alert, Linking, SafeAreaView, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
+import { Alert, SafeAreaView, ScrollView, View, StyleSheet, TouchableOpacity } from "react-native";
 import { LoadingWrapper } from "../../src/components/wrapper/LoadingWrapper";
 import { TextInput, Button, Text, Card } from "react-native-paper";
 import { useUserStore, useCurrentChurch, useChurchAppearance } from "../../src/stores/useUserStore";
@@ -92,7 +92,6 @@ const Login = () => {
       });
   };
 
-  const forgotLink = EnvironmentHelper.B1WebRoot.replace("{subdomain}.", "") + "/login?action=forgot";
   const heroGradientColors = [adjustHexColor(theme.colors.primary, -12), adjustHexColor(theme.colors.primary, 18)] as const;
 
   return (
@@ -176,7 +175,7 @@ const Login = () => {
                     />
                   </View>
 
-                  <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => Linking.openURL(forgotLink)} accessibilityLabel="Forgot password" accessibilityRole="link">
+                  <TouchableOpacity style={styles.forgotPasswordContainer} onPress={() => router.navigate({ pathname: "/auth/forgot", params: email ? { email } : {} })} accessibilityLabel="Forgot password" accessibilityRole="link">
                     <Text variant="bodyMedium" style={[styles.forgotPasswordText, { color: tc.primary }]}>
                       {t("auth.forgotPassword")}
                     </Text>

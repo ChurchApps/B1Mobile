@@ -36,6 +36,9 @@ export const CheckinServices = (props: Props) => {
     gcTime: 30 * 60 * 1000 // 30 minutes
   });
 
+  const showServicesLoader = servicesLoading;
+  const showEmptyServices = !servicesLoading && !servicesError && serviceList.length === 0;
+
   useEffect(() => {
     UserHelper.addOpenScreenEvent("ServiceScreen");
   }, []);
@@ -82,14 +85,14 @@ export const CheckinServices = (props: Props) => {
 
         {/* Services List */}
         <View style={styles.contentSection}>
-          {servicesLoading || (serviceList?.length === 0 && !servicesError) ? (
+          {showServicesLoader ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={colors.primary} />
               <Text variant="bodyLarge" style={[styles.loadingText, { color: colors.textMuted }]}>
                 {t("checkin.loadingServices")}
               </Text>
             </View>
-          ) : serviceList.length === 0 ? (
+          ) : showEmptyServices ? (
             <Card style={[styles.emptyCard, { backgroundColor: colors.card, shadowColor: colors.shadowBlack }]}>
               <View style={styles.emptyContent}>
                 <MaterialIcons name="event-busy" size={64} color={colors.iconColor} />

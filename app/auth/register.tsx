@@ -46,8 +46,14 @@ const Register = () => {
       const registerData: any = { email, firstName, lastName };
       if (matchedChurchId) registerData.churchId = matchedChurchId;
       const data = await ApiHelper.postAnonymous("/users/register", registerData, "MembershipApi");
-      if (data.email != null) {
-        Alert.alert(t("common.alert"), t("auth.registrationSuccess"), [{ text: "OK", onPress: () => router.navigate("/auth/login") }]);
+      if (data?.errors?.length) {
+        const msg = String(data.errors[0]);
+        if (msg.toLowerCase().includes("user already exists")) Alert.alert(t("common.error"), t("auth.userExists"));
+        else Alert.alert(t("common.error"), msg);
+        return;
+      }
+      if (data?.email != null) {
+        router.replace({ pathname: "/auth/verify", params: { email } });
       } else {
         Alert.alert(t("common.error"), t("auth.userExists"));
       }
