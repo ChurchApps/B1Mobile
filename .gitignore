@@ -81,7 +81,6 @@ buck-out/
 /ios/Pods/
 
 # Env
-.env
 
 # Sentry config (no secrets - auth token is in EAS secrets)
 
@@ -98,5 +97,5 @@ ios/GoogleService-Info.plist
 
 expo-env.d.ts
 # @end expo-cli
-.env.local
 Notes.md
+config.bat

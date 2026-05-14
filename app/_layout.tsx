@@ -15,6 +15,7 @@ import { HeaderBell } from "@/components/wrapper/HeaderBell";
 import { Platform, StatusBar } from "react-native";
 import { AppLifecycleManager } from "../src/helpers/AppLifecycleManager";
 import { useThemeColors } from "../src/theme";
+import { getYouVersionModule } from "../src/helpers/YouVersionHelper";
 import "../src/i18n";
 import * as Sentry from "@sentry/react-native";
 import Constants from "expo-constants";
@@ -26,19 +27,6 @@ function ThemedStatusBar() {
   const barStyle = tc.onPrimary.toLowerCase() === "#ffffff" ? "light-content" : "dark-content";
 
   return <StatusBar barStyle={barStyle} backgroundColor={tc.headerBg} />;
-}
-
-const youversionKey = Constants.expoConfig?.extra?.YOUVERSION_API_KEY;
-if (youversionKey) {
-  try {
-    // This package is optional / may not be linked in some builds.
-    // Avoid crashing the app if the native module isn't present.
-
-    const { YouVersionPlatform } = require("@youversion/platform-react-native");
-    YouVersionPlatform.configure(youversionKey);
-  } catch (error) {
-    console.warn("[YouVersion] Native module not available - skipping configuration.", error);
-  }
 }
 
 Sentry.init({
@@ -131,6 +119,18 @@ function ThemedStack() {
 function RootLayout() {
   useEffect(() => {
     const setupApp = async () => {
+      const youversionKey = Constants.expoConfig?.extra?.YOUVERSION_API_KEY;
+      if (youversionKey) {
+        const youVersionModule = getYouVersionModule();
+        if (youVersionModule?.YouVersionPlatform) {
+          youVersionModule.YouVersionPlatform.configure(youversionKey);
+        } else {
+          console.warn("[YouVersion] Native module not available - skipping configuration.");
+        }
+      } else {
+        console.warn("[YouVersion] Missing YOUVERSION_API_KEY - skipping configuration.");
+      }
+
       await initializeFirebase();
       await UserHelper.loadSecureTokens();
       await initializeQueryCache();
