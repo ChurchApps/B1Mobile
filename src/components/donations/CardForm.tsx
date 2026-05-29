@@ -1,12 +1,13 @@
 import { ApiHelper } from "../../../src/helpers";
 import { PaymentMethodInterface, StripeCardUpdateInterface, StripePaymentMethod } from "../../../src/interfaces";
 import { CardField, CardFieldInput, useStripe } from "@stripe/stripe-react-native";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Alert, View } from "react-native";
 import { Button, Card, IconButton, Text, TextInput } from "react-native-paper";
 import { useAppTheme } from "../../../src/theme";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
 import { useTranslation } from "react-i18next";
+import { KingdomFundingTokenWebView, KFTokenWebViewHandle } from "./KingdomFundingTokenWebView";
 
 interface Props {
   setMode: (mode: "display" | "edit") => void;
@@ -14,9 +15,12 @@ interface Props {
   customerId: string;
   updatedFunction: () => void;
   handleDelete: () => void;
+  isKingdomFunding?: boolean;
+  kfTokenizationKey?: string;
+  kfSandbox?: boolean;
 }
 
-export function CardForm({ setMode, card, customerId, updatedFunction, handleDelete }: Props) {
+export function CardForm({ setMode, card, customerId, updatedFunction, handleDelete, isKingdomFunding, kfTokenizationKey, kfSandbox }: Props) {
   const { t } = useTranslation();
   const { theme, spacing } = useAppTheme();
   const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
@@ -27,10 +31,50 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
   const currentUserChurch = useCurrentUserChurch();
   const person = currentUserChurch?.person;
   const [cardHolderName, setCardHolderName] = useState(person?.name?.display || "");
+  const kfTokenRef = useRef<KFTokenWebViewHandle>(null);
 
   const handleSave = () => {
     setIsSubmitting(true);
+    if (isKingdomFunding && !card.id) return createCardKF();
     return card.id ? updateCard() : createCard();
+  };
+
+  const createCardKF = async () => {
+    if (!person?.id) {
+      Alert.alert(t("donations.error"), t("donations.userInfoNotAvailable"));
+      setIsSubmitting(false);
+      return;
+    }
+    if (!kfTokenRef.current) {
+      Alert.alert(t("donations.error"), "Payment form not ready. Please wait a moment and try again.");
+      setIsSubmitting(false);
+      return;
+    }
+    try {
+      const tokenResult = await kfTokenRef.current.getNonce();
+      const paymentMethod: any = {
+        id: `nonce-${tokenResult.nonce}`,
+        customerId,
+        personId: person.id,
+        email: person?.contactInfo?.email,
+        name: cardHolderName || person?.name?.display,
+        provider: "kingdomfunding",
+        cardBrand: tokenResult.cardType,
+        cardLast4: tokenResult.last4,
+        expiry_month: tokenResult.expiryMonth,
+        expiry_year: tokenResult.expiryYear
+      };
+      const result = await ApiHelper.post("/paymentmethods/addcard", paymentMethod, "GivingApi");
+      if (result?.error) {
+        Alert.alert(t("donations.failedToCreatePaymentMethod"), result.error);
+      } else {
+        setMode("display");
+        await updatedFunction();
+      }
+    } catch (err: any) {
+      Alert.alert(t("donations.failed"), err?.message || "Failed to add card");
+    }
+    setIsSubmitting(false);
   };
 
   const createCard = async () => {
@@ -96,6 +140,31 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
     </Text>
   );
 
+  // For KingdomFunding + existing card: only show delete/cancel (no editing fields)
+  if (isKingdomFunding && card.id) {
+    return (
+      <Card style={{ marginBottom: spacing.md }}>
+        <Card.Title title={t("donations.editCard")} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
+        <Card.Content>
+          <Text variant="bodyMedium" style={{ marginBottom: spacing.md }}>
+            {`${card.name} ending in ${card.last4}`}
+          </Text>
+          <Text variant="bodySmall" style={{ marginBottom: spacing.md, color: theme.colors.onSurfaceVariant }}>
+            Card details cannot be edited for this payment provider. You may delete this payment method and add a new one.
+          </Text>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: spacing.md }}>
+            <Button mode="outlined" onPress={() => setMode("display")} style={{ flex: 1, marginRight: spacing.sm }}>
+              {t("common.cancel")}
+            </Button>
+            <Button mode="contained" onPress={handleDelete} buttonColor={theme.colors.error} textColor={theme.colors.onError} style={{ flex: 1, marginLeft: spacing.sm }}>
+              {t("common.delete")}
+            </Button>
+          </View>
+        </Card.Content>
+      </Card>
+    );
+  }
+
   return (
     <Card style={{ marginBottom: spacing.md }}>
       <Card.Title title={card.id ? t("donations.editCard") : t("donations.addNewCard")} titleStyle={{ fontSize: 20, fontWeight: "600" }} left={props => <IconButton {...props} icon="credit-card" size={24} iconColor={theme.colors.primary} style={{ margin: 0 }} />} />
@@ -103,7 +172,11 @@ export function CardForm({ setMode, card, customerId, updatedFunction, handleDel
         {!card.id ? (
           <View style={{ marginBottom: spacing.md }}>
             <TextInput mode="outlined" label={t("donations.cardHolderName")} value={cardHolderName} onChangeText={setCardHolderName} style={{ marginBottom: spacing.sm }} />
-            <CardField postalCodeEnabled={true} placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }} cardStyle={{ backgroundColor: theme.colors.surface, textColor: theme.colors.onSurface }} style={{ height: 50, marginBottom: spacing.sm }} onCardChange={setCardDetails} />
+            {isKingdomFunding && kfTokenizationKey ? (
+              <KingdomFundingTokenWebView ref={kfTokenRef} tokenizationKey={kfTokenizationKey} sandbox={kfSandbox} />
+            ) : (
+              <CardField postalCodeEnabled={true} placeholders={{ number: "4242 4242 4242 4242", cvc: "123" }} cardStyle={{ backgroundColor: theme.colors.surface, textColor: theme.colors.onSurface }} style={{ height: 50, marginBottom: spacing.sm }} onCardChange={setCardDetails} />
+            )}
           </View>
         ) : (
           <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: spacing.md }}>

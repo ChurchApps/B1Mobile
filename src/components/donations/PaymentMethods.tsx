@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ApiHelper, UserHelper } from "../../../src/helpers";
 import { ErrorHelper } from "../../helpers/ErrorHelper";
-import { Permissions, StripePaymentMethod } from "../../../src/interfaces";
+import { GatewayData, Permissions, StripePaymentMethod } from "../../../src/interfaces";
 import { useIsFocused } from "@react-navigation/native";
 import { Alert, View } from "react-native";
 import { ActivityIndicator, Button, Card, Divider, IconButton, List, Text, useTheme } from "react-native-paper";
@@ -17,12 +17,16 @@ interface Props {
   updatedFunction: () => void;
   isLoading: boolean;
   publishKey: string;
+  gatewayData?: GatewayData[];
 }
 
-export function PaymentMethods({ customerId, paymentMethods, updatedFunction, isLoading }: Props) {
+export function PaymentMethods({ customerId, paymentMethods, updatedFunction, isLoading, gatewayData }: Props) {
   const { t } = useTranslation();
   const { spacing } = useAppTheme();
   const theme = useTheme();
+  const isKingdomFunding = gatewayData?.[0]?.provider?.toLowerCase() === "kingdomfunding";
+  const kfTokenizationKey = isKingdomFunding ? gatewayData?.[0]?.publicKey : "";
+  const kfSandbox = isKingdomFunding ? (gatewayData?.[0]?.settings?.sandbox === true || gatewayData?.[0]?.environment === "sandbox") : false;
   const [showModal, setShowModal] = useState<boolean>(false);
   const [editPaymentMethod, setEditPaymentMethod] = useState<StripePaymentMethod>(new StripePaymentMethod());
   const [verify, setVerify] = useState<boolean>(false);
@@ -68,7 +72,7 @@ export function PaymentMethods({ customerId, paymentMethods, updatedFunction, is
   let editModeContent: any = null;
   switch (editPaymentMethod.type) {
     case "card":
-      editModeContent = <CardForm setMode={setMode} card={editPaymentMethod} customerId={customerId} updatedFunction={updatedFunction} handleDelete={handleDelete} />;
+      editModeContent = <CardForm setMode={setMode} card={editPaymentMethod} customerId={customerId} updatedFunction={updatedFunction} handleDelete={handleDelete} isKingdomFunding={isKingdomFunding} kfTokenizationKey={kfTokenizationKey} kfSandbox={kfSandbox} />;
       break;
     case "bank":
       editModeContent = <EnhancedBankForm setMode={setMode} bank={editPaymentMethod} customerId={customerId} updatedFunction={updatedFunction} handleDelete={handleDelete} showVerifyForm={verify} />;

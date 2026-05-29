@@ -38,6 +38,17 @@ If you'd like to set up the project locally, see our [development guide](https:/
 1. Copy dotenv.sample.txt to .env
 2. Run `npm i` to install dependencies
 
+#### iOS Build Patches (Xcode 26+)
+
+The iOS Podfile contains two `post_install` patches that fix native build errors with Xcode 26 / new clang:
+
+- **fmt library**: Patches `node_modules/.../fmt/include/fmt/base.h` to disable `consteval` for all Apple clang versions (avoids "consteval call is not a constant expression" error).
+- **stripe-react-native**: Patches `node_modules/@stripe/stripe-react-native/ios/StripeSwiftInterop.h` to change `NS_ENUM(NSUInteger, STPPaymentStatus)` to `NSInteger`, matching the Swift enum's `Int` backing type (fixes "enumeration redeclared with different underlying type" error).
+
+Both patches live inside `ios/Podfile`'s `post_install` hook and re-apply automatically on every `pod install`. **However, `npm install` overwrites `node_modules`**, so after any `npm install`/`npm ci` you MUST run `pod install` again from the `ios/` directory before building. If you see `fmt` or `STPPaymentStatus` errors during build, this is the cause — re-run `pod install`.
+
+Both fixes can be removed once the upstream packages support Xcode 26+ natively.
+
 ## Release build
 
 1. Hardcode stage to prod EnvironmentHelper.ts

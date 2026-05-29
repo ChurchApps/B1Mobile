@@ -16,11 +16,8 @@ export class EnvironmentHelper {
 
   static init = () => {
     const extra = Constants.expoConfig?.extra || {};
-    let stage = extra.STAGE;
+    const stage = extra.STAGE;
 
-    stage = "prod";
-    //stage = "staging";
-    console.log("[EnvironmentHelper] Initializing with stage:", stage);
     switch (stage) {
       case "prod": EnvironmentHelper.initProd(); break;
       default: EnvironmentHelper.initDev(); break;
@@ -53,11 +50,19 @@ export class EnvironmentHelper {
   };
 
   static initDev = () => {
-    EnvironmentHelper.applyApiBase("https://api.staging.churchapps.org");
-    EnvironmentHelper.LessonsApi = "https://api.staging.lessons.church";
-    EnvironmentHelper.ContentRoot = "https://content.staging.churchapps.org";
-    EnvironmentHelper.LessonsRoot = "https://staging.lessons.church";
-    EnvironmentHelper.B1WebRoot = "https://{subdomain}.staging.b1.church";
+    // Read individual API URLs from app.config.js `extra` (populated from .env at build time).
+    // Falls back to staging if a value is missing.
+    const extra = Constants.expoConfig?.extra || {};
+    EnvironmentHelper.MembershipApi = extra.MEMBERSHIP_API || "https://api.staging.churchapps.org/membership";
+    EnvironmentHelper.MessagingApi  = extra.MESSAGING_API  || "https://api.staging.churchapps.org/messaging";
+    EnvironmentHelper.AttendanceApi = extra.ATTENDANCE_API || "https://api.staging.churchapps.org/attendance";
+    EnvironmentHelper.GivingApi     = extra.GIVING_API     || "https://api.staging.churchapps.org/giving";
+    EnvironmentHelper.DoingApi      = extra.DOING_API      || "https://api.staging.churchapps.org/doing";
+    EnvironmentHelper.ContentApi    = extra.CONTENT_API    || "https://api.staging.churchapps.org/content";
+    EnvironmentHelper.LessonsApi    = extra.LESSONS_API    || "https://api.staging.lessons.church";
+    EnvironmentHelper.ContentRoot   = extra.CONTENT_ROOT   || "https://content.staging.churchapps.org";
+    EnvironmentHelper.LessonsRoot   = extra.LESSONS_ROOT   || "https://staging.lessons.church";
+    EnvironmentHelper.B1WebRoot     = "https://{subdomain}.staging.b1.church";
   };
 
   // NOTE - None of these values are secret

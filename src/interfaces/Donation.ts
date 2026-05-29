@@ -76,7 +76,7 @@ export interface StripeDonationInterface {
 export interface MultiGatewayDonationInterface {
   id: string;
   type: "card" | "bank" | "paypal";
-  provider: "stripe" | "paypal";
+  provider: "stripe" | "paypal" | "kingdomfunding";
   customerId?: string;
   person?: {
     id?: string;
@@ -105,9 +105,10 @@ export interface PaymentMethod {
 
 export interface PaymentGateway {
   id: string;
-  provider: "stripe" | "paypal";
+  provider: "stripe" | "paypal" | "kingdomfunding";
   publicKey: string;
   enabled?: boolean;
+  settings?: Record<string, any>;
 }
 export interface SubscriptionInterface {
   id: string;
@@ -227,6 +228,8 @@ export interface GatewayData {
   webhookKey: string;
   productId: string;
   payFees: boolean;
+  settings?: any;
+  environment?: string;
 }
 
 export class StripePaymentMethod {
@@ -239,6 +242,7 @@ export class StripePaymentMethod {
   status?: string;
   account_holder_name?: string;
   account_holder_type?: string;
+  customerId?: string;
 
   constructor(obj?: any) {
     this.id = obj?.id || null;
@@ -250,5 +254,6 @@ export class StripePaymentMethod {
     this.status = obj?.status || null;
     this.account_holder_name = obj?.account_holder_name || "";
     this.account_holder_type = obj?.account_holder_type || "individual";
+    this.customerId = obj?.customerId || null;
   }
 }

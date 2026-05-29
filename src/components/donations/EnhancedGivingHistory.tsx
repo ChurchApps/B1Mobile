@@ -4,7 +4,7 @@ import { Card, Text, Button, Menu, Divider } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { ApiHelper, CurrencyHelper, DateHelper, globalStyles } from "../../helpers";
 import { useCurrentUserChurch } from "../../stores/useUserStore";
-import { DonationImpact, StripePaymentMethod, SubscriptionInterface } from "@/interfaces";
+import { DonationImpact, GatewayData, StripePaymentMethod, SubscriptionInterface } from "@/interfaces";
 import DropDownPicker from "react-native-dropdown-picker";
 import { DimensionHelper } from "@/helpers/DimensionHelper";
 import { DonationHelper } from "@churchapps/helpers";
@@ -29,12 +29,14 @@ interface Props {
   paymentMethods: StripePaymentMethod[];
   donationImpactData: DonationImpact[];
   donationImpactLoading?: boolean;
+  gatewayData?: GatewayData[];
 }
 
-export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpactData, donationImpactLoading = false }: Props) {
+export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpactData, donationImpactLoading = false, gatewayData }: Props) {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const currentUserChurch = useCurrentUserChurch();
+  const isKingdomFunding = gatewayData?.[0]?.provider?.toLowerCase() === "kingdomfunding";
 
   const intervalTypes = [
     { label: t("donations.weekly"), value: "one_week" },
@@ -576,59 +578,71 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                     <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                       {t("donations.selectPaymentMethod")}
                     </Text>
-                    <DropDownPicker
-                      listMode="FLATLIST"
-                      open={isPaymentMethodDropDownOpen}
-                      value={selectedMethod}
-                      items={paymentMethodItems}
-                      setOpen={setIsPaymentMethodDropDownOpen}
-                      setValue={setSelectedMethod}
-                      setItems={setPaymentMethodItems}
-                      onChangeValue={(value) => {
-                        handlePaymentMethodChange(value as string);
-                      }}
-                      containerStyle={{ marginTop: DimensionHelper.wp(1) }}
-                      style={{ borderColor: colors.borderLight }}
-                      labelStyle={globalStyles.labelStyle}
-                      dropDownContainerStyle={[styles.dropdownStyle, { backgroundColor: colors.card, borderColor: colors.borderLight, shadowColor: colors.shadowBlack }]}
-                      scrollViewProps={{ scrollEnabled: true }}
-                      dropDownDirection="AUTO"
-                      zIndex={3000}
-                      zIndexInverse={1000}
-                    />
+                    {isKingdomFunding ? (
+                      <View style={{ padding: 12, backgroundColor: colors.background, borderRadius: 8, marginTop: 4, marginBottom: 8 }}>
+                        <Text variant="bodyMedium" style={{ color: colors.text }}>{paymentMethods.find(pm => pm.id === selectedMethod)?.name || ""} ending in {paymentMethods.find(pm => pm.id === selectedMethod)?.last4 || ""}</Text>
+                      </View>
+                    ) : (
+                      <DropDownPicker
+                        listMode="FLATLIST"
+                        open={isPaymentMethodDropDownOpen}
+                        value={selectedMethod}
+                        items={paymentMethodItems}
+                        setOpen={setIsPaymentMethodDropDownOpen}
+                        setValue={setSelectedMethod}
+                        setItems={setPaymentMethodItems}
+                        onChangeValue={(value) => {
+                          handlePaymentMethodChange(value as string);
+                        }}
+                        containerStyle={{ marginTop: DimensionHelper.wp(1) }}
+                        style={{ borderColor: colors.borderLight }}
+                        labelStyle={globalStyles.labelStyle}
+                        dropDownContainerStyle={[styles.dropdownStyle, { backgroundColor: colors.card, borderColor: colors.borderLight, shadowColor: colors.shadowBlack }]}
+                        scrollViewProps={{ scrollEnabled: true }}
+                        dropDownDirection="AUTO"
+                        zIndex={3000}
+                        zIndexInverse={1000}
+                      />
+                    )}
                     <Text variant="bodyMedium" style={[styles.detailLabel, { color: colors.disabled }]}>
                       {t("donations.selectInterval")}
                     </Text>
-                    <DropDownPicker
-                      listMode="FLATLIST"
-                      open={intervalOpen}
-                      value={intervalValue}
-                      items={intervalItems}
-                      setOpen={setIntervalOpen}
-                      setValue={setIntervalValue}
-                      setItems={setIntervalItems}
-                      onChangeValue={(v) => {
-                        if (typeof v === "string") {
-                          setSelectedInterval(v);
-                          setIntervalValue(v);
-                          if (selectedRecurring?.plan) {
-                            const inter = DonationHelper.getInterval(v);
-                            const updated = { ...selectedRecurring };
-                            updated.plan.interval_count = inter.interval_count;
-                            updated.plan.interval = inter.interval;
-                            setSelectedRecurring(updated);
+                    {isKingdomFunding ? (
+                      <View style={{ padding: 12, backgroundColor: colors.background, borderRadius: 8, marginTop: 4, marginBottom: 8 }}>
+                        <Text variant="bodyMedium" style={{ color: colors.text }}>{selectedRecurring?.plan?.interval_count || 1} {selectedRecurring?.plan?.interval || "month"}{(selectedRecurring?.plan?.interval_count || 1) > 1 ? "s" : ""}</Text>
+                      </View>
+                    ) : (
+                      <DropDownPicker
+                        listMode="FLATLIST"
+                        open={intervalOpen}
+                        value={intervalValue}
+                        items={intervalItems}
+                        setOpen={setIntervalOpen}
+                        setValue={setIntervalValue}
+                        setItems={setIntervalItems}
+                        onChangeValue={(v) => {
+                          if (typeof v === "string") {
+                            setSelectedInterval(v);
+                            setIntervalValue(v);
+                            if (selectedRecurring?.plan) {
+                              const inter = DonationHelper.getInterval(v);
+                              const updated = { ...selectedRecurring };
+                              updated.plan.interval_count = inter.interval_count;
+                              updated.plan.interval = inter.interval;
+                              setSelectedRecurring(updated);
+                            }
                           }
-                        }
-                      }}
-                      containerStyle={{ marginTop: DimensionHelper.wp(1) }}
-                      style={{ borderColor: colors.borderLight }}
-                      labelStyle={globalStyles.labelStyle}
-                      dropDownContainerStyle={[styles.dropdownStyle, { backgroundColor: colors.card, borderColor: colors.borderLight, shadowColor: colors.shadowBlack }]}
-                      scrollViewProps={{ scrollEnabled: true }}
-                      dropDownDirection="AUTO"
-                      zIndex={2000}
-                      zIndexInverse={2000}
-                    />
+                        }}
+                        containerStyle={{ marginTop: DimensionHelper.wp(1) }}
+                        style={{ borderColor: colors.borderLight }}
+                        labelStyle={globalStyles.labelStyle}
+                        dropDownContainerStyle={[styles.dropdownStyle, { backgroundColor: colors.card, borderColor: colors.borderLight, shadowColor: colors.shadowBlack }]}
+                        scrollViewProps={{ scrollEnabled: true }}
+                        dropDownDirection="AUTO"
+                        zIndex={2000}
+                        zIndexInverse={2000}
+                      />
+                    )}
                   </View>
 
                   <View style={styles.managementActions}>
@@ -649,16 +663,18 @@ export function EnhancedGivingHistory({ customerId, paymentMethods, donationImpa
                     >
                       {loadingAction === "delete" ? t("common.loading").toUpperCase() : t("common.delete").toUpperCase()}
                     </Button>
-                    <Button
-                      mode="contained"
-                      style={styles.stopButton}
-                      buttonColor={colors.primary}
-                      textColor={colors.white}
-                      onPress={handleSave}
-                      loading={loadingAction === "save"}
-                    >
-                      {loadingAction === "save" ? t("common.loading").toUpperCase() : t("common.save").toUpperCase()}
-                    </Button>
+                    {!isKingdomFunding && (
+                      <Button
+                        mode="contained"
+                        style={styles.stopButton}
+                        buttonColor={colors.primary}
+                        textColor={colors.white}
+                        onPress={handleSave}
+                        loading={loadingAction === "save"}
+                      >
+                        {loadingAction === "save" ? t("common.loading").toUpperCase() : t("common.save").toUpperCase()}
+                      </Button>
+                    )}
                   </View>
                 </>
               )}
