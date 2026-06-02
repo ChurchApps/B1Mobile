@@ -3,6 +3,7 @@
   "main": "expo-router/entry",
   "version": "3.16.1",
   "scripts": {
+    "preinstall": "node -e \"if(!(process.env.npm_config_user_agent||'').startsWith('yarn')){console.error('\\n[B1Mobile] This project uses Yarn (Berry). Run \\'yarn install\\' instead of npm/pnpm.\\n');process.exit(1)}\"",
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
@@ -122,11 +123,17 @@
     "react-test-renderer": "^19.2.5",
     "typescript": "~5.9.2"
   },
-  "overrides": {
+  "resolutions": {
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "@types/react": "~19.2.10",
     "@types/react-dom": "~19.2.10"
+  },
+  "packageManager": "yarn@4.15.0",
+  "dependenciesMeta": {
+    "@sentry/cli": {
+      "built": true
+    }
   },
   "private": true,
   "expo": {

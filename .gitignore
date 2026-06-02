@@ -7,7 +7,6 @@ devices.json
 
 android/.cxx
 .cursor
-yarn.lock
 package-lock.json
 *.bat
 *.hprof
@@ -99,3 +98,12 @@ expo-env.d.ts
 # @end expo-cli
 Notes.md
 .env
+
+# Yarn Berry (Corepack-managed, node-modules linker + global cache)
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
