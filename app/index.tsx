@@ -46,7 +46,6 @@ const SplashScreen = () => {
 
       // Set up notification listeners (these don't need to be awaited)
       PushNotificationHelper.NotificationListener();
-      PushNotificationHelper.NotificationPermissionAndroid();
 
       // Only authentication check needs to be sequential after token loading
       checkUser();

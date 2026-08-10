@@ -1,5 +1,6 @@
 import * as Notifications from "expo-notifications";
-import { DeviceEventEmitter, PermissionsAndroid, Platform, AppState } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert, DeviceEventEmitter, Linking, Platform, AppState } from "react-native";
 import DeviceInfo from "react-native-device-info";
 import * as Device from "expo-device";
 import { useUserStore } from "../stores/useUserStore";
@@ -17,6 +18,10 @@ export const updateCurrentScreen = (screen: string) => {
 // Initialize app state listener
 AppState.addEventListener("change", nextAppState => {
   isAppInForeground = nextAppState === "active";
+  // Pick up permission granted from phone settings without requiring an app restart
+  if (isAppInForeground) {
+    PushNotificationHelper.syncPermissionState().catch(() => {});
+  }
 });
 
 // Configure notification behavior
@@ -117,57 +122,50 @@ export class PushNotificationHelper {
 
   static async requestUserPermission() {
     try {
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
+      const existing = await Notifications.getPermissionsAsync();
 
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
+      if (existing.status === "granted") {
+        await PushNotificationHelper.GetFCMToken();
+        return;
       }
 
-      if (finalStatus === "granted") {
-        await PushNotificationHelper.GetFCMToken();
-      } else {
-        // Permission not granted, but we continue without notification permissions
+      if (existing.canAskAgain) {
+        // Soft ask first so the system prompt (2 denials = permanently blocked on Android) is only spent on willing users
+        const declined = await AsyncStorage.getItem("notificationSoftPromptDeclined");
+        if (declined) return;
+        Alert.alert("Stay Connected", "B1 Church can notify you about new messages, announcements and event reminders from your church. Would you like to turn on notifications?", [
+          { text: "Not Now", style: "cancel", onPress: () => AsyncStorage.setItem("notificationSoftPromptDeclined", "true") },
+          {
+            text: "Turn On",
+            onPress: async () => {
+              const { status } = await Notifications.requestPermissionsAsync();
+              if (status === "granted") await PushNotificationHelper.GetFCMToken();
+            }
+          }
+        ]);
+        return;
+      }
+
+      // Permanently denied — the OS will never show the prompt again; point to phone settings once
+      const promptShown = await AsyncStorage.getItem("notificationSettingsPromptShown");
+      if (!promptShown) {
+        await AsyncStorage.setItem("notificationSettingsPromptShown", "true");
+        Alert.alert("Notifications Are Blocked", "To receive updates from your church, enable notifications for B1 Church in your phone settings.", [
+          { text: "Not Now", style: "cancel" },
+          { text: "Open Settings", onPress: () => Linking.openSettings() }
+        ]);
       }
     } catch (error) {
       console.error("Error requesting notification permission:", error);
     }
   }
 
-  static async registerForPushNotificationsAsync() {
-    if (!Device.isDevice) {
-      return null;
-    }
-
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-
-    if (finalStatus !== "granted") {
-      return null;
-    }
-
-    try {
-      const tokenData = await Notifications.getExpoPushTokenAsync();
-      return tokenData.data;
-    } catch (error) {
-      console.error("Error getting Expo push token:", error);
-      return null;
-    }
-  }
-
-  static async NotificationPermissionAndroid() {
-    if (Platform.OS === "android") {
-      try {
-        await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-      } catch {
-        // Permission request failed, but we continue without notification permissions
-      }
+  static async syncPermissionState() {
+    if (useUserStore.getState().fcmToken) return;
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status === "granted") {
+      await PushNotificationHelper.GetFCMToken();
+      await PushNotificationHelper.registerUserDevice();
     }
   }
 
