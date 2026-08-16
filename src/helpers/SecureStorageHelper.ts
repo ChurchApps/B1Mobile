@@ -21,7 +21,7 @@ export class SecureStorageHelper {
     try {
       const value = await SecureStore.getItemAsync(key);
       if (value) {
-        try { await AsyncStorage.removeItem(`secure_${key}`); } catch {}
+        await AsyncStorage.removeItem(`secure_${key}`).catch(() => undefined);
         return value;
       }
     } catch (error) {
@@ -38,7 +38,7 @@ export class SecureStorageHelper {
       await AsyncStorage.removeItem(`secure_${key}`);
       return fallbackValue;
     } catch {
-      try { await AsyncStorage.removeItem(`secure_${key}`); } catch {}
+      await AsyncStorage.removeItem(`secure_${key}`).catch(() => undefined);
       return null;
     }
   }
@@ -70,7 +70,7 @@ export class SecureStorageHelper {
       for (const storageKey of leftover) {
         const value = await AsyncStorage.getItem(storageKey);
         if (value) {
-          try { await SecureStore.setItemAsync(storageKey.slice("secure_".length), value); } catch {}
+          await SecureStore.setItemAsync(storageKey.slice("secure_".length), value).catch(() => undefined);
         }
       }
       if (leftover.length > 0) await AsyncStorage.multiRemove(leftover);

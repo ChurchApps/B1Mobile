@@ -2,11 +2,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
 import { SecureStorageHelper } from "./SecureStorageHelper";
 
+jest.mock("react-native", () => ({ Platform: { OS: "ios" } }));
+
 jest.mock("expo-secure-store", () => ({
   setItemAsync: jest.fn(),
   getItemAsync: jest.fn(),
   deleteItemAsync: jest.fn()
 }));
+
+jest.mock("@react-native-async-storage/async-storage", () => {
+  const memory = new Map<string, string>();
+  return {
+    __esModule: true,
+    default: {
+      getItem: jest.fn(async (key: string) => memory.get(key) ?? null),
+      setItem: jest.fn(async (key: string, value: string) => { memory.set(key, value); }),
+      removeItem: jest.fn(async (key: string) => { memory.delete(key); }),
+      multiRemove: jest.fn(async (keys: string[]) => { keys.forEach(key => memory.delete(key)); }),
+      getAllKeys: jest.fn(async () => Array.from(memory.keys())),
+      clear: jest.fn(async () => { memory.clear(); })
+    }
+  };
+});
 
 describe("SecureStorageHelper", () => {
   beforeEach(async () => {

@@ -4,9 +4,29 @@ import { LoginUserChurchInterface, UserInterface } from "./Interfaces";
 import { SecureStorageHelper } from "./SecureStorageHelper";
 import { SessionTokenHelper } from "./SessionTokenHelper";
 
+jest.mock("react-native", () => ({ Platform: { OS: "ios" } }));
+jest.mock("expo-secure-store", () => ({
+  setItemAsync: jest.fn(),
+  getItemAsync: jest.fn(),
+  deleteItemAsync: jest.fn()
+}));
 jest.mock("@churchapps/helpers", () => ({
   ApiHelper: { setDefaultPermissions: jest.fn(), setPermissions: jest.fn() }
 }));
+jest.mock("@react-native-async-storage/async-storage", () => {
+  const memory = new Map<string, string>();
+  return {
+    __esModule: true,
+    default: {
+      getItem: jest.fn(async (key: string) => memory.get(key) ?? null),
+      setItem: jest.fn(async (key: string, value: string) => { memory.set(key, value); }),
+      removeItem: jest.fn(async (key: string) => { memory.delete(key); }),
+      multiRemove: jest.fn(async (keys: string[]) => { keys.forEach(key => memory.delete(key)); }),
+      getAllKeys: jest.fn(async () => Array.from(memory.keys())),
+      clear: jest.fn(async () => { memory.clear(); })
+    }
+  };
+});
 
 const church: LoginUserChurchInterface = {
   person: { id: "p1", name: { display: "Ada" } } as any,
