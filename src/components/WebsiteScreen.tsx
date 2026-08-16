@@ -5,7 +5,7 @@ import WebView from "react-native-webview";
 import { useNavigation, DrawerActions } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { useTranslation } from "react-i18next";
-import { ApiHelper, globalStyles, SecureStorageHelper } from "../../src/helpers";
+import { ApiHelper, globalStyles, prepareWebViewAuth, SecureStorageHelper } from "../../src/helpers";
 import { MainHeader } from "./wrapper/MainHeader";
 import { UserHelper } from "../helpers/UserHelper";
 import { eventBus } from "@/helpers/PushNotificationHelper";
@@ -16,9 +16,10 @@ import { useThemeColors } from "../theme";
 interface WebsiteScreenProps {
   url: string;
   title: string;
+  sessionJwt?: string;
 }
 
-export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
+export function WebsiteScreen({ url, title, sessionJwt }: WebsiteScreenProps) {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -28,10 +29,11 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
   const webviewRef = useRef<WebView>(null);
   const navigationMain = useNavigation();
   const authStore = useAuthStore;
+  const webViewAuth = prepareWebViewAuth(url, sessionJwt);
 
   useEffect(() => {
     // Utilities.trackEvent('Website Screen', { url });
-    UserHelper.addOpenScreenEvent("Website Screen", { url });
+    UserHelper.addOpenScreenEvent("Website Screen", { url: webViewAuth.uri });
 
     const timer = setTimeout(() => {
       setCurrentUrl(url);
@@ -133,8 +135,10 @@ export function WebsiteScreen({ url, title }: WebsiteScreenProps) {
       <View style={globalStyles.webViewContainer} onLayout={() => setIsLayoutReady(true)}>
         {isLayoutReady && (
           <WebView
-            source={currentUrl ? { uri: url } : undefined}
+            source={currentUrl ? { uri: webViewAuth.uri } : undefined}
             ref={webviewRef}
+            sharedCookiesEnabled={true}
+            injectedJavaScriptBeforeContentLoaded={webViewAuth.script}
             onMessage={handleMessage}
             renderError={() => (
               <View>

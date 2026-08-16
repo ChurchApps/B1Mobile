@@ -16,6 +16,7 @@ export { PersonHelper } from "./PersonHelper";
 export { queryClient, initializeQueryCache } from "./QueryClient";
 export { SecureStorageHelper } from "./SecureStorageHelper";
 export { UserHelper } from "./UserHelper";
+export { prepareWebViewAuth } from "./WebViewAuth";
 export { Utilities } from "./Utilities";
 export { useChurchSettings } from "../hooks/useChurchSettings";
 export { ValidationHelper } from "./ValidationHelper";

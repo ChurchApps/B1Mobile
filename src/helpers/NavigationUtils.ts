@@ -17,8 +17,7 @@ export class NavigationUtils {
         break;
       }
       case "lessons": {
-        const jwt = uc?.jwt;
-        router.push({ pathname: "/lessonRoot", params: { url: EnvironmentHelper.LessonsRoot + "/login?jwt=" + jwt + "&returnUrl=/b1/person&churchId=" + currentChurch?.id, title: item.text } });
+        router.push({ pathname: "/lessonRoot", params: { url: EnvironmentHelper.LessonsRoot + "/login?returnUrl=/b1/person&churchId=" + currentChurch?.id, title: item.text } });
         break;
       }
       case "bible": {
@@ -103,14 +102,9 @@ export class NavigationUtils {
 
   private static handleDonationNavigation(currentChurch?: ChurchInterface) {
     UserHelper.addOpenScreenEvent("DonationScreen");
-    const uc = useUserStore.getState().currentUserChurch;
 
     if (Platform.OS === "ios") {
-      let url = "https://" + currentChurch?.subDomain + ".b1.church/login/?returnUrl=%2Fdonate";
-      if (uc?.jwt) {
-        url += "&jwt=" + uc.jwt;
-      }
-      Linking.openURL(url);
+      Linking.openURL("https://" + currentChurch?.subDomain + ".b1.church/login/?returnUrl=%2Fdonate");
     } else {
       router.push("/donationRoot");
     }
