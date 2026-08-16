@@ -578,6 +578,7 @@
     "confirmPassword": "비밀번호 확인",
     "contact": "연락처",
     "currentHousehold": "현재 가족",
+    "currentPassword": "현재 비밀번호",
     "discard": "취소",
     "discardChanges": "변경사항을 취소하시겠습니까?",
     "discardChangesMessage": "저장하지 않은 변경사항이 손실됩니다.",
