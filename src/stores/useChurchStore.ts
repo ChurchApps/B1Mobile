@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ChurchInterface, LoginUserChurchInterface, AppearanceInterface, PersonInterface } from "../helpers/Interfaces";
 import { ApiHelper } from "@churchapps/helpers";
 import { PushNotificationHelper } from "../helpers/PushNotificationHelper";
+import { SessionTokenHelper } from "../helpers/SessionTokenHelper";
 import { useEngagementStore } from "./useEngagementStore";
 
 export interface AppThemeModeColors {
@@ -89,10 +89,7 @@ export const useChurchStore = create<ChurchState>()(
           userChurch.apis?.forEach((api: any) => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
 
           await get().setCurrentUserChurch(userChurch);
-
-          setTimeout(() => {
-            storeSecureTokens(userChurch);
-          }, 200);
+          await SessionTokenHelper.storeSessionTokens(userChurch);
         } else {
           await get().setAnonymousChurch(church);
         }
@@ -175,7 +172,13 @@ export const useChurchStore = create<ChurchState>()(
         const state = get();
 
         if (state.currentUserChurch?.church) {
-          const churchId = state.currentUserChurch.church.id;
+          let userChurch = state.currentUserChurch;
+          if (!userChurch.jwt) {
+            userChurch = await SessionTokenHelper.hydrateChurchTokens(userChurch);
+            set({ currentUserChurch: userChurch });
+          }
+
+          const churchId = userChurch.church.id;
 
           if (!state.churchAppearance || !state.appTheme) {
             try {
@@ -191,23 +194,20 @@ export const useChurchStore = create<ChurchState>()(
             await get().loadChurchLinks(churchId);
           }
 
-          if (state.currentUserChurch.jwt && !state.currentUserChurch.person) {
+          if (userChurch.jwt && !userChurch.person) {
             await get().loadPersonRecord();
           }
 
-          if (state.currentUserChurch.jwt) {
-            ApiHelper.setDefaultPermissions(state.currentUserChurch.jwt);
-            state.currentUserChurch.apis?.forEach(api => ApiHelper.setPermissions(api.keyName || "", api.jwt, api.permissions));
-            ApiHelper.setPermissions("MessagingApi", state.currentUserChurch.jwt, []);
-          }
+          if (userChurch.jwt) SessionTokenHelper.applyToApiHelper(userChurch);
         }
       }
     }),
     {
       name: "church-storage",
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => SessionTokenHelper.sanitizedAsyncStorage),
       partialize: state => ({
-        currentUserChurch: state.currentUserChurch,
+        currentUserChurch: SessionTokenHelper.stripChurchSecrets(state.currentUserChurch),
+        churchAppearance: state.churchAppearance,
         fcmToken: state.fcmToken
       })
     }
@@ -227,20 +227,3 @@ function extractAppTheme(publicSettings: any, set: (state: Partial<ChurchState>)
   }
 }
 
-async function storeSecureTokens(userChurch: LoginUserChurchInterface): Promise<void> {
-  try {
-    if (userChurch?.apis && userChurch.apis.length > 0) {
-      userChurch.apis.forEach(api => {
-        if (api.keyName && api.jwt) {
-          ApiHelper.setPermissions(api.keyName, api.jwt, api.permissions || []);
-        }
-      });
-
-      if (userChurch.jwt) {
-        ApiHelper.setPermissions("MessagingApi", userChurch.jwt, []);
-      }
-    }
-  } catch (error) {
-    console.error("Failed to store secure tokens:", error);
-  }
-}

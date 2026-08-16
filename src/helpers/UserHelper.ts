@@ -2,6 +2,7 @@ import { ApiHelper } from "@churchapps/helpers";
 import { Platform } from "react-native";
 import { logAnalyticsEvent } from "../config/firebase";
 import { SecureStorageHelper } from "./SecureStorageHelper";
+import { SessionTokenHelper } from "./SessionTokenHelper";
 import { IPermission } from "./Interfaces";
 
 export class UserHelper {
@@ -71,39 +72,26 @@ export class UserHelper {
     return false;
   }
 
-  /**
-   * Load JWT tokens from secure storage on app initialization
-   */
   static async loadSecureTokens(): Promise<void> {
     try {
+      await SessionTokenHelper.migrateAndWipePersistedTokens();
+
       const defaultToken = await SecureStorageHelper.getSecureItem("default_jwt");
       if (defaultToken) {
-        // Check if token is still valid
-        if (this.isTokenValid(defaultToken)) {
-          ApiHelper.setDefaultPermissions(defaultToken);
-        } else {
-          console.log("Stored JWT token is expired, will attempt refresh during authentication");
-          // Don't set expired token, let authentication handle it
-        }
+        if (this.isTokenValid(defaultToken)) ApiHelper.setDefaultPermissions(defaultToken);
+        else console.log("Stored JWT token is expired, will attempt refresh during authentication");
       }
 
-      // One-time migration: Remove old api_tokens to prevent SecureStore size warning
       const hasOldTokens = await SecureStorageHelper.hasSecureItem("api_tokens");
-      if (hasOldTokens) {
-        await SecureStorageHelper.removeSecureItem("api_tokens");
-        console.log("Migrated: Removed old api_tokens from SecureStore");
-      }
+      if (hasOldTokens) await SecureStorageHelper.removeSecureItem("api_tokens");
     } catch (error) {
       console.error("Failed to load secure tokens:", error);
     }
   }
 
-  /**
-   * Clear all stored JWT tokens (for logout)
-   */
-  static async clearSecureTokens(): Promise<void> {
+  static async clearSecureTokens(churchId?: string): Promise<void> {
     try {
-      await SecureStorageHelper.removeSecureItem("default_jwt");
+      await SessionTokenHelper.clearSessionTokens(churchId);
     } catch (error) {
       console.error("Failed to clear secure tokens:", error);
     }

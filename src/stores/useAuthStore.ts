@@ -1,9 +1,8 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserInterface, ChurchInterface, LoginUserChurchInterface, LoginResponseInterface } from "../helpers/Interfaces";
 import { ApiHelper } from "@churchapps/helpers";
-import { SecureStorageHelper } from "../helpers/SecureStorageHelper";
+import { SessionTokenHelper } from "../helpers/SessionTokenHelper";
 import { Platform } from "react-native";
 import { logAnalyticsEvent } from "../config/firebase";
 import { useChurchStore } from "./useChurchStore";
@@ -61,7 +60,7 @@ export const useAuthStore = create<AuthState>()(
           church: currentChurch.church.name
         });
 
-        await storeSecureTokens(currentChurch, data.user?.jwt);
+        await SessionTokenHelper.storeSessionTokens(currentChurch, data.user?.jwt);
 
         await churchStore.loadPersonRecord();
 
@@ -75,7 +74,7 @@ export const useAuthStore = create<AuthState>()(
         const currentChurch = churchStore.currentUserChurch?.church;
 
         ApiHelper.setDefaultPermissions("");
-        await SecureStorageHelper.removeSecureItem("default_jwt");
+        await SessionTokenHelper.clearSessionTokens(currentChurch?.id);
 
         set({ user: null, churches: [], userChurches: [] });
 
@@ -100,30 +99,8 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-      storage: createJSONStorage(() => AsyncStorage),
-      partialize: state => ({ user: state.user })
+      storage: createJSONStorage(() => SessionTokenHelper.sanitizedAsyncStorage),
+      partialize: state => ({ user: SessionTokenHelper.stripUserSecrets(state.user) })
     }
   )
 );
-
-async function storeSecureTokens(userChurch: LoginUserChurchInterface, userJwt?: string): Promise<void> {
-  try {
-    if (userJwt) {
-      await SecureStorageHelper.setSecureItem("default_jwt", userJwt);
-    }
-
-    if (userChurch?.apis && userChurch.apis.length > 0) {
-      userChurch.apis.forEach(api => {
-        if (api.keyName && api.jwt) {
-          ApiHelper.setPermissions(api.keyName, api.jwt, api.permissions || []);
-        }
-      });
-
-      if (userChurch.jwt) {
-        ApiHelper.setPermissions("MessagingApi", userChurch.jwt, []);
-      }
-    }
-  } catch (error) {
-    console.error("Failed to store secure tokens:", error);
-  }
-}

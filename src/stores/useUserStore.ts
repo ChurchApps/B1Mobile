@@ -1,6 +1,7 @@
 // Facade — re-exports from focused stores for backward compatibility.
 // New code should import from useAuthStore, useChurchStore, or useEngagementStore directly.
 
+import { SessionTokenHelper } from "../helpers/SessionTokenHelper";
 import { useAuthStore } from "./useAuthStore";
 import { useChurchStore } from "./useChurchStore";
 import { useEngagementStore } from "./useEngagementStore";
@@ -21,6 +22,9 @@ export const useUserStore = {
 // Initialize all stores from persistence
 export async function initializeFromPersistence() {
   await useChurchStore.getState().initializeFromPersistence();
+  const user = useAuthStore.getState().user;
+  const hydratedUser = await SessionTokenHelper.hydrateUserJwt(user);
+  if (hydratedUser?.jwt && hydratedUser.jwt !== user?.jwt) useAuthStore.setState({ user: hydratedUser });
 }
 
 // Convenience hooks — same signatures as before
