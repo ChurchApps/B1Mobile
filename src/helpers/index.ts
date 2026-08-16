@@ -21,3 +21,4 @@ export { Utilities } from "./Utilities";
 export { useChurchSettings } from "../hooks/useChurchSettings";
 export { ValidationHelper } from "./ValidationHelper";
 export { ApiErrorHandler } from "./ApiErrorHandler";
+export { WebViewAllowlist } from "./WebViewAllowlist";
