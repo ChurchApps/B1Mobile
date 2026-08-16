@@ -23,6 +23,7 @@ export const AccountSettings: React.FC = () => {
   const [newEmail, setNewEmail] = useState("");
 
   // Password state
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -30,6 +31,7 @@ export const AccountSettings: React.FC = () => {
   const [nameErrors, setNameErrors] = useState<{ firstName?: string; lastName?: string }>({});
   const [emailErrors, setEmailErrors] = useState<{ email?: string }>({});
   const [passwordErrors, setPasswordErrors] = useState<{
+    current?: string;
     new?: string;
     confirm?: string;
   }>({});
@@ -80,10 +82,11 @@ export const AccountSettings: React.FC = () => {
 
   // Password mutation
   const passwordMutation = useMutation({
-    mutationFn: async (data: { newPassword: string }) => {
+    mutationFn: async (data: { currentPassword: string; newPassword: string }) => {
       return ApiHelper.post("/users/updatePassword", data, "MembershipApi");
     },
     onSuccess: () => {
+      setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
       Alert.alert(t("common.success"), t("profileEdit.passwordUpdated"));
@@ -111,7 +114,8 @@ export const AccountSettings: React.FC = () => {
   };
 
   const validatePassword = (): boolean => {
-    const errors: { new?: string; confirm?: string } = {};
+    const errors: { current?: string; new?: string; confirm?: string } = {};
+    if (!currentPassword) errors.current = t("auth.enterPassword");
     if (!newPassword) errors.new = t("auth.enterPassword");
     else if (newPassword.length < 8) errors.new = t("profileEdit.passwordRequirements");
     if (!confirmPassword) errors.confirm = t("auth.enterPassword");
@@ -134,7 +138,7 @@ export const AccountSettings: React.FC = () => {
 
   const handleSavePassword = () => {
     if (validatePassword()) {
-      passwordMutation.mutate({ newPassword });
+      passwordMutation.mutate({ currentPassword, newPassword });
     }
   };
 
@@ -238,6 +242,17 @@ export const AccountSettings: React.FC = () => {
           </View>
 
           <FormField
+            label={t("profileEdit.currentPassword")}
+            value={currentPassword}
+            onChangeText={(text) => {
+              setCurrentPassword(text);
+              setPasswordErrors({});
+            }}
+            type="password"
+            error={passwordErrors.current}
+          />
+
+          <FormField
             label={t("profileEdit.newPassword")}
             value={newPassword}
             onChangeText={(text) => {
@@ -267,7 +282,7 @@ export const AccountSettings: React.FC = () => {
             mode="contained"
             onPress={handleSavePassword}
             loading={passwordMutation.isPending}
-            disabled={passwordMutation.isPending || !newPassword || !confirmPassword}
+            disabled={passwordMutation.isPending || !currentPassword || !newPassword || !confirmPassword}
             style={styles.saveButton}
             buttonColor={colors.primary}
             textColor={colors.onPrimary}>
