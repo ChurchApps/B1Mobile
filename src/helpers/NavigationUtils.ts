@@ -5,6 +5,7 @@ import { UserHelper } from "./UserHelper";
 import { ChurchInterface, LinkInterface } from "./Interfaces";
 import { Permissions } from "@churchapps/helpers";
 import { useUserStore } from "../stores/useUserStore";
+import { WebViewAllowlist } from "./WebViewAllowlist";
 
 export class NavigationUtils {
   static navigateToScreen(item: LinkInterface, currentChurch?: ChurchInterface) {
@@ -41,7 +42,11 @@ export class NavigationUtils {
       }
       case "url": {
         UserHelper.addOpenScreenEvent("WebsiteScreen");
-        router.push({ pathname: "/websiteUrlRoot", params: { url: item.url, title: item.text } });
+        if (WebViewAllowlist.isAllowedUrl(item.url)) {
+          router.push({ pathname: "/websiteUrlRoot", params: { url: item.url, title: item.text } });
+        } else if (WebViewAllowlist.isSafeExternalUrl(item.url)) {
+          Linking.openURL(item.url || "");
+        }
         break;
       }
       case "page": {
