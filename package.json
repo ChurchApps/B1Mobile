@@ -18,7 +18,14 @@
     "submit:ios": "eas submit --platform ios --profile production"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "moduleNameMapper": {
+      "^@churchapps/helpers$": "<rootDir>/node_modules/@churchapps/helpers/dist/index.js"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(.pnpm|react-native|@react-native|@react-native-community|expo|@expo|@expo-google-fonts|react-navigation|@react-navigation|@sentry/react-native|native-base|@churchapps))",
+      "/node_modules/react-native-reanimated/plugin/"
+    ]
   },
   "dependencies": {
     "@churchapps/content-providers": "^0.3.0",

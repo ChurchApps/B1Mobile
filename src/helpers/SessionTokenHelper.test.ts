@@ -10,9 +10,7 @@ jest.mock("expo-secure-store", () => ({
   getItemAsync: jest.fn(),
   deleteItemAsync: jest.fn()
 }));
-jest.mock("@churchapps/helpers", () => ({
-  ApiHelper: { setDefaultPermissions: jest.fn(), setPermissions: jest.fn() }
-}));
+jest.mock("@churchapps/helpers", () => ({ ApiHelper: { setDefaultPermissions: jest.fn(), setPermissions: jest.fn() } }));
 jest.mock("@react-native-async-storage/async-storage", () => {
   const memory = new Map<string, string>();
   return {
