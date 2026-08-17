@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ApiHelper } from "@churchapps/helpers";
-import { LoginUserChurchInterface, UserInterface } from "./Interfaces";
+import { ApiInterface, LoginUserChurchInterface, UserInterface } from "./Interfaces";
 import { SecureStorageHelper } from "./SecureStorageHelper";
 
 const DEFAULT_JWT_KEY = "default_jwt";
@@ -116,7 +116,7 @@ export class SessionTokenHelper {
     const keyNames = storedKeyNames ? storedKeyNames.split(",").filter(Boolean) : (userChurch.apis || []).map(api => api.keyName).filter((name): name is string => !!name);
     const existingApis = userChurch.apis || [];
 
-    const apis = await Promise.all(keyNames.map(async keyName => {
+    const apis: ApiInterface[] = await Promise.all(keyNames.map(async keyName => {
       const existing = existingApis.find(api => api.keyName === keyName);
       const apiJwt = await SecureStorageHelper.getSecureItem(churchApiJwtKey(churchId, keyName)) || "";
       return { name: existing?.name || keyName, keyName, permissions: existing?.permissions || [], jwt: apiJwt };
