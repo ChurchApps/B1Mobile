@@ -1,52 +1,48 @@
 import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
 
-/**
- * Helper class for secure storage of sensitive data like JWT tokens
- * Uses Expo SecureStore for encrypted storage with AsyncStorage fallback
- */
 export class SecureStorageHelper {
-  /**
-   * Securely store a value with encryption
-   */
+  static insecureFallbackAllowed(): boolean {
+    return Platform.OS === "web" && __DEV__;
+  }
+
   static async setSecureItem(key: string, value: string): Promise<void> {
     try {
       await SecureStore.setItemAsync(key, value);
     } catch (error) {
       console.error("Failed to store secure item:", error);
-      // Fallback to AsyncStorage for development/web
+      if (!this.insecureFallbackAllowed()) throw error;
       await AsyncStorage.setItem(`secure_${key}`, value);
     }
   }
 
-  /**
-   * Retrieve a securely stored value
-   */
   static async getSecureItem(key: string): Promise<string | null> {
     try {
       const value = await SecureStore.getItemAsync(key);
-      if (value) return value;
-
-      // Check for migrated data from AsyncStorage
-      const fallbackValue = await AsyncStorage.getItem(`secure_${key}`);
-      if (fallbackValue) {
-        // Migrate to secure storage and clean up
-        await this.setSecureItem(key, fallbackValue);
-        await AsyncStorage.removeItem(`secure_${key}`);
-        return fallbackValue;
+      if (value) {
+        await AsyncStorage.removeItem(`secure_${key}`).catch(() => undefined);
+        return value;
       }
-
-      return null;
     } catch (error) {
       console.error("Failed to retrieve secure item:", error);
-      // Fallback to AsyncStorage
-      return await AsyncStorage.getItem(`secure_${key}`);
+      if (!this.insecureFallbackAllowed()) return null;
+    }
+
+    const fallbackValue = await AsyncStorage.getItem(`secure_${key}`);
+    if (!fallbackValue) return null;
+    if (this.insecureFallbackAllowed()) return fallbackValue;
+
+    try {
+      await SecureStore.setItemAsync(key, fallbackValue);
+      await AsyncStorage.removeItem(`secure_${key}`);
+      return fallbackValue;
+    } catch {
+      await AsyncStorage.removeItem(`secure_${key}`).catch(() => undefined);
+      return null;
     }
   }
 
-  /**
-   * Remove a securely stored value
-   */
   static async removeSecureItem(key: string): Promise<void> {
     try {
       await SecureStore.deleteItemAsync(key);
@@ -54,7 +50,6 @@ export class SecureStorageHelper {
       console.error("Failed to remove secure item:", error);
     }
 
-    // Also clean up any fallback storage
     try {
       await AsyncStorage.removeItem(`secure_${key}`);
     } catch (error) {
@@ -62,12 +57,25 @@ export class SecureStorageHelper {
     }
   }
 
-  /**
-   * Check if a secure item exists
-   */
   static async hasSecureItem(key: string): Promise<boolean> {
     const value = await this.getSecureItem(key);
     return value !== null;
   }
 
+  static async wipeInsecureFallbacks(): Promise<void> {
+    if (this.insecureFallbackAllowed()) return;
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      const leftover = keys.filter(k => k.startsWith("secure_"));
+      for (const storageKey of leftover) {
+        const value = await AsyncStorage.getItem(storageKey);
+        if (value) {
+          await SecureStore.setItemAsync(storageKey.slice("secure_".length), value).catch(() => undefined);
+        }
+      }
+      if (leftover.length > 0) await AsyncStorage.multiRemove(leftover);
+    } catch (error) {
+      console.error("Failed to wipe insecure token fallbacks:", error);
+    }
+  }
 }

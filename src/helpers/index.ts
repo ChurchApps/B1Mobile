@@ -15,6 +15,7 @@ export { NavigationUtils } from "./NavigationUtils";
 export { PersonHelper } from "./PersonHelper";
 export { queryClient, initializeQueryCache } from "./QueryClient";
 export { SecureStorageHelper } from "./SecureStorageHelper";
+export { SessionTokenHelper } from "./SessionTokenHelper";
 export { UserHelper } from "./UserHelper";
 export { prepareWebViewAuth } from "./WebViewAuth";
 export { Utilities } from "./Utilities";
