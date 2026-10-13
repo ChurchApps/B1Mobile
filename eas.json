@@ -13,7 +13,11 @@
   "submit": {
     "production": {
       "android": {
-        "serviceAccountKeyPath": "./google-service-account.json"
+        "track": "production",
+        "releaseStatus": "completed"
+      },
+      "ios": {
+        "appleTeamId": "84A55Q9H5B"
       }
     }
   }

@@ -85,6 +85,7 @@ buck-out/
 
 # Firebase Config Files (sensitive)
 google-services.json
+google-service-account.json
 !android/app/google-services.json
 config/GoogleService-Info.plist
 ios/GoogleService-Info.plist

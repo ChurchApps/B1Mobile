@@ -63,3 +63,5 @@ To avoid App Store rejections after the Expo eject, keep the native project in s
 5. Submit with `eas submit --platform ios --profile production` (or use the Expo dashboard).
 6. If App Store Connect reports a duplicate version/build, repeat the steps with higher numbers and rebuild.
 
+`yarn publish:stores` builds on EAS and uploads Play and the App Store. Versions for this app stay on EAS (`appVersionSource: remote`), so the command does not edit the local version files. `/publish-app-stores b1mobile` is the same flow. B1 Mobile is maintenance-only.
+
