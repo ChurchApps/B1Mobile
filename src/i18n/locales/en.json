@@ -189,6 +189,8 @@
     "depositAmounts": "Deposit Amounts",
     "donate": "Give",
     "donationDetails": "Donation Details",
+    "guestGiveOnWeb": "Giving without an account happens on our secure web form. Sign in to give here in the app.",
+    "guestGiveOnWebButton": "Give on the web",
     "donations": "Donations",
     "editCard": "Edit Card",
     "editRecurringDonation": "Edit Recurring Donation",

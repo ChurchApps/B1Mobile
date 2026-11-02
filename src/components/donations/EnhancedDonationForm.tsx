@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
-import { Card, Text, TextInput, Button, Switch, Menu, SegmentedButtons } from "react-native-paper";
+import { View, StyleSheet, TouchableOpacity, Alert, Linking } from "react-native";
+import { Card, Text, TextInput, Button, Switch, Menu } from "react-native-paper";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useQuery } from "@tanstack/react-query";
-import { CardField, CardFieldInput, createPaymentMethod, collectBankAccountForSetup, confirmSetupIntent } from "@stripe/stripe-react-native";
+import { CardField, CardFieldInput } from "@stripe/stripe-react-native";
 import { ApiHelper, CurrencyHelper } from "../../helpers";
 import { FundInterface, StripeDonationInterface, StripePaymentMethod } from "../../interfaces";
 import { useUser, useCurrentUserChurch } from "../../stores/useUserStore";
@@ -48,17 +48,9 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
   const [showMethodMenu, setShowMethodMenu] = useState(false);
   const [showIntervalMenu, setShowIntervalMenu] = useState(false);
 
-  // Guest user fields
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [cardDetails, setCardDetails] = useState<CardFieldInput.Details>();
+  const [, setCardDetails] = useState<CardFieldInput.Details>();
   const [openStartPicker, setOpenStartPicker] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
-
-  // Guest payment type (card or bank)
-  const [guestPaymentType, setGuestPaymentType] = useState<"card" | "bank">("card");
-  const [bankConnecting, setBankConnecting] = useState(false);
 
   // Church data for non-auth users
   const [churchData, setChurchData] = useState<any>(null);
@@ -196,8 +188,8 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         customerId: customerId,
         person: {
           id: person?.id || "",
-          email: person ? user?.email || "" : email,
-          name: person ? `${user?.firstName} ${user?.lastName}` : `${firstName} ${lastName}`
+          email: user?.email || "",
+          name: `${user?.firstName} ${user?.lastName}`
         },
         amount: total,
         funds: [
@@ -218,29 +210,20 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       };
 
 
-      if (!currentUserChurch?.person?.id) {
-        // Guest user - route based on payment type
-        if (guestPaymentType === "bank") {
-          await handleGuestBankDonation(donation);
-        } else {
-          await handleGuestDonation(donation);
+      // For authenticated users, add gatewayId and other required fields
+      const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
+      const enhancedDonation = {
+        ...donation,
+        gatewayId: gateway?.id,
+        churchId: churchId,
+        notes: "",
+        church: {
+          name: churchData?.name || currentUserChurch?.church?.name,
+          subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
+          churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
         }
-      } else {
-        // For authenticated users, add gatewayId and other required fields
-        const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
-        const enhancedDonation = {
-          ...donation,
-          gatewayId: gateway?.id,
-          churchId: churchId,
-          notes: "",
-          church: {
-            name: churchData?.name || currentUserChurch?.church?.name,
-            subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
-            churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
-          }
-        };
-        await makeDonation(enhancedDonation);
-      }
+      };
+      await makeDonation(enhancedDonation);
     } catch (error) {
       console.error("Donation error:", error);
       Alert.alert(t("common.error"), t("donations.failed"));
@@ -267,145 +250,6 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
     }
   };
 
-  const handleGuestDonation = async (donation: StripeDonationInterface) => {
-    // Create user and person first
-    await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
-
-    const personData = { churchId: churchId, firstName, lastName, email };
-    const personResult = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
-
-    // Create payment method
-    const stripePaymentMethod = await createPaymentMethod({ paymentMethodType: "Card", ...cardDetails });
-
-    if (stripePaymentMethod.error) {
-      throw new Error(stripePaymentMethod.error.message);
-    }
-
-    // Call addcard to get customerId (like AppHelper does)
-    const pm = { id: stripePaymentMethod.paymentMethod.id, personId: personResult.id, email: email, name: `${firstName} ${lastName}`, churchId: churchId };
-
-    const result = await ApiHelper.post("/paymentmethods/addcard", pm, "GivingApi");
-
-    if (result?.raw?.message) {
-      throw new Error(result.raw.message);
-    }
-
-
-    // Create donation object with data from addcard response
-    const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
-    const updatedDonation = {
-      amount: donation.amount,
-      id: result.paymentMethod?.id || "",
-      customerId: result.customerId || "",
-      type: result.paymentMethod?.type || "card",
-      gatewayId: gateway?.id, // Add gatewayId as required by API
-      churchId: churchId,
-      person: {
-        id: personResult.id,
-        email: email,
-        name: `${firstName} ${lastName}`
-      },
-      notes: "", // Add notes field like AppHelper
-      funds: donation.funds || [],
-      billing_cycle_anchor: donation.billing_cycle_anchor,
-      interval: donation.interval,
-      church: {
-        name: churchData?.name || currentUserChurch?.church?.name,
-        subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
-        churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
-      }
-    };
-
-    await makeDonation(updatedDonation);
-  };
-
-  const handleGuestBankDonation = async (donation: StripeDonationInterface) => {
-    setBankConnecting(true);
-
-    try {
-      // Create user and person first
-      await ApiHelper.post("/users/loadOrCreate", { userEmail: email, firstName, lastName }, "MembershipApi");
-
-      const personData = { churchId: churchId, firstName, lastName, email };
-      const personResult = await ApiHelper.post("/people/loadOrCreate", personData, "MembershipApi");
-
-      // Get ACH setup intent from anonymous endpoint
-      const gateway = gatewayData && gatewayData.length > 0 ? gatewayData[0] : null;
-      const setupResponse = await ApiHelper.postAnonymous("/paymentmethods/ach-setup-intent-anon", {
-        email,
-        name: `${firstName} ${lastName}`,
-        churchId: churchId,
-        gatewayId: gateway?.id
-      }, "GivingApi");
-
-      if (setupResponse?.error) {
-        throw new Error(setupResponse.error);
-      }
-
-      // Use Financial Connections to collect bank account
-      const { setupIntent: collectedSetupIntent, error: collectError } = await collectBankAccountForSetup(
-        setupResponse.clientSecret,
-        {
-          paymentMethodType: "USBankAccount",
-          paymentMethodData: {
-            billingDetails: {
-              name: `${firstName} ${lastName}`,
-              email
-            }
-          }
-        }
-      );
-
-      if (collectError) {
-        throw new Error(collectError.message || "Failed to connect bank account");
-      }
-
-      // Check if user completed the flow
-      if (!collectedSetupIntent?.paymentMethod?.id) {
-        throw new Error("Bank account connection was not completed. Please try again.");
-      }
-
-      // Confirm the SetupIntent
-      const { setupIntent: confirmedIntent, error: confirmError } = await confirmSetupIntent(
-        setupResponse.clientSecret,
-        { paymentMethodType: "USBankAccount" }
-      );
-
-      if (confirmError) {
-        throw new Error(confirmError.message || "Failed to confirm bank account");
-      }
-
-      setBankConnecting(false);
-
-      // Process the donation - use paymentMethod.id (paymentMethodId is deprecated)
-      const updatedDonation = {
-        amount: donation.amount,
-        id: confirmedIntent?.paymentMethod?.id || collectedSetupIntent?.paymentMethod?.id || "",
-        customerId: setupResponse.customerId,
-        type: "bank",
-        gatewayId: gateway?.id,
-        churchId: churchId,
-        person: {
-          id: personResult.id,
-          email: email,
-          name: `${firstName} ${lastName}`
-        },
-        notes: "",
-        funds: donation.funds || [],
-        church: {
-          name: churchData?.name || currentUserChurch?.church?.name,
-          subDomain: churchData?.subDomain || currentUserChurch?.church?.subDomain,
-          churchURL: `https://${churchData?.subDomain || currentUserChurch?.church?.subDomain}.staging.b1.church`
-        }
-      };
-
-      await makeDonation(updatedDonation);
-    } catch (error: any) {
-      setBankConnecting(false);
-      throw error;
-    }
-  };
-
   const makeDonation = async (donation: StripeDonationInterface) => {
     const endpoint = isRecurring ? "/donate/subscribe/" : "/donate/charge/";
     const result = await ApiHelper.post(endpoint, donation, "GivingApi");
@@ -418,9 +262,6 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       setAmount("");
       setIsRecurring(false);
       setCoverFees(false);
-      setEmail("");
-      setFirstName("");
-      setLastName("");
 
       // Show completion screen
       setShowComplete(true);
@@ -428,6 +269,23 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
       throw new Error(result.raw.message);
     }
   };
+
+  // The Api requires a captcha for guest payments, which only the web form can show.
+  if (!person?.id) {
+    const subDomain = churchData?.subDomain || currentUserChurch?.church?.subDomain;
+    return (
+      <Card style={styles.guestCard}>
+        <Card.Content>
+          <Text variant="bodyMedium" style={[styles.guestMessage, { color: colors.text }]}>
+            {t("donations.guestGiveOnWeb")}
+          </Text>
+          <Button mode="contained" icon="open-in-new" disabled={!subDomain} onPress={() => Linking.openURL(`https://${subDomain}.b1.church/mobile/donate`)}>
+            {t("donations.guestGiveOnWebButton")}
+          </Button>
+        </Card.Content>
+      </Card>
+    );
+  }
 
   if (showComplete) {
     return (
@@ -452,42 +310,6 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         </Text>
         <TextInput mode="outlined" value={amount} onChangeText={setAmount} keyboardType="numeric" style={[styles.amountInput, { backgroundColor: colors.card }]} contentStyle={[styles.amountInputText, { color: colors.primary }]} placeholder="0.00" left={<TextInput.Icon icon={() => <Text style={[styles.dollarSign, { color: colors.primary }]}>$</Text>} />} outlineStyle={[styles.amountInputOutline, { borderColor: colors.primary }]} onFocus={() => { if (amount === "0.00" || amount === "0" || parseFloat(amount || "0") === 0) setAmount(""); }} />
       </View>
-
-      {/* Guest User Fields */}
-      {!currentUserChurch?.person?.id && (
-        <Card style={styles.guestCard}>
-          <Card.Content>
-            <Text variant="titleMedium" style={[styles.guestTitle, { color: colors.text }]}>
-              {t("auth.email")}
-            </Text>
-            <TextInput mode="outlined" label={t("auth.email")} value={email} onChangeText={setEmail} style={[styles.guestInput, { backgroundColor: colors.card }]} />
-            <View style={styles.nameRow}>
-              <TextInput mode="outlined" label={t("auth.firstName")} value={firstName} onChangeText={setFirstName} style={[styles.guestInput, styles.nameInput, { backgroundColor: colors.card }]} />
-              <TextInput mode="outlined" label={t("auth.lastName")} value={lastName} onChangeText={setLastName} style={[styles.guestInput, styles.nameInput, { backgroundColor: colors.card }]} />
-            </View>
-
-            {/* Payment Type Selector for Guests */}
-            <Text variant="titleSmall" style={[styles.paymentTypeLabel, { color: colors.text }]}>
-              {t("donations.selectPaymentMethod")}
-            </Text>
-            <SegmentedButtons
-              value={guestPaymentType}
-              onValueChange={(value) => {
-                setGuestPaymentType(value as "card" | "bank");
-                // Reset recurring when switching to bank (one-time only for guest ACH)
-                if (value === "bank") {
-                  setIsRecurring(false);
-                }
-              }}
-              buttons={[
-                { value: "card", label: "Credit/Debit Card" },
-                { value: "bank", label: "Bank Account (ACH)" }
-              ]}
-              style={styles.paymentTypeButtons}
-            />
-          </Card.Content>
-        </Card>
-      )}
 
       {/* Fund Selection */}
       <Card style={[styles.sectionCard, { backgroundColor: colors.card }]}>
@@ -520,75 +342,73 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
         </Card.Content>
       </Card>
 
-      {/* Recurring Toggle - Hidden for guest bank payments (one-time only) */}
-      {!((!currentUserChurch?.person?.id) && guestPaymentType === "bank") && (
-        <Card style={[styles.sectionCard, { backgroundColor: colors.card }]}>
-          <Card.Content>
-            <View style={styles.switchRow}>
-              <View style={styles.switchContent}>
-                <Text variant="titleMedium" style={[styles.switchTitle, { color: colors.text }]}>
-                  {t("donations.recurring")}
-                </Text>
-                <Text variant="bodyMedium" style={[styles.switchSubtitle, { color: colors.disabled }]}>
-                  {t("donations.donate")}
-                </Text>
-              </View>
-              <Switch value={isRecurring} onValueChange={setIsRecurring} thumbColor={isRecurring ? colors.primary : "#f4f3f4"} trackColor={{ false: "#767577", true: colors.primary }} />
+      {/* Recurring Toggle */}
+      <Card style={[styles.sectionCard, { backgroundColor: colors.card }]}>
+        <Card.Content>
+          <View style={styles.switchRow}>
+            <View style={styles.switchContent}>
+              <Text variant="titleMedium" style={[styles.switchTitle, { color: colors.text }]}>
+                {t("donations.recurring")}
+              </Text>
+              <Text variant="bodyMedium" style={[styles.switchSubtitle, { color: colors.disabled }]}>
+                {t("donations.donate")}
+              </Text>
             </View>
+            <Switch value={isRecurring} onValueChange={setIsRecurring} thumbColor={isRecurring ? colors.primary : "#f4f3f4"} trackColor={{ false: "#767577", true: colors.primary }} />
+          </View>
 
-            {isRecurring && (
-              <View style={[styles.intervalSection, { borderTopColor: colors.border }]}>
-                <View style={{ width: DimensionHelper.wp(35) }}>
-                  <Text variant="titleSmall" style={[styles.intervalLabel, { color: colors.text }]}>
-                    {t("donations.selectInterval")}
-                  </Text>
-                  <Menu
-                    visible={showIntervalMenu}
-                    onDismiss={() => setShowIntervalMenu(false)}
-                    anchor={
-                      <TouchableOpacity style={[styles.selector, { backgroundColor: colors.background, borderColor: colors.divider }]} onPress={() => setShowIntervalMenu(true)}>
-                        <Text variant="bodyLarge" style={[styles.selectorText, { color: colors.text }]}>
-                          {getIntervalLabel(selectedInterval)}
-                        </Text>
-                        <MaterialIcons name="expand-more" size={24} color={colors.disabled} />
-                      </TouchableOpacity>
-                    }>
-                    {intervalTypes.map(interval => (
-                      <Menu.Item
-                        key={interval.value}
-                        onPress={() => {
-                          setSelectedInterval(interval.value);
-                          setShowIntervalMenu(false);
-                        }}
-                        title={interval.label}
-                      />
-                    ))}
-                  </Menu>
-                </View>
-                <View style={{ width: DimensionHelper.wp(35) }}>
-                  <Text variant="titleSmall" style={[styles.intervalLabel, { color: colors.text }]}>
-                  Start Date
-                  </Text>
-                  <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={[styles.dateTimeButton, { backgroundColor: colors.background, borderColor: colors.divider }]}>
-                    <Text style={[styles.dateTimeText, { color: colors.text }]}>{dayjs(startDate).format("ll")}</Text>
-                  </Button>
-                  <DatePicker
-                    modal
-                    open={openStartPicker}
-                    date={startDate}
-                    mode={"date"}
-                    onConfirm={date => {
-                      setOpenStartPicker(false);
-                      setStartDate(date);
-                    }}
-                    onCancel={() => setOpenStartPicker(false)}
-                  />
-                </View>
+          {isRecurring && (
+            <View style={[styles.intervalSection, { borderTopColor: colors.border }]}>
+              <View style={{ width: DimensionHelper.wp(35) }}>
+                <Text variant="titleSmall" style={[styles.intervalLabel, { color: colors.text }]}>
+                  {t("donations.selectInterval")}
+                </Text>
+                <Menu
+                  visible={showIntervalMenu}
+                  onDismiss={() => setShowIntervalMenu(false)}
+                  anchor={
+                    <TouchableOpacity style={[styles.selector, { backgroundColor: colors.background, borderColor: colors.divider }]} onPress={() => setShowIntervalMenu(true)}>
+                      <Text variant="bodyLarge" style={[styles.selectorText, { color: colors.text }]}>
+                        {getIntervalLabel(selectedInterval)}
+                      </Text>
+                      <MaterialIcons name="expand-more" size={24} color={colors.disabled} />
+                    </TouchableOpacity>
+                  }>
+                  {intervalTypes.map(interval => (
+                    <Menu.Item
+                      key={interval.value}
+                      onPress={() => {
+                        setSelectedInterval(interval.value);
+                        setShowIntervalMenu(false);
+                      }}
+                      title={interval.label}
+                    />
+                  ))}
+                </Menu>
               </View>
-            )}
-          </Card.Content>
-        </Card>
-      )}
+              <View style={{ width: DimensionHelper.wp(35) }}>
+                <Text variant="titleSmall" style={[styles.intervalLabel, { color: colors.text }]}>
+                Start Date
+                </Text>
+                <Button mode="outlined" onPress={() => setOpenStartPicker(true)} style={[styles.dateTimeButton, { backgroundColor: colors.background, borderColor: colors.divider }]}>
+                  <Text style={[styles.dateTimeText, { color: colors.text }]}>{dayjs(startDate).format("ll")}</Text>
+                </Button>
+                <DatePicker
+                  modal
+                  open={openStartPicker}
+                  date={startDate}
+                  mode={"date"}
+                  onConfirm={date => {
+                    setOpenStartPicker(false);
+                    setStartDate(date);
+                  }}
+                  onCancel={() => setOpenStartPicker(false)}
+                />
+              </View>
+            </View>
+          )}
+        </Card.Content>
+      </Card>
 
       {/* Payment Method */}
       <Card style={[styles.sectionCard, { backgroundColor: colors.card }]}>
@@ -620,23 +440,6 @@ export function EnhancedDonationForm({ paymentMethods: pm, customerId, gatewayDa
                 />
               ))}
             </Menu>
-          ) : guestPaymentType === "bank" ? (
-            <View style={[styles.bankConnectionContainer, { backgroundColor: colors.background, borderColor: colors.divider }]}>
-              <Text variant="bodyMedium" style={[styles.bankConnectionText, { color: colors.text }]}>
-                Securely connect your bank account using Stripe Financial Connections.
-              </Text>
-              <Text variant="bodySmall" style={[styles.bankConnectionSubtext, { color: colors.disabled }]}>
-                You'll log in to your bank to authorize the connection. Your credentials are never shared.
-              </Text>
-              {bankConnecting && (
-                <View style={styles.bankConnectingRow}>
-                  <ActivityIndicator size="small" color={colors.primary} />
-                  <Text variant="bodyMedium" style={[styles.bankConnectingText, { color: colors.primary }]}>
-                    Connecting to your bank...
-                  </Text>
-                </View>
-              )}
-            </View>
           ) : (
             <CardField
               postalCodeEnabled={false}
@@ -718,20 +521,11 @@ const styles = StyleSheet.create({
   },
 
   // Guest User Section
+  guestMessage: { marginBottom: 16 },
   guestCard: {
     borderRadius: 16,
     elevation: 2
   },
-  guestTitle: {
-    fontWeight: "600",
-    marginBottom: 16
-  },
-  guestInput: { marginBottom: 12 },
-  nameRow: {
-    flexDirection: "row",
-    gap: 12
-  },
-  nameInput: { flex: 1 },
 
   // Section Cards
   sectionCard: {
@@ -817,33 +611,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1
   },
-  dateTimeText: { fontSize: 14 },
-
-  // Payment Type Selector for Guests
-  paymentTypeLabel: {
-    fontWeight: "600",
-    marginTop: 8,
-    marginBottom: 8
-  },
-  paymentTypeButtons: { marginBottom: 8 },
-
-  // Bank Connection UI
-  bankConnectionContainer: {
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-    alignItems: "center"
-  },
-  bankConnectionText: {
-    textAlign: "center",
-    marginBottom: 8
-  },
-  bankConnectionSubtext: { textAlign: "center" },
-  bankConnectingRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 16,
-    gap: 8
-  },
-  bankConnectingText: {}
+  dateTimeText: { fontSize: 14 }
 });
