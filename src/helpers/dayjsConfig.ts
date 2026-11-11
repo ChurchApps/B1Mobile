@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 
-// Import locales matching the 12 supported languages
+// Import locales matching the 13 supported languages
 import "dayjs/locale/de";
 import "dayjs/locale/en";
 import "dayjs/locale/es";
@@ -12,6 +12,7 @@ import "dayjs/locale/it";
 import "dayjs/locale/ko";
 import "dayjs/locale/nb"; // Norwegian Bokmal - dayjs uses 'nb' not 'no'
 import "dayjs/locale/pt";
+import "dayjs/locale/ro";
 import "dayjs/locale/ru";
 import "dayjs/locale/tl-ph"; // Tagalog/Filipino
 import "dayjs/locale/zh";
@@ -31,6 +32,7 @@ export const DAYJS_LOCALE_MAP: Record<string, string> = {
   ko: "ko",
   no: "nb", // Norwegian uses 'nb' in dayjs
   pt: "pt",
+  ro: "ro",
   ru: "ru",
   tl: "tl-ph", // Tagalog/Filipino
   zh: "zh"
